@@ -62,18 +62,21 @@ public class TemplateParser {
 		boolean isTag = false;
 		String tagName = "";
 		boolean isTagBody = false;
-		boolean isTagParam = false;
+		boolean isTagParamName = false;
 		String tagParamName = "";
+		String tagParamNameCache = "";
+		boolean isTagParamValue = false;
 		String tagParamValue = "";
 		Map<String, String> params = new HashMap<>();
-		while((actual = (char)br.read()) != (char)-1) {
+		System.out.println("----");
+		while((actual = (char)br.read()) != (char)-1) {			
 			/*** quotes ****/
 			if ((isTag || isTagBody) && actual == '"' && previous != '\\' && !isSingleQuoted) {
 				isDoubleQuoted = !isDoubleQuoted;
 			} else if ((isTag || isTagBody) && actual == '\'' && previous != '\\' && !isDoubleQuoted) {
 				isSingleQuoted = !isSingleQuoted;
 			/***** tag start ****/
-			} if (!tagCandidate1 && actual == '<' && !isDoubleQuoted && !isSingleQuoted) {
+			} else if (!tagCandidate1 && actual == '<' && !isDoubleQuoted && !isSingleQuoted) {
 				tagCandidate1 = true;
 			} else if (tagCandidate1 && actual == '/') {
 				isClosingTag = true;
@@ -88,15 +91,20 @@ public class TemplateParser {
 			} else if ((isTag || isTagBody) && actual == '/' && !isDoubleQuoted && !isSingleQuoted) {
 				// ignored
 			} else if ((isTag || isTagBody) && actual == '>' && !isDoubleQuoted && !isSingleQuoted) {
+				if (isTagParamValue) {
+					params.put(tagParamNameCache, tagParamValue);
+				}
 				if (tags.get(tagName) != null) {
 					bw.write(tags.get(tagName).getCode(params));
 				} // TODO maybe else log
 				isTag = false;
 				isTagBody = false;
 				isClosingTag = false;
-				isTagParam = false;
+				isTagParamName = false;
+				isTagParamValue = false;
 				tagName = "";
 				tagParamName = "";
+				tagParamNameCache = "";
 				tagParamValue = "";
 				params = new HashMap<>();
 			/*** tag split ***/
@@ -106,8 +114,26 @@ public class TemplateParser {
 				isTag = false;
 				isTagBody = true;
 			/**** tag params  *****/
-			} else if (isTagBody && !isTagParam && actual != ' ') {
+			} else if (isTagBody && !isTagParamName && actual != ' ' && !isDoubleQuoted && !isSingleQuoted) {
+				isTagParamName = true;
 				tagParamName += actual;
+			} else if (isTagParamName && (actual == ' ' || actual == '=')) {
+				isTagParamName = false;
+				params.put(tagParamName, "");
+				tagParamNameCache = tagParamName;
+				tagParamName = "";
+			} else if (isTagParamName) {
+				tagParamName += actual;
+			} else if (isTagBody && !isTagParamValue && (isDoubleQuoted || isSingleQuoted)) {
+				isTagParamValue = true;
+				tagParamValue += actual;
+			} else if (isTagParamValue && !isDoubleQuoted && !isSingleQuoted) {
+				isTagParamValue = false;
+				params.put(tagParamNameCache, tagParamValue);
+				tagParamNameCache = "";
+				tagParamValue = "";
+			} else if (isTagParamValue && (isDoubleQuoted || isSingleQuoted)) {
+				tagParamValue += actual;
 			/*** just write non special tags and text ***/
 			} else {
 				if (actual == '\r') {
