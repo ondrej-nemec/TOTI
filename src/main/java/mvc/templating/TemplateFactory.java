@@ -4,13 +4,17 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 
 import common.FileExtension;
+import mvc.templating.tags.ConsoleOutputTag;
+import mvc.templating.tags.ForTag;
+import mvc.templating.tags.IfTag;
 
 public class TemplateFactory {
 
@@ -20,15 +24,16 @@ public class TemplateFactory {
 	
 	public TemplateFactory(String tempPath) {
 		this.tempPath = tempPath;
-		parser = new TemplateParser(getTags());
+		List<Tag> tags = getTags();
+		parser = new TemplateParser(tags.stream()
+			      .collect(Collectors.toMap(Tag::getName, tag -> tag)));
 	}
 
-	public Template getTemplate(String templateFile, Map<String, Object> variables) throws Exception {
+	public Template getTemplate(String templateFile) throws Exception {
 		File file = new File(templateFile);
 		String className = getClassName(file);
-		try (URLClassLoader loader = new URLClassLoader(new URL[] {
-				new File(tempPath + "/" + className).toURI().toURL()});
-		) {
+		File cacheDir = new File(tempPath);
+		try (URLClassLoader loader = new URLClassLoader(new URL[] {cacheDir.toURI().toURL()});) {
 			try {
 				Template template = (Template)loader.loadClass(className).newInstance();
 				if (file.lastModified() != template.getLastModification()) {
@@ -39,6 +44,8 @@ public class TemplateFactory {
 			} catch (ClassNotFoundException e) {
 				compileNewCache(templateFile, className, file.lastModified());
 			}
+		}
+		try (URLClassLoader loader = new URLClassLoader(new URL[] {cacheDir.toURI().toURL()});) {
 			return (Template)loader.loadClass(className).newInstance();
 		}
 	}
@@ -47,17 +54,20 @@ public class TemplateFactory {
 		String javaTempFile = parser.createTempCache(className, templateFile, tempPath, modificationTime);
 		File file = new File(javaTempFile);
 		compiler.run(null, null, null, file.getPath()); // streamy, kam se zapisuje
-		file.delete();
+		//file.delete();
 	}
 	
 	private String getClassName(File file) {
 		return new FileExtension(file.getName()).getName();
 	}
 	
-	private Map<String, Tag> getTags() {
-		Map<String, Tag> map = new HashMap<>();
+	private List<Tag> getTags() {
+		List<Tag> tags = new ArrayList<>();
 		// TODO
-		return map;
+		tags.add(new ConsoleOutputTag());
+		tags.add(new ForTag());
+		tags.add(new IfTag());
+		return tags;
 	}
 		
 }

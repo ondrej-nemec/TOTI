@@ -21,10 +21,11 @@ public class TemplateParser {
 			String fileName, 
 			String tempPath,
 			long modificationTime) throws IOException {
-		String clazz1 = "import template.Template;"
+		String clazz1 = "import mvc.templating.Template;" 
+				+ "import java.util.Map;"
 				+ "public class %s implements Template"
-				+ "{public long getLastModification(){return %s;}"
-				+ "public String create()throws Exception{";
+				+ "{public long getLastModification(){return %sL;}"
+				+ "public String create(Map<String, Object>variables)throws Exception{";
 		String clazz2 = "}}";
 		String tempFile = tempPath + "/" + className + ".java";
 		
@@ -68,10 +69,52 @@ public class TemplateParser {
 		boolean isTagParamValue = false;
 		String tagParamValue = "";
 		Map<String, String> params = new HashMap<>();
-		System.out.println("----");
-		while((actual = (char)br.read()) != (char)-1) {			
+		
+		
+		boolean isVariable = false;
+		boolean isVariableCandidate = false;
+		String variable = "";
+		//List<String> devinedVariables = new ArrayList<>();
+		while((actual = (char)br.read()) != (char)-1) {
+			if (actual == '$') {
+				isVariableCandidate = true;
+				isTagParamName = isTagParamName || (!isTagParamValue && isTagBody && !isDoubleQuoted && !isSingleQuoted);
+				isTagParamValue = isTagParamValue || (!isTagParamName && isTagBody && (isDoubleQuoted || isSingleQuoted));
+			} else if (isVariableCandidate && actual == '{') {
+				isVariable = true;
+				isVariableCandidate = false;
+			} else if (isVariable && actual == '}') {
+				if (isTagBody) {
+					String appendString = "\" + Template.escapreVariable(variables.get(\"" +  variable + "\").toString()) + \"";
+					if (isTagParamName) {
+						tagParamName +=  "\" + Template.escapreVariable(variables.get(\"" +  variable + "\").toString()) + \"";
+					} else if (isTagParamValue) {
+						// TODO tohle porad nejde
+						tagParamValue +=  "Template.escapreVariable(variables.get(\"" +  variable + "\").toString())";
+					}
+				/*	if (!devinedVariables.contains(variable)) {
+						bw.write("\");");
+						bw.write("String " + variable + " = Template.escapreVariable(variables.get(\"" + variable + "\"));");
+						bw.write("b.append(\"");
+					}
+					if (isTagParamValue) {
+						tagParamValue += "\" +  + \"";
+					}*/
+				} else {
+					bw.write(	
+							"\");"
+							+ "b.append(Template.escapreVariable(variables.get(\"" + variable + "\").toString()));"
+							+ "b.append(\""
+						);
+				}
+				isVariable = false;
+				variable = "";
+			} else if (isVariable && (actual == ' ' || actual == '\n' || actual == '\r' || actual == '"' || actual == '\'')) {
+				throw new RuntimeException("Variable cannot be interupted");
+			} else if (isVariable) {
+				variable += actual;			
 			/*** quotes ****/
-			if ((isTag || isTagBody) && actual == '"' && previous != '\\' && !isSingleQuoted) {
+			} else if ((isTag || isTagBody) && actual == '"' && previous != '\\' && !isSingleQuoted) {
 				isDoubleQuoted = !isDoubleQuoted;
 			} else if ((isTag || isTagBody) && actual == '\'' && previous != '\\' && !isDoubleQuoted) {
 				isSingleQuoted = !isSingleQuoted;
@@ -94,9 +137,15 @@ public class TemplateParser {
 				if (isTagParamValue) {
 					params.put(tagParamNameCache, tagParamValue);
 				}
+				bw.write("\");");
 				if (tags.get(tagName) != null) {
-					bw.write(tags.get(tagName).getCode(params));
+					if (isClosingTag) {
+						bw.write(tags.get(tagName).getClosingCode(params));
+					} else {
+						bw.write(tags.get(tagName).getStartingCode(params));
+					}
 				} // TODO maybe else log
+				bw.write("b.append(\"");
 				isTag = false;
 				isTagBody = false;
 				isClosingTag = false;
@@ -151,6 +200,10 @@ public class TemplateParser {
 					tagCandidate1 = false;
 					tagCandidate2 = false;
 					isClosingTag = false;
+
+				} else if (isVariableCandidate) {
+					bw.write('$');
+					bw.write(actual);
 				} else {
 					bw.write(actual);
 				}
@@ -158,6 +211,7 @@ public class TemplateParser {
 			previous = actual;
 		}
 	}
+	
 
 	/**
 	 * promenna - inicializace, set a vypis
@@ -174,12 +228,6 @@ public class TemplateParser {
 	 * dump
 	 * 
 	 * obecny vypis promenne s a bez escapovani
-	 * 
-		&amp; → & (ampersand, U+0026)
-		&lt; → < (less-than sign, U+003C)
-		&gt; → > (greater-than sign, U+003E)
-		&quot; → " (quotation mark, U+0022)
-		&apos; → ' (apostrophe, U+0027)
-	 * 
+	 
 	 */
 }

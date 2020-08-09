@@ -23,6 +23,7 @@ public class TemplateParserTest {
 
 	//TODO test missing tag
 	
+	
 	@Test
 	@Parameters(method = "dataLoadFileLoadAndWriteFile")
 	public void testLoadFileLoadAndWriteFile(
@@ -214,22 +215,65 @@ public class TemplateParserTest {
 			getTagTest("<t:testingTag  class=\"body1\"  id='body2' >", 1, hashMap(t("class", "body1"), t("id", "body2"))),
 			// <t:testingTag  class id='body2' >
 			getTagTest("<t:testingTag  class id='body2' >", 1, hashMap(t("class", ""), t("id", "body2"))),
-			
+			// <t:testingTag  class id='body2${var}' >
+			getTagTest("<t:testingTag  class id='${var}' >", 1, hashMap(t("class", ""), t("id", "body2"))),
+			new Object[] {
+				initBr(()->{
+					BufferedReader br = mock(BufferedReader.class);
+					when(br.read())
+						.thenReturn((int)'1')
+						.thenReturn((int)'$')
+						.thenReturn((int)'{')
+						.thenReturn((int)'v')
+						.thenReturn((int)'a')
+						.thenReturn((int)'r')
+						.thenReturn((int)'}')
+						.thenReturn((int)'2')
+						.thenReturn(-1);
+					return br;
+					
+				}), mock(BufferedWriter.class), initBw((bwMock)->{
+					verify(bwMock, times(1)).write('1');
+					verify(bwMock, times(1)).write(
+							"\");b.append(escapreVariable(variables.get(\"var\").toString()));b.append(\""
+					);
+					verify(bwMock, times(1)).write('2');						
+				}), mock(Tag.class)
+			},
+			new Object[] {
+					initBr(()->{
+						BufferedReader br = mock(BufferedReader.class);
+						when(br.read())
+							.thenReturn((int)'1')
+							.thenReturn((int)'$')
+							.thenReturn((int)'2')
+							.thenReturn(-1);
+						return br;
+						
+					}), mock(BufferedWriter.class), initBw((bwMock)->{
+						verify(bwMock, times(1)).write('1');
+						verify(bwMock, times(1)).write('$');
+						verify(bwMock, times(1)).write('2');						
+					}), mock(Tag.class)
+				},
 		};
 	}
 	
 	private Object[] getTagTest(String text, int callCount, Map<String, String> params) {
 		Tag tag = mock(Tag.class);
 		when(tag.getName()).thenReturn("testingTag");
-		when(tag.getCode(any())).thenReturn("body");
+		when(tag.getStartingCode(any())).thenReturn("body");
+		when(tag.getClosingCode(any())).thenReturn("body");
 		return new Object[] {
 				initBr(()->{
 					BufferedReader br = mock(BufferedReader.class);
 					setBufferedReader(br, text);
 					return br;
 				}), mock(BufferedWriter.class), initBw((bwMock)->{
+					verify(bwMock, times(1)).write("\");");
+					verify(bwMock, times(1)).write("b.append(\"");
 					verify(bwMock, times(1)).write("body");
-					verify(tag, times(callCount)).getCode(params);
+					//verify(tag, times(callCount)).getStartingCode(params);
 				}), tag
 			};
 	}
