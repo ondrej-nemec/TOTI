@@ -1,0 +1,18 @@
+apply plugin: 'java-library'
+
+repositories {
+	mavenCentral()
+	maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+	implementation 'com.github.ondrej-nemec:javainit:afdbaf8264'
+		
+	// https://mvnrepository.com/artifact/junit/junit
+	compile group: 'junit', name: 'junit', version: '4.12'
+	// https://mvnrepository.com/artifact/org.mockito/mockito-core
+	compile group: 'org.mockito', name: 'mockito-core', version: '2.19.1'	
+	// https://mvnrepository.com/artifact/pl.pragmatists/JUnitParams
+	compile group: 'pl.pragmatists', name: 'JUnitParams', version: '1.1.1'
+}
+
