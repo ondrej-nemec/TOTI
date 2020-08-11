@@ -4,7 +4,10 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+
+import org.hamcrest.core.IsInstanceOf;
 
 import core.text.Text;
 
@@ -54,71 +57,136 @@ public class TemplateParser {
 		char actual;
 		char previous = '\u0000';
 		
+		boolean isQuoteNow = false;
 		boolean isDoubleQuoted = false;
 		boolean isSingleQuoted = false;
 		boolean tagCandidate1 = false;
 		boolean tagCandidate2 = false;
-		boolean isClosingTag = false;
-		
-		boolean isTag = false;
-		String tagName = "";
-		boolean isTagBody = false;
-		boolean isTagParamName = false;
-		String tagParamName = "";
-		String tagParamNameCache = "";
-		boolean isTagParamValue = false;
-		String tagParamValue = "";
-		Map<String, String> params = new HashMap<>();
-		
-		
+		boolean isClosingTag = false;		
+		boolean isTag = false;	
 		boolean isVariable = false;
 		boolean isVariableCandidate = false;
-		String variable = "";
-		//List<String> devinedVariables = new ArrayList<>();
+		
+		TagParser tagParser = null;
 		while((actual = (char)br.read()) != (char)-1) {
-			if (actual == '$') {
+			/*
+			 * escapovani - solo
+			 * parsovani promenych
+			 * parsovani tagu
+			 * parsovani zbyleho textu
+			 * !! comentare <!-- -->
+			 */
+			isQuoteNow = false;
+			if ((isTag || isVariable) && actual == '"' && previous != '\\' && !isSingleQuoted) {
+				isDoubleQuoted = !isDoubleQuoted;
+				isQuoteNow = true;
+			} else if ((isTag || isVariable) && actual == '\'' && previous != '\\' && !isDoubleQuoted) {
+				isSingleQuoted = !isSingleQuoted;
+				isQuoteNow = true;
+			}
+			// variables
+		/*	if (!isVariable && actual == '$') {
+				isVariableCandidate = true;
+			} else if (isVariableCandidate && actual == '{') {
+				isVariable = true;
+				isVariableCandidate = false;
+				// TODO start parsing
+				// if is tag add to tag parser, else write to bw
+				
+			// tags
+			} else */if (actual == '<' && !isDoubleQuoted && !isSingleQuoted) {
+				if (tagCandidate1 || isTag || tagCandidate2) {
+					// TODO throw tags cannot be in tags
+				}
+				tagCandidate1 = true;
+			} else if (tagCandidate1 && actual == '/') {
+				isClosingTag = true;
+			} else if (tagCandidate1 && actual == 't') {
+				tagCandidate2 = true;
+				tagCandidate1 = false;
+			} else if (tagCandidate2 && actual == ':') {
+				tagCandidate1 = false;
+				tagCandidate2 = false;
+				isTag = true;
+				tagParser = new TagParser(tags, isClosingTag);
+			} else if (isTag && !isQuoteNow) {
+				boolean continu = tagParser.parse(actual, isSingleQuoted, isDoubleQuoted);
+				if (!continu) {
+					bw.write(tagParser.getString());
+					tagParser = null;
+					isClosingTag = false;
+				}
+				isTag = continu;
+			} else {
+				if (actual == '\r') {
+					// ignored
+				} else if (actual == '\\' || actual == '"') {
+					bw.write('\\');
+					bw.write(actual);
+				} else if (actual == '\n') {
+					bw.write(
+						"\");b.append(\"\\n"
+					);
+				} else if (tagCandidate1 || tagCandidate2) {
+					bw.write("<" + (isClosingTag ? "/" : "") + (tagCandidate2 ? "t" : ""));
+					bw.write(actual);
+					tagCandidate1 = false;
+					tagCandidate2 = false;
+					isClosingTag = false;
+				} else if (isVariableCandidate) {
+					bw.write('$');
+					bw.write(actual);
+				} else {
+					bw.write(actual);
+				}
+			}
+			previous = actual;
+			
+			/*
+			
 				isVariableCandidate = true;
 				isTagParamName = isTagParamName || (!isTagParamValue && isTagBody && !isDoubleQuoted && !isSingleQuoted);
 				isTagParamValue = isTagParamValue || (!isTagParamName && isTagBody && (isDoubleQuoted || isSingleQuoted));
 			} else if (isVariableCandidate && actual == '{') {
 				isVariable = true;
 				isVariableCandidate = false;
+				variables.add(new StringBuilder());
 			} else if (isVariable && actual == '}') {
 				if (isTagBody) {
-					String appendString = "\" + Template.escapreVariable(variables.get(\"" +  variable + "\").toString()) + \"";
+					String appendString = "\" + Template.escapreVariable(variables.get(\"" +  variables.getLast().toString() + "\").toString()) + \"";
 					if (isTagParamName) {
-						tagParamName +=  "\" + Template.escapreVariable(variables.get(\"" +  variable + "\").toString()) + \"";
+						tagParamName +=  "\" + Template.escapreVariable(variables.get(\"" +  variables.getLast().toString() + "\").toString()) + \"";
 					} else if (isTagParamValue) {
 						// TODO tohle porad nejde
-						tagParamValue +=  "Template.escapreVariable(variables.get(\"" +  variable + "\").toString())";
+						tagParamValue +=  "Template.escapreVariable(variables.get(\"" +  variables.getLast().toString() + "\").toString())";
 					}
-				/*	if (!devinedVariables.contains(variable)) {
-						bw.write("\");");
-						bw.write("String " + variable + " = Template.escapreVariable(variables.get(\"" + variable + "\"));");
-						bw.write("b.append(\"");
-					}
-					if (isTagParamValue) {
-						tagParamValue += "\" +  + \"";
-					}*/
+				//	if (!devinedVariables.contains(variable)) {
+				//		bw.write("\");");
+				//		bw.write("String " + variable + " = Template.escapreVariable(variables.get(\"" + variable + "\"));");
+				//		bw.write("b.append(\"");
+				//	}
+				//	if (isTagParamValue) {
+				//		tagParamValue += "\" +  + \"";
+				//	}
 				} else {
 					bw.write(	
 							"\");"
-							+ "b.append(Template.escapreVariable(variables.get(\"" + variable + "\").toString()));"
+							+ "b.append(Template.escapreVariable(variables.get(\"" + variables.getLast().toString() + "\").toString()));"
 							+ "b.append(\""
 						);
 				}
 				isVariable = false;
-				variable = "";
-			} else if (isVariable && (actual == ' ' || actual == '\n' || actual == '\r' || actual == '"' || actual == '\'')) {
-				throw new RuntimeException("Variable cannot be interupted");
+				variables.removeLast();
+			//} else if (isVariable && (actual == ' ' || actual == '\n' || actual == '\r' || actual == '"' || actual == '\'')) {
+			//	throw new RuntimeException("Variable cannot be interupted");
 			} else if (isVariable) {
-				variable += actual;			
-			/*** quotes ****/
+				variables.getLast().append(actual);			
+			/*** quotes ****
 			} else if ((isTag || isTagBody) && actual == '"' && previous != '\\' && !isSingleQuoted) {
 				isDoubleQuoted = !isDoubleQuoted;
 			} else if ((isTag || isTagBody) && actual == '\'' && previous != '\\' && !isDoubleQuoted) {
 				isSingleQuoted = !isSingleQuoted;
-			/***** tag start ****/
+			/***** tag start ****
 			} else if (!tagCandidate1 && actual == '<' && !isDoubleQuoted && !isSingleQuoted) {
 				tagCandidate1 = true;
 			} else if (tagCandidate1 && actual == '/') {
@@ -130,7 +198,7 @@ public class TemplateParser {
 				tagCandidate1 = false;
 				tagCandidate2 = false;
 				isTag = true;
-			/*** tag end ****/
+			/*** tag end ****
 			} else if ((isTag || isTagBody) && actual == '/' && !isDoubleQuoted && !isSingleQuoted) {
 				// ignored
 			} else if ((isTag || isTagBody) && actual == '>' && !isDoubleQuoted && !isSingleQuoted) {
@@ -156,13 +224,13 @@ public class TemplateParser {
 				tagParamNameCache = "";
 				tagParamValue = "";
 				params = new HashMap<>();
-			/*** tag split ***/
+			/*** tag split ***
 			} else if (isTag && actual != ' ') {
 				tagName += actual;
 			} else if (isTag && actual == ' ') {
 				isTag = false;
 				isTagBody = true;
-			/**** tag params  *****/
+			/**** tag params  *****
 			} else if (isTagBody && !isTagParamName && actual != ' ' && !isDoubleQuoted && !isSingleQuoted) {
 				isTagParamName = true;
 				tagParamName += actual;
@@ -183,7 +251,7 @@ public class TemplateParser {
 				tagParamValue = "";
 			} else if (isTagParamValue && (isDoubleQuoted || isSingleQuoted)) {
 				tagParamValue += actual;
-			/*** just write non special tags and text ***/
+			/*** just write non special tags and text ***
 			} else {
 				if (actual == '\r') {
 					// ignored
@@ -209,10 +277,10 @@ public class TemplateParser {
 				}
 			}
 			previous = actual;
+			*/
 		}
 	}
-	
-
+		
 	/**
 	 * promenna - inicializace, set a vypis
 	 * <t:var type="" name="" value=""/> <t:set name="" value=""/> <t:out name="" />
