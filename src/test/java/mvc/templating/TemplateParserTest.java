@@ -1,20 +1,19 @@
 package mvc.templating;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.stubbing.OngoingStubbing;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 import static common.MapInit.*;
 
-import common.structures.ThrowingConsumer;
-import common.structures.ThrowingSupplier;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 
@@ -27,18 +26,31 @@ public class TemplateParserTest {
 	@Test
 	@Parameters(method = "dataLoadFileLoadAndWriteFile")
 	public void testLoadFileLoadAndWriteFile(
-			ThrowingSupplier<BufferedReader, Exception> br,
-			BufferedWriter bw,
-			ThrowingConsumer<BufferedWriter, Exception> verify,
-			Tag testingTag) {
+			String template,
+			String expectedHtml,
+			Consumer<Tag> verifyTag) {
+		Tag tag = mock(Tag.class);
+		when(tag.getName()).thenReturn("testingTag");
+		when(tag.getPairStartCode(any())).thenReturn("starting-tag");
+		when(tag.getPairEndCode(any())).thenReturn("ending-tag");
+		when(tag.getNotPairCode(any())).thenReturn("non-pair-tag");
 		Map<String, Tag> tags = new HashMap<>();
-		tags.put(testingTag.getName(), testingTag);
-		TemplateParser parser = new TemplateParser(tags);
+		tags.put(tag.getName(), tag);
+		
+		StringBuilder bw = new StringBuilder();
+		
 		try {
-			parser.loadFile(br.get(), bw);
-			verify.accept(bw);
+			BufferedReader br = mock(BufferedReader.class);
+			setBufferedReader(br, template);
+		
+			TemplateParser parser = new TemplateParser(tags);
+			parser.loadFile(br, (text)->{
+				bw.append(text);
+			});
+			
+			assertEquals(expectedHtml, bw.toString());
+			verifyTag.accept(tag);
 		} catch (Exception e) {
-			// TODO: handle exception
 			e.printStackTrace();
 		}
 	}
@@ -46,243 +58,144 @@ public class TemplateParserTest {
 	public Object[] dataLoadFileLoadAndWriteFile() {
 		return new Object[] {
 			new Object[] {
-				initBr(()->{
-					BufferedReader br = mock(BufferedReader.class);
-					when(br.read())
-						.thenReturn((int)'t')
-						.thenReturn((int)'e')
-						.thenReturn((int)'x')
-						.thenReturn((int)'t')
-						.thenReturn((int)'I')
-						.thenReturn((int)'n')
-						.thenReturn((int)'L')
-						.thenReturn((int)'i')
-						.thenReturn((int)'n')
-						.thenReturn((int)'e')
-						.thenReturn(-1);
-					return br;
-				}), mock(BufferedWriter.class), initBw((bwMock)->{
-					verify(bwMock, times(2)).write('t');
-					verify(bwMock, times(2)).write('e');
-					verify(bwMock, times(1)).write('x');
-					//verify(bwMock, times(1)).write('t');
-					verify(bwMock, times(1)).write('I');
-					verify(bwMock, times(2)).write('n');
-					verify(bwMock, times(1)).write('L');
-					verify(bwMock, times(1)).write('i');
-					//verify(bwMock, times(1)).write('n');
-					//verify(bwMock, times(1)).write('e');
-				}), mock(Tag.class)
+				"textInLine",
+				"textInLine",
+				getVerify((tag)->{})
 			},
 			new Object[] {
-				initBr(()->{
-					BufferedReader br = mock(BufferedReader.class);
-					when(br.read())
-						.thenReturn((int)'1')
-						.thenReturn((int)'\r')
-						.thenReturn((int)'\n')
-						.thenReturn((int)'2')
-						.thenReturn(-1);
-					return br;
-					
-				}), mock(BufferedWriter.class), initBw((bwMock)->{
-					verify(bwMock, times(1)).write('1');
-					verify(bwMock, times(1)).write("\");b.append(\"\\n");
-					verify(bwMock, times(1)).write('2');						
-				}), mock(Tag.class)
-			},
-			new Object[] {
-				initBr(()->{
-					BufferedReader br = mock(BufferedReader.class);
-					when(br.read())
-						.thenReturn((int)'1')
-						.thenReturn((int)'\"')
-						.thenReturn((int)'2')
-						.thenReturn(-1);
-					return br;
-					
-				}), mock(BufferedWriter.class), initBw((bwMock)->{
-					verify(bwMock, times(1)).write('1');
-					verify(bwMock, times(1)).write('\\');
-					verify(bwMock, times(1)).write('\"');
-					verify(bwMock, times(1)).write('2');						
-				}), mock(Tag.class)
-			},
-			new Object[] {
-				initBr(()->{
-					BufferedReader br = mock(BufferedReader.class);
-					when(br.read())
-						.thenReturn((int)'1')
-						.thenReturn((int)'\\')
-						.thenReturn((int)'2')
-						.thenReturn(-1);
-					return br;
-					
-				}), mock(BufferedWriter.class), initBw((bwMock)->{
-					verify(bwMock, times(1)).write('1');
-					verify(bwMock, times(2)).write('\\');
-					verify(bwMock, times(1)).write('2');						
-				}), mock(Tag.class)
-			},
-			new Object[] {
-				initBr(()->{
-					BufferedReader br = mock(BufferedReader.class);
-					/* <html class="text" id='text'></html> */
-					setBufferedReader(br, "<html class=\"text\" id='text'></html>");
-					return br;
-				}), mock(BufferedWriter.class), initBw((bwMock)->{
-					verify(bwMock, times(1)).write("<");
-					verify(bwMock, times(1)).write("</");
-					
-					verify(bwMock, times(2)).write('h');
-					verify(bwMock, times(6)).write('t');
-					verify(bwMock, times(2)).write('m');
-					verify(bwMock, times(3)).write('l');
-					verify(bwMock, times(2)).write(' ');
-					verify(bwMock, times(1)).write('c');
-					verify(bwMock, times(1)).write('a');
-					verify(bwMock, times(2)).write('s');
-					verify(bwMock, times(2)).write('=');
-					verify(bwMock, times(2)).write('\"');
-					verify(bwMock, times(2)).write('e');
-					verify(bwMock, times(2)).write('x');
-					verify(bwMock, times(1)).write('i');
-					verify(bwMock, times(1)).write('d');
-					verify(bwMock, times(2)).write('\'');
-					verify(bwMock, times(2)).write('>');
-				}), mock(Tag.class)
-			},
-			new Object[] {
-					initBr(()->{
-						BufferedReader br = mock(BufferedReader.class);
-						when(br.read())
-							.thenReturn((int)'<')
-							.thenReturn((int)'t')
-							.thenReturn((int)'a')
-							.thenReturn((int)'b')
-							.thenReturn((int)'l')
-							.thenReturn((int)'e')
-							.thenReturn((int)'>')
-							.thenReturn((int)'<')
-							.thenReturn((int)'/')
-							.thenReturn((int)'t')
-							.thenReturn((int)'a')
-							.thenReturn((int)'b')
-							.thenReturn((int)'l')
-							.thenReturn((int)'e')
-							.thenReturn((int)'>')
-							.thenReturn(-1);
-						return br;
-						
-					}), mock(BufferedWriter.class), initBw((bwMock)->{
-						verify(bwMock, times(1)).write("<t");
-						verify(bwMock, times(1)).write("</t");
-						
-						verify(bwMock, times(2)).write('a');
-						verify(bwMock, times(2)).write('b');
-						verify(bwMock, times(2)).write('l');
-						verify(bwMock, times(2)).write('e');
-						verify(bwMock, times(2)).write('>');						
-					}), mock(Tag.class)
+					"1\r\n2",
+					"1\");b.append(\"\\n2",
+					getVerify((tag)->{})
 				},
-			// <t:testingTag >
-			getTagTest("<t:testingTag >", 1, new HashMap<>()),
-			// <t:testingTag>
-			getTagTest("<t:testingTag>", 1, new HashMap<>()),
-			// </t:testingTag>
-			getTagTest("</t:testingTag>", 1, new HashMap<>()),
-			// </t:testingTag >
-			getTagTest("</t:testingTag >", 1, new HashMap<>()),
-			// <t:testingTag />
-			getTagTest("<t:testingTag />", 1, new HashMap<>()),
-			// <t:testingTag class="body1" id="body2">
-			getTagTest("<t:testingTag class=\"body1\" id=\"body2\">", 1, hashMap(t("class", "body1"), t("id", "body2"))),
-			// <t:testingTag class="body1" id='body2'/>
-			getTagTest("<t:testingTag class=\"body1\" id='body2'/>", 1, hashMap(t("class", "body1"), t("id", "body2"))),
-			// <t:testingTag class="body1" id='body2' >
-			getTagTest("<t:testingTag class=\"body1\" id='body2' >", 1, hashMap(t("class", "body1"), t("id", "body2"))),
-			// <t:testingTag class="body1" id='body2' />
-			getTagTest("<t:testingTag class=\"body1\" id='body2' />", 1, hashMap(t("class", "body1"), t("id", "body2"))),
-			// <t:testingTag id="<> \ \" ' ">
-			getTagTest("<t:testingTag id=\"<> \\ \\\" ' \">", 1, hashMap(t("id", "<> \\ \\\" ' "))),
-			// <t:testingTag id='<> \ " \' '>
-			getTagTest( "<t:testingTag id='<> \\ \" \\' '>", 1, hashMap(t("id", "<> \\ \" \\' "))),
-			/**** TODO not supporeted yet *****/
-			// <t:testingTag class="body1"id='body2' >
-			//getTagTest("<t:testingTag class=\"body1\"id='body2' >", 1, hashMap(t("class", "body1"), t("id", "body2"))),
-			/*********/
-			// <t:testingTag  class="body1"  id='body2' >
-			getTagTest("<t:testingTag  class=\"body1\"  id='body2' >", 1, hashMap(t("class", "body1"), t("id", "body2"))),
-			// <t:testingTag  class id='body2' >
-			getTagTest("<t:testingTag  class id='body2' >", 1, hashMap(t("class", ""), t("id", "body2"))),
-			// <t:testingTag  class id='body2${var}' >
-			getTagTest("<t:testingTag  class id='${var}' >", 1, hashMap(t("class", ""), t("id", "body2"))),
 			new Object[] {
-				initBr(()->{
-					BufferedReader br = mock(BufferedReader.class);
-					when(br.read())
-						.thenReturn((int)'1')
-						.thenReturn((int)'$')
-						.thenReturn((int)'{')
-						.thenReturn((int)'v')
-						.thenReturn((int)'a')
-						.thenReturn((int)'r')
-						.thenReturn((int)'}')
-						.thenReturn((int)'2')
-						.thenReturn(-1);
-					return br;
-					
-				}), mock(BufferedWriter.class), initBw((bwMock)->{
-					verify(bwMock, times(1)).write('1');
-					verify(bwMock, times(1)).write(
-							"\");b.append(escapreVariable(variables.get(\"var\").toString()));b.append(\""
-					);
-					verify(bwMock, times(1)).write('2');						
-				}), mock(Tag.class)
-			},
+					"1\"2",
+					"1\\\"2",
+					getVerify((tag)->{})
+				},
 			new Object[] {
-					initBr(()->{
-						BufferedReader br = mock(BufferedReader.class);
-						when(br.read())
-							.thenReturn((int)'1')
-							.thenReturn((int)'$')
-							.thenReturn((int)'2')
-							.thenReturn(-1);
-						return br;
-						
-					}), mock(BufferedWriter.class), initBw((bwMock)->{
-						verify(bwMock, times(1)).write('1');
-						verify(bwMock, times(1)).write('$');
-						verify(bwMock, times(1)).write('2');						
-					}), mock(Tag.class)
+					"1\\2",
+					"1\\\\2",
+					getVerify((tag)->{})
+				},
+			new Object[] {
+					"<html class=\"text\" id='text'></html>",
+					"<html class=\\\"text\\\" id='text'></html>",
+					getVerify((tag)->{})
+				},
+			new Object[] {
+					"<table></table>",
+					"<table></table>",
+					getVerify((tag)->{})
+				},
+			new Object[] {
+					"<t:testingTag >",
+					"\");starting-tagb.append(\"",
+					getVerify((tag)->{})
+				},
+			new Object[] {
+					"<t:testingTag>",
+					"\");starting-tagb.append(\"",
+					getVerify((tag)->{})
+				},
+			new Object[] {
+					"</t:testingTag>",
+					"\");ending-tagb.append(\"",
+					getVerify((tag)->{})
+				},
+			new Object[] {
+					"</t:testingTag >",
+					"\");ending-tagb.append(\"",
+					getVerify((tag)->{})
+				},
+			new Object[] {
+					"<t:testingTag />",
+					"\");non-pair-tagb.append(\"",
+					getVerify((tag)->{})
+				},
+			new Object[] {
+					"<t:testingTag class=\"body1\" id=\"body2\">",
+					"\");starting-tagb.append(\"",
+					getVerify((tag)->{
+						verify(tag, times(1)).getPairStartCode(hashMap(t("class", "body1"), t("id", "body2")));
+					})
+				},
+			new Object[] {
+					"<t:testingTag class=\"body1\" id='body2'/>",
+					"\");non-pair-tagb.append(\"",
+					getVerify((tag)->{
+						verify(tag, times(1)).getNotPairCode(hashMap(t("class", "body1"), t("id", "body2")));
+						})
+				},
+			new Object[] {
+					"<t:testingTag class=\"body1\" id='body2' >",
+					"\");starting-tagb.append(\"",
+					getVerify((tag)->{
+						verify(tag, times(1)).getPairStartCode(hashMap(t("class", "body1"), t("id", "body2")));
+						})
+				},
+			new Object[] {
+					"<t:testingTag class=\"body1\" id='body2' />",
+					"\");non-pair-tagb.append(\"",
+					getVerify((tag)->{
+						verify(tag, times(1)).getNotPairCode(hashMap(t("class", "body1"), t("id", "body2")));
+						})
+				},
+			new Object[] {
+					"<t:testingTag id=\"<> \\ \\\" ' \">",
+					"\");starting-tagb.append(\"",
+					getVerify((tag)->{
+						verify(tag, times(1)).getPairStartCode(hashMap(t("id", "<> \\ \\\" ' ")));
+						})
+				},
+			new Object[] {
+					"<t:testingTag id='<> \\ \" \\' '>",
+					"\");starting-tagb.append(\"",
+					getVerify((tag)->{
+						verify(tag, times(1)).getPairStartCode(hashMap(t("id", "<> \\ \" \\' ")));
+						})
+				},
+			new Object[] {
+					"<t:testingTag class=\"body1\"id='body2' >",
+					"\");starting-tagb.append(\"",
+					getVerify((tag)->{
+						verify(tag, times(1)).getPairStartCode(hashMap(t("class", "body1"), t("id", "body2")));
+						})
+				},
+			new Object[] {
+					"<t:testingTag  class=\"body1\"  id='body2' >",
+					"\");starting-tagb.append(\"",
+					getVerify((tag)->{
+						verify(tag, times(1)).getPairStartCode(hashMap(t("class", "body1"), t("id", "body2")));
+						})
+				},
+			new Object[] {
+					"<t:testingTag  class id='body2' >",
+					"\");starting-tagb.append(\"",
+					getVerify((tag)->{
+						verify(tag, times(1)).getPairStartCode(hashMap(t("class", ""), t("id", "body2")));
+						})
+				},
+			new Object[] {
+					"1$2",
+					"1$2",
+					getVerify((tag)->{})
+				},
+			new Object[] {
+					"<t:testingTag  class id='${var}' >",
+					"\");starting-tagb.append(\"",
+					getVerify((tag)->{
+						verify(tag, times(1)).getPairStartCode(hashMap(t("id", "body2")));
+					})
+				},
+			new Object[] {
+					"1${var}2",
+					"1\");b.append(escapreVariable(variables.get(\"var\").toString()));b.append(\"2",
+					getVerify((tag)->{})
 				},
 		};
 	}
 	
-	private Object[] getTagTest(String text, int callCount, Map<String, String> params) {
-		Tag tag = mock(Tag.class);
-		when(tag.getName()).thenReturn("testingTag");
-		when(tag.getStartingCode(any())).thenReturn("body");
-		when(tag.getClosingCode(any())).thenReturn("body");
-		return new Object[] {
-				initBr(()->{
-					BufferedReader br = mock(BufferedReader.class);
-					setBufferedReader(br, text);
-					return br;
-				}), mock(BufferedWriter.class), initBw((bwMock)->{
-					verify(bwMock, times(1)).write("\");");
-					verify(bwMock, times(1)).write("b.append(\"");
-					verify(bwMock, times(1)).write("body");
-					//verify(tag, times(callCount)).getStartingCode(params);
-				}), tag
-			};
-	}
-	
-	public ThrowingSupplier<BufferedReader, Exception> initBr(ThrowingSupplier<BufferedReader, Exception> init) {
-		return init;
-	}
-	
-	public ThrowingConsumer<BufferedWriter, Exception> initBw(ThrowingConsumer<BufferedWriter, Exception> verify) {
+	private Consumer<Tag> getVerify(Consumer<Tag> verify) {
 		return verify;
 	}
 	

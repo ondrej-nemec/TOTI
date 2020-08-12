@@ -46,7 +46,7 @@ public class TagParser {
 		}
 	}
 	
-	public boolean parse(char actual, boolean isSingleQuoted, boolean isDoubleQuoted) throws IOException {
+	public boolean parse(char actual, boolean isSingleQuoted, boolean isDoubleQuoted, char previous) throws IOException {
 		// tag end
 		if (actual == '/' && !isDoubleQuoted && !isSingleQuoted) {
 			// ignored
@@ -58,21 +58,27 @@ public class TagParser {
 			}
 			builder.append("\");");
 			if (tags.get(tagName) != null) {
-				if (isClosingTag) {
-					builder.append(tags.get(tagName).getClosingCode(params));
+				if (previous == '/') {
+					builder.append(tags.get(tagName).getNotPairCode(params));
+				} else if (isClosingTag) {
+					builder.append(tags.get(tagName).getPairEndCode(params));
 				} else {
-					builder.append(tags.get(tagName).getStartingCode(params));
+					builder.append(tags.get(tagName).getPairStartCode(params));
 				}
 			} // TODO maybe else log
 			builder.append("b.append(\"");
 			return false;
-		// tag name
+		// tag name		
 		} else if (isTagName && actual != ' ') {
 			tagName += actual;
 		} else if (isTagName && actual == ' ') {
 			isTagName = false;
 		// param name
 		} else if (!isParamName && actual != ' ' && actual != '=' && !isDoubleQuoted && !isSingleQuoted) {
+			if (!paramValue.isEmpty()) {
+				params.put(paramNameCache, paramValue);
+				paramValue = "";
+			}
 			paramName += actual;
 			isParamName = true;
 		} else if (isParamName && (actual == ' ' || actual == '=')) {

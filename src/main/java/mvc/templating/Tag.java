@@ -6,8 +6,10 @@ public interface Tag {
 
 	String getName();
 	
-	String getStartingCode(Map<String, String> params);
+	String getPairStartCode(Map<String, String> params);
 	
-	String getClosingCode(Map<String, String> params);
+	String getPairEndCode(Map<String, String> params);
+	
+	String getNotPairCode(Map<String, String> params);
 	
 }

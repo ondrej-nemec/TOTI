@@ -6,9 +6,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.hamcrest.core.IsInstanceOf;
 
+import common.structures.ThrowingConsumer;
 import core.text.Text;
 
 public class TemplateParser {
@@ -47,17 +49,19 @@ public class TemplateParser {
 	
 	private void loadFile(String fileName, BufferedWriter bw) throws IOException {
 		Text.read((br)->{
-			loadFile(br, bw);			
+			loadFile(br, (text)->{
+				bw.write(text);
+			});			
 			// TODO read s void
 			return null;
 		}, fileName);
 	}
 	
-	protected void loadFile(BufferedReader br, BufferedWriter bw) throws IOException {
+	protected void loadFile(BufferedReader br, ThrowingConsumer<String, IOException> bw) throws IOException {
 		char actual;
 		char previous = '\u0000';
 		
-		boolean isQuoteNow = false;
+	//	boolean isQuoteNow = false;
 		boolean isDoubleQuoted = false;
 		boolean isSingleQuoted = false;
 		boolean tagCandidate1 = false;
@@ -76,14 +80,7 @@ public class TemplateParser {
 			 * parsovani zbyleho textu
 			 * !! comentare <!-- -->
 			 */
-			isQuoteNow = false;
-			if ((isTag || isVariable) && actual == '"' && previous != '\\' && !isSingleQuoted) {
-				isDoubleQuoted = !isDoubleQuoted;
-				isQuoteNow = true;
-			} else if ((isTag || isVariable) && actual == '\'' && previous != '\\' && !isDoubleQuoted) {
-				isSingleQuoted = !isSingleQuoted;
-				isQuoteNow = true;
-			}
+			
 			// variables
 		/*	if (!isVariable && actual == '$') {
 				isVariableCandidate = true;
@@ -94,7 +91,15 @@ public class TemplateParser {
 				// if is tag add to tag parser, else write to bw
 				
 			// tags
-			} else */if (actual == '<' && !isDoubleQuoted && !isSingleQuoted) {
+			} else */
+		//	isQuoteNow = false;
+			if ((isTag || isVariable) && actual == '"' && previous != '\\' && !isSingleQuoted) {
+				isDoubleQuoted = !isDoubleQuoted;
+			//	isQuoteNow = true;
+			} else if ((isTag || isVariable) && actual == '\'' && previous != '\\' && !isDoubleQuoted) {
+				isSingleQuoted = !isSingleQuoted;
+			//	isQuoteNow = true;
+			} else if (actual == '<' && !isDoubleQuoted && !isSingleQuoted) {
 				if (tagCandidate1 || isTag || tagCandidate2) {
 					// TODO throw tags cannot be in tags
 				}
@@ -109,10 +114,10 @@ public class TemplateParser {
 				tagCandidate2 = false;
 				isTag = true;
 				tagParser = new TagParser(tags, isClosingTag);
-			} else if (isTag && !isQuoteNow) {
-				boolean continu = tagParser.parse(actual, isSingleQuoted, isDoubleQuoted);
+			} else if (isTag /*&& !isQuoteNow*/) {
+				boolean continu = tagParser.parse(actual, isSingleQuoted, isDoubleQuoted, previous);
 				if (!continu) {
-					bw.write(tagParser.getString());
+					bw.accept(tagParser.getString());
 					tagParser = null;
 					isClosingTag = false;
 				}
@@ -121,23 +126,23 @@ public class TemplateParser {
 				if (actual == '\r') {
 					// ignored
 				} else if (actual == '\\' || actual == '"') {
-					bw.write('\\');
-					bw.write(actual);
+					bw.accept("\\");
+					bw.accept(actual + "");
 				} else if (actual == '\n') {
-					bw.write(
+					bw.accept(
 						"\");b.append(\"\\n"
 					);
 				} else if (tagCandidate1 || tagCandidate2) {
-					bw.write("<" + (isClosingTag ? "/" : "") + (tagCandidate2 ? "t" : ""));
-					bw.write(actual);
+					bw.accept("<" + (isClosingTag ? "/" : "") + (tagCandidate2 ? "t" : ""));
+					bw.accept(actual + "");
 					tagCandidate1 = false;
 					tagCandidate2 = false;
 					isClosingTag = false;
 				} else if (isVariableCandidate) {
-					bw.write('$');
-					bw.write(actual);
+					bw.accept("$");
+					bw.accept(actual + "");
 				} else {
-					bw.write(actual);
+					bw.accept(actual + "");
 				}
 			}
 			previous = actual;
