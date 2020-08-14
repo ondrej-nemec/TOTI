@@ -12,13 +12,18 @@ public class ForEachTag implements Tag {
 	}
 
 	@Override
-	public String getStartingCode(Map<String, String> params) {
+	public String getPairStartCode(Map<String, String> params) {
 		return String.format("for(%s:%s){", params.get("item"), params.get("collection"));
 	}
 
 	@Override
-	public String getClosingCode(Map<String, String> params) {
+	public String getPairEndCode(Map<String, String> params) {
 		return "}";
+	}
+
+	@Override
+	public String getNotPairCode(Map<String, String> params) {
+		return "";
 	}
 
 }

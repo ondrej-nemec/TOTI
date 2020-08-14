@@ -12,14 +12,23 @@ public class ConsoleOutputTag implements Tag{
 	}
 
 	@Override
-	public String getStartingCode(Map<String, String> params) {
-		return "System.out.println(\"" + params.get("value") + "\");";
+	public String getPairStartCode(Map<String, String> params) {
+		// TODO Auto-generated method stub
+				return "";
 	}
 
 	@Override
-	public String getClosingCode(Map<String, String> params) {
+	public String getPairEndCode(Map<String, String> params) {
 		// TODO Auto-generated method stub
 		return "";
+	}
+
+	@Override
+	public String getNotPairCode(Map<String, String> params) {
+		if (params.get("text") != null) {
+			return "System.out.println(\"" + params.get("text") + "\");";
+		}
+		return "System.out.println(" + params.get("value") + ");";
 	}
 
 }

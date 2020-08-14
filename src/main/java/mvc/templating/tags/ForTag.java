@@ -12,13 +12,18 @@ public class ForTag implements Tag {
 	}
 
 	@Override
-	public String getStartingCode(Map<String, String> params) {
+	public String getPairStartCode(Map<String, String> params) {
 		return String.format("for(%s;%s;%s){", params.get("from"), params.get("to"), params.get("change"));
 	}
 
 	@Override
-	public String getClosingCode(Map<String, String> params) {
+	public String getPairEndCode(Map<String, String> params) {
 		return "}";
+	}
+
+	@Override
+	public String getNotPairCode(Map<String, String> params) {
+		return "";
 	}
 
 }

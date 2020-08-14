@@ -12,13 +12,18 @@ public class IfTag implements Tag {
 	}
 
 	@Override
-	public String getStartingCode(Map<String, String> params) {
-		return String.format("if(%s){", params.get("cond"));
+	public String getPairStartCode(Map<String, String> params) {
+		return getNotPairCode(params) + "{";
 	}
 
 	@Override
-	public String getClosingCode(Map<String, String> params) {
+	public String getPairEndCode(Map<String, String> params) {
 		return "}";
+	}
+
+	@Override
+	public String getNotPairCode(Map<String, String> params) {
+		return String.format("if(%s)", params.get("cond"));
 	}
 
 }
