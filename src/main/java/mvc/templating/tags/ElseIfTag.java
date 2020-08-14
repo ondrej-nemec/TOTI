@@ -4,16 +4,16 @@ import java.util.Map;
 
 import mvc.templating.Tag;
 
-public class ConsoleOutputTag implements Tag{
+public class ElseIfTag implements Tag {
 
 	@Override
 	public String getName() {
-		return "console";
+		return "elseif";
 	}
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
-		return "";
+		return "}" + getNotPairCode(params) + "{";
 	}
 
 	@Override
@@ -23,10 +23,7 @@ public class ConsoleOutputTag implements Tag{
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
-		if (params.get("text") != null) {
-			return "System.out.println(\"" + params.get("text") + "\");";
-		}
-		return "System.out.println(" + params.get("value") + ");";
+		return String.format("else if(%s)", params.get("cond"));
 	}
 
 }

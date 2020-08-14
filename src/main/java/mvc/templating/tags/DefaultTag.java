@@ -4,29 +4,25 @@ import java.util.Map;
 
 import mvc.templating.Tag;
 
-public class ConsoleOutputTag implements Tag{
+public class DefaultTag implements Tag {
 
 	@Override
 	public String getName() {
-		return "console";
+		return "default";
 	}
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
-		return "";
+		return "default:";
 	}
 
 	@Override
 	public String getPairEndCode(Map<String, String> params) {
-		return "";
+		return "break;";
 	}
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
-		if (params.get("text") != null) {
-			return "System.out.println(\"" + params.get("text") + "\");";
-		}
-		return "System.out.println(" + params.get("value") + ");";
+		return getPairStartCode(params) + getPairEndCode(params);
 	}
-
 }

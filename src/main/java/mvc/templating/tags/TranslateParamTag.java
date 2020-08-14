@@ -4,11 +4,11 @@ import java.util.Map;
 
 import mvc.templating.Tag;
 
-public class ConsoleOutputTag implements Tag{
+public class TranslateParamTag implements Tag {
 
 	@Override
 	public String getName() {
-		return "console";
+		return "param";
 	}
 
 	@Override
@@ -23,10 +23,7 @@ public class ConsoleOutputTag implements Tag{
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
-		if (params.get("text") != null) {
-			return "System.out.println(\"" + params.get("text") + "\");";
-		}
-		return "System.out.println(" + params.get("value") + ");";
+		return "";
 	}
 
 }

@@ -4,29 +4,26 @@ import java.util.Map;
 
 import mvc.templating.Tag;
 
-public class ConsoleOutputTag implements Tag{
+public class DoWhileTag implements Tag {
 
 	@Override
 	public String getName() {
-		return "console";
+		return "dowhile";
 	}
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
-		return "";
+		return "do{";
 	}
 
 	@Override
 	public String getPairEndCode(Map<String, String> params) {
-		return "";
+		return String.format("}while(%s)", params.get("exp"));
 	}
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
-		if (params.get("text") != null) {
-			return "System.out.println(\"" + params.get("text") + "\");";
-		}
-		return "System.out.println(" + params.get("value") + ");";
+		return "";
 	}
 
 }
