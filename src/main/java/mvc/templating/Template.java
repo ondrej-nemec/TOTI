@@ -2,13 +2,15 @@ package mvc.templating;
 
 import java.util.Map;
 
+import translator.Translator;
+
 public interface Template {
 
 	long getLastModification();
 	
-	String create(Map<String, Object>variables) throws Exception;
+	String create(Map<String, Object>variables, Translator translator) throws Exception;
 
-	static String escapreVariable(Object variable) {
+	static String escapeVariable(Object variable) {
 		return variable.toString()
 				.replaceAll("\\&", "&amp;") // must be first
 				.replaceAll(">", "&gt;")

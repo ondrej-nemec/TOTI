@@ -23,10 +23,10 @@ public class TemplateParser {
 			String tempPath,
 			long modificationTime) throws IOException {
 		String clazz1 = "import mvc.templating.Template;" 
-				+ "import java.util.Map;"
+				+ "import java.util.Map;import translator.Translator;"
 				+ "public class %s implements Template"
 				+ "{public long getLastModification(){return %sL;}"
-				+ "public String create(Map<String, Object>variables)throws Exception{";
+				+ "public String create(Map<String, Object>variables,Translator translator)throws Exception{";
 		String clazz2 = "}}";
 		String tempFile = tempPath + "/" + className + ".java";
 		
@@ -72,6 +72,7 @@ public class TemplateParser {
 		boolean isComment = false;
 		
 		TagParser tagParser = null;
+		int varIndex = 0;
 		LinkedList<VariableParser> variableParsers = new LinkedList<>();
 		while((actual = (char)br.read()) != (char)-1) {
 			/*
@@ -95,25 +96,31 @@ public class TemplateParser {
 			} else if (isComment) {
 				continue;
 			// variables
-			} else if (!isVariable && actual == '$') {
+			} else if (/*!isVariable &&*/ actual == '$') {
 				isVariableCandidate = true;
 			} else if (isVariableCandidate && actual == '{') {
 				isVariable = true;
 				isVariableCandidate = false;
-				variableParsers.add(new VariableParser());
+				variableParsers.add(new VariableParser(varIndex++)); // variableParsers.size()
 			} else if (isVariable) {
 				boolean continu = variableParsers.getLast().parse(actual, previous);
 				if (!continu) {
 					VariableParser varParser = variableParsers.removeLast();
 					if (variableParsers.size() > 0) {
-						variableParsers.getLast().addVariable(varParser.getString());
+						variableParsers.getLast().addVariable(varParser);
+						isVariable = true;
 					} else if (isTag) {
-						tagParser.addVariable(varParser.getString());
-					} else {
-						bw.accept(varParser.getString());
+						tagParser.addVariable(varParser);
+						isVariable = false;
+					} else {						
+						bw.accept("\");");
+						bw.accept(varParser.getInit());
+						bw.accept("b.append(Template.escapeVariable(" + varParser.getResult() + "));");
+						bw.accept("b.append(\"");
+						isVariable = false;
 					}
 				}
-				isVariable = continu;
+				//isVariable = continu;
 			// tags
 			} else if ((isTag || isVariable) && actual == '"' && previous != '\\' && !isSingleQuoted) {
 				isDoubleQuoted = !isDoubleQuoted;

@@ -14,7 +14,7 @@ public class TemplateTest {
 	@Test
 	@Parameters(method = "dataEscapeStringWorks")
 	public void testEscapeStringWorks(String variable, String expected) {
-		assertEquals(expected, Template.escapreVariable(variable));
+		assertEquals(expected, Template.escapeVariable(variable));
 	}
 	
 	public Object[] dataEscapeStringWorks() {
