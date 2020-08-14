@@ -8,8 +8,8 @@ public interface Template {
 	
 	String create(Map<String, Object>variables) throws Exception;
 
-	static String escapreVariable(String variable) {
-		return variable
+	static String escapreVariable(Object variable) {
+		return variable.toString()
 				.replaceAll("\\&", "&amp;") // must be first
 				.replaceAll(">", "&gt;")
 				.replaceAll("<", "&lt;")

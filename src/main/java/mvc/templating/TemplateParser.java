@@ -3,12 +3,8 @@ package mvc.templating;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.function.Consumer;
-
-import org.hamcrest.core.IsInstanceOf;
 
 import common.structures.ThrowingConsumer;
 import core.text.Text;
@@ -70,30 +66,56 @@ public class TemplateParser {
 		boolean isTag = false;	
 		boolean isVariable = false;
 		boolean isVariableCandidate = false;
+		boolean commentCandidate1 = false;
+		boolean commentCandidate2 = false;
+		boolean closingCommentCandidate = false;
+		boolean isComment = false;
 		
 		TagParser tagParser = null;
+		LinkedList<VariableParser> variableParsers = new LinkedList<>();
 		while((actual = (char)br.read()) != (char)-1) {
 			/*
 			 * escapovani - solo
 			 * parsovani promenych
 			 * parsovani tagu
 			 * parsovani zbyleho textu
-			 * !! comentare <!-- -->
+			 * !! komentare <!-- -->
 			 */
-			
+			if (isComment && !commentCandidate1 && actual == '-') {
+				commentCandidate1 = true;
+			} else if (isComment && commentCandidate1 && actual == '-') {
+				commentCandidate1 = false;
+				commentCandidate2 = true;
+			} else if (isComment && commentCandidate2 && actual == '%') {
+				commentCandidate2 = false;
+				closingCommentCandidate = true;
+			} else if (isComment && closingCommentCandidate && actual == '>') {
+				closingCommentCandidate = false;
+				isComment = false;
+			} else if (isComment) {
+				continue;
 			// variables
-		/*	if (!isVariable && actual == '$') {
+			} else if (!isVariable && actual == '$') {
 				isVariableCandidate = true;
 			} else if (isVariableCandidate && actual == '{') {
 				isVariable = true;
 				isVariableCandidate = false;
-				// TODO start parsing
-				// if is tag add to tag parser, else write to bw
-				
+				variableParsers.add(new VariableParser());
+			} else if (isVariable) {
+				boolean continu = variableParsers.getLast().parse(actual, previous);
+				if (!continu) {
+					VariableParser varParser = variableParsers.removeLast();
+					if (variableParsers.size() > 0) {
+						variableParsers.getLast().addVariable(varParser.getString());
+					} else if (isTag) {
+						tagParser.addVariable(varParser.getString());
+					} else {
+						bw.accept(varParser.getString());
+					}
+				}
+				isVariable = continu;
 			// tags
-			} else */
-		//	isQuoteNow = false;
-			if ((isTag || isVariable) && actual == '"' && previous != '\\' && !isSingleQuoted) {
+			} else if ((isTag || isVariable) && actual == '"' && previous != '\\' && !isSingleQuoted) {
 				isDoubleQuoted = !isDoubleQuoted;
 			//	isQuoteNow = true;
 			} else if ((isTag || isVariable) && actual == '\'' && previous != '\\' && !isDoubleQuoted) {
@@ -122,6 +144,15 @@ public class TemplateParser {
 					isClosingTag = false;
 				}
 				isTag = continu;
+			} else if (tagCandidate1 && actual == '%') {
+				tagCandidate1 = false;
+				commentCandidate1 = true;
+			} else if (commentCandidate1 && actual == '-') {
+				commentCandidate1 = false;
+				commentCandidate2 = true;
+			} else if (commentCandidate2 && actual == '-') {
+				commentCandidate2 = false;
+				isComment = true;
 			} else {
 				if (actual == '\r') {
 					// ignored
@@ -138,6 +169,11 @@ public class TemplateParser {
 					tagCandidate1 = false;
 					tagCandidate2 = false;
 					isClosingTag = false;
+				} else if (commentCandidate1 || commentCandidate2) {
+					bw.accept("<%" + (commentCandidate2 ? "-" : ""));
+					bw.accept(actual + "");
+					commentCandidate1 = false;
+					commentCandidate2 = false;
 				} else if (isVariableCandidate) {
 					bw.accept("$");
 					bw.accept(actual + "");

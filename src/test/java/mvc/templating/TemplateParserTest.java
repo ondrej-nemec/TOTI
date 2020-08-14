@@ -176,6 +176,21 @@ public class TemplateParserTest {
 						})
 				},
 			new Object[] {
+					"1<!-- <t:testingTag /> -->2",
+					"1<!-- \");non-pair-tagb.append(\" -->2",
+					getVerify((tag)->{})
+				},
+			new Object[] {
+					"1<%-- <t:testingTag /> --%>2",
+					"12",
+					getVerify((tag)->{})
+				},
+			new Object[] {
+					"1<%-- ${var} --%>2",
+					"12",
+					getVerify((tag)->{})
+				},
+			new Object[] {
 					"1$2",
 					"1$2",
 					getVerify((tag)->{})
@@ -184,12 +199,51 @@ public class TemplateParserTest {
 					"<t:testingTag  class id='${var}' >",
 					"\");starting-tagb.append(\"",
 					getVerify((tag)->{
-						verify(tag, times(1)).getPairStartCode(hashMap(t("id", "body2")));
+						verify(tag, times(1)).getPairStartCode(hashMap(t("id", "var"), t("class", "")));
 					})
 				},
 			new Object[] {
 					"1${var}2",
-					"1\");b.append(escapreVariable(variables.get(\"var\").toString()));b.append(\"2",
+					"1\");b.append(Template.escapreVariable(variables.get(\"var\")));b.append(\"2",
+					getVerify((tag)->{})
+				},
+			new Object[] {
+					"1${var.equals(1)}2",
+					"1\");"
+					+ "Object o0_1 = variables.get(\"var\");"
+					+ "Object o0_2 = o0_1.getClass().getMethod(\"equals\").invoke(o0_1, 1);"
+					+ "b.append(Template.escapreVariable(o0_2));"
+					+ "b.append(\"2",
+					getVerify((tag)->{})
+				},
+			new Object[] {
+					"1${var.getClass().equals(1)}2",
+					"1\");"
+					+ "Object o0_1 = variables.get(\"var\");"
+					+ "Object o0_2 = o0_1.getClass().getMethod(\"getClass\").invoke(o0_1);"
+					+ "Object o0_3 = o0_2.getClass().getMethod(\"equals\").invoke(o0_2, 1);"
+					+ "b.append(Template.escapreVariable(o0_3));"
+					+ "b.append(\"2",
+					getVerify((tag)->{})
+				},
+			new Object[] {
+					"1${var.class.equals(1)}2",
+					"1\");"
+					+ "Object o0_1 = variables.get(\"var\");"
+					+ "Object o0_2 = o0_1.getClass().getMethod(\"getClass\").invoke(o0_1);"
+					+ "Object o0_3 = o0_2.getClass().getMethod(\"equals\").invoke(o0_2, 1);"
+					+ "b.append(Template.escapreVariable(o0_3));"
+					+ "b.append(\"2",
+					getVerify((tag)->{})
+				},
+			new Object[] {
+					"1${var.equals(${var2})}2",
+					"1\");"
+					+ "Object o0_1 = variables.get(\"var\");"
+					+ "Object o1_1 = variables.get(\"var2\");"
+					+ "Object o0_2 = o1.getClass().getMethod(\"equals\").invoke(o0_1, 1);"
+					+ "b.append(Template.escapreVariable(o0_2));"
+					+ "b.append(\"2",
 					getVerify((tag)->{})
 				},
 		};
