@@ -17,7 +17,7 @@ public class TemplateFactoryEndToEndTest {
 		variables.put("limit", 10);
 		
 		//*
-		TemplateFactory factory = new TemplateFactory("test/template-factory-cache", "src/test/resources/mvc/templating/");
+		TemplateFactory factory = new TemplateFactory("test/template-factory-cache", "src/test/resources/mvc/templating/", false);
 		Template template = factory.getTemplate(
 				"dir/dir2/index.jsp"
 		);
@@ -44,7 +44,7 @@ public class TemplateFactoryEndToEndTest {
 				return key;
 			}
 		};
-		String html = template.create(variables, translator);
+		String html = template.create(factory, variables, translator);
 		System.out.println(html);
 		Text.write((bw)->{
 			WriteText.write(bw, html);

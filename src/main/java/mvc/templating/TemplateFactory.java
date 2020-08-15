@@ -4,8 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.tools.JavaCompiler;
@@ -26,6 +30,7 @@ import mvc.templating.tags.FinallyTag;
 import mvc.templating.tags.ForEachTag;
 import mvc.templating.tags.ForTag;
 import mvc.templating.tags.IfTag;
+import mvc.templating.tags.LayoutTag;
 import mvc.templating.tags.SwitchTag;
 import mvc.templating.tags.TranslateParamTag;
 import mvc.templating.tags.TranslateTag;
@@ -37,25 +42,34 @@ import mvc.templating.tags.WhileTag;
 
 public class TemplateFactory {
 	
-	private static final List<Tag> tags = initTags();
+	private static final List<Supplier<Tag>> CUSTOM_TAG_PROVIDERS = new LinkedList<>();
 
 	private final String tempPath;
 	private final String templatePath;
-	private final TemplateParser parser;
+	private final boolean deleteAuxJavaClass;
+//	private final TemplateParser parser;
 	private final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 	
 	public TemplateFactory(String tempPath, String templatePath) {
+		this(tempPath, templatePath, true);
+	}
+	
+	public TemplateFactory(String tempPath, String templatePath, boolean deleteAuxJavaClass) {
 		this.tempPath = tempPath;
 		this.templatePath = templatePath;
-		parser = new TemplateParser(tags.stream()
-			      .collect(Collectors.toMap(Tag::getName, tag -> tag)));
+		this.deleteAuxJavaClass = deleteAuxJavaClass;
+	/*	parser = new TemplateParser(tags.stream()
+			      .collect(Collectors.toMap(Tag::getName, tag -> tag)));*/
 	}
 
 	public Template getTemplate(String templateFile) throws Exception {
 		File file = new File(templatePath + templateFile);
 		Tuple2<String, String> classNameAndNamespace = getClassName(file);
 		File cacheDir = new File(tempPath);
-		String className = classNameAndNamespace._1().replaceAll("/", ".") + "." + classNameAndNamespace._2();
+		String className = 
+				classNameAndNamespace._1().replaceAll("/", ".")
+				+ (classNameAndNamespace._1().length() == 0 ? "" : ".")
+				+ classNameAndNamespace._2();
 		try (URLClassLoader loader = new URLClassLoader(new URL[] {cacheDir.toURI().toURL()});) {
 			try {
 				Template template = (Template)loader.loadClass(className).newInstance();
@@ -77,19 +91,30 @@ public class TemplateFactory {
 		File dir = new File(tempPath + "/" + namespace);
 		dir.mkdirs();
 		
+		List<Tag> tags = initTags(namespace);
+		tags.addAll(CUSTOM_TAG_PROVIDERS.stream().map(s->s.get()).collect(Collectors.toList()));
+		TemplateParser parser = new TemplateParser(tags.stream()
+			      .collect(Collectors.toMap(Tag::getName, tag -> tag)));
+		
 		String javaTempFile = parser.createTempCache(namespace, className, templateFile, tempPath, modificationTime);
 		File file = new File(javaTempFile);
 		compiler.run(null, null, null, file.getPath()); // streamy, kam se zapisuje
-		//file.delete();
+		if (deleteAuxJavaClass) {
+			file.delete();
+		}
 	}
 	
-	private Tuple2<String, String> getClassName(File file) {
-		String namespace = file.getPath().replace(file.getName(), "").replaceAll("\\\\", "/").replace(templatePath, "");
-		namespace = namespace.substring(0, namespace.length() - 1); // "/" at the file end
+	private Tuple2<String, String> getClassName(File file) throws IOException {
+		String namespace = file.getCanonicalPath()
+				.replace(new File(templatePath).getCanonicalPath(), "")
+				.substring(1)
+				.replace(file.getName(), "")
+				.replaceAll("\\\\", "/");
+		namespace = (namespace.length() == 0) ? "" : namespace.substring(0, namespace.length() - 1); // "/" at the file end
 		return new Tuple2<>(namespace, new FileExtension(file.getName()).getName());
 	}
 
-	private static List<Tag> initTags() {
+	private List<Tag> initTags(String actualFileDir) {
 		List<Tag> tags = new ArrayList<>();
 		tags.add(new BreakTag());
 		tags.add(new CaseTag());
@@ -112,11 +137,12 @@ public class TemplateFactory {
 		tags.add(new VariablePrintTag());
 		tags.add(new VariableSetTag());
 		tags.add(new WhileTag());
+		tags.add(new LayoutTag(actualFileDir));
 		return tags;
 	}
 	
-	public static void addTag(Tag tag) {
-		tags.add(tag);
+	public static void addTag(Supplier<Tag> tag) {
+		CUSTOM_TAG_PROVIDERS.add(tag);
 	}
 		
 }

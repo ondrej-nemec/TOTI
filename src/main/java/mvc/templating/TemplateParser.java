@@ -23,12 +23,22 @@ public class TemplateParser {
 			String fileName, 
 			String tempPath,
 			long modificationTime) throws IOException {
-		String clazz1 = "package %s;"
+		String preClass = namespace.length() == 0 ? "%s" : "package %s;";
+		String clazz1 = preClass
 				+ "import mvc.templating.Template;" 
-				+ "import java.util.Map;import translator.Translator;"
+				+ "import java.util.Map;"
+				+ "import java.util.HashMap;"
+				+ "import translator.Translator;"
+				+ "import mvc.templating.TemplateFactory;"
 				+ "public class %s implements Template"
 				+ "{public long getLastModification(){return %sL;}"
-				+ "public String create(Map<String, Object>variables,Translator translator)throws Exception{";
+				+ "public String create("
+					+ "TemplateFactory templateFactory,"
+					+ "Map<String, Object>variables,"
+					+ "Translator translator"
+				+ ")throws Exception{"
+				+ "Map<String,String>blocks=new HashMap<>();"
+				+ "String layout=null;";
 		String clazz2 = "}}";
 		String tempFile = tempPath + "/" + namespace + "/" + className + ".java";
 		
@@ -38,6 +48,7 @@ public class TemplateParser {
 			bw.write("b.append(\"");			
 			loadFile(fileName, bw);
 			bw.write("\");");
+			bw.write("if(layout!=null){b.append(layout);}");
 			bw.write("return b.toString();");
 			bw.write(clazz2);
 		}, tempFile, false);
