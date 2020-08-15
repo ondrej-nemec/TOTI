@@ -328,22 +328,4 @@ public class TemplateParser {
 			*/
 		}
 	}
-		
-	/**
-	 * promenna - inicializace, set a vypis
-	 * <t:var type="" name="" value=""/> <t:set name="" value=""/> <t:out name="" />
-	 * preklad
-	 * <>
-	 * try catch finally
-	 * if else if else
-	 * switch case default
-	 * import, layout, bloky
-	 * for, while + continue, break
-	 * link/url
-	 * 
-	 * dump
-	 * 
-	 * obecny vypis promenne s a bez escapovani
-	 
-	 */
 }

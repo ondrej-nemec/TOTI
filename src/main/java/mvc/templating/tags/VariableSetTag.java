@@ -4,16 +4,16 @@ import java.util.Map;
 
 import mvc.templating.Tag;
 
-public class TranslateParamTag implements Tag {
+public class VariableSetTag implements Tag {
 
 	@Override
 	public String getName() {
-		return "param";
+		return "set";
 	}
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
-		return "";
+		return getNotPairCode(params);
 	}
 
 	@Override
@@ -23,7 +23,7 @@ public class TranslateParamTag implements Tag {
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
-		return String.format("*/common.MapInit.MapInit.t(%s.%s),/*", params.get("key"), params.get("value"));
+		return String.format("%s=%s;", params.get("var"), params.get("value"));
 	}
 
 }
