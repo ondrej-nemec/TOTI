@@ -29,9 +29,14 @@ public class TemplateParser {
 				+ "import java.util.Map;"
 				+ "import java.util.HashMap;"
 				+ "import translator.Translator;"
-				+ "public class %s implements Template"
-				+ "{public long getLastModification(){return %sL;}"
+				+ "import mvc.templating.TemplateFactory;"
+				+ "public class %s implements Template{"
+					+ "public StringBuilder b = new StringBuilder();"
+					//+ "public StringBuilder main=b;"
+					+ "public Map<String,StringBuilder>blocks=new HashMap<>();"
+				+ "public long getLastModification(){return %sL;}"
 				+ "public String create("
+					+ "TemplateFactory templateFactory,"
 					+ "Map<String, Object>variables,"
 					+ "Translator translator"
 				+ ")throws Exception{";
@@ -40,14 +45,16 @@ public class TemplateParser {
 		
 		Text.write((bw)->{
 			bw.write(String.format(clazz1, namespace.replaceAll("/", "."), className, modificationTime));
-			bw.write("StringBuilder b = new StringBuilder();");
+			//bw.write("StringBuilder b = new StringBuilder();");
 			bw.write("StringBuilder main=b;");
-			bw.write("Map<String,StringBuilder>blocks=new HashMap<>();");
-		//	bw.write("Template layout=null;");
+			//bw.write("Map<String,StringBuilder>blocks=new HashMap<>();");
+			bw.write("Template layout=null;");
 			bw.write("b.append(\"");			
 			loadFile(fileName, bw);
 			bw.write("\");");
-		//	bw.write("if(layout!=null){b.append(layout.create(templateFactory,variables,translator));}");
+			bw.write("if(layout!=null){"
+					+ "layout.create(templateFactory,variables,translator);"
+					+ "}");
 			bw.write("return b.toString();");
 			bw.write(clazz2);
 		}, tempFile, false);

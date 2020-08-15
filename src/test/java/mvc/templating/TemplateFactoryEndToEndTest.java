@@ -44,7 +44,7 @@ public class TemplateFactoryEndToEndTest {
 				return key;
 			}
 		};
-		String html = template.create(variables, translator);
+		String html = template.create(factory, variables, translator);
 		System.out.println(html);
 		Text.write((bw)->{
 			WriteText.write(bw, html);

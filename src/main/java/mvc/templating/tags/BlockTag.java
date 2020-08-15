@@ -13,7 +13,7 @@ public class BlockTag implements Tag {
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
-		return String.format("b=new StringBuilder();blocks.put(\"%s\",b);", params.get("name"));
+		return String.format("main=b;b=new StringBuilder();blocks.put(\"%s\",b);", params.get("name"));
 	}
 
 	@Override

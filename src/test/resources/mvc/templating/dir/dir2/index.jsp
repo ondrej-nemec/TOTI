@@ -1,5 +1,6 @@
 <t:layout path="../../layout.jsp"/>
 <t:block name="content" >
+
 		<h1>Testing JSP for tags and variables</h1>
 	
 		<h2>Variables</h2>
@@ -24,7 +25,8 @@
 	    <t:out var="xss2" />
 	    
 		<h3>Translate</h3>
-		<t:trans message="single key" /><br>
+		<t:trans message="single key" />
+		<br>
 		<t:trans message="parametrized key">
 			<t:param key='"paramKey"' value='"paramValue"'/>
 		</t:trans>
@@ -60,17 +62,22 @@
 		<t:for from="int i = 0" to="i < 5"  change="i++"> 
 			<t:out var='"For iteration: " + i' /> <br>
 		</t:for> <br>
+		
 		<t:var type="int" name="index" value="0"/>
 		<t:while cond="index < 3">
 			<t:out var='"While iteration: " + index' /> <br>
 			<t:set name="index" value="index + 1" />
+		 	<t:include file="../block.jsp" />
 		</t:while> <br>
+		
 		TODO for-each, Do-while, Continue, Break
 		
 		<h3>Import, layout, define, block</h3>
 		TODO
+		
 		<h3>Link</h3>
 		TODO
+		
 		<h3>Print not escaped variable</h3>
 		TODO
 		

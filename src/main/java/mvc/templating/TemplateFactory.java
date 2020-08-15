@@ -141,7 +141,7 @@ public class TemplateFactory {
 		tags.add(new WhileTag());
 		tags.add(new LayoutTag(actualFileDir));
 		tags.add(new BlockTag());
-		tags.add(new IncludeTag());
+		tags.add(new IncludeTag(actualFileDir));
 		return tags;
 	}
 	
