@@ -8,17 +8,17 @@ public class SwitchTag implements Tag {
 
 	@Override
 	public String getName() {
-		return "tag";
+		return "switch";
 	}
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
-		return String.format("switch(%s){", params.get("object"));
+		return String.format("switch(%s){/*", params.get("object"));
 	}
 
 	@Override
 	public String getPairEndCode(Map<String, String> params) {
-		return "}";
+		return "*/}";
 	}
 
 	@Override

@@ -13,12 +13,12 @@ public class CaseTag implements Tag {
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
-		return "case:";
+		return String.format("/**/case %s:", params.get("cond"));
 	}
 
 	@Override
 	public String getPairEndCode(Map<String, String> params) {
-		return "break;";
+		return "break;/*";
 	}
 
 	@Override

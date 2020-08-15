@@ -5,7 +5,7 @@ import java.util.Map;
 import mvc.templating.Tag;
 
 public class WhileTag implements Tag {
-
+	
 	@Override
 	public String getName() {
 		return "while";
@@ -13,7 +13,7 @@ public class WhileTag implements Tag {
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
-		return String.format("while(%s){", params.get("exp"));
+		return String.format("while(%s){", params.get("cond"));
 	}
 
 	@Override

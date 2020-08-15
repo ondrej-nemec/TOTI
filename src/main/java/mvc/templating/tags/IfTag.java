@@ -13,7 +13,7 @@ public class IfTag implements Tag {
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
-		return getNotPairCode(params) + "{";
+		return getNotPairCode(params);
 	}
 
 	@Override
@@ -23,7 +23,7 @@ public class IfTag implements Tag {
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
-		return String.format("if(%s)", params.get("cond"));
+		return String.format("if(%s){", params.get("cond"));
 	}
 
 }

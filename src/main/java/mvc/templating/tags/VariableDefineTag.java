@@ -5,7 +5,7 @@ import java.util.Map;
 import mvc.templating.Tag;
 
 public class VariableDefineTag implements Tag {
-
+	
 	@Override
 	public String getName() {
 		return "var";
@@ -23,11 +23,14 @@ public class VariableDefineTag implements Tag {
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
-		String define = String.format("%s %s=%s;", params.get("type"), params.get("name"), params.get("value"));
+		String define = String.format("%s %s", params.get("type"), params.get("name"));
 		if (params.get("final") != null) {
 			define = "final " + define;
 		}
-		return define;
+		if (params.get("value") != null) {
+			define += String.format("=%s", params.get("value"));
+		}
+		return define + ";";
 	}
 
 }

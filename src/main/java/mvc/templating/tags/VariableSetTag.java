@@ -23,7 +23,7 @@ public class VariableSetTag implements Tag {
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
-		return String.format("%s=%s;", params.get("var"), params.get("value"));
+		return String.format("%s=%s;", params.get("name"), params.get("value"));
 	}
 
 }

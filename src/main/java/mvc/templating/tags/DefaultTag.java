@@ -13,12 +13,12 @@ public class DefaultTag implements Tag {
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
-		return "default:";
+		return "/**/default:";
 	}
 
 	@Override
 	public String getPairEndCode(Map<String, String> params) {
-		return "break;";
+		return "break;/*";
 	}
 
 	@Override

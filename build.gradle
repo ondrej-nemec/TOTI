@@ -6,7 +6,7 @@ repositories {
 }
 
 dependencies {
-	implementation 'com.github.ondrej-nemec:javainit:afdbaf8264'
+	implementation 'com.github.ondrej-nemec:javainit:5aa9d3324f'
 		
 	// https://mvnrepository.com/artifact/junit/junit
 	compile group: 'junit', name: 'junit', version: '4.12'

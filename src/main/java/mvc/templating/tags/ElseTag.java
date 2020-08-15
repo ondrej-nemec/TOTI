@@ -13,7 +13,7 @@ public class ElseTag implements Tag {
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
-		return "}" + getNotPairCode(params) + "{";
+		return getNotPairCode(params);
 	}
 
 	@Override
@@ -23,7 +23,7 @@ public class ElseTag implements Tag {
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
-		return "else";
+		return "}else { ";
 	}
 
 }

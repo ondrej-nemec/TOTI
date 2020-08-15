@@ -5,7 +5,7 @@ import java.util.Map;
 import mvc.templating.Tag;
 
 public class TryTag implements Tag {
-
+	
 	@Override
 	public String getName() {
 		return "try";

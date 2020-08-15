@@ -23,7 +23,10 @@ public class TranslateParamTag implements Tag {
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
-		return String.format("*/common.MapInit.MapInit.t(%s.%s),/*", params.get("key"), params.get("value"));
+		return String.format(
+				"*/common.MapInit.t(%s,%s),/*",
+				params.get("key"), params.get("value")
+		);
 	}
 
 }
