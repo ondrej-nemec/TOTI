@@ -12,6 +12,7 @@ import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 
 import common.FileExtension;
+import common.structures.Tuple2;
 import mvc.templating.tags.BreakTag;
 import mvc.templating.tags.CaseTag;
 import mvc.templating.tags.CatchTag;
@@ -39,29 +40,32 @@ public class TemplateFactory {
 	private static final List<Tag> tags = initTags();
 
 	private final String tempPath;
+	private final String templatePath;
 	private final TemplateParser parser;
 	private final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 	
-	public TemplateFactory(String tempPath) {
+	public TemplateFactory(String tempPath, String templatePath) {
 		this.tempPath = tempPath;
+		this.templatePath = templatePath;
 		parser = new TemplateParser(tags.stream()
 			      .collect(Collectors.toMap(Tag::getName, tag -> tag)));
 	}
 
 	public Template getTemplate(String templateFile) throws Exception {
-		File file = new File(templateFile);
-		String className = getClassName(file);
+		File file = new File(templatePath + templateFile);
+		Tuple2<String, String> classNameAndNamespace = getClassName(file);
 		File cacheDir = new File(tempPath);
+		String className = classNameAndNamespace._1().replaceAll("/", ".") + "." + classNameAndNamespace._2();
 		try (URLClassLoader loader = new URLClassLoader(new URL[] {cacheDir.toURI().toURL()});) {
 			try {
 				Template template = (Template)loader.loadClass(className).newInstance();
 				if (file.lastModified() != template.getLastModification()) {
-					compileNewCache(templateFile, className, file.lastModified());
+					compileNewCache(templatePath + templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), file.lastModified());
 				} else {
 					return template;
 				}
 			} catch (ClassNotFoundException e) {
-				compileNewCache(templateFile, className, file.lastModified());
+				compileNewCache(templatePath + templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), file.lastModified());
 			}
 		}
 		try (URLClassLoader loader = new URLClassLoader(new URL[] {cacheDir.toURI().toURL()});) {
@@ -69,15 +73,20 @@ public class TemplateFactory {
 		}
 	}
 	
-	private void compileNewCache(String templateFile, String className, long modificationTime) throws IOException {
-		String javaTempFile = parser.createTempCache(className, templateFile, tempPath, modificationTime);
+	private void compileNewCache(String templateFile, String namespace, String className, long modificationTime) throws IOException {
+		File dir = new File(tempPath + "/" + namespace);
+		dir.mkdirs();
+		
+		String javaTempFile = parser.createTempCache(namespace, className, templateFile, tempPath, modificationTime);
 		File file = new File(javaTempFile);
 		compiler.run(null, null, null, file.getPath()); // streamy, kam se zapisuje
 		//file.delete();
 	}
 	
-	private String getClassName(File file) {
-		return new FileExtension(file.getName()).getName();
+	private Tuple2<String, String> getClassName(File file) {
+		String namespace = file.getPath().replace(file.getName(), "").replaceAll("\\\\", "/").replace(templatePath, "");
+		namespace = namespace.substring(0, namespace.length() - 1); // "/" at the file end
+		return new Tuple2<>(namespace, new FileExtension(file.getName()).getName());
 	}
 
 	private static List<Tag> initTags() {

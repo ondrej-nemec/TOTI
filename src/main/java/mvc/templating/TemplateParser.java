@@ -18,20 +18,22 @@ public class TemplateParser {
 	}
 	
 	public String createTempCache(
+			String namespace,
 			String className,
 			String fileName, 
 			String tempPath,
 			long modificationTime) throws IOException {
-		String clazz1 = "import mvc.templating.Template;" 
+		String clazz1 = "package %s;"
+				+ "import mvc.templating.Template;" 
 				+ "import java.util.Map;import translator.Translator;"
 				+ "public class %s implements Template"
 				+ "{public long getLastModification(){return %sL;}"
 				+ "public String create(Map<String, Object>variables,Translator translator)throws Exception{";
 		String clazz2 = "}}";
-		String tempFile = tempPath + "/" + className + ".java";
+		String tempFile = tempPath + "/" + namespace + "/" + className + ".java";
 		
 		Text.write((bw)->{
-			bw.write(String.format(clazz1, className, modificationTime));
+			bw.write(String.format(clazz1, namespace.replaceAll("/", "."), className, modificationTime));
 			bw.write("StringBuilder b = new StringBuilder();");
 			bw.write("b.append(\"");			
 			loadFile(fileName, bw);

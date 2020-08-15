@@ -17,9 +17,9 @@ public class TemplateFactoryEndToEndTest {
 		variables.put("limit", 10);
 		
 		//*
-		TemplateFactory factory = new TemplateFactory("test/template-factory-cache");
+		TemplateFactory factory = new TemplateFactory("test/template-factory-cache", "src/test/resources/mvc/templating/");
 		Template template = factory.getTemplate(
-				"src/test/resources/mvc/templating/index.jsp"
+				"dir/dir2/index.jsp"
 		);
 	//	Logger logger = LoggerFactory.getLogger("test");
 		Translator translator = new Translator() {
