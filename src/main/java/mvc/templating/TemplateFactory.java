@@ -23,6 +23,7 @@ import mvc.templating.tags.CatchTag;
 import mvc.templating.tags.ConsoleOutputTag;
 import mvc.templating.tags.ContinueTag;
 import mvc.templating.tags.DefaultTag;
+import mvc.templating.tags.BlockTag;
 import mvc.templating.tags.DoWhileTag;
 import mvc.templating.tags.ElseIfTag;
 import mvc.templating.tags.ElseTag;
@@ -30,6 +31,7 @@ import mvc.templating.tags.FinallyTag;
 import mvc.templating.tags.ForEachTag;
 import mvc.templating.tags.ForTag;
 import mvc.templating.tags.IfTag;
+import mvc.templating.tags.IncludeTag;
 import mvc.templating.tags.LayoutTag;
 import mvc.templating.tags.SwitchTag;
 import mvc.templating.tags.TranslateParamTag;
@@ -138,6 +140,8 @@ public class TemplateFactory {
 		tags.add(new VariableSetTag());
 		tags.add(new WhileTag());
 		tags.add(new LayoutTag(actualFileDir));
+		tags.add(new BlockTag());
+		tags.add(new IncludeTag());
 		return tags;
 	}
 	

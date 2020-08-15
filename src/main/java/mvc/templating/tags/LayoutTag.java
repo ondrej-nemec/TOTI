@@ -3,6 +3,7 @@ package mvc.templating.tags;
 import java.util.Map;
 
 import mvc.templating.Tag;
+import mvc.templating.TemplateFactory;
 
 public class LayoutTag implements Tag {
 	
@@ -29,11 +30,12 @@ public class LayoutTag implements Tag {
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
-		return String.format(
+		return "";
+		/*return String.format(
 				"if(layout!=null){throw new RuntimeException(\"There could be only one layout\");"
-				+ "} else {layout=templateFactory.getTemplate(\"%s\").create(templateFactory,variables,translator);}",
+				+ "} else {layout=templateFactory.getTemplate(\"%s\");}",
 				actualFileDir + "/" + params.get("path")
-		);
+		);*/
 		
 	}
 

@@ -1,4 +1,5 @@
 <t:layout path="../../layout.jsp"/>
+<t:block name="content" >
 		<h1>Testing JSP for tags and variables</h1>
 	
 		<h2>Variables</h2>
@@ -78,3 +79,4 @@
 		<t:for from="int i = 0" to="i < (int)${limit}"  change="i++"> 
 			<t:out var='"Iteration: " + i' />
 		</t:for> 
+</t:block>

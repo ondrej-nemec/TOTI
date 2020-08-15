@@ -8,7 +8,7 @@ public interface Template {
 
 	long getLastModification();
 	
-	String create(TemplateFactory templateFactory, Map<String, Object>variables, Translator translator) throws Exception;
+	String create(Map<String, Object>variables, Translator translator) throws Exception;
 
 	static String escapeVariable(Object variable) {
 		if (variable == null) {

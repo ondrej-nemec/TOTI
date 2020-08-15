@@ -9,6 +9,6 @@
 		</style>
 	</head>
 	<body>
-		
+		<t:include block="content" />
 	</body>
 </html>
