@@ -1,4 +1,4 @@
-package mvc.templating;
+package mvc.templating.parsing;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,6 +16,8 @@ import static common.MapInit.*;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+import mvc.templating.Tag;
+import mvc.templating.parsing.TemplateParser;
 
 @RunWith(JUnitParamsRunner.class)
 public class TemplateParserTest {

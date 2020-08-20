@@ -1,4 +1,4 @@
-package mvc.templating;
+package mvc.templating.parsing;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -12,12 +12,63 @@ import static common.MapInit.*;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+import mvc.templating.Tag;
+import mvc.templating.parsing.TagParser;
 
 @RunWith(JUnitParamsRunner.class)
 public class TagParserTest {
 
-	//TODO test missing tag
+	//TODO check  wrong cases
+	@Test
+	@Parameters(method = "dataParseThrowsOnWrongText")
+	public void testParseThrowsOnWrongText(String template, boolean isClosingTag) throws IOException {
+		@SuppressWarnings("unchecked")
+		Map<String, Tag> tags = mock(Map.class);		
+		
+		TagParser parser = new TagParser(tags, isClosingTag);
+		
+		char previous = '\u0000';
+		boolean isDoubleQuoted = false;
+		boolean isSingleQuoted = false;
+		for (char c : template.toCharArray()) {
+			boolean write = true;
+			if (c == '"' && previous != '\\' && !isSingleQuoted) {
+				isDoubleQuoted = !isDoubleQuoted;
+				write = false;
+			} else if (c == '\'' && previous != '\\' && !isDoubleQuoted) {
+				isSingleQuoted = !isSingleQuoted;
+				write = false;
+			}
+			if (write) {
+				parser.parse(c, isSingleQuoted, isDoubleQuoted, previous);
+			}
+			previous = c;
+		}
+		verifyNoMoreInteractions(tags);
+	}
 	
+	public Object[] dataParseThrowsOnWrongText() {
+		return new Object[] {
+			new Object[] {
+				"testng\"", false
+			},
+			new Object[] {
+				"testng \"", false
+			},
+			new Object[] {
+					"testng class=\"value>", false
+				},
+			new Object[] {
+					"testng class=value>", false
+				},
+			new Object[] {
+					"testng 'class'=value>", false
+				},
+			new Object[] {
+					"testng <", false
+				},
+		};
+	}
 	
 	@Test
 	@Parameters(method = "dataParseWorks")
@@ -31,6 +82,7 @@ public class TagParserTest {
 		when(tag.getPairEndCode(any())).thenReturn("ending-tag");
 		when(tag.getNotPairCode(any())).thenReturn("non-pair-tag");
 		Map<String, Tag> tags = new HashMap<>();
+		tags.put("testingTag", tag);
 		
 		TagParser parser = new TagParser(tags, isClosingTag);
 		
@@ -38,14 +90,20 @@ public class TagParserTest {
 		boolean isDoubleQuoted = false;
 		boolean isSingleQuoted = false;
 		for (char c : template.toCharArray()) {
+			boolean write = true;
 			if (c == '"' && previous != '\\' && !isSingleQuoted) {
 				isDoubleQuoted = !isDoubleQuoted;
+				write = false;
 			} else if (c == '\'' && previous != '\\' && !isDoubleQuoted) {
 				isSingleQuoted = !isSingleQuoted;
+				write = false;
 			}
-			parser.parse(c, isSingleQuoted, isDoubleQuoted, previous);
+			if (write) {
+				parser.parse(c, isSingleQuoted, isDoubleQuoted, previous);
+			}
 			previous = c;
 		}
+		verifyTag.accept(tag);
 	}
 	
 	public Object[] dataParseWorks() {

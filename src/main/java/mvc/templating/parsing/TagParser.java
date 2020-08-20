@@ -1,8 +1,10 @@
-package mvc.templating;
+package mvc.templating.parsing;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import mvc.templating.Tag;
 
 public class TagParser {
 	

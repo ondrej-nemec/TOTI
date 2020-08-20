@@ -1,4 +1,4 @@
-package mvc.templating;
+package mvc.templating.parsing;
 
 import java.io.IOException;
 import java.util.LinkedList;

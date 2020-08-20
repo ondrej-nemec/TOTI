@@ -1,4 +1,4 @@
-package mvc.templating;
+package mvc.templating.parsing;
 
 import java.io.IOException;
 
@@ -9,6 +9,7 @@ import static org.junit.Assert.assertEquals;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+import mvc.templating.parsing.VariableParser;
 
 @RunWith(JUnitParamsRunner.class)
 public class VariableParserTest {

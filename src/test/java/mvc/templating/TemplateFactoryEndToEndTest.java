@@ -17,7 +17,7 @@ public class TemplateFactoryEndToEndTest {
 		variables.put("limit", 10);
 		
 		//*
-		TemplateFactory factory = new TemplateFactory("test/template-factory-cache", "src/test/resources/mvc/templating/", false);
+		TemplateFactory factory = new TemplateFactory("test/template-factory-cache", "mvc/templating/", false);
 		Template template = factory.getTemplate(
 				"dir/dir2/index.jsp"
 		);
