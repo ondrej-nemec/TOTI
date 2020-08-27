@@ -12,35 +12,35 @@ public interface Response {
 	
 	RestApiResponse getResponse(List<String> header, TemplateFactory templateFactory, Translator translator);
 
-	static FileResponse getFileResponse(String fileName) {
-		return new FileResponse(StatusCode.OK, fileName);
+	static Response getFile(String fileName, String charset) {
+		return new FileResponse(StatusCode.OK, fileName, charset);
 	}
 
-	static FileResponse getFileResponse(StatusCode code, String fileName) {
-		return new FileResponse(code, fileName);
+	static Response getFile(StatusCode code, String fileName, String charset) {
+		return new FileResponse(code, fileName, charset);
 	}
 	
-	static JsonResponse getJsonResponse(StatusCode code, Map<String, Object> json) {
-		return new JsonResponse(code, json);
+	static Response getJson(StatusCode code, Map<String, Object> json, String charset) {
+		return new JsonResponse(code, json, charset);
 	}
 	
-	static JsonResponse getJsonResponse(Map<String, Object> json) {
-		return new JsonResponse(StatusCode.ACCEPTED, json);
+	static Response getJson(Map<String, Object> json, String charset) {
+		return new JsonResponse(StatusCode.ACCEPTED, json, charset);
 	}
 	
-	static HtmlResponse getHtmlResponse(StatusCode code, String fileName, Map<String, Object> params) {
-		return new HtmlResponse(code, fileName, params);
+	static Response getHtml(StatusCode code, String fileName, Map<String, Object> params, String charset) {
+		return new JspResponse(code, fileName, params, charset);
 	}
 	
-	static HtmlResponse getHtmlResponse(String fileName, Map<String, Object> params) {
-		return new HtmlResponse(StatusCode.OK, fileName, params);
+	static Response getHtml(String fileName, Map<String, Object> params, String charset) {
+		return new JspResponse(StatusCode.OK, fileName, params, charset);
 	}
 	
-	static RedirectResponse getRedirect(StatusCode code, String url) {
+	static Response getRedirect(StatusCode code, String url) {
 		return new RedirectResponse(code, url);
 	}
 	
-	static RedirectResponse getRedirect(String url) {
+	static Response getRedirect(String url) {
 		return new RedirectResponse(StatusCode.TEMPORARY_REDIRECT, url);
 	}
 	
