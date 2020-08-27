@@ -1,5 +1,6 @@
 package mvc.response;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -15,16 +16,19 @@ public class JsonResponse implements Response {
 	
 	private final Map<String, Object> json;
 	private final StatusCode code;
+	private final String charset;
 
-	public JsonResponse(StatusCode code, Map<String, Object> json) {
+	public JsonResponse(StatusCode code, Map<String, Object> json, String charset) {
 		this.json = json;
 		this.code = code;
+		this.charset = charset;
 	}
 
 	@Override
 	public RestApiResponse getResponse(List<String> header, TemplateFactory templateFactory, Translator translator) {
-		header.add("Content-Type: application/json; charset=UTF-8");
-		return RestApiResponse.textResponse(code, header, (bw)->{
+		List<String> h = new LinkedList<>(header);
+		h.add("Content-Type: application/json; charset=" + charset);
+		return RestApiResponse.textResponse(code, h, (bw)->{
 			try {
 				OutputJsonStream stream = new OutputJsonStream(new OutputReaderProvider(bw));
 				stream.startDocument();

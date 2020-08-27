@@ -1,5 +1,6 @@
 package mvc.response;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -11,23 +12,26 @@ import socketCommunication.http.StatusCode;
 import socketCommunication.http.server.RestApiResponse;
 import translator.Translator;
 
-public class HtmlResponse implements Response {
+public class JspResponse implements Response {
 	
 	private final Map<String, Object> params;
 	private final StatusCode code;
 	private final String fileName;
+	private final String charset;
 
-	public HtmlResponse(StatusCode code, String fileName, Map<String, Object> params) {
+	public JspResponse(StatusCode code, String fileName, Map<String, Object> params, String charset) {
 		this.params = params;
 		this.code = code;
 		this.fileName = fileName;
+		this.charset = charset;
 	}
 
 	@Override
 	public RestApiResponse getResponse(List<String> header, TemplateFactory templateFactory, Translator translator) {
-		header.add("Content-Type: text/html; charset=UTF-8");
-		params.put("nonce", RandomStringUtils.randomAlphanumeric(50));
-		return RestApiResponse.textResponse(code, header, (bw)->{
+		List<String> h = new LinkedList<>(header);
+		h.add("Content-Type: text/html; charset=" + charset);
+		params.put("nonce", RandomStringUtils.randomAlphanumeric(50)); // TODO generated upper
+		return RestApiResponse.textResponse(code, h, (bw)->{
 			try {
 				Template template = templateFactory.getTemplate(fileName);
 				bw.write(template.create(templateFactory, params, translator));

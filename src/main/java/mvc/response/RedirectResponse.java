@@ -1,5 +1,6 @@
 package mvc.response;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import mvc.templating.TemplateFactory;
@@ -19,8 +20,9 @@ public class RedirectResponse implements Response {
 	
 	@Override
 	public RestApiResponse getResponse(List<String> header, TemplateFactory templateFactory, Translator translator) {
-		header.add("Location: " + url);
-		return RestApiResponse.textResponse(code, header, (bw)->{});
+		List<String> h = new LinkedList<>(header);
+		h.add("Location: " + url);
+		return RestApiResponse.textResponse(code, h, (bw)->{});
 	}
 
 }
