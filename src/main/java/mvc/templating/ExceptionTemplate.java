@@ -30,14 +30,15 @@ public class ExceptionTemplate implements Template {
 		builder.append(t.getClass() + " " + t.getMessage() + "<br>");
 		for (StackTraceElement el : t.getStackTrace()) {
 			builder.append(String.format(
-					"%s (%s) %s:%s<br>",
+					"	%s.%s (%s:%s)<br>",
 					el.getClassName(),
-					el.getFileName(),
 					el.getMethodName(),
-					el.getMethodName()
+					el.getFileName(),
+					el.getLineNumber()
 			));
 		}
 		if (t.getCause() != null) {
+			builder.append("<br>Caused:<br>");
 			printException(t.getCause(), builder);
 		}
 	}
