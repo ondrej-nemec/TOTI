@@ -67,13 +67,17 @@
 		<t:while cond="index < 3">
 			<t:out var='"While iteration: " + index' /> <br>
 			<t:set name="index" value="index + 1" />
-		 	<t:include file="../block.jsp" />
 		</t:while> <br>
 		
-		TODO for-each, Do-while, Continue, Break
+		<t:var type="int" name="index2" value="0"/>
+		<t:dowhile>
+			<t:out var='"While iteration: " + index2' /> <br>
+			<t:set name="index2" value="index2 + 1" />
+		</t:dowhile cond="index2 < 3">
+		TODO for-each, Continue, Break
 		
 		<h3>Import, layout, define, block</h3>
-		TODO
+		 	<t:include file="../block.jsp" />
 		
 		<h3>Link</h3>
 		TODO
