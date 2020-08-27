@@ -17,17 +17,17 @@ public class JspResponse implements Response {
 	private final Map<String, Object> params;
 	private final StatusCode code;
 	private final String fileName;
-	private final String charset;
+	//private final String charset;
 
-	public JspResponse(StatusCode code, String fileName, Map<String, Object> params, String charset) {
+	public JspResponse(StatusCode code, String fileName, Map<String, Object> params/*, String charset*/) {
 		this.params = params;
 		this.code = code;
 		this.fileName = fileName;
-		this.charset = charset;
+		//this.charset = charset;
 	}
 
 	@Override
-	public RestApiResponse getResponse(List<String> header, TemplateFactory templateFactory, Translator translator) {
+	public RestApiResponse getResponse(List<String> header, TemplateFactory templateFactory, Translator translator, String charset) {
 		List<String> h = new LinkedList<>(header);
 		h.add("Content-Type: text/html; charset=" + charset);
 		params.put("nonce", RandomStringUtils.randomAlphanumeric(50)); // TODO generated upper

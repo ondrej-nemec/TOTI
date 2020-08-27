@@ -15,18 +15,18 @@ public class FileResponse implements Response {
 
 	private final String fileName;
 	private final StatusCode code;
-	private final String charset;
+	/*private final String charset;*/
 	
-	public FileResponse(StatusCode code, String fileName, String charset) {
+	public FileResponse(StatusCode code, String fileName/*, String charset*/) {
 		this.fileName = fileName;
 		this.code = code;
-		this.charset = charset;
+	//	this.charset = charset;
 	}
 	
 	@Override
-	public RestApiResponse getResponse(List<String> header, TemplateFactory templateFactory, Translator translator) {
+	public RestApiResponse getResponse(List<String> header, TemplateFactory templateFactory, Translator translator, String charset) {
 		List<String> h = new LinkedList<>(header);
-		String head = getContentType(fileName);
+		String head = getContentType(fileName, charset);
 		if (head != null) {
 			h.add(head);
 		}
@@ -41,7 +41,7 @@ public class FileResponse implements Response {
 		});
 	}
 	
-	private String getContentType(String fileName) {
+	private String getContentType(String fileName, String charset) {
 		String ext = new FileExtension(fileName).getExtension();
 		// https://stackoverflow.com/a/48704300
 		switch (ext) {

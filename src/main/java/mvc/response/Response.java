@@ -10,30 +10,30 @@ import translator.Translator;
 
 public interface Response {
 	
-	RestApiResponse getResponse(List<String> header, TemplateFactory templateFactory, Translator translator);
+	RestApiResponse getResponse(List<String> header, TemplateFactory templateFactory, Translator translator, String charset);
 
-	static Response getFile(String fileName, String charset) {
-		return new FileResponse(StatusCode.OK, fileName, charset);
+	static Response getFile(String fileName) {
+		return new FileResponse(StatusCode.OK, fileName);
 	}
 
-	static Response getFile(StatusCode code, String fileName, String charset) {
-		return new FileResponse(code, fileName, charset);
+	static Response getFile(StatusCode code, String fileName) {
+		return new FileResponse(code, fileName);
 	}
 	
-	static Response getJson(StatusCode code, Map<String, Object> json, String charset) {
-		return new JsonResponse(code, json, charset);
+	static Response getJson(StatusCode code, Map<String, Object> json) {
+		return new JsonResponse(code, json);
 	}
 	
-	static Response getJson(Map<String, Object> json, String charset) {
-		return new JsonResponse(StatusCode.ACCEPTED, json, charset);
+	static Response getJson(Map<String, Object> json) {
+		return new JsonResponse(StatusCode.ACCEPTED, json);
 	}
 	
-	static Response getHtml(StatusCode code, String fileName, Map<String, Object> params, String charset) {
-		return new JspResponse(code, fileName, params, charset);
+	static Response getHtml(StatusCode code, String fileName, Map<String, Object> params) {
+		return new JspResponse(code, fileName, params);
 	}
 	
-	static Response getHtml(String fileName, Map<String, Object> params, String charset) {
-		return new JspResponse(StatusCode.OK, fileName, params, charset);
+	static Response getHtml(String fileName, Map<String, Object> params) {
+		return new JspResponse(StatusCode.OK, fileName, params);
 	}
 	
 	static Response getRedirect(StatusCode code, String url) {

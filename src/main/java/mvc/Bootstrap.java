@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.util.List;
 
 import common.Logger;
+import mvc.templating.TemplateFactory;
 import socketCommunication.Server;
 import socketCommunication.http.server.session.FileSessionStorage;
 import socketCommunication.http.server.session.SessionStorage;
+import translator.Translator;
 
 public class Bootstrap {
 	
@@ -20,18 +22,21 @@ public class Bootstrap {
     		long sessionExpirationTime,
     		String tempPath,
     		String templatePath,
+    		String[] controllers,
     		String resourcesPath,
     		List<String> headers,
     		String charset,
+    		Translator translator,
     		Logger logger) throws IOException {
-		// TemplateFactory templateFactory = new TemplateFactory(cachePath, templatePath);
 		try {
 			String cachePath = tempPath + "/cache";
 			String sessionPath = tempPath + "/sessions";
 			new File(cachePath).mkdir();
 			new File(sessionPath).mkdir();
 			
-			ResponseFactory response = new ResponseFactory(resourcesPath, charset);
+		    TemplateFactory templateFactory = new TemplateFactory(cachePath, templatePath);
+		    
+			ResponseFactory response = new ResponseFactory(templateFactory, translator, controllers, resourcesPath, charset);
 			headers.forEach((header)->{
 				response.addHeader(header);
 			});

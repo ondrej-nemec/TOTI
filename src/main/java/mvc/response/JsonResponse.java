@@ -16,16 +16,16 @@ public class JsonResponse implements Response {
 	
 	private final Map<String, Object> json;
 	private final StatusCode code;
-	private final String charset;
+	//private final String charset;
 
-	public JsonResponse(StatusCode code, Map<String, Object> json, String charset) {
+	public JsonResponse(StatusCode code, Map<String, Object> json/*, String charset*/) {
 		this.json = json;
 		this.code = code;
-		this.charset = charset;
+		/*this.charset = charset;*/
 	}
 
 	@Override
-	public RestApiResponse getResponse(List<String> header, TemplateFactory templateFactory, Translator translator) {
+	public RestApiResponse getResponse(List<String> header, TemplateFactory templateFactory, Translator translator, String charset) {
 		List<String> h = new LinkedList<>(header);
 		h.add("Content-Type: application/json; charset=" + charset);
 		return RestApiResponse.textResponse(code, h, (bw)->{

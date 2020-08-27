@@ -19,7 +19,7 @@ public class RedirectResponse implements Response {
 	}
 	
 	@Override
-	public RestApiResponse getResponse(List<String> header, TemplateFactory templateFactory, Translator translator) {
+	public RestApiResponse getResponse(List<String> header, TemplateFactory templateFactory, Translator translator, String charset) {
 		List<String> h = new LinkedList<>(header);
 		h.add("Location: " + url);
 		return RestApiResponse.textResponse(code, h, (bw)->{});

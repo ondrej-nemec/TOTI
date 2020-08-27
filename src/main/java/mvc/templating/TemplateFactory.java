@@ -59,8 +59,6 @@ public class TemplateFactory {
 		this.tempPath = tempPath;
 		this.templatePath = templatePath;
 		this.deleteAuxJavaClass = deleteAuxJavaClass;
-	/*	parser = new TemplateParser(tags.stream()
-			      .collect(Collectors.toMap(Tag::getName, tag -> tag)));*/
 	}
 
 	public Template getTemplate(String templateFile) throws Exception {

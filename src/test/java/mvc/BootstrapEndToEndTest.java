@@ -3,6 +3,7 @@ package mvc;
 import java.util.Arrays;
 
 import logging.LoggerFactory;
+import translator.DefaultTranslator;
 
 public class BootstrapEndToEndTest {
 
@@ -10,15 +11,15 @@ public class BootstrapEndToEndTest {
 		try {
 			Bootstrap b = new Bootstrap(
 					80, 10, 60000, 600000,
-					"temp", "jsp", "www",
+					"temp", "templates/", new String[]{"controllers"}, "www",
 					Arrays.asList(
 							"Access-Control-Allow-Origin: *"
 					), "utf-8",
+					new DefaultTranslator(LoggerFactory.getLogger("translator"), "", "messages"),
 					LoggerFactory.getLogger("server")
 			);
 			b.start();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
