@@ -36,7 +36,13 @@ public class Bootstrap {
 			
 		    TemplateFactory templateFactory = new TemplateFactory(cachePath, templatePath);
 		    
-			ResponseFactory response = new ResponseFactory(templateFactory, translator, controllers, resourcesPath, charset);
+			ResponseFactory response = new ResponseFactory(
+					templateFactory,
+					translator,
+					controllers,
+					resourcesPath,
+					charset
+			);
 			headers.forEach((header)->{
 				response.addHeader(header);
 			});

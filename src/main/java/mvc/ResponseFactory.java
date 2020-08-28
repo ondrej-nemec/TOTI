@@ -11,6 +11,7 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import common.exceptions.LogicException;
 import mvc.dependencyInjection.Registr;
 import mvc.response.Response;
 import mvc.templating.DirectoryTemplate;
@@ -69,7 +70,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Pattern p = Pattern.compile(String.format("(%s)", mapped));
 	    	Matcher m = p.matcher(url);
 	    	if (m.find()) {
-	    		for (int i = 2; i <= m.groupCount(); i++) { // skupina 0 je vychozi
+	    		for (int i = 2; i <= m.groupCount(); i++) { // group 0 is origin text, 1 match url
 	    			params.put(mapped.getParamName(i - 2), m.group(i));
 	    		}
 				try {
@@ -138,6 +139,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	@Override
 	public RestApiResponse onException(HttpMethod method, String url, String fullUrl, String protocol,
 			Properties header, Properties params, Session session, Throwable t) throws IOException {
+		t.printStackTrace();
+		
 		List<String> h = new LinkedList<>(headers);
 		h.add("Content-Type: text/html; charset=" + charset);
 		return RestApiResponse.textResponse(StatusCode.OK, h, (bw)->{
@@ -189,7 +192,13 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		    						mappedUrl.addParamName(name);
 		    					} else if (p.isAnnotationPresent(Param.class)) {
 		    						mappedUrl.addParam(p.getType(), p.getAnnotation(Param.class).value());
-		    					} else { /* TODO throw */ }
+		    					} else {
+		    						throw new LogicException(
+		    							"Not anotated param " + p.getName()
+		    							+ ", required anotation: " + Param.class
+		    							+ " or " + ParamUrl.class
+		    						);
+		    					}
 		    				}
 		    				mapping.add(mappedUrl);
 		    			}

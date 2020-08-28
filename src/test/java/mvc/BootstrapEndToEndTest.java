@@ -2,13 +2,20 @@ package mvc;
 
 import java.util.Arrays;
 
+import controllers.TestController;
 import logging.LoggerFactory;
+import mvc.dependencyInjection.Registr;
 import translator.DefaultTranslator;
 
 public class BootstrapEndToEndTest {
 
 	public static void main(String[] args) {
 		try {
+			Registr.addFactory(TestController.class, ()->{
+				return new TestController();
+			});
+			
+			
 			Bootstrap b = new Bootstrap(
 					80, 10, 60000, 600000,
 					"temp", "templates/", new String[]{"controllers"}, "www",
