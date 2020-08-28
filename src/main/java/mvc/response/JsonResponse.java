@@ -1,12 +1,12 @@
 package mvc.response;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import json.JsonStreamException;
 import json.OutputJsonStream;
 import json.providers.OutputReaderProvider;
+import mvc.ResponseHeaders;
 import mvc.templating.TemplateFactory;
 import socketCommunication.http.StatusCode;
 import socketCommunication.http.server.RestApiResponse;
@@ -25,20 +25,21 @@ public class JsonResponse implements Response {
 	}
 
 	@Override
-	public RestApiResponse getResponse(List<String> header, TemplateFactory templateFactory, Translator translator, String charset) {
-		List<String> h = new LinkedList<>(header);
-		h.add("Content-Type: application/json; charset=" + charset);
-		return RestApiResponse.textResponse(code, h, (bw)->{
-			try {
-				OutputJsonStream stream = new OutputJsonStream(new OutputReaderProvider(bw));
-				stream.startDocument();
-				for (String key : json.keySet()) {
-					writeObject(stream, json.get(key), key);
+	public RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String charset) {
+		return RestApiResponse.textResponse(
+			code,
+			header.getHeaders("Content-Type: application/json; charset=" + charset),
+			(bw)->{
+				try {
+					OutputJsonStream stream = new OutputJsonStream(new OutputReaderProvider(bw));
+					stream.startDocument();
+					for (String key : json.keySet()) {
+						writeObject(stream, json.get(key), key);
+					}
+					stream.endDocument();
+				} catch (JsonStreamException e) {
+					throw new RuntimeException(e);
 				}
-				stream.endDocument();
-			} catch (JsonStreamException e) {
-				throw new RuntimeException(e);
-			}
 		});
 	}
 	

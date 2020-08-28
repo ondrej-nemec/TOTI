@@ -32,7 +32,7 @@ import translator.Translator;
 
 public class ResponseFactory implements RestApiServerResponseFactory {
 	
-	private final List<String> headers = new LinkedList<>();
+	private final ResponseHeaders headers;
 	
 	private final List<MappedUrl> mapping;
 	
@@ -43,6 +43,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private final Translator translator;
 	
 	public ResponseFactory(
+			ResponseHeaders headers,
 			TemplateFactory templateFactory,
 			Translator translator,
 			String[] folders, String resourcesDir, String charset) throws Exception {
@@ -51,12 +52,13 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		this.templateFactory = templateFactory;
 		this.translator = translator;
 		this.mapping = loadUrlMap(folders);
+		this.headers = headers;
 	}
-	
+	/*
 	public void addHeader(String header) {
 		headers.add(header);
 	}
-
+*/
 	@Override
 	public RestApiResponse accept(
 			HttpMethod method,
@@ -125,14 +127,15 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	}
 	
 	private RestApiResponse getDirResponse(File[] files, String path) {
-		List<String> h = new LinkedList<>(headers);
-		h.add("Content-Type: text/html; charset=" + charset);
-		return RestApiResponse.textResponse(StatusCode.OK, h, (bw)->{
-			try {
-				bw.write(new DirectoryTemplate(files, path).create(null, null, null));
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
+		return RestApiResponse.textResponse(
+			StatusCode.OK,
+			 headers.getHeaders("Content-Type: text/html; charset=" + charset),
+			(bw)->{
+				try {
+					bw.write(new DirectoryTemplate(files, path).create(null, null, null));
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
 		});
 	}
 	
@@ -141,14 +144,15 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Properties header, Properties params, Session session, Throwable t) throws IOException {
 		t.printStackTrace();
 		
-		List<String> h = new LinkedList<>(headers);
-		h.add("Content-Type: text/html; charset=" + charset);
-		return RestApiResponse.textResponse(StatusCode.OK, h, (bw)->{
-			try {
-				bw.write(new ExceptionTemplate(t).create(null, null, null));
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
+		return RestApiResponse.textResponse(
+			StatusCode.OK,
+			headers.getHeaders("Content-Type: text/html; charset=" + charset),
+			(bw)->{
+				try {
+					bw.write(new ExceptionTemplate(t).create(null, null, null));
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
 		});
 	}
 	

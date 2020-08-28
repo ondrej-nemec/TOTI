@@ -2,6 +2,8 @@ package mvc;
 
 import java.util.Arrays;
 
+import org.apache.commons.lang3.RandomStringUtils;
+
 import controllers.TestController;
 import logging.LoggerFactory;
 import mvc.registr.Registr;
@@ -15,12 +17,14 @@ public class BootstrapEndToEndTest {
 				return new TestController();
 			});
 			
-			
 			Bootstrap b = new Bootstrap(
 					80, 10, 60000, 600000,
 					"temp", "templates/", new String[]{"controllers"}, "www",
-					Arrays.asList(
+					new ResponseHeaders(
+						RandomStringUtils.randomAlphanumeric(50),
+						Arrays.asList(
 							"Access-Control-Allow-Origin: *"
+						)
 					), "utf-8",
 					new DefaultTranslator(LoggerFactory.getLogger("translator"), "", "messages"),
 					LoggerFactory.getLogger("server")

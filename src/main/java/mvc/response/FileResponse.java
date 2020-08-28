@@ -1,11 +1,11 @@
 package mvc.response;
 
 import java.io.FileInputStream;
-import java.util.LinkedList;
 import java.util.List;
 
 import common.FileExtension;
 import core.text.Binary;
+import mvc.ResponseHeaders;
 import mvc.templating.TemplateFactory;
 import socketCommunication.http.StatusCode;
 import socketCommunication.http.server.RestApiResponse;
@@ -24,8 +24,8 @@ public class FileResponse implements Response {
 	}
 	
 	@Override
-	public RestApiResponse getResponse(List<String> header, TemplateFactory templateFactory, Translator translator, String charset) {
-		List<String> h = new LinkedList<>(header);
+	public RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String charset) {
+		List<String> h = header.getHeaders();
 		String head = getContentType(fileName, charset);
 		if (head != null) {
 			h.add(head);

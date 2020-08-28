@@ -1,8 +1,8 @@
 package mvc.response;
 
-import java.util.List;
 import java.util.Map;
 
+import mvc.ResponseHeaders;
 import mvc.templating.TemplateFactory;
 import socketCommunication.http.StatusCode;
 import socketCommunication.http.server.RestApiResponse;
@@ -10,7 +10,7 @@ import translator.Translator;
 
 public interface Response {
 	
-	RestApiResponse getResponse(List<String> header, TemplateFactory templateFactory, Translator translator, String charset);
+	RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String charset);
 
 	static Response getFile(String fileName) {
 		return new FileResponse(StatusCode.OK, fileName);

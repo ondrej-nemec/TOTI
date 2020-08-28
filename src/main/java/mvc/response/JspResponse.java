@@ -1,11 +1,8 @@
 package mvc.response;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.RandomStringUtils;
-
+import mvc.ResponseHeaders;
 import mvc.templating.Template;
 import mvc.templating.TemplateFactory;
 import socketCommunication.http.StatusCode;
@@ -27,17 +24,18 @@ public class JspResponse implements Response {
 	}
 
 	@Override
-	public RestApiResponse getResponse(List<String> header, TemplateFactory templateFactory, Translator translator, String charset) {
-		List<String> h = new LinkedList<>(header);
-		h.add("Content-Type: text/html; charset=" + charset);
-		params.put("nonce", RandomStringUtils.randomAlphanumeric(50)); // TODO generated upper
-		return RestApiResponse.textResponse(code, h, (bw)->{
-			try {
-				Template template = templateFactory.getTemplate(fileName);
-				bw.write(template.create(templateFactory, params, translator));
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
+	public RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String charset) {
+		params.put("nonce", header.getNonce());
+		return RestApiResponse.textResponse(
+			code,
+			header.getHeaders("Content-Type: text/html; charset=" + charset),
+			(bw)->{
+				try {
+					Template template = templateFactory.getTemplate(fileName);
+					bw.write(template.create(templateFactory, params, translator));
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
 		});
 	}
 

@@ -1,8 +1,6 @@
 package mvc.response;
 
-import java.util.LinkedList;
-import java.util.List;
-
+import mvc.ResponseHeaders;
 import mvc.templating.TemplateFactory;
 import socketCommunication.http.StatusCode;
 import socketCommunication.http.server.RestApiResponse;
@@ -19,10 +17,8 @@ public class RedirectResponse implements Response {
 	}
 	
 	@Override
-	public RestApiResponse getResponse(List<String> header, TemplateFactory templateFactory, Translator translator, String charset) {
-		List<String> h = new LinkedList<>(header);
-		h.add("Location: " + url);
-		return RestApiResponse.textResponse(code, h, (bw)->{});
+	public RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String charset) {
+		return RestApiResponse.textResponse(code, header.getHeaders("Location: " + url), (bw)->{});
 	}
 
 }

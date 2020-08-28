@@ -2,7 +2,6 @@ package mvc;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import common.Logger;
 import mvc.templating.TemplateFactory;
@@ -24,7 +23,7 @@ public class Bootstrap {
     		String templatePath,
     		String[] controllers,
     		String resourcesPath,
-    		List<String> headers,
+    		ResponseHeaders headers,
     		String charset,
     		Translator translator,
     		Logger logger) throws IOException {
@@ -37,15 +36,13 @@ public class Bootstrap {
 		    TemplateFactory templateFactory = new TemplateFactory(cachePath, templatePath);
 		    
 			ResponseFactory response = new ResponseFactory(
+					headers,
 					templateFactory,
 					translator,
 					controllers,
 					resourcesPath,
 					charset
 			);
-			headers.forEach((header)->{
-				response.addHeader(header);
-			});
 			
 			SessionStorage storage = new FileSessionStorage(sessionPath);
 					
