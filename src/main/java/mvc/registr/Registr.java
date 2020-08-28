@@ -1,4 +1,4 @@
-package mvc.dependencyInjection;
+package mvc.registr;
 
 import java.util.HashMap;
 import java.util.Map;

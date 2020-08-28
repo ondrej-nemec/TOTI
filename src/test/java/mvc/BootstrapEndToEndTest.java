@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import controllers.TestController;
 import logging.LoggerFactory;
-import mvc.dependencyInjection.Registr;
+import mvc.registr.Registr;
 import translator.DefaultTranslator;
 
 public class BootstrapEndToEndTest {

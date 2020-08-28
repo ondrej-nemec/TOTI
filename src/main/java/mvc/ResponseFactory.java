@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import common.exceptions.LogicException;
-import mvc.dependencyInjection.Registr;
+import mvc.registr.Registr;
 import mvc.response.Response;
 import mvc.templating.DirectoryTemplate;
 import mvc.templating.ExceptionTemplate;
