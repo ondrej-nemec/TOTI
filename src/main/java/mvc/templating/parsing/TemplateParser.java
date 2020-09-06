@@ -142,8 +142,8 @@ public class TemplateParser {
 			} else if ((isTag || isVariable) && actual == '\'' && previous != '\\' && !isDoubleQuoted) {
 				isSingleQuoted = !isSingleQuoted;
 			//	isQuoteNow = true;
-			} else if (actual == '<' && !isDoubleQuoted && !isSingleQuoted) {
-				if (tagCandidate1 || isTag || tagCandidate2) {
+			} else if (!tagCandidate1 && actual == '<' && !isDoubleQuoted && !isSingleQuoted) {
+				if (isTag || tagCandidate2) {
 					// TODO throw tags cannot be in tags
 				}
 				tagCandidate1 = true;
@@ -177,20 +177,20 @@ public class TemplateParser {
 			} else {
 				if (actual == '\r') {
 					// ignored
-				} else if (actual == '\\' || actual == '"') {
-					bw.accept("\\");
-					bw.accept(actual + "");
-				} else if (actual == '\n') {
+				}else if (actual == '\n') {
 					bw.accept(
 						"\");b.append(\"\\n"
 					);
 				} else if (tagCandidate1 || tagCandidate2) {
 					bw.accept("<" + (isClosingTag ? "/" : "") + (tagCandidate2 ? "t" : ""));
-					bw.accept(actual + "");
+					bw.accept(((actual == '\\' || actual == '"') ? "\\" : "") + actual);
 					tagCandidate1 = false;
 					tagCandidate2 = false;
 					isClosingTag = false;
-				} else if (commentCandidate1 || commentCandidate2) {
+				} else if (actual == '\\' || actual == '"') {
+					bw.accept("\\");
+					bw.accept(actual + "");
+				}  else if (commentCandidate1 || commentCandidate2) {
 					bw.accept("<%" + (commentCandidate2 ? "-" : ""));
 					bw.accept(actual + "");
 					commentCandidate1 = false;
@@ -198,6 +198,7 @@ public class TemplateParser {
 				} else if (isVariableCandidate) {
 					bw.accept("$");
 					bw.accept(actual + "");
+					isVariableCandidate = false;
 				} else {
 					bw.accept(actual + "");
 				}

@@ -278,6 +278,7 @@ public class TemplateParserTest {
 				},*/
 		};
 	}
+	
 	@Test
 	@Parameters(method = "dataWriteHtmlWorks")
 	public void testWriteHtmlWorks(
@@ -334,6 +335,18 @@ public class TemplateParserTest {
 			new Object[] {
 					"<%aa",
 					"<%aa",
+				},
+			new Object[] {
+					"<\"",
+					"<\\\"",
+				},
+			new Object[] {
+					"<<\"",
+					"<<\\\"",
+				},
+			new Object[] {
+					"$(js here)",
+					"$(js here)",
 				},
 		};
 	}
