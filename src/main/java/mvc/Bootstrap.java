@@ -27,13 +27,30 @@ public class Bootstrap {
     		String charset,
     		Translator translator,
     		Logger logger) throws IOException {
+		this(port, threadPool, readTimeout, sessionExpirationTime, tempPath, templatePath, controllers, resourcesPath,headers, charset, translator, logger, true);
+	}
+	
+	public Bootstrap(
+			int port,
+			int threadPool,
+    		long readTimeout,
+    		long sessionExpirationTime,
+    		String tempPath,
+    		String templatePath,
+    		String[] controllers,
+    		String resourcesPath,
+    		ResponseHeaders headers,
+    		String charset,
+    		Translator translator,
+    		Logger logger,
+    		boolean deleteDir) throws IOException {
 		try {
 			String cachePath = tempPath + "/cache";
 			String sessionPath = tempPath + "/sessions";
 			new File(cachePath).mkdir();
 			new File(sessionPath).mkdir();
 			
-		    TemplateFactory templateFactory = new TemplateFactory(cachePath, templatePath);
+		    TemplateFactory templateFactory = new TemplateFactory(cachePath, templatePath, deleteDir);
 		    
 			ResponseFactory response = new ResponseFactory(
 					headers,

@@ -18,7 +18,7 @@ public class BootstrapEndToEndTest {
 			});
 			
 			Bootstrap b = new Bootstrap(
-					80, 10, 60000, 600000,
+					80, 10, 60000, 3600000, // 1 h
 					"temp", "templates/", new String[]{"controllers"}, "www",
 					new ResponseHeaders(
 						RandomStringUtils.randomAlphanumeric(50),
@@ -27,7 +27,7 @@ public class BootstrapEndToEndTest {
 						)
 					), "utf-8",
 					new DefaultTranslator(LoggerFactory.getLogger("translator"), "", "messages"),
-					LoggerFactory.getLogger("server")
+					LoggerFactory.getLogger("server"), false
 			);
 			b.start();
 		} catch (Exception e) {
