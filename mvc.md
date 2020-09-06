@@ -49,6 +49,37 @@ do tagu <script src="..." integrity="--hash--" crossorigin="anonymous"> - pro sc
 
 do cookies httponly (pak nejdou ukrast session cookies - nema k ni pristup js, ale jen protokol http) a secure - ??
 
+# PDF
+https://www.baeldung.com/pdf-conversions-java
+
+```java
+	public static void main(String[] args) throws IOException {
+		Document document = new Document();
+	    
+	    Text.read((bw)->{
+	    	PdfWriter writer;
+			try {
+				writer = PdfWriter.getInstance(document, new FileOutputStream("templating/html.pdf"));
+			} catch (DocumentException e) {
+				throw new RuntimeException(e);
+			}
+	    	document.open();
+		    XMLWorkerHelper.getInstance().parseXHtml(writer, document,
+		     bw);
+		    document.close();
+	    	return null;
+	    }, PdfTest.class.getResourceAsStream("/pdf/index.html"));
+	    
+	}
+```
+
+```gradle
+// https://mvnrepository.com/artifact/com.itextpdf/itextpdf
+compile group: 'com.itextpdf', name: 'itextpdf', version: '5.5.13.1'
+// https://mvnrepository.com/artifact/com.itextpdf.tool/xmlworker
+compile group: 'com.itextpdf.tool', name: 'xmlworker', version: '5.5.13.1'
+```
+
 ------------
 
 # generovani certifikatu
