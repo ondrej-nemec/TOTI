@@ -22,6 +22,7 @@ import mvc.templating.TemplateFactory;
 import mvc.urlMapping.Action;
 import mvc.urlMapping.Controller;
 import mvc.urlMapping.Flash;
+import mvc.urlMapping.Lang;
 import mvc.urlMapping.MappedUrl;
 import mvc.urlMapping.Method;
 import mvc.urlMapping.Param;
@@ -153,6 +154,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 					} else {
 						o.getClass().getMethod(method, Object.class).invoke(o, session.getSession(sessionValue));
 					}
+				} else if (field.isAnnotationPresent(Lang.class)) {
+					o.getClass().getMethod(method, String.class).invoke(o, session.getLang());
 				}
 			}
 			
