@@ -2,9 +2,11 @@ package mvc;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -19,6 +21,7 @@ import mvc.templating.ExceptionTemplate;
 import mvc.templating.TemplateFactory;
 import mvc.urlMapping.Action;
 import mvc.urlMapping.Controller;
+import mvc.urlMapping.Flash;
 import mvc.urlMapping.MappedUrl;
 import mvc.urlMapping.Method;
 import mvc.urlMapping.Param;
@@ -54,11 +57,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		this.mapping = loadUrlMap(folders);
 		this.headers = headers;
 	}
-	/*
-	public void addHeader(String header) {
-		headers.add(header);
-	}
-*/
+
 	@Override
 	public RestApiResponse accept(
 			HttpMethod method,
@@ -68,54 +67,41 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Properties header,
 			Properties params,
 			Session session) throws IOException {
-		for (MappedUrl mapped : mapping) {
-			Pattern p = Pattern.compile(String.format("(%s)", mapped));
-	    	Matcher m = p.matcher(url);
-	    	if (m.find()) {
-	    		for (int i = 2; i <= m.groupCount(); i++) { // group 0 is origin text, 1 match url
-	    			params.put(mapped.getParamName(i - 2), m.group(i));
-	    		}
-				try {
-					List<Class<?>> classesList = new ArrayList<>();
-					List<Object> valuesList = new ArrayList<>();
-					
-					mapped.forEachParams((clazz, name)->{
-						classesList.add(clazz);
-						if (clazz.isAssignableFrom(Integer.class) || clazz.isAssignableFrom(int.class)) {
-							valuesList.add(Integer.parseInt(params.get(name) + ""));
-						} else if (clazz.isAssignableFrom(Boolean.class) || clazz.isAssignableFrom(boolean.class)) {
-							valuesList.add(Boolean.parseBoolean(params.get(name) + ""));
-						} else if (clazz.isAssignableFrom(Short.class) || clazz.isAssignableFrom(short.class)) {
-							valuesList.add(Short.parseShort(params.get(name) + ""));
-						} else if (clazz.isAssignableFrom(Float.class) || clazz.isAssignableFrom(float.class)) {
-							valuesList.add(Float.parseFloat(params.get(name) + ""));
-						} else if (clazz.isAssignableFrom(Double.class) || clazz.isAssignableFrom(double.class)) {
-							valuesList.add(Double.parseDouble(params.get(name) + ""));
-						} else if (clazz.isAssignableFrom(Long.class) || clazz.isAssignableFrom(long.class)) {
-							valuesList.add(Long.parseLong(params.get(name) + ""));
-						} else {
-							valuesList.add(clazz.cast(params.get(name)));
-						}
-					});
-					
-					Object o = Registr.getFactory(mapped.getClassName()).get();
-					
-					if (classesList.size() > 0) {
-						Class<?>[] classes = new Class<?>[classesList.size()];
-						classesList.toArray(classes);
-						Object[] values = new Object[valuesList.size()];
-						valuesList.toArray(values);
-						
-			    		Response response = (Response)o.getClass()
-			    				.getMethod(mapped.getMethodName(), classes).invoke(o, values);
-			    		return response.getResponse(headers, templateFactory, translator, charset);
-					} else {
-			    		Response response = (Response)o.getClass().getMethod(mapped.getMethodName()).invoke(o);
-			    		return response.getResponse(headers, templateFactory, translator, charset);
-					}
-				} catch (Exception e) {
-					throw new RuntimeException(e);
-				}	    		
+		return accept(method, fullUrl, params, session);
+	}
+	
+	private RestApiResponse accept(
+			HttpMethod method,
+			String url,
+			Properties params,
+			Session originSession) throws IOException {
+		mvc.Session session = new mvc.Session(originSession);
+		RestApiResponse res = getResponse(method, url, params, session);
+	    session.flush();
+		return res;
+	}
+	
+	private RestApiResponse getResponse(
+			HttpMethod method,
+			String url,
+			Properties params,
+			mvc.Session session) {
+		for (MappedUrl mapped : mapping) {		
+			boolean is = false;
+			if (mapped.isRegex()) {
+				Pattern p = Pattern.compile(String.format("(%s)", mapped.getUrl()));
+		    	Matcher m = p.matcher(url);
+		    	if (m.find() && Arrays.asList(mapped.getAllowedMethods()).contains(method)) {
+		    		for (int i = 2; i <= m.groupCount(); i++) { // group 0 is origin text, 1 match url
+		    			params.put(mapped.getParamName(i - 2), m.group(i));
+		    		}
+		    		is = true;
+		    	}
+			} else {
+				is = url.equals(mapped.getUrl());
+			}
+	    	if (is) {
+	    		return getControllerResponse(mapped, params, session);
 	    	}
 		}
 		
@@ -126,6 +112,70 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		return Response.getFile(resourcesDir + url).getResponse(headers, null, null, charset);
 	}
 	
+	private RestApiResponse getControllerResponse(MappedUrl mapped, Properties params, mvc.Session session) {
+		FlashMessages flash = session.getFlash();
+		Translator translator = null; // TODO
+		try {
+			List<Class<?>> classesList = new ArrayList<>();
+			List<Object> valuesList = new ArrayList<>();
+			
+			mapped.forEachParams((clazz, name)->{
+				classesList.add(clazz);
+				if (clazz.isAssignableFrom(Integer.class) || clazz.isAssignableFrom(int.class)) {
+					valuesList.add(Integer.parseInt(params.get(name) + ""));
+				} else if (clazz.isAssignableFrom(Boolean.class) || clazz.isAssignableFrom(boolean.class)) {
+					valuesList.add(Boolean.parseBoolean(params.get(name) + ""));
+				} else if (clazz.isAssignableFrom(Short.class) || clazz.isAssignableFrom(short.class)) {
+					valuesList.add(Short.parseShort(params.get(name) + ""));
+				} else if (clazz.isAssignableFrom(Float.class) || clazz.isAssignableFrom(float.class)) {
+					valuesList.add(Float.parseFloat(params.get(name) + ""));
+				} else if (clazz.isAssignableFrom(Double.class) || clazz.isAssignableFrom(double.class)) {
+					valuesList.add(Double.parseDouble(params.get(name) + ""));
+				} else if (clazz.isAssignableFrom(Long.class) || clazz.isAssignableFrom(long.class)) {
+					valuesList.add(Long.parseLong(params.get(name) + ""));
+				} else {
+					valuesList.add(clazz.cast(params.get(name)));
+				}
+			});
+			
+			Object o = Registr.getFactory(mapped.getClassName()).get();
+			Field[] fields = o.getClass().getDeclaredFields();
+			for (Field field : fields) {
+				String method = "set" + (field.getName().charAt(0) + "").toUpperCase() + field.getName().substring(1);
+				if (field.isAnnotationPresent(Flash.class)) {
+					o.getClass().getMethod(method, FlashMessages.class).invoke(o, flash);
+				} else if (field.isAnnotationPresent(mvc.urlMapping.Translator.class)) {
+					o.getClass().getMethod(method, Translator.class).invoke(o, translator);
+				} else if (field.isAnnotationPresent(mvc.urlMapping.Session.class)) {
+					String sessionValue = field.getAnnotation(mvc.urlMapping.Session.class).value();
+					if (sessionValue.isEmpty()) {
+						o.getClass().getMethod(method, mvc.Session.class).invoke(o, session);
+					} else {
+						o.getClass().getMethod(method, Object.class).invoke(o, session.getSession(sessionValue));
+					}
+				}
+			}
+			
+			if (classesList.size() > 0) {
+				Class<?>[] classes = new Class<?>[classesList.size()];
+				classesList.toArray(classes);
+				Object[] values = new Object[valuesList.size()];
+				valuesList.toArray(values);
+				
+	    		Response response = (Response)o.getClass()
+	    				.getMethod(mapped.getMethodName(), classes).invoke(o, values);
+	    		response.addParam("flashes", flash);
+	    		return response.getResponse(headers, templateFactory, translator, charset);
+			} else {
+	    		Response response = (Response)o.getClass().getMethod(mapped.getMethodName()).invoke(o);
+	    		response.addParam("flashes", flash);
+	    		return response.getResponse(headers, templateFactory, translator, charset);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	private RestApiResponse getDirResponse(File[] files, String path) {
 		return RestApiResponse.textResponse(
 			StatusCode.OK,
@@ -194,6 +244,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		    						String name = p.getAnnotation(ParamUrl.class).value();
 		    						mappedUrl.addParam(p.getType(), name);
 		    						mappedUrl.addParamName(name);
+		    						mappedUrl.setRegex(true);
 		    					} else if (p.isAnnotationPresent(Param.class)) {
 		    						mappedUrl.addParam(p.getType(), p.getAnnotation(Param.class).value());
 		    					} else {

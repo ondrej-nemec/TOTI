@@ -20,6 +20,8 @@ public class MappedUrl {
 	private final List<Tuple2<Class<?>, String>> params;
 	
 	private final List<String> paramNames;
+	
+	private boolean isRegex = false;
 
 	public MappedUrl(String url, HttpMethod[] allowedMethods, String className, String methodName) {
 		this.url = url;
@@ -79,6 +81,14 @@ public class MappedUrl {
 	@Override
 	public String toString() {
 		return url;
+	}
+
+	public boolean isRegex() {
+		return isRegex;
+	}
+
+	public void setRegex(boolean isRegex) {
+		this.isRegex = isRegex;
 	}
 	
 }
