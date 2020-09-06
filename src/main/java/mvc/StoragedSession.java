@@ -9,9 +9,11 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Session {
+import socketCommunication.http.server.session.Session;
 
-	private final socketCommunication.http.server.session.Session session;
+public class StoragedSession {
+
+	private final Session session;
 	
 	private String lang;
 	
@@ -20,7 +22,7 @@ public class Session {
 	private Map<String, Object> params;
 	
 	@SuppressWarnings("unchecked")
-	protected Session(socketCommunication.http.server.session.Session session) throws IOException {
+	protected StoragedSession(Session session) throws IOException {
 		this.session = session;
 		if (session.getContent().isEmpty()) {
 			this.lang = "cs"; // TODO default

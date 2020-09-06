@@ -76,7 +76,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			String url,
 			Properties params,
 			Session originSession) throws IOException {
-		mvc.Session session = new mvc.Session(originSession);
+		StoragedSession session = new StoragedSession(originSession);
 		RestApiResponse res = getResponse(method, url, params, session);
 	    session.flush();
 		return res;
@@ -86,7 +86,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			HttpMethod method,
 			String url,
 			Properties params,
-			mvc.Session session) {
+			mvc.StoragedSession session) {
 		for (MappedUrl mapped : mapping) {		
 			boolean is = false;
 			if (mapped.isRegex()) {
@@ -113,7 +113,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		return Response.getFile(resourcesDir + url).getResponse(headers, null, null, charset);
 	}
 	
-	private RestApiResponse getControllerResponse(MappedUrl mapped, Properties params, mvc.Session session) {
+	private RestApiResponse getControllerResponse(MappedUrl mapped, Properties params, StoragedSession session) {
 		FlashMessages flash = session.getFlash();
 		Translator translator = null; // TODO
 		try {
@@ -150,7 +150,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				} else if (field.isAnnotationPresent(mvc.urlMapping.Session.class)) {
 					String sessionValue = field.getAnnotation(mvc.urlMapping.Session.class).value();
 					if (sessionValue.isEmpty()) {
-						o.getClass().getMethod(method, mvc.Session.class).invoke(o, session);
+						o.getClass().getMethod(method, StoragedSession.class).invoke(o, session);
 					} else {
 						o.getClass().getMethod(method, Object.class).invoke(o, session.getSession(sessionValue));
 					}
