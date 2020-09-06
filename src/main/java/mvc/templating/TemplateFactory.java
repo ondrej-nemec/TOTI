@@ -14,6 +14,7 @@ import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 
 import common.FileExtension;
+import common.structures.ThrowingFunction;
 import common.structures.Tuple2;
 import mvc.templating.tags.BreakTag;
 import mvc.templating.tags.CaseTag;
@@ -29,6 +30,7 @@ import mvc.templating.tags.ElseTag;
 import mvc.templating.tags.FinallyTag;
 import mvc.templating.tags.ForEachTag;
 import mvc.templating.tags.ForTag;
+import mvc.templating.tags.GridTag;
 import mvc.templating.tags.IfTag;
 import mvc.templating.tags.IncludeTag;
 import mvc.templating.tags.LayoutTag;
@@ -60,25 +62,40 @@ public class TemplateFactory {
 		this.templatePath = templatePath;
 		this.deleteAuxJavaClass = deleteAuxJavaClass;
 	}
-
+	
 	public Template getTemplate(String templateFile) throws Exception {
-		File file = new File(templatePath + templateFile);
-		Tuple2<String, String> classNameAndNamespace = getClassName(file);
+		return getTemplateWithAbsolutePath(templatePath + templateFile, (file)->{
+			return getClassName(file);
+		});
+	}
+	
+	public Template getFrameworkTemplate(String templateFile) throws Exception {
+		return getTemplateWithAbsolutePath(templateFile, (file)->{
+			return new Tuple2<>("framework", new FileExtension(file.getName()).getName());
+		});
+	}
+
+	private Template getTemplateWithAbsolutePath(
+			String templateFile,
+			ThrowingFunction<File, Tuple2<String, String>, IOException> getClassNameAndNamespace) throws Exception {
+		File file = new File(/*templatePath + */templateFile);
+		Tuple2<String, String> classNameAndNamespace = getClassNameAndNamespace.apply(file);// getClassName(file);
 		File cacheDir = new File(tempPath);
 		String className = 
 				classNameAndNamespace._1().replaceAll("/", ".")
 				+ (classNameAndNamespace._1().length() == 0 ? "" : ".")
 				+ classNameAndNamespace._2();
+		
 		try (URLClassLoader loader = new URLClassLoader(new URL[] {cacheDir.toURI().toURL()});) {
 			try {
 				Template template = (Template)loader.loadClass(className).newInstance();
 				if (file.lastModified() != template.getLastModification()) {
-					compileNewCache(templatePath + templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), file.lastModified());
+					compileNewCache(/*templatePath +*/ templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), file.lastModified());
 				} else {
 					return template;
 				}
 			} catch (ClassNotFoundException e) {
-				compileNewCache(templatePath + templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), file.lastModified());
+				compileNewCache(/*templatePath + */templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), file.lastModified());
 			}
 		}
 		try (URLClassLoader loader = new URLClassLoader(new URL[] {cacheDir.toURI().toURL()});) {
@@ -139,6 +156,7 @@ public class TemplateFactory {
 		tags.add(new LayoutTag(actualFileDir));
 		tags.add(new BlockTag());
 		tags.add(new IncludeTag(actualFileDir));
+		tags.add(new GridTag());
 		return tags;
 	}
 	
