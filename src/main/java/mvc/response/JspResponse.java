@@ -24,6 +24,11 @@ public class JspResponse implements Response {
 	}
 
 	@Override
+	public void addParam(String name, Object value) {
+		params.put(name, value);
+	}
+
+	@Override
 	public RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String charset) {
 		params.put("nonce", header.getNonce());
 		return RestApiResponse.textResponse(

@@ -16,13 +16,14 @@ public class JsonResponse implements Response {
 	
 	private final Map<String, Object> json;
 	private final StatusCode code;
-	//private final String charset;
 
-	public JsonResponse(StatusCode code, Map<String, Object> json/*, String charset*/) {
+	public JsonResponse(StatusCode code, Map<String, Object> json) {
 		this.json = json;
 		this.code = code;
-		/*this.charset = charset;*/
 	}
+
+	@Override
+	public void addParam(String name, Object value) {}
 
 	@Override
 	public RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String charset) {

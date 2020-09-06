@@ -12,6 +12,8 @@ public interface Response {
 	
 	RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String charset);
 
+	void addParam(String name, Object value);
+	
 	static Response getFile(String fileName) {
 		return new FileResponse(StatusCode.OK, fileName);
 	}

@@ -22,6 +22,9 @@ public class FileResponse implements Response {
 		this.code = code;
 	//	this.charset = charset;
 	}
+
+	@Override
+	public void addParam(String name, Object value) {}
 	
 	@Override
 	public RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String charset) {

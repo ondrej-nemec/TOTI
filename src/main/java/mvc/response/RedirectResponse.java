@@ -21,4 +21,7 @@ public class RedirectResponse implements Response {
 		return RestApiResponse.textResponse(code, header.getHeaders("Location: " + url), (bw)->{});
 	}
 
+	@Override
+	public void addParam(String name, Object value) {}
+
 }
