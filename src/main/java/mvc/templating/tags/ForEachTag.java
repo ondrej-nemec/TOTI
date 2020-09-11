@@ -13,7 +13,14 @@ public class ForEachTag implements Tag {
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
-		return String.format("for(%s:%s){", params.get("item"), params.get("collection"));
+		String[] item = params.get("item").trim().split(" +");
+		if (item.length != 2) {
+			throw new RuntimeException("Incorrect item");
+		}
+		return String.format(
+				"for(%s %s:Template.toIterable(%s,%s.class)){",
+				item[0], item[1], params.get("collection"), item[0]
+		);
 	}
 
 	@Override
