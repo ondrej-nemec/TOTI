@@ -1,6 +1,7 @@
 package mvc;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
@@ -25,7 +26,9 @@ public class BootstrapEndToEndTest {
 						Arrays.asList(
 							"Access-Control-Allow-Origin: *"
 						)
-					), "utf-8",
+					),
+					Optional.empty(),
+					"utf-8",
 					new DefaultTranslator(LoggerFactory.getLogger("translator"), "", "messages"),
 					LoggerFactory.getLogger("server"), false
 			);
