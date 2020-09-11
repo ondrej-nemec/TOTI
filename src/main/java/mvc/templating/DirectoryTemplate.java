@@ -27,9 +27,19 @@ public class DirectoryTemplate implements Template {
 		StringBuilder builder = new StringBuilder();
 		
 		builder.append("Folder: <br>");
+		
+		String filePath = path;
+		if (!path.endsWith("/")) {
+			filePath += "/";
+		}
+		if (!path.equals("/")) { // root
+			builder.append(String.format("<a href='%s..'>..</a>", filePath));			
+			builder.append("<br>");
+		}
+		
 		for(File file : files) {
 			// TODO icon
-			builder.append(String.format("<a href='%s'>%s</a>", path + file.getName(), file.getName()));			
+			builder.append(String.format("<a href='%s'>%s</a>", filePath + file.getName(), file.getName()));			
 			builder.append("<br>");
 		}
 		
