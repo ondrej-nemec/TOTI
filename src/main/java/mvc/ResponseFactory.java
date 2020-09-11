@@ -27,6 +27,7 @@ import mvc.urlMapping.MappedUrl;
 import mvc.urlMapping.Method;
 import mvc.urlMapping.Param;
 import mvc.urlMapping.ParamUrl;
+import mvc.urlMapping.Params;
 import socketCommunication.http.HttpMethod;
 import socketCommunication.http.StatusCode;
 import socketCommunication.http.server.RestApiResponse;
@@ -68,7 +69,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Properties header,
 			Properties params,
 			Session session) throws IOException {
-		return accept(method, fullUrl, params, session);
+		return accept(method, url, params, session);
 	}
 	
 	private RestApiResponse accept(
@@ -107,6 +108,9 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		}
 		
 		File file = new File(resourcesDir + url);
+		if (!file.exists()) {
+			throw new RuntimeException(String.format("URL not fouded: %s (%s)", url, method));
+		}
 		if (file.isDirectory()) {
 			return getDirResponse(file.listFiles(), url);
 		}
@@ -115,14 +119,14 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	
 	private RestApiResponse getControllerResponse(MappedUrl mapped, Properties params, StoragedSession session) {
 		FlashMessages flash = session.getFlash();
-		Translator translator = null; // TODO
 		try {
 			List<Class<?>> classesList = new ArrayList<>();
 			List<Object> valuesList = new ArrayList<>();
-			
 			mapped.forEachParams((clazz, name)->{
 				classesList.add(clazz);
-				if (clazz.isAssignableFrom(Integer.class) || clazz.isAssignableFrom(int.class)) {
+				if (name == null) {
+					valuesList.add(params);
+				} else if (clazz.isAssignableFrom(Integer.class) || clazz.isAssignableFrom(int.class)) {
 					valuesList.add(Integer.parseInt(params.get(name) + ""));
 				} else if (clazz.isAssignableFrom(Boolean.class) || clazz.isAssignableFrom(boolean.class)) {
 					valuesList.add(Boolean.parseBoolean(params.get(name) + ""));
@@ -250,6 +254,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		    						mappedUrl.setRegex(true);
 		    					} else if (p.isAnnotationPresent(Param.class)) {
 		    						mappedUrl.addParam(p.getType(), p.getAnnotation(Param.class).value());
+		    					} else if (p.isAnnotationPresent(Params.class)) {
+		    						mappedUrl.addParam(p.getType(), null);
 		    					} else {
 		    						throw new LogicException(
 		    							"Not anotated param " + p.getName()
