@@ -21,4 +21,13 @@ public interface Template {
 				.replaceAll("\"", "&quot;")
 				.replaceAll("'", "&apos;");
 	}
+	
+	@SuppressWarnings("unchecked")
+	static <T> Iterable<T> toIterable(Object o, Class<T> clazz) {
+		if (o.getClass().isArray()) {
+			return java.util.Arrays.asList((T[])o);
+		} else /*if (o16_1 instanceof Iterable<?>)*/ {
+			return (Iterable<T>) o;
+		}
+	}
 }
