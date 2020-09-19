@@ -4,11 +4,10 @@ import java.io.File;
 import java.util.Optional;
 
 import common.Logger;
+import mvc.authentication.Authenticator;
 import mvc.templating.TemplateFactory;
 import socketCommunication.Server;
 import socketCommunication.ServerSecuredCredentials;
-import socketCommunication.http.server.session.FileSessionStorage;
-import socketCommunication.http.server.session.SessionStorage;
 import translator.Translator;
 
 public class Bootstrap {
@@ -28,8 +27,14 @@ public class Bootstrap {
     		Optional<ServerSecuredCredentials> certs,
     		String charset,
     		Translator translator,
+    		Authenticator authenticator,
+    		Router router,
     		Logger logger) throws Exception {
-		this(port, threadPool, readTimeout, sessionExpirationTime, tempPath, templatePath, controllers, resourcesPath,headers, certs, charset, translator, logger, true);
+		this(
+				port, threadPool, readTimeout, sessionExpirationTime,
+				tempPath, templatePath, controllers, 
+				resourcesPath,headers, certs,
+				charset, translator, authenticator, router, logger, true);
 	}
 	
 	public Bootstrap(
@@ -45,33 +50,34 @@ public class Bootstrap {
     		Optional<ServerSecuredCredentials> certs,
     		String charset,
     		Translator translator,
+    		Authenticator authenticator,
+    		Router router,
     		Logger logger,
     		boolean deleteDir) throws Exception {
 		String cachePath = tempPath + "/cache";
-		String sessionPath = tempPath + "/sessions";
+	//	String sessionPath = tempPath + "/sessions";
 		new File(cachePath).mkdir();
-		new File(sessionPath).mkdir();
+	//	new File(sessionPath).mkdir();
 		
 		TemplateFactory templateFactory = new TemplateFactory(cachePath, templatePath, deleteDir);
 		
 		ResponseFactory response = new ResponseFactory(
 				headers,
 				templateFactory,
+				router,
 				translator,
+				null, // authorizator
+				authenticator,
 				controllers,
 				resourcesPath,
 				charset
 		);
-		
-		SessionStorage storage = new FileSessionStorage(sessionPath);
 				
 		this.server = Server.create(
 				port,
 				threadPool,
 				readTimeout,
-				sessionExpirationTime,
 				response,
-				storage,
 				certs,
 				charset,
 				logger

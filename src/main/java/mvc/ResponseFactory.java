@@ -9,20 +9,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import common.exceptions.LogicException;
+import helper.AuthorizationHelper;
+import mvc.authentication.Authenticator;
+import mvc.authentication.Identity;
 import mvc.registr.Registr;
 import mvc.response.Response;
 import mvc.templating.DirectoryTemplate;
-import mvc.templating.ExceptionTemplate;
 import mvc.templating.TemplateFactory;
 import mvc.urlMapping.Action;
 import mvc.urlMapping.Controller;
-import mvc.urlMapping.Flash;
-import mvc.urlMapping.Lang;
 import mvc.urlMapping.MappedUrl;
 import mvc.urlMapping.Method;
 import mvc.urlMapping.Param;
@@ -32,7 +33,6 @@ import socketCommunication.http.HttpMethod;
 import socketCommunication.http.StatusCode;
 import socketCommunication.http.server.RestApiResponse;
 import socketCommunication.http.server.RestApiServerResponseFactory;
-import socketCommunication.http.server.session.Session;
 import translator.Translator;
 
 public class ResponseFactory implements RestApiServerResponseFactory {
@@ -46,11 +46,14 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 
 	private final TemplateFactory templateFactory;
 	private final Translator translator;
+	private final AuthorizationHelper authorizator;
+	private final Authenticator authenticator;
+	private final Router router;
 	
 	public ResponseFactory(
 			ResponseHeaders headers,
-			TemplateFactory templateFactory,
-			Translator translator,
+			TemplateFactory templateFactory, Router router,
+			Translator translator, AuthorizationHelper authorizator, Authenticator authenticator,
 			String[] folders, String resourcesDir, String charset) throws Exception {
 		this.resourcesDir = resourcesDir;
 		this.charset = charset;
@@ -58,6 +61,9 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		this.translator = translator;
 		this.mapping = loadUrlMap(folders);
 		this.headers = headers;
+		this.authorizator = authorizator;
+		this.authenticator = authenticator;
+		this.router = router;
 	}
 
 	@Override
@@ -68,26 +74,34 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			String protocol,
 			Properties header,
 			Properties params,
-			Session session) throws IOException {
-		return accept(method, url, params, session);
-	}
-	
-	private RestApiResponse accept(
-			HttpMethod method,
-			String url,
-			Properties params,
-			Session originSession) throws IOException {
-		StoragedSession session = new StoragedSession(originSession);
-		RestApiResponse res = getResponse(method, url, params, session);
-	    session.flush();
+			String ip) throws IOException {
+		Optional<Identity> identity = authenticator.authenticate(header);
+		RestApiResponse res = getNormalizedResponse(method, url, params);
+		res.getHeader().addAll(authenticator.getHeaders(identity));
 		return res;
 	}
 	
-	private RestApiResponse getResponse(
+	private RestApiResponse getNormalizedResponse(
 			HttpMethod method,
 			String url,
-			Properties params,
-			mvc.StoragedSession session) {
+			Properties params) {
+		return getRoutedResponse(method, url.endsWith("/") ? url.substring(0, url.length()-1) : url, params);
+	}
+	
+	private RestApiResponse getRoutedResponse(
+			HttpMethod method,
+			String url,
+			Properties params) {
+		if (router.getUrlMapping(url) == null) {
+			return getMappedResponse(method, url, params);
+		}
+		return getMappedResponse(method, router.getUrlMapping(url), params);
+	}
+	
+	private RestApiResponse getMappedResponse(
+			HttpMethod method,
+			String url,
+			Properties params) {
 		for (MappedUrl mapped : mapping) {		
 			boolean is = false;
 			if (mapped.isRegex()) {
@@ -100,10 +114,10 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		    		is = true;
 		    	}
 			} else {
-				is = url.equals(mapped.getUrl());
+					is = url.equals(mapped.getUrl());
 			}
 	    	if (is) {
-	    		return getControllerResponse(mapped, params, session);
+	    		return getControllerResponse(mapped, params);
 	    	}
 		}
 		
@@ -117,9 +131,9 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		return Response.getFile(resourcesDir + url).getResponse(headers, null, null, charset);
 	}
 	
-	private RestApiResponse getControllerResponse(MappedUrl mapped, Properties params, StoragedSession session) {
-		FlashMessages flash = session.getFlash();
+	private RestApiResponse getControllerResponse(MappedUrl mapped, Properties params) {
 		try {
+			// params for method
 			List<Class<?>> classesList = new ArrayList<>();
 			List<Object> valuesList = new ArrayList<>();
 			mapped.forEachParams((clazz, name)->{
@@ -144,23 +158,15 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			});
 			
 			Object o = Registr.getFactory(mapped.getClassName()).get();
+			// inject
 			Field[] fields = o.getClass().getDeclaredFields();
 			for (Field field : fields) {
 				String method = "set" + (field.getName().charAt(0) + "").toUpperCase() + field.getName().substring(1);
-				if (field.isAnnotationPresent(Flash.class)) {
-					o.getClass().getMethod(method, FlashMessages.class).invoke(o, flash);
-				} else if (field.isAnnotationPresent(mvc.urlMapping.Translator.class)) {
+				if (field.isAnnotationPresent(mvc.urlMapping.Translator.class)) {
 					o.getClass().getMethod(method, Translator.class).invoke(o, translator);
-				} else if (field.isAnnotationPresent(mvc.urlMapping.Session.class)) {
-					String sessionValue = field.getAnnotation(mvc.urlMapping.Session.class).value();
-					if (sessionValue.isEmpty()) {
-						o.getClass().getMethod(method, StoragedSession.class).invoke(o, session);
-					} else {
-						o.getClass().getMethod(method, Object.class).invoke(o, session.getSession(sessionValue));
-					}
-				} else if (field.isAnnotationPresent(Lang.class)) {
+				}/* else if (field.isAnnotationPresent(Lang.class)) {
 					o.getClass().getMethod(method, String.class).invoke(o, session.getLang());
-				}
+				}*/
 			}
 			
 			if (classesList.size() > 0) {
@@ -171,11 +177,9 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				
 	    		Response response = (Response)o.getClass()
 	    				.getMethod(mapped.getMethodName(), classes).invoke(o, values);
-	    		response.addParam("flashes", flash);
 	    		return response.getResponse(headers, templateFactory, translator, charset);
 			} else {
 	    		Response response = (Response)o.getClass().getMethod(mapped.getMethodName()).invoke(o);
-	    		response.addParam("flashes", flash);
 	    		return response.getResponse(headers, templateFactory, translator, charset);
 			}
 		} catch (Exception e) {
@@ -195,10 +199,10 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				}
 		});
 	}
-	
+	/*
 	@Override
 	public RestApiResponse onException(HttpMethod method, String url, String fullUrl, String protocol,
-			Properties header, Properties params, Session session, Throwable t) throws IOException {
+			Properties header, Properties params, Throwable t) throws IOException {
 		t.printStackTrace();
 		
 		return RestApiResponse.textResponse(
@@ -212,7 +216,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				}
 		});
 	}
-	
+	*/
 	private List<MappedUrl> loadUrlMap(String[] folders) throws Exception {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		List<MappedUrl> mapping = new LinkedList<>();

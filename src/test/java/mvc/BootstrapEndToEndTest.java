@@ -7,6 +7,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 import controllers.TestController;
 import logging.LoggerFactory;
+import mvc.authentication.Authenticator;
+import mvc.authentication.TokenType;
 import mvc.registr.Registr;
 import translator.DefaultTranslator;
 
@@ -17,6 +19,11 @@ public class BootstrapEndToEndTest {
 			Registr.addFactory(TestController.class, ()->{
 				return new TestController();
 			});
+
+			Authenticator authenticator = new Authenticator(120000, TokenType.AUTHENTIZATION(), "secretSalt");		
+			Router router = new Router();
+			router.addUrl("/jsgrid", "/base/grid");
+			router.addUrl("", "/index.html");
 			
 			Bootstrap b = new Bootstrap(
 					80, 10, 60000, 3600000, // 1 h
@@ -30,6 +37,8 @@ public class BootstrapEndToEndTest {
 					Optional.empty(),
 					"utf-8",
 					new DefaultTranslator(LoggerFactory.getLogger("translator"), "", "messages"),
+					authenticator,
+					router,
 					LoggerFactory.getLogger("server"), false
 			);
 			b.start();
