@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,13 +16,15 @@ import java.util.regex.Pattern;
 import common.exceptions.LogicException;
 import helper.AuthorizationHelper;
 import mvc.authentication.Authenticator;
-import mvc.authentication.Identity;
+import mvc.authentication.Optional;
 import mvc.registr.Registr;
 import mvc.response.Response;
 import mvc.templating.DirectoryTemplate;
 import mvc.templating.TemplateFactory;
 import mvc.urlMapping.Action;
+import mvc.urlMapping.Auth;
 import mvc.urlMapping.Controller;
+import mvc.urlMapping.Ident;
 import mvc.urlMapping.MappedUrl;
 import mvc.urlMapping.Method;
 import mvc.urlMapping.Param;
@@ -46,7 +47,9 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 
 	private final TemplateFactory templateFactory;
 	private final Translator translator;
+	// TODO use it
 	private final AuthorizationHelper authorizator;
+	// TODO inject
 	private final Authenticator authenticator;
 	private final Router router;
 	
@@ -75,8 +78,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Properties header,
 			Properties params,
 			String ip) throws IOException {
-		Optional<Identity> identity = authenticator.authenticate(header);
-		RestApiResponse res = getNormalizedResponse(method, url, params);
+		Optional identity = authenticator.authenticate(header);
+		RestApiResponse res = getNormalizedResponse(method, url, params, identity);
 		res.getHeader().addAll(authenticator.getHeaders(identity));
 		return res;
 	}
@@ -84,25 +87,28 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private RestApiResponse getNormalizedResponse(
 			HttpMethod method,
 			String url,
-			Properties params) {
-		return getRoutedResponse(method, url.endsWith("/") ? url.substring(0, url.length()-1) : url, params);
+			Properties params,
+			Optional identity) {
+		return getRoutedResponse(method, url.endsWith("/") ? url.substring(0, url.length()-1) : url, params, identity);
 	}
 	
 	private RestApiResponse getRoutedResponse(
 			HttpMethod method,
 			String url,
-			Properties params) {
+			Properties params,
+			Optional identity) {
 		if (router.getUrlMapping(url) == null) {
-			return getMappedResponse(method, url, params);
+			return getMappedResponse(method, url, params, identity);
 		}
-		return getMappedResponse(method, router.getUrlMapping(url), params);
+		return getMappedResponse(method, router.getUrlMapping(url), params, identity);
 	}
 	
 	private RestApiResponse getMappedResponse(
 			HttpMethod method,
 			String url,
-			Properties params) {
-		for (MappedUrl mapped : mapping) {		
+			Properties params,
+			Optional identity) {
+		for (MappedUrl mapped : mapping) {
 			boolean is = false;
 			if (mapped.isRegex()) {
 				Pattern p = Pattern.compile(String.format("(%s)", mapped.getUrl()));
@@ -117,7 +123,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 					is = url.equals(mapped.getUrl());
 			}
 	    	if (is) {
-	    		return getControllerResponse(mapped, params);
+	    		return getControllerResponse(mapped, params, identity);
 	    	}
 		}
 		
@@ -131,7 +137,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		return Response.getFile(resourcesDir + url).getResponse(headers, null, null, charset);
 	}
 	
-	private RestApiResponse getControllerResponse(MappedUrl mapped, Properties params) {
+	private RestApiResponse getControllerResponse(MappedUrl mapped, Properties params, Optional identity) {
 		try {
 			// params for method
 			List<Class<?>> classesList = new ArrayList<>();
@@ -164,6 +170,10 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				String method = "set" + (field.getName().charAt(0) + "").toUpperCase() + field.getName().substring(1);
 				if (field.isAnnotationPresent(mvc.urlMapping.Translator.class)) {
 					o.getClass().getMethod(method, Translator.class).invoke(o, translator);
+				} else if (field.isAnnotationPresent(Auth.class)) {
+					o.getClass().getMethod(method, Authenticator.class).invoke(o, authenticator);
+				} else if (field.isAnnotationPresent(Ident.class)) {
+					o.getClass().getMethod(method, Optional.class).invoke(o, identity);
 				}/* else if (field.isAnnotationPresent(Lang.class)) {
 					o.getClass().getMethod(method, String.class).invoke(o, session.getLang());
 				}*/
@@ -244,8 +254,10 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		    				HttpMethod[] methods = m.isAnnotationPresent(Method.class)
 		    								? m.getAnnotation(Method.class).value()
 		    								: HttpMethod.values();
-		    				String url = prefix + "/" + clazz.getAnnotation(Controller.class).value()
-			    					+ "/" + m.getAnnotation(Action.class).value();
+		    				String controllerUrl = clazz.getAnnotation(Controller.class).value();
+		    				String methodUrl = m.getAnnotation(Action.class).value();
+		    				String url = prefix + (controllerUrl.isEmpty() ? "" : "/" + controllerUrl)
+			    					+ (methodUrl.isEmpty() ? "" : "/" + methodUrl);
 		    				String className = clazz.getName();
 		    				String methodName = m.getName();
 		    				MappedUrl mappedUrl = new MappedUrl(url, methods, className, methodName);

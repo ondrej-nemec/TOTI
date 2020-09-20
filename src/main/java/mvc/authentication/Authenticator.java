@@ -1,13 +1,12 @@
 package mvc.authentication;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.Properties;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
+import mvc.authentication.storage.Storage;
 import utils.security.Hash;
 import utils.security.HashException;
 
@@ -16,55 +15,67 @@ public class Authenticator {
 	private final long expirationTime;
 	private final TokenType tokenType;
 	private final String hashSalt;
+	private final Storage storage;
 	
 	private final Hash hasher;
 	
-	public Authenticator(long expirationTime, TokenType tokenType, String hashSalt) {
+	public Authenticator(long expirationTime, TokenType tokenType, Storage storage, String hashSalt) {
 		this.expirationTime = expirationTime;
 		this.tokenType = tokenType;
 		this.hashSalt = hashSalt;
 		this.hasher = new Hash("SHA-256");
+		this.storage = storage;
 	}
 
-	public AuthResponse login(String content) throws AuthentizationException {
+	public String login(String content, Optional identity) throws AuthentizationException {
 		try {
-		// if (serverSide) {
-		//	save content to session
-		//  return new AuthResponse(createToken(""), Arrays.asList());
-		// } else {
-			return new AuthResponse(createToken(content), Arrays.asList());
-		// }
+			String id = RandomStringUtils.randomAlphanumeric(50);
+			String token;
+			if (storage.writeContentToToken()) {
+				storage.saveToken(id, expirationTime, content);
+				token = createToken(id, content);
+			} else {
+				token = createToken(id, "");
+			}
+			identity.set(new Identity(content, id, expirationTime, token));
+			return token;
 		} catch (Exception e) {
 			throw new AuthentizationException(e);
 		}
 	}
 	
-	public AuthResponse logout(String token) {
-		return null;
+	public void logout(Optional token) {
+		if (token.isPresent()) {
+			storage.deleteToken(token.get().getId());
+		}
+		token.clear();
 	}
 	
-	public AuthResponse refresh(String token) throws AuthentizationException {
-		return null;
+	public String refresh(Identity token, String content, Boolean append) throws AuthentizationException {
+		storage.updateToken(token.getId(), expirationTime, content, append);
+		return "";
 	}
 	
-	public Optional<Identity> authenticate(Properties header) {
+	public Optional authenticate(Properties header) {
 		try {
-			Identity token = parseToken(
+			String token = tokenType.getHeaderName() + "";
+			Identity identity = parseToken(
 				tokenType.getFromValueToToken().apply(
-					header.getProperty(
-						tokenType.getHeaderName() + ""
-					)
+					header.getProperty(token)
 				)
 			);
-			// server side storage update expiration time
-			return Optional.of(token);
+			if (storage.autoRefresh()) {
+				refresh(identity, "", true);
+			}
+			return Optional.of(identity);
 		} catch (Exception e) {
 			// TODO log
+			e.printStackTrace();
 			return Optional.empty();
 		}
 	}
 	
-	public List<String> getHeaders(Optional<Identity> identity) {
+	public List<String> getHeaders(Optional identity) {
 		return tokenType.getCreateHeader().apply(identity);
 	}
 	
@@ -73,30 +84,27 @@ public class Authenticator {
 	}
 	
 	// TODO test this method
-	protected String createToken(String content) throws HashException {
-		String random = RandomStringUtils.randomAlphanumeric(50);
+	protected String createToken(String random, String content) throws HashException {
 		long expired = new Date().getTime() + expirationTime;
 		// random + expired + ";" + content.length() + ";"+ con
 		String hash = hasher.toHash(createHashingMesasge(random, expired, content));
-		return String.format("%s%s;%s;%s%š", random, expired, content.length(), content, hash);
+		return String.format("%s%s-%s-%s", random, expired, content, hash);
 	}
 	
 	// TODO test this method
-	protected Identity parseToken(String token) {
+	protected Identity parseToken(String token) throws HashException {
 		String random = token.substring(0, 50);
-		String[] others = token.substring(50).split(";");
+		String[] others = token.substring(50).split("-");
 		long expired = Long.parseLong(others[0]);
-		int contentLength = Integer.parseInt(others[1]);
-		String content = others[2].substring(0, contentLength);
-		String hash = others[2].substring(contentLength);
-		
+		String content = others[1];
+		String hash = others[2];		
 		if (!hasher.compare(createHashingMesasge(random, expired, content), hash)) {
 			throw new RuntimeException("Token corrupted");
 		}
 		if (expired > new Date().getTime() + expirationTime) {
 			throw new RuntimeException("Token is expired");
 		}
-		return new Identity(content, random, expired);
+		return new Identity(content, random, expired, token);
 	}
 	
 	private String createHashingMesasge(String random, long expired, String content) {
