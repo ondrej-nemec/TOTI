@@ -32,10 +32,10 @@ public class TokenType {
 			}
 			return Arrays.asList(
 					"Set-Cookie: SessionID="
-					+ identity.get().getToken()
+					+ identity.getToken()
 					+ "; HttpOnly; SameSite=Strict;"
 					+ " Max-Age="
-					+ (identity.get().getExpired() / 1000)
+					+ (identity.getExpired() / 1000)
 			);
 		});
 	}
@@ -55,18 +55,18 @@ public class TokenType {
 	
 	private final String headerName;
 	private final Function<String, String> fromValueToToken;
-	private final Function<Optional, List<String>> createHeader;
+	private final Function<Identity, List<String>> createHeader;
 	
 	private TokenType(
 			String headerName, 
 			Function<String, String> fromValueToToken,
-			Function<Optional, List<String>> createHeader) {
+			Function<Identity, List<String>> createHeader) {
 		this.headerName = headerName;
 		this.createHeader = createHeader;
 		this.fromValueToToken = fromValueToToken;
 	}
 
-	public Function<Optional, List<String>> getCreateHeader() {
+	public Function<Identity, List<String>> getCreateHeader() {
 		return createHeader;
 	}
 

@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import common.Logger;
 import mvc.authentication.Authenticator;

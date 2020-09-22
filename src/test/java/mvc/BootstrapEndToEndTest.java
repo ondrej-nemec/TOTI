@@ -29,7 +29,8 @@ public class BootstrapEndToEndTest {
 					120000,
 					TokenType.COOKIE(),
 					new NullStorage(),
-					"secretSalt"
+					"secretSalt",
+					LoggerFactory.getLogger("auth")
 			);		
 			Router router = new Router();
 			router.addUrl("/jsgrid", "/base/grid");

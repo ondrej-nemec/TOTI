@@ -18,15 +18,16 @@ import java.util.regex.Pattern;
 import common.exceptions.LogicException;
 import helper.AuthorizationHelper;
 import mvc.authentication.Authenticator;
-import mvc.authentication.Optional;
+import mvc.authentication.Identity;
 import mvc.registr.Registr;
 import mvc.response.Response;
 import mvc.templating.DirectoryTemplate;
 import mvc.templating.TemplateFactory;
 import mvc.urlMapping.Action;
-import mvc.urlMapping.Auth;
+import mvc.urlMapping.Authenticate;
 import mvc.urlMapping.Controller;
-import mvc.urlMapping.Ident;
+import mvc.urlMapping.Lang;
+import mvc.urlMapping.ClientIdentity;
 import mvc.urlMapping.MappedUrl;
 import mvc.urlMapping.Method;
 import mvc.urlMapping.Param;
@@ -80,7 +81,9 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Properties header,
 			Properties params,
 			String ip) throws IOException {
-		Optional identity = authenticator.authenticate(header);
+		System.out.println(fullUrl);
+		System.out.println(header);
+		Identity identity = authenticator.authenticate(header);
 		RestApiResponse res = getNormalizedResponse(method, url, params, identity);
 		res.getHeader().addAll(authenticator.getHeaders(identity));
 		return res;
@@ -90,7 +93,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			HttpMethod method,
 			String url,
 			Properties params,
-			Optional identity) {
+			Identity identity) {
 		return getRoutedResponse(method, url.endsWith("/") ? url.substring(0, url.length()-1) : url, params, identity);
 	}
 	
@@ -98,7 +101,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			HttpMethod method,
 			String url,
 			Properties params,
-			Optional identity) {
+			Identity identity) {
 		if (router.getUrlMapping(url) == null) {
 			return getMappedResponse(method, url, params, identity);
 		}
@@ -109,7 +112,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			HttpMethod method,
 			String url,
 			Properties params,
-			Optional identity) {
+			Identity identity) {
 		for (MappedUrl mapped : mapping) {
 			boolean is = false;
 			if (mapped.isRegex()) {
@@ -139,7 +142,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		return Response.getFile(resourcesDir + url).getResponse(headers, null, null, charset);
 	}
 	
-	private RestApiResponse getControllerResponse(MappedUrl mapped, Properties params, Optional identity) {
+	private RestApiResponse getControllerResponse(MappedUrl mapped, Properties params, Identity identity) {
 		try {
 			// params for method
 			List<Class<?>> classesList = new ArrayList<>();
@@ -165,6 +168,9 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				}
 			});
 			
+			// TODO get locale from request/session, some translator cache
+			Locale locale = Locale.getDefault();
+			
 			Object o = Registr.get().getFactory(mapped.getClassName()).get();
 			// inject
 			Field[] fields = o.getClass().getDeclaredFields();
@@ -172,17 +178,14 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				String method = "set" + (field.getName().charAt(0) + "").toUpperCase() + field.getName().substring(1);
 				if (field.isAnnotationPresent(mvc.urlMapping.Translator.class)) {
 					o.getClass().getMethod(method, Translator.class).invoke(o, translator);
-				} else if (field.isAnnotationPresent(Auth.class)) {
+				} else if (field.isAnnotationPresent(Authenticate.class)) {
 					o.getClass().getMethod(method, Authenticator.class).invoke(o, authenticator);
-				} else if (field.isAnnotationPresent(Ident.class)) {
-					o.getClass().getMethod(method, Optional.class).invoke(o, identity);
-				}/* else if (field.isAnnotationPresent(Lang.class)) {
-					o.getClass().getMethod(method, String.class).invoke(o, session.getLang());
-				}*/
-			}
-			
-			// TODO get locale from request/session, some translator cache
-			Locale locale = Locale.getDefault();
+				} else if (field.isAnnotationPresent(ClientIdentity.class)) {
+					o.getClass().getMethod(method, Identity.class).invoke(o, identity);
+				} else if (field.isAnnotationPresent(Lang.class)) {
+					o.getClass().getMethod(method, Locale.class).invoke(o, locale);
+				}
+			}			
 			
 			if (classesList.size() > 0) {
 				Class<?>[] classes = new Class<?>[classesList.size()];
