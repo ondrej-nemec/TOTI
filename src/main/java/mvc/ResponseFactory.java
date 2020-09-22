@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,7 +48,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private final String charset;
 
 	private final TemplateFactory templateFactory;
-	private final Translator translator;
+	private final Function<Locale, Translator> translator;
 	// TODO use it
 	private final AuthorizationHelper authorizator;
 	// TODO inject
@@ -56,7 +58,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	public ResponseFactory(
 			ResponseHeaders headers,
 			TemplateFactory templateFactory, Router router,
-			Translator translator, AuthorizationHelper authorizator, Authenticator authenticator,
+			Function<Locale, Translator> translator, AuthorizationHelper authorizator, Authenticator authenticator,
 			String[] folders, String resourcesDir, String charset) throws Exception {
 		this.resourcesDir = resourcesDir;
 		this.charset = charset;
@@ -163,7 +165,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				}
 			});
 			
-			Object o = Registr.getFactory(mapped.getClassName()).get();
+			Object o = Registr.get().getFactory(mapped.getClassName()).get();
 			// inject
 			Field[] fields = o.getClass().getDeclaredFields();
 			for (Field field : fields) {
@@ -179,6 +181,9 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				}*/
 			}
 			
+			// TODO get locale from request/session, some translator cache
+			Locale locale = Locale.getDefault();
+			
 			if (classesList.size() > 0) {
 				Class<?>[] classes = new Class<?>[classesList.size()];
 				classesList.toArray(classes);
@@ -187,10 +192,10 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				
 	    		Response response = (Response)o.getClass()
 	    				.getMethod(mapped.getMethodName(), classes).invoke(o, values);
-	    		return response.getResponse(headers, templateFactory, translator, charset);
+	    		return response.getResponse(headers, templateFactory, translator.apply(locale), charset);
 			} else {
 	    		Response response = (Response)o.getClass().getMethod(mapped.getMethodName()).invoke(o);
-	    		return response.getResponse(headers, templateFactory, translator, charset);
+	    		return response.getResponse(headers, templateFactory, translator.apply(locale), charset);
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);

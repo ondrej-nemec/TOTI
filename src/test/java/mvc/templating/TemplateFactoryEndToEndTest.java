@@ -1,6 +1,7 @@
 package mvc.templating;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import core.text.Text;
@@ -23,24 +24,28 @@ public class TemplateFactoryEndToEndTest {
 		);
 	//	Logger logger = LoggerFactory.getLogger("test");
 		Translator translator = new Translator() {
-			
-			@Override
-			public String translate(String key, int count, Map<String, String> variables) {
-				return key + String.format(" (%s)", count) + " " + variables;
-			}
-			
-			@Override
-			public String translate(String key, int count) {
-				return key + String.format(" (%s)", count);
-			}
-			
-			@Override
-			public String translate(String key, Map<String, String> variables) {
-				return key + " " + variables;
-			}
-			
+
 			@Override
 			public String translate(String key) {
+				// TODO Auto-generated method stub
+				return key;
+			}
+
+			@Override
+			public String translate(String key, Locale locale) {
+				// TODO Auto-generated method stub
+				return key;
+			}
+
+			@Override
+			public String translate(String key, Map<String, String> variables) {
+				// TODO Auto-generated method stub
+				return key;
+			}
+
+			@Override
+			public String translate(String key, Map<String, String> variables, Locale locale) {
+				// TODO Auto-generated method stub
 				return key;
 			}
 		};

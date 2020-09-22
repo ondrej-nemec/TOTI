@@ -1,7 +1,10 @@
 package mvc;
 
 import java.io.File;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import common.Logger;
 import mvc.authentication.Authenticator;
@@ -26,7 +29,7 @@ public class Bootstrap {
     		ResponseHeaders headers,
     		Optional<ServerSecuredCredentials> certs,
     		String charset,
-    		Translator translator,
+    		Function<Locale, Translator> translator,
     		Authenticator authenticator,
     		Router router,
     		Logger logger) throws Exception {
@@ -49,7 +52,7 @@ public class Bootstrap {
     		ResponseHeaders headers,
     		Optional<ServerSecuredCredentials> certs,
     		String charset,
-    		Translator translator,
+    		Function<Locale, Translator> translator,
     		Authenticator authenticator,
     		Router router,
     		Logger logger,

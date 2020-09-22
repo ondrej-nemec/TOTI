@@ -12,16 +12,16 @@ import mvc.authentication.Authenticator;
 import mvc.authentication.TokenType;
 import mvc.authentication.storage.NullStorage;
 import mvc.registr.Registr;
-import translator.DefaultTranslator;
+import translator.PropertiesTranslator;
 
 public class BootstrapEndToEndTest {
 
 	public static void main(String[] args) {
 		try {
-			Registr.addFactory(TestController.class, ()->{
+			Registr.get().addFactory(TestController.class, ()->{
 				return new TestController();
 			});
-			Registr.addFactory(LoginController.class, ()->{
+			Registr.get().addFactory(LoginController.class, ()->{
 				return new LoginController();
 			});
 
@@ -47,7 +47,7 @@ public class BootstrapEndToEndTest {
 					),
 					Optional.empty(),
 					"utf-8",
-					new DefaultTranslator(LoggerFactory.getLogger("translator"), "", "messages"),
+					(loc)->new PropertiesTranslator(LoggerFactory.getLogger("translator"), "messages"),
 					authenticator,
 					router,
 					LoggerFactory.getLogger("server"), false
