@@ -1,10 +1,10 @@
-package mvc.annotations;
+package mvc.annotations.inject;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Retention;
 
 @Retention(RUNTIME)
-public @interface ClientIdentity {
+public @interface Authenticate {
 
 }

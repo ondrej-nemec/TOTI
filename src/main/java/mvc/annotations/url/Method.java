@@ -1,11 +1,13 @@
-package mvc.annotations;
+package mvc.annotations.url;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-@Retention(RetentionPolicy.RUNTIME)
-public @interface ParamUrl {
+import socketCommunication.http.HttpMethod;
 
-	String value();
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Method {
+
+	HttpMethod[] value();
 	
 }

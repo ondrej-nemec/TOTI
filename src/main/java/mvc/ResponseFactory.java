@@ -21,16 +21,16 @@ import common.exceptions.LogicException;
 import exception.AccessDeniedException;
 import exception.NotAllowedActionException;
 import helper.AuthorizationHelper;
-import mvc.annotations.Action;
-import mvc.annotations.Authenticate;
-import mvc.annotations.ClientIdentity;
-import mvc.annotations.Controller;
-import mvc.annotations.Lang;
 import mvc.annotations.MappedUrl;
-import mvc.annotations.Method;
-import mvc.annotations.Param;
-import mvc.annotations.ParamUrl;
-import mvc.annotations.Params;
+import mvc.annotations.inject.Authenticate;
+import mvc.annotations.inject.ClientIdentity;
+import mvc.annotations.inject.Lang;
+import mvc.annotations.url.Action;
+import mvc.annotations.url.Controller;
+import mvc.annotations.url.Method;
+import mvc.annotations.url.Param;
+import mvc.annotations.url.ParamUrl;
+import mvc.annotations.url.Params;
 import mvc.authentication.Authenticator;
 import mvc.authentication.Identity;
 import mvc.registr.Registr;
@@ -211,7 +211,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Field[] fields = o.getClass().getDeclaredFields();
 			for (Field field : fields) {
 				String method = "set" + (field.getName().charAt(0) + "").toUpperCase() + field.getName().substring(1);
-				if (field.isAnnotationPresent(mvc.annotations.Translator.class)) {
+				if (field.isAnnotationPresent(mvc.annotations.inject.Translator.class)) {
 					o.getClass().getMethod(method, Translator.class).invoke(o, translator);
 				} else if (field.isAnnotationPresent(Authenticate.class)) {
 					o.getClass().getMethod(method, Authenticator.class).invoke(o, authenticator);

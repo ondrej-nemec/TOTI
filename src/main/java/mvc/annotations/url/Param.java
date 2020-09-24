@@ -1,9 +1,11 @@
-package mvc.annotations;
+package mvc.annotations.url;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Lang {
+public @interface Param {
 
+	String value();
+	
 }
