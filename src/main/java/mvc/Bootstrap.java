@@ -6,7 +6,10 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import common.Logger;
+import helper.AuthorizationHelper;
+import interfaces.AclUser;
 import mvc.authentication.Authenticator;
+import mvc.authentication.Identity;
 import mvc.templating.TemplateFactory;
 import socketCommunication.Server;
 import socketCommunication.ServerSecuredCredentials;
@@ -17,54 +20,59 @@ public class Bootstrap {
 	private final Server server;
 
 	public Bootstrap(
-			int port,
-			int threadPool,
-    		long readTimeout,
-    		long sessionExpirationTime,
-    		String tempPath,
+			int port, // settins section
+			int threadPool, // settins section
+    		long readTimeout, // settins section
+    		ResponseHeaders headers, // settins section
+    		Optional<ServerSecuredCredentials> certs, // settins section
+    		String tempPath, // settins section
     		Map<String, String> folders,
-    		String resourcesPath,
-    		ResponseHeaders headers,
-    		Optional<ServerSecuredCredentials> certs,
-    		String charset,
-    		Function<Locale, Translator> translator,
-    		Authenticator authenticator,
+    		String resourcesPath, // settins section
     		Router router,
+    		Function<Locale, Translator> translator,
+    		Authenticator authenticator, // secured section
+    		AuthorizationHelper authorizator, // secured section
+    		Function<Identity, AclUser> identityToUser, // secured section
+    		String charset, // settins section
     		Logger logger) throws Exception {
 		this(
-				port, threadPool, readTimeout, sessionExpirationTime,
-				tempPath, folders, 
-				resourcesPath,headers, certs,
-				charset, translator, authenticator, router, logger, true);
+				port, threadPool, readTimeout,
+				headers, certs,
+				tempPath, folders, resourcesPath, router, translator, 
+				authenticator, authorizator, identityToUser,
+				charset, logger, true);
+		
 	}
 	
 	public Bootstrap(
 			int port,
 			int threadPool,
     		long readTimeout,
-    		long sessionExpirationTime,
+    		ResponseHeaders headers,
+    		Optional<ServerSecuredCredentials> certs,
     		String tempPath,
     		Map<String, String> folders,
     		String resourcesPath,
-    		ResponseHeaders headers,
-    		Optional<ServerSecuredCredentials> certs,
-    		String charset,
+    		Router router,
     		Function<Locale, Translator> translator,
     		Authenticator authenticator,
-    		Router router,
+    		AuthorizationHelper authorizator,
+    		Function<Identity, AclUser> identityToUser,
+    		String charset,
     		Logger logger,
     		boolean deleteDir) throws Exception {
-		TemplateFactory templateFactory = new TemplateFactory(tempPath,/* templatePath,*/ deleteDir);
+		TemplateFactory templateFactory = new TemplateFactory(tempPath, deleteDir);
 		
 		ResponseFactory response = new ResponseFactory(
 				headers,
-				templateFactory,
-				router,
-				translator,
-				null, // authorizator
-				authenticator,
-				folders,
 				resourcesPath,
+				router,
+				folders,
+				templateFactory,
+				translator,
+				authenticator,
+				authorizator,
+				identityToUser,
 				charset,
 				logger
 		);

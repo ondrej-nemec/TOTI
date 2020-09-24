@@ -9,6 +9,12 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 import controllers.LoginController;
 import controllers.TestController;
+import helper.Action;
+import helper.AuthorizationHelper;
+import helper.Rules;
+import interfaces.AclDestination;
+import interfaces.AclUser;
+import interfaces.RulesDao;
 import logging.LoggerFactory;
 import mvc.authentication.Authenticator;
 import mvc.authentication.TokenType;
@@ -35,8 +41,19 @@ public class BootstrapEndToEndTest {
 					TokenType.COOKIE(),
 					new NullStorage(),
 					"secretSalt",
-					LoggerFactory.getLogger("auth")
-			);		
+					LoggerFactory.getLogger("security")
+			);
+			
+			AuthorizationHelper authorizator = new AuthorizationHelper(
+					new RulesDao() {						
+						@Override
+						public Rules getRulesForUser(AclUser user, AclDestination domain) {
+							return new Rules(Action.UNDEFINED, Action.UNDEFINED, Arrays.asList(Action.UNDEFINED));
+						}
+					},
+					LoggerFactory.getLogger("security")
+			);
+			
 			Router router = new Router();
 			router.addUrl("/jsgrid", "/base/grid");
 			router.addUrl("", "/index.html");
@@ -47,8 +64,7 @@ public class BootstrapEndToEndTest {
 			folders.put("controllers2", "templates2");
 			
 			Bootstrap b = new Bootstrap(
-					80, 10, 60000, 3600000, // 1 h
-					"temp", folders, "www",
+					80, 10, 60000,
 					new ResponseHeaders(
 						RandomStringUtils.randomAlphanumeric(50),
 						Arrays.asList(
@@ -56,10 +72,15 @@ public class BootstrapEndToEndTest {
 						)
 					),
 					Optional.empty(),
-					"utf-8",
+					"temp", folders, "www",
+					router,
 					(loc)->new PropertiesTranslator(LoggerFactory.getLogger("translator"), "messages"),
 					authenticator,
-					router,
+					authorizator,
+					(ident)->{
+						return null;
+					},
+					"utf-8",
 					LoggerFactory.getLogger("server"), false
 			);
 			b.start();

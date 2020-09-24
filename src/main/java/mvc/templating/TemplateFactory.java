@@ -67,11 +67,6 @@ public class TemplateFactory {
 	
 	public Template getTemplate(String templateFile, String templatePath) throws Exception {
 		return getTemplateWithAbsolutePath(templatePath + templateFile, (file)->{
-			System.err.println(file);
-			System.err.println(templatePath);
-			System.err.println(templateFile);
-			System.err.println(getClassName(file, templatePath));
-			System.err.println();
 			return getClassName(file, templatePath);
 		});
 	}

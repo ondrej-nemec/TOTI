@@ -52,7 +52,10 @@ public class Identity {
 	
 	@Override
 	public String toString() {
-		return String.format("%s(%s): %s - %s", identity.id, identity.expired, identity.content, identity.token);
+		if (isPresent()) {
+			return String.format("Identity%s(%s): %s - %s", identity.id, identity.expired, identity.content, identity.token);
+		}
+		return "Identity.empty";
 	}
 
 	public String getToken() {

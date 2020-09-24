@@ -16,21 +16,26 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import common.Logger;
 import common.exceptions.LogicException;
 import exception.AccessDeniedException;
 import exception.NotAllowedActionException;
 import helper.AuthorizationHelper;
+import interfaces.AclUser;
 import mvc.annotations.MappedUrl;
 import mvc.annotations.inject.Authenticate;
 import mvc.annotations.inject.ClientIdentity;
 import mvc.annotations.inject.Lang;
 import mvc.annotations.url.Action;
 import mvc.annotations.url.Controller;
+import mvc.annotations.url.Domain;
 import mvc.annotations.url.Method;
 import mvc.annotations.url.Param;
 import mvc.annotations.url.ParamUrl;
 import mvc.annotations.url.Params;
+import mvc.annotations.url.Secured;
 import mvc.authentication.Authenticator;
 import mvc.authentication.Identity;
 import mvc.registr.Registr;
@@ -46,27 +51,34 @@ import translator.Translator;
 public class ResponseFactory implements RestApiServerResponseFactory {
 	
 	private final ResponseHeaders headers;
-	
-	private final List<MappedUrl> mapping;
-	
-	private final String resourcesDir;
 	private final String charset;
-
+	private final Logger logger;
+	
+	private final List<MappedUrl> mapping;	
+	private final String resourcesDir;
+	private final Router router;
+	
+	private final Map<String, String> folders;
 	private final TemplateFactory templateFactory;
 	private final Function<Locale, Translator> translator;
-	// TODO use it
+	
+	private final Function<Identity, AclUser> identityToUser;
 	private final AuthorizationHelper authorizator;
-	// TODO inject
 	private final Authenticator authenticator;
-	private final Router router;
-	private final Map<String, String> folders;
-	private final Logger logger;
+	
 	
 	public ResponseFactory(
 			ResponseHeaders headers,
-			TemplateFactory templateFactory, Router router,
-			Function<Locale, Translator> translator, AuthorizationHelper authorizator, Authenticator authenticator,
-			Map<String, String> folders, String resourcesDir, String charset, Logger logger) throws Exception {
+			String resourcesDir,
+			Router router,
+			Map<String, String> folders,
+			TemplateFactory templateFactory,
+			Function<Locale, Translator> translator,			
+			Authenticator authenticator,
+			AuthorizationHelper authorizator,
+			Function<Identity, AclUser> identityToUser,
+			String charset,
+			Logger logger) throws Exception {
 		this.resourcesDir = resourcesDir;
 		this.charset = charset;
 		this.templateFactory = templateFactory;
@@ -78,6 +90,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		this.router = router;
 		this.folders = folders;
 		this.logger = logger;
+		this.identityToUser = identityToUser;
 	}
 
 	@Override
@@ -92,7 +105,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		System.out.println(fullUrl);
 		System.out.println(header);
 		try {
-			return getAuthenticatedResponse(method, fullUrl, params, header, ip);
+			return getAuthenticatedResponse(method, url, params, header, ip);
 		} catch (NotAllowedActionException | AccessDeniedException e) {
 			return onException(403, e, fullUrl);
 		} catch (ServerException e) {
@@ -177,7 +190,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		return Response.getFile(resourcesDir + url).getResponse(headers, null, null, null, charset);
 	}
 	
-	private RestApiResponse getControllerResponse(MappedUrl mapped, Properties params, Identity identity) {
+	private RestApiResponse getControllerResponse(MappedUrl mapped, Properties params, Identity identity) throws ServerException {
+		authorize(mapped, params, identity);
 		try {
 			// params for method
 			List<Class<?>> classesList = new ArrayList<>();
@@ -223,22 +237,30 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			}			
 			
 			String templatePath = folders.get(mapped.getFolder());
-			
-			if (classesList.size() > 0) {
-				Class<?>[] classes = new Class<?>[classesList.size()];
-				classesList.toArray(classes);
-				Object[] values = new Object[valuesList.size()];
-				valuesList.toArray(values);
+
+			Class<?>[] classes = new Class<?>[classesList.size()];
+			classesList.toArray(classes);
+			Object[] values = new Object[valuesList.size()];
+			valuesList.toArray(values);
 				
-	    		Response response = (Response)o.getClass()
+	    	Response response = (Response)o.getClass()
 	    				.getMethod(mapped.getMethodName(), classes).invoke(o, values);
-	    		return response.getResponse(headers, templateFactory, translator.apply(locale), templatePath, charset);
-			} else {
-	    		Response response = (Response)o.getClass().getMethod(mapped.getMethodName()).invoke(o);
-	    		return response.getResponse(headers, templateFactory, translator.apply(locale), templatePath, charset);
-			}
+	    	return response.getResponse(headers, templateFactory, translator.apply(locale), templatePath, charset);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	private void authorize(MappedUrl mapped, Properties params, Identity identity) throws ServerException {
+		if (mapped.isSecured()) {
+			if (!identity.isPresent()) {
+				throw new ServerException(403, "Method require logged user");
+			}
+			for (Domain domain : mapped.getSecured()) {
+				for (helper.Action action : domain.actions()) {
+					authorizator.throwIfIsNotAllowed(identityToUser.apply(identity), ()->{return domain.name();}, action);
+				}
+			}
 		}
 	}
 
@@ -294,6 +316,10 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		    	Class<?> clazz =  Class.forName(namespace + "." + f.getName().replace(".class", ""));
 			    if ( ! (clazz.isInterface() || clazz.isAnonymousClass() || clazz.isPrimitive()) 
 		    			&& clazz.isAnnotationPresent(Controller.class)) {
+			    	Domain[] classDomains = null;
+			    	if (clazz.isAnnotationPresent(Secured.class)) {
+			    		classDomains = clazz.getAnnotation(Secured.class).value();
+			    	}
 		    		for (java.lang.reflect.Method m : clazz.getMethods()) {
 		    			if (m.isAnnotationPresent(Action.class)) {
 		    				HttpMethod[] methods = m.isAnnotationPresent(Method.class)
@@ -305,7 +331,16 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			    					+ (methodUrl.isEmpty() ? "" : "/" + methodUrl);
 		    				String className = clazz.getName();
 		    				String methodName = m.getName();
-		    				MappedUrl mappedUrl = new MappedUrl(url, methods, className, methodName, folder);
+		    				
+		    				Domain[] methodDomains = null;
+		    				if (m.isAnnotationPresent(Secured.class)) {
+		    					methodDomains = m.getAnnotation(Secured.class).value();
+		    				}
+		    				
+		    				MappedUrl mappedUrl = new MappedUrl(
+		    						url, methods, className, methodName, folder,
+		    						ArrayUtils.addAll(classDomains, methodDomains)
+		    				);
 		    				for (Parameter p : m.getParameters()) {
 		    					if (p.isAnnotationPresent(ParamUrl.class)) {
 		    						mappedUrl.appendUrl("([a-zA-Z0-9_]*)");

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 import common.structures.Tuple2;
+import mvc.annotations.url.Domain;
 import socketCommunication.http.HttpMethod;
 
 public class MappedUrl {
@@ -24,8 +25,10 @@ public class MappedUrl {
 	private final String folder;
 	
 	private boolean isRegex = false;
+	
+	private final Domain[] domains;
 
-	public MappedUrl(String url, HttpMethod[] allowedMethods, String className, String methodName, String folder) {
+	public MappedUrl(String url, HttpMethod[] allowedMethods, String className, String methodName, String folder, Domain[] domains) {
 		this.url = url;
 		this.folder = folder;
 		this.allowedMethods = allowedMethods;
@@ -33,6 +36,7 @@ public class MappedUrl {
 		this.methodName = methodName;
 		this.params = new LinkedList<>();
 		this.paramNames = new LinkedList<>();
+		this.domains = domains;
 	}
 
 	public String getUrl() {
@@ -96,6 +100,14 @@ public class MappedUrl {
 
 	public void setRegex(boolean isRegex) {
 		this.isRegex = isRegex;
+	}
+
+	public boolean isSecured() {
+		return domains != null;
+	}
+	
+	public Domain[] getSecured() {
+		return domains;
 	}
 	
 }
