@@ -17,7 +17,7 @@ public class RedirectResponse implements Response {
 	}
 	
 	@Override
-	public RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String charset) {
+	public RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String templateDir, String charset) {
 		return RestApiResponse.textResponse(code, header.getHeaders("Location: " + url), (bw)->{});
 	}
 

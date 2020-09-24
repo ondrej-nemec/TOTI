@@ -26,7 +26,7 @@ public class JsonResponse implements Response {
 	public void addParam(String name, Object value) {}
 
 	@Override
-	public RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String charset) {
+	public RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String templateDir, String charset) {
 		return RestApiResponse.textResponse(
 			code,
 			header.getHeaders("Content-Type: application/json; charset=" + charset),

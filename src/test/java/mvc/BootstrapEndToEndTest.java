@@ -1,6 +1,8 @@
 package mvc;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -21,6 +23,9 @@ public class BootstrapEndToEndTest {
 			Registr.get().addFactory(TestController.class, ()->{
 				return new TestController();
 			});
+			Registr.get().addFactory(controllers2.TestController.class, ()->{
+				return new controllers2.TestController();
+			});
 			Registr.get().addFactory(LoginController.class, ()->{
 				return new LoginController();
 			});
@@ -37,9 +42,13 @@ public class BootstrapEndToEndTest {
 			router.addUrl("", "/index.html");
 			router.addUrl("/grid/index.html", "/grid");
 			
+			Map<String, String> folders = new HashMap<>();
+			folders.put("controllers", "templates");
+			folders.put("controllers2", "templates2");
+			
 			Bootstrap b = new Bootstrap(
 					80, 10, 60000, 3600000, // 1 h
-					"temp", "templates/", new String[]{"controllers"}, "www",
+					"temp", folders, "www",
 					new ResponseHeaders(
 						RandomStringUtils.randomAlphanumeric(50),
 						Arrays.asList(

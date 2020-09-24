@@ -48,24 +48,31 @@ public class TemplateFactory {
 	private static final List<Supplier<Tag>> CUSTOM_TAG_PROVIDERS = new LinkedList<>();
 
 	private final String tempPath;
-	private final String templatePath;
+//	private final String templatePath;
 	private final boolean deleteAuxJavaClass;
 //	private final TemplateParser parser;
 	private final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 	
-	public TemplateFactory(String tempPath, String templatePath) {
-		this(tempPath, templatePath, true);
+	public TemplateFactory(String tempPath/*, String templatePath*/) {
+		this(tempPath/*, templatePath*/, true);
 	}
 	
-	public TemplateFactory(String tempPath, String templatePath, boolean deleteAuxJavaClass) {
-		this.tempPath = tempPath;
-		this.templatePath = templatePath;
+	public TemplateFactory(String tempPath, /*String templatePath, */boolean deleteAuxJavaClass) {
+		String cachePath = tempPath + "/cache";
+		new File(cachePath).mkdir();
+		this.tempPath = cachePath;
+	//	this.templatePath = templatePath;
 		this.deleteAuxJavaClass = deleteAuxJavaClass;
 	}
 	
-	public Template getTemplate(String templateFile) throws Exception {
+	public Template getTemplate(String templateFile, String templatePath) throws Exception {
 		return getTemplateWithAbsolutePath(templatePath + templateFile, (file)->{
-			return getClassName(file);
+			System.err.println(file);
+			System.err.println(templatePath);
+			System.err.println(templateFile);
+			System.err.println(getClassName(file, templatePath));
+			System.err.println();
+			return getClassName(file, templatePath);
 		});
 	}
 	
@@ -120,8 +127,9 @@ public class TemplateFactory {
 		}
 	}
 	
-	private Tuple2<String, String> getClassName(File file) throws IOException {
-		String namespace = file.getCanonicalPath()
+	private Tuple2<String, String> getClassName(File file, String templatePath) throws IOException {
+		String moduleName = templatePath.replaceAll("\\\\", "_").replaceAll("/", "_");
+		String namespace = moduleName + file.getCanonicalPath()
 				.replace(new File(templatePath).getCanonicalPath(), "")
 				.substring(1)
 				.replace(file.getName(), "")

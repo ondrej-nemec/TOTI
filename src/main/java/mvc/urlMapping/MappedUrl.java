@@ -21,10 +21,13 @@ public class MappedUrl {
 	
 	private final List<String> paramNames;
 	
+	private final String folder;
+	
 	private boolean isRegex = false;
 
-	public MappedUrl(String url, HttpMethod[] allowedMethods, String className, String methodName) {
+	public MappedUrl(String url, HttpMethod[] allowedMethods, String className, String methodName, String folder) {
 		this.url = url;
+		this.folder = folder;
 		this.allowedMethods = allowedMethods;
 		this.className = className;
 		this.methodName = methodName;
@@ -36,6 +39,10 @@ public class MappedUrl {
 		return url;
 	}
 	
+	public String getFolder() {
+		return folder;
+	}
+
 	public void appendUrl(String append) {
 		url += "/" + append;
 	}

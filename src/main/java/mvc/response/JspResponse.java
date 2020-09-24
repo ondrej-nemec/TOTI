@@ -29,14 +29,14 @@ public class JspResponse implements Response {
 	}
 
 	@Override
-	public RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String charset) {
+	public RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String templateDir, String charset) {
 		params.put("nonce", header.getNonce());
 		return RestApiResponse.textResponse(
 			code,
 			header.getHeaders("Content-Type: text/html; charset=" + charset),
 			(bw)->{
 				try {
-					Template template = templateFactory.getTemplate(fileName);
+					Template template = templateFactory.getTemplate(fileName, templateDir + "/");
 					bw.write(template.create(templateFactory, params, translator));
 				} catch (Exception e) {
 					throw new RuntimeException(e);

@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -55,12 +56,13 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	// TODO inject
 	private final Authenticator authenticator;
 	private final Router router;
+	private final Map<String, String> folders;
 	
 	public ResponseFactory(
 			ResponseHeaders headers,
 			TemplateFactory templateFactory, Router router,
 			Function<Locale, Translator> translator, AuthorizationHelper authorizator, Authenticator authenticator,
-			String[] folders, String resourcesDir, String charset) throws Exception {
+			Map<String, String> folders, String resourcesDir, String charset) throws Exception {
 		this.resourcesDir = resourcesDir;
 		this.charset = charset;
 		this.templateFactory = templateFactory;
@@ -70,6 +72,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		this.authorizator = authorizator;
 		this.authenticator = authenticator;
 		this.router = router;
+		this.folders = folders;
 	}
 
 	@Override
@@ -115,17 +118,18 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Identity identity) {
 		for (MappedUrl mapped : mapping) {
 			boolean is = false;
+			boolean methodMatch = Arrays.asList(mapped.getAllowedMethods()).contains(method);
 			if (mapped.isRegex()) {
 				Pattern p = Pattern.compile(String.format("(%s)", mapped.getUrl()));
 		    	Matcher m = p.matcher(url);
-		    	if (m.find() && Arrays.asList(mapped.getAllowedMethods()).contains(method)) {
+		    	if (m.find() && methodMatch) {
 		    		for (int i = 2; i <= m.groupCount(); i++) { // group 0 is origin text, 1 match url
 		    			params.put(mapped.getParamName(i - 2), m.group(i));
 		    		}
 		    		is = true;
 		    	}
 			} else {
-					is = url.equals(mapped.getUrl());
+					is = url.equals(mapped.getUrl()) && methodMatch;
 			}
 	    	if (is) {
 	    		return getControllerResponse(mapped, params, identity);
@@ -139,7 +143,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		if (file.isDirectory()) {
 			return getDirResponse(file.listFiles(), url);
 		}
-		return Response.getFile(resourcesDir + url).getResponse(headers, null, null, charset);
+		return Response.getFile(resourcesDir + url).getResponse(headers, null, null, null, charset);
 	}
 	
 	private RestApiResponse getControllerResponse(MappedUrl mapped, Properties params, Identity identity) {
@@ -187,6 +191,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				}
 			}			
 			
+			String templatePath = folders.get(mapped.getFolder());
+			
 			if (classesList.size() > 0) {
 				Class<?>[] classes = new Class<?>[classesList.size()];
 				classesList.toArray(classes);
@@ -195,10 +201,10 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				
 	    		Response response = (Response)o.getClass()
 	    				.getMethod(mapped.getMethodName(), classes).invoke(o, values);
-	    		return response.getResponse(headers, templateFactory, translator.apply(locale), charset);
+	    		return response.getResponse(headers, templateFactory, translator.apply(locale), templatePath, charset);
 			} else {
 	    		Response response = (Response)o.getClass().getMethod(mapped.getMethodName()).invoke(o);
-	    		return response.getResponse(headers, templateFactory, translator.apply(locale), charset);
+	    		return response.getResponse(headers, templateFactory, translator.apply(locale), templatePath, charset);
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -235,10 +241,10 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		});
 	}
 	*/
-	private List<MappedUrl> loadUrlMap(String[] folders) throws Exception {
+	private List<MappedUrl> loadUrlMap(Map<String, String>  folders) throws Exception {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		List<MappedUrl> mapping = new LinkedList<>();
-		for (String folder : folders) {
+		for (String folder : folders.keySet()) {
 			URL url = loader.getResource(folder);
 		    String path = url.getPath();
 		    File dir = new File(path);
@@ -268,7 +274,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			    					+ (methodUrl.isEmpty() ? "" : "/" + methodUrl);
 		    				String className = clazz.getName();
 		    				String methodName = m.getName();
-		    				MappedUrl mappedUrl = new MappedUrl(url, methods, className, methodName);
+		    				MappedUrl mappedUrl = new MappedUrl(url, methods, className, methodName, folder);
 		    				for (Parameter p : m.getParameters()) {
 		    					if (p.isAnnotationPresent(ParamUrl.class)) {
 		    						mappedUrl.appendUrl("([a-zA-Z0-9_]*)");

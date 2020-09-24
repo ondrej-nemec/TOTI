@@ -1,7 +1,7 @@
 package mvc;
 
-import java.io.File;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -22,8 +22,7 @@ public class Bootstrap {
     		long readTimeout,
     		long sessionExpirationTime,
     		String tempPath,
-    		String templatePath,
-    		String[] controllers,
+    		Map<String, String> folders,
     		String resourcesPath,
     		ResponseHeaders headers,
     		Optional<ServerSecuredCredentials> certs,
@@ -34,7 +33,7 @@ public class Bootstrap {
     		Logger logger) throws Exception {
 		this(
 				port, threadPool, readTimeout, sessionExpirationTime,
-				tempPath, templatePath, controllers, 
+				tempPath, folders, 
 				resourcesPath,headers, certs,
 				charset, translator, authenticator, router, logger, true);
 	}
@@ -45,8 +44,7 @@ public class Bootstrap {
     		long readTimeout,
     		long sessionExpirationTime,
     		String tempPath,
-    		String templatePath,
-    		String[] controllers,
+    		Map<String, String> folders,
     		String resourcesPath,
     		ResponseHeaders headers,
     		Optional<ServerSecuredCredentials> certs,
@@ -56,12 +54,7 @@ public class Bootstrap {
     		Router router,
     		Logger logger,
     		boolean deleteDir) throws Exception {
-		String cachePath = tempPath + "/cache";
-	//	String sessionPath = tempPath + "/sessions";
-		new File(cachePath).mkdir();
-	//	new File(sessionPath).mkdir();
-		
-		TemplateFactory templateFactory = new TemplateFactory(cachePath, templatePath, deleteDir);
+		TemplateFactory templateFactory = new TemplateFactory(tempPath,/* templatePath,*/ deleteDir);
 		
 		ResponseFactory response = new ResponseFactory(
 				headers,
@@ -70,7 +63,7 @@ public class Bootstrap {
 				translator,
 				null, // authorizator
 				authenticator,
-				controllers,
+				folders,
 				resourcesPath,
 				charset
 		);

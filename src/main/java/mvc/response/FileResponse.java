@@ -27,7 +27,7 @@ public class FileResponse implements Response {
 	public void addParam(String name, Object value) {}
 	
 	@Override
-	public RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String charset) {
+	public RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String templateDir, String charset) {
 		List<String> h = header.getHeaders();
 		String head = getContentType(fileName, charset);
 		if (head != null) {

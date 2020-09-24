@@ -10,7 +10,7 @@ import translator.Translator;
 
 public interface Response {
 	
-	RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String charset);
+	RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String templateDir, String charset);
 
 	void addParam(String name, Object value);
 	
