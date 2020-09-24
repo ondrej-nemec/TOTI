@@ -1,10 +1,10 @@
 package mvc.response;
 
-import java.io.FileInputStream;
 import java.util.List;
 
 import common.FileExtension;
 import core.text.Binary;
+import core.text.InputStreamLoader;
 import mvc.ResponseHeaders;
 import mvc.templating.TemplateFactory;
 import socketCommunication.http.StatusCode;
@@ -40,7 +40,7 @@ public class FileResponse implements Response {
 				while((len = bin.read(b)) != -1) {
 					bout.write(b, 0, len);
 				}
-			}, new FileInputStream(fileName)); // TODO add www dir ???
+			}, InputStreamLoader.createInputStream(getClass(), fileName));
 		});
 	}
 	
