@@ -16,24 +16,27 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import common.Logger;
 import common.exceptions.LogicException;
+import exception.AccessDeniedException;
+import exception.NotAllowedActionException;
 import helper.AuthorizationHelper;
+import mvc.annotations.Action;
+import mvc.annotations.Authenticate;
+import mvc.annotations.ClientIdentity;
+import mvc.annotations.Controller;
+import mvc.annotations.Lang;
+import mvc.annotations.MappedUrl;
+import mvc.annotations.Method;
+import mvc.annotations.Param;
+import mvc.annotations.ParamUrl;
+import mvc.annotations.Params;
 import mvc.authentication.Authenticator;
 import mvc.authentication.Identity;
 import mvc.registr.Registr;
 import mvc.response.Response;
 import mvc.templating.DirectoryTemplate;
 import mvc.templating.TemplateFactory;
-import mvc.urlMapping.Action;
-import mvc.urlMapping.Authenticate;
-import mvc.urlMapping.Controller;
-import mvc.urlMapping.Lang;
-import mvc.urlMapping.ClientIdentity;
-import mvc.urlMapping.MappedUrl;
-import mvc.urlMapping.Method;
-import mvc.urlMapping.Param;
-import mvc.urlMapping.ParamUrl;
-import mvc.urlMapping.Params;
 import socketCommunication.http.HttpMethod;
 import socketCommunication.http.StatusCode;
 import socketCommunication.http.server.RestApiResponse;
@@ -57,12 +60,13 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private final Authenticator authenticator;
 	private final Router router;
 	private final Map<String, String> folders;
+	private final Logger logger;
 	
 	public ResponseFactory(
 			ResponseHeaders headers,
 			TemplateFactory templateFactory, Router router,
 			Function<Locale, Translator> translator, AuthorizationHelper authorizator, Authenticator authenticator,
-			Map<String, String> folders, String resourcesDir, String charset) throws Exception {
+			Map<String, String> folders, String resourcesDir, String charset, Logger logger) throws Exception {
 		this.resourcesDir = resourcesDir;
 		this.charset = charset;
 		this.templateFactory = templateFactory;
@@ -73,6 +77,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		this.authenticator = authenticator;
 		this.router = router;
 		this.folders = folders;
+		this.logger = logger;
 	}
 
 	@Override
@@ -86,8 +91,31 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			String ip) throws IOException {
 		System.out.println(fullUrl);
 		System.out.println(header);
+		try {
+			return getAuthenticatedResponse(method, fullUrl, params, header, ip);
+		} catch (NotAllowedActionException | AccessDeniedException e) {
+			return onException(403, e, fullUrl);
+		} catch (ServerException e) {
+			return onException(e.getCode(), e, fullUrl);
+		} catch (Exception e) {
+			return onException(500, e, fullUrl);
+		}
+	}
+	
+	private RestApiResponse onException(int code, Throwable t, String fullUrl) {
+		logger.error(String.format("Exception occured %s URL: %s", code, fullUrl), t);
+		// TODO maybe some custom handler
+		return Response.getFile(StatusCode.forCode(code), String.format("mvc/errors/%s.html", code))
+				.getResponse(headers, null, null, null, charset);
+	}
+	
+	private RestApiResponse getAuthenticatedResponse(HttpMethod method,
+			String url,
+			Properties params,
+			Properties header,
+			String ip) throws ServerException {
 		Identity identity = authenticator.authenticate(header);
-		RestApiResponse res = getNormalizedResponse(method, url, params, identity);
+		RestApiResponse res = getNormalizedResponse(method, url, params, identity, ip);
 		res.getHeader().addAll(authenticator.getHeaders(identity));
 		return res;
 	}
@@ -96,26 +124,29 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			HttpMethod method,
 			String url,
 			Properties params,
-			Identity identity) {
-		return getRoutedResponse(method, url.endsWith("/") ? url.substring(0, url.length()-1) : url, params, identity);
+			Identity identity,
+			String ip) throws ServerException {
+		return getRoutedResponse(method, url.endsWith("/") ? url.substring(0, url.length()-1) : url, params, identity, ip);
 	}
 	
 	private RestApiResponse getRoutedResponse(
 			HttpMethod method,
 			String url,
 			Properties params,
-			Identity identity) {
+			Identity identity,
+			String ip) throws ServerException {
 		if (router.getUrlMapping(url) == null) {
-			return getMappedResponse(method, url, params, identity);
+			return getMappedResponse(method, url, params, identity, ip);
 		}
-		return getMappedResponse(method, router.getUrlMapping(url), params, identity);
+		return getMappedResponse(method, router.getUrlMapping(url), params, identity, ip);
 	}
 	
 	private RestApiResponse getMappedResponse(
 			HttpMethod method,
 			String url,
 			Properties params,
-			Identity identity) {
+			Identity identity,
+			String ip) throws ServerException {
 		for (MappedUrl mapped : mapping) {
 			boolean is = false;
 			boolean methodMatch = Arrays.asList(mapped.getAllowedMethods()).contains(method);
@@ -138,7 +169,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		
 		File file = new File(resourcesDir + url);
 		if (!file.exists()) {
-			throw new RuntimeException(String.format("URL not fouded: %s (%s)", url, method));
+			throw new ServerException(404, String.format("URL not fouded: %s (%s)", url, method));
 		}
 		if (file.isDirectory()) {
 			return getDirResponse(file.listFiles(), url);
@@ -180,7 +211,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Field[] fields = o.getClass().getDeclaredFields();
 			for (Field field : fields) {
 				String method = "set" + (field.getName().charAt(0) + "").toUpperCase() + field.getName().substring(1);
-				if (field.isAnnotationPresent(mvc.urlMapping.Translator.class)) {
+				if (field.isAnnotationPresent(mvc.annotations.Translator.class)) {
 					o.getClass().getMethod(method, Translator.class).invoke(o, translator);
 				} else if (field.isAnnotationPresent(Authenticate.class)) {
 					o.getClass().getMethod(method, Authenticator.class).invoke(o, authenticator);

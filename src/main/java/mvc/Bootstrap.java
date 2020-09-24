@@ -65,7 +65,8 @@ public class Bootstrap {
 				authenticator,
 				folders,
 				resourcesPath,
-				charset
+				charset,
+				logger
 		);
 				
 		this.server = Server.create(
