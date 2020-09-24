@@ -1,9 +1,9 @@
-package mvc.urlMapping;
+package mvc.annotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Translator {
+public @interface Lang {
 
 }

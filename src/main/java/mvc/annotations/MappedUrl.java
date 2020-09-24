@@ -1,4 +1,4 @@
-package mvc.urlMapping;
+package mvc.annotations;
 
 import java.util.LinkedList;
 import java.util.List;
