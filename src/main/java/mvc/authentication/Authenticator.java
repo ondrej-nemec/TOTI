@@ -54,9 +54,10 @@ public class Authenticator {
 		token.clear();
 	}
 	
-	public String refresh(Identity token, String content, Boolean append) throws AuthentizationException {
-		storage.updateToken(token.getId(), expirationTime, content, append);
-		return "";
+	public String refresh(Identity identity, String content, Boolean append) throws AuthentizationException {
+		//TODO
+		storage.updateToken(identity.getId(), expirationTime, content, append);
+		return login(content, identity);
 	}
 	
 	public Identity authenticate(Properties header) {
@@ -95,6 +96,9 @@ public class Authenticator {
 	
 	// TODO test this method
 	protected Identity parseToken(String token) throws HashException {
+		if (token == null || token.isEmpty()) {
+			return Identity.empty();
+		}
 		String random = token.substring(0, 50);
 		String[] others = token.substring(50).split("-");
 		long expired = Long.parseLong(others[0]);
