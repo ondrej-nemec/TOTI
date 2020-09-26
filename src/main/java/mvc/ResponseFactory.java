@@ -26,6 +26,7 @@ import helper.AuthorizationHelper;
 import interfaces.AclUser;
 import mvc.annotations.MappedUrl;
 import mvc.annotations.inject.Authenticate;
+import mvc.annotations.inject.Authorize;
 import mvc.annotations.inject.ClientIdentity;
 import mvc.annotations.inject.Lang;
 import mvc.annotations.url.Action;
@@ -249,6 +250,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 					o.getClass().getMethod(method, Translator.class).invoke(o, translator);
 				} else if (field.isAnnotationPresent(Authenticate.class)) {
 					o.getClass().getMethod(method, Authenticator.class).invoke(o, authenticator);
+				} else if (field.isAnnotationPresent(Authorize.class)) {
+					o.getClass().getMethod(method, AuthorizationHelper.class).invoke(o, authorizator);
 				} else if (field.isAnnotationPresent(ClientIdentity.class)) {
 					o.getClass().getMethod(method, Identity.class).invoke(o, identity);
 				} else if (field.isAnnotationPresent(Lang.class)) {
