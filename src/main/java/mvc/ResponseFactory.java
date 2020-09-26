@@ -111,7 +111,9 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		System.out.println(header);
 		try {
 			return getAuthenticatedResponse(method, url, params, header, ip);
-		} catch (NotAllowedActionException | AccessDeniedException | AuthentizationException e) {
+		} catch (AuthentizationException e) {
+			return onException(401, e, fullUrl);
+		} catch (NotAllowedActionException | AccessDeniedException e) {
 			return onException(403, e, fullUrl);
 		} catch (ServerException e) {
 			return onException(e.getCode(), e, fullUrl);
@@ -277,7 +279,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private void authorize(MappedUrl mapped, Properties params, Identity identity) throws ServerException {
 		if (mapped.isSecured()) {
 			if (!identity.isPresent()) {
-				throw new ServerException(403, "Method require logged user");
+				throw new ServerException(401, "Method require logged user");
 			}
 			for (Domain domain : mapped.getSecured()) {
 				for (helper.Action action : domain.actions()) {

@@ -30,18 +30,20 @@ public class Bootstrap {
     		String resourcesPath, // settins section
     		Router router,
     		Function<Locale, Translator> translator,
-    		Authenticator authenticator, // secured section
     		AuthorizationHelper authorizator, // secured section
     		Function<Identity, AclUser> identityToUser, // secured section
     		String charset, // settins section
     		String defLang, // settings section
-    		Logger logger) throws Exception {
+    		String tokenSalt,
+    		long tokenExpirationTime,
+    		Logger logger,
+    		Logger securityLogger) throws Exception {
 		this(
 				port, threadPool, readTimeout,
 				headers, certs,
 				tempPath, folders, resourcesPath, router, translator, 
-				authenticator, authorizator, identityToUser,
-				charset, defLang, logger, true);
+				authorizator, identityToUser,
+				charset, defLang, tokenSalt, tokenExpirationTime, logger, securityLogger, true);
 		
 	}
 	
@@ -56,13 +58,22 @@ public class Bootstrap {
     		String resourcesPath,
     		Router router,
     		Function<Locale, Translator> translator,
-    		Authenticator authenticator,
     		AuthorizationHelper authorizator,
     		Function<Identity, AclUser> identityToUser,
     		String charset,
     		String defLang,
+    		String tokenSalt,
+    		long tokenExpirationTime,
     		Logger logger,
+    		Logger securityLogger,
     		boolean deleteDir) throws Exception {
+
+		Authenticator authenticator = new Authenticator(
+				tokenExpirationTime,
+				tokenSalt,
+				securityLogger
+		);
+		
 		TemplateFactory templateFactory = new TemplateFactory(tempPath, deleteDir);
 		
 		ResponseFactory response = new ResponseFactory(
