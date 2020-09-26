@@ -2,8 +2,8 @@ package mvc.registr;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
+import common.structures.ThrowingSupplier;
 import common.structures.Tuple2;
 
 public class Registr {
@@ -14,7 +14,7 @@ public class Registr {
 		return registr;
 	}
 	
-	private final Map<String, Supplier<Object>> FACTORIES;
+	private final Map<String, ThrowingSupplier<Object, Throwable>> FACTORIES;
 	private final Map<Tuple2<String, Class<?>>, Object> SERVICES;
 	
 	private Registr() {
@@ -22,16 +22,16 @@ public class Registr {
 		this.SERVICES = new HashMap<>();
 	}
 	
-	public void addFactory(String name, Supplier<Object> factory) {
+	public void addFactory(String name, ThrowingSupplier<Object, Throwable> factory) {
 		FACTORIES.put(name, factory);
 	}
 
-	public void addFactory(Class<?> clazz, Supplier<Object> factory) {
+	public void addFactory(Class<?> clazz, ThrowingSupplier<Object, Throwable> factory) {
 		FACTORIES.put(clazz.getName(), factory);
 	}
 	
-	public Supplier<Object> getFactory(String className) throws Exception {
-		Supplier<Object> result = FACTORIES.get(className);
+	public ThrowingSupplier<Object, Throwable> getFactory(String className) throws Exception {
+		ThrowingSupplier<Object, Throwable> result = FACTORIES.get(className);
 		if (result == null) {
 			throw new RuntimeException("Missing factory " + className);
 		}
@@ -39,7 +39,7 @@ public class Registr {
 	}
 
     public void addService(String name, Class<?> clazz, Object object) {
-        SERVICES.put(new Tuple2<>(name, object.getClass()), object);
+        SERVICES.put(new Tuple2<>(name, clazz), object);
     }
     
     @SuppressWarnings("unchecked")
