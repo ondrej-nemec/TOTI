@@ -17,8 +17,6 @@ import interfaces.AclUser;
 import interfaces.RulesDao;
 import logging.LoggerFactory;
 import mvc.authentication.Authenticator;
-import mvc.authentication.TokenType;
-import mvc.authentication.storage.NullStorage;
 import mvc.registr.Registr;
 import translator.PropertiesTranslator;
 
@@ -38,8 +36,6 @@ public class BootstrapEndToEndTest {
 
 			Authenticator authenticator = new Authenticator(
 					120000,
-					TokenType.COOKIE(),
-					new NullStorage(),
 					"secretSalt",
 					LoggerFactory.getLogger("security")
 			);
@@ -81,6 +77,7 @@ public class BootstrapEndToEndTest {
 						return null;
 					},
 					"utf-8",
+					"cs_CZ",
 					LoggerFactory.getLogger("server"), false
 			);
 			b.start();

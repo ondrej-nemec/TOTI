@@ -37,6 +37,7 @@ import mvc.annotations.url.ParamUrl;
 import mvc.annotations.url.Params;
 import mvc.annotations.url.Secured;
 import mvc.authentication.Authenticator;
+import mvc.authentication.AuthentizationException;
 import mvc.authentication.Identity;
 import mvc.registr.Registr;
 import mvc.response.Response;
@@ -52,6 +53,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	
 	private final ResponseHeaders headers;
 	private final String charset;
+	private final String defLang;
 	private final Logger logger;
 	
 	private final List<MappedUrl> mapping;	
@@ -78,6 +80,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			AuthorizationHelper authorizator,
 			Function<Identity, AclUser> identityToUser,
 			String charset,
+			String defLang,
 			Logger logger) throws Exception {
 		this.resourcesDir = resourcesDir;
 		this.charset = charset;
@@ -91,6 +94,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		this.folders = folders;
 		this.logger = logger;
 		this.identityToUser = identityToUser;
+		this.defLang = defLang;
 	}
 
 	@Override
@@ -106,7 +110,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		System.out.println(header);
 		try {
 			return getAuthenticatedResponse(method, url, params, header, ip);
-		} catch (NotAllowedActionException | AccessDeniedException e) {
+		} catch (NotAllowedActionException | AccessDeniedException | AuthentizationException e) {
 			return onException(403, e, fullUrl);
 		} catch (ServerException e) {
 			return onException(e.getCode(), e, fullUrl);
@@ -126,11 +130,25 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			String url,
 			Properties params,
 			Properties header,
-			String ip) throws ServerException {
+			String ip) throws Exception {
 		Identity identity = authenticator.authenticate(header);
-		RestApiResponse res = getNormalizedResponse(method, url, params, identity, ip);
-		res.getHeader().addAll(authenticator.getHeaders(identity));
-		return res;
+		return getLocalizedResponse(method, url, header, params, identity, ip);
+	}
+	
+	private RestApiResponse getLocalizedResponse(
+			HttpMethod method,
+			String url,
+			Properties header,
+			Properties params,
+			Identity identity,
+			String ip) throws ServerException {
+		String lang = header.getProperty("Accept-Language");
+		if (lang == null) {
+			return getNormalizedResponse(method, url, params, identity, ip, new Locale(defLang));
+		} else {
+			String locale = lang.split(" ", 2)[0].split(";")[0].trim().replace("-", "_");
+			return getNormalizedResponse(method, url, params, identity, ip, new Locale(locale));
+		}
 	}
 	
 	private RestApiResponse getNormalizedResponse(
@@ -138,8 +156,9 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			String url,
 			Properties params,
 			Identity identity,
-			String ip) throws ServerException {
-		return getRoutedResponse(method, url.endsWith("/") ? url.substring(0, url.length()-1) : url, params, identity, ip);
+			String ip,
+			Locale locale) throws ServerException {
+		return getRoutedResponse(method, url.endsWith("/") ? url.substring(0, url.length()-1) : url, params, identity, ip, locale);
 	}
 	
 	private RestApiResponse getRoutedResponse(
@@ -147,11 +166,12 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			String url,
 			Properties params,
 			Identity identity,
-			String ip) throws ServerException {
+			String ip,
+			Locale locale) throws ServerException {
 		if (router.getUrlMapping(url) == null) {
-			return getMappedResponse(method, url, params, identity, ip);
+			return getMappedResponse(method, url, params, identity, ip, locale);
 		}
-		return getMappedResponse(method, router.getUrlMapping(url), params, identity, ip);
+		return getMappedResponse(method, router.getUrlMapping(url), params, identity, ip, locale);
 	}
 	
 	private RestApiResponse getMappedResponse(
@@ -159,7 +179,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			String url,
 			Properties params,
 			Identity identity,
-			String ip) throws ServerException {
+			String ip,
+			Locale locale) throws ServerException {
 		for (MappedUrl mapped : mapping) {
 			boolean is = false;
 			boolean methodMatch = Arrays.asList(mapped.getAllowedMethods()).contains(method);
@@ -176,7 +197,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 					is = url.equals(mapped.getUrl()) && methodMatch;
 			}
 	    	if (is) {
-	    		return getControllerResponse(mapped, params, identity);
+	    		return getControllerResponse(mapped, params, identity, locale);
 	    	}
 		}
 		
@@ -190,7 +211,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		return Response.getFile(resourcesDir + url).getResponse(headers, null, null, null, charset);
 	}
 	
-	private RestApiResponse getControllerResponse(MappedUrl mapped, Properties params, Identity identity) throws ServerException {
+	private RestApiResponse getControllerResponse(MappedUrl mapped, Properties params, Identity identity, Locale locale) throws ServerException {
 		authorize(mapped, params, identity);
 		try {
 			// params for method
@@ -217,8 +238,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				}
 			});
 			
-			// TODO get locale from request/session, some translator cache
-			Locale locale = Locale.getDefault();
+			// TODO authenticate
 			
 			Object o = Registr.get().getFactory(mapped.getClassName()).get();
 			// inject
@@ -246,7 +266,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	    	Response response = (Response)o.getClass()
 	    				.getMethod(mapped.getMethodName(), classes).invoke(o, values);
 	    	return response.getResponse(headers, templateFactory, translator.apply(locale), templatePath, charset);
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -258,7 +278,9 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			}
 			for (Domain domain : mapped.getSecured()) {
 				for (helper.Action action : domain.actions()) {
-					authorizator.throwIfIsNotAllowed(identityToUser.apply(identity), ()->{return domain.name();}, action);
+					authorizator.throwIfIsNotAllowed(identityToUser.apply(identity), ()->{
+						return domain.name();
+					}, action);
 				}
 			}
 		}

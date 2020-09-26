@@ -34,13 +34,14 @@ public class Bootstrap {
     		AuthorizationHelper authorizator, // secured section
     		Function<Identity, AclUser> identityToUser, // secured section
     		String charset, // settins section
+    		String defLang, // settings section
     		Logger logger) throws Exception {
 		this(
 				port, threadPool, readTimeout,
 				headers, certs,
 				tempPath, folders, resourcesPath, router, translator, 
 				authenticator, authorizator, identityToUser,
-				charset, logger, true);
+				charset, defLang, logger, true);
 		
 	}
 	
@@ -59,6 +60,7 @@ public class Bootstrap {
     		AuthorizationHelper authorizator,
     		Function<Identity, AclUser> identityToUser,
     		String charset,
+    		String defLang,
     		Logger logger,
     		boolean deleteDir) throws Exception {
 		TemplateFactory templateFactory = new TemplateFactory(tempPath, deleteDir);
@@ -74,6 +76,7 @@ public class Bootstrap {
 				authorizator,
 				identityToUser,
 				charset,
+				defLang,
 				logger
 		);
 				

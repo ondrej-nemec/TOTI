@@ -1,45 +1,33 @@
 package mvc.authentication;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
 import common.Logger;
-import mvc.authentication.storage.Storage;
 import utils.security.Hash;
 import utils.security.HashException;
 
 public class Authenticator {
 
 	private final long expirationTime;
-	private final TokenType tokenType;
 	private final String hashSalt;
-	private final Storage storage;
 	private final Logger logger;
 	
 	private final Hash hasher;
 	
-	public Authenticator(long expirationTime, TokenType tokenType, Storage storage, String hashSalt, Logger logger) {
+	public Authenticator(long expirationTime, String hashSalt, Logger logger) {
 		this.expirationTime = expirationTime;
-		this.tokenType = tokenType;
 		this.logger = logger;
 		this.hashSalt = hashSalt;
 		this.hasher = new Hash("SHA-256");
-		this.storage = storage;
 	}
 
 	public String login(String content, Identity identity) throws AuthentizationException {
 		try {
 			String id = RandomStringUtils.randomAlphanumeric(50);
-			String token;
-			if (storage.writeContentToToken()) {
-				storage.saveToken(id, expirationTime, content);
-				token = createToken(id, content);
-			} else {
-				token = createToken(id, "");
-			}
+			String token = createToken(id, content);
 			identity.set(content, id, expirationTime, token);
 			return token;
 		} catch (Exception e) {
@@ -48,38 +36,29 @@ public class Authenticator {
 	}
 	
 	public void logout(Identity token) {
-		if (token.isPresent()) {
-			storage.deleteToken(token.getId());
-		}
+		// TODO some disabling - maybe memory list of tokens
 		token.clear();
 	}
 	
 	public String refresh(Identity identity, String content, Boolean append) throws AuthentizationException {
-		//TODO
-		storage.updateToken(identity.getId(), expirationTime, content, append);
 		return login(content, identity);
 	}
 	
 	public Identity authenticate(Properties header) {
 		try {
-			String token = tokenType.getHeaderName() + "";
-			Identity identity = parseToken(
-				tokenType.getFromValueToToken().apply(
-					header.getProperty(token)
-				)
-			);
-			if (storage.autoRefresh()) {
-				refresh(identity, "", true);
+			String token = null;
+			if (header.get("Authorization") != null) {
+				String[] vals = header.get("Authorization").toString().split(" ", 2);
+				if (vals.length == 2) {
+					token = vals[1];
+				}
 			}
+			Identity identity = parseToken(token);
 			return identity;
 		} catch (Exception e) {
 			logger.debug("Missing authenticate header", e);
 			return Identity.empty();
 		}
-	}
-	
-	public List<String> getHeaders(Identity identity) {
-		return tokenType.getCreateHeader().apply(identity);
 	}
 	
 	public long getExpirationTime() {
@@ -107,7 +86,7 @@ public class Authenticator {
 		if (!hasher.compare(createHashingMesasge(random, expired, content), hash)) {
 			throw new RuntimeException("Token corrupted");
 		}
-		if (expired > new Date().getTime() + expirationTime) {
+		if (expired < new Date().getTime()) {
 			throw new RuntimeException("Token is expired");
 		}
 		return Identity.get(content, random, expired, token);
