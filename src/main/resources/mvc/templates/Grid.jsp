@@ -1,5 +1,8 @@
 	<div id="${gridName}"></div>
-	<!-- <div id="${gridName}-pager"></div> -->
+	<div>
+		<div id="${gridName}-pager" style="float:left"></div>
+		<div id="${gridName}-actions"></div>
+	</div>
 	
 	<script>
 		jsGrid.locales.locale = {
@@ -85,7 +88,7 @@
 		    align: "center",
 		    sorting: false,
 		    width: 10,
-		    itemTemplate: function(value) {
+		    itemTemplate: function(item) {
 		        return $("<input>").attr("type", "checkbox").attr("class", "jsgrid-action");
 		    },
 		    filterTemplate: function() {
@@ -96,11 +99,11 @@
 		    	return this._insertPicker = element;
     		},
     		headerTemplate: function() {
-    			return "aaa";
+    			return "";
     		}
 		});
 		jsGrid.fields.actions = Actions;
-		
+				
 		/*************************/
 	
 		$("#${gridName}").jsGrid({
@@ -118,6 +121,7 @@
 			
 			pageSize: ${pageSize},
 	        pageButtonCount: ${pageButtonCount},
+	        pagerContainer: '#${gridName}-pager',
 	        // TODO parametrized
 	        // rowRenderer: function(item) {},
 	        // TODO parametrized
@@ -129,9 +133,28 @@
 				},
 	        </t:if>
 	        fields: [
+	        	<t:if cond='${actions} != null'>
 	        	{
-	                type: "actions",
+	                type: "control",
+	    		    align: "center",
+	    		    sorting: false,
+	    		    width: 10,
+	    		    itemTemplate: function(item) {
+	    		    	console.log(item);
+	    		        return $("<input>").attr("type", "checkbox").attr("class", "jsgrid-action");
+	    		    },
+	    		    filterTemplate: function() {
+	    		    	return "";
+	        		},
+	        		headerTemplate: function() {
+	        			var element = $("<input>").attr("type", "checkbox").attr("id", "jsgrid-action");
+	    		    	element.click(function() {
+	    		    		$('.jsgrid-action').prop('checked', $(this).prop('checked'));
+	    		    	});
+	    		    	return this._insertPicker = element;
+	        		}
 	            },
+	            </t:if>
 	        	<t:foreach item="mvc.control.Column column" collection="${fields}">
 		        	{
 		        		name: "<t:out var="column.getName()"/>", // name in data
@@ -189,16 +212,20 @@
 					    modeSwitchButton: <t:out var='buttons.isModeSwitchButton()' />,
 					    width: <t:out var='buttons.getWidth()' />,
 		        		/****/
+		        		itemTemplate: function (item) {
+		    		    	console.log(item);
+		        			return "";
+		        		},
 		        		<t:if cond='buttons.getItemTemplate() != null'>
-			        	itemTemplate: function (item) {
-		        			return <t:out var='buttons.getItemTemplate()' nonescape />;
-		        		},
-		        	</t:if>
+				        	itemTemplate: function (item) {
+			        			return <t:out var='buttons.getItemTemplate()' nonescape />;
+			        		},
+			        	</t:if>
 		        		<t:if cond='buttons.getHeaderTemplate() != null'>
-			        	headerTemplate: function () {
-		        			return <t:out var='buttons.getHeaderTemplate()' nonescape />;
-		        		},
-		        	</t:if>
+				        	headerTemplate: function () {
+			        			return <t:out var='buttons.getHeaderTemplate()' nonescape />;
+			        		},
+			        	</t:if>
 		            }
 	        	</t:if>
 	        ],
@@ -243,5 +270,24 @@
     		        });
     		    }
     		}
-		});	    
+		});
+		<t:if cond='${actions} != null'>
+			$(document).ready(function() {
+				var select = $('<select>').attr("id", "action-select");			
+				<t:foreach item="common.structures.Tuple2 action" collection="${actions}">
+					select.append($("<option>")
+							.attr('value', "<t:out var='action._2()'/>")
+							.text("<t:out var='action._1()'/>")
+					);
+				</t:foreach>
+				var button = $("<a>").attr("id", "action-select-button").text("TODO send").hide();
+				$('#${gridName}-actions').append(select).append(button);
+				
+				$('#action-select').change(function(){
+					$("#action-select-button")
+						.attr("href", $(this).children(":selected").val())
+						.show();
+				});
+			});
+		</t:if>
 	</script>
