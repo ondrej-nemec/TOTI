@@ -8,7 +8,8 @@ var gridLang = gridLang || {
 	},
 	"loading": {
 		"noItemsFound": "No items founded",
-		"loadingError": "Loading error"
+		"loadingError": "Loading error",
+		"noItemsSelected": "No items selected"
 	},
 	"execute": "Execute..."
 };
@@ -161,12 +162,25 @@ simpleGrid.data.load = function(config, firstLoad) {
 								.attr("class", config.Name + '-grid-action')
 								.attr("data-unique", row[config.Unique])
 						);
+					} else if (column.type === 'buttons') {
+						// td.html(column["renderer"](row));
+						column.buttons.forEach(function(button, index) {
+							td.append(
+								$('<a>').attr("href", button.href(row)).html(
+									$('<button>').attr("class", button.class).text(button.title)
+								).click(function() {
+									if (!button.confirmation(row)) {
+										return false;
+									}
+									if (button.ajax) {
+										// TODO send request
+										return false;
+									}
+								})
+							);
+						});
 					} else if (column.hasOwnProperty("renderer")) {
-						if (column.type === 'buttons') {
-							td.html(column["renderer"](row));
-						} else {
-							td.html(column["renderer"](row[column.name]));
-						}
+						td.html(column["renderer"](row[column.name]));
 					} else {
 						td.text(row[column.name]);
 					}
@@ -280,7 +294,7 @@ simpleGrid.gui.header = function(config) {
 }
 
 simpleGrid.gui.body = function() {
-	return $('<tbody>'); /* empty, data loaded after */ 
+	return $('<tbody>'); // empty, data loaded after
 }
 
 simpleGrid.gui.footer = function(config) {
@@ -289,7 +303,10 @@ simpleGrid.gui.footer = function(config) {
 	var actions = $('<div>');
 	var select = $('<select>').append($('<option>').attr("value", '').text('---'));
 	config.Actions.forEach(function (item, index) {
-		select.append($('<option>').attr("value", item.link).text(item.title));
+		select.append($('<option>')
+				.attr("value", item.link)
+				.data("sync", item.hasOwnProperty("sync") ? item.sync : false)
+				.text(item.title));
 	});
 	select.change(function() {
 		$(this).next("a").attr("href", $(this).val());
@@ -297,10 +314,15 @@ simpleGrid.gui.footer = function(config) {
 	var button = $('<a>').attr("href", "").click(function() {
 		var ids = {};
 		$('.' + config.Name + "-grid-action:checked").each(function() {
-			// ids.push($(this).data("unique"));
 			ids[$(this).data("unique")] = $(this).data("unique");
 		});
-		if (true) { // TODO async switch
+		if (Object.keys(ids).length === 0) {
+			$('#' + config.Name + "-gridMessages")
+			.html($('<div>').css("background-color", 'red').text(gridLang.loading.noItemsSelected)); // TODO color
+			return false;
+		}
+		
+		if (!$(this).parent().children('select').children('option:selected').data("sync")) {
 			$.ajax({
 				url: $(this).attr("href"),
 				data: {
