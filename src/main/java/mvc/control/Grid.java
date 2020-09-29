@@ -1,165 +1,106 @@
 package mvc.control;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+
+import mvc.control.gridColumns.ActionColumn;
+import mvc.control.gridColumns.GridButton;
 
 public class Grid {
 	
 	public static final String TEMPLATE_FILE = "mvc/templates/Grid.jsp";
 	
 	private final String name;
-	private final String dataUrl;
-
-	private String width = "auto";
-	private String height = "auto";
-	
-	private boolean heading = true;
-	private boolean filtering = true;
-	private boolean autoload = true;
-	private boolean sorting = true;
-	private boolean selecting = true;
-	
-	private boolean paging = true;
-	private boolean pageLoading = true;	
-	private int pageSize = 20;
-	private int pageButtonCount = 5;
-	
-	private boolean inserting = false;
-	private boolean editing = false;
+	private final String sourceUrl;
+	private String rowUnique = "id";
+	private String sourceMethod = "GET";
+	private int pagesButtonCount = 5;
+	private List<Integer> pageSizes = Arrays.asList(5, 10, 20, 50, 100);
+	private int defatulPageSize = 20;
 	
 	private final List<Column> columns = new LinkedList<>();
-	private GridButtons buttons = null;
+	private final List<GridButton> buttons = new LinkedList<>();
+	private final List<ActionColumn> actions = new LinkedList<>();
 	
-	// itemTemplate, headerTemplate, filterTemplate, insertTemplate
-		
-	// editButton, modeSwitchButton, deleteButton, clearFilteringButton
-	
-	// validate
-	
-	// deleteConfirm: , rowRenderer, rowClick
-	
-	/**
-	 * required:
-	 * <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-	 * <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
-	 * recomended:
-	 * <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css" />
-	 * <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
-	 * @param name
-	 */
-	public Grid(String name, String dataUrl) {
+	public Grid(String name, String sourceUrl) {
 		this.name = name;
-		this.dataUrl = dataUrl;
+		this.sourceUrl = sourceUrl;
 	}
-	
+
+	public static String getTemplateFile() {
+		return TEMPLATE_FILE;
+	}
+
 	public String getName() {
 		return name;
 	}
 
-	public String getDataUrl() {
-		return dataUrl;
+	public String getSourceUrl() {
+		return sourceUrl;
 	}
 
-	public String getWidth() {
-		return width;
+	public String getRowUnique() {
+		return rowUnique;
 	}
 
-	public String getHeight() {
-		return height;
+	public String getSourceMethod() {
+		return sourceMethod;
 	}
 
-	public boolean isHeading() {
-		return heading;
+	public int getPagesButtonCount() {
+		return pagesButtonCount;
 	}
 
-	public boolean isFiltering() {
-		return filtering;
+	public List<Integer> getPageSizes() {
+		return pageSizes;
 	}
 
-	public boolean isAutoload() {
-		return autoload;
+	public int getDefatulPageSize() {
+		return defatulPageSize;
 	}
 
-	public boolean isSorting() {
-		return sorting;
-	}
-
-	public boolean isSelecting() {
-		return selecting;
-	}
-
-	public boolean isPaging() {
-		return paging;
-	}
-
-	public boolean isPageLoading() {
-		return pageLoading;
-	}
-
-	public int getPageSize() {
-		return pageSize;
-	}
-
-	public int getPageButtonCount() {
-		return pageButtonCount;
-	}
-
-	public boolean isInserting() {
-		return inserting;
-	}
-
-	public boolean isEditing() {
-		return editing;
-	}
-	
 	public List<Column> getColumns() {
 		return columns;
 	}
-	
-	public GridButtons getButtons() {
+
+	public List<GridButton> getButtons() {
 		return buttons;
 	}
 
-	public void setSize(String width, String height) {
-		this.width = width;
-		this.height = height;
+	public List<ActionColumn> getActions() {
+		return actions;
+	}
+
+	public void setRowUnique(String rowUnique) {
+		this.rowUnique = rowUnique;
+	}
+
+	public void setSourceMethod(String sourceMethod) {
+		this.sourceMethod = sourceMethod;
+	}
+
+	public void setPagesButtonCount(int pagesButtonCount) {
+		this.pagesButtonCount = pagesButtonCount;
+	}
+
+	public void setPageSizes(List<Integer> pageSizes) {
+		this.pageSizes = pageSizes;
+	}
+
+	public void setDefatulPageSize(int defatulPageSize) {
+		this.defatulPageSize = defatulPageSize;
+	}
+
+	public void addColumn(Column column) {
+		columns.add(column);
 	}
 	
-	public Column addTextColumn(String name, String title) {
-		Column col = new Column(name, title, "text");
-		columns.add(col);
-		return col;
+	public void addButtons(GridButton button) {
+		buttons.add(button);
 	}
-	
-	public Column addNumberColumn(String name, String title) {
-		Column col = new Column(name, title, "number");
-		columns.add(col);
-		return col;
+
+	public void addAction(ActionColumn action) {
+		actions.add(action);
 	}
-	
-	public Column addCheckboxColumn(String name, String title) {
-		Column col = new Column(name, title, "checkbox");
-		columns.add(col);
-		return col;
-	}
-	
-	public Column addDateTimeColumn(String name, String title) {
-		Column col = new Column(name, title, "datetime");
-		columns.add(col);
-		return col;
-	}
-	
-	public Column addSelectColumn(String name, String title, Map<String, String> options) {
-		Column col = new SelectColumn(name, title, options);
-		columns.add(col);
-		return col;
-	}
-	
-	public GridButtons setButtons() {
-		GridButtons buttons = new GridButtons();
-		this.buttons = buttons;
-		return buttons;
-	}
-	
 }

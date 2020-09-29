@@ -1,88 +1,68 @@
 package mvc.control;
 
-public class Column {
+import java.util.HashMap;
+import java.util.Map;
 
+import json.JsonStreamException;
+import json.OutputJsonStream;
+import json.OutputJsonWritter;
+import json.providers.OutputStringProvider;
+import mvc.templating.Template;
+
+public abstract class Column {
+	
 	private final String name;
-	private final String type;
-	private final String title;
-	private String width = "50";
-	private boolean sorting = true;
-	private boolean filtering = true;
+	private final String type; // value, buttons, actions
+	private String title;
+	private boolean useSorting = false;
 	
-	private Html itemTemplate = null;
-	private Html headerTemplate = null;
-	private Html filterTemplate = null;
-	private Html insertTemplate = null;
+	private final String filterType;
+	private boolean useFilter = false;
 	
-	public Column(String name, String title, String type) {
+	private Html renderer = null;
+	
+	public Column(String name, String type, String filterType) {
 		this.name = name;
-		this.title = title;
 		this.type = type;
+		this.title = name;
+		this.filterType = filterType;
 	}
 	
-	public Column setWidth(String width) {
-		this.width = width;
-		return this;
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
-	public String getName() {
-		return name;
+	public void setUseSorting(boolean useSorting) {
+		this.useSorting = useSorting;
 	}
 
-	public String getType() {
-		return type;
+	public void setUseFilter(boolean useFilter) {
+		this.useFilter = useFilter;
 	}
 
-	public String getTitle() {
-		return title;
+	public void setRenderer(Html renderer) {
+		this.renderer = renderer;
 	}
 
-	public String getWidth() {
-		return width;
+	public String toJsonString() throws JsonStreamException {
+		Map<String, Object> json = new HashMap<>();
+		json.put("name", Template.escapeVariable(name));
+		json.put("type", type);
+		json.put("title", Template.escapeVariable(title));
+		json.put("sorting", useSorting);
+		if (useFilter) {
+			json.put("filter", filterType);
+		}
+		if (renderer != null) {
+			json.put("renderer", renderer);
+		}
+		OutputJsonWritter writer = new OutputJsonWritter();
+		OutputStringProvider provider = new OutputStringProvider();
+		OutputJsonStream stream = new OutputJsonStream(provider);
+		writer.write(stream, json);
+		return provider.getJson();
 	}
-
-	public Html getItemTemplate() {
-		return itemTemplate;
-	}
-
-	public void setItemTemplate(Html itemTemplate) {
-		this.itemTemplate = itemTemplate;
-	}
-
-	public Html getHeaderTemplate() {
-		return headerTemplate;
-	}
-
-	public void setHeaderTemplate(Html headerTemplate) {
-		this.headerTemplate = headerTemplate;
-	}
-
-	public Html getFilterTemplate() {
-		return filterTemplate;
-	}
-
-	public void setFilterTemplate(Html filterTemplate) {
-		this.filterTemplate = filterTemplate;
-	}
-
-	public Html getInsertTemplate() {
-		return insertTemplate;
-	}
-
-	public boolean isSorting() {
-		return sorting;
-	}
-
-	public void setSorting(boolean sorting) {
-		this.sorting = sorting;
-	}
-
-	public boolean isFiltering() {
-		return filtering;
-	}
-
-	public void setFiltering(boolean filtering) {
-		this.filtering = filtering;
-	}
+	
+	public abstract Map<String, Object> getParams();
 	
 }

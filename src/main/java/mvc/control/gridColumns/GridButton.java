@@ -1,9 +1,11 @@
-package mvc.control;
+package mvc.control.gridColumns;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class GridButtons {
+import mvc.control.Html;
+
+public class GridButton {
 	
 	private boolean defaultEdit = true;
 	private boolean defaultDelete = true;
