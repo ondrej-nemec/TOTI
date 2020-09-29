@@ -24,9 +24,9 @@ public class VariablePrintTag implements Tag {
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
 		if (params.get("nonescape") != null) {
-			return String.format("b.append(%s);", params.get("var")); 
+			return String.format("b.append(%s);", params.get("name")); 
 		}
-		return String.format("b.append(Template.escapeVariable(%s));", params.get("var"));
+		return String.format("b.append(Template.escapeVariable(%s));", params.get("name"));
 	}
 		
 }
