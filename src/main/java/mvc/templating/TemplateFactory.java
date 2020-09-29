@@ -48,20 +48,17 @@ public class TemplateFactory {
 	private static final List<Supplier<Tag>> CUSTOM_TAG_PROVIDERS = new LinkedList<>();
 
 	private final String tempPath;
-//	private final String templatePath;
 	private final boolean deleteAuxJavaClass;
-//	private final TemplateParser parser;
 	private final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 	
-	public TemplateFactory(String tempPath/*, String templatePath*/) {
-		this(tempPath/*, templatePath*/, true);
+	public TemplateFactory(String tempPath) {
+		this(tempPath, true);
 	}
 	
-	public TemplateFactory(String tempPath, /*String templatePath, */boolean deleteAuxJavaClass) {
+	public TemplateFactory(String tempPath, boolean deleteAuxJavaClass) {
 		String cachePath = tempPath + "/cache";
 		new File(cachePath).mkdir();
 		this.tempPath = cachePath;
-	//	this.templatePath = templatePath;
 		this.deleteAuxJavaClass = deleteAuxJavaClass;
 	}
 	
@@ -73,15 +70,15 @@ public class TemplateFactory {
 	
 	public Template getFrameworkTemplate(String templateFile) throws Exception {
 		return getTemplateWithAbsolutePath(templateFile, (file)->{
-			return new Tuple2<>("framework", new FileExtension(file.getName()).getName());
+			return new Tuple2<>("toti", new FileExtension(file.getName()).getName());
 		});
 	}
 
 	private Template getTemplateWithAbsolutePath(
 			String templateFile,
 			ThrowingFunction<File, Tuple2<String, String>, IOException> getClassNameAndNamespace) throws Exception {
-		File file = new File(/*templatePath + */templateFile);
-		Tuple2<String, String> classNameAndNamespace = getClassNameAndNamespace.apply(file);// getClassName(file);
+		File file = new File(templateFile);
+		Tuple2<String, String> classNameAndNamespace = getClassNameAndNamespace.apply(file);
 		File cacheDir = new File(tempPath);
 		String className = 
 				classNameAndNamespace._1().replaceAll("/", ".")
@@ -92,12 +89,12 @@ public class TemplateFactory {
 			try {
 				Template template = (Template)loader.loadClass(className).newInstance();
 				if (file.lastModified() != template.getLastModification()) {
-					compileNewCache(/*templatePath +*/ templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), file.lastModified());
+					compileNewCache(templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), file.lastModified());
 				} else {
 					return template;
 				}
 			} catch (ClassNotFoundException e) {
-				compileNewCache(/*templatePath + */templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), file.lastModified());
+				compileNewCache(templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), file.lastModified());
 			}
 		}
 		try (URLClassLoader loader = new URLClassLoader(new URL[] {cacheDir.toURI().toURL()});) {
