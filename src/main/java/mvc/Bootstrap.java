@@ -1,5 +1,6 @@
 package mvc;
 
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -73,15 +74,16 @@ public class Bootstrap {
 				tokenSalt,
 				securityLogger
 		);
-		
-		TemplateFactory templateFactory = new TemplateFactory(tempPath, deleteDir);
+		Map<String, TemplateFactory> modules = new HashMap<>();
+		folders.forEach((controller, templates)->{
+			modules.put(controller, new TemplateFactory(tempPath, templates, deleteDir));
+		});
 		
 		ResponseFactory response = new ResponseFactory(
 				headers,
 				resourcesPath,
 				router,
-				folders,
-				templateFactory,
+				modules,
 				translator,
 				authenticator,
 				authorizator,

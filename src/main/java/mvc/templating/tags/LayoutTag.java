@@ -31,7 +31,8 @@ public class LayoutTag implements Tag {
 	public String getNotPairCode(Map<String, String> params) {
 		return String.format(
 				"if(layout!=null){throw new RuntimeException(\"There could be only one layout\");"
-				+ "} else {layout=templateFactory.getTemplate(\"%s\");"
+				+ "} else {"
+				+ "layout=templateFactory.getTemplate(\"%s\");"
 				+ "layout.getClass().getDeclaredField(\"b\").set(layout,b);"
 				+ "layout.getClass().getDeclaredField(\"blocks\").set(layout,blocks);"
 				+ "}",

@@ -61,8 +61,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private final String resourcesDir;
 	private final Router router;
 	
-	private final Map<String, String> folders;
-	private final TemplateFactory templateFactory;
+	private final Map<String, TemplateFactory> modules;
+	// private final TemplateFactory templateFactory;
 	private final Function<Locale, Translator> translator;
 	
 	private final Function<Identity, AclUser> identityToUser;
@@ -74,8 +74,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			ResponseHeaders headers,
 			String resourcesDir,
 			Router router,
-			Map<String, String> folders,
-			TemplateFactory templateFactory,
+			Map<String, TemplateFactory> modules,
+			// TemplateFactory templateFactory,
 			Function<Locale, Translator> translator,			
 			Authenticator authenticator,
 			AuthorizationHelper authorizator,
@@ -85,14 +85,14 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Logger logger) throws Exception {
 		this.resourcesDir = resourcesDir;
 		this.charset = charset;
-		this.templateFactory = templateFactory;
+	//	this.templateFactory = templateFactory;
 		this.translator = translator;
-		this.mapping = loadUrlMap(folders);
+		this.mapping = loadUrlMap(modules);
 		this.headers = headers;
 		this.authorizator = authorizator;
 		this.authenticator = authenticator;
 		this.router = router;
-		this.folders = folders;
+		this.modules = modules;
 		this.logger = logger;
 		this.identityToUser = identityToUser;
 		this.defLang = defLang;
@@ -126,7 +126,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		logger.error(String.format("Exception occured %s URL: %s", code, fullUrl), t);
 		// TODO maybe some custom handler
 		return Response.getFile(StatusCode.forCode(code), String.format("mvc/errors/%s.html", code))
-				.getResponse(headers, null, null, null, charset);
+				.getResponse(headers, null, null, charset);
 	}
 	
 	private RestApiResponse getAuthenticatedResponse(HttpMethod method,
@@ -211,7 +211,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		if (file.isDirectory()) {
 			return getDirResponse(file.listFiles(), url);
 		}
-		return Response.getFile(resourcesDir + url).getResponse(headers, null, null, null, charset);
+		return Response.getFile(resourcesDir + url).getResponse(headers, null, null, charset);
 	}
 	
 	private RestApiResponse getControllerResponse(MappedUrl mapped, Properties params, Identity identity, Locale locale) throws ServerException {
@@ -261,7 +261,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				}
 			}			
 			
-			String templatePath = folders.get(mapped.getFolder());
+			TemplateFactory templateFactory = modules.get(mapped.getFolder());
 
 			Class<?>[] classes = new Class<?>[classesList.size()];
 			classesList.toArray(classes);
@@ -270,7 +270,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				
 	    	Response response = (Response)o.getClass()
 	    				.getMethod(mapped.getMethodName(), classes).invoke(o, values);
-	    	return response.getResponse(headers, templateFactory, translator.apply(locale), templatePath, charset);
+	    	return response.getResponse(headers, templateFactory, translator.apply(locale), charset);
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
@@ -321,10 +321,10 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		});
 	}
 	*/
-	private List<MappedUrl> loadUrlMap(Map<String, String>  folders) throws Exception {
+	private List<MappedUrl> loadUrlMap(Map<String, TemplateFactory> modules) throws Exception {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		List<MappedUrl> mapping = new LinkedList<>();
-		for (String folder : folders.keySet()) {
+		for (String folder : modules.keySet()) {
 			URL url = loader.getResource(folder);
 		    String path = url.getPath();
 		    File dir = new File(path);

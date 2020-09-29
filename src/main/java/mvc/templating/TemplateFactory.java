@@ -50,21 +50,29 @@ public class TemplateFactory {
 	private final String tempPath;
 	private final boolean deleteAuxJavaClass;
 	private final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+	private final String templatePath;
 	
-	public TemplateFactory(String tempPath) {
-		this(tempPath, true);
+	public TemplateFactory(String tempPath, String templatePath) {
+		this(tempPath, templatePath, true);
 	}
 	
-	public TemplateFactory(String tempPath, boolean deleteAuxJavaClass) {
+	public TemplateFactory(String tempPath, String templatePath, boolean deleteAuxJavaClass) {
 		String cachePath = tempPath + "/cache";
 		new File(cachePath).mkdir();
 		this.tempPath = cachePath;
+		this.templatePath = templatePath;
 		this.deleteAuxJavaClass = deleteAuxJavaClass;
 	}
 	
-	public Template getTemplate(String templateFile, String templatePath) throws Exception {
-		return getTemplateWithAbsolutePath(templatePath + templateFile, (file)->{
+	public Template getTemplate(String templateFile) throws Exception {
+		return getTemplateWithAbsolutePath(templatePath+ "/" + templateFile, (file)->{
 			return getClassName(file, templatePath);
+		});
+	}
+	
+	public Template getModuleTemplate(String templateFile, String module) throws Exception {
+		return getTemplateWithAbsolutePath(templateFile, (file)->{
+			return new Tuple2<>(module, new FileExtension(file.getName()).getName());
 		});
 	}
 	
