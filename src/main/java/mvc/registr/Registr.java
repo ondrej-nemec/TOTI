@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import common.structures.ThrowingSupplier;
-import common.structures.Tuple2;
 
 public class Registr {
 	
@@ -15,7 +14,7 @@ public class Registr {
 	}
 	
 	private final Map<String, ThrowingSupplier<Object, Throwable>> FACTORIES;
-	private final Map<Tuple2<String, Class<?>>, Object> SERVICES;
+	private final Map<String, Object> SERVICES;
 	
 	private Registr() {
 		this.FACTORIES = new HashMap<>();
@@ -38,13 +37,13 @@ public class Registr {
 		return result;
 	}
 
-    public void addService(String name, Class<?> clazz, Object object) {
-        SERVICES.put(new Tuple2<>(name, clazz), object);
+    public void addService(String name, Object object) {
+        SERVICES.put(name, object);
     }
     
     @SuppressWarnings("unchecked")
     public <T> T getService(String name, Class<T> clazz) throws Exception {
-        Object result = SERVICES.get(new Tuple2<>(name, clazz));
+        Object result = SERVICES.get(name);
         if (result == null) {
              throw new RuntimeException("Missing service " + name + " " + clazz);
         }
