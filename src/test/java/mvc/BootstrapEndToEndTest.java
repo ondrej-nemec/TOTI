@@ -60,7 +60,6 @@ public class BootstrapEndToEndTest {
 			Router router = new Router();
 			router.addUrl("/jsgrid", "/base/grid");
 			router.addUrl("", "/index.html");
-			router.addUrl("/grid/index.html", "/grid");
 			
 			Map<String, String> folders = new HashMap<>();
 			folders.put("controllers", "templates");
