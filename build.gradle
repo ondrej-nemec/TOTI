@@ -6,7 +6,7 @@ repositories {
 }
 
 dependencies {
-	implementation 'com.github.ondrej-nemec:javainit:c9b32d1f21' // v6.0-alpha6
+	implementation 'com.github.ondrej-nemec:javainit:fcde1d992e' // v6.0-alpha6
 	
 	
 	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
