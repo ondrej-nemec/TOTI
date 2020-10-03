@@ -2,10 +2,12 @@ package mvc.annotations;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 
 import common.structures.Tuple2;
 import mvc.annotations.url.Domain;
+import mvc.validation.Validator;
 import socketCommunication.http.HttpMethod;
 
 public class MappedUrl {
@@ -27,8 +29,14 @@ public class MappedUrl {
 	private boolean isRegex = false;
 	
 	private final Domain[] domains;
+	
+	private final Optional<Validator> validator;
 
-	public MappedUrl(String url, HttpMethod[] allowedMethods, String className, String methodName, String folder, Domain[] domains) {
+	public MappedUrl(
+			String url, HttpMethod[] allowedMethods,
+			String className, String methodName,
+			String folder, Domain[] domains,
+			Optional<Validator> validator) {
 		this.url = url;
 		this.folder = folder;
 		this.allowedMethods = allowedMethods;
@@ -37,6 +45,7 @@ public class MappedUrl {
 		this.params = new LinkedList<>();
 		this.paramNames = new LinkedList<>();
 		this.domains = domains;
+		this.validator = validator;
 	}
 
 	public String getUrl() {
@@ -108,6 +117,10 @@ public class MappedUrl {
 	
 	public Domain[] getSecured() {
 		return domains;
+	}
+
+	public Optional<Validator> getValidator() {
+		return validator;
 	}
 	
 }

@@ -8,4 +8,6 @@ public @interface Action {
 
 	String value();
 	
+	String validator() default "";
+	
 }

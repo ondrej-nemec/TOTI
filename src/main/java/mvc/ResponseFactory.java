@@ -7,10 +7,12 @@ import java.lang.reflect.Parameter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -45,6 +47,7 @@ import mvc.response.Response;
 import mvc.templating.DirectoryTemplate;
 import mvc.templating.TemplateFactory;
 import mvc.validation.ParseObject;
+import mvc.validation.Validator;
 import socketCommunication.http.HttpMethod;
 import socketCommunication.http.StatusCode;
 import socketCommunication.http.server.RestApiResponse;
@@ -201,6 +204,14 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 					is = url.equals(mapped.getUrl()) && methodMatch;
 			}
 	    	if (is) {
+	    		if (mapped.getValidator().isPresent()) {
+		    		Map<String,  List<String>> errors = mapped.getValidator().get().validate(params);
+		    		Map<String,  Object> json = new HashMap<>();
+		    		json.putAll(errors);
+		    		if (!errors.isEmpty()) {
+		    			return Response.getJson(StatusCode.BAD_REQUEST, json).getResponse(headers, null, null, charset);
+		    		}
+	    		}
 	    		return getControllerResponse(mapped, params, identity, locale);
 	    	}
 		}
@@ -355,6 +366,9 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		    				HttpMethod[] methods = m.isAnnotationPresent(Method.class)
 		    								? m.getAnnotation(Method.class).value()
 		    								: HttpMethod.values();
+		    				Optional<Validator> validator = m.getAnnotation(Action.class).validator().isEmpty()
+		    						? Optional.empty()
+		    						: Optional.of(Registr.get().getService(m.getAnnotation(Action.class).validator(), Validator.class));
 		    				String controllerUrl = clazz.getAnnotation(Controller.class).value();
 		    				String methodUrl = m.getAnnotation(Action.class).value();
 		    				String url = prefix + (controllerUrl.isEmpty() ? "" : "/" + controllerUrl)
@@ -369,7 +383,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		    				
 		    				MappedUrl mappedUrl = new MappedUrl(
 		    						url, methods, className, methodName, folder,
-		    						ArrayUtils.addAll(classDomains, methodDomains)
+		    						ArrayUtils.addAll(classDomains, methodDomains),
+		    						validator
 		    				);
 		    				for (Parameter p : m.getParameters()) {
 		    					if (p.isAnnotationPresent(ParamUrl.class)) {
