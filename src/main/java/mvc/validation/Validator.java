@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 public class Validator {
 	
-	private final List<Rules> rules;
+	private final List<ItemRules> rules;
 	private final boolean strictList;
 	private final String onStrictListError;
 	
@@ -28,7 +28,7 @@ public class Validator {
 		this.rules = new LinkedList<>();
 	}
 	
-	public void addRule(Rules rule) {
+	public void addRule(ItemRules rule) {
 		rules.add(rule);
 	}
 	
@@ -87,14 +87,14 @@ public class Validator {
 						(maxValue)->maxValue.longValue() < new BigDecimal(o.toString()).longValue(),
 						errors,
 						rule.getName(),
-						rule.getOnMinLengthError()
+						rule.getOnMaxValueError()
 				);
 				checkRule(
 						rule.getMinValue(),
 						(minValue)->minValue.longValue() > new BigDecimal(o.toString()).longValue(),
 						errors,
 						rule.getName(),
-						rule.getOnMinLengthError()
+						rule.getOnMinValueError()
 				);
 				checkRule(
 						rule.getRegex(),

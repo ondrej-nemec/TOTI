@@ -5,14 +5,14 @@ import java.util.Optional;
 
 import common.exceptions.LogicException;
 
-public class Rules {
+public class ItemRules {
 
-	public static Rules forName(String name, boolean required) {
-		return new Rules(name, required, "This item is required");
+	public static ItemRules forName(String name, boolean required) {
+		return new ItemRules(name, required, "This item is required");
 	}
 
-	public static Rules forName(String name, boolean required, String onRequiredError) {
-		return new Rules(name, required, onRequiredError);
+	public static ItemRules forName(String name, boolean required, String onRequiredError) {
+		return new ItemRules(name, required, onRequiredError);
 	}
 	
 	private final String name;
@@ -36,17 +36,17 @@ public class Rules {
 	private Optional<Collection<Object>> allowedValues = Optional.empty();
 	private String onAllowedValuesError;
 	
-	private Rules(String name, boolean required, String onRequiredError) {
+	private ItemRules(String name, boolean required, String onRequiredError) {
 		this.name = name;
 		this.required = required;
 		this.onRequiredError = onRequiredError;
 	}
 	
-	public Rules setAllowedValues(Collection<Object> values) {
+	public ItemRules setAllowedValues(Collection<Object> values) {
 		return setAllowedValues(values, "Value must be one of: " + values);
 	}
 	
-	public Rules setAllowedValues(Collection<Object> values, String onAllowedValuesError) {
+	public ItemRules setAllowedValues(Collection<Object> values, String onAllowedValuesError) {
 		if (this.allowedValues.isPresent()) {
 			throw new LogicException("You cannot set an already set value");
 		}
@@ -55,11 +55,11 @@ public class Rules {
 		return this;
 	}
 	
-	public Rules setMaxValue(Number maxValue) {
+	public ItemRules setMaxValue(Number maxValue) {
 		return setMaxValue(maxValue, "Value must be less or equals " + maxValue);
 	}
 	
-	public Rules setMaxValue(Number maxValue, String onMaxValueError) {
+	public ItemRules setMaxValue(Number maxValue, String onMaxValueError) {
 		if (this.maxValue.isPresent()) {
 			throw new LogicException("You cannot set an already set value");
 		}
@@ -69,11 +69,11 @@ public class Rules {
 		return this;
 	}
 	
-	public Rules setMinValue(Number minValue) {
+	public ItemRules setMinValue(Number minValue) {
 		return setMinValue(minValue, "Value must be equals or higher " + minValue);
 	}
 	
-	public Rules setMinValue(Number minValue, String onMinValueError) {
+	public ItemRules setMinValue(Number minValue, String onMinValueError) {
 		if (this.minValue.isPresent()) {
 			throw new LogicException("You cannot set an already set value");
 		}
@@ -83,11 +83,11 @@ public class Rules {
 		return this;
 	}
 	
-	public Rules setMinLength(int minLength) {
+	public ItemRules setMinLength(int minLength) {
 		return setMinLength(minLength, "Text length must be at least " + minLength);
 	}
 	
-	public Rules setMinLength(int minLength, String onMinLengthError) {
+	public ItemRules setMinLength(int minLength, String onMinLengthError) {
 		if (this.minLength.isPresent()) {
 			throw new LogicException("You cannot set an already set value");
 		}
@@ -97,11 +97,11 @@ public class Rules {
 		return this;
 	}
 	
-	public Rules setMaxLength(int maxLength) {
+	public ItemRules setMaxLength(int maxLength) {
 		return setMaxLength(maxLength, "Text length must be maximal " + maxLength);
 	}
 	
-	public Rules setMaxLength(int maxLength, String onMaxLengthError) {
+	public ItemRules setMaxLength(int maxLength, String onMaxLengthError) {
 		if (this.maxLength.isPresent()) {
 			throw new LogicException("You cannot set an already set value");
 		}
@@ -111,11 +111,11 @@ public class Rules {
 		return this;
 	}
 	
-	public Rules setRegex(String regex) {
+	public ItemRules setRegex(String regex) {
 		return setRegex(regex, "Text must looks like " + regex);
 	}
 	
-	public Rules setRegex(String regex, String onRegexError) {
+	public ItemRules setRegex(String regex, String onRegexError) {
 		if (this.regex.isPresent()) {
 			throw new LogicException("You cannot set an already set value");
 		}
@@ -125,11 +125,11 @@ public class Rules {
 		return this;
 	}
 	
-	public Rules setType(Class<?> clazz) {
+	public ItemRules setType(Class<?> clazz) {
 		return setType(clazz, "Value must be " + clazz);
 	}
 	
-	public Rules setType(Class<?> clazz, String onExpectedTypeError) {
+	public ItemRules setType(Class<?> clazz, String onExpectedTypeError) {
 		if (this.expectedType.isPresent()) {
 			throw new LogicException("You cannot set an already set value");
 		}

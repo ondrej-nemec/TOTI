@@ -21,6 +21,7 @@ import interfaces.AclUser;
 import interfaces.RulesDao;
 import logging.LoggerFactory;
 import mvc.registr.Registr;
+import mvc.validation.Validator;
 import translator.PropertiesTranslator;
 
 public class BootstrapEndToEndTest {
@@ -39,6 +40,11 @@ public class BootstrapEndToEndTest {
 			Registr.get().addFactory(SecurityController.class, ()->{
 				return new SecurityController();
 			});
+			Validator val = new Validator(true);
+			val.addRule(mvc.validation.ItemRules.forName("a", true).setType(Integer.class).setMinValue(10).setMaxValue(20));
+			val.addRule(mvc.validation.ItemRules.forName("b", true).setMaxLength(20).setMinLength(10));
+			Registr.get().addService("testValidator", val);
+			
 			
 			AuthorizationHelper authorizator = new AuthorizationHelper(
 					new RulesDao() {						
@@ -100,7 +106,7 @@ public class BootstrapEndToEndTest {
 					"utf-8",
 					"cs_CZ",
 					"salt",
-					120000,
+					15000,
 					LoggerFactory.getLogger("server"),
 					LoggerFactory.getLogger("security"),
 					false
