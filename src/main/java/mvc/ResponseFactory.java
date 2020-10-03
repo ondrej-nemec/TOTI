@@ -44,6 +44,7 @@ import mvc.registr.Registr;
 import mvc.response.Response;
 import mvc.templating.DirectoryTemplate;
 import mvc.templating.TemplateFactory;
+import mvc.validation.ParseObject;
 import socketCommunication.http.HttpMethod;
 import socketCommunication.http.StatusCode;
 import socketCommunication.http.server.RestApiResponse;
@@ -224,7 +225,9 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				classesList.add(clazz);
 				if (name == null) {
 					valuesList.add(params);
-				} else if (clazz.isAssignableFrom(Integer.class) || clazz.isAssignableFrom(int.class)) {
+				} else {
+					valuesList.add(ParseObject.parse(clazz, params.get(name)));
+				} /*else if (clazz.isAssignableFrom(Integer.class) || clazz.isAssignableFrom(int.class)) {
 					valuesList.add(Integer.parseInt(params.get(name) + ""));
 				} else if (clazz.isAssignableFrom(Boolean.class) || clazz.isAssignableFrom(boolean.class)) {
 					valuesList.add(Boolean.parseBoolean(params.get(name) + ""));
@@ -238,7 +241,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 					valuesList.add(Long.parseLong(params.get(name) + ""));
 				} else {
 					valuesList.add(clazz.cast(params.get(name)));
-				}
+				}*/
 			});
 			
 			// TODO authenticate
