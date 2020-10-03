@@ -6,6 +6,11 @@ var totiLang = {
 		"next": "Next",
 		"last": "Last"
 	},
+	"actions": {
+		"select": "Select action",
+		"execute": "Execute",
+		"noSelectedItems": "No selected items"
+	}
 };
 
 var totiControl = {
@@ -64,11 +69,12 @@ var totiControl = {
 			}
 			return option;
 		},
-		button: function (asyncFunction, submitConfirmation, title, href, params = {}) {
+		button: function (asyncFunction, submitConfirmation, title, href, params = {}, renderer = null) {
+			if (renderer === null) {
+				renderer = $('<button>').text(title);
+			}
 			// TODO renderer
-			var button = $('<a>').attr("href", href).html(
-					$('<button>').text(title)
-			);
+			var button = $('<a>').attr("href", href).html(renderer);
 			for ([key, name] of Object.entries(params)) {
 				button.attr(key, name);
 			}
@@ -151,26 +157,130 @@ var totiGrid = {
 	load: function(uniqueName) {
 
 	},
-	filters: {
-		print: function() {
-			// TODO
+	filters: { 
+		/*columns: name, type (value, button, action), filter(optional):
+			radio: function (params = {})
+			checkbox: function (params = {})
+			number: function (params = {}) - sugested params: step, max, min
+			text: function (params = {}) - sugested params: size, minlength, maxlength
+			password: function (params = {}) - sugested params: size, minlength, maxlength
+			email: function (params = {})
+			datetime: function (params = {})
+			select: function (options, params = {}) 
+			option: function(value, title, params = {})
+		*/
+		print: function(uniqueName, columns) {
+			var filters = $('<tr>').attr("id", uniqueName + "-filtering");
+			columns.forEach(function(column, index) {
+				var cell = $('<td>').attr("data-name", column.name);
+
+
+				if (column.type === "actions") {
+					cell.html(
+						totiControl.inputs.checkbox().click(function() {
+							$('.' + uniqueName + '-grid-action').prop('checked', $(this).prop('checked'));
+						})
+					);
+				} else if (column.hasOwnProperty('filter')) {
+					cell.html(
+						totiControl.inputs[column.filter.type](column.filter)
+					);
+					cell.change(function() {
+						totiGrid.load(uniqueName);
+					});
+				} else {
+					cell.text('');
+				}
+				filters.append(cell);
+			});
+			return filters;
 		},
-		onLoad: function(uniqueName) {
-			// TODO
+		onLoad: function(uniqueName, urlParams) { // TODO maybe not all params but filtering only
+			$('#' + uniqueName + "-filtering").children('td').each(function() {
+				var name = $(this).data('name');
+				if (urlParams["filters[" + name + "]"] !== undefined) {
+					$(this).children().val(urlParams["filters[" + name + "]"]);
+				}
+			});
 		},
-		get: function() {
-			// TODO
+		get: function(uniqueName) {
+			var filters = {};
+			$('#' + uniqueName + "-filtering").children('td').each(function(index) {
+				var value = $(this).children().val();
+				if ($(this).data('name') != '' && value !== undefined && value !== '') {
+					filters[$(this).data('name')] = value;
+				}
+			});
+			return filters;
 		}
 	},
 	sorting: {
-		print: function() {
-			// TODO
+		/*
+		columns: [
+			{name, title, useSorting}
+		]
+		*/
+		print: function(uniqueName, columns) {
+			var sortes = $('<tr>').attr("id", uniqueName + "-sorting");
+			columns.forEach(function(column, index) {
+				sortes.append($('<td>').attr("data-name", column.name).html(
+					totiGrid.sorting._print(uniqueName, column.name, column.useSorting, column.title)
+				));
+			});
+			return sortes;
 		},
-		onLoad: function(uniqueName) {
-			// TODO
+		_print: function(uniqueName, name, useSorting, title = null) {
+			var cell = $('<a>');
+			if (useSorting) {
+				cell.attr("href", "").attr("data-sort", 0).click(function(e) {
+					e.preventDefault();
+					var sortType = $(this).data('sort') + 1;
+					if (sortType === 3) {
+						$(this).data('sort', 0);
+					} else {
+						$(this).data('sort', sortType);
+					}
+					$(this).children(".sortType").hide();
+					$(this).children(".type" + sortType).show();
+					totiGrid.load(uniqueName);
+				});
+				cell.append($('<i>').attr("class", "far fa-clock sortType type1").hide()); // TODO another icon
+				cell.append($('<i>').attr("class", "fas fa-clock sortType type2").hide()); // TODO another icon
+			}
+			if (title !== null) {
+				cell.append(title);
+			} else {
+				cell.append(name);
+			}
+			return $('<td>').attr("data-name", name).html(cell);
 		},
-		get: function() {
-			// TODO
+		onLoad: function(uniqueName, urlParams) { // TODO maybe not all params but sorting only
+			$('#' + uniqueName + "-sorting").children('td').each(function() {
+				var name = $(this).data('name');
+				if (urlParams["sorting[" + name + "]"] !== undefined) {
+					var val = urlParams["sorting[" + name + "]"];
+					var sortType = 0;
+					if (val == 'ASC') {
+						sortType = 1;
+					} else if (val == "DESC") {
+						sortType = 2;
+					}
+					var a = $(this).children("a")
+					a.attr("data-sort", sortType);
+					a.children(".sortType").hide();
+					a.children(".type" + sortType).show();
+				}
+			});
+		},
+		get: function(uniqueName) {
+			var sorts = {};
+			$('#' + uniqueName + "-sorting").children('td').each(function() {
+				var sort = $(this).children("a").data("sort");
+				if ($(this).data('name') != '' && sort !== 0) {
+					sorts[$(this).data("name")] = (sort === 1) ? 'ASC' : 'DESC';
+				}
+			});
+			return sorts;
 		}
 	},
 	pages: {
@@ -279,6 +389,68 @@ var totiGrid = {
 		},
 		get: function(uniqueName) {
 			return $("#" + uniqueName + "-pageSize").val();
+		}
+	},
+	actions: {
+		/*
+		actions: [
+			{link, title, ajax, method}
+		]
+		*/
+		print: function(uniqueName, actions, onError, onSuccess, headers = {}) {
+			var options = [];
+			options.push(totiControl.inputs.option('', totiLang.actions.select, {
+					"data-ajax": true,
+					"data-method": null
+				}));
+			actions.forEach(function(action) {
+				options.push(totiControl.inputs.option(action.link, action.title, {
+					"data-ajax": action.ajax,
+					"data-method": action.method
+				}));
+			});
+			var select = totiControl.inputs.select(options);
+			select.change(function() {
+				$(this).next("a").attr("href", $(this).val());
+				$(this).next("a").attr("data-method", $(this).data('method'));
+			});
+			var execute = totiControl.inputs.button(
+				function() {
+					var ids = {};
+					$('.' + uniqueName + "-grid-action:checked").each(function() {
+						ids[$(this).data("unique")] = $(this).data("unique");
+					});
+					if (Object.keys(ids).length === 0) {
+						onError(totiLang.actions.noSelectedItems);
+						return false;
+					}
+					
+					if ($(this).parent().children('select').children('option:selected').data("ajax")) {
+						totiControl.load(
+							$(this).attr("href"),
+							$(this).attr("method"),
+							{ids: ids},
+							onSuccess,
+							onError,
+							headers
+						);
+					} else {
+						// FIX
+						window.location = $(this).attr("href");
+					}
+				},
+				"", // confirm
+				totiLang.actions.execute,
+				"", // href
+				{}
+			);
+			var actions = $('<div>');
+		},
+		onLoad: function(uniqueName) {
+			// empty
+		},
+		get: function(uniqueName) {
+			// empty
 		}
 	}
 };

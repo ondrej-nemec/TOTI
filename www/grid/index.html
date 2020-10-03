@@ -227,6 +227,45 @@
 
 </div>
 
+<div>
+	<h2>Sorting</h2>
+	<button class="show" id="sorting">Show</button>
+	<button class="hide" id="sorting">Hide</button>
+	<div id="sorting"></div>
+
+	<script type="text/javascript">
+		var pages = $('div#sorting');
+		var columns = [
+			{
+				"name": "column1",
+				"useSorting": false,
+				"title": null
+			},
+			{
+				"name": "column2",
+				"useSorting": true,
+				"title": null
+			},
+			{
+				"name": "column3",
+				"useSorting": false,
+				"title": "Column 3"
+			},
+			{
+				"name": "column4",
+				"useSorting": true,
+				"title": "Column 4"
+			},
+		];
+		pages.append(totiGrid.sorting.print('name', columns));
+		// totiGrid.sorting.print('name')
+		pages.append('<br>');
+		pages.append(totiGrid.sorting.get('name'));
+	</script>
+
+</div>
+
+<br><br><br><br><br><br>
 <script type="text/javascript">
 	$('.hide').click(function(argument) {
 		$('.show#' + $(this).attr('id')).show();
@@ -243,6 +282,7 @@
 	$('.hide').hide();
 	$('.hide').next('div').hide();
 </script>
+
 
 </body>
 </html>
