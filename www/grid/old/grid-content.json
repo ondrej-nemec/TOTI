@@ -1,0 +1,24 @@
+{
+	"data": [
+		{
+			"id": 1,
+			"name": "Name 1",
+			"age": 25,
+			"maried": false
+		},
+		{
+			"id": 2,
+			"maried": true,
+			"name": "Name 2",
+			"age": 25
+		},
+		{
+			"id": 3,
+			"name": "Name 3",
+			"age": 25,
+			"maried": false
+		}
+	],
+	"pageIndex": 1,
+	"pageCount": 10
+}
