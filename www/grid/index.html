@@ -6,6 +6,165 @@
 </head>
 <body>
 <h1>Testing page</h1>
+<div>
+		<h2>Grid</h2>
+		<div id="form"></div>
+		<script>
+			var formname = "formName";
+			var formConfig = {
+				"headers": {
+					"Accept-Language": "de-DE",
+					"Header": "header"
+				}
+			};
+			totiForm.init('div#form', formname, formConfig);
+
+		</script>
+	</div>
+
+
+		<h2>Grid</h2>
+		<div id="grid"></div>
+		<script>
+			var name = "gridName";
+			var gridConfig = {
+				"dataLoadUrl": "/base/grid/items",
+				"dataLoadMethod": "get",
+				"identifier": "id",
+				"columns": [
+						{
+							"name": "actions",
+							"type": "actions",
+							"title": "Actions",
+							"useSorting": false
+						},
+						{
+							"name": "id",
+							"sorting": false,
+							"type": "value"
+						},
+						{
+							"name": "name",
+							"type": "value",
+							"filter": {
+								"type": "text"
+							},
+							"title": "Name",
+							"useSorting": true
+						},
+						{
+							"name": "maried",
+							"type": "value",
+							"filter": {
+								"type": "select",
+								"options": [
+									{
+										"value": 1,
+										"title": "ANO"
+									},
+									{
+										"value": 2,
+										"title": "NE"
+									}
+								]
+							},
+							"title": "Maried",
+							"useSorting": true,
+							"renderer": function(value) {
+								if (value === 'false') {
+									return "NO";
+								} else if (value === 'true') {
+									return "YES";
+								}
+							}
+						},
+						{
+							"name": "age",
+							"title": "Age",
+							"filter": {
+								"type": "number",
+								"step": 2
+							},
+							"useSorting": true,
+							"type": "value"
+						},
+						{
+							"name": "datetime",
+							"title": "Datetime",
+							"filter": {
+								"type": "datetime"
+							},
+							"useSorting": true,
+							"type": "value"
+						},
+						{
+							"name": "button",
+							"type": "buttons",
+							"buttons": [
+								{
+									"confirmation": function(row) {
+										return confirm("realy");
+									},
+									"title": "Delete",
+									"href": function(row) {
+
+									},
+									"ajax": true,
+									"class": "",
+									"onSuccess": function() {},
+									"onFailure": function() {}
+								},
+								{
+									"title": "Link",
+									"href": function(row) {
+										return "link";
+									},
+									"ajax": false,
+									"class": "",
+									"onSuccess": function() {},
+									"onFailure": function() {}
+								}
+							],
+							"title": "Buttons",
+							"useSorting": false
+						}
+					],
+				"pages": {
+					"pagesSizes": [5,10,15,20],
+					"defaultSize": 10,
+					"pagesButtonCount": 5
+				},
+				"actions": {
+					"actionsList": [
+						{
+							"link": "link1",
+						 	"title": "action 1",
+						 	"ajax": true,
+						 	"method": "POST"
+						 },
+						{
+							"link": "link2",
+						 	"title": "action 2",
+						 	"ajax": true,
+						 	"method": "POST"
+						 }
+					],
+					"onSuccess": function(param1) {
+						console.log("action success ", param1);
+					},
+					"onError": function(param1, param2, param3) {
+						console.log("Action failure", param1, param2, param3);
+					}
+				},
+				"headers": {
+					"Accept-Language": "de-DE",
+					"Header": "header"
+				}
+			};
+			totiGrid.init('div#grid', name, gridConfig);
+
+		</script>
+	</div>	
 	
 	<div>
 		<h2>Inputs alone</h2>
@@ -214,7 +373,7 @@
 	<div id="pagging"></div>
 
 	<script type="text/javascript">
-		var pages = $('div#pagging');
+	/*	var pages = $('div#pagging');
 		pages.append(totiGrid.pages.print('name', 5));
 		totiGrid.pages.onLoad('name', 5, 10);
 		pages.append('<br>');
@@ -222,7 +381,7 @@
 		pages.append('<br>');
 		pages.append(totiGrid.pagesSize.print('name', [5,10,15,20,25], 10));
 		pages.append('<br>');
-		pages.append("Selected size " + totiGrid.pagesSize.get('name'));
+		pages.append("Selected size " + totiGrid.pagesSize.get('name'));*/
 	</script>
 
 </div>

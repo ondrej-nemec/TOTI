@@ -10,6 +10,10 @@ var totiLang = {
 		"select": "Select action",
 		"execute": "Execute",
 		"noSelectedItems": "No selected items"
+	},
+	"gridMessages": {
+		"noItemsFound": "No Item Found",
+		"loadingError": "Problem with data loading"
 	}
 };
 
@@ -103,7 +107,7 @@ var totiControl = {
 							form.attr("method")
 						);
 					} else {
-						asyncFunction({}, null, null);
+						asyncFunction({}, element.attr("href"), element.data("method"));
 					}
 					return false;
 				}
@@ -133,7 +137,7 @@ var totiControl = {
 		*/
 	},
 	load: {
-		ajax: function(url, method, data, onSuccess, onFailure, headers = {}) {
+		ajax: function(url, method, data, onSuccess, onFailure, headers) {
 			$.ajax({
 				url: url,
 				data: data,
@@ -151,23 +155,136 @@ var totiControl = {
 };
 
 var totiGrid = {
-	init: function() {
-		// TODO
+	config: {},
+	init: function(elementIdentifier, uniqueName, config) {
+		totiGrid.config[uniqueName] = config;
+		var grid = totiGrid.print(
+			uniqueName,
+			totiGrid.config[uniqueName].columns,
+			totiGrid.config[uniqueName].pages.pagesSizes, 
+			totiGrid.config[uniqueName].pages.defaultSize, 
+			totiGrid.config[uniqueName].pages.pagesButtonCount, 
+			totiGrid.config[uniqueName].actions.actionsList, 
+			totiGrid.config[uniqueName].actions.onError, 
+			totiGrid.config[uniqueName].actions.onSuccess, 
+			totiGrid.config[uniqueName].headers
+		);
+		$(elementIdentifier).html(grid);
+		totiGrid.load(uniqueName, true)
 	},
-	load: function(uniqueName) {
-
+	load: function(uniqueName, initialLoad = false) {
+		var urlParams = {};
+		var search = decodeURIComponent(window.location.search.substring(1));
+		if (initialLoad && search !== '') {
+			urlParams = JSON.parse('{"' + search.replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
+			totiGrid.filters.onLoad(uniqueName, urlParams);
+			totiGrid.sorting.onLoad(uniqueName, urlParams);
+			totiGrid.pagesSize.onLoad(uniqueName, urlParams.pageSize);
+		} else {
+			var pageIndex = totiGrid.pages.get(uniqueName);
+			var pageSize = totiGrid.pagesSize.get(uniqueName);
+			urlParams = {
+				pageIndex: pageIndex === undefined ? 1 : pageIndex,
+				pageSize: pageSize === undefined ? totiGrid.config[uniqueName].pages.pageSizeDefault : pageSize,
+				filters: totiGrid.filters.get(uniqueName),
+				sorting: totiGrid.sorting.get(uniqueName)
+			};
+		}
+		var body = $('#' + uniqueName + "-control table tbody");
+		body.html('');
+		totiControl.load.ajax(
+			totiGrid.config[uniqueName].dataLoadUrl,
+			totiGrid.config[uniqueName].dataLoadMethod,
+			urlParams,
+			function(response) {
+				window.history.pushState({"html":window.location.href},"", "?" + jQuery.param(urlParams));
+				// called from grid, must load config
+				totiGrid._loadDataSuccess(
+					body,
+					uniqueName,
+					response, 
+					totiGrid.config[uniqueName].columns,
+					totiGrid.config[uniqueName].headers,
+					totiGrid.config[uniqueName].identifier				);
+			},
+			function(xhr, a, b) {
+				body.html(totiGrid._loadDataFailure(xhr, a, b));
+			},
+			totiGrid.config[uniqueName].headers
+		);
+	},
+	_loadDataSuccess: function(body, uniqueName, response, columns, headers, identifier) {
+		if (response.data.length === 0) {
+			body.html($('<div>').text(totiLang.gridMessages.noItemsFound));
+			return;
+		}
+		totiGrid.pages.onLoad(uniqueName, response.pageIndex, response.itemsCount);
+		response.data.forEach(function(row, index) {
+			var tableRow = $('<tr>');
+			columns.forEach(function(column, index) {
+				var td = $('<td>');
+				if (column.type === 'actions') {
+					td.html(totiControl.inputs.checkbox({
+						"class": uniqueName + "-grid-action",
+						"data-unique": row[identifier]
+					}));
+				} else if (column.type === 'buttons') {
+					column.buttons.forEach(function(button, index) {
+						var func = button.ajax ? function(data, url, method) {
+							totiControl.load.ajax(
+								url,
+								method, 
+								data,
+								button.onSuccess(row),
+								button.onFailure(row),
+								headers
+							 );
+						} : null;
+						td.append(
+							totiControl.inputs.button(
+								func,
+								function() {
+									return button.confirmation(row);
+								},
+								button.title,
+								button.href(row),
+								{
+									"class": button.class
+								}
+							)
+						);
+					});
+				} else if (column.hasOwnProperty("renderer")) {
+					td.html(column["renderer"](row[column.name]));
+				} else {
+					td.text(row[column.name]);
+				}
+				tableRow.append(td);
+			});
+			body.append(tableRow);
+		});
+		return body;
+	},
+	_loadDataFailure: function(xhr, a, b) {
+		console.log(xhr, a, b);
+		return $('<div>').text(totiLang.gridMessages.loadingError);
+	},
+	print: function(uniqueName, columns, pageSizes, defaultSize, pagesButtonCount, actions, onError, onSuccess, headers = {}) {
+		// filters: print: function(uniqueName, columns) columns: name, type (value, button, action), filter(optional)
+		// sorting print: function(uniqueName, columns) columns: [ {name, title, useSorting} ]
+		var head = $('<thead>')
+			.append(totiGrid.sorting.print(uniqueName, columns))
+			.append(totiGrid.filters.print(uniqueName, columns));
+		var body = $('<tbody>');
+		var footer = $('<div>')
+			.append(totiGrid.actions.print(uniqueName, actions, onError, onSuccess, headers))
+			.append(totiGrid.pages.print(uniqueName, pagesButtonCount, 1))
+			.append(totiGrid.pagesSize.print(uniqueName, pageSizes, defaultSize));
+		var table = $('<table>').append(head).append(body);
+		return $('<div>').attr("id", uniqueName + "-control").append(table).append(footer);
 	},
 	filters: { 
-		/*columns: name, type (value, button, action), filter(optional):
-			radio: function (params = {})
-			checkbox: function (params = {})
-			number: function (params = {}) - sugested params: step, max, min
-			text: function (params = {}) - sugested params: size, minlength, maxlength
-			password: function (params = {}) - sugested params: size, minlength, maxlength
-			email: function (params = {})
-			datetime: function (params = {})
-			select: function (options, params = {}) 
-			option: function(value, title, params = {})
+		/*columns: name, type (value, button, action), filter(optional) - standart input with type
 		*/
 		print: function(uniqueName, columns) {
 			var filters = $('<tr>').attr("id", uniqueName + "-filtering");
@@ -182,9 +299,26 @@ var totiGrid = {
 						})
 					);
 				} else if (column.hasOwnProperty('filter')) {
-					cell.html(
-						totiControl.inputs[column.filter.type](column.filter)
-					);
+					if (column.filter.type === 'select') {
+						var options = [];
+						column.filter.options.forEach(function(option) {
+							var params = {};
+							if (option.hasOwnProperty('params')) {
+								params = option.params;
+							}
+							options.push(totiControl.inputs.option(option.value, option.title, params));
+						});
+						delete column.filter.options;
+						cell.html(
+							totiControl.inputs[column.filter.type](options, column.filter)
+						);
+					} else {
+						var filterType = column.filter.type;
+						delete column.filter.type;
+						cell.html(
+							totiControl.inputs[filterType](column.filter)
+						);
+					}
 					cell.change(function() {
 						totiGrid.load(uniqueName);
 					});
@@ -284,7 +418,7 @@ var totiGrid = {
 		}
 	},
 	pages: {
-		print: function(uniqueName, pagesButtonCount, actualPage = null) {
+		print: function(uniqueName, pagesButtonCount, actualPage) {
 			var pagging = $('<div>')
 				.attr("id", uniqueName + "-pages");
 			pagging.append($('<span>').text(totiLang.pages.title)); // TODO lang
@@ -303,7 +437,7 @@ var totiGrid = {
 
 			var onPageClick = function(newPage) {
 				return function() {
-					pagesList.data("actualpage", newPage);
+					pagesList.attr("data-actualpage", newPage);
 					totiGrid.load(uniqueName);
 					return false;
 				};
@@ -384,8 +518,8 @@ var totiGrid = {
 			});
 			return select;
 		},
-		onLoad: function(uniqueName) {
-			// empty
+		onLoad: function(uniqueName, pageSize) {
+			$("#" + uniqueName + "-pageSize").val(pageSize);
 		},
 		get: function(uniqueName) {
 			return $("#" + uniqueName + "-pageSize").val();
@@ -412,10 +546,11 @@ var totiGrid = {
 			var select = totiControl.inputs.select(options);
 			select.change(function() {
 				$(this).next("a").attr("href", $(this).val());
-				$(this).next("a").attr("data-method", $(this).data('method'));
+				$(this).next("a").attr("data-method", $(this).children("option:selected").data('method'));
+				$(this).next("a").attr("data-ajax", $(this).children("option:selected").data('ajax'));
 			});
 			var execute = totiControl.inputs.button(
-				function() {
+				function(data, url, method) {
 					var ids = {};
 					$('.' + uniqueName + "-grid-action:checked").each(function() {
 						ids[$(this).data("unique")] = $(this).data("unique");
@@ -424,11 +559,10 @@ var totiGrid = {
 						onError(totiLang.actions.noSelectedItems);
 						return false;
 					}
-					
-					if ($(this).parent().children('select').children('option:selected').data("ajax")) {
-						totiControl.load(
-							$(this).attr("href"),
-							$(this).attr("method"),
+					if (true) { // TODO solve
+						totiControl.load.ajax(
+							url,
+							method,
 							{ids: ids},
 							onSuccess,
 							onError,
@@ -439,12 +573,11 @@ var totiGrid = {
 						window.location = $(this).attr("href");
 					}
 				},
-				"", // confirm
-				totiLang.actions.execute,
-				"", // href
-				{}
+				null, /*confirm*/ totiLang.actions.execute, "" /*href*/
 			);
 			var actions = $('<div>');
+			actions.append(select).append(execute);
+			return actions;
 		},
 		onLoad: function(uniqueName) {
 			// empty
@@ -453,4 +586,8 @@ var totiGrid = {
 			// empty
 		}
 	}
+};
+
+totiForm = {
+	
 };
