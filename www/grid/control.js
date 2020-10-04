@@ -589,5 +589,54 @@ var totiGrid = {
 };
 
 totiForm = {
-	
+	init: function(elementIdentifier, uniqueName, config) {
+		$(elementIdentifier).html(totiForm.print(uniqueName, config));
+	},
+	print: function(uniqueName, config) {
+		var formId = config.formId;
+		var errors = $('<div>').attr("id", uniqueName + "-errors-form").append($('<span>'));
+		var form = $('<form>')
+			.attr("id", formId)
+			.attr("action", config.action)
+			.attr("method", config.method)
+			.append(errors);
+		config.fields.forEach(function(field, index) {
+			field.form = formId;
+			var label = null;
+			if (field.hasOwnProperty('title')) {
+				label = totiControl.inputs.label(field.id, field.title);
+			}
+			var input;
+			if (field.type === 'submit') {
+				input = totiControl.inputs.submit(
+					function(data, url, method) {
+						console.log(data, url, method);
+					},
+					field.confirmation(),
+					field
+				);
+			} else if (field.type === 'select') {
+				var options = [];
+				field.options.forEach(function(option) {
+					var params = {};
+					if (option.hasOwnProperty('params')) {
+						params = option.params;
+					}
+					options.push(totiControl.inputs.option(option.value, option.title, params));
+				});
+				delete field.options;
+				input = totiControl.inputs[column.filter.type](options, field);
+			} else {
+				var fieldType = field.type;
+				delete field.type;
+				input = totiControl.inputs[fieldType](field);
+			}
+			var inputTuple = $('<div>').attr('id', uniqueName + '-errors-' + field.name).append(input).append($('<span>'));
+			form.append($('<div>').append(label).append(inputTuple)); // TODO maybe some pattern for customization
+		});
+		return form;
+	},
+	onSaveError: function(uniqueName) {
+
+	}
 };

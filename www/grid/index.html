@@ -7,11 +7,40 @@
 <body>
 <h1>Testing page</h1>
 <div>
-		<h2>Grid</h2>
+		<h2>Form</h2>
 		<div id="form"></div>
 		<script>
 			var formname = "formName";
 			var formConfig = {
+				"formId": "frm-Test",
+				"action": "/base/second",
+				"method": "get",
+				"fields": [
+					{
+						"name": "a",
+						"id": "some-id",
+						"type": "number"
+					},
+					{
+						"name": "b",
+						"id": "some-text-id",
+						"type": "text",
+						"title": "Name",
+						"required": "required"
+					},
+					{
+						"type": "submit",
+						'value': "Submit",
+						"confirmation": function(param) {
+							console.log(param);
+							return false;
+						}
+					}
+				],
+				"bind": {
+					"url": "",
+					"method": ""
+				},
 				"headers": {
 					"Accept-Language": "de-DE",
 					"Header": "header"
@@ -222,9 +251,9 @@
 		<h2>Inputs in form</h2>
 		<button class="show" id="inputs-form">Show</button>
 		<button class="hide" id="inputs-form">Hide</button>
-		<div id="inputs-form"><form id="form"></form></div>
+		<div id="inputs-form"><form id="simple-form"></form></div>
 		<script>
-			$('#form')
+			$('#simple-form')
 				.append(totiControl.inputs.label("form-radio1a", "Radio 1 A"))
 				.append(totiControl.inputs.radio({"name": "radio", "value": 1, "id": "form-radio1a"}))
 				.append(totiControl.inputs.label("form-radio1b", "Radio 1 B"))
