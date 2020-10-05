@@ -139,6 +139,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Properties header,
 			String ip) throws Exception {
 		Identity identity = authenticator.authenticate(header);
+		System.err.println(identity);
+		System.err.println(header);
 		return getLocalizedResponse(method, url, header, params, identity, ip);
 	}
 	
