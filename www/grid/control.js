@@ -154,6 +154,114 @@ var totiControl = {
 	}
 };
 
+var totiAuth = {
+	storage: {
+		variableName: "authentication",
+		saveVariable: function(value) {
+			localStorage[totiAuth.storage.variableName] = JSON.stringify(value);
+		},
+		getVariable: function() {
+			var name = totiAuth.storage.variableName;
+			if (!localStorage[name] || localStorage[name] === null || (localStorage[name] == 'null') ) {
+				return null;
+			}
+			return JSON.parse(localStorage[name]);
+		},
+		removeVariable: function() {
+			localStorage.removeItem(totiAuth.storage.variableName);
+		}
+	},
+	getAuthHeader: function(access = true) {
+		if (totiAuth.storage.getVariable() === null) {
+			return {};
+		}
+		var token = totiAuth.storage.getVariable();
+		return {
+			"Authorization": token.token_type + " " + (access ? token.access_token : token.refresh_token)
+		};
+	},
+	// for public use
+	getToken: function() {
+		var token = totiAuth.storage.getVariable();
+		if (token !== null) {
+			delete token.config;
+		}
+		return token;
+	},
+	isRefreshActive: false,
+	setTokenRefresh: function(token = null, immidiatelly = false) {
+		if (totiAuth.isRefreshActive) {
+			console.log("Another refresh is running");
+			return false;
+		}
+		token = token || totiAuth.storage.getVariable();
+		if (!token) {
+			console.log("No saved token");
+			return false;
+		}
+		totiAuth.isRefreshActive = true;
+		totiAuth.storage.saveVariable(token);
+		setTimeout(function() {
+			totiControl.load.ajax(
+				token.config.refreshUrl,
+				token.config.refreshMethod, 
+				{}, 
+				function(gettedToken) {
+					totiAuth.isRefreshActive = false;
+					gettedToken.config = token.config;
+					totiAuth.setTokenRefresh(gettedToken);
+				}, 
+				function(xhr, a, error) {
+					totiAuth.isRefreshActive = false;
+					totiAuth.storage.removeVariable();
+					console.log(xhr, a, error);
+				}, 
+				totiAuth.getAuthHeader(false)
+			);
+		}, immidiatelly ? 0 : (token.expires_in - 30000));
+		return true;
+	},
+	logout: function() {
+		if (totiAuth.storage.getVariable() === null) {
+			console.log("No token");
+			return;
+		}
+		var token = totiAuth.storage.getVariable();
+		totiControl.load.ajax(
+			token.config.logoutUrl,
+			token.config.logoutMethod, 
+			{}, 
+			function(res) {}, 
+			function(xhr, a, error) {
+				console.log(xhr, a, error);
+			}, 
+			totiAuth.getAuthHeader()
+		);
+		totiAuth.storage.removeVariable();
+	},
+	login: function(authData, config, redirect = null) {
+		totiControl.load.ajax(
+			config.loginUrl,
+			config.logoutMethod, 
+			authData, 
+			function(token) {
+				token.config = config;
+				totiAuth.setTokenRefresh(token);
+				if (redirect) {
+					window.location = redirect;
+				}
+			}, 
+			function(xhr, a, error) {
+				console.log(xhr, a, error);
+			}, 
+			{}
+		);		
+	},
+	onLoad: function() {
+		totiAuth.setTokenRefresh(null, true);
+	}
+};
+
 var totiGrid = {
 	config: {},
 	init: function(elementIdentifier, uniqueName, config) {

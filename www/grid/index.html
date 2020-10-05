@@ -6,6 +6,60 @@
 </head>
 <body>
 <h1>Testing page</h1>
+
+<div>
+<h2>Auth</h2>
+ 
+<div id="login" class="hidden">Login</div>
+<div id="logout" class="hidden">Logout</div>
+<div id="secured" class="hidden">Secured</div>
+<a href="" id="secured-content">Secured page</a>
+<div id="content"></div>
+
+<script type="text/javascript">
+$('.hidden').hide();
+totiAuth.onLoad();
+
+if (totiAuth.getToken()) {
+	$('#logout').show();
+	$('#secured').show();
+} else {
+	$('#login').show();
+}
+$('#login').click(function() {
+	totiAuth.login({"username": "user1"}, {
+		"loginUrl": "/sign/login",
+		"loginMethod": "POST",
+		"refreshUrl": "/sign/refresh",
+		"refreshMethod": "POST",
+		"logoutUrl": "/sign/logout",
+		"logoutMethod": "POST"
+	});
+});
+$('#logout').click(function() {
+	totiAuth.logout();
+});
+$('#secured-content').click(function(e) {
+	e.preventDefault();
+	console.log(totiAuth.getAuthHeader());
+	$.ajax({
+		url: "/base/first",
+		headers: totiAuth.getAuthHeader(),
+		success: function (data) {
+			$('#content').html(data);
+		},
+		failure: function(xhr, a, b) {
+			console.log(xhr, a, b);
+		}
+	});
+});
+
+</script>
+
+</div>
+
+
+
 <div>
 		<h2>Form</h2>
 		<div id="form"></div>
