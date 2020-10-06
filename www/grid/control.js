@@ -202,7 +202,7 @@ var totiAuth = {
 		totiAuth.isRefreshActive = true;
 		totiAuth.storage.saveVariable(token);
 		if (period < 0) {
-			period = token.expires_in / 2;
+			period = token.expires_in * 3 / 2;
 		}
 		setTimeout(function() {
 			totiControl.load.ajax(
@@ -217,11 +217,11 @@ var totiAuth = {
 				function(xhr, a, error) {
 					totiAuth.isRefreshActive = false;
 					console.log(xhr, a, error);
-					if (period > 0 && period < 1000) {
+					//if (totiAuth.refreshCount > 5) {
 						totiAuth.storage.removeVariable();
-					} else {
-						totiAuth.setTokenRefresh(gettedToken, period / 2);
-					}					
+					/*} else {
+						totiAuth.setTokenRefresh(token, period / 2);
+					}	*/				
 				}, 
 				totiAuth.getAuthHeader(false)
 			);
@@ -727,7 +727,7 @@ totiForm = {
 					function(data, url, method) {
 						console.log(data, url, method);
 					},
-					field.confirmation(),
+					field.confirmation,
 					field
 				);
 			} else if (field.type === 'select') {
