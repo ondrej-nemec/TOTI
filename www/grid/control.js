@@ -189,7 +189,7 @@ var totiAuth = {
 		return token;
 	},
 	isRefreshActive: false,
-	setTokenRefresh: function(token = null, immidiatelly = false) {
+	setTokenRefresh: function(token = null, period = -1) {
 		if (totiAuth.isRefreshActive) {
 			console.log("Another refresh is running");
 			return false;
@@ -201,6 +201,9 @@ var totiAuth = {
 		}
 		totiAuth.isRefreshActive = true;
 		totiAuth.storage.saveVariable(token);
+		if (period < 0) {
+			period = token.expires_in / 2;
+		}
 		setTimeout(function() {
 			totiControl.load.ajax(
 				token.config.refreshUrl,
@@ -213,12 +216,16 @@ var totiAuth = {
 				}, 
 				function(xhr, a, error) {
 					totiAuth.isRefreshActive = false;
-					totiAuth.storage.removeVariable();
 					console.log(xhr, a, error);
+					if (period > 0 && period < 1000) {
+						totiAuth.storage.removeVariable();
+					} else {
+						totiAuth.setTokenRefresh(gettedToken, period / 2);
+					}					
 				}, 
 				totiAuth.getAuthHeader(false)
 			);
-		}, immidiatelly ? 0 : (token.expires_in - 30000));
+		}, period);
 		return true;
 	},
 	logout: function() {
@@ -258,7 +265,7 @@ var totiAuth = {
 		);		
 	},
 	onLoad: function() {
-		totiAuth.setTokenRefresh(null, true);
+		totiAuth.setTokenRefresh(null, 0);
 	}
 };
 
