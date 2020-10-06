@@ -5,13 +5,13 @@ import java.util.Map;
 import mvc.templating.Tag;
 
 public class LayoutTag implements Tag {
-	
+	/*
 	private final String actualFileDir;
 
 	public LayoutTag(String actualFile) {
 		this.actualFileDir = actualFile;
 	}
-
+*/
 	@Override
 	public String getName() {
 		return "layout";
@@ -29,6 +29,26 @@ public class LayoutTag implements Tag {
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
+		StringBuilder code = new StringBuilder();
+		code.append(
+			"if(layout!=null){throw new RuntimeException(\"There could be only one layout\");"
+			+ "} else {"
+		);
+		if (params.get("module") == null) {
+			code.append(String.format("layout=templateFactory.getTemplate(\"%s\");", params.get("path")));
+		} else {
+			code.append(String.format(
+				"layout=templateFactory.getModuleTemplate(\"%s\", \"%s\");",
+				params.get("path"), params.get("module")
+			));
+		}
+		code.append(
+			"layout.getClass().getDeclaredField(\"b\").set(layout,b);"
+			+ "layout.getClass().getDeclaredField(\"blocks\").set(layout,blocks);"
+			+ "}"	
+		);
+		return code.toString();
+		/*
 		return String.format(
 				"if(layout!=null){throw new RuntimeException(\"There could be only one layout\");"
 				+ "} else {"
@@ -36,8 +56,9 @@ public class LayoutTag implements Tag {
 				+ "layout.getClass().getDeclaredField(\"b\").set(layout,b);"
 				+ "layout.getClass().getDeclaredField(\"blocks\").set(layout,blocks);"
 				+ "}",
-				actualFileDir + "/" + params.get("path")
-		);
+				//actualFileDir + "/" +
+				 params.get("path")
+		);*/
 		
 	}
 

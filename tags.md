@@ -191,10 +191,11 @@ Parameters for translation message. Always between start and closing trans tag. 
 
 ### Layout
 
-Select another template as parent. Can be only one on one page. Unpaired
+Select another template as parent. Can be only one on one page. Optionally can be used template from another module. Unpaired
 
 ```
 <t:layout path="" />
+<t:layout path="" module="" />
 ```
 
 ### Block
@@ -207,11 +208,12 @@ Define block for used in future. Pair
 
 ### Include
 
-Include defined block/another template file on given place. Unpaired
+Include defined block/another template file on given place. Template can be included from another module. Unpaired
 
 ```
 <t:include block="" />
 <t:include file="" />
+<t:include file="" module="" />
 ```
 
 ## Control

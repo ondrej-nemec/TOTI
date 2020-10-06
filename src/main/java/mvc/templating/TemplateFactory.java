@@ -69,13 +69,13 @@ public class TemplateFactory {
 			return getClassName(file, templatePath);
 		});
 	}
-	
+
 	public Template getModuleTemplate(String templateFile, String module) throws Exception {
-		return getTemplateWithAbsolutePath(templateFile, (file)->{
+		return getTemplateWithAbsolutePath(module + "/" + templateFile, (file)->{
 			return new Tuple2<>(module, new FileExtension(file.getName()).getName());
 		});
 	}
-	
+
 	public Template getFrameworkTemplate(String templateFile) throws Exception {
 		return getTemplateWithAbsolutePath(templateFile, (file)->{
 			return new Tuple2<>("toti", new FileExtension(file.getName()).getName());
@@ -92,7 +92,7 @@ public class TemplateFactory {
 				classNameAndNamespace._1().replaceAll("/", ".")
 				+ (classNameAndNamespace._1().length() == 0 ? "" : ".")
 				+ classNameAndNamespace._2();
-		
+
 		try (URLClassLoader loader = new URLClassLoader(new URL[] {cacheDir.toURI().toURL()});) {
 			try {
 				Template template = (Template)loader.loadClass(className).newInstance();
@@ -134,7 +134,11 @@ public class TemplateFactory {
 				.substring(1)
 				.replace(file.getName(), "")
 				.replaceAll("\\\\", "/");
-		namespace = (namespace.length() == 0) ? "" : namespace.substring(0, namespace.length() - 1); // "/" at the file end
+		namespace = (namespace.length() == 0) 
+				? ""
+				: namespace.charAt(namespace.length() - 1) == '/' 
+					? namespace.substring(0, namespace.length() - 1)
+					: namespace; // "/" at the file end
 		return new Tuple2<>(namespace, new FileExtension(file.getName()).getName());
 	}
 
@@ -161,9 +165,9 @@ public class TemplateFactory {
 		tags.add(new VariablePrintTag());
 		tags.add(new VariableSetTag());
 		tags.add(new WhileTag());
-		tags.add(new LayoutTag(actualFileDir));
+		tags.add(new LayoutTag(/*actualFileDir*/));
 		tags.add(new BlockTag());
-		tags.add(new IncludeTag(actualFileDir));
+		tags.add(new IncludeTag(/*actualFileDir*/));
 		tags.add(new GridTag());
 		return tags;
 	}
