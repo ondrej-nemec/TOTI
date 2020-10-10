@@ -32,6 +32,9 @@ var totiControl = {
 		label: function (forInput, title) {
 			return $('<label>').attr('for', forInput).text(title);
 		},
+		hidden: function (params = {}) {
+			return totiControl.inputs._createInput("hidden", params);
+		},
 		radio: function (params = {}) {
 			return totiControl.inputs._createInput("radio", params);
 		},
@@ -77,7 +80,6 @@ var totiControl = {
 			if (renderer === null) {
 				renderer = $('<button>').text(title);
 			}
-			// TODO renderer
 			var button = $('<a>').attr("href", href).html(renderer);
 			for ([key, name] of Object.entries(params)) {
 				button.attr(key, name);
@@ -150,6 +152,9 @@ var totiControl = {
 					onFailure(xhr, mess, errror);
 				}
 			});
+		},
+		parseUrlToObject: function (data) {
+			return JSON.parse('{"' + data.replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
 		}
 	}
 };
@@ -291,7 +296,8 @@ var totiGrid = {
 		var urlParams = {};
 		var search = decodeURIComponent(window.location.search.substring(1));
 		if (initialLoad && search !== '') {
-			urlParams = JSON.parse('{"' + search.replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
+			urlParams = totiControl.load.parseUrlToObject(search);
+			// JSON.parse('{"' + search.replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
 			totiGrid.filters.onLoad(uniqueName, urlParams);
 			totiGrid.sorting.onLoad(uniqueName, urlParams);
 			totiGrid.pagesSize.onLoad(uniqueName, urlParams.pageSize);
@@ -381,7 +387,7 @@ var totiGrid = {
 		return body;
 	},
 	_loadDataFailure: function(xhr, a, b) {
-		console.log(xhr, a, b);
+		console.log(xhr);
 		return $('<div>').text(totiLang.gridMessages.loadingError);
 	},
 	print: function(uniqueName, columns, pageSizes, defaultSize, pagesButtonCount, actions, onError, onSuccess, headers = {}) {
@@ -536,7 +542,7 @@ var totiGrid = {
 		print: function(uniqueName, pagesButtonCount, actualPage) {
 			var pagging = $('<div>')
 				.attr("id", uniqueName + "-pages");
-			pagging.append($('<span>').text(totiLang.pages.title)); // TODO lang
+			pagging.append($('<span>').text(totiLang.pages.title));
 			pagging.append('&nbsp;');
 			var list = $('<span>')
 					.attr("id", uniqueName + "-pages-list")
@@ -562,7 +568,7 @@ var totiGrid = {
 				pagesList.append(totiControl.inputs.button(
 					onPageClick(1),
 					null, // confirm
-					totiLang.pages.first, // TODO lang
+					totiLang.pages.first,
 					"" // href
 				));
 				pagesList.append('&nbsp;');
@@ -572,7 +578,7 @@ var totiGrid = {
 				pagesList.append(totiControl.inputs.button(
 					onPageClick(actualPage - 1),
 					null, // confirm
-					totiLang.pages.previous, // TODO lang
+					totiLang.pages.previous,
 					"" // href
 				));
 				pagesList.append('&nbsp;');
@@ -600,7 +606,7 @@ var totiGrid = {
 				pagesList.append(totiControl.inputs.button(
 					onPageClick(actualPage + 1),
 					null, // confirm
-					totiLang.pages.next, // TODO lang
+					totiLang.pages.next,
 					"" // href
 				));
 				pagesList.append('&nbsp;');
@@ -610,7 +616,7 @@ var totiGrid = {
 				pagesList.append(totiControl.inputs.button(
 					onPageClick(pagesCount),
 					null, // confirm
-					totiLang.pages.last, // TODO lang
+					totiLang.pages.last,
 					"" // href
 				));
 				pagesList.append('&nbsp;');
@@ -706,10 +712,11 @@ var totiGrid = {
 totiForm = {
 	init: function(elementIdentifier, uniqueName, config) {
 		$(elementIdentifier).html(totiForm.print(uniqueName, config));
+		totiForm.bind(config.bind, config.formId);
 	},
 	print: function(uniqueName, config) {
 		var formId = config.formId;
-		var errors = $('<div>').attr("id", uniqueName + "-errors-form").append($('<span>'));
+		var errors = $('<div>').attr("id", config.formId + "-errors-form").append($('<span>'));
 		var form = $('<form>')
 			.attr("id", formId)
 			.attr("action", config.action)
@@ -725,7 +732,24 @@ totiForm = {
 			if (field.type === 'submit') {
 				input = totiControl.inputs.submit(
 					function(data, url, method) {
-						console.log(data, url, method);
+						totiControl.load.ajax(
+							url, 
+							method, 
+							totiControl.load.parseUrlToObject(data), 
+							field.onSuccess, 
+							function(xhr) {
+								if (xhr.status === 400) {
+									for (const[key, list] of Object.entries(xhr.responseJSON)) {
+										var ol = $('<ul>').attr("class", "error-list");
+										list.forEach(function(item) {
+											ol.append($('<li>').text(item));
+										});
+										$('#' + config.formId + '-errors-' + key + '').html(ol);
+									}
+								}
+							}, 
+							totiAuth.getAuthHeader()
+						);
 					},
 					field.confirmation,
 					field
@@ -740,18 +764,37 @@ totiForm = {
 					options.push(totiControl.inputs.option(option.value, option.title, params));
 				});
 				delete field.options;
-				input = totiControl.inputs[column.filter.type](options, field);
+				input = totiControl.inputs[field.type](options, field);
 			} else {
 				var fieldType = field.type;
 				delete field.type;
 				input = totiControl.inputs[fieldType](field);
 			}
-			var inputTuple = $('<div>').attr('id', uniqueName + '-errors-' + field.name).append(input).append($('<span>'));
-			form.append($('<div>').append(label).append(inputTuple)); // TODO maybe some pattern for customization
+			var inputTuple = $('<div>').attr('id', config.formId + '-errors-' + field.name).append(input).append($('<span>'));
+			form.append(
+				$('<div>')
+					.append($('<div>').append(label).append(input))
+					.append($('<div>').attr('id', config.formId + '-errors-' + field.name))
+			);
 		});
 		return form;
 	},
-	onSaveError: function(uniqueName) {
-
+	bind: function(bind, formId) {
+		totiControl.load.ajax(
+			bind.url, 
+			bind.method, 
+			bind.params, 
+			function(values) {
+				for (const[key, value] of Object.entries(values)) {
+					$('#' + formId + ' [name=' + key + ']').val(value);
+				}
+			}, 
+			function(xhr, a, b) {
+				console.log(xhr, a, b);
+				bind.onFailure(xhr, a, b);
+			}, 
+			totiAuth.getAuthHeader
+		);
+		
 	}
 };
