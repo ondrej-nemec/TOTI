@@ -76,7 +76,7 @@ public class Bootstrap {
 		);
 		Map<String, TemplateFactory> modules = new HashMap<>();
 		folders.forEach((controller, templates)->{
-			modules.put(controller, new TemplateFactory(tempPath, templates, deleteDir));
+			modules.put(controller, new TemplateFactory(tempPath, templates, modules, deleteDir));
 		});
 		
 		ResponseFactory response = new ResponseFactory(
