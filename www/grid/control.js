@@ -119,24 +119,6 @@ var totiControl = {
 				return true;
 			});
 		}
-		/*,
-		// deprecated
-		form: function(action, method, inputs, params = {}) {
-			var form = $('<form>')
-				.attr("action", action)
-				.attr("method", method);
-			for ([key, name] of Object.entries(params)) {
-				form.attr(key, name);
-			}
-			inputs.forEach(function (input, index) {
-				if (form.hasOwnProperty("id")) {
-					input.attr("form", form.id);
-				}
-				form.append(input);
-			});
-			return form;
-		}
-		*/
 	},
 	load: {
 		ajax: function(url, method, data, onSuccess, onFailure, headers) {
@@ -155,6 +137,30 @@ var totiControl = {
 		},
 		parseUrlToObject: function (data) {
 			return JSON.parse('{"' + data.replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
+		},
+		link: function(url, method, data, headers) {
+			var xhr = new XMLHttpRequest()
+			xhr.open(method, url, true);
+			for (const[name, value] of Object.entries(headers)) {
+				xhr.setRequestHeader(name, value);
+			}
+			
+			// window.history.pushState({"html":window.location.href},"", "?" + jQuery.param(urlParams));
+			xhr.onload = function() {
+				document.documentElement.innerHTML = xhr.response;
+				window.history.pushState({},"", xhr.responseURL);
+			}
+			xhr.send(jQuery.param(data));
+			
+		}
+	},
+	display: {
+		prompt: function(message, defValue = "") {
+			return prompt(message);
+		},
+		confirm: function(message, params = {}) {
+			console.log("Params here!!", params);
+			return confirm(message);
 		}
 	}
 };
@@ -254,7 +260,7 @@ var totiAuth = {
 	login: function(authData, config, redirect = null) {
 		totiControl.load.ajax(
 			config.loginUrl,
-			config.logoutMethod, 
+			config.loginMethod, 
 			authData, 
 			function(token) {
 				token.config = config;
@@ -331,7 +337,8 @@ var totiGrid = {
 			function(xhr, a, b) {
 				body.html(totiGrid._loadDataFailure(xhr, a, b));
 			},
-			totiGrid.config[uniqueName].headers
+			totiAuth.getAuthHeader()
+			// totiGrid.config[uniqueName].headers
 		);
 	},
 	_loadDataSuccess: function(body, uniqueName, response, columns, headers, identifier) {
@@ -356,8 +363,8 @@ var totiGrid = {
 								url,
 								method, 
 								data,
-								button.onSuccess(row),
-								button.onFailure(row),
+								button.onSuccess(row), // TODO Flash
+								button.onFailure(row), // TODO flash
 								headers
 							 );
 						} : null;
@@ -365,13 +372,12 @@ var totiGrid = {
 							totiControl.inputs.button(
 								func,
 								function() {
-									return button.confirmation(row);
+									return totiControl.display.confirm(button.confirmation, row);
 								},
 								button.title,
 								button.href(row),
-								{
-									"class": button.class
-								}
+								button.params,
+								button.hasOwnProperty("renderer") ? button.renderer : null
 							)
 						);
 					});
@@ -685,8 +691,8 @@ var totiGrid = {
 							url,
 							method,
 							{ids: ids},
-							onSuccess,
-							onError,
+							onSuccess, // TODO flash
+							onError, // TODO flash
 							headers
 						);
 					} else {
@@ -712,7 +718,9 @@ var totiGrid = {
 totiForm = {
 	init: function(elementIdentifier, uniqueName, config) {
 		$(elementIdentifier).html(totiForm.print(uniqueName, config));
-		totiForm.bind(config.bind, config.formId);
+		if (config.hasOwnProperty('bind')) {
+			totiForm.bind(config.bind, config.formId);
+		}
 	},
 	print: function(uniqueName, config) {
 		var formId = config.formId;
@@ -736,7 +744,12 @@ totiForm = {
 							url, 
 							method, 
 							totiControl.load.parseUrlToObject(data), 
-							field.onSuccess, 
+							function(data) {
+								if (field.hasOwnProperty('redirect')) {
+									window.location = field.redirect(data);
+								}
+								// TODO flash
+							}, 
 							function(xhr) {
 								if (xhr.status === 400) {
 									for (const[key, list] of Object.entries(xhr.responseJSON)) {
@@ -747,11 +760,14 @@ totiForm = {
 										$('#' + config.formId + '-errors-' + key + '').html(ol);
 									}
 								}
+								//TODO flash
 							}, 
 							totiAuth.getAuthHeader()
 						);
 					},
-					field.confirmation,
+					function() {
+						return totiControl.display.confirm(field.confirmation, data);
+					},
 					field
 				);
 			} else if (field.type === 'select') {

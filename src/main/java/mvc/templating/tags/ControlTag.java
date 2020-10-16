@@ -2,14 +2,13 @@ package mvc.templating.tags;
 
 import java.util.Map;
 
-import mvc.control.Grid;
 import mvc.templating.Tag;
 
-public class GridTag implements Tag {
+public class ControlTag implements Tag {
 
 	@Override
 	public String getName() {
-		return "grid";
+		return "control";
 	}
 
 	@Override
@@ -24,6 +23,20 @@ public class GridTag implements Tag {
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
+		return String.format(
+				"{"
+				+ "mvc.control.Control control=(mvc.control.Control)(variables.get(\"%s\"));"
+				+ "b.append(\""
+				+ "<div id='%s'></div>"
+				+ "<script>"
+				+ "toti\"+control.getType()+\".init('%s', name, control.toString());"
+				+ "</script>"
+				+ "\");"
+				+ "}",
+				params.get("name"),
+				"control-" +params.get("name"),
+				"control-" +params.get("name")
+		);/*
 		return String.format(
 				"{"
 				+ "Template temp = templateFactory.getFrameworkTemplate(\"%s\");"
@@ -47,11 +60,12 @@ public class GridTag implements Tag {
 				+ "gridVars.put(\"apiUrl\",grid.getDataUrl());"
 				+ "gridVars.put(\"fields\",grid.getColumns());"
 				+ "gridVars.put(\"buttons\",grid.getButtons());"
+				+ "gridVars.put(\"actions\",grid.getActions());"
 				+ "temp.create(templateFactory,gridVars,translator);"
 				+ "}",
-				Grid.TEMPLATE_FILE,
+				//Grid.TEMPLATE_FILE,
 				params.get("grid")
-		);
+		);*/
 	}
 
 }

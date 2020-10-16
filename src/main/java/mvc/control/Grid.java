@@ -1,106 +1,66 @@
 package mvc.control;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
-import mvc.control.gridColumns.ActionColumn;
-import mvc.control.gridColumns.GridButton;
+import mvc.control.columns.Action;
+import mvc.control.columns.Column;
 
-public class Grid {
-	
-	public static final String TEMPLATE_FILE = "mvc/templates/Grid.jsp";
-	
-	private final String name;
-	private final String sourceUrl;
-	private String rowUnique = "id";
-	private String sourceMethod = "GET";
-	private int pagesButtonCount = 5;
-	private List<Integer> pageSizes = Arrays.asList(5, 10, 20, 50, 100);
-	private int defatulPageSize = 20;
-	
+public class Grid implements Jsonable, Control {
+
+	private final String loadDataUrl;
+	private final String loadDataMethod;
+	private String uniqueRowIdentifier = "id";
 	private final List<Column> columns = new LinkedList<>();
-	private final List<GridButton> buttons = new LinkedList<>();
-	private final List<ActionColumn> actions = new LinkedList<>();
+	private final List<Action> actions = new LinkedList<>();
 	
-	public Grid(String name, String sourceUrl) {
-		this.name = name;
-		this.sourceUrl = sourceUrl;
+	// paging
+	private List<Integer> pagesSizes = Arrays.asList(5, 10, 20, 50, 100);
+	private Integer defaultPageSize = null;
+	private int pagesButtonCount = 5;
+	
+	public Grid(String loadDataUrl, String loadDataMethod) {
+		this.loadDataMethod = loadDataMethod;
+		this.loadDataUrl = loadDataUrl;
 	}
-
-	public static String getTemplateFile() {
-		return TEMPLATE_FILE;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public String getSourceUrl() {
-		return sourceUrl;
-	}
-
-	public String getRowUnique() {
-		return rowUnique;
-	}
-
-	public String getSourceMethod() {
-		return sourceMethod;
-	}
-
-	public int getPagesButtonCount() {
-		return pagesButtonCount;
-	}
-
-	public List<Integer> getPageSizes() {
-		return pageSizes;
-	}
-
-	public int getDefatulPageSize() {
-		return defatulPageSize;
-	}
-
-	public List<Column> getColumns() {
-		return columns;
-	}
-
-	public List<GridButton> getButtons() {
-		return buttons;
-	}
-
-	public List<ActionColumn> getActions() {
-		return actions;
-	}
-
-	public void setRowUnique(String rowUnique) {
-		this.rowUnique = rowUnique;
-	}
-
-	public void setSourceMethod(String sourceMethod) {
-		this.sourceMethod = sourceMethod;
-	}
-
-	public void setPagesButtonCount(int pagesButtonCount) {
-		this.pagesButtonCount = pagesButtonCount;
-	}
-
-	public void setPageSizes(List<Integer> pageSizes) {
-		this.pageSizes = pageSizes;
-	}
-
-	public void setDefatulPageSize(int defatulPageSize) {
-		this.defatulPageSize = defatulPageSize;
-	}
-
-	public void addColumn(Column column) {
+	
+	public Grid addColumn(Column column) {
 		columns.add(column);
+		return this;
 	}
 	
-	public void addButtons(GridButton button) {
-		buttons.add(button);
+	@Override
+	public String toString() {
+		Map<String, Object> json = new HashMap<>();
+		json.put("dataLoadUrl", loadDataUrl);
+		json.put("dataLoadMethod", loadDataMethod);
+		json.put("identifier", uniqueRowIdentifier);
+		json.put("columns", columns);
+		
+		Map<String, Object> pages = new HashMap<>();
+		json.put("pages", pages);
+		pages.put("pagesSizes", pagesSizes);
+		if (defaultPageSize == null && !pagesSizes.isEmpty()) {
+			defaultPageSize = pagesSizes.get(0);
+		}
+		pages.put("defaultsize", defaultPageSize);
+		pages.put("pagesButtonCount", pagesButtonCount);
+		
+		Map<String, Object> groupActions = new HashMap<>();
+		json.put("actions", groupActions);
+		groupActions.put("actionsList", actions);
+		groupActions.put("onSuccess", null); // TODO
+		groupActions.put("onError", null); // TODO
+		
+		return toJson(json);
 	}
 
-	public void addAction(ActionColumn action) {
-		actions.add(action);
+	@Override
+	public String getType() {
+		return "Grid";
 	}
+	
 }

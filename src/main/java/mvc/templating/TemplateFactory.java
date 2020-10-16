@@ -31,7 +31,7 @@ import mvc.templating.tags.ElseTag;
 import mvc.templating.tags.FinallyTag;
 import mvc.templating.tags.ForEachTag;
 import mvc.templating.tags.ForTag;
-import mvc.templating.tags.GridTag;
+import mvc.templating.tags.ControlTag;
 import mvc.templating.tags.IfTag;
 import mvc.templating.tags.IncludeTag;
 import mvc.templating.tags.LayoutTag;
@@ -172,7 +172,7 @@ public class TemplateFactory {
 		tags.add(new LayoutTag(/*actualFileDir*/));
 		tags.add(new BlockTag());
 		tags.add(new IncludeTag(/*actualFileDir*/));
-		tags.add(new GridTag());
+		tags.add(new ControlTag());
 		return tags;
 	}
 	
