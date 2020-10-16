@@ -28,8 +28,9 @@ public class Validator {
 		this.rules = new LinkedList<>();
 	}
 	
-	public void addRule(ItemRules rule) {
+	public Validator addRule(ItemRules rule) {
 		rules.add(rule);
+		return this;
 	}
 	
 	public Map<String, List<String>> validate(Properties prop) {
