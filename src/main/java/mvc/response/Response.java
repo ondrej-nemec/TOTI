@@ -30,11 +30,29 @@ public interface Response {
 		return new JsonResponse(StatusCode.ACCEPTED, json);
 	}
 	
+	@Deprecated
 	static Response getHtml(StatusCode code, String fileName, Map<String, Object> params) {
 		return new JspResponse(code, fileName, params);
 	}
-	
+
+	@Deprecated
 	static Response getHtml(String fileName, Map<String, Object> params) {
+		return new JspResponse(StatusCode.OK, fileName, params);
+	}
+	
+	static Response getText(String text) {
+		return new TextResponse(StatusCode.OK, text);
+	}
+	
+	static Response getText(StatusCode code, String text) {
+		return new TextResponse(code, text);
+	}
+	
+	static Response getTemplate(StatusCode code, String fileName, Map<String, Object> params) {
+		return new JspResponse(code, fileName, params);
+	}
+	
+	static Response getTemplate(String fileName, Map<String, Object> params) {
 		return new JspResponse(StatusCode.OK, fileName, params);
 	}
 	
