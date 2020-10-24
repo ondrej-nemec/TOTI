@@ -19,34 +19,6 @@ import translator.Translator;
 public class Bootstrap {
 	
 	private final Server server;
-
-	public Bootstrap(
-			int port, // settins section
-			int threadPool, // settins section
-    		long readTimeout, // settins section
-    		ResponseHeaders headers, // settins section
-    		Optional<ServerSecuredCredentials> certs, // settins section
-    		String tempPath, // settins section
-    		Map<String, String> folders,
-    		String resourcesPath, // settins section
-    		Router router,
-    		Function<Locale, Translator> translator,
-    		AuthorizationHelper authorizator, // secured section
-    		Function<Identity, AclUser> identityToUser, // secured section
-    		String charset, // settins section
-    		String defLang, // settings section
-    		String tokenSalt,
-    		long tokenExpirationTime,
-    		Logger logger,
-    		Logger securityLogger) throws Exception {
-		this(
-				port, threadPool, readTimeout,
-				headers, certs,
-				tempPath, folders, resourcesPath, router, translator, 
-				authorizator, identityToUser,
-				charset, defLang, tokenSalt, tokenExpirationTime, logger, securityLogger, true);
-		
-	}
 	
 	public Bootstrap(
 			int port,

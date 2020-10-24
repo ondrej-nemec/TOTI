@@ -7,8 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.apache.commons.lang3.RandomStringUtils;
-
+import controllers.ControlController;
 import controllers.LoginController;
 import controllers.SecurityController;
 import controllers.TestController;
@@ -41,9 +40,14 @@ public class BootstrapEndToEndTest {
 				return new SecurityController();
 			});
 			Validator val = new Validator(true);
-			val.addRule(mvc.validation.ItemRules.forName("a", true).setType(Integer.class).setMinValue(10).setMaxValue(20));
-			val.addRule(mvc.validation.ItemRules.forName("b", true).setMaxLength(20).setMinLength(10));
+			val.addRule(mvc.validation.ItemRules.forName("a", true)
+					.setType(Integer.class).setMinValue(10).setMaxValue(20));
+			val.addRule(mvc.validation.ItemRules.forName("b", true)
+					.setMaxLength(20).setMinLength(10).setRegex("[0-9]", "Wrong regex"));
 			Registr.get().addService("testValidator", val);
+			Registr.get().addFactory(ControlController.class, ()->{
+				return new ControlController();
+			});
 			
 			
 			AuthorizationHelper authorizator = new AuthorizationHelper(
@@ -69,12 +73,12 @@ public class BootstrapEndToEndTest {
 			
 			Map<String, String> folders = new HashMap<>();
 			folders.put("controllers", "templates");
-			folders.put("controllers2", "templates2");
+			folders.put("controllers2", "module2");
 			
 			Bootstrap b = new Bootstrap(
 					80, 10, 60000,
 					new ResponseHeaders(
-						RandomStringUtils.randomAlphanumeric(50),
+						// RandomStringUtils.randomAlphanumeric(50),
 						Arrays.asList(
 							"Access-Control-Allow-Origin: *"
 						)
@@ -106,7 +110,7 @@ public class BootstrapEndToEndTest {
 					"utf-8",
 					"cs_CZ",
 					"salt",
-					15000,
+					90000,
 					LoggerFactory.getLogger("server"),
 					LoggerFactory.getLogger("security"),
 					false
