@@ -15,4 +15,9 @@ public class Router {
 		return map.get(url);
 	}
 	
+	@Override
+	public String toString() {
+		return "Router:" + map.toString();
+	}
+	
 }
