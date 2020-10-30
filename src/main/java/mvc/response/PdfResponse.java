@@ -3,6 +3,7 @@ package mvc.response;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
+import java.util.LinkedList;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -39,7 +40,7 @@ public class PdfResponse implements Response {
 	@Override
 	public RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String charset) {
 		RestApiResponse res = response.getResponse(header, templateFactory, translator, charset);
-		return RestApiResponse.binaryResponse(res.getStatusCode(), res.getHeader(), (bout)->{
+		return RestApiResponse.binaryResponse(res.getStatusCode(), new LinkedList<>(), (bout)->{
 			StringWriter writer = new StringWriter();
 			BufferedWriter bw = new BufferedWriter(writer);
 			res.createTextContent(bw);
