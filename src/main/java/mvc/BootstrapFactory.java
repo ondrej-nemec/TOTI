@@ -45,76 +45,94 @@ public class BootstrapFactory {
 		return new Bootstrap(port, threadPool, readTimeout, headers, certs, tempPath, folders, resourcesPath, router, translator, authorizator, identityToUser, charset, defLang, tokenSalt, tokenExpirationTime, logger, securityLogger, deleteDir);
 	}
 
-	public void setRouter(Router router) {
+	public BootstrapFactory setRouter(Router router) {
 		this.router = router;
+		return this;
 	}
 
-	public void setHeaders(ResponseHeaders headers) {
+	public BootstrapFactory setHeaders(ResponseHeaders headers) {
 		this.headers = headers;
+		return this;
 	}
 
-	public void setAuthorizator(AuthorizationHelper authorizator) {
+	public BootstrapFactory setAuthorizator(AuthorizationHelper authorizator) {
 		this.authorizator = authorizator;
+		return this;
 	}
 
-	public void setIdentityToUser(Function<Identity, AclUser> identityToUser) {
+	public BootstrapFactory setIdentityToUser(Function<Identity, AclUser> identityToUser) {
 		this.identityToUser = identityToUser;
+		return this;
 	}
 
-	public void setSecurityLogger(Logger securityLogger) {
+	public BootstrapFactory setSecurityLogger(Logger securityLogger) {
 		this.securityLogger = securityLogger;
+		return this;
 	}
 
-	public void setTranslator(Function<Locale, Translator> translator) {
+	public BootstrapFactory setTranslator(Function<Locale, Translator> translator) {
 		this.translator = translator;
+		return this;
 	}
 
-	public void setLogger(Logger logger) {
+	public BootstrapFactory setLogger(Logger logger) {
 		this.logger = logger;
+		return this;
 	}
 
-	public void setPort(int port) {
+	public BootstrapFactory setPort(int port) {
 		this.port = port;
+		return this;
 	}
 
-	public void setThreadPool(int threadPool) {
+	public BootstrapFactory setThreadPool(int threadPool) {
 		this.threadPool = threadPool;
+		return this;
 	}
 
-	public void setTokenSalt(String tokenSalt) {
+	public BootstrapFactory setTokenSalt(String tokenSalt) {
 		this.tokenSalt = tokenSalt;
+		return this;
 	}
 
-	public void setTokenExpirationTime(long tokenExpirationTime) {
+	public BootstrapFactory setTokenExpirationTime(long tokenExpirationTime) {
 		this.tokenExpirationTime = tokenExpirationTime;
+		return this;
 	}
 
-	public void setReadTimeout(long readTimeout) {
+	public BootstrapFactory setReadTimeout(long readTimeout) {
 		this.readTimeout = readTimeout;
+		return this;
 	}
 
-	public void setCerts(Optional<ServerSecuredCredentials> certs) {
+	public BootstrapFactory setCerts(Optional<ServerSecuredCredentials> certs) {
 		this.certs = certs;
+		return this;
 	}
 
-	public void setTempPath(String tempPath) {
+	public BootstrapFactory setTempPath(String tempPath) {
 		this.tempPath = tempPath;
+		return this;
 	}
 
-	public void setCharset(String charset) {
+	public BootstrapFactory setCharset(String charset) {
 		this.charset = charset;
+		return this;
 	}
 
-	public void setDefLang(String defLang) {
+	public BootstrapFactory setDefLang(String defLang) {
 		this.defLang = defLang;
+		return this;
 	}
 
-	public void setResourcesPath(String resourcesPath) {
+	public BootstrapFactory setResourcesPath(String resourcesPath) {
 		this.resourcesPath = resourcesPath;
+		return this;
 	}
 
-	public void setDeleteDir(boolean deleteDir) {
+	public BootstrapFactory setDeleteDir(boolean deleteDir) {
 		this.deleteDir = deleteDir;
+		return this;
 	}
 
 }
