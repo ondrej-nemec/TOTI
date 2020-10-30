@@ -56,7 +56,6 @@ public class Form implements Jsonable, Control {
 			json.put("bind", bind);
 			bind.put("url", bindUrl);
 			bind.put("method", bindMethod);
-			// TODO params
 		}
 		return toJson(json);
 	}

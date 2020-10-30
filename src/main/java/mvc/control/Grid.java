@@ -59,8 +59,6 @@ public class Grid implements Jsonable, Control {
 		Map<String, Object> groupActions = new HashMap<>();
 		json.put("actions", groupActions);
 		groupActions.put("actionsList", actions);
-		groupActions.put("onSuccess", null); // TODO
-		groupActions.put("onError", null); // TODO
 		return toJson(json);
 	}
 
