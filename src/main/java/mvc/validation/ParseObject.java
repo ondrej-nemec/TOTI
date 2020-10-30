@@ -1,5 +1,10 @@
 package mvc.validation;
 
+import java.util.Map;
+
+import json.JsonReader;
+import json.JsonStreamException;
+
 public class ParseObject {
 
 	public static Object parse(Class<?> clazz, Object object) {
@@ -22,6 +27,13 @@ public class ParseObject {
 		} else if (clazz.isAssignableFrom(Long.class) || clazz.isAssignableFrom(long.class)) {
 			if (object.toString().isEmpty()) { return null; }
 			return Long.parseLong(object + "");
+		} else if (clazz.isAssignableFrom(Map.class)) {
+			if (object.toString().isEmpty()) { return null; }
+			try {
+				return new JsonReader().read(object.toString());
+			} catch (JsonStreamException e) {
+				throw new RuntimeException(e);
+			}
 		} else {
 			return clazz.cast(object);
 		}
