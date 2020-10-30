@@ -3,27 +3,42 @@ package mvc.control.inputs;
 import java.util.HashMap;
 import java.util.Map;
 
-import mvc.control.Jsonable;
 import mvc.control.columns.Filter;
 
-public class Text implements Jsonable, Input, Filter {
+public class Text implements Input, Filter {
 	
 	private final String name;
 	private final String id;
 	private final String type;
 	private String title;	
 	private final boolean required;
+	private boolean disabled = false;
 	
 	private Integer size = null;
 	private Integer maxLength = null;
 	private Integer minLength = null;
 	private String value = null;
+	private final Map<String, String> params = new HashMap<>();
 	
-	public Text(String name, String id, boolean required) {
+	public static Text input(String name, boolean required) {
+		return new Text(name, required);
+	}
+	
+	public static Text filter() {
+		String name = "";
+		return new Text(name, false);
+	}
+	
+	private Text(String name, boolean required) {
 		this.name = name;
-		this.id = id;
+		this.id = "id-" + name;
 		this.type = "text";
 		this.required = required;
+	}
+
+	public Text addParam(String name, String value) {
+		params.put(name, value);
+		return this;
 	}
 	
 	public Text setTitle(String title) {
@@ -55,6 +70,11 @@ public class Text implements Jsonable, Input, Filter {
 		this.value = value;
 		return this;
 	}
+	
+	public Text setDisabled(boolean disabled) {
+		this.disabled = disabled;
+		return this;
+	}
 
 	@Override
 	public Map<String, Object> getFilterSettings() {
@@ -72,12 +92,17 @@ public class Text implements Jsonable, Input, Filter {
 	}
 	
 	@Override
-	public String toString() {
+	public Map<String, Object> getInputSettings() {
 		Map<String, Object> json = new HashMap<>();
 		json.put("name", name);
 		json.put("id", id);
 		json.put("type", type);
-		json.put("required", required);
+		if (required) {
+			json.put("required", required);
+		}
+		if (disabled) {
+			json.put("disabled", disabled);
+		}
 		if (title != null) {
 			json.put("title", title);
 		}
@@ -93,7 +118,10 @@ public class Text implements Jsonable, Input, Filter {
 		if (value != null) {
 			json.put("value", value);
 		}
-		return toJson(json);
+		params.forEach((key, param)->{
+			json.put(key, param);
+		});
+		return json;
 	}
 
 }

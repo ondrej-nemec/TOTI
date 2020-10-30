@@ -8,13 +8,21 @@ import mvc.control.Jsonable;
 public class Submit implements Jsonable, Input {
 	
 	private final String type;
+	private final String name;
 	private final String title;
 	private String redirect;
 	private String confirmation;
+	private boolean ajax = true;
+	private final Map<String, String> params = new HashMap<>();
 	
-	public Submit(String title) {
+	public static Submit create(String title, String name) {
+		return new Submit(title, name);
+	}
+	
+	private Submit(String title, String name) {
 		this.type = "submit";
 		this.title = title;
+		this.name = name;
 	}
 
 	// after success ajax request, redirect
@@ -28,18 +36,28 @@ public class Submit implements Jsonable, Input {
 		return this;
 	}
 
+	public Submit addParam(String name, String value) {
+		params.put(name, value);
+		return this;
+	}
+	
 	@Override
-	public String toString() {
+	public Map<String, Object> getInputSettings() {
 		Map<String, Object> json = new HashMap<>();
 		json.put("type", type);
 		json.put("value", title);
+		json.put("ajax", ajax);
+		json.put("id", name);
+		params.forEach((key, param)->{
+			json.put(key, param);
+		});
 		if (redirect != null) {
 			json.put("redirect", redirect);
 		}
 		if (confirmation != null) {
-			json.put("value", confirmation);
+			json.put("confirmation", confirmation);
 		}
-		return toJson(json);
+		return json;
 	}
 	
 }

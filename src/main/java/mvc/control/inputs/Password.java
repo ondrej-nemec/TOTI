@@ -3,26 +3,35 @@ package mvc.control.inputs;
 import java.util.HashMap;
 import java.util.Map;
 
-import mvc.control.Jsonable;
-
-public class Password implements Jsonable, Input {
+public class Password implements Input {
 	
 	private final String name;
 	private final String id;
 	private final String type;
 	private String title;	
 	private final boolean required;
+	private boolean disabled = false;
 	
 	private Integer size = null;
 	private Integer maxLength = null;
 	private Integer minLength = null;
 	private String value = null;
+	private final Map<String, String> params = new HashMap<>();
 	
-	public Password(String name, String id, boolean required) {
+	public static Password input(String name, boolean required) {
+		return new Password(name, required);
+	}
+	
+	private Password(String name, boolean required) {
 		this.name = name;
-		this.id = id;
+		this.id = "id-" + name;
 		this.type = "password";
 		this.required = required;
+	}
+
+	public Password addParam(String name, String value) {
+		params.put(name, value);
+		return this;
 	}
 	
 	public Password setTitle(String title) {
@@ -50,13 +59,26 @@ public class Password implements Jsonable, Input {
 		return this;
 	}
 	
+	public Password setDisabled(boolean disabled) {
+		this.disabled = disabled;
+		return this;
+	}
+	
 	@Override
-	public String toString() {
+	public Map<String, Object> getInputSettings() {
 		Map<String, Object> json = new HashMap<>();
 		json.put("name", name);
 		json.put("id", id);
 		json.put("type", type);
-		json.put("required", required);
+		if (required) {
+			json.put("required", required);
+		}
+		if (disabled) {
+			json.put("disabled", disabled);
+		}
+		params.forEach((key, param)->{
+			json.put(key, param);
+		});
 		if (title != null) {
 			json.put("title", title);
 		}
@@ -72,7 +94,7 @@ public class Password implements Jsonable, Input {
 		if (value != null) {
 			json.put("value", value);
 		}
-		return toJson(json);
+		return json;
 	}
 
 }

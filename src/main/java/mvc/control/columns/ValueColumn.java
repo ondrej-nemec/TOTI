@@ -3,7 +3,6 @@ package mvc.control.columns;
 import java.util.HashMap;
 import java.util.Map;
 
-import json.JsonStreamException;
 import mvc.control.Jsonable;
 import mvc.control.Html;
 import mvc.templating.Template;
@@ -44,12 +43,13 @@ public class ValueColumn implements Jsonable, Column {
 		return this;
 	}
 
-	public String toJsonString() throws JsonStreamException {
+	@Override
+	public Map<String, Object> getGridSettings() {
 		Map<String, Object> json = new HashMap<>();
 		json.put("name", Template.escapeVariable(name));
 		json.put("type", type);
 		json.put("title", Template.escapeVariable(title));
-		json.put("sorting", useSorting);
+		json.put("useSorting", useSorting);
 		if (filter != null) {
 			Map<String, Object> filterConf = new HashMap<>(filter.getFilterSettings());
 			json.put("filter", filterConf);
@@ -58,7 +58,7 @@ public class ValueColumn implements Jsonable, Column {
 		if (renderer != null) {
 			json.put("renderer", renderer);
 		}
-		return toJson(json);
+		return json;
 	}
 	
 }

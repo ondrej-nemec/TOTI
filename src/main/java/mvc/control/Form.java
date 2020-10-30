@@ -16,7 +16,7 @@ public class Form implements Jsonable, Control {
 	private final String formAction;
 	private String formMethod = "get";
 
-	private final List<Input> fields;
+	private final List<Map<String, Object>> fields;
 	
 	public Form(String formId, String action) {
 		this.formId = formId;
@@ -25,7 +25,7 @@ public class Form implements Jsonable, Control {
 	}
 	
 	public Form addInput(Input input) {
-		fields.add(input);
+		fields.add(input.getInputSettings());
 		return this;
 	}
 
@@ -56,7 +56,7 @@ public class Form implements Jsonable, Control {
 			json.put("bind", bind);
 			bind.put("url", bindUrl);
 			bind.put("method", bindMethod);
-			// TODO params, onFailure
+			// TODO params
 		}
 		return toJson(json);
 	}

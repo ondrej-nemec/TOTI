@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import json.JsonStreamException;
 import mvc.control.Jsonable;
 import mvc.control.inputs.Button;
 import mvc.templating.Template;
@@ -17,7 +16,7 @@ public class ButtonsColumn implements Jsonable, Column {
 	private String title;
 	
 	private final boolean useSorting = false;
-	private final List<Button> buttons = new LinkedList<>();
+	private final List<Map<String, Object>> buttons = new LinkedList<>();
 	
 	public ButtonsColumn(String name) {
 		this.name = name;
@@ -26,7 +25,7 @@ public class ButtonsColumn implements Jsonable, Column {
 	}
 	
 	public ButtonsColumn addButton(Button button) {
-		buttons.add(button);
+		buttons.add(button.getInputSettings());
 		return this;
 	}
 	
@@ -35,14 +34,15 @@ public class ButtonsColumn implements Jsonable, Column {
 		return this;
 	}
 
-	public String toJsonString() throws JsonStreamException {
+	@Override
+	public Map<String, Object> getGridSettings() {
 		Map<String, Object> json = new HashMap<>();
 		json.put("name", Template.escapeVariable(name));
 		json.put("type", type);
 		json.put("title", Template.escapeVariable(title));
 		json.put("sorting", useSorting);
 		json.put("buttons", buttons);
-		return toJson(json);
+		return json;
 	}
 	
 }

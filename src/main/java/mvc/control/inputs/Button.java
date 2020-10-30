@@ -6,7 +6,7 @@ import java.util.Map;
 import mvc.control.Jsonable;
 import mvc.control.Html;
 
-public class Button implements Jsonable {
+public class Button implements Input, Jsonable {
 		
 	private final String url;
 	private String confirmation = null;
@@ -14,8 +14,13 @@ public class Button implements Jsonable {
 	private boolean ajax = false;
 	private String method = "get";
 	private Html renderer = null;
+	private final Map<String, String> params = new HashMap<>();
 	
-	public Button(String url) {
+	public static Button create(String url) {
+		return new Button(url);
+	}
+	
+	private Button(String url) {
 		this.url = url;
 	}
 
@@ -34,6 +39,11 @@ public class Button implements Jsonable {
 		return this;
 	}
 
+	public Button addParam(String name, String value) {
+		params.put(name, value);
+		return this;
+	}
+
 	public Button setMethod(String method) {
 		this.method = method;
 		return this;
@@ -45,10 +55,12 @@ public class Button implements Jsonable {
 	}
 	
 	@Override
-	public String toString() {
+	public Map<String, Object> getInputSettings() {
 		Map<String, Object> json = new HashMap<>();
-		json.put("url", url);
+		json.put("href", url);
 		json.put("ajax", ajax);
+		json.put("type", "button");
+		json.put("method", method);
 		if (title != null) {
 			json.put("title", title);
 		}
@@ -58,7 +70,8 @@ public class Button implements Jsonable {
 		if (renderer != null) {
 			json.put("renderer", renderer);
 		}
-		return toJson(json);
+		json.put("params", params);
+		return json;
 	}
-	
+
 }

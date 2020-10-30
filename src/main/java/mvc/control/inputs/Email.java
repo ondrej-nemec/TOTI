@@ -3,22 +3,31 @@ package mvc.control.inputs;
 import java.util.HashMap;
 import java.util.Map;
 
-import mvc.control.Jsonable;
-
-public class Email implements Jsonable, Input {
+public class Email implements Input {
 	
 	private final String name;
 	private final String id;
 	private final String type;
 	private String title;	
 	private final boolean required;
+	private boolean disabled = false;
 	private String value = null;
+	private final Map<String, String> params = new HashMap<>();
 	
-	public Email(String name, String id, boolean required) {
+	public static Email input(String name, boolean required) {
+		return new Email(name, required);
+	}
+	
+	private Email(String name, boolean required) {
 		this.name = name;
-		this.id = id;
+		this.id = "id-" + name;
 		this.type = "email";
 		this.required = required;
+	}
+
+	public Email addParam(String name, String value) {
+		params.put(name, value);
+		return this;
 	}
 	
 	public Email setTitle(String title) {
@@ -31,20 +40,33 @@ public class Email implements Jsonable, Input {
 		return this;
 	}
 	
+	public Email setDisabled(boolean disabled) {
+		this.disabled = disabled;
+		return this;
+	}
+	
 	@Override
-	public String toString() {
+	public Map<String, Object> getInputSettings() {
 		Map<String, Object> json = new HashMap<>();
 		json.put("name", name);
 		json.put("id", id);
 		json.put("type", type);
-		json.put("required", required);
+		if (required) {
+			json.put("required", required);
+		}
+		if (disabled) {
+			json.put("disabled", disabled);
+		}
+		params.forEach((key, param)->{
+			json.put(key, param);
+		});
 		if (title != null) {
 			json.put("title", title);
 		}
 		if (value != null) {
 			json.put("value", value);
 		}
-		return toJson(json);
+		return json;
 	}
 
 }

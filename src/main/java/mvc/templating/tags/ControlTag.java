@@ -29,13 +29,13 @@ public class ControlTag implements Tag {
 				+ "b.append(\""
 				+ "<div id='%s'></div>"
 				+ "<script>"
-				+ "toti\"+control.getType()+\".init('%s', name, control.toString());"
+				+ "toti\"+control.getType()+\".init('%s', name, \"+control.toString()+\");"
 				+ "</script>"
 				+ "\");"
 				+ "}",
 				params.get("name"),
 				"control-" +params.get("name"),
-				"control-" +params.get("name")
+				"div#control-" +params.get("name")
 		);/*
 		return String.format(
 				"{"

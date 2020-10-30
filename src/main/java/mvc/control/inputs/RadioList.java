@@ -1,46 +1,55 @@
 package mvc.control.inputs;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
-public class Checkbox implements Input {
+public class RadioList implements Input {
 	
 	private final String name;
-	private final String id;
+	private final List<Map<String, String>> radios;
 	private final String type;
-	private String title;	
 	private final boolean required;
 	private boolean disabled = false;
 	private String value = null;
+	private String title = null;
 	private final Map<String, String> params = new HashMap<>();
 	
-	public static Checkbox input(String name, boolean required) {
-		return new Checkbox(name, required);
+	public static RadioList input(String name, boolean required, Map<String, String> radios) {
+		return new RadioList(name, required, radios);
 	}
 	
-	private Checkbox(String name, boolean required) {
+	private RadioList(String name, boolean required, Map<String, String> radios) {
 		this.name = name;
-		this.id = "id-" + name;
-		this.type = "checkbox";
+		this.radios = new LinkedList<>();
+		radios.forEach((value, title)->{
+			Map<String, String> radio = new HashMap<>();
+			radio.put("id", "id-" + value);
+			radio.put("value", value);
+			radio.put("title", title);
+			this.radios.add(radio);
+		});
+		this.type = "radio";
 		this.required = required;
 	}
 	
-	public Checkbox setTitle(String title) {
+	public RadioList setTitle(String title) {
 		this.title = title;
 		return this;
 	}
 
-	public Checkbox addParam(String name, String value) {
+	public RadioList addParam(String name, String value) {
 		params.put(name, value);
 		return this;
 	}
 	
-	public Checkbox setDefaultValue(String value) {
+	public RadioList setDefaultValue(String value) {
 		this.value = value;
 		return this;
 	}
 	
-	public Checkbox setDisabled(boolean disabled) {
+	public RadioList setDisabled(boolean disabled) {
 		this.disabled = disabled;
 		return this;
 	}
@@ -49,19 +58,19 @@ public class Checkbox implements Input {
 	public Map<String, Object> getInputSettings() {
 		Map<String, Object> json = new HashMap<>();
 		json.put("name", name);
-		json.put("id", id);
+		json.put("radios", radios);
 		json.put("type", type);
 		params.forEach((key, param)->{
 			json.put(key, param);
 		});
+		if (title != null) {
+			json.put("title", title);
+		}
 		if (required) {
 			json.put("required", required);
 		}
 		if (disabled) {
 			json.put("disabled", disabled);
-		}
-		if (title != null) {
-			json.put("title", title);
 		}
 		if (value != null) {
 			json.put("value", value);
