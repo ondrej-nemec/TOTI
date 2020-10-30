@@ -33,7 +33,7 @@ import mvc.response.Response;
 import socketCommunication.http.HttpMethod;
 
 @Controller("control")
-public class ControlController {
+public class EntityController {
 	
 	private final static Map<Integer, Map<String, Object>> DATA = new HashMap<>();
 	{
