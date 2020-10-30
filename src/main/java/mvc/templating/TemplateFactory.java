@@ -31,6 +31,9 @@ import mvc.templating.tags.ElseTag;
 import mvc.templating.tags.FinallyTag;
 import mvc.templating.tags.ForEachTag;
 import mvc.templating.tags.ForTag;
+import mvc.templating.tags.FormError;
+import mvc.templating.tags.FormInput;
+import mvc.templating.tags.FormLabel;
 import mvc.templating.tags.ControlTag;
 import mvc.templating.tags.IfTag;
 import mvc.templating.tags.IncludeTag;
@@ -173,6 +176,9 @@ public class TemplateFactory {
 		tags.add(new BlockTag());
 		tags.add(new IncludeTag(/*actualFileDir*/));
 		tags.add(new ControlTag());
+		tags.add(new FormError());
+		tags.add(new FormInput());
+		tags.add(new FormLabel());
 		return tags;
 	}
 	

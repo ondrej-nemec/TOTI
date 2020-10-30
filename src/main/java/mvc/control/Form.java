@@ -11,6 +11,7 @@ public class Form implements Jsonable, Control {
 
 	private String bindUrl = null;
 	private String bindMethod = "get";
+	private final boolean editable;
 	
 	private final String formId;
 	private final String formAction;
@@ -18,10 +19,11 @@ public class Form implements Jsonable, Control {
 
 	private final List<Map<String, Object>> fields;
 	
-	public Form(String formId, String action) {
+	public Form(String formId, String action, boolean editable) {
 		this.formId = formId;
 		this.formAction = action;
 		this.fields = new LinkedList<>();
+		this.editable = editable;
 	}
 	
 	public Form addInput(Input input) {
@@ -51,6 +53,7 @@ public class Form implements Jsonable, Control {
 		json.put("action", formAction);
 		json.put("method", formMethod);
 		json.put("fields", fields);
+		json.put("editable", editable);
 		if (bindUrl != null) {
 			Map<String, Object> bind = new HashMap<>();
 			json.put("bind", bind);

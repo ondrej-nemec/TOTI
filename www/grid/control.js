@@ -17,6 +17,13 @@ var totiLang = {
 	}
 };
 
+var totiImages = {
+	// https://www.iconfinder.com/icons/186407/up_arrow_icon
+	"arrowUp": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDMyIDMyIiBoZWlnaHQ9IjMycHgiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAzMiAzMiIgd2lkdGg9IjMycHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxwYXRoIGQ9Ik0xOC4yMjEsNy4yMDZsOS41ODUsOS41ODVjMC44NzksMC44NzksMC44NzksMi4zMTcsMCwzLjE5NWwtMC44LDAuODAxYy0wLjg3NywwLjg3OC0yLjMxNiwwLjg3OC0zLjE5NCwwICBsLTcuMzE1LTcuMzE1bC03LjMxNSw3LjMxNWMtMC44NzgsMC44NzgtMi4zMTcsMC44NzgtMy4xOTQsMGwtMC44LTAuODAxYy0wLjg3OS0wLjg3OC0wLjg3OS0yLjMxNiwwLTMuMTk1bDkuNTg3LTkuNTg1ICBjMC40NzEtMC40NzIsMS4xMDMtMC42ODIsMS43MjMtMC42NDdDMTcuMTE1LDYuNTI0LDE3Ljc0OCw2LjczNCwxOC4yMjEsNy4yMDZ6IiBmaWxsPSIjNTE1MTUxIi8+PC9zdmc+",
+	// https://www.iconfinder.com/icons/186411/down_arrow_icon
+	"arrowDown": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDMyIDMyIiBoZWlnaHQ9IjMycHgiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAzMiAzMiIgd2lkdGg9IjMycHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxwYXRoIGQ9Ik0xNC43NywyMy43OTVMNS4xODUsMTQuMjFjLTAuODc5LTAuODc5LTAuODc5LTIuMzE3LDAtMy4xOTVsMC44LTAuODAxYzAuODc3LTAuODc4LDIuMzE2LTAuODc4LDMuMTk0LDAgIGw3LjMxNSw3LjMxNWw3LjMxNi03LjMxNWMwLjg3OC0wLjg3OCwyLjMxNy0wLjg3OCwzLjE5NCwwbDAuOCwwLjgwMWMwLjg3OSwwLjg3OCwwLjg3OSwyLjMxNiwwLDMuMTk1bC05LjU4Nyw5LjU4NSAgYy0wLjQ3MSwwLjQ3Mi0xLjEwNCwwLjY4Mi0xLjcyMywwLjY0N0MxNS44NzUsMjQuNDc3LDE1LjI0MywyNC4yNjcsMTQuNzcsMjMuNzk1eiIgZmlsbD0iIzUxNTE1MSIvPjwvc3ZnPg=="
+};
+
 var totiControl = {
 	inputs: {
 		_createInput: function (type, attributes, data = {}) {
@@ -157,7 +164,7 @@ var totiControl = {
 									list.forEach(function(item) {
 										ol.append($('<li>').text(item));
 									});
-										$('#' + config.formId + '-errors-' + key + '').html(ol);
+									$('#' + config.formId + '-errors-' + key + '').html(ol);
 								}
 							} else {
 								// TODO
@@ -348,20 +355,23 @@ var totiAuth = {
 var totiGrid = {
 	config: {},
 	init: function(elementIdentifier, uniqueName, config) {
-		totiGrid.config[uniqueName] = config;
-		var grid = totiGrid.print(
-			uniqueName,
-			totiGrid.config[uniqueName].columns,
-			totiGrid.config[uniqueName].pages.pagesSizes, 
-			totiGrid.config[uniqueName].pages.defaultSize, 
-			totiGrid.config[uniqueName].pages.pagesButtonCount, 
-			totiGrid.config[uniqueName].actions.actionsList, 
-			totiGrid.config[uniqueName].actions.onError, 
-			totiGrid.config[uniqueName].actions.onSuccess, 
-			totiGrid.config[uniqueName].headers
-		);
-		$(elementIdentifier).html(grid);
-		totiGrid.load(uniqueName, true)
+		$(document).ready(function() {
+			totiGrid.config[uniqueName] = config;
+			var grid = totiGrid.print(
+				uniqueName,
+				totiGrid.config[uniqueName].columns,
+				totiGrid.config[uniqueName].pages.pagesSizes, 
+				totiGrid.config[uniqueName].pages.defaultSize, 
+				totiGrid.config[uniqueName].pages.pagesButtonCount, 
+				totiGrid.config[uniqueName].actions.actionsList, 
+				totiGrid.config[uniqueName].actions.onError, 
+				totiGrid.config[uniqueName].actions.onSuccess, 
+				totiGrid.config[uniqueName].headers
+			);
+			$(elementIdentifier).html(grid);
+			totiGrid.load(uniqueName, true)	
+		});
+		
 	},
 	load: function(uniqueName, initialLoad = false) {
 		var urlParams = {};
@@ -572,6 +582,11 @@ var totiGrid = {
 		},
 		_print: function(uniqueName, name, useSorting, title = null) {
 			var cell = $('<a>');
+			if (title !== null) {
+				cell.append(title);
+			} else {
+				cell.append(name);
+			}
 			if (useSorting) {
 				cell.attr("href", "").attr("data-sort", 0).click(function(e) {
 					e.preventDefault();
@@ -585,13 +600,22 @@ var totiGrid = {
 					$(this).children(".type" + sortType).show();
 					totiGrid.load(uniqueName);
 				});
-				cell.append($('<i>').attr("class", "far fa-clock sortType type1").hide()); // TODO another icon
-				cell.append($('<i>').attr("class", "fas fa-clock sortType type2").hide()); // TODO another icon
-			}
-			if (title !== null) {
-				cell.append(title);
-			} else {
-				cell.append(name);
+				cell.append(
+					$('<img>')
+						.attr("src", totiImages.arrowUp)
+						.attr("alt", "")
+						.attr("width", "15")
+						.attr("class", "sortType type1")
+						.hide()
+				);
+				cell.append(
+					$('<img>')
+						.attr("src", totiImages.arrowDown)
+						.attr("alt", "")
+						.attr("width", "15")
+						.attr("class", "sortType type2")
+						.hide()
+				);
 			}
 			return cell;
 		},
@@ -805,19 +829,29 @@ var totiGrid = {
 
 totiForm = {
 	init: function(elementIdentifier, uniqueName, config) {
-		$(elementIdentifier).html(totiForm.print(uniqueName, config));
-		if (config.hasOwnProperty('bind')) {
-			totiForm.bind(config.bind, config.formId);
-		}
+		$(document).ready(function() {
+			var html = $(elementIdentifier).html();
+			$(elementIdentifier).html(totiForm.print(uniqueName, config, $(elementIdentifier)));
+			if (config.hasOwnProperty('bind')) {
+				totiForm.bind(config.bind, config.formId);
+			}
+		});
 	},
-	print: function(uniqueName, config) {
+	print: function(uniqueName, config, element) {
 		var formId = config.formId;
-		var errors = $('<div>').attr("id", config.formId + "-errors-form").append($('<span>'));
-		var form = $('<form>')
-			.attr("id", formId)
-			.attr("action", config.action)
-			.attr("method", config.method)
-			.append(errors);
+		var form;
+		if (config.editable) {
+			var errors = $('<div>').attr("id", config.formId + "-errors-form").append($('<span>'));
+			form = $('<form>')
+				.attr("id", formId)
+				.attr("action", config.action)
+				.attr("method", config.method)
+				.append(errors);
+		} else {
+			form = $('<div>')
+				.attr("id", formId);
+		}
+		var table = $('<table>');
 		config.fields.forEach(function(field, index) {
 			field.id = config.formId + "-" + field.id;
 			field.form = formId;
@@ -828,7 +862,15 @@ totiForm = {
 				});
 			}
 			var input;
-			if (field.type === 'submit') {
+			if (!config.editable && field.type !== 'button') {
+				// TODO checkbox, radio, select zobrazeni
+				if (field.type !== 'submit') {
+					input = $('<div>');
+					for ([key, name] of Object.entries(field)) {
+						input.attr(key, name);
+					}
+				}
+			} else if (field.type === 'submit') {
 				input = totiControl.inputs.submit(
 					field.ajax, function(data) {
 						if (field.hasOwnProperty("confirmation")) {
@@ -894,13 +936,42 @@ totiForm = {
 				delete field.type;
 				input = totiControl.inputs[fieldType](field);
 			}
-			var inputTuple = $('<div>').attr('id', config.formId + '-errors-' + field.name).append(input).append($('<span>'));
-			form.append(
-				$('<div>')
-					.append($('<div>').append(label).append(input))
-					.append($('<div>').attr('id', config.formId + '-errors-' + field.name))
-			);
+
+			var error = $('<div>').attr('id', config.formId + '-errors-' + field.name);
+			if (element.html().length > 0) {
+				var labelElement = element.find("#form-label-" + field.name);
+				if (labelElement.length > 0) {
+					labelElement.html(label);
+				}
+				var inputElement = element.find("#form-input-" + field.name);
+				if (inputElement.length > 0) {
+					inputElement.html(input);
+				}
+				var errorElement = element.find("#form-error-" + field.name);
+				if (config.editable && errorElement.length > 0) {
+					errorElement.html(error);
+				}
+			} else {
+				/*
+				form.append($('<div>')
+					.append(label)
+					.append(input)
+					.append(config.editable ? error : "")
+				);
+				*/
+				table.append($('<tr>')
+					.append($('<td>').append(label))
+					.append($('<td>').append(input))
+					.append($('<td>').append(config.editable ? error : ""))
+				);
+			}
 		});
+		if (element.html().length > 0) {
+			form.append(element.html());
+		} else {
+			form.append(table);
+		}
+		
 		return form;
 	},
 	bind: function(bind, formId) {
@@ -914,7 +985,9 @@ totiForm = {
 					if ($('#' + formId + ' [name=' + key + ']').attr("type") === 'datetime-local') {
 						val = val.replace(" ", "T");
 					}
-					$('#' + formId + ' [name=' + key + ']').val(val);
+					var id = '#' + formId + ' [name=' + key + ']';
+					$(id).val(val); // form
+					$(id).text(val); // detail
 				}
 			}, 
 			function(xhr, a, b) {
