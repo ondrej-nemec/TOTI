@@ -9,14 +9,14 @@ import socketCommunication.http.StatusCode;
 import socketCommunication.http.server.RestApiResponse;
 import translator.Translator;
 
-public class JspResponse implements Response {
+public class TemplateResponse implements Response {
 	
 	private final Map<String, Object> params;
 	private final StatusCode code;
 	private final String fileName;
 	//private final String charset;
 
-	public JspResponse(StatusCode code, String fileName, Map<String, Object> params/*, String charset*/) {
+	public TemplateResponse(StatusCode code, String fileName, Map<String, Object> params/*, String charset*/) {
 		this.params = params;
 		this.code = code;
 		this.fileName = fileName;
