@@ -136,9 +136,13 @@ var totiControl = {
 				}
 				var data = {};
 				$.each(form.serializeArray(), function(index, item) {
-					data[item.name] = item.value;
+					var input = form.find('[name="' + item.name + '"]');
+					var value = item.value;
+					if (input.attr('type') === 'datetime-local') {
+						value = value.replace("T", " ");
+					}
+					data[item.name] = value;
 				});
-				console.log(data);
 
 				if (submitConfirmation !== null && !submitConfirmation(data)) {
 					event.preventDefault();
@@ -149,13 +153,13 @@ var totiControl = {
 					totiControl.load.ajax(
 						form.attr("action"), 
 						form.attr("method"), 
-						form.serialize(), 
-						function(data) {
+						data, 
+						function(response) {
 							if (element.attr("redirect") != null) {
 								// TODO window.location = field.redirect(data); headers
 								console.log("Redirect: " + element.attr("redirect"));
 							}
-							totiControl.display.flash('success', data);
+							totiControl.display.flash('success', response);
 						}, 
 						function(xhr) {
 							if (xhr.status === 400) {
@@ -864,7 +868,7 @@ totiForm = {
 			var input;
 			if (!config.editable && field.type !== 'button') {
 				// TODO checkbox, radio, select zobrazeni
-				if (field.type !== 'submit') {
+				if (field.type !== 'submit' && field.type !== 'hidden') {
 					input = $('<div>');
 					for ([key, name] of Object.entries(field)) {
 						input.attr(key, name);
@@ -980,14 +984,25 @@ totiForm = {
 			bind.method, 
 			bind.params, 
 			function(values) {
+				console.log(values);
 				for (const[key, value] of Object.entries(values)) {
 					var val = value;
-					if ($('#' + formId + ' [name=' + key + ']').attr("type") === 'datetime-local') {
+					var id = '#' + formId + ' [name=' + key + ']';
+					var element = $(id);
+					if (element.attr("type") === 'datetime-local') {
 						val = val.replace(" ", "T");
 					}
-					var id = '#' + formId + ' [name=' + key + ']';
-					$(id).val(val); // form
-					$(id).text(val); // detail
+					if (element.length > 1) {
+						$('#' + formId + ' #' + formId + '-id-' + val + '[name=' + key + ']').prop('checked', true);
+					} else {
+						element.val(val); // form
+						if (element.text().length == 0) {
+							element.text(val); // detail
+						}
+						element.prop('checked', val); // form
+					}
+					
+					
 				}
 			}, 
 			function(xhr, a, b) {

@@ -1,8 +1,6 @@
 package controllers;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -13,7 +11,6 @@ import mvc.annotations.url.Method;
 import mvc.annotations.url.Param;
 import mvc.annotations.url.ParamUrl;
 import mvc.annotations.url.Params;
-import mvc.annotations.url.Secured;
 import mvc.control.Form;
 import mvc.control.Grid;
 import mvc.control.columns.ActionsColumn;
@@ -23,8 +20,10 @@ import mvc.control.columns.ValueColumn;
 import mvc.control.inputs.Button;
 import mvc.control.inputs.Checkbox;
 import mvc.control.inputs.Datetime;
+import mvc.control.inputs.Email;
 import mvc.control.inputs.Hidden;
 import mvc.control.inputs.Number;
+import mvc.control.inputs.Password;
 import mvc.control.inputs.RadioList;
 import mvc.control.inputs.Select;
 import mvc.control.inputs.Submit;
@@ -35,27 +34,16 @@ import socketCommunication.http.HttpMethod;
 @Controller("control")
 public class EntityController {
 	
-	private final static Map<Integer, Map<String, Object>> DATA = new HashMap<>();
-	{
-		if (DATA.isEmpty()) {
-			for (int i = 0; i < 50; i++) {
-				Map<String, Object> row = new HashMap<>();
-				row.put("id", i);
-				row.put("name", "Name #" + i);
-				row.put("age", (i%10)*20);
-				row.put("maried", i%3);
-				row.put("born", "2020-02-12 12:21");
-				DATA.put(i, row);
-			}
-		}
-	}
+	private final PersonDao dao;
 	
-	/*************************/
+	public EntityController(PersonDao dao) {
+		this.dao = dao;
+	}
 	
 	@Action("list")
 	public Response grid() {
 		Map<String, Object> params = new HashMap<>();
-		Grid grid = new Grid("/control/all", "gEt");
+		Grid grid = new Grid("/control/all", "get");
 		grid.addColumn(new ActionsColumn("Actions"));
 		grid.addColumn(new ValueColumn("id"));
 		grid.addColumn(new ValueColumn("name").setTitle("Name").setFilter(Text.filter()).setUseSorting(true));
@@ -64,6 +52,7 @@ public class EntityController {
 			MapInit.hashMap(MapInit.t("", "---"), MapInit.t("no", "No"), MapInit.t("yes", "Yes"))
 		)));
 		grid.addColumn(new ValueColumn("born").setTitle("Born date").setFilter(Datetime.filter()));
+		
 		grid.addColumn(new ButtonsColumn("Buttons")
 			.addButton(Button.create("/control/delete/{id}").setAjax(true).setTitle("Delete")
 					.setConfirmation("Delete {name}?").setMethod("put"))
@@ -71,8 +60,8 @@ public class EntityController {
 			.addButton(Button.create("/control/detail/{id}").setAjax(false).setTitle("Detail"))
 			.addButton(Button.create("/control/edit/{id}").setAjax(false).setTitle("Edit"))
 		);
-		grid.addAction(new GroupAction("Action with no link", "url"));
-		params.put("great", grid);
+		grid.addAction(new GroupAction("Action with no link", "url")); // TODO some tests
+		params.put("personControl", grid);
 		return Response.getTemplate("/control.jsp", params);
 	}
 	
@@ -101,28 +90,33 @@ public class EntityController {
 	private Response getOne(Integer id, boolean editable) {
 		Map<String, Object> params = new HashMap<>();
 		String url = id == null ? "/control/insert" : "/control/update/" + id;
-		Form form = new Form("someNewForm", url, editable);
+		Form form = new Form("personForm", url, editable);
 		form.setFormMethod("put");
-		form.addInput(Text.input("name", true).setTitle("Name").addParam("class", "testing-class").setDisabled(true));
+		form.addInput(Hidden.input("id"));
+		form.addInput(Text.input("name", true).setTitle("Name"));
 		form.addInput(Number.input("age", true).setTitle("Age"));
 		form.addInput(Checkbox.input("maried", false).setTitle("Is Maried"));
 		form.addInput(Datetime.input("born", true).setTitle("Born date"));
-		form.addInput(Hidden.input("id"));
-		form.addInput(Text.input("other", false).setTitle("Other").setDefaultValue("Fill"));
-		
-		Map<String, String> radios = new HashMap<>();
-		radios.put("male", "Male");
-		radios.put("female", "Female");
-		radios.put("empty", null);
-		form.addInput(RadioList.input("sex", true, radios).setTitle("Sex").setDefaultValue("empty"));
-		
+		form.addInput(Password.input("password", false).setTitle("Password"));
+		form.addInput(Email.input("email", true).setTitle("Email").setDefaultValue("example@example.com"));
+		form.addInput(RadioList.input(
+				"sex",
+				true,
+				MapInit.hashMap(MapInit.t("male", "Male"), MapInit.t("female", "Female"))
+		).setTitle("Sex"));
+		Map<String, String> departments = new HashMap<>();
+		for (int i = 1; i < 11; i++) {
+			departments.put(i + "", "Department #" + i);
+		}
+		form.addInput(Select.input("department", true, departments).setTitle("Department"));
+				
 		form.setBindMethod("get");
 		form.setBindUrl("/control/get/" + id);
 		
 		form.addInput(Submit.create("Save", "save").setConfirmation("Send {name}?"));
 		form.addInput(Submit.create("Save and return", "save-and-return").setRedirect("/control/all"));
 		form.addInput(Button.create("/control/all").setTitle("Cancel").setAjax(false));
-		params.put("great", form);
+		params.put("personControl", form);
 		params.put("itemId", id);
 		return Response.getTemplate("/detail.jsp", params);
 	}
@@ -141,12 +135,8 @@ public class EntityController {
 		// TODO validator
 		System.out.println(prop);
 		Map<String, Object> json = new HashMap<>();
-		List<Map<String, Object>> data = new LinkedList<>(DATA.values()).subList(
-				Math.min(DATA.size() - 1, (pageIndex-1)*pageSize+1), 
-				Math.min(DATA.size(), pageIndex*pageSize+1)
-		);
-		json.put("data", data);
-		json.put("itemsCount", DATA.size());
+		json.put("data", dao.getData(pageIndex, pageSize, filters, sorting));
+		json.put("itemsCount", dao.getAll().size());
 		json.put("pageIndex", pageIndex);
 		return Response.getJson(json);
 	}
@@ -154,13 +144,14 @@ public class EntityController {
 	@Action("get")
 	@Method({HttpMethod.GET})
 	public Response get(@ParamUrl("id") Integer id) {
-		return Response.getJson(DATA.get(id));
+		return Response.getJson(dao.get(id).toParams());
 	}
 
 	@Action("delete")
 	@Method({HttpMethod.DELETE})
-	public Response delete(@Params Properties prop) {
-		System.out.println(prop);
+	public Response delete(@ParamUrl("id") Integer id) {
+		// System.out.println(prop);
+		dao.delete(id);
 		return Response.getText("Item deleted");
 	}
 
@@ -168,7 +159,9 @@ public class EntityController {
 	@Method({HttpMethod.PUT})
 	public Response update(@ParamUrl("id") Integer id, @Params Properties prop) {
 		// TODO validator
+		dao.update(id, new Person(prop));
 		System.out.println(prop);
+		System.out.println(dao.get(id));
 		return Response.getText("Item updated");
 	}
 
@@ -176,8 +169,8 @@ public class EntityController {
 	@Method({HttpMethod.PUT})
 	public Response insert(@Params Properties prop) {
 		// TODO validator
-		System.out.println(prop);
-		return Response.getText("Item inserted");
+		int id = dao.insert(new Person(prop));
+		return Response.getText("Item inserted " + id);
 	}
 	
 }

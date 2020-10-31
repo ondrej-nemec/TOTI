@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import controllers.EntityController;
+import controllers.PersonDao;
 import helper.Action;
 import helper.AuthorizationHelper;
 import helper.Rules;
@@ -22,28 +23,9 @@ public class BootstrapEndToEndTest {
 
 	public static void main(String[] args) {
 		try {
-			/*Registr.get().addFactory(TestController.class, ()->{
-				return new TestController();
-			});
-			Registr.get().addFactory(controllers2.TestController.class, ()->{
-				return new controllers2.TestController();
-			});
-			Registr.get().addFactory(LoginController.class, ()->{
-				return new LoginController();
-			});
-			Registr.get().addFactory(SecurityController.class, ()->{
-				return new SecurityController();
-			});
-			Validator val = new Validator(true);
-			val.addRule(mvc.validation.ItemRules.forName("a", true)
-					.setType(Integer.class).setMinValue(10).setMaxValue(20));
-			val.addRule(mvc.validation.ItemRules.forName("b", true)
-					.setMaxLength(20).setMinLength(10).setRegex("[0-9]", "Wrong regex"));
-			Registr.get().addService("testValidator", val);
-			*/
-			
+			PersonDao personDao = new PersonDao();
 			Registr.get().addFactory(EntityController.class, ()->{
-				return new EntityController();
+				return new EntityController(personDao);
 			});
 			
 			

@@ -5,7 +5,9 @@ import java.util.Map;
 
 public interface EntityDao <E extends Entity> {
 
-	List<E> getData(int pageIndex, int pageSize, Map<String, Object> filters, Map<String, Object> sorting);
+	List<Map<String, Object>> getData(int pageIndex, int pageSize, Map<String, Object> filters, Map<String, Object> sorting);
+	
+	List<E> getAll();
 	
 	E get(int id);
 	
