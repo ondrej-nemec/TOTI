@@ -15,6 +15,7 @@ public class Button implements Input, Jsonable {
 	private String method = "get";
 	private Html renderer = null;
 	private final Map<String, String> params = new HashMap<>();
+	private boolean preventDefault = false;
 	
 	public static Button create(String url) {
 		return new Button(url);
@@ -31,6 +32,11 @@ public class Button implements Input, Jsonable {
 
 	public Button setTitle(String title) {
 		this.title = title;
+		return this;
+	}
+
+	public Button setPreventDefault(boolean preventDefault) {
+		this.preventDefault = preventDefault;
 		return this;
 	}
 
@@ -70,6 +76,7 @@ public class Button implements Input, Jsonable {
 		if (renderer != null) {
 			json.put("renderer", renderer);
 		}
+		json.put("preventDefault", preventDefault);
 		json.put("params", params);
 		return json;
 	}

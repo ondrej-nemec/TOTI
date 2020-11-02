@@ -56,7 +56,7 @@ public class EntityController {
 		grid.addColumn(new ButtonsColumn("Buttons")
 			.addButton(Button.create("/control/delete/{id}").setAjax(true).setTitle("Delete")
 					.setConfirmation("Delete {name}?").setMethod("put"))
-			.addButton(Button.create("/control/pdf/{id}").setAjax(false).setTitle("PDF"))
+			//.addButton(Button.create("/control/pdf/{id}").setAjax(false).setTitle("PDF"))
 			.addButton(Button.create("/control/detail/{id}").setAjax(false).setTitle("Detail"))
 			.addButton(Button.create("/control/edit/{id}").setAjax(false).setTitle("Edit"))
 		);
@@ -84,7 +84,9 @@ public class EntityController {
 	@Action("pdf")
 	@Method({HttpMethod.GET})
 	public Response pdf(@ParamUrl("id") Integer id) {
-		return Response.getPdf(detail(id));
+		Response res = detail(id);
+		res.addParam("pdf", "pdf");
+		return res; // Response.getPdf(res);
 	}
 	
 	private Response getOne(Integer id, boolean editable) {
@@ -115,7 +117,7 @@ public class EntityController {
 		
 		form.addInput(Submit.create("Save", "save").setConfirmation("Send {name}?"));
 		form.addInput(Submit.create("Save and return", "save-and-return").setRedirect("/control/all"));
-		form.addInput(Button.create("/control/all").setTitle("Cancel").setAjax(false));
+		form.addInput(Button.create("/control/list").setTitle("Cancel").setAjax(false));
 		params.put("personControl", form);
 		params.put("itemId", id);
 		return Response.getTemplate("/detail.jsp", params);

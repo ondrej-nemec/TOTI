@@ -105,7 +105,7 @@ var totiControl = {
 					if (prevent) {
 						event.preventDefault();
 					}
-					if (submitConfirmation !== null && !submitConfirmation()) {
+					if (submitConfirmation !== null && submitConfirmation !== undefined && !submitConfirmation()) {
 						event.preventDefault();
 						return false;
 					}
@@ -117,9 +117,10 @@ var totiControl = {
 							totiControl.display.flash("error", xhr);
 						}, totiAuth.getAuthHeader());
 					} else {
-						// TODO sync request with headers
-						console.log("Button redirect " + href);
-						return true;
+						if (!prevent) {
+							return true;
+						}
+						totiControl.load.link(href, method, {}, totiAuth.getAuthHeader());
 					}
 				};
 			}
@@ -156,8 +157,12 @@ var totiControl = {
 						data, 
 						function(response) {
 							if (element.attr("redirect") != null) {
-								// TODO window.location = field.redirect(data); headers
-								console.log("Redirect: " + element.attr("redirect"));
+								totiControl.load.link(
+									element.attr("redirect"),
+									"get", 
+									{}, 
+									totiAuth.getAuthHeader()
+								);
 							}
 							totiControl.display.flash('success', response);
 						}, 
@@ -206,14 +211,14 @@ var totiControl = {
 			for (const[name, value] of Object.entries(headers)) {
 				xhr.setRequestHeader(name, value);
 			}
-			
-			// window.history.pushState({"html":window.location.href},"", "?" + jQuery.param(urlParams));
 			xhr.onload = function() {
 				document.documentElement.innerHTML = xhr.response;
 				window.history.pushState({},"", xhr.responseURL);
 			}
 			xhr.send(jQuery.param(data));
-			
+			// location.reload();
+			// window.onload();
+			// console.log("onload");
 		}
 	},
 	display: {
@@ -452,7 +457,8 @@ var totiGrid = {
 								},
 								button.hasOwnProperty("title") ? button.title : "",
 								button.params,
-								button.hasOwnProperty("renderer") ? button.renderer : null
+								button.hasOwnProperty("renderer") ? button.renderer : null,
+								button.preventDefault
 							)
 						);
 					});
@@ -812,7 +818,7 @@ var totiGrid = {
 							totiAuth.getAuthHeader()
 						);
 					} else {
-						// FIX
+						// TODO
 						window.location = $(this).attr("href");
 					}
 				},
@@ -856,6 +862,19 @@ totiForm = {
 				.attr("id", formId);
 		}
 		var table = $('<table>');
+
+		var printSelectFunc = function (field, optionsName) {
+			var input = $('<div>');
+			var options = field[optionsName];
+			delete field[optionsName];
+			for ([key, name] of Object.entries(field)) {
+				input.attr(key, name);
+			}
+			options.forEach(function(option) {
+				input.append($('<span>').attr("value", option.value).text(option.title).hide());
+			});
+			return input;
+		}
 		config.fields.forEach(function(field, index) {
 			field.id = config.formId + "-" + field.id;
 			field.form = formId;
@@ -867,8 +886,14 @@ totiForm = {
 			}
 			var input;
 			if (!config.editable && field.type !== 'button') {
-				// TODO checkbox, radio, select zobrazeni
-				if (field.type !== 'submit' && field.type !== 'hidden') {
+				if (field.type === 'select') {
+					input = printSelectFunc(field, 'options');
+				} else if (field.type === 'radio') {
+					input = printSelectFunc(field, 'radios');
+				} else if (field.type === 'checkbox') {
+					console.log(field, field.values);
+					input = printSelectFunc(field, 'values');
+				} else if (field.type !== 'submit' && field.type !== 'hidden') {
 					input = $('<div>');
 					for ([key, name] of Object.entries(field)) {
 						input.attr(key, name);
@@ -905,7 +930,7 @@ totiForm = {
 							}
 							return true;
 						}
-					}, field.title, field.params, field.hasOwnProperty('renderer') ? field.renderer : null, true);
+					}, field.title, field.params, field.hasOwnProperty('renderer') ? field.renderer : null, field.preventDefault);
 			} else if (field.type === 'radio') {
 				input = $("<div>");
 				field.radios.forEach(function(radio) {
@@ -984,22 +1009,24 @@ totiForm = {
 			bind.method, 
 			bind.params, 
 			function(values) {
-				console.log(values);
 				for (const[key, value] of Object.entries(values)) {
-					var val = value;
+					var val = value; // TODO escape?
 					var id = '#' + formId + ' [name=' + key + ']';
 					var element = $(id);
 					if (element.attr("type") === 'datetime-local') {
 						val = val.replace(" ", "T");
 					}
-					if (element.length > 1) {
-						$('#' + formId + ' #' + formId + '-id-' + val + '[name=' + key + ']').prop('checked', true);
+					//console.log(element.length, element.attr('type'), value, element.html());
+					if (element.children('span').length > 0) { // detail:select, checkbox, radio
+						element.children('span[value="' + val + '"]').show();
+					} else if (element.length > 1) {
+						$('#' + formId + ' #' + formId + '-id-' + val + '[name=' + key + ']').prop('checked', true); // form: radio list
 					} else {
 						element.val(val); // form
 						if (element.text().length == 0) {
 							element.text(val); // detail
 						}
-						element.prop('checked', val); // form
+						element.prop('checked', val); // form: checkbox
 					}
 					
 					
