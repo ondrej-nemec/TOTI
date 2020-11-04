@@ -8,6 +8,7 @@ import java.util.Map;
 
 import controllers.EntityController;
 import controllers.PersonDao;
+import controllers.SecurityController;
 import helper.Action;
 import helper.AuthorizationHelper;
 import helper.Rules;
@@ -27,7 +28,9 @@ public class BootstrapEndToEndTest {
 			Registr.get().addFactory(EntityController.class, ()->{
 				return new EntityController(personDao);
 			});
-			
+			Registr.get().addFactory(SecurityController.class, ()->{
+				return new SecurityController();
+			});
 			
 			AuthorizationHelper authorizator = new AuthorizationHelper(
 					new RulesDao() {						
@@ -78,6 +81,9 @@ public class BootstrapEndToEndTest {
 					.setRouter(router)
 					.setLogger(LoggerFactory.getLogger("server"))
 					.setSecurityLogger(LoggerFactory.getLogger("security"))
+					.setHeaders(new ResponseHeaders(Arrays.asList(
+							"Access-Control-Allow-Origin: *"
+					)))
 					.get(folders);
 			/*
 			Bootstrap b = new Bootstrap(

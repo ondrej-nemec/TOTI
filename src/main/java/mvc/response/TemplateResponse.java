@@ -2,6 +2,8 @@ package mvc.response;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.RandomStringUtils;
+
 import mvc.ResponseHeaders;
 import mvc.templating.Template;
 import mvc.templating.TemplateFactory;
@@ -14,13 +16,11 @@ public class TemplateResponse implements Response {
 	private final Map<String, Object> params;
 	private final StatusCode code;
 	private final String fileName;
-	//private final String charset;
 
-	public TemplateResponse(StatusCode code, String fileName, Map<String, Object> params/*, String charset*/) {
+	public TemplateResponse(StatusCode code, String fileName, Map<String, Object> params) {
 		this.params = params;
 		this.code = code;
 		this.fileName = fileName;
-		//this.charset = charset;
 	}
 
 	@Override
@@ -30,10 +30,11 @@ public class TemplateResponse implements Response {
 
 	@Override
 	public RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String charset) {
-		params.put("nonce", header.getNonce());
+		params.put("nonce", RandomStringUtils.randomAlphanumeric(50));
+		header.addHeader("Content-Type: text/html; charset=" + charset);
 		return RestApiResponse.textResponse(
 			code,
-			header.getHeaders("Content-Type: text/html; charset=" + charset),
+			header.getHeaders(),
 			(bw)->{
 				try {
 					Template template = templateFactory.getTemplate(fileName);

@@ -9,4 +9,6 @@ public @interface Secured {
 
 	Domain[] value() default {};
 	
+	boolean isApi() default true;
+	
 }

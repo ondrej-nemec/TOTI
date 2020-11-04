@@ -13,6 +13,7 @@ public class Submit implements Jsonable, Input {
 	private String redirect;
 	private String confirmation;
 	private boolean ajax = true;
+	private String onResponseFunction = null;
 	private final Map<String, String> params = new HashMap<>();
 	
 	public static Submit create(String title, String name) {
@@ -28,6 +29,11 @@ public class Submit implements Jsonable, Input {
 	// after success ajax request, redirect
 	public Submit setRedirect(String redirect) {
 		this.redirect = redirect;
+		return this;
+	}
+
+	public Submit setOnResponseFunction(String onResponseFunction) {
+		this.onResponseFunction = onResponseFunction;
 		return this;
 	}
 
@@ -56,6 +62,9 @@ public class Submit implements Jsonable, Input {
 		}
 		if (confirmation != null) {
 			json.put("confirmation", confirmation);
+		}
+		if (onResponseFunction != null) {
+			json.put("onSuccess", onResponseFunction);
 		}
 		return json;
 	}

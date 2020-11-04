@@ -56,7 +56,7 @@ import translator.Translator;
 
 public class ResponseFactory implements RestApiServerResponseFactory {
 	
-	private final ResponseHeaders headers;
+	private final ResponseHeaders responseHeaders;
 	private final String charset;
 	private final String defLang;
 	private final Logger logger;
@@ -66,7 +66,6 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private final Router router;
 	
 	private final Map<String, TemplateFactory> modules;
-	// private final TemplateFactory templateFactory;
 	private final Function<Locale, Translator> translator;
 	
 	private final Function<Identity, AclUser> identityToUser;
@@ -75,11 +74,10 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	
 	
 	public ResponseFactory(
-			ResponseHeaders headers,
+			ResponseHeaders responseHeaders,
 			String resourcesDir,
 			Router router,
 			Map<String, TemplateFactory> modules,
-			// TemplateFactory templateFactory,
 			Function<Locale, Translator> translator,			
 			Authenticator authenticator,
 			AuthorizationHelper authorizator,
@@ -89,10 +87,9 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Logger logger) throws Exception {
 		this.resourcesDir = resourcesDir;
 		this.charset = charset;
-	//	this.templateFactory = templateFactory;
 		this.translator = translator;
 		this.mapping = loadUrlMap(modules);
-		this.headers = headers;
+		this.responseHeaders = responseHeaders;
 		this.authorizator = authorizator;
 		this.authenticator = authenticator;
 		this.router = router;
@@ -111,8 +108,9 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Properties header,
 			Properties params,
 			String ip) throws IOException {
-		System.out.println(fullUrl);
-		System.out.println(header);
+		System.err.println("URL: " + fullUrl);
+		System.err.println("Header: " + header);
+		System.err.println("Params: " + params);
 		try {
 			return getAuthenticatedResponse(method, url, params, header, ip);
 		} catch (AuthentizationException e) {
@@ -129,8 +127,10 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private RestApiResponse onException(int code, Throwable t, String fullUrl) {
 		logger.error(String.format("Exception occured %s URL: %s", code, fullUrl), t);
 		// TODO maybe some custom handler
+		/*List<String> h = headers.getHeaders();
+		h.add("WWW-Authenticate: basic realm=\"User Visible Realm\"");*/
 		return Response.getFile(StatusCode.forCode(code), String.format("mvc/errors/%s.html", code))
-				.getResponse(headers, null, null, charset);
+				.getResponse(responseHeaders, null, null, charset);
 	}
 	
 	private RestApiResponse getAuthenticatedResponse(HttpMethod method,
@@ -139,8 +139,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Properties header,
 			String ip) throws Exception {
 		Identity identity = authenticator.authenticate(header);
-		System.err.println(identity);
-		System.err.println(header);
+		System.err.println("Identity: " + identity);
 		return getLocalizedResponse(method, url, header, params, identity, ip);
 	}
 	
@@ -190,6 +189,12 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Identity identity,
 			String ip,
 			Locale locale) throws ServerException {
+		ResponseHeaders headers = responseHeaders.get();
+		// toti exclusive
+		if (url.startsWith("/toti/")) {
+			return Response.getFile("toti/web" + url.substring(5)).getResponse(headers, null, null, charset);
+		}
+		// controllers
 		for (MappedUrl mapped : mapping) {
 			boolean is = false;
 			boolean methodMatch = Arrays.asList(mapped.getAllowedMethods()).contains(method);
@@ -214,21 +219,23 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		    			return Response.getJson(StatusCode.BAD_REQUEST, json).getResponse(headers, null, null, charset);
 		    		}
 	    		}
-	    		return getControllerResponse(mapped, params, identity, locale);
+	    		return getControllerResponse(headers, mapped, params, identity, locale);
 	    	}
 		}
-		
+		// files
 		File file = new File(resourcesDir + url);
 		if (!file.exists()) {
 			throw new ServerException(404, String.format("URL not fouded: %s (%s)", url, method));
 		}
 		if (file.isDirectory()) {
-			return getDirResponse(file.listFiles(), url);
+			return getDirResponse(headers, file.listFiles(), url);
 		}
 		return Response.getFile(resourcesDir + url).getResponse(headers, null, null, charset);
 	}
 	
-	private RestApiResponse getControllerResponse(MappedUrl mapped, Properties params, Identity identity, Locale locale) throws ServerException {
+	private RestApiResponse getControllerResponse(
+			ResponseHeaders headers,
+			MappedUrl mapped, Properties params, Identity identity, Locale locale) throws ServerException {
 		authorize(mapped, params, identity);
 		try {
 			// params for method
@@ -240,21 +247,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 					valuesList.add(params);
 				} else {
 					valuesList.add(ParseObject.parse(clazz, params.get(name)));
-				} /*else if (clazz.isAssignableFrom(Integer.class) || clazz.isAssignableFrom(int.class)) {
-					valuesList.add(Integer.parseInt(params.get(name) + ""));
-				} else if (clazz.isAssignableFrom(Boolean.class) || clazz.isAssignableFrom(boolean.class)) {
-					valuesList.add(Boolean.parseBoolean(params.get(name) + ""));
-				} else if (clazz.isAssignableFrom(Short.class) || clazz.isAssignableFrom(short.class)) {
-					valuesList.add(Short.parseShort(params.get(name) + ""));
-				} else if (clazz.isAssignableFrom(Float.class) || clazz.isAssignableFrom(float.class)) {
-					valuesList.add(Float.parseFloat(params.get(name) + ""));
-				} else if (clazz.isAssignableFrom(Double.class) || clazz.isAssignableFrom(double.class)) {
-					valuesList.add(Double.parseDouble(params.get(name) + ""));
-				} else if (clazz.isAssignableFrom(Long.class) || clazz.isAssignableFrom(long.class)) {
-					valuesList.add(Long.parseLong(params.get(name) + ""));
-				} else {
-					valuesList.add(clazz.cast(params.get(name)));
-				}*/
+				}
 			});
 			
 			// TODO authenticate
@@ -286,7 +279,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				
 	    	Response response = (Response)o.getClass()
 	    				.getMethod(mapped.getMethodName(), classes).invoke(o, values);
-	    	return response.getResponse(headers, templateFactory, translator.apply(locale), charset);
+	    	headers.addHeaders(authenticator.getHeaders(identity)); // TODO fix for cookes
+			return response.getResponse(headers, templateFactory, translator.apply(locale), charset);
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
@@ -296,6 +290,9 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		if (mapped.isSecured()) {
 			if (!identity.isPresent()) {
 				throw new ServerException(401, "Method require logged user");
+			}
+			if (mapped.isApi() && !identity.isApiAllowed()) {
+				throw new ServerException(StatusCode.FORBIDDEN.getCode(), "For this url you cannot use cookie token");
 			}
 			for (Domain domain : mapped.getSecured()) {
 				for (helper.Action action : domain.actions()) {
@@ -307,10 +304,11 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		}
 	}
 
-	private RestApiResponse getDirResponse(File[] files, String path) {
+	private RestApiResponse getDirResponse(ResponseHeaders headers, File[] files, String path) {
+		headers.addHeader("Content-Type: text/html; charset=" + charset);
 		return RestApiResponse.textResponse(
 			StatusCode.OK,
-			 headers.getHeaders("Content-Type: text/html; charset=" + charset),
+			headers.getHeaders(),
 			(bw)->{
 				try {
 					bw.write(new DirectoryTemplate(files, path).create(null, null, null));
@@ -379,13 +377,15 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		    				String methodName = m.getName();
 		    				
 		    				Domain[] methodDomains = null;
+		    				boolean isApi = false;
 		    				if (m.isAnnotationPresent(Secured.class)) {
 		    					methodDomains = m.getAnnotation(Secured.class).value();
+		    					isApi = m.getAnnotation(Secured.class).isApi();
 		    				}
 		    				
 		    				MappedUrl mappedUrl = new MappedUrl(
 		    						url, methods, className, methodName, folder,
-		    						ArrayUtils.addAll(classDomains, methodDomains),
+		    						ArrayUtils.addAll(classDomains, methodDomains), isApi,
 		    						validator
 		    				);
 		    				for (Parameter p : m.getParameters()) {

@@ -11,6 +11,7 @@ import mvc.annotations.url.Method;
 import mvc.annotations.url.Param;
 import mvc.annotations.url.ParamUrl;
 import mvc.annotations.url.Params;
+import mvc.annotations.url.Secured;
 import mvc.control.Form;
 import mvc.control.Grid;
 import mvc.control.columns.ActionsColumn;
@@ -41,6 +42,7 @@ public class EntityController {
 	}
 	
 	@Action("list")
+	@Secured(isApi = false)
 	public Response grid() {
 		Map<String, Object> params = new HashMap<>();
 		Grid grid = new Grid("/control/all", "get");
@@ -55,7 +57,7 @@ public class EntityController {
 		
 		grid.addColumn(new ButtonsColumn("Buttons")
 			.addButton(Button.create("/control/delete/{id}").setAjax(true).setTitle("Delete")
-					.setConfirmation("Delete {name}?").setMethod("put"))
+					.setConfirmation("Delete {name}?").setMethod("delete"))
 			//.addButton(Button.create("/control/pdf/{id}").setAjax(false).setTitle("PDF"))
 			.addButton(Button.create("/control/detail/{id}").setAjax(false).setTitle("Detail"))
 			.addButton(Button.create("/control/edit/{id}").setAjax(false).setTitle("Edit"))
@@ -66,23 +68,27 @@ public class EntityController {
 	}
 	
 	@Action("add")
+	@Secured(isApi = false)
 	public Response add() {
 		return getOne(null, true);
 	}
 
 	@Action("edit")
+	@Secured(isApi = false)
 	public Response edit(@ParamUrl("id") Integer id) {
 		return getOne(id, true);
 	}
 
 	@Action("detail")
 	@Method({HttpMethod.GET})
+	@Secured(isApi = false)
 	public Response detail(@ParamUrl("id") Integer id) {
 		return getOne(id, false);
 	}
 
 	@Action("pdf")
 	@Method({HttpMethod.GET})
+	@Secured(isApi = false)
 	public Response pdf(@ParamUrl("id") Integer id) {
 		Response res = detail(id);
 		res.addParam("pdf", "pdf");
@@ -127,6 +133,7 @@ public class EntityController {
 	
 	@Action("all")
 	@Method({HttpMethod.GET})
+	@Secured
 	public Response getAll(
 			@Param("pageIndex") Integer pageIndex,
 			@Param("pageSize") Integer pageSize,
@@ -145,12 +152,14 @@ public class EntityController {
 
 	@Action("get")
 	@Method({HttpMethod.GET})
+	@Secured
 	public Response get(@ParamUrl("id") Integer id) {
 		return Response.getJson(dao.get(id).toParams());
 	}
 
 	@Action("delete")
 	@Method({HttpMethod.DELETE})
+	@Secured
 	public Response delete(@ParamUrl("id") Integer id) {
 		// System.out.println(prop);
 		dao.delete(id);
@@ -159,6 +168,7 @@ public class EntityController {
 
 	@Action("update")
 	@Method({HttpMethod.PUT})
+	@Secured
 	public Response update(@ParamUrl("id") Integer id, @Params Properties prop) {
 		// TODO validator
 		dao.update(id, new Person(prop));
@@ -169,6 +179,7 @@ public class EntityController {
 
 	@Action("insert")
 	@Method({HttpMethod.PUT})
+	@Secured
 	public Response insert(@Params Properties prop) {
 		// TODO validator
 		int id = dao.insert(new Person(prop));

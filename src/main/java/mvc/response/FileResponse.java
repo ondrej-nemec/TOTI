@@ -1,7 +1,5 @@
 package mvc.response;
 
-import java.util.List;
-
 import common.FileExtension;
 import core.text.Binary;
 import core.text.InputStreamLoader;
@@ -15,12 +13,10 @@ public class FileResponse implements Response {
 
 	private final String fileName;
 	private final StatusCode code;
-	/*private final String charset;*/
 	
-	public FileResponse(StatusCode code, String fileName/*, String charset*/) {
+	public FileResponse(StatusCode code, String fileName) {
 		this.fileName = fileName;
 		this.code = code;
-	//	this.charset = charset;
 	}
 
 	@Override
@@ -28,12 +24,11 @@ public class FileResponse implements Response {
 	
 	@Override
 	public RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String charset) {
-		List<String> h = header.getHeaders();
 		String head = getContentType(fileName, charset);
 		if (head != null) {
-			h.add(head);
+			header.addHeader(head);
 		}
-		return RestApiResponse.binaryResponse(code, h, (bout)->{
+		return RestApiResponse.binaryResponse(code, header.getHeaders(), (bout)->{
 			Binary.read((bin)->{
 				byte[] b = new byte[2048];
 				int len = 0;

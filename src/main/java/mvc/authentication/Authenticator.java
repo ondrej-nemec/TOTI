@@ -1,7 +1,11 @@
 package mvc.authentication;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
@@ -11,6 +15,10 @@ import utils.security.HashException;
 
 public class Authenticator {
 
+	private final static String cookieName = "SessionID";
+	
+	private final Set<String> activeTokens = new HashSet<>();
+	
 	private final long expirationTime;
 	private final String hashSalt;
 	private final Logger logger;
@@ -25,35 +33,75 @@ public class Authenticator {
 	}
 
 	public String login(String content, Identity identity) throws AuthentizationException {
+		return getToken(content, identity);
+	}
+	
+	public String refresh(Identity identity, String content, Boolean append) throws AuthentizationException {
+		return getToken(content, identity);
+	}
+	
+	public void logout(Identity token) {
+		activeTokens.remove(token.getToken());
+		token.clear();
+	}
+	
+	private String getToken(String content, Identity identity) throws AuthentizationException {
 		try {
 			String id = RandomStringUtils.randomAlphanumeric(50);
 			String token = createToken(id, content);
-			identity.set(content, id, expirationTime, token);
+			identity.set(content, id, expirationTime, token, false); // just for login/refresh request
+			activeTokens.remove(identity.getToken());
+			activeTokens.add(token);
 			return token;
 		} catch (Exception e) {
 			throw new AuthentizationException(e);
 		}
 	}
-	
-	public void logout(Identity token) {
-		// TODO some disabling - maybe memory list of tokens
-		token.clear();
-	}
-	
-	public String refresh(Identity identity, String content, Boolean append) throws AuthentizationException {
-		return login(content, identity);
+
+	public List<String> getHeaders(Identity identity) {
+		if (identity.isPresent()) {
+			return Arrays.asList(
+				"Set-Cookie: "
+				+ cookieName + "=" + identity.getToken()
+				+ "; HttpOnly"
+				+ "; Path=/"
+				+ "; SameSite=Strict"
+				+ "; Max-Age=" + (expirationTime / 1000)
+			);
+		}
+		return Arrays.asList(
+				/*"Set-Cookie: "
+				+ cookieName + "=empty"
+				+ "; HttpOnly"
+				+ "; Path=/"
+				+ "; SameSite=Strict"
+				+ "; Max-Age=0"*/
+			);
 	}
 	
 	public Identity authenticate(Properties header) {
 		try {
 			String token = null;
+			boolean apiAllowed = false;
 			if (header.get("Authorization") != null) {
 				String[] vals = header.get("Authorization").toString().split(" ", 2);
 				if (vals.length == 2) {
 					token = vals[1];
+					apiAllowed = true;
+				}
+			} else if (header.get("Cookie") != null) {
+				String[] cookiesArray = header.get("Cookie").toString().split(";");
+				for (String cookies : cookiesArray) {
+					String[] cookie = cookies.split("=", 2);
+					if (cookie.length == 2 && cookie[0].trim().equals(cookieName)) {
+						token = cookie[1].trim();
+					}
 				}
 			}
-			Identity identity = parseToken(token);
+			if (!activeTokens.contains(token)) {
+				return Identity.empty();
+			}
+			Identity identity = parseToken(token, apiAllowed);
 			return identity;
 		} catch (Exception e) {
 			System.err.println(header);
@@ -76,7 +124,7 @@ public class Authenticator {
 	}
 	
 	// TODO test this method
-	protected Identity parseToken(String token) throws HashException {
+	protected Identity parseToken(String token, boolean apiAllowed) throws HashException {
 		if (token == null || token.isEmpty()) {
 			return Identity.empty();
 		}
@@ -92,7 +140,7 @@ public class Authenticator {
 		if (expired < new Date().getTime()) {
 			throw new RuntimeException("Token is expired");
 		}
-		return Identity.get(content, random, expired, token);
+		return Identity.get(content, random, expired, token, apiAllowed);
 	}
 	
 	private String createHashingMesasge(String random, long expired, String content) {

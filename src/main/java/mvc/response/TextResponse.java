@@ -1,7 +1,5 @@
 package mvc.response;
 
-import java.util.List;
-
 import mvc.ResponseHeaders;
 import mvc.templating.TemplateFactory;
 import socketCommunication.http.StatusCode;
@@ -23,8 +21,7 @@ public class TextResponse implements Response {
 	
 	@Override
 	public RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String charset) {
-		List<String> h = header.getHeaders();
-		return RestApiResponse.textResponse(code, h, (bw)->{
+		return RestApiResponse.textResponse(code, header.getHeaders(), (bw)->{
 			bw.write(text);
 		});
 	}

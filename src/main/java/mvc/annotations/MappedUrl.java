@@ -31,11 +31,13 @@ public class MappedUrl {
 	private final Domain[] domains;
 	
 	private final Optional<Validator> validator;
+	
+	private final boolean isApi;
 
 	public MappedUrl(
 			String url, HttpMethod[] allowedMethods,
 			String className, String methodName,
-			String folder, Domain[] domains,
+			String folder, Domain[] domains, boolean isApi,
 			Optional<Validator> validator) {
 		this.url = url;
 		this.folder = folder;
@@ -45,6 +47,7 @@ public class MappedUrl {
 		this.params = new LinkedList<>();
 		this.paramNames = new LinkedList<>();
 		this.domains = domains;
+		this.isApi = isApi;
 		this.validator = validator;
 	}
 
@@ -121,6 +124,10 @@ public class MappedUrl {
 
 	public Optional<Validator> getValidator() {
 		return validator;
+	}
+
+	public boolean isApi() {
+		return isApi;
 	}
 	
 }

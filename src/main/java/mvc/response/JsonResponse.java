@@ -27,9 +27,10 @@ public class JsonResponse implements Response {
 
 	@Override
 	public RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String charset) {
+		header.addHeader("Content-Type: application/json; charset=" + charset);
 		return RestApiResponse.textResponse(
 			code,
-			header.getHeaders("Content-Type: application/json; charset=" + charset),
+			header.getHeaders(),
 			(bw)->{
 				try {
 					OutputJsonStream stream = new OutputJsonStream(new OutputReaderProvider(bw));

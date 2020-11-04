@@ -156,6 +156,9 @@ var totiControl = {
 						form.attr("method"), 
 						data, 
 						function(response) {
+							if (element.attr("onSuccess") != null) {
+								window[element.attr("onSuccess")](response);
+							} 
 							if (element.attr("redirect") != null) {
 								totiControl.load.link(
 									element.attr("redirect"),
@@ -163,8 +166,9 @@ var totiControl = {
 									{}, 
 									totiAuth.getAuthHeader()
 								);
+							} else {
+								totiControl.display.flash('success', response);
 							}
-							totiControl.display.flash('success', response);
 						}, 
 						function(xhr) {
 							if (xhr.status === 400) {
@@ -175,6 +179,8 @@ var totiControl = {
 									});
 									$('#' + config.formId + '-errors-' + key + '').html(ol);
 								}
+							} else if (element.attr("onFailure") != null) {
+								window[element.attr("onFailure")](xhr);
 							} else {
 								// TODO
 								console.log("what now?", xhr);
@@ -254,7 +260,7 @@ var totiAuth = {
 		},
 		getVariable: function() {
 			var name = totiAuth.storage.variableName;
-			if (!localStorage[name] || localStorage[name] === null || (localStorage[name] == 'null') ) {
+			if (!localStorage[name] || localStorage[name] === null || (localStorage[name] == 'null') || localStorage[name] === undefined) {
 				return null;
 			}
 			return JSON.parse(localStorage[name]);
@@ -298,8 +304,8 @@ var totiAuth = {
 		}
 		setTimeout(function() {
 			totiControl.load.ajax(
-				token.config.refreshUrl,
-				token.config.refreshMethod, 
+				token.config.refresh.url,
+				token.config.refresh.method, 
 				{}, 
 				function(gettedToken) {
 					totiAuth.isRefreshActive = false;
@@ -327,8 +333,8 @@ var totiAuth = {
 		}
 		var token = totiAuth.storage.getVariable();
 		totiControl.load.ajax(
-			token.config.logoutUrl,
-			token.config.logoutMethod, 
+			token.config.logout.url,
+			token.config.logout.method, 
 			{}, 
 			function(res) {}, 
 			function(xhr, a, error) {
@@ -338,7 +344,11 @@ var totiAuth = {
 		);
 		totiAuth.storage.removeVariable();
 	},
-	login: function(authData, config, redirect = null) {
+	//login: function(authData, config, redirect = null) {
+	login: function(token, config) {
+		token.config = config;
+		totiAuth.setTokenRefresh(token);
+		/*
 		totiControl.load.ajax(
 			config.loginUrl,
 			config.loginMethod, 
@@ -354,7 +364,8 @@ var totiAuth = {
 				console.log(xhr, a, error);
 			}, 
 			{}
-		);		
+		);
+		*/	
 	},
 	onLoad: function() {
 		totiAuth.setTokenRefresh(null, 0);
@@ -442,6 +453,7 @@ var totiGrid = {
 					}));
 				} else if (column.type === 'buttons') {
 					column.buttons.forEach(function(button, index) {
+						// TODO reload data
 						td.append(
 							totiControl.inputs.button(
 								{
@@ -981,13 +993,6 @@ totiForm = {
 					errorElement.html(error);
 				}
 			} else {
-				/*
-				form.append($('<div>')
-					.append(label)
-					.append(input)
-					.append(config.editable ? error : "")
-				);
-				*/
 				table.append($('<tr>')
 					.append($('<td>').append(label))
 					.append($('<td>').append(input))
@@ -1028,15 +1033,13 @@ totiForm = {
 						}
 						element.prop('checked', val); // form: checkbox
 					}
-					
-					
 				}
 			}, 
 			function(xhr, a, b) {
 				console.log(xhr, a, b);
 				bind.onFailure(xhr, a, b);
 			}, 
-			totiAuth.getAuthHeader
+			totiAuth.getAuthHeader()
 		);
 		
 	}
