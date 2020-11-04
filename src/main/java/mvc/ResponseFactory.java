@@ -42,6 +42,7 @@ import mvc.annotations.url.Secured;
 import mvc.authentication.Authenticator;
 import mvc.authentication.AuthentizationException;
 import mvc.authentication.Identity;
+import mvc.authentication.Language;
 import mvc.registr.Registr;
 import mvc.response.Response;
 import mvc.templating.DirectoryTemplate;
@@ -58,7 +59,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	
 	private final ResponseHeaders responseHeaders;
 	private final String charset;
-	private final String defLang;
+	private final Language language;
 	private final Logger logger;
 	
 	private final List<MappedUrl> mapping;	
@@ -75,6 +76,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	
 	public ResponseFactory(
 			ResponseHeaders responseHeaders,
+			Language language,
 			String resourcesDir,
 			Router router,
 			Map<String, TemplateFactory> modules,
@@ -83,7 +85,6 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			AuthorizationHelper authorizator,
 			Function<Identity, AclUser> identityToUser,
 			String charset,
-			String defLang,
 			Logger logger) throws Exception {
 		this.resourcesDir = resourcesDir;
 		this.charset = charset;
@@ -96,7 +97,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		this.modules = modules;
 		this.logger = logger;
 		this.identityToUser = identityToUser;
-		this.defLang = defLang;
+		this.language = language;
 	}
 
 	@Override
@@ -130,7 +131,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		/*List<String> h = headers.getHeaders();
 		h.add("WWW-Authenticate: basic realm=\"User Visible Realm\"");*/
 		return Response.getFile(StatusCode.forCode(code), String.format("mvc/errors/%s.html", code))
-				.getResponse(responseHeaders, null, null, charset);
+				.getResponse(responseHeaders.get(), null, null, charset);
 	}
 	
 	private RestApiResponse getAuthenticatedResponse(HttpMethod method,
@@ -150,13 +151,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Properties params,
 			Identity identity,
 			String ip) throws ServerException {
-		String lang = header.getProperty("Accept-Language");
-		if (lang == null) {
-			return getNormalizedResponse(method, url, params, identity, ip, new Locale(defLang));
-		} else {
-			String locale = lang.split(" ", 2)[0].split(";")[0].trim().replace("-", "_");
-			return getNormalizedResponse(method, url, params, identity, ip, new Locale(locale));
-		}
+		Locale locale = language.getLocale(header);
+		return getNormalizedResponse(method, url, params, identity, ip, locale);
 	}
 	
 	private RestApiResponse getNormalizedResponse(
@@ -166,6 +162,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Identity identity,
 			String ip,
 			Locale locale) throws ServerException {
+		System.err.println("Locale: " + locale);
 		return getRoutedResponse(method, url.endsWith("/") ? url.substring(0, url.length()-1) : url, params, identity, ip, locale);
 	}
 	
@@ -250,8 +247,6 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				}
 			});
 			
-			// TODO authenticate
-			
 			Object o = Registr.get().getFactory(mapped.getClassName()).get();
 			// inject
 			Field[] fields = o.getClass().getDeclaredFields();
@@ -279,7 +274,10 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				
 	    	Response response = (Response)o.getClass()
 	    				.getMethod(mapped.getMethodName(), classes).invoke(o, values);
-	    	headers.addHeaders(authenticator.getHeaders(identity)); // TODO fix for cookes
+	    	
+	    	headers.addHeaders(authenticator.getHeaders(identity)); // FIX for cookies
+	    	headers.addHeaders(language.getHeaders(locale)); // FIX for cookies
+	    	
 			return response.getResponse(headers, templateFactory, translator.apply(locale), charset);
 		} catch (Throwable e) {
 			throw new RuntimeException(e);

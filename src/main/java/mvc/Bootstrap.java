@@ -11,6 +11,7 @@ import helper.AuthorizationHelper;
 import interfaces.AclUser;
 import mvc.authentication.Authenticator;
 import mvc.authentication.Identity;
+import mvc.authentication.Language;
 import mvc.templating.TemplateFactory;
 import socketCommunication.Server;
 import socketCommunication.ServerSecuredCredentials;
@@ -24,7 +25,7 @@ public class Bootstrap {
 			int port,
 			int threadPool,
     		long readTimeout,
-    		ResponseHeaders headers,
+    		ResponseHeaders headers, // TODO only list ??
     		Optional<ServerSecuredCredentials> certs,
     		String tempPath,
     		Map<String, String> folders,
@@ -53,6 +54,7 @@ public class Bootstrap {
 		
 		ResponseFactory response = new ResponseFactory(
 				headers,
+				new Language(defLang),
 				resourcesPath,
 				router,
 				modules,
@@ -61,7 +63,6 @@ public class Bootstrap {
 				authorizator,
 				identityToUser,
 				charset,
-				defLang,
 				logger
 		);
 				

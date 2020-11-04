@@ -89,14 +89,8 @@ public class Authenticator {
 					token = vals[1];
 					apiAllowed = true;
 				}
-			} else if (header.get("Cookie") != null) {
-				String[] cookiesArray = header.get("Cookie").toString().split(";");
-				for (String cookies : cookiesArray) {
-					String[] cookie = cookies.split("=", 2);
-					if (cookie.length == 2 && cookie[0].trim().equals(cookieName)) {
-						token = cookie[1].trim();
-					}
-				}
+			} else {
+				token = Cookie.getCookieValue(header, cookieName);
 			}
 			if (!activeTokens.contains(token)) {
 				return Identity.empty();

@@ -14,6 +14,27 @@ var totiLang = {
 	"gridMessages": {
 		"noItemsFound": "No Item Found",
 		"loadingError": "Problem with data loading"
+	},
+	variableName: "language",
+	changeLanguage: function (language) {
+		totiControl.storage.saveVariable(totiLang.variableName, language);
+		document.cookie = "Language=" + language + ";Path=/";
+	},
+	getLang: function() {
+		var lang = totiControl.storage.getVariable(totiLang.variableName);
+		if (lang === null) {
+			return navigator.language.toLowerCase().replace("-", "_");
+		}
+		return lang;
+	},
+	getLangHeader: function() {
+		var lang = totiControl.storage.getVariable(totiLang.variableName);
+		if (lang === null) {
+			return {};
+		}
+		return {
+			"Accept-Language": lang
+		};
 	}
 };
 
@@ -115,12 +136,12 @@ var totiControl = {
 							totiControl.display.flash("success", res);
 						}, function(xhr) {
 							totiControl.display.flash("error", xhr);
-						}, totiAuth.getAuthHeader());
+						}, totiControl.getHeaders() /* totiAuth.getAuthHeader() */ );
 					} else {
 						if (!prevent) {
 							return true;
 						}
-						totiControl.load.link(href, method, {}, totiAuth.getAuthHeader());
+						totiControl.load.link(href, method, {}, totiControl.getHeaders() /* totiAuth.getAuthHeader() */ );
 					}
 				};
 			}
@@ -164,7 +185,8 @@ var totiControl = {
 									element.attr("redirect"),
 									"get", 
 									{}, 
-									totiAuth.getAuthHeader()
+									totiControl.getHeaders()
+									// totiAuth.getAuthHeader()
 								);
 							} else {
 								totiControl.display.flash('success', response);
@@ -186,7 +208,8 @@ var totiControl = {
 								console.log("what now?", xhr);
 							}
 						}, 
-						totiAuth.getAuthHeader()
+						totiControl.getHeaders() 
+						// totiAuth.getAuthHeader()  
 					);
 				}
 			});
@@ -249,38 +272,43 @@ var totiControl = {
 			}
 			return string;
 		}
-	}
-};
-
-var totiAuth = {
+	},
 	storage: {
-		variableName: "authentication",
-		saveVariable: function(value) {
-			localStorage[totiAuth.storage.variableName] = JSON.stringify(value);
+		saveVariable: function(name, value) {
+			localStorage[name] = JSON.stringify(value);
 		},
-		getVariable: function() {
-			var name = totiAuth.storage.variableName;
+		getVariable: function(name) {
 			if (!localStorage[name] || localStorage[name] === null || (localStorage[name] == 'null') || localStorage[name] === undefined) {
 				return null;
 			}
 			return JSON.parse(localStorage[name]);
 		},
-		removeVariable: function() {
-			localStorage.removeItem(totiAuth.storage.variableName);
+		removeVariable: function(name) {
+			localStorage.removeItem(name);
 		}
 	},
+	getHeaders: function() {
+		return {
+			...totiAuth.getAuthHeader(),
+			 ...totiLang.getLangHeader()
+		};
+	}
+};
+
+var totiAuth = {
+	variableName: "authentication",
 	getAuthHeader: function(access = true) {
-		if (totiAuth.storage.getVariable() === null) {
+		var token = totiControl.storage.getVariable(totiAuth.variableName);
+		if (token === null) {
 			return {};
 		}
-		var token = totiAuth.storage.getVariable();
 		return {
 			"Authorization": token.token_type + " " + (access ? token.access_token : token.refresh_token)
 		};
 	},
 	// for public use
 	getToken: function() {
-		var token = totiAuth.storage.getVariable();
+		var token = totiControl.storage.getVariable(totiAuth.variableName);
 		if (token !== null) {
 			delete token.config;
 		}
@@ -292,13 +320,13 @@ var totiAuth = {
 			console.log("Another refresh is running");
 			return false;
 		}
-		token = token || totiAuth.storage.getVariable();
+		token = token || totiControl.storage.getVariable(totiAuth.variableName);
 		if (!token) {
 			console.log("No saved token");
 			return false;
 		}
 		totiAuth.isRefreshActive = true;
-		totiAuth.storage.saveVariable(token);
+		totiControl.storage.saveVariable(totiAuth.variableName, token);
 		if (period < 0) {
 			period = token.expires_in * 3 / 2;
 		}
@@ -316,7 +344,7 @@ var totiAuth = {
 					totiAuth.isRefreshActive = false;
 					console.log(xhr, a, error);
 					//if (totiAuth.refreshCount > 5) {
-						totiAuth.storage.removeVariable();
+						totiControl.storage.removeVariable(totiAuth.variableName);
 					/*} else {
 						totiAuth.setTokenRefresh(token, period / 2);
 					}	*/				
@@ -327,11 +355,11 @@ var totiAuth = {
 		return true;
 	},
 	logout: function() {
-		if (totiAuth.storage.getVariable() === null) {
+		if (totiControl.storage.getVariable(totiAuth.variableName) === null) {
 			console.log("No token");
 			return;
 		}
-		var token = totiAuth.storage.getVariable();
+		var token = totiControl.storage.getVariable(totiAuth.variableName);
 		totiControl.load.ajax(
 			token.config.logout.url,
 			token.config.logout.method, 
@@ -342,7 +370,7 @@ var totiAuth = {
 			}, 
 			totiAuth.getAuthHeader()
 		);
-		totiAuth.storage.removeVariable();
+		totiControl.storage.removeVariable(totiAuth.variableName);
 	},
 	//login: function(authData, config, redirect = null) {
 	login: function(token, config) {
@@ -432,8 +460,8 @@ var totiGrid = {
 			function(xhr, a, b) {
 				body.html(totiGrid._loadDataFailure(xhr, a, b));
 			},
-			totiAuth.getAuthHeader()
-			// totiGrid.config[uniqueName].headers
+			totiControl.getHeaders()
+			// totiAuth.getAuthHeader()
 		);
 	},
 	_loadDataSuccess: function(body, uniqueName, response, columns, headers, identifier) {
@@ -827,7 +855,8 @@ var totiGrid = {
 							function(message) {
 								totiControl.display.flash('error', message);
 							},
-							totiAuth.getAuthHeader()
+							totiControl.getHeaders()
+							// totiAuth.getAuthHeader()
 						);
 					} else {
 						// TODO
@@ -1038,8 +1067,9 @@ totiForm = {
 			function(xhr, a, b) {
 				console.log(xhr, a, b);
 				bind.onFailure(xhr, a, b);
-			}, 
-			totiAuth.getAuthHeader()
+			},
+			totiControl.getHeaders()
+			// totiAuth.getAuthHeader()
 		);
 		
 	}
