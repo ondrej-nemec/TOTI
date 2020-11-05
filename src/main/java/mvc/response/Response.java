@@ -65,10 +65,10 @@ public interface Response {
 	static Response getRedirect(String url) {
 		return new RedirectResponse(StatusCode.TEMPORARY_REDIRECT, url);
 	}
-	
+	/*
 	// TODO some param in supported responses
 	static Response getPdf(Response response) {
 		return new PdfResponse(response);
 	}
-	
+	*/
 }
