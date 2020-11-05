@@ -1,6 +1,8 @@
 package mvc;
 
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -17,7 +19,9 @@ public class BootstrapFactory {
 	
 	// todo maybe regist here too
 	private Router router = new Router();
-	private ResponseHeaders headers = new ResponseHeaders(new LinkedList<>());
+	private ResponseHeaders headers = new ResponseHeaders(Arrays.asList(
+			"Access-Control-Allow-Origin: *"
+	));
 	
 	// private Map<String, String> folders;
 	
@@ -40,9 +44,28 @@ public class BootstrapFactory {
 	private String defLang = Locale.getDefault().toString();
 	private String resourcesPath = "www";
 	private boolean deleteDir = false;
+	private int maxUploadFileSize = 0;
+	private Optional<List<String>> allowedUploadFileTypes = Optional.of(new LinkedList<>());
 	
 	public Bootstrap get(Map<String, String> folders) throws Exception {
-		return new Bootstrap(port, threadPool, readTimeout, headers, certs, tempPath, folders, resourcesPath, router, translator, authorizator, identityToUser, charset, defLang, tokenSalt, tokenExpirationTime, logger, securityLogger, deleteDir);
+		return new Bootstrap(
+				port, threadPool, readTimeout, headers,
+				certs, tempPath, folders, resourcesPath, router,
+				translator, authorizator, identityToUser,
+				maxUploadFileSize, allowedUploadFileTypes,
+				charset, defLang, tokenSalt, tokenExpirationTime,
+				logger, securityLogger, deleteDir
+		);
+	}
+
+	public BootstrapFactory setMaxUploadFileSize(int maxUploadFileSize) {
+		this.maxUploadFileSize = maxUploadFileSize;
+		return this;
+	}
+
+	public BootstrapFactory setAllowedUploadFileTypes(Optional<List<String>> allowedUploadFileTypes) {
+		this.allowedUploadFileTypes = allowedUploadFileTypes;
+		return this;
 	}
 
 	public BootstrapFactory setRouter(Router router) {

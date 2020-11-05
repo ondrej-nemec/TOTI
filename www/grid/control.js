@@ -64,6 +64,9 @@ var totiControl = {
 			}
 			return label;
 		},
+		file: function(params = {}) {
+			return totiControl.inputs._createInput("file", params);
+		},
 		hidden: function (params = {}) {
 			return totiControl.inputs._createInput("hidden", params);
 		},
@@ -156,6 +159,7 @@ var totiControl = {
 				if (!form[0].reportValidity()) {
 					return false;
 				}
+
 				var data = {};
 				$.each(form.serializeArray(), function(index, item) {
 					var input = form.find('[name="' + item.name + '"]');
@@ -165,6 +169,41 @@ var totiControl = {
 					}
 					data[item.name] = value;
 				});
+				// TODO
+				var config = {};
+				if (form.attr("enctype") !== undefined) {
+					/*event.preventDefault();
+					file = $('input[name="file"]')
+					console.log(data, new FormData(form[0]));
+					return false;*/
+					var formData = new FormData(form[0]);
+					for (var key of formData.keys()) {
+						if (form.find('input[name="' + key + '"]').attr('type') === 'datetime-local') {
+							formData.set(key, formData.get(key).replace("T", " "));
+						}
+					}
+					config = {
+						cache: false,
+					    contentType: false,
+					    processData: false,
+					    data: formData, // new FormData(form[0]),
+					    xhr: function () {
+					      var myXhr = $.ajaxSettings.xhr();
+					      if (myXhr.upload) {
+					        myXhr.upload.addEventListener('progress', function (e) {
+					        	console.log(e.loaded);
+					            if (e.lengthComputable) {
+						            $('progress').attr({
+						               value: e.loaded,
+						               max: e.total,
+						            });
+					            }
+					        }, false);
+					      }
+					      return myXhr;
+					    }
+					};
+				}
 
 				if (submitConfirmation !== null && !submitConfirmation(data)) {
 					event.preventDefault();
@@ -172,6 +211,10 @@ var totiControl = {
 				}
 				if (async) {
 					event.preventDefault();
+					var header = totiControl.getHeaders();
+					if (form.attr("enctype") !== undefined) {
+						header.enctype = form.attr("enctype");
+					}
 					totiControl.load.ajax(
 						form.attr("action"), 
 						form.attr("method"), 
@@ -186,7 +229,6 @@ var totiControl = {
 									"get", 
 									{}, 
 									totiControl.getHeaders()
-									// totiAuth.getAuthHeader()
 								);
 							} else {
 								totiControl.display.flash('success', response);
@@ -208,8 +250,8 @@ var totiControl = {
 								console.log("what now?", xhr);
 							}
 						}, 
-						totiControl.getHeaders() 
-						// totiAuth.getAuthHeader()  
+						header,
+						config
 					);
 				}
 			});
@@ -217,8 +259,8 @@ var totiControl = {
 		}
 	},
 	load: {
-		ajax: function(url, method, data, onSuccess, onFailure, headers) {
-			$.ajax({
+		ajax: function(url, method, data, onSuccess, onFailure, headers, ajaxConfig = {}) {
+			var ajaxObject = {
 				url: url,
 				data: data,
 				method: method,
@@ -229,6 +271,10 @@ var totiControl = {
 				error: function(xhr, mess, errror) {
 					onFailure(xhr, mess, errror);
 				}
+			};
+			$.ajax({
+				...ajaxObject,
+				...ajaxConfig
 			});
 		},
 		parseUrlToObject: function (data) {
@@ -1002,6 +1048,9 @@ totiForm = {
 					input.append(item);
 				});
 			} else {
+				if (field.type === 'file') {
+					form.attr("enctype", "multipart/form-data");
+				}
 				var fieldType = field.type;
 				delete field.type;
 				input = totiControl.inputs[fieldType](field);

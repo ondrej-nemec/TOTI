@@ -1,6 +1,7 @@
 package mvc;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -34,6 +35,8 @@ public class Bootstrap {
     		Function<Locale, Translator> translator,
     		AuthorizationHelper authorizator,
     		Function<Identity, AclUser> identityToUser,
+    		int maxUploadFileSize,
+    		Optional<List<String>> allowedUploadFileTypes,
     		String charset,
     		String defLang,
     		String tokenSalt,
@@ -72,6 +75,8 @@ public class Bootstrap {
 				readTimeout,
 				response,
 				certs,
+				maxUploadFileSize,
+				allowedUploadFileTypes,
 				charset,
 				logger
 		);

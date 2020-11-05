@@ -22,6 +22,7 @@ import mvc.control.inputs.Button;
 import mvc.control.inputs.Checkbox;
 import mvc.control.inputs.Datetime;
 import mvc.control.inputs.Email;
+import mvc.control.inputs.File;
 import mvc.control.inputs.Hidden;
 import mvc.control.inputs.Number;
 import mvc.control.inputs.Password;
@@ -31,6 +32,7 @@ import mvc.control.inputs.Submit;
 import mvc.control.inputs.Text;
 import mvc.response.Response;
 import socketCommunication.http.HttpMethod;
+import socketCommunication.http.server.UploadedFile;
 
 @Controller("control")
 public class EntityController {
@@ -117,6 +119,7 @@ public class EntityController {
 			departments.put(i + "", "Department #" + i);
 		}
 		form.addInput(Select.input("department", true, departments).setTitle("Department"));
+		form.addInput(File.input("foto", true).setTitle("Foto"));
 				
 		form.setBindMethod("get");
 		form.setBindUrl("/control/get/" + id);
@@ -169,11 +172,16 @@ public class EntityController {
 	@Action("update")
 	@Method({HttpMethod.PUT})
 	@Secured
-	public Response update(@ParamUrl("id") Integer id, @Params Properties prop) {
+	public Response update(@ParamUrl("id") Integer id, @Param("foto") UploadedFile file, @Params Properties prop) {
 		// TODO validator
+		/*try {
+			file.save("temp/uploads/");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}*/
 		dao.update(id, new Person(prop));
 		System.out.println(prop);
-		System.out.println(dao.get(id));
+		//System.out.println(dao.get(id));
 		return Response.getText("Item updated");
 	}
 
@@ -182,6 +190,7 @@ public class EntityController {
 	@Secured
 	public Response insert(@Params Properties prop) {
 		// TODO validator
+		System.out.println(prop);
 		int id = dao.insert(new Person(prop));
 		return Response.getText("Item inserted " + id);
 	}

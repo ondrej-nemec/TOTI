@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import controllers.EntityController;
 import controllers.PersonDao;
@@ -82,8 +83,11 @@ public class BootstrapEndToEndTest {
 					.setLogger(LoggerFactory.getLogger("server"))
 					.setSecurityLogger(LoggerFactory.getLogger("security"))
 					.setHeaders(new ResponseHeaders(Arrays.asList(
-							"Access-Control-Allow-Origin: *"
+							"Access-Control-Allow-Origin: *",
+							"Access-Control-Allow-Credentials: true"
 					)))
+					.setMaxUploadFileSize(10*1024)
+					.setAllowedUploadFileTypes(Optional.empty())
 					.get(folders);
 			/*
 			Bootstrap b = new Bootstrap(
