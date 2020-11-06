@@ -56,7 +56,7 @@ https://www.baeldung.com/pdf-conversions-java
 	public static void main(String[] args) throws IOException {
 		Document document = new Document();
 	    
-	    Text.read((bw)->{
+	    Text.read((br)->{
 	    	PdfWriter writer;
 			try {
 				writer = PdfWriter.getInstance(document, new FileOutputStream("templating/html.pdf"));
@@ -64,8 +64,7 @@ https://www.baeldung.com/pdf-conversions-java
 				throw new RuntimeException(e);
 			}
 	    	document.open();
-		    XMLWorkerHelper.getInstance().parseXHtml(writer, document,
-		     bw);
+		    XMLWorkerHelper.getInstance().parseXHtml(writer, document, br);
 		    document.close();
 	    	return null;
 	    }, PdfTest.class.getResourceAsStream("/pdf/index.html"));
