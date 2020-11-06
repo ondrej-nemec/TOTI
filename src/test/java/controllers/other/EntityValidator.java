@@ -1,4 +1,4 @@
-package controllers;
+package controllers.other;
 
 import java.util.Arrays;
 
@@ -7,9 +7,18 @@ import mvc.validation.Validator;
 
 public class EntityValidator {
 	
-	public static final String NAME = "entityValidator";
+	public static final String NAME_FORM = "entityFormValidator";
+	public static final String NAME_GRID = "entityGridValidator";
 	
-	public Validator getValidator() {
+	public static Validator getGridValidator() {
+		return new Validator(true)
+				.addRule(ItemRules.forName("pageIndex", true))
+				.addRule(ItemRules.forName("pageSize", true))
+				.addRule(ItemRules.forName("filters", false)) // TODO values check
+				.addRule(ItemRules.forName("sorting", false)); // TODO values check
+	}
+	
+	public static Validator getFormValidator() {
 		return new Validator(true)
 				.addRule(ItemRules.forName("name", true).setMaxLength(10).setMinLength(2))
 				.addRule(ItemRules.forName("age", true).setMaxValue(18, "Must be adult"))

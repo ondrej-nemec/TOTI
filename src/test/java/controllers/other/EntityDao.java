@@ -1,4 +1,4 @@
-package controllers;
+package controllers.other;
 
 import java.util.List;
 import java.util.Map;

@@ -5,6 +5,9 @@ import java.util.Map;
 import java.util.Properties;
 
 import common.MapInit;
+import controllers.other.EntityValidator;
+import controllers.other.Person;
+import controllers.other.PersonDao;
 import mvc.annotations.url.Action;
 import mvc.annotations.url.Controller;
 import mvc.annotations.url.Method;
@@ -169,7 +172,7 @@ public class EntityController {
 		return Response.getText("Item deleted");
 	}
 
-	@Action(value = "update", validator = EntityValidator.NAME)
+	@Action(value = "update", validator = EntityValidator.NAME_FORM)
 	@Method({HttpMethod.PUT})
 	@Secured
 	public Response update(@ParamUrl("id") Integer id, @Param("foto") UploadedFile file, @Params Properties prop) {
@@ -184,7 +187,7 @@ public class EntityController {
 		return Response.getText("Item updated");
 	}
 
-	@Action(value = "insert", validator = EntityValidator.NAME)
+	@Action(value = "insert", validator = EntityValidator.NAME_FORM)
 	@Method({HttpMethod.PUT})
 	@Secured
 	public Response insert(@Params Properties prop) {
