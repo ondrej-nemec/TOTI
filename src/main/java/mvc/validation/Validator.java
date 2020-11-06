@@ -12,6 +12,8 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import socketCommunication.http.server.UploadedFile;
+
 public class Validator {
 	
 	private final List<ItemRules> rules;
@@ -106,6 +108,36 @@ public class Validator {
 						errors,
 						rule.getName(),
 						rule.getOnRegexError()
+				);
+				checkRule(
+						rule.getFileMaxSize(),
+						(maxSize)->{
+							UploadedFile file = (UploadedFile)o;
+							return file.getContent().size() > maxSize;
+						},
+						errors,
+						rule.getName(),
+						rule.getOnFileMaxSizeError()
+				);
+				checkRule(
+						rule.getFileMinSize(),
+						(minSize)->{
+							UploadedFile file = (UploadedFile)o;
+							return file.getContent().size() < minSize;
+						},
+						errors,
+						rule.getName(),
+						rule.getOnFileMinSizeError()
+				);
+				checkRule(
+						rule.getAllowedFileTypes(),
+						(type)->{
+							UploadedFile file = (UploadedFile)o;
+							return !type.contains(file.getContentType());
+						},
+						errors,
+						rule.getName(),
+						rule.getOnAllowedFileTypesError()
 				);
 			}
 		});

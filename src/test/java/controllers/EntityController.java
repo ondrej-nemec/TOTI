@@ -119,7 +119,7 @@ public class EntityController {
 			departments.put(i + "", "Department #" + i);
 		}
 		form.addInput(Select.input("department", true, departments).setTitle("Department"));
-		form.addInput(File.input("foto", true).setTitle("Foto"));
+		form.addInput(File.input("foto", false).setTitle("Foto"));
 				
 		form.setBindMethod("get");
 		form.setBindUrl("/control/get/" + id);
@@ -169,11 +169,10 @@ public class EntityController {
 		return Response.getText("Item deleted");
 	}
 
-	@Action("update")
+	@Action(value = "update", validator = EntityValidator.NAME)
 	@Method({HttpMethod.PUT})
 	@Secured
 	public Response update(@ParamUrl("id") Integer id, @Param("foto") UploadedFile file, @Params Properties prop) {
-		// TODO validator
 		/*try {
 			file.save("temp/uploads/");
 		} catch (Exception e) {
@@ -185,11 +184,10 @@ public class EntityController {
 		return Response.getText("Item updated");
 	}
 
-	@Action("insert")
+	@Action(value = "insert", validator = EntityValidator.NAME)
 	@Method({HttpMethod.PUT})
 	@Secured
 	public Response insert(@Params Properties prop) {
-		// TODO validator
 		System.out.println(prop);
 		int id = dao.insert(new Person(prop));
 		return Response.getText("Item inserted " + id);

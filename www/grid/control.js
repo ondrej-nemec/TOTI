@@ -154,6 +154,7 @@ var totiControl = {
 		submit: function (async = true, submitConfirmation = null, params = {}) {
 			var submit = totiControl.inputs._createInput("submit", params);
 			submit.click(function(event) {
+				$('.error-list').remove();
 				var element = $(this);
 				var form = $('form#' + element.attr("form"));
 				if (!form[0].reportValidity()) {
@@ -169,24 +170,23 @@ var totiControl = {
 					}
 					data[item.name] = value;
 				});
-				// TODO
-				var config = {};
-				if (form.attr("enctype") !== undefined) {
-					/*event.preventDefault();
-					file = $('input[name="file"]')
-					console.log(data, new FormData(form[0]));
-					return false;*/
+				var formConfig = {};
+				var useFiles = false;
+				form.find('[type="file"]').each(function() {
+					useFiles = useFiles ? true : $(this).val().length > 0;
+				});
+				if (form.attr("enctype") !== undefined && useFiles) {
 					var formData = new FormData(form[0]);
 					for (var key of formData.keys()) {
 						if (form.find('input[name="' + key + '"]').attr('type') === 'datetime-local') {
 							formData.set(key, formData.get(key).replace("T", " "));
 						}
 					}
-					config = {
+					formConfig = {
 						cache: false,
 					    contentType: false,
 					    processData: false,
-					    data: formData, // new FormData(form[0]),
+					    data: formData,
 					    xhr: function () {
 					      var myXhr = $.ajaxSettings.xhr();
 					      if (myXhr.upload) {
@@ -236,12 +236,12 @@ var totiControl = {
 						}, 
 						function(xhr) {
 							if (xhr.status === 400) {
-								for (const[key, list] of Object.entries(xhr.responseJSON)) {
+								for (const[key, list] of Object.entries(JSON.parse(xhr.responseText))) { // xhr.responseJSON
 									var ol = $('<ul>').attr("class", "error-list");
 									list.forEach(function(item) {
 										ol.append($('<li>').text(item));
 									});
-									$('#' + config.formId + '-errors-' + key + '').html(ol);
+									$('#' + form.attr('id') + '-errors-' + key + '').html(ol);
 								}
 							} else if (element.attr("onFailure") != null) {
 								window[element.attr("onFailure")](xhr);
@@ -251,7 +251,7 @@ var totiControl = {
 							}
 						}, 
 						header,
-						config
+						formConfig
 					);
 				}
 			});

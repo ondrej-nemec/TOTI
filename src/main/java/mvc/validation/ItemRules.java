@@ -33,6 +33,13 @@ public class ItemRules {
 	private Optional<Number> minValue = Optional.empty();
 	private String onMinValueError;
 	
+	private Optional<Integer> fileMaxSize = Optional.empty();
+	private String onFileMaxSizeError;
+	private Optional<Integer> fileMinSize = Optional.empty();
+	private String onFileMinSizeError;
+	private Optional<Collection<Object>> allowedFileTypes = Optional.empty();
+	private String onAllowedFileTypesError;
+	
 	private Optional<Collection<Object>> allowedValues = Optional.empty();
 	private String onAllowedValuesError;
 	
@@ -66,6 +73,45 @@ public class ItemRules {
 		// TODO only for number
 		this.onMaxValueError = onMaxValueError;
 		this.maxValue = Optional.of(maxValue);
+		return this;
+	}
+
+	public ItemRules setFileMaxSize(Integer fileMaxSize) {
+		return setFileMaxSize(fileMaxSize, "File size can be max " + fileMaxSize + "b");
+	}
+
+	public ItemRules setFileMaxSize(Integer fileMaxSize, String onFileMaxSizeError) {
+		if (this.fileMaxSize.isPresent()) {
+			throw new LogicException("You cannot set an already set value");
+		}
+		this.fileMaxSize = Optional.of(fileMaxSize);
+		this.onFileMaxSizeError = onFileMaxSizeError;
+		return this;
+	}
+
+	public ItemRules setFileMinSize(Integer fileMinSize) {
+		return setFileMinSize(fileMinSize, "File size must be at least " + fileMinSize + "b");
+	}
+
+	public ItemRules setFileMinSize(Integer fileMinSize, String onFileMinSizeError) {
+		if (this.fileMinSize.isPresent()) {
+			throw new LogicException("You cannot set an already set value");
+		}
+		this.fileMinSize = Optional.of(fileMinSize);
+		this.onFileMinSizeError = onFileMinSizeError;
+		return this;
+	}
+
+	public ItemRules setAllowedFileTypes(Collection<Object> allowedFileTypes) {
+		return setAllowedFileTypes(allowedFileTypes, "File type is not allowed. Allowed: " + allowedFileTypes);
+	}
+
+	public ItemRules setAllowedFileTypes(Collection<Object> allowedFileTypes, String onAllowedFileTypesError) {
+		if (this.allowedFileTypes.isPresent()) {
+			throw new LogicException("You cannot set an already set value");
+		}
+		this.allowedFileTypes = Optional.of(allowedFileTypes);
+		this.onAllowedFileTypesError = onAllowedFileTypesError;
 		return this;
 	}
 	
@@ -112,7 +158,7 @@ public class ItemRules {
 	}
 	
 	public ItemRules setRegex(String regex) {
-		return setRegex(regex, "Text must looks like " + regex);
+		return setRegex(regex, "Text must looks like " + regex.replace("\\", "\\\\"));
 	}
 	
 	public ItemRules setRegex(String regex, String onRegexError) {
@@ -206,6 +252,30 @@ public class ItemRules {
 
 	public String getOnAllowedValuesError() {
 		return onAllowedValuesError;
+	}
+
+	public Optional<Integer> getFileMaxSize() {
+		return fileMaxSize;
+	}
+
+	public String getOnFileMaxSizeError() {
+		return onFileMaxSizeError;
+	}
+
+	public Optional<Integer> getFileMinSize() {
+		return fileMinSize;
+	}
+
+	public String getOnFileMinSizeError() {
+		return onFileMinSizeError;
+	}
+
+	public Optional<Collection<Object>> getAllowedFileTypes() {
+		return allowedFileTypes;
+	}
+
+	public String getOnAllowedFileTypesError() {
+		return onAllowedFileTypesError;
 	}
 	
 }

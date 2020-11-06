@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import controllers.EntityController;
+import controllers.EntityValidator;
 import controllers.PersonDao;
 import controllers.SecurityController;
 import helper.Action;
@@ -25,6 +26,7 @@ public class BootstrapEndToEndTest {
 
 	public static void main(String[] args) {
 		try {
+			Registr.get().addService(EntityValidator.NAME, new EntityValidator().getValidator());
 			PersonDao personDao = new PersonDao();
 			Registr.get().addFactory(EntityController.class, ()->{
 				return new EntityController(personDao);
