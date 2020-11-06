@@ -2,8 +2,8 @@ package controllers.other;
 
 import java.util.Arrays;
 
-import mvc.validation.ItemRules;
-import mvc.validation.Validator;
+import toti.validation.ItemRules;
+import toti.validation.Validator;
 
 public class EntityValidator {
 	

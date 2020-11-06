@@ -3,22 +3,22 @@ package controllers;
 import java.util.HashMap;
 import java.util.Map;
 
-import mvc.annotations.inject.Authenticate;
-import mvc.annotations.inject.ClientIdentity;
-import mvc.annotations.url.Action;
-import mvc.annotations.url.Controller;
-import mvc.annotations.url.Method;
-import mvc.annotations.url.Param;
-import mvc.annotations.url.Secured;
-import mvc.authentication.Authenticator;
-import mvc.authentication.AuthentizationException;
-import mvc.authentication.Identity;
-import mvc.control.Form;
-import mvc.control.inputs.Submit;
-import mvc.control.inputs.Text;
-import mvc.response.Response;
 import socketCommunication.http.HttpMethod;
 import socketCommunication.http.StatusCode;
+import toti.annotations.inject.Authenticate;
+import toti.annotations.inject.ClientIdentity;
+import toti.annotations.url.Action;
+import toti.annotations.url.Controller;
+import toti.annotations.url.Method;
+import toti.annotations.url.Param;
+import toti.annotations.url.Secured;
+import toti.authentication.Authenticator;
+import toti.authentication.AuthentizationException;
+import toti.authentication.Identity;
+import toti.control.Form;
+import toti.control.inputs.Submit;
+import toti.control.inputs.Text;
+import toti.response.Response;
 
 @Controller("security")
 public class SecurityController {
