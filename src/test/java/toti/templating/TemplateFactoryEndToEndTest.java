@@ -27,25 +27,21 @@ public class TemplateFactoryEndToEndTest {
 
 			@Override
 			public String translate(String key) {
-				// TODO Auto-generated method stub
 				return key;
 			}
 
 			@Override
 			public String translate(String key, Locale locale) {
-				// TODO Auto-generated method stub
 				return key;
 			}
 
 			@Override
 			public String translate(String key, Map<String, String> variables) {
-				// TODO Auto-generated method stub
 				return key;
 			}
 
 			@Override
 			public String translate(String key, Map<String, String> variables, Locale locale) {
-				// TODO Auto-generated method stub
 				return key;
 			}
 		};

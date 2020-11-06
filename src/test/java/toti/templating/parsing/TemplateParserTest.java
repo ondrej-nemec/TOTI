@@ -91,7 +91,7 @@ public class TemplateParserTest {
 					"<t:testingTag  class id='${var}' >",
 					"\");"
 					+ "Object o0_1=variables.get(\"var\");"
-					+ "/* starting-tag */b.append(\"", // TODO
+					+ "/* starting-tag */b.append(\"",
 					getVerify((tag)->{
 						verify(tag, times(1)).getPairStartCode(hashMap(t("id", "o0_1"), t("class", "")));
 					})
