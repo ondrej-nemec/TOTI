@@ -44,6 +44,7 @@ public class BootstrapFactory {
 	private String defLang = Locale.getDefault().toString();
 	private String resourcesPath = "www";
 	private boolean deleteDir = false;
+	private boolean dirResponseAllowed = true;
 	private int maxUploadFileSize = 0;
 	private Optional<List<String>> allowedUploadFileTypes = Optional.of(new LinkedList<>());
 	
@@ -54,8 +55,13 @@ public class BootstrapFactory {
 				translator, authorizator, identityToUser,
 				maxUploadFileSize, allowedUploadFileTypes,
 				charset, defLang, tokenSalt, tokenExpirationTime,
-				logger, securityLogger, deleteDir
+				logger, securityLogger, deleteDir, dirResponseAllowed
 		);
+	}
+
+	public BootstrapFactory setDirResponseAllowed(boolean dirResponseAllowed) {
+		this.dirResponseAllowed = dirResponseAllowed;
+		return this;
 	}
 
 	public BootstrapFactory setMaxUploadFileSize(int maxUploadFileSize) {

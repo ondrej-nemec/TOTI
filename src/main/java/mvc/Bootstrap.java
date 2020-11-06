@@ -43,7 +43,8 @@ public class Bootstrap {
     		long tokenExpirationTime,
     		Logger logger,
     		Logger securityLogger,
-    		boolean deleteDir) throws Exception {
+    		boolean deleteDir,
+    		boolean dirResponseAllowed) throws Exception {
 
 		Authenticator authenticator = new Authenticator(
 				tokenExpirationTime,
@@ -66,6 +67,7 @@ public class Bootstrap {
 				authorizator,
 				identityToUser,
 				charset,
+				dirResponseAllowed,
 				logger
 		);
 				

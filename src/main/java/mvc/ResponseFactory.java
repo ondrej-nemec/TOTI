@@ -60,6 +60,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private final ResponseHeaders responseHeaders;
 	private final String charset;
 	private final Language language;
+	private final boolean dirResponseAllowed;
 	private final Logger logger;
 	
 	private final List<MappedUrl> mapping;	
@@ -85,6 +86,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			AuthorizationHelper authorizator,
 			Function<Identity, AclUser> identityToUser,
 			String charset,
+			boolean dirResponseAllowed,
 			Logger logger) throws Exception {
 		this.resourcesDir = resourcesDir;
 		this.charset = charset;
@@ -98,6 +100,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		this.logger = logger;
 		this.identityToUser = identityToUser;
 		this.language = language;
+		this.dirResponseAllowed = dirResponseAllowed;
 	}
 
 	@Override
@@ -221,7 +224,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		}
 		// files
 		File file = new File(resourcesDir + url);
-		if (!file.exists()) {
+		if (!file.exists() || (file.isDirectory() && !dirResponseAllowed)) {
 			throw new ServerException(404, String.format("URL not fouded: %s (%s)", url, method));
 		}
 		if (file.isDirectory()) {
