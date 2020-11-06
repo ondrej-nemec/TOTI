@@ -19,6 +19,7 @@
 <script type="text/javascript">
 $('.hidden').hide();
 totiAuth.onLoad();
+console.log(totiAuth.getToken());
 
 if (totiAuth.getToken()) {
 	$('#logout').show();
@@ -58,7 +59,18 @@ $('#secured-content').click(function(e) {
 
 </div>
 
+<div>
 
+<a href="readme.md" class="link">ReadMe</a>
+<a href="test.html" class="link">Test</a>
+<a href="/test.ods" class="link">Ods</a>
+ <script type="text/javascript">
+ 	$('.link').click(function(e) {
+ 		e.preventDefault();
+ 		totiControl.load.link($(this).attr('href'), "get", {}, totiAuth.getAuthHeader());
+ 	});
+ </script>
+</div>
 
 <div>
 		<h2>Form</h2>
@@ -68,7 +80,7 @@ $('#secured-content').click(function(e) {
 			var formConfig = {
 				"formId": "frm-Test",
 				"action": "/base/second",
-				"method": "get",
+				"method": "post",
 				"fields": [
 					{
 						"name": "a",
@@ -83,17 +95,44 @@ $('#secured-content').click(function(e) {
 						"required": "required"
 					},
 					{
+						"name": "c",
+						"id": "some-select-id",
+						"type": "select",
+						"title": "select text",
+						"required": "required",
+						"options": [
+							{
+								"value": "a",
+								"title": "A"
+							},
+							{
+								"value": "b",
+								"title": "B"
+							}
+						]
+					},
+					{
+						"name": "d",
+						"id": "hidden-id",
+						"type": "hidden"
+					},
+					{
 						"type": "submit",
 						'value': "Submit",
 						"confirmation": function(param) {
 							console.log(param);
-							return false;
+							return true;
+						},
+						"onSuccess": function(data) {
+							console.log(data);
 						}
 					}
 				],
 				"bind": {
-					"url": "",
-					"method": ""
+					"url": "/base/item",
+					"method": "get",
+					"params": {},
+					"onFailure": function(){}
 				},
 				"headers": {
 					"Accept-Language": "de-DE",
@@ -238,11 +277,11 @@ $('#secured-content').click(function(e) {
 					"onError": function(param1, param2, param3) {
 						console.log("Action failure", param1, param2, param3);
 					}
-				},
+				}/*,
 				"headers": {
 					"Accept-Language": "de-DE",
 					"Header": "header"
-				}
+				}*/
 			};
 			totiGrid.init('div#grid', name, gridConfig);
 
