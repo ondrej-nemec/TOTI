@@ -30,7 +30,7 @@ public class BootstrapEndToEndTest {
 
 	public static void main(String[] args) {
 		try {
-			Registr.get().addService(EntityValidator.NAME_FORM, new EntityValidator().getFormValidator());
+			Registr.get().addService(EntityValidator.NAME_FORM, EntityValidator.getFormValidator());
 			PersonDao personDao = new PersonDao();
 			Registr.get().addFactory(EntityController.class, ()->{
 				return new EntityController(personDao);
