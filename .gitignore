@@ -3,3 +3,12 @@
 /.classpath
 /.project
 /.settings
+/temp
+/build
+/www
+# ignore testing app
+/rip
+/src/test/java/controllers2*
+/template2*
+/entity
+/TODO.md

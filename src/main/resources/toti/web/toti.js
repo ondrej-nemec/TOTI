@@ -1,3 +1,4 @@
+/* TOTI script version 0.0.1 */
 var totiLang = {
 	"pages": {
 		"title": "Pages:",
