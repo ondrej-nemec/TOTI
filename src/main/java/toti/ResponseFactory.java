@@ -255,7 +255,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Field[] fields = o.getClass().getDeclaredFields();
 			for (Field field : fields) {
 				String method = "set" + (field.getName().charAt(0) + "").toUpperCase() + field.getName().substring(1);
-				if (field.isAnnotationPresent(toti.annotations.inject.Translator.class)) {
+				if (field.isAnnotationPresent(toti.annotations.inject.Translate.class)) {
 					o.getClass().getMethod(method, Translator.class).invoke(o, translator);
 				} else if (field.isAnnotationPresent(Authenticate.class)) {
 					o.getClass().getMethod(method, Authenticator.class).invoke(o, authenticator);
