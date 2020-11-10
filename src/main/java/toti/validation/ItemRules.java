@@ -43,6 +43,8 @@ public class ItemRules {
 	private Optional<Collection<Object>> allowedValues = Optional.empty();
 	private String onAllowedValuesError;
 	
+	private Optional<Validator> mapSpecification = Optional.empty();
+	
 	private ItemRules(String name, boolean required, String onRequiredError) {
 		this.name = name;
 		this.required = required;
@@ -183,6 +185,11 @@ public class ItemRules {
 		this.expectedType = Optional.of(clazz);
 		return this;
 	}
+
+	public ItemRules setMapSpecification(Validator mapSpecification) {
+		this.mapSpecification = Optional.of(mapSpecification);
+		return this;
+	}
 	
 	/*******************/
 
@@ -276,6 +283,10 @@ public class ItemRules {
 
 	public String getOnAllowedFileTypesError() {
 		return onAllowedFileTypesError;
+	}
+
+	public Optional<Validator> getMapSpecification() {
+		return mapSpecification;
 	}
 	
 }

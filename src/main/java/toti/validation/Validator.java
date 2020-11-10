@@ -13,12 +13,25 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import socketCommunication.http.server.UploadedFile;
+import toti.registr.Registr;
 
 public class Validator {
 	
 	private final List<ItemRules> rules;
 	private final boolean strictList;
 	private final String onStrictListError;
+	
+	public static Validator create(String uniqueName, boolean strictList, String onStrictListError) {
+		Validator val = new Validator(strictList, onStrictListError);
+		Registr.get().addService(uniqueName, val);
+		return val;
+	}
+
+	public static Validator create(String uniqueName, boolean strictList) {
+		Validator val = new Validator(strictList);
+		Registr.get().addService(uniqueName, val);
+		return val;
+	}
 	
 	public Validator(boolean strictList) {
 		this(strictList, "Parameters names not match expectation");
@@ -40,106 +53,7 @@ public class Validator {
 		List<String> names = new ArrayList<>();
 		rules.forEach((rule)->{
 			names.add(rule.getName());
-			if (prop.get(rule.getName()) == null) {
-				checkRule(
-						Optional.of(rule.getRequired()),
-						(required)->required,
-						errors,
-						rule.getName(), 
-						rule.getOnRequiredError()
-				);
-			} else {
-				Object o = prop.get(rule.getName());
-				checkRule(
-						rule.getExpectedType(), 
-						(expectedType)->{
-							try {
-								ParseObject.parse(expectedType, o);
-								return false;
-							} catch (ClassCastException | NumberFormatException e) {
-								return true;
-							}
-						},
-						errors,
-						rule.getName(),
-						rule.getOnExpectedTypeError()
-				);
-				checkRule(
-						rule.getAllowedValues(),
-						(allowedList)->!allowedList.contains(o),
-						errors,
-						rule.getName(),
-						rule.getOnAllowedValuesError()
-				);
-				checkRule(
-						rule.getMaxLength(), 
-						(maxLength)->maxLength.intValue() < o.toString().length(),
-						errors,
-						rule.getName(),
-						rule.getOnMaxLengthError()
-				);
-				checkRule(
-						rule.getMinLength(),
-						(minLength)->minLength.intValue() > o.toString().length(),
-						errors,
-						rule.getName(),
-						rule.getOnMinLengthError()
-				);
-				checkRule(
-						rule.getMaxValue(),
-						(maxValue)->maxValue.longValue() < new BigDecimal(o.toString()).longValue(),
-						errors,
-						rule.getName(),
-						rule.getOnMaxValueError()
-				);
-				checkRule(
-						rule.getMinValue(),
-						(minValue)->minValue.longValue() > new BigDecimal(o.toString()).longValue(),
-						errors,
-						rule.getName(),
-						rule.getOnMinValueError()
-				);
-				checkRule(
-						rule.getRegex(),
-						(regex)->{
-							Matcher m = Pattern.compile(regex).matcher(o.toString());
-							return !m.find();
-						},
-						errors,
-						rule.getName(),
-						rule.getOnRegexError()
-				);
-				checkRule(
-						rule.getFileMaxSize(),
-						(maxSize)->{
-							UploadedFile file = (UploadedFile)o;
-							return file.getContent().size() > maxSize;
-						},
-						errors,
-						rule.getName(),
-						rule.getOnFileMaxSizeError()
-				);
-				checkRule(
-						rule.getFileMinSize(),
-						(minSize)->{
-							UploadedFile file = (UploadedFile)o;
-							return file.getContent().size() < minSize;
-						},
-						errors,
-						rule.getName(),
-						rule.getOnFileMinSizeError()
-				);
-				checkRule(
-						rule.getAllowedFileTypes(),
-						(type)->{
-							UploadedFile file = (UploadedFile)o;
-							return !type.contains(file.getContentType());
-						},
-						errors,
-						rule.getName(),
-						rule.getOnAllowedFileTypesError()
-				);
-			}
+			swichRules(rule, errors, prop);
 		});
 		checkRule(
 				Optional.of(new ArrayList<>(prop.keySet())),
@@ -152,6 +66,121 @@ public class Validator {
 				onStrictListError
 		);
 		return errors;
+	}
+	
+	private void swichRules(ItemRules rule, Map<String, List<String>> errors, Properties prop) {
+		if (prop.get(rule.getName()) == null) {
+			checkRule(
+					Optional.of(rule.getRequired()),
+					(required)->required,
+					errors,
+					rule.getName(), 
+					rule.getOnRequiredError()
+			);
+		} else {
+			Object o = prop.get(rule.getName());
+			checkRule(
+					rule.getExpectedType(), 
+					(expectedType)->{
+						try {
+							ParseObject.parse(expectedType, o);
+							return false;
+						} catch (ClassCastException | NumberFormatException e) {
+							return true;
+						}
+					},
+					errors,
+					rule.getName(),
+					rule.getOnExpectedTypeError()
+			);
+			checkRule(
+					rule.getAllowedValues(),
+					(allowedList)->!allowedList.contains(o),
+					errors,
+					rule.getName(),
+					rule.getOnAllowedValuesError()
+			);
+			checkRule(
+					rule.getMaxLength(), 
+					(maxLength)->maxLength.intValue() < o.toString().length(),
+					errors,
+					rule.getName(),
+					rule.getOnMaxLengthError()
+			);
+			checkRule(
+					rule.getMinLength(),
+					(minLength)->minLength.intValue() > o.toString().length(),
+					errors,
+					rule.getName(),
+					rule.getOnMinLengthError()
+			);
+			checkRule(
+					rule.getMaxValue(),
+					(maxValue)->maxValue.longValue() < new BigDecimal(o.toString()).longValue(),
+					errors,
+					rule.getName(),
+					rule.getOnMaxValueError()
+			);
+			checkRule(
+					rule.getMinValue(),
+					(minValue)->minValue.longValue() > new BigDecimal(o.toString()).longValue(),
+					errors,
+					rule.getName(),
+					rule.getOnMinValueError()
+			);
+			checkRule(
+					rule.getRegex(),
+					(regex)->{
+						Matcher m = Pattern.compile(regex).matcher(o.toString());
+						return !m.find();
+					},
+					errors,
+					rule.getName(),
+					rule.getOnRegexError()
+			);
+			checkRule(
+					rule.getFileMaxSize(),
+					(maxSize)->{
+						UploadedFile file = (UploadedFile)o;
+						return file.getContent().size() > maxSize;
+					},
+					errors,
+					rule.getName(),
+					rule.getOnFileMaxSizeError()
+			);
+			checkRule(
+					rule.getFileMinSize(),
+					(minSize)->{
+						UploadedFile file = (UploadedFile)o;
+						return file.getContent().size() < minSize;
+					},
+					errors,
+					rule.getName(),
+					rule.getOnFileMinSizeError()
+			);
+			checkRule(
+					rule.getAllowedFileTypes(),
+					(type)->{
+						UploadedFile file = (UploadedFile)o;
+						return !type.contains(file.getContentType());
+					},
+					errors,
+					rule.getName(),
+					rule.getOnAllowedFileTypesError()
+			);
+			checkRule(
+					rule.getMapSpecification(),
+					(validator)->{
+						Properties fields = new Properties();
+						fields.putAll((Map<?, ?>)o);
+						errors.putAll(validator.validate(fields));
+						return false;
+					},
+					errors,
+					rule.getName(),
+					rule.getOnAllowedFileTypesError()
+			);
+		}
 	}
 	
 	private <T> void checkRule(

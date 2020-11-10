@@ -3,13 +3,16 @@ package toti.validation;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import common.MapInit;
+import common.structures.Tuple2;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import toti.validation.ItemRules;
@@ -18,6 +21,77 @@ import toti.validation.Validator;
 @RunWith(JUnitParamsRunner.class)
 public class ValidatorTest {
 
+	@Test
+	@Parameters(method = "dataValidateAllowedMapWorks")
+	public void testValidateAllowedMapWorks(List<ItemRules> rules, Properties prop, boolean expected) {
+		Validator val = new Validator(true);
+		rules.forEach((rule)->{
+			val.addRule(rule);
+		});
+		assertEquals(expected, val.validate(prop).isEmpty());
+	}
+	
+	public Object[] dataValidateAllowedMapWorks() {
+		Map<String, Object> correct = new HashMap<>();
+		correct.put("val1", "text");
+		correct.put("val2", 123);
+		correct.put("val3", true);
+		
+		return new Object[] {
+			new Object[] {
+				Arrays.asList(ItemRules.forName("item1", true).setMapSpecification(
+					new Validator(true)
+						.addRule(ItemRules.forName("val1", true).setType(String.class))
+						.addRule(ItemRules.forName("val2", true).setType(Integer.class))
+						.addRule(ItemRules.forName("val3", true).setType(Boolean.class))
+				)),
+				MapInit.properties(new Tuple2<>("item1", correct)),
+				true
+			},
+			new Object[] {
+					Arrays.asList(ItemRules.forName("item1", true).setMapSpecification(
+						new Validator(true)
+							.addRule(ItemRules.forName("val1", true).setType(String.class))
+							.addRule(ItemRules.forName("val2", true).setType(Integer.class))
+							.addRule(ItemRules.forName("val3", true).setType(Boolean.class))
+							.addRule(ItemRules.forName("val4", false))
+					)),
+					MapInit.properties(new Tuple2<>("item1", correct)),
+					true
+				},
+			new Object[] {
+					Arrays.asList(ItemRules.forName("item1", true).setMapSpecification(
+						new Validator(false)
+							.addRule(ItemRules.forName("val1", true).setType(String.class))
+							.addRule(ItemRules.forName("val2", true).setType(Integer.class))
+					)),
+					MapInit.properties(new Tuple2<>("item1", correct)),
+					true
+				},
+			new Object[] {
+					Arrays.asList(ItemRules.forName("item1", true).setMapSpecification(
+						new Validator(true)
+							.addRule(ItemRules.forName("val1", true).setType(String.class))
+							.addRule(ItemRules.forName("val2", true).setType(Integer.class))
+							.addRule(ItemRules.forName("val3", true).setType(Boolean.class))
+							.addRule(ItemRules.forName("val4", true).setType(Integer.class))
+					)),
+					MapInit.properties(new Tuple2<>("item1", correct)),
+					false
+				},
+			new Object[] {
+					Arrays.asList(ItemRules.forName("item1", true).setMapSpecification(
+						new Validator(true)
+							.addRule(ItemRules.forName("val1", true).setType(Integer.class))
+							.addRule(ItemRules.forName("val2", true).setType(Integer.class))
+							.addRule(ItemRules.forName("val3", true).setType(Boolean.class))
+					)),
+					MapInit.properties(new Tuple2<>("item1", correct)),
+					false
+				},
+		};
+	}
+	
 	@Test
 	@Parameters(method = "dataValidateAllowedListWorks")
 	public void testValidateAllowedListWorks(List<ItemRules> rules, Properties prop, boolean expected) {
