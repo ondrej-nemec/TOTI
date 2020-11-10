@@ -70,7 +70,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private final Map<String, TemplateFactory> modules;
 	private final Function<Locale, Translator> translator;
 	
-	private final Function<Identity, AclUser> identityToUser;
+	//private final Function<Identity, AclUser> identityToUser;
 	private final AuthorizationHelper authorizator;
 	private final Authenticator authenticator;
 	
@@ -98,9 +98,10 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		this.router = router;
 		this.modules = modules;
 		this.logger = logger;
-		this.identityToUser = identityToUser;
+	//	this.identityToUser = identityToUser;
 		this.language = language;
 		this.dirResponseAllowed = dirResponseAllowed;
+		Identity.TO_USER = identityToUser;
 	}
 
 	@Override
@@ -297,7 +298,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			}
 			for (Domain domain : mapped.getSecured()) {
 				for (helper.Action action : domain.actions()) {
-					authorizator.throwIfIsNotAllowed(identityToUser.apply(identity), ()->{
+					authorizator.throwIfIsNotAllowed(identity.getUser(), ()->{
 						return domain.name();
 					}, action);
 				}

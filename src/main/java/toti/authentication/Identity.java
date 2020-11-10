@@ -1,6 +1,12 @@
 package toti.authentication;
 
+import java.util.function.Function;
+
+import interfaces.AclUser;
+
 public class Identity {
+	
+	public static Function<Identity, AclUser> TO_USER;
 
 	class Ident {
 		private final String content;
@@ -49,6 +55,10 @@ public class Identity {
 			return false;
 		}
 		return identity.apiAllowed;
+	}
+	
+	public AclUser getUser() {
+		return TO_USER.apply(this);
 	}
 
 	protected String getId() {
