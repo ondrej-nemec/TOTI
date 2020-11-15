@@ -7,10 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import controllers.EntityController;
-import controllers.SecurityController;
-import controllers.other.EntityValidator;
-import controllers.other.PersonDao;
+import adminer.AdminerModule;
 import helper.Action;
 import helper.AuthorizationHelper;
 import helper.Rules;
@@ -30,14 +27,10 @@ public class BootstrapEndToEndTest {
 
 	public static void main(String[] args) {
 		try {
-			Registr.get().addService(EntityValidator.NAME_FORM, EntityValidator.getFormValidator());
-			PersonDao personDao = new PersonDao();
-			Registr.get().addFactory(EntityController.class, ()->{
-				return new EntityController(personDao);
-			});
-			Registr.get().addFactory(SecurityController.class, ()->{
-				return new SecurityController();
-			});
+			List<ModuleConfig> configs = Arrays.asList(
+				// TODO
+				new AdminerModule()
+			);
 			
 			AuthorizationHelper authorizator = new AuthorizationHelper(
 					new RulesDao() {						
@@ -56,14 +49,16 @@ public class BootstrapEndToEndTest {
 					LoggerFactory.getLogger("security")
 			);
 			
+			Registr registr = Registr.get();
 			Router router = new Router();
-		//	router.addUrl("/jsgrid", "/base/grid");
-			router.addUrl("", "/control/list");
-			
 			Map<String, String> folders = new HashMap<>();
-			folders.put("controllers", "templates");
-			//folders.put("controllers2", "module2");
+			configs.forEach((config)->{
+				config.initInstances(registr);
+				config.addRoutes(router);
+				folders.put(config.getControllersPath(), config.getTemplatesPath());
+			});
 			Bootstrap b = new BootstrapFactory()
+					.setPort(81)
 					.setTranslator((loc)->new PropertiesTranslator(LoggerFactory.getLogger("translator"), "messages"))
 					.setAuthorizator(authorizator)
 					.setIdentityToUser((ident)->{
