@@ -218,4 +218,20 @@ Include defined block/another template file on given place. Template can be incl
 
 ## Control
 
-**Under construction**
+### Control
+
+Show grid/form object. For grid always unpaired. For form unpaired for default view, paired for custom view (see Error, Label and Input). Name is grid/form variable name.
+
+```
+<t:control name="" />
+```
+
+### Error, Label, Input
+
+Show form element. Unpaired.
+
+```
+<t:error name="" />
+<t:label name="" />
+<t:input name="" />
+```
