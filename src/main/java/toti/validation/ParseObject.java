@@ -14,6 +14,7 @@ public class ParseObject {
 			if (object.toString().isEmpty()) { return null; }
 			return Integer.parseInt(object + "");
 		} else if (clazz.isAssignableFrom(Boolean.class) || clazz.isAssignableFrom(boolean.class)) {
+			if (object.toString().isEmpty()) { return null; }
 			return Boolean.parseBoolean(object + "");
 		} else if (clazz.isAssignableFrom(Short.class) || clazz.isAssignableFrom(short.class)) {
 			if (object.toString().isEmpty()) { return null; }
