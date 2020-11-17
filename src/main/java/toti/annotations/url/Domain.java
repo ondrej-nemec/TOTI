@@ -11,6 +11,6 @@ public @interface Domain {
 
 	String name();
 	
-	Action[] actions();
+	Action action();
 	
 }

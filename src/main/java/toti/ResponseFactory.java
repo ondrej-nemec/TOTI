@@ -297,11 +297,9 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				throw new ServerException(StatusCode.FORBIDDEN.getCode(), "For this url you cannot use cookie token");
 			}
 			for (Domain domain : mapped.getSecured()) {
-				for (helper.Action action : domain.actions()) {
-					authorizator.throwIfIsNotAllowed(identity.getUser(), ()->{
-						return domain.name();
-					}, action);
-				}
+				authorizator.throwIfIsNotAllowed(identity.getUser(), ()->{
+					return domain.name();
+				}, domain.action());
 			}
 		}
 	}
