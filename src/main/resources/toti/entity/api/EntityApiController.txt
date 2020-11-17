@@ -1,4 +1,3 @@
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +52,7 @@ public class __X__ApiController {
 
 	@Action(value = "all", validator = __X__Validator.NAME_GRID)
 	@Method({HttpMethod.GET})
-	@Secured({@Domain(name=SECURITY_DOMAIN, actions= {helper.Action.READ})})
+	@Secured({@Domain(name=SECURITY_DOMAIN, action=helper.Action.READ)})
 	public Response getAll(
 			@Param("pageIndex") Integer pageIndex,
 			@Param("pageSize") Integer pageSize,
@@ -79,7 +78,7 @@ public class __X__ApiController {
 
 	@Action("get")
 	@Method({HttpMethod.GET})
-	@Secured({@Domain(name=SECURITY_DOMAIN, actions= {helper.Action.READ})})
+	@Secured({@Domain(name=SECURITY_DOMAIN, action=helper.Action.READ)})
 	public Response get(@ParamUrl("id") Integer id) {
 		try {
 			Map<String, Object> item = dao.get(id);
@@ -95,7 +94,7 @@ public class __X__ApiController {
 
 	@Action("delete")
 	@Method({HttpMethod.DELETE})
-	@Secured({@Domain(name=SECURITY_DOMAIN, actions= {helper.Action.DELETE})})
+	@Secured({@Domain(name=SECURITY_DOMAIN, action=helper.Action.DELETE)})
 	public Response delete(@ParamUrl("id") Integer id) {
 		try {
 			Map<String, Object> deleted = dao.delete(id);
@@ -109,7 +108,7 @@ public class __X__ApiController {
 
 	@Action(value = "update", validator = __X__Validator.NAME_FORM)
 	@Method({HttpMethod.PUT})
-	@Secured({@Domain(name=SECURITY_DOMAIN, actions= {helper.Action.UPDATE})})
+	@Secured({@Domain(name=SECURITY_DOMAIN, action=helper.Action.UPDATE)})
 	public Response update(@ParamUrl("id") Integer id, @Params Properties prop) {
 		try {
 			Map<String, Object> origin = dao.get(id);
@@ -131,7 +130,7 @@ public class __X__ApiController {
 
 	@Action(value = "insert", validator = __X__Validator.NAME_FORM)
 	@Method({HttpMethod.PUT})
-	@Secured({@Domain(name=SECURITY_DOMAIN, actions= {helper.Action.CREATE})})
+	@Secured({@Domain(name=SECURITY_DOMAIN, action=helper.Action.CREATE)})
 	public Response insert(@Params Properties prop) {
 		try {
 			Map<String, Object> inserted = new HashMap<>();

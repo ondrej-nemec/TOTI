@@ -1,4 +1,3 @@
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +31,7 @@ import toti.control.inputs.Text;
 import toti.response.Response;
 import translator.Translator;
 
-@Controller("__Y__") // TODO rename
+@Controller("__Y__")
 public class __X__PageController {
 	
 	private final static String SECURITY_DOMAIN = "__Y__";
@@ -45,7 +44,7 @@ public class __X__PageController {
 	}
 
 	@Action("list")
-	@Secured(isApi = false, value={@Domain(name=SECURITY_DOMAIN, actions= {helper.Action.READ})})
+	@Secured(isApi = false, value={@Domain(name=SECURITY_DOMAIN, action=helper.Action.READ)})
 	public Response grid() {
 		Map<String, Object> params = new HashMap<>();
 		/***/
@@ -58,20 +57,20 @@ public class __X__PageController {
 	}
 	
 	@Action("add")
-	@Secured(isApi = false, value={@Domain(name=SECURITY_DOMAIN, actions= {helper.Action.CREATE})})
+	@Secured(isApi = false, value={@Domain(name=SECURITY_DOMAIN, action=helper.Action.CREATE)})
 	public Response add() {
 		return getOne(null, true);
 	}
 
 	@Action("edit")
-	@Secured(isApi = false, value={@Domain(name=SECURITY_DOMAIN, actions= {helper.Action.UPDATE})})
+	@Secured(isApi = false, value={@Domain(name=SECURITY_DOMAIN, action=helper.Action.UPDATE)})
 	public Response edit(@ParamUrl("id") Integer id) {
 		return getOne(id, true);
 	}
 
 	@Action("detail")
 	@Method({HttpMethod.GET})
-	@Secured(isApi = false, value={@Domain(name=SECURITY_DOMAIN, actions= {helper.Action.READ})})
+	@Secured(isApi = false, value={@Domain(name=SECURITY_DOMAIN, action=helper.Action.READ)})
 	public Response detail(@ParamUrl("id") Integer id) {
 		return getOne(id, false);
 	}

@@ -30,7 +30,7 @@ public class CreateEntity {
 							+ ".java",
 					name, domain);
 			}
-			createFile("/toti/entity/web/control.jsp", destination + "/control.jsp", name, domain);
+			createFile("/toti/entity/web/control.jsp", destination + "/" + name + ".jsp", name, domain);
 		}
 	}
 	
