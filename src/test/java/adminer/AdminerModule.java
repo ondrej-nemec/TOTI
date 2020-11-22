@@ -1,10 +1,10 @@
 package adminer;
 
-import toti.ModuleConfig;
+import toti.Module;
 import toti.Router;
 import toti.registr.Registr;
 
-public class AdminerModule implements ModuleConfig {
+public class AdminerModule implements Module {
 
 	@Override
 	public void initInstances(Registr registr) {
@@ -25,6 +25,11 @@ public class AdminerModule implements ModuleConfig {
 
 	@Override
 	public String getControllersPath() {
+		return "adminer";
+	}
+
+	@Override
+	public String getModuleName() {
 		return "adminer";
 	}
 

@@ -1,10 +1,8 @@
 package toti;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import adminer.AdminerModule;
@@ -16,20 +14,20 @@ import interfaces.AclRole;
 import interfaces.AclUser;
 import interfaces.RulesDao;
 import logging.LoggerFactory;
+import module.ModuleConfig;
 import toti.Bootstrap;
 import toti.BootstrapFactory;
 import toti.ResponseHeaders;
-import toti.Router;
-import toti.registr.Registr;
 import translator.PropertiesTranslator;
 
 public class BootstrapEndToEndTest {
 
 	public static void main(String[] args) {
 		try {
-			List<ModuleConfig> configs = Arrays.asList(
+			List<Module> configs = Arrays.asList(
 				// TODO
-				new AdminerModule()
+				new AdminerModule(),
+				new ModuleConfig()
 			);
 			
 			AuthorizationHelper authorizator = new AuthorizationHelper(
@@ -49,14 +47,6 @@ public class BootstrapEndToEndTest {
 					LoggerFactory.getLogger("security")
 			);
 			
-			Registr registr = Registr.get();
-			Router router = new Router();
-			Map<String, String> folders = new HashMap<>();
-			configs.forEach((config)->{
-				config.initInstances(registr);
-				config.addRoutes(router);
-				folders.put(config.getControllersPath(), config.getTemplatesPath());
-			});
 			Bootstrap b = new BootstrapFactory()
 					.setPort(81)
 					.setTranslator((loc)->new PropertiesTranslator(LoggerFactory.getLogger("translator"), "messages"))
@@ -80,7 +70,6 @@ public class BootstrapEndToEndTest {
 							}
 						};
 					})
-					.setRouter(router)
 					.setLogger(LoggerFactory.getLogger("server"))
 					.setSecurityLogger(LoggerFactory.getLogger("security"))
 					.setHeaders(new ResponseHeaders(Arrays.asList(
@@ -89,7 +78,7 @@ public class BootstrapEndToEndTest {
 					)))
 					.setMaxUploadFileSize(10*1024)
 					.setAllowedUploadFileTypes(Optional.empty())
-					.get(folders);
+					.get(configs);
 			/*
 			Bootstrap b = new Bootstrap(
 					80, 10, 60000,

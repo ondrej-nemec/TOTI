@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -18,12 +17,9 @@ import translator.Translator;
 public class BootstrapFactory {
 	
 	// todo maybe regist here too
-	private Router router = new Router();
 	private ResponseHeaders headers = new ResponseHeaders(Arrays.asList(
 			"Access-Control-Allow-Origin: *"
 	));
-	
-	// private Map<String, String> folders;
 	
 	// TODO solve this section
 	private AuthorizationHelper authorizator;
@@ -48,10 +44,10 @@ public class BootstrapFactory {
 	private int maxUploadFileSize = 0;
 	private Optional<List<String>> allowedUploadFileTypes = Optional.of(new LinkedList<>());
 	
-	public Bootstrap get(Map<String, String> folders) throws Exception {
+	public Bootstrap get(List<Module> modules) throws Exception {
 		return new Bootstrap(
 				port, threadPool, readTimeout, headers,
-				certs, tempPath, folders, resourcesPath, router,
+				certs, tempPath, modules, resourcesPath,
 				translator, authorizator, identityToUser,
 				maxUploadFileSize, allowedUploadFileTypes,
 				charset, defLang, tokenSalt, tokenExpirationTime,
@@ -71,11 +67,6 @@ public class BootstrapFactory {
 
 	public BootstrapFactory setAllowedUploadFileTypes(Optional<List<String>> allowedUploadFileTypes) {
 		this.allowedUploadFileTypes = allowedUploadFileTypes;
-		return this;
-	}
-
-	public BootstrapFactory setRouter(Router router) {
-		this.router = router;
 		return this;
 	}
 

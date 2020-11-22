@@ -15,6 +15,7 @@ import socketCommunication.ServerSecuredCredentials;
 import toti.authentication.Authenticator;
 import toti.authentication.Identity;
 import toti.authentication.Language;
+import toti.registr.Registr;
 import toti.templating.TemplateFactory;
 import translator.Translator;
 
@@ -29,9 +30,8 @@ public class Bootstrap {
     		ResponseHeaders headers, // TODO only list ??
     		Optional<ServerSecuredCredentials> certs,
     		String tempPath,
-    		Map<String, String> folders,
+    		List<Module> modules,
     		String resourcesPath,
-    		Router router,
     		Function<Locale, Translator> translator,
     		AuthorizationHelper authorizator,
     		Function<Identity, AclUser> identityToUser,
@@ -51,17 +51,27 @@ public class Bootstrap {
 				tokenSalt,
 				securityLogger
 		);
-		Map<String, TemplateFactory> modules = new HashMap<>();
-		folders.forEach((controller, templates)->{
-			modules.put(controller, new TemplateFactory(tempPath, templates, modules, deleteDir));
-		});
+		Registr registr = Registr.get();
+		Router router = new Router();
 		
+		Map<String, TemplateFactory> controllers = new HashMap<>();
+		Map<String, TemplateFactory> templateFactories = new HashMap<>();
+		modules.forEach((module)->{
+			module.addRoutes(router);
+			module.initInstances(registr);
+			TemplateFactory templateFactory = new TemplateFactory(
+					tempPath, module.getTemplatesPath(), templateFactories, deleteDir
+			);
+			controllers.put(module.getControllersPath(), templateFactory);
+			templateFactories.put(module.getModuleName(), templateFactory);
+		});
+
 		ResponseFactory response = new ResponseFactory(
 				headers,
 				new Language(defLang),
 				resourcesPath,
 				router,
-				modules,
+				controllers,
 				translator,
 				authenticator,
 				authorizator,

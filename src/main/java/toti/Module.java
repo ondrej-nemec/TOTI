@@ -2,7 +2,7 @@ package toti;
 
 import toti.registr.Registr;
 
-public interface ModuleConfig {
+public interface Module {
 
 	void initInstances(Registr registr);
 	
@@ -11,4 +11,7 @@ public interface ModuleConfig {
 	String getTemplatesPath();
 	
 	String getControllersPath();
+	
+	String getModuleName();
+	
 }
