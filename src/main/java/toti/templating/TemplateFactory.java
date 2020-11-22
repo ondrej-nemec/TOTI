@@ -71,7 +71,10 @@ public class TemplateFactory {
 	}
 	
 	public Template getTemplate(String templateFile) throws Exception {
-		return getTemplateWithAbsolutePath(templatePath+ "/" + templateFile, (file)->{
+		if (!templateFile.startsWith("/")) {
+			templateFile = "/" + templateFile;
+		}
+		return getTemplateWithAbsolutePath(templatePath + templateFile, (file)->{
 			return getClassName(file, templatePath);
 		});
 	}
@@ -134,11 +137,12 @@ public class TemplateFactory {
 		}
 	}
 	
+	// TODO test it
 	private Tuple2<String, String> getClassName(File file, String templatePath) throws IOException {
 		String moduleName = templatePath.replaceAll("\\\\", "_").replaceAll("/", "_");
 		String namespace = moduleName + file.getCanonicalPath()
 				.replace(new File(templatePath).getCanonicalPath(), "")
-				.substring(1)
+				//.substring(1)
 				.replace(file.getName(), "")
 				.replaceAll("\\\\", "/");
 		namespace = (namespace.length() == 0) 
