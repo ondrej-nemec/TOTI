@@ -56,15 +56,15 @@ public class Bootstrap {
 		
 		Map<String, TemplateFactory> controllers = new HashMap<>();
 		Map<String, TemplateFactory> templateFactories = new HashMap<>();
-		modules.forEach((module)->{
+		for (Module module : modules) {
 			module.addRoutes(router);
 			module.initInstances(registr);
 			TemplateFactory templateFactory = new TemplateFactory(
 					tempPath, module.getTemplatesPath(), templateFactories, deleteDir
 			);
 			controllers.put(module.getControllersPath(), templateFactory);
-			templateFactories.put(module.getModuleName(), templateFactory);
-		});
+			templateFactories.put(module.getName(), templateFactory);
+		};
 
 		ResponseFactory response = new ResponseFactory(
 				headers,

@@ -29,7 +29,7 @@ public class AdminerModule implements Module {
 	}
 
 	@Override
-	public String getModuleName() {
+	public String getName() {
 		return "adminer";
 	}
 

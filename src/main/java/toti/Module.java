@@ -4,7 +4,7 @@ import toti.registr.Registr;
 
 public interface Module {
 
-	void initInstances(Registr registr);
+	void initInstances(Registr registr) throws Exception;
 	
 	void addRoutes(Router router);
 	
@@ -12,6 +12,6 @@ public interface Module {
 	
 	String getControllersPath();
 	
-	String getModuleName();
+	String getName();
 	
 }
