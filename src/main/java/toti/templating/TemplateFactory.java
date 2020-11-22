@@ -80,6 +80,7 @@ public class TemplateFactory {
 	}
 
 	public Template getModuleTemplate(String templateFile, String module) throws Exception {
+		System.err.println(module + ": " + modules);
 		return modules.get(module).getTemplate(templateFile);
 	/*	return getTemplateWithAbsolutePath(module + "/" + templateFile, (file)->{
 			return new Tuple2<>(module, new FileExtension(file.getName()).getName());
