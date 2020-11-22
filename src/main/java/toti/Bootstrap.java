@@ -58,7 +58,7 @@ public class Bootstrap {
 		Map<String, TemplateFactory> templateFactories = new HashMap<>();
 		for (Module module : modules) {
 			module.addRoutes(router);
-			module.initInstances(registr);
+			// module.initInstances(registr);
 			TemplateFactory templateFactory = new TemplateFactory(
 					tempPath, module.getTemplatesPath(), templateFactories, deleteDir
 			);

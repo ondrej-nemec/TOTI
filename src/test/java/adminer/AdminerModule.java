@@ -7,10 +7,11 @@ import toti.registr.Registr;
 public class AdminerModule implements Module {
 
 	@Override
-	public void initInstances(Registr registr) {
+	public Module initInstances(Registr registr) {
 		registr.addFactory(Adminer.class, ()->{
 			return new Adminer();
 		});
+		return this;
 	}
 
 	@Override
