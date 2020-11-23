@@ -18,7 +18,7 @@ import module.ModuleConfig;
 import toti.Bootstrap;
 import toti.BootstrapFactory;
 import toti.ResponseHeaders;
-import translator.PropertiesTranslator;
+import toti.registr.Registr;
 
 public class BootstrapEndToEndTest {
 
@@ -26,8 +26,8 @@ public class BootstrapEndToEndTest {
 		try {
 			List<Module> configs = Arrays.asList(
 				// TODO
-				new AdminerModule(),
-				new ModuleConfig()
+				new AdminerModule().initInstances(Registr.get()),
+				new ModuleConfig().initInstances(Registr.get())
 			);
 			
 			AuthorizationHelper authorizator = new AuthorizationHelper(
@@ -49,7 +49,7 @@ public class BootstrapEndToEndTest {
 			
 			Bootstrap b = new BootstrapFactory()
 					.setPort(81)
-					.setTranslator((loc)->new PropertiesTranslator(LoggerFactory.getLogger("translator"), "messages"))
+					//.setTranslator((loc)->new PropertiesTranslator(LoggerFactory.getLogger("translator"), "messages"))
 					.setAuthorizator(authorizator)
 					.setIdentityToUser((ident)->{
 						return new AclUser() {

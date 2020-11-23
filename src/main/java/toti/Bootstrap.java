@@ -10,13 +10,14 @@ import java.util.function.Function;
 import common.Logger;
 import helper.AuthorizationHelper;
 import interfaces.AclUser;
+import logging.LoggerFactory;
 import socketCommunication.Server;
 import socketCommunication.ServerSecuredCredentials;
 import toti.authentication.Authenticator;
 import toti.authentication.Identity;
 import toti.authentication.Language;
-import toti.registr.Registr;
 import toti.templating.TemplateFactory;
+import translator.PropertiesTranslator;
 import translator.Translator;
 
 public class Bootstrap {
@@ -51,11 +52,12 @@ public class Bootstrap {
 				tokenSalt,
 				securityLogger
 		);
-		Registr registr = Registr.get();
 		Router router = new Router();
 		
 		Map<String, TemplateFactory> controllers = new HashMap<>();
 		Map<String, TemplateFactory> templateFactories = new HashMap<>();
+		String[] trans = new String[modules.size()];
+		int i = 0;
 		for (Module module : modules) {
 			module.addRoutes(router);
 			// module.initInstances(registr);
@@ -64,8 +66,23 @@ public class Bootstrap {
 			);
 			controllers.put(module.getControllersPath(), templateFactory);
 			templateFactories.put(module.getName(), templateFactory);
+			trans[i++] = module.getTranslationPath();
 		};
-
+		if (translator == null) {
+			translator = new Function<Locale, Translator>() {
+				private final Map<Locale, Translator> translators = new HashMap<>();
+				@Override
+				public Translator apply(Locale locale) {
+					if (translators.get(locale) == null) {
+						translators.put(
+							locale,
+							new PropertiesTranslator(LoggerFactory.getLogger("translator"), locale, trans)
+						);
+					}
+					return translators.get(locale);
+				}
+			};
+		}
 		ResponseFactory response = new ResponseFactory(
 				headers,
 				new Language(defLang),

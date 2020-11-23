@@ -1,4 +1,4 @@
-package adminer;
+package module;
 
 import java.util.List;
 
@@ -9,39 +9,37 @@ import toti.Task;
 import toti.registr.Registr;
 import utils.Env;
 
-public class AdminerModule implements Module {
+public class ModuleConfig implements Module {
 
 	@Override
-	public Module initInstances(Registr registr) {
-		registr.addFactory(Adminer.class, ()->{
-			return new Adminer();
+	public Module initInstances(Registr registr) throws Exception {
+		registr.addFactory(ModuleController.class, ()->{
+			return new ModuleController();
 		});
 		return this;
 	}
 
 	@Override
-	public void addRoutes(Router router) {
-		
-	}
+	public void addRoutes(Router router) {}
 
 	@Override
 	public String getTemplatesPath() {
-		return "templates";
+		return "jsp";
 	}
 
 	@Override
 	public String getControllersPath() {
-		return "adminer";
+		return "module";
 	}
 
 	@Override
 	public String getName() {
-		return "adminer";
+		return "module";
 	}
 
 	@Override
 	public String getTranslationPath() {
-		return "translations/adminer";
+		return "translations/module";
 	}
 
 	@Override
