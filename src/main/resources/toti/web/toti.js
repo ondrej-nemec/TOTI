@@ -1,11 +1,11 @@
 /* TOTI script version 0.0.1 */
 var totiLang = {
 	"pages": {
-		"title": "Pages:",
-		"first": "First",
-		"previous": "Previous",
-		"next": "Next",
-		"last": "Last"
+		"title": <t:trans message= "common.grid.pages"/>, // "Pages:",
+		"first": <t:trans message= "common.grid.first" />, // "First",
+		"previous": <t:trans message= "common.grid.previous" />, // "Previous",
+		"next": <t:trans message= "common.grid.next" />, // "Next",
+		"last": <t:trans message= "common.grid.last" /> // "Last"
 	},
 	"actions": {
 		"select": "Select action",
