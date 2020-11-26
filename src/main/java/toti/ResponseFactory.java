@@ -188,7 +188,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		ResponseHeaders headers = responseHeaders.get();
 		// toti exclusive
 		if (url.startsWith("/toti/")) {
-			return Response.getFile("toti/web" + url.substring(5)).getResponse(headers, null, null, charset);
+			return Response.getTemplate("toti/web" + url.substring(5), new HashMap<>()).getResponse(headers, null, null, charset);
 		}
 		// controllers
 		for (MappedUrl mapped : mapping) {

@@ -31,7 +31,7 @@ public class TemplateResponse implements Response {
 	@Override
 	public RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String charset) {
 		params.put("nonce", RandomStringUtils.randomAlphanumeric(50));
-		header.addHeader("Content-Type: text/html; charset=" + charset);
+		header.addHeader(getContentType(fileName, charset));
 		return RestApiResponse.textResponse(
 			code,
 			header.getHeaders(),

@@ -2,6 +2,7 @@ package toti.response;
 
 import java.util.Map;
 
+import common.FileExtension;
 import socketCommunication.http.StatusCode;
 import socketCommunication.http.server.RestApiResponse;
 import toti.ResponseHeaders;
@@ -31,17 +32,7 @@ public interface Response {
 	static Response getJson(Map<String, Object> json) {
 		return new JsonResponse(StatusCode.ACCEPTED, json);
 	}
-/*	
-	@Deprecated
-	static Response getHtml(StatusCode code, String fileName, Map<String, Object> params) {
-		return new TemplateResponse(code, fileName, params);
-	}
-
-	@Deprecated
-	static Response getHtml(String fileName, Map<String, Object> params) {
-		return new TemplateResponse(StatusCode.OK, fileName, params);
-	}
-*/	
+	
 	static Response getText(String text) {
 		return new TextResponse(StatusCode.OK, text);
 	}
@@ -65,10 +56,24 @@ public interface Response {
 	static Response getRedirect(String url) {
 		return new RedirectResponse(StatusCode.TEMPORARY_REDIRECT, url);
 	}
-	/*
-	// TODO some param in supported responses
-	static Response getPdf(Response response) {
-		return new PdfResponse(response);
+	
+	default String getContentType(String fileName, String charset) {
+		String ext = new FileExtension(fileName).getExtension();
+		// https://stackoverflow.com/a/48704300
+		switch (ext) {
+			case "jsp":
+			case "html": return "Content-Type: text/html; charset=" + charset;
+			case "css": return "Content-Type: text/css; charset=" + charset;
+			case "js": return "Content-Type: text/javascript; charset=" + charset;
+			case "json": return "Content-Type: application/json; charset=" + charset;
+			case "ico": return "Content-Type: image/ico";
+			case "jpeg":
+			case "jpg": return "Content-Type: image/jpeg";
+			case "png": return "Content-Type: image/png";
+			case "giff": return "Content-Type: image/giff";
+			case "gif": return "Content-Type: image/gif";
+			case "txt": return "Content-Type: text/plain; charset=" + charset;
+			default: return null;
+		}
 	}
-	*/
 }

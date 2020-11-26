@@ -1,6 +1,5 @@
 package toti.response;
 
-import common.FileExtension;
 import core.text.Binary;
 import core.text.InputStreamLoader;
 import socketCommunication.http.StatusCode;
@@ -37,25 +36,6 @@ public class FileResponse implements Response {
 				}
 			}, InputStreamLoader.createInputStream(getClass(), fileName));
 		});
-	}
-	
-	private String getContentType(String fileName, String charset) {
-		String ext = new FileExtension(fileName).getExtension();
-		// https://stackoverflow.com/a/48704300
-		switch (ext) {
-			case "html": return "Content-Type: text/html; charset=" + charset;
-			case "css": return "Content-Type: text/css; charset=" + charset;
-			case "js": return "Content-Type: text/javascript; charset=" + charset;
-			case "json": return "Content-Type: application/json; charset=" + charset;
-			case "ico": return "Content-Type: image/ico";
-			case "jpeg":
-			case "jpg": return "Content-Type: image/jpeg";
-			case "png": return "Content-Type: image/png";
-			case "giff": return "Content-Type: image/giff";
-			case "gif": return "Content-Type: image/gif";
-			case "txt": return "Content-Type: text/plain; charset=" + charset;
-			default: return null;
-		}
 	}
 
 }
