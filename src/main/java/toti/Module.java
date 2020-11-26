@@ -3,14 +3,14 @@ package toti;
 import java.util.List;
 
 import common.Logger;
+import database.Database;
+import toti.application.Task;
 import toti.registr.Registr;
 import utils.Env;
 
 public interface Module {
 
-	Module initInstances(Registr registr) throws Exception;
-	
-	List<Task> getTasks(Env env, Logger logger) throws Exception;
+	List<Task> initInstances(Env env, Registr registr, Database database, Logger logger) throws Exception;
 	
 	void addRoutes(Router router);
 	

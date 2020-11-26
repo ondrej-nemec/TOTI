@@ -1,4 +1,4 @@
-package toti.entity;
+package toti.application;
 
 import java.io.File;
 import java.io.IOException;

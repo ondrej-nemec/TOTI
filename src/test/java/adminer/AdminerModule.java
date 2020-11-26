@@ -1,22 +1,24 @@
 package adminer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import common.Logger;
+import database.Database;
 import toti.Module;
 import toti.Router;
-import toti.Task;
+import toti.application.Task;
 import toti.registr.Registr;
 import utils.Env;
 
 public class AdminerModule implements Module {
 
 	@Override
-	public Module initInstances(Registr registr) {
+	public List<Task> initInstances(Env env, Registr registr, Database database, Logger logger) {
 		registr.addFactory(Adminer.class, ()->{
 			return new Adminer();
 		});
-		return this;
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -42,12 +44,6 @@ public class AdminerModule implements Module {
 	@Override
 	public String getTranslationPath() {
 		return "translations/adminer";
-	}
-
-	@Override
-	public List<Task> getTasks(Env env, Logger logger) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

@@ -21,20 +21,3 @@ public interface AuditTrail {
 		
 }
 ```
-
-### Module config
-
-```java
-import toti.registr.Registr;
-
-public interface ModuleConfig {
-
-	void initInstances(Registr registr);
-	
-	void addRoutes(Router router);
-	
-	String getTemplatesPath();
-	
-	String getControllersPath();
-}
-```

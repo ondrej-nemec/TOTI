@@ -1,4 +1,4 @@
-package toti;
+package toti.application;
 
 public interface Task {
 	

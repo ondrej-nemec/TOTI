@@ -25,7 +25,6 @@ import common.exceptions.LogicException;
 import exception.AccessDeniedException;
 import exception.NotAllowedActionException;
 import helper.AuthorizationHelper;
-import interfaces.AclUser;
 import socketCommunication.http.HttpMethod;
 import socketCommunication.http.StatusCode;
 import socketCommunication.http.server.RestApiResponse;
@@ -47,6 +46,7 @@ import toti.authentication.Authenticator;
 import toti.authentication.AuthentizationException;
 import toti.authentication.Identity;
 import toti.authentication.Language;
+import toti.authentication.UserSecurity;
 import toti.registr.Registr;
 import toti.response.Response;
 import toti.templating.DirectoryTemplate;
@@ -70,7 +70,6 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private final Map<String, TemplateFactory> modules;
 	private final Function<Locale, Translator> translator;
 	
-	//private final Function<Identity, AclUser> identityToUser;
 	private final AuthorizationHelper authorizator;
 	private final Authenticator authenticator;
 	
@@ -81,10 +80,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			String resourcesDir,
 			Router router,
 			Map<String, TemplateFactory> modules,
-			Function<Locale, Translator> translator,			
-			Authenticator authenticator,
-			AuthorizationHelper authorizator,
-			Function<Identity, AclUser> identityToUser,
+			Function<Locale, Translator> translator,
+			UserSecurity security,
 			String charset,
 			boolean dirResponseAllowed,
 			Logger logger) throws Exception {
@@ -93,15 +90,13 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		this.translator = translator;
 		this.mapping = loadUrlMap(modules);
 		this.responseHeaders = responseHeaders;
-		this.authorizator = authorizator;
-		this.authenticator = authenticator;
+		this.authorizator = security.getAuthorizator();
+		this.authenticator = security.getAuthenticator();
 		this.router = router;
 		this.modules = modules;
 		this.logger = logger;
-	//	this.identityToUser = identityToUser;
 		this.language = language;
 		this.dirResponseAllowed = dirResponseAllowed;
-		Identity.TO_USER = identityToUser;
 	}
 
 	@Override
@@ -212,14 +207,6 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 					is = url.equals(mapped.getUrl()) && methodMatch;
 			}
 	    	if (is) {
-	    		if (mapped.getValidator().isPresent()) {
-		    		Map<String,  List<String>> errors = mapped.getValidator().get().validate(params);
-		    		Map<String,  Object> json = new HashMap<>();
-		    		json.putAll(errors);
-		    		if (!errors.isEmpty()) {
-		    			return Response.getJson(StatusCode.BAD_REQUEST, json).getResponse(headers, null, null, charset);
-		    		}
-	    		}
 	    		return getControllerResponse(headers, mapped, params, identity, locale);
 	    	}
 		}
@@ -238,6 +225,14 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			ResponseHeaders headers,
 			MappedUrl mapped, Properties params, Identity identity, Locale locale) throws ServerException {
 		authorize(mapped, params, identity);
+		if (mapped.getValidator().isPresent()) {
+    		Map<String,  List<String>> errors = mapped.getValidator().get().validate(params);
+    		Map<String,  Object> json = new HashMap<>();
+    		json.putAll(errors);
+    		if (!errors.isEmpty()) {
+    			return Response.getJson(StatusCode.BAD_REQUEST, json).getResponse(headers, null, null, charset);
+    		}
+		}
 		try {
 			// params for method
 			List<Class<?>> classesList = new ArrayList<>();

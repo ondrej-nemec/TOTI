@@ -8,23 +8,20 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import common.Logger;
-import helper.AuthorizationHelper;
-import interfaces.AclUser;
 import logging.LoggerFactory;
 import socketCommunication.Server;
 import socketCommunication.ServerSecuredCredentials;
-import toti.authentication.Authenticator;
-import toti.authentication.Identity;
 import toti.authentication.Language;
+import toti.authentication.UserSecurity;
 import toti.templating.TemplateFactory;
 import translator.PropertiesTranslator;
 import translator.Translator;
 
-public class Bootstrap {
+public class HttpServer {
 	
 	private final Server server;
 	
-	public Bootstrap(
+	public HttpServer(
 			int port,
 			int threadPool,
     		long readTimeout,
@@ -34,33 +31,22 @@ public class Bootstrap {
     		List<Module> modules,
     		String resourcesPath,
     		Function<Locale, Translator> translator,
-    		AuthorizationHelper authorizator,
-    		Function<Identity, AclUser> identityToUser,
+    		UserSecurity security,
     		int maxUploadFileSize,
     		Optional<List<String>> allowedUploadFileTypes,
     		String charset,
     		String defLang,
-    		String tokenSalt,
-    		long tokenExpirationTime,
     		Logger logger,
-    		Logger securityLogger,
     		boolean deleteDir,
     		boolean dirResponseAllowed) throws Exception {
 
-		Authenticator authenticator = new Authenticator(
-				tokenExpirationTime,
-				tokenSalt,
-				securityLogger
-		);
 		Router router = new Router();
-		
 		Map<String, TemplateFactory> controllers = new HashMap<>();
 		Map<String, TemplateFactory> templateFactories = new HashMap<>();
 		String[] trans = new String[modules.size()];
 		int i = 0;
 		for (Module module : modules) {
 			module.addRoutes(router);
-			// module.initInstances(registr);
 			TemplateFactory templateFactory = new TemplateFactory(
 					tempPath, module.getTemplatesPath(), templateFactories, deleteDir
 			);
@@ -90,9 +76,7 @@ public class Bootstrap {
 				router,
 				controllers,
 				translator,
-				authenticator,
-				authorizator,
-				identityToUser,
+				security,
 				charset,
 				dirResponseAllowed,
 				logger

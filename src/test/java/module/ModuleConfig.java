@@ -1,22 +1,24 @@
 package module;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import common.Logger;
+import database.Database;
 import toti.Module;
 import toti.Router;
-import toti.Task;
+import toti.application.Task;
 import toti.registr.Registr;
 import utils.Env;
 
 public class ModuleConfig implements Module {
 
 	@Override
-	public Module initInstances(Registr registr) throws Exception {
+	public List<Task> initInstances(Env env, Registr registr, Database database, Logger logger) throws Exception {
 		registr.addFactory(ModuleController.class, ()->{
 			return new ModuleController();
 		});
-		return this;
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -40,12 +42,6 @@ public class ModuleConfig implements Module {
 	@Override
 	public String getTranslationPath() {
 		return "translations/module";
-	}
-
-	@Override
-	public List<Task> getTasks(Env env, Logger logger) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

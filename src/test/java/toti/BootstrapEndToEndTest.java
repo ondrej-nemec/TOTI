@@ -1,22 +1,14 @@
 package toti;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
 import adminer.AdminerModule;
-import helper.Action;
-import helper.AuthorizationHelper;
-import helper.Rules;
-import interfaces.AclDestination;
-import interfaces.AclRole;
-import interfaces.AclUser;
-import interfaces.RulesDao;
 import logging.LoggerFactory;
 import module.ModuleConfig;
-import toti.Bootstrap;
-import toti.BootstrapFactory;
+import toti.HttpServer;
+import toti.HttpServerFactory;
 import toti.ResponseHeaders;
 import toti.registr.Registr;
 
@@ -26,10 +18,10 @@ public class BootstrapEndToEndTest {
 		try {
 			List<Module> configs = Arrays.asList(
 				// TODO
-				new AdminerModule().initInstances(Registr.get()),
-				new ModuleConfig().initInstances(Registr.get())
+				new AdminerModule(),
+				new ModuleConfig()
 			);
-			
+			/*
 			AuthorizationHelper authorizator = new AuthorizationHelper(
 					new RulesDao() {						
 						@Override
@@ -46,12 +38,16 @@ public class BootstrapEndToEndTest {
 					},
 					LoggerFactory.getLogger("security")
 			);
+			*/
+			for (Module module : configs) {
+				module.initInstances(null, Registr.get(), null, null);
+			}
 			
-			Bootstrap b = new BootstrapFactory()
+			HttpServer b = new HttpServerFactory()
 					.setPort(81)
 					//.setTranslator((loc)->new PropertiesTranslator(LoggerFactory.getLogger("translator"), "messages"))
-					.setAuthorizator(authorizator)
-					.setIdentityToUser((ident)->{
+					// .setAuthorizator(authorizator)
+					/*.setIdentityToUser((ident)->{
 						return new AclUser() {
 							
 							@Override
@@ -69,9 +65,9 @@ public class BootstrapEndToEndTest {
 								return ident.getContent();
 							}
 						};
-					})
+					})*/
 					.setLogger(LoggerFactory.getLogger("server"))
-					.setSecurityLogger(LoggerFactory.getLogger("security"))
+					//.setSecurityLogger(LoggerFactory.getLogger("security"))
 					.setHeaders(new ResponseHeaders(Arrays.asList(
 							"Access-Control-Allow-Origin: *",
 							"Access-Control-Allow-Credentials: true"
