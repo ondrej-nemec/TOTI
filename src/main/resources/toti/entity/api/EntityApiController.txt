@@ -102,7 +102,7 @@ public class __X__ApiController {
 			return Response.getText(translator.translate("common.item-deleted"));
 		} catch (Exception e) {
 			logger.error("__X__ Delete", e);
-			return Response.getJson(StatusCode.INTERNAL_SERVER_ERROR, new HashMap<>());
+			return Response.getText(StatusCode.INTERNAL_SERVER_ERROR, translator.translate("common.deleting-problem"));
 		}
 	}
 
@@ -124,7 +124,7 @@ public class __X__ApiController {
 			return Response.getText(translator.translate("common.item-updated"));
 		} catch (Exception e) {
 			logger.error("__X__ Update", e);
-			return Response.getJson(StatusCode.INTERNAL_SERVER_ERROR, new HashMap<>());
+			return Response.getText(StatusCode.INTERNAL_SERVER_ERROR, translator.translate("common.saving-problem"));
 		}
 	}
 
@@ -151,7 +151,7 @@ public class __X__ApiController {
 			return Response.getJson(params);
 		} catch (Exception e) {
 			logger.error("__X__ Insert", e);
-			return Response.getJson(StatusCode.INTERNAL_SERVER_ERROR, new HashMap<>());
+			return Response.getText(StatusCode.INTERNAL_SERVER_ERROR, translator.translate("common.saving-problem"));
 		}
 	}
 }
