@@ -14,9 +14,11 @@ import toti.templating.Tag;
 public class TemplateParser {
 	
 	private final Map<String, Tag> tags;
+	private final boolean minimalize;
 	
-	public TemplateParser(Map<String, Tag> tags) {
+	public TemplateParser(Map<String, Tag> tags, boolean minimalize) {
 		this.tags = tags;
+		this.minimalize = minimalize;
 	}
 	
 	public String createTempCache(
@@ -95,7 +97,7 @@ public class TemplateParser {
 		TagParser tagParser = null;
 		int varIndex = 0;
 		LinkedList<VariableParser> variableParsers = new LinkedList<>();
-		while((actual = (char)br.read()) != (char)-1) {
+		while((actual = (char)br.read()) != (char)-1) {			
 			if (isComment && !commentCandidate1 && actual == '-') {
 				commentCandidate1 = true;
 			} else if (isComment && commentCandidate1 && actual == '-') {
@@ -179,7 +181,7 @@ public class TemplateParser {
 					// ignored
 				}else if (actual == '\n') {
 					bw.accept(
-						"\");b.append(\"\\n"
+						"\");b.append(\"" + (minimalize ? "" : "\\n")
 					);
 				} else if (tagCandidate1 || tagCandidate2) {
 					bw.accept("<" + (isClosingTag ? "/" : "") + (tagCandidate2 ? "t" : ""));
@@ -200,7 +202,12 @@ public class TemplateParser {
 					bw.accept(actual + "");
 					isVariableCandidate = false;
 				} else {
-					bw.accept(actual + "");
+					if (minimalize && (actual == '\t' || (actual == ' ' && previous == ' ') )) {
+						// ignore
+					} else {
+						bw.accept(actual + "");
+					}
+					
 				}
 			}
 			previous = actual;

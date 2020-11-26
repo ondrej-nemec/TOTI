@@ -1,20 +1,20 @@
 /* TOTI script version 0.0.1 */
 var totiLang = {
 	"pages": {
-		"title": <t:trans message= "common.grid.pages"/>, // "Pages:",
-		"first": <t:trans message= "common.grid.first" />, // "First",
-		"previous": <t:trans message= "common.grid.previous" />, // "Previous",
-		"next": <t:trans message= "common.grid.next" />, // "Next",
-		"last": <t:trans message= "common.grid.last" /> // "Last"
+		"title": "<t:trans message='common.grid.paging.pages'/>", // "Pages:",
+		"first": "<t:trans message='common.grid.paging.first' />", // "First",
+		"previous": "<t:trans message='common.grid.paging.previous' />", // "Previous",
+		"next": "<t:trans message='common.grid.paging.next' />", // "Next",
+		"last": "<t:trans message='common.grid.paging.last' />" // "Last"
 	},
 	"actions": {
-		"select": "Select action",
-		"execute": "Execute",
-		"noSelectedItems": "No selected items"
+		"select": "<t:trans message='common.grid.action.select' />", // "Select action",
+		"execute": "<t:trans message='common.grid.action.execute' />", // "Execute",
+		"noSelectedItems": "<t:trans message='common.grid.action.no-selected-item' />" // "No selected items"
 	},
 	"gridMessages": {
-		"noItemsFound": "No Item Found",
-		"loadingError": "Problem with data loading"
+		"noItemsFound": "<t:trans message='common.grid.no-item-found' />", // "No Item Found",
+		"loadingError": "<t:trans message='common.grid.loading-error' />" // "Problem with data loading"
 	},
 	variableName: "language",
 	changeLanguage: function (language) {

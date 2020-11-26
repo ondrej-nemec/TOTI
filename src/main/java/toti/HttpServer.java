@@ -38,7 +38,8 @@ public class HttpServer {
     		String defLang,
     		Logger logger,
     		boolean deleteDir,
-    		boolean dirResponseAllowed) throws Exception {
+    		boolean dirResponseAllowed,
+    		boolean minimalize) throws Exception {
 
 		Router router = new Router();
 		Map<String, TemplateFactory> controllers = new HashMap<>();
@@ -48,12 +49,13 @@ public class HttpServer {
 		for (Module module : modules) {
 			module.addRoutes(router);
 			TemplateFactory templateFactory = new TemplateFactory(
-					tempPath, module.getTemplatesPath(), templateFactories, deleteDir
+					tempPath, module.getTemplatesPath(), templateFactories, deleteDir, minimalize
 			);
 			controllers.put(module.getControllersPath(), templateFactory);
 			templateFactories.put(module.getName(), templateFactory);
 			trans[i++] = module.getTranslationPath();
 		};
+		TemplateFactory totiTemplateFactory = new TemplateFactory(tempPath, "toti/web", templateFactories, deleteDir, minimalize);
 		if (translator == null) {
 			translator = new Function<Locale, Translator>() {
 				private final Map<Locale, Translator> translators = new HashMap<>();
@@ -75,6 +77,7 @@ public class HttpServer {
 				resourcesPath,
 				router,
 				controllers,
+				totiTemplateFactory,
 				translator,
 				security,
 				charset,

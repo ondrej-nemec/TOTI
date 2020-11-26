@@ -53,21 +53,28 @@ public class TemplateFactory {
 
 	private final String tempPath;
 	private final boolean deleteAuxJavaClass;
+	private final boolean minimalize;
 	private final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 	private final String templatePath;
 	private final Map<String, TemplateFactory> modules;
 	
 	public TemplateFactory(String tempPath, String templatePath, Map<String, TemplateFactory> modules) {
-		this(tempPath, templatePath, modules, true);
+		this(tempPath, templatePath, modules, true, false);
 	}
 	
-	public TemplateFactory(String tempPath, String templatePath, Map<String, TemplateFactory> modules, boolean deleteAuxJavaClass) {
+	public TemplateFactory(
+			String tempPath, 
+			String templatePath, 
+			Map<String, TemplateFactory> modules,
+			boolean deleteAuxJavaClass,
+			boolean minimalize) {
 		String cachePath = tempPath + "/cache";
 		new File(cachePath).mkdir();
 		this.tempPath = cachePath;
 		this.templatePath = templatePath;
 		this.deleteAuxJavaClass = deleteAuxJavaClass;
 		this.modules = modules;
+		this.minimalize = minimalize;
 	}
 	
 	public Template getTemplate(String templateFile) throws Exception {
@@ -127,7 +134,7 @@ public class TemplateFactory {
 		List<Tag> tags = initTags(namespace);
 		tags.addAll(CUSTOM_TAG_PROVIDERS.stream().map(s->s.get()).collect(Collectors.toList()));
 		TemplateParser parser = new TemplateParser(tags.stream()
-			      .collect(Collectors.toMap(Tag::getName, tag -> tag)));
+			      .collect(Collectors.toMap(Tag::getName, tag -> tag)), minimalize);
 		
 		String javaTempFile = parser.createTempCache(namespace, className, templateFile, tempPath, modificationTime);
 		File file = new File(javaTempFile);

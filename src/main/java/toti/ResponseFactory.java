@@ -68,6 +68,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private final Router router;
 	
 	private final Map<String, TemplateFactory> modules;
+	private final TemplateFactory totiTemplateFactory;
 	private final Function<Locale, Translator> translator;
 	
 	private final AuthorizationHelper authorizator;
@@ -80,6 +81,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			String resourcesDir,
 			Router router,
 			Map<String, TemplateFactory> modules,
+			TemplateFactory totiTemplateFactory,
 			Function<Locale, Translator> translator,
 			UserSecurity security,
 			String charset,
@@ -94,6 +96,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		this.authenticator = security.getAuthenticator();
 		this.router = router;
 		this.modules = modules;
+		this.totiTemplateFactory = totiTemplateFactory;
 		this.logger = logger;
 		this.language = language;
 		this.dirResponseAllowed = dirResponseAllowed;
@@ -188,7 +191,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		ResponseHeaders headers = responseHeaders.get();
 		// toti exclusive
 		if (url.startsWith("/toti/")) {
-			return Response.getTemplate("toti/web" + url.substring(5), new HashMap<>()).getResponse(headers, null, null, charset);
+			return Response.getTemplate(url.substring(5), new HashMap<>())
+					.getResponse(headers, totiTemplateFactory, translator.apply(locale), charset);
 		}
 		// controllers
 		for (MappedUrl mapped : mapping) {

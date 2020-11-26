@@ -74,6 +74,7 @@ public class BootstrapEndToEndTest {
 					)))
 					.setMaxUploadFileSize(10*1024)
 					.setAllowedUploadFileTypes(Optional.empty())
+					.setMinimalize(false)
 					.get(configs);
 			/*
 			Bootstrap b = new Bootstrap(

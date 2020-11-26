@@ -44,7 +44,7 @@ public class TemplateParserTest {
 		BufferedReader br = mock(BufferedReader.class);
 		setBufferedReader(br, template);
 		
-		TemplateParser parser = new TemplateParser(tags);
+		TemplateParser parser = new TemplateParser(tags, false);
 		parser.loadFile(br, (text)->{
 			bw.append(text);
 		});
@@ -293,7 +293,7 @@ public class TemplateParserTest {
 		BufferedReader br = mock(BufferedReader.class);
 		setBufferedReader(br, template);
 		
-		TemplateParser parser = new TemplateParser(tags);
+		TemplateParser parser = new TemplateParser(tags, false);
 		parser.loadFile(br, (text)->{
 			bw.append(text);
 		});
@@ -364,7 +364,7 @@ public class TemplateParserTest {
 		BufferedReader br = mock(BufferedReader.class);
 		setBufferedReader(br, template);
 		
-		TemplateParser parser = new TemplateParser(tags);
+		TemplateParser parser = new TemplateParser(tags, false);
 		parser.loadFile(br, (text)->{
 			bw.append(text);
 		});

@@ -40,6 +40,7 @@ public class HttpServerFactory {
 	private String resourcesPath = "www";
 	private boolean deleteDir = false;
 	private boolean dirResponseAllowed = true;
+	private boolean minimalize = true;
 	private int maxUploadFileSize = 0;
 	private Optional<List<String>> allowedUploadFileTypes = Optional.of(new LinkedList<>());
 	
@@ -68,7 +69,7 @@ public class HttpServerFactory {
 				translator, security,
 				maxUploadFileSize, allowedUploadFileTypes,
 				charset, defLang,
-				logger, deleteDir, dirResponseAllowed
+				logger, deleteDir, dirResponseAllowed, minimalize
 		);
 	}
 
@@ -149,6 +150,11 @@ public class HttpServerFactory {
 
 	public HttpServerFactory setDeleteDir(boolean deleteDir) {
 		this.deleteDir = deleteDir;
+		return this;
+	}
+
+	public HttpServerFactory setMinimalize(boolean minimalize) {
+		this.minimalize = minimalize;
 		return this;
 	}
 
