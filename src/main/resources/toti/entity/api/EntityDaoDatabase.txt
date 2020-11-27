@@ -24,7 +24,7 @@ public class __X__DaoDatabase implements __X__Dao {
 			SelectQueryBuilder select = builder.select("*").from(table);
 			select.where("1=1");
 			filters.forEach((filter, value)->{
-				select.andWhere(filter + " like :" + filter + "Value")
+				select.andWhere("concat('', " + filter + ") like :" + filter + "Value")
 					.addParameter(":" + filter + "Value", value + "%");
 			});
 			StringBuilder orderBY = new StringBuilder();

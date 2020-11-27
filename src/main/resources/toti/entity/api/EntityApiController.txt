@@ -121,7 +121,11 @@ public class __X__ApiController {
 			/***/
 			dao.update(id, updated);
 			auditTrail.update(identity.getUser().getId(), origin, updated);
-			return Response.getText(translator.translate("common.item-updated"));
+			Map<String, Object> params = new HashMap<>();
+			params.put("id", id);
+			params.put("message", translator.translate("common.item-updated"));
+			
+			return Response.getJson(params);
 		} catch (Exception e) {
 			logger.error("__X__ Update", e);
 			return Response.getText(StatusCode.INTERNAL_SERVER_ERROR, translator.translate("common.saving-problem"));
