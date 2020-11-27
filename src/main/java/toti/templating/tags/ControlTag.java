@@ -17,14 +17,15 @@ public class ControlTag implements Tag {
 				"{"
 				+ "toti.control.Control control=(toti.control.Control)(variables.get(\"%s\"));"
 				+ "b.append(\""
-				+ "<script id='pdf-ignored'>"
-				+ "toti\"+control.getType()+\".init('%s', name, \"+control.toString()+\");"
+				+ "<script>"
+				+ "toti\"+control.getType()+\".init('%s', 'toti-\" + control.getType + \"-%s', \"+control.toString()+\");"
 				+ "</script>"
 				+ "\");"
 				+ "}"
 				+ "b.append(\"<div id='%s'>\");",
 				params.get("name"),
 				"div#control-" +params.get("name"),
+				params.get("name"),
 				"control-" +params.get("name")
 		);
 	}

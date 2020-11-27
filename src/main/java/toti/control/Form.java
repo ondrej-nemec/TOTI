@@ -13,14 +13,14 @@ public class Form implements Jsonable, Control {
 	private String bindMethod = "get";
 	private final boolean editable;
 	
-	private final String formId;
+	//private final String formId;
 	private final String formAction;
 	private String formMethod = "get";
 
 	private final List<Map<String, Object>> fields;
 	
-	public Form(String formId, String action, boolean editable) {
-		this.formId = formId;
+	public Form(/*String formId, */String action, boolean editable) {
+	//	this.formId = formId;
 		this.formAction = action;
 		this.fields = new LinkedList<>();
 		this.editable = editable;
@@ -49,7 +49,6 @@ public class Form implements Jsonable, Control {
 	@Override
 	public String toString() {
 		Map<String, Object> json = new HashMap<>();
-		json.put("formId", formId);
 		json.put("action", formAction);
 		json.put("method", formMethod);
 		json.put("fields", fields);
