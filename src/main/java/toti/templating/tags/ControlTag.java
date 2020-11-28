@@ -18,7 +18,7 @@ public class ControlTag implements Tag {
 				+ "toti.control.Control control=(toti.control.Control)(variables.get(\"%s\"));"
 				+ "b.append(\""
 				+ "<script>"
-				+ "toti\"+control.getType()+\".init('%s', 'toti-\" + control.getType + \"-%s', \"+control.toString()+\");"
+				+ "toti\"+control.getType()+\".init('%s', 'toti-\" + control.getType() + \"-%s', \"+control.toString()+\");"
 				+ "</script>"
 				+ "\");"
 				+ "}"
