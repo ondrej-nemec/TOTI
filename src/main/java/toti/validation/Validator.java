@@ -12,6 +12,8 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import json.JsonReader;
+import json.JsonStreamException;
 import socketCommunication.http.server.UploadedFile;
 import toti.registr.Registr;
 
@@ -171,10 +173,15 @@ public class Validator {
 			checkRule(
 					rule.getMapSpecification(),
 					(validator)->{
-						Properties fields = new Properties();
-						fields.putAll((Map<?, ?>)o);
-						errors.putAll(validator.validate(fields));
-						return false;
+						try {
+							Map<String, Object> json = new JsonReader().read(o.toString());
+							Properties fields = new Properties();
+							fields.putAll(json);
+							errors.putAll(validator.validate(fields));
+							return false;
+						} catch (JsonStreamException e) {
+							return true;
+						}
 					},
 					errors,
 					rule.getName(),
