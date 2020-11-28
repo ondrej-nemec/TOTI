@@ -38,7 +38,7 @@ public class HttpServerFactory {
 	private String charset = "UTF-8";
 	private String defLang = Locale.getDefault().toString();
 	private String resourcesPath = "www";
-	private boolean deleteDir = false;
+	private boolean deleteTempJavaFiles = true;
 	private boolean dirResponseAllowed = true;
 	private boolean minimalize = true;
 	private int maxUploadFileSize = 0;
@@ -69,7 +69,7 @@ public class HttpServerFactory {
 				translator, security,
 				maxUploadFileSize, allowedUploadFileTypes,
 				charset, defLang,
-				logger, deleteDir, dirResponseAllowed, minimalize
+				logger, deleteTempJavaFiles, dirResponseAllowed, minimalize
 		);
 	}
 
@@ -148,8 +148,8 @@ public class HttpServerFactory {
 		return this;
 	}
 
-	public HttpServerFactory setDeleteDir(boolean deleteDir) {
-		this.deleteDir = deleteDir;
+	public HttpServerFactory setDeleteTempJavaFiles(boolean deleteTempJavaFiles) {
+		this.deleteTempJavaFiles = deleteTempJavaFiles;
 		return this;
 	}
 

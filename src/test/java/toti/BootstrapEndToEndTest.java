@@ -36,7 +36,7 @@ public class BootstrapEndToEndTest {
 					factory.setReadTimeout(60000);
 					factory.setLogger(LoggerFactory.getLogger("server"));
 					factory.setMinimalize(false);
-					factory.setDeleteDir(false);
+					factory.setDeleteTempJavaFiles(false);
 					
 					// TODO little bit another way
 					try {
