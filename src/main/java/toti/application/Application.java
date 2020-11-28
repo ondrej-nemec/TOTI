@@ -37,13 +37,24 @@ public class Application {
 		LoggerFactory.setConfigFile(LOG_CONFIG_FILE);
 		LoggerFactory.getLogger("main").info("Initialization...");
 		try {
-			Env env = new Env(APP_CONFIG_FILE);
+			Env env = null;
+			if (APP_CONFIG_FILE == null) {
+				LoggerFactory.getLogger("main").warn("No config file specified. Env is null");
+			} else {
+				env = new Env(APP_CONFIG_FILE);
+			}
 			/*** creating db ****/
 			List<String> migrations = new LinkedList<>();
 			modules.forEach((config)->{
 				migrations.add(config.getMigrationsPath());
 			});
-			database = createDatabase(env, migrations);
+			DatabaseConfig databaseConfig = createDatabaseConfig(env, migrations);
+			if (databaseConfig == null) {
+				database = null;
+				LoggerFactory.getLogger("main").warn("Database config is null, so database is null");
+			} else {
+				database = new Database(databaseConfig, LoggerFactory.getLogger("database"));
+			}
 			/*** init classes ****/
 			Registr registr = Registr.get();
 			registr.addService("database", database);
@@ -55,7 +66,7 @@ public class Application {
 					LoggerFactory.getLogger(module.getName())
 				));
 			}
-			this.server = createServer(env, modules, registr);
+			this.server = createServerFactory(env, registr).get(modules);
 		} catch (Exception e) {
 			LoggerFactory.getLogger("main").error("Start failed", e);
 			System.exit(1);
@@ -68,7 +79,9 @@ public class Application {
 	public void start() {
 		LoggerFactory.getLogger("main").info("Starting...");
 		try {
-			database.createDbAndMigrate();
+			if (database != null) {
+				database.createDbAndMigrate();
+			}
 			for (Task task : tasks) {
 				task.start();
 			}
@@ -96,14 +109,14 @@ public class Application {
 	
 	/************/
 	
-	private HttpServer createServer(Env env, List<Module> modules, Registr registr) throws Exception {
-		// TODO create factory constructor with env
+	public HttpServerFactory createServerFactory(Env env, Registr registr) throws Exception {
 		HttpServerFactory factory = new HttpServerFactory();
 		factory.setPort(env.getInt("http.port"));
 		factory.setThreadPool(env.getInt("http.thread-pool"));
 		factory.setReadTimeout(env.getInt("http.read-timeout"));
 		factory.setHeaders(new ResponseHeaders(env.getList("http.headers", "\\|")));
 		factory.setLogger(LoggerFactory.getLogger("server"));
+		factory.setMinimalize(false);
 		
 		// TODO little bit another way
 		try {
@@ -113,11 +126,11 @@ public class Application {
 				LoggerFactory.getLogger("auth")
 			));
 		} catch (RuntimeException ignored) {}
-		return factory.get(modules);
+		return factory;
 	}
 	
-	private Database createDatabase(Env env, List<String> migrations) {
-		return new Database(new DatabaseConfig(
+	public DatabaseConfig createDatabaseConfig(Env env, List<String> migrations) {
+		return new DatabaseConfig(
 				env.getString("database.type"),
 				env.getString("database.url"),
 				env.getBoolean("database.external"),
@@ -127,7 +140,7 @@ public class Application {
 				migrations,
 				env.getString("database.timezone"),
 				env.getInt("database.pool-size")
-		), LoggerFactory.getLogger("database"));
+		);
 	}
 	
 }
