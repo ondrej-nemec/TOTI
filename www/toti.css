@@ -1,0 +1,34 @@
+.toti-table {
+	border-spacing: 0;
+    border-collapse: collapse;
+    border-color: #dfe2e5;
+    margin-bottom: 0.5em;
+}
+.toti-table td, .toti-table th {
+	border: 1px solid;
+	border-collapse: collapse;
+	padding: 0.5em;
+}
+.toti-table th a {
+	color: #000000;
+	text-decoration: none;
+}
+/* A link that has not been visited
+.toti-table th a:link {
+} */
+/* A link that has been visited
+.toti-table th a:visited {
+} */
+/* A link that is hovered on
+.toti-table th a:hover {
+} */
+/* A link that is selected
+.toti-table th a:active {
+} */
+/* rows*/
+.toti-row-0 {
+	background-color: #ffffff;
+}
+.toti-row-1 {
+	background-color: #dfe2e5;
+}
