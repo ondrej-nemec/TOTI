@@ -1,20 +1,24 @@
 /* TOTI script version 0.0.2 */
 var totiLang = {
 	"pages": {
-		"title": "<t:trans message='common.grid.paging.pages'/>", /* "Pages:",*/
-		"first": "<t:trans message='common.grid.paging.first' />", /* "First",*/
-		"previous": "<t:trans message='common.grid.paging.previous' />", /* "Previous",*/
-		"next": "<t:trans message='common.grid.paging.next' />", /* "Next",*/
-		"last": "<t:trans message='common.grid.paging.last' />" /* "Last"*/
+		"title": /* "<t:trans message='common.grid.paging.pages'/>", /*/ "Pages:", //*/
+		"first": /* "<t:trans message='common.grid.paging.first' />", /*/ "First", //*/
+		"previous": /* "<t:trans message='common.grid.paging.previous' />", /*/ "Previous", //*/
+		"next": /* "<t:trans message='common.grid.paging.next' />", /*/ "Next", //*/
+		"last": /* "<t:trans message='common.grid.paging.last' />" /*/ "Last" //*/
 	},
 	"actions": {
-		"select": "<t:trans message='common.grid.action.select' />", /* "Select action",*/
-		"execute": "<t:trans message='common.grid.action.execute' />", /* "Execute",*/
-		"noSelectedItems": "<t:trans message='common.grid.action.no-selected-item' />" /* "No selected items"*/
+		"select": /* "<t:trans message='common.grid.action.select' />", /*/ "Select action", //*/
+		"execute": /* "<t:trans message='common.grid.action.execute' />", /*/ "Execute", //*/
+		"noSelectedItems": /* "<t:trans message='common.grid.action.no-selected-item' />" /*/ "No selected items" //*/
 	},
 	"gridMessages": {
-		"noItemsFound": "<t:trans message='common.grid.no-item-found' />", /* "No Item Found",*/
-		"loadingError": "<t:trans message='common.grid.loading-error' />" /* "Problem with data loading"*/
+		"noItemsFound": /* "<t:trans message='common.grid.no-item-found' />", /*/ "No Item Found", //*/
+		"loadingError": /* "<t:trans message='common.grid.loading-error' />" /*/ "Problem with data loading" //*/
+	},
+	"formMessages": {
+		"saveError": /* "<t:trans message='common.form.saving-problem' />", /*/ "Problem with form saving", //*/
+		"bindError": /* "<t:trans message='common.form.binding-problem' />" /*/ "Loading data failure" //*/
 	},
 	variableName: "language",
 	changeLanguage: function (language) {
@@ -40,9 +44,9 @@ var totiLang = {
 };
 
 var totiImages = {
-	// https://www.iconfinder.com/icons/186407/up_arrow_icon
+	/* https://www.iconfinder.com/icons/186407/up_arrow_icon */
 	"arrowUp": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDMyIDMyIiBoZWlnaHQ9IjMycHgiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAzMiAzMiIgd2lkdGg9IjMycHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxwYXRoIGQ9Ik0xOC4yMjEsNy4yMDZsOS41ODUsOS41ODVjMC44NzksMC44NzksMC44NzksMi4zMTcsMCwzLjE5NWwtMC44LDAuODAxYy0wLjg3NywwLjg3OC0yLjMxNiwwLjg3OC0zLjE5NCwwICBsLTcuMzE1LTcuMzE1bC03LjMxNSw3LjMxNWMtMC44NzgsMC44NzgtMi4zMTcsMC44NzgtMy4xOTQsMGwtMC44LTAuODAxYy0wLjg3OS0wLjg3OC0wLjg3OS0yLjMxNiwwLTMuMTk1bDkuNTg3LTkuNTg1ICBjMC40NzEtMC40NzIsMS4xMDMtMC42ODIsMS43MjMtMC42NDdDMTcuMTE1LDYuNTI0LDE3Ljc0OCw2LjczNCwxOC4yMjEsNy4yMDZ6IiBmaWxsPSIjNTE1MTUxIi8+PC9zdmc+",
-	// https://www.iconfinder.com/icons/186411/down_arrow_icon
+	/* https://www.iconfinder.com/icons/186411/down_arrow_icon */
 	"arrowDown": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDMyIDMyIiBoZWlnaHQ9IjMycHgiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAzMiAzMiIgd2lkdGg9IjMycHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxwYXRoIGQ9Ik0xNC43NywyMy43OTVMNS4xODUsMTQuMjFjLTAuODc5LTAuODc5LTAuODc5LTIuMzE3LDAtMy4xOTVsMC44LTAuODAxYzAuODc3LTAuODc4LDIuMzE2LTAuODc4LDMuMTk0LDAgIGw3LjMxNSw3LjMxNWw3LjMxNi03LjMxNWMwLjg3OC0wLjg3OCwyLjMxNy0wLjg3OCwzLjE5NCwwbDAuOCwwLjgwMWMwLjg3OSwwLjg3OCwwLjg3OSwyLjMxNiwwLDMuMTk1bC05LjU4Nyw5LjU4NSAgYy0wLjQ3MSwwLjQ3Mi0xLjEwNCwwLjY4Mi0xLjcyMywwLjY0N0MxNS44NzUsMjQuNDc3LDE1LjI0MywyNC4yNjcsMTQuNzcsMjMuNzk1eiIgZmlsbD0iIzUxNTE1MSIvPjwvc3ZnPg=="
 };
 
@@ -256,8 +260,8 @@ var totiControl = {
 								// custom function calling
 								window[element.attr("onFailure")](xhr);
 							} else {
-								// TODO
-								console.log("what now?", xhr);
+								// TODO need solve
+								totiControl.display.flash('error', totiLang.formMessages.saveError);
 							}
 						}, 
 						header,
@@ -924,7 +928,6 @@ var totiGrid = {
 
 totiForm = {
 	init: function(elementIdentifier, uniqueName, config) {
-		console.log(uniqueName, elementIdentifier);
 		$(document).ready(function() {
 			var html = $(elementIdentifier).html();
 			$(elementIdentifier).html(totiForm.print(uniqueName, config, $(elementIdentifier)));
@@ -977,7 +980,6 @@ totiForm = {
 				} else if (field.type === 'radio') {
 					input = printSelectFunc(field, 'radios');
 				} else if (field.type === 'checkbox') {
-					console.log(field, field.values);
 					input = printSelectFunc(field, 'values');
 				} else if (field.type !== 'submit' && field.type !== 'hidden') {
 					input = $('<div>');
@@ -1112,8 +1114,9 @@ totiForm = {
 				}
 			}, 
 			function(xhr, a, b) {
-				console.log(xhr, a, b);
 				bind.onFailure(xhr, a, b);
+				// TODO need solve
+				totiControl.display.flash('error', totiLang.formMessages.saveError);
 			},
 			totiControl.getHeaders()
 		);
