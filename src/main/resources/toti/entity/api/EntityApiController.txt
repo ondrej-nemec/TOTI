@@ -26,6 +26,10 @@ public class __X__ApiController {
 	private final static String SECURITY_DOMAIN = "__Y__";
 	private final static String UNIQUE = "id";
 	
+	static {
+		EntityValidator.init();
+	}
+	
 	@Translate
 	private Translator translator;
 	
@@ -62,9 +66,7 @@ public class __X__ApiController {
 		) {
 		try {
 			List<Map<String, Object>> items = dao.getAll(pageIndex, pageSize, filters, sorting);
-			/******/
-			// TODO edit items
-			/******/
+		
 			Map<String, Object> json = new HashMap<>();
 			json.put("data", items);
 			json.put("itemsCount", dao.getTotalCount());
@@ -116,15 +118,15 @@ public class __X__ApiController {
 			prop.forEach((key, value)->{
 				updated.put(key.toString(), value);
 			});
-			/***/
-			// TODO edit values			
-			/***/
+			
+			editValues(updated, false);
+			
 			dao.update(id, updated);
 			auditTrail.update(identity.getUser().getId(), origin, updated);
+			
 			Map<String, Object> params = new HashMap<>();
 			params.put("id", id);
 			params.put("message", translator.translate("common.item-updated"));
-			
 			return Response.getJson(params);
 		} catch (Exception e) {
 			logger.error("__X__ Update", e);
@@ -142,20 +144,24 @@ public class __X__ApiController {
 				inserted.put(key.toString(), value);
 			});
 			inserted.remove(UNIQUE);
-			/***/
-			// TODO edit values
-			/***/
+						
+			editValues(inserted, true);
+			
 			int id = dao.insert(inserted);
 			inserted.put(UNIQUE, id);
 			auditTrail.insert(identity.getUser().getId(), inserted);
+			
 			Map<String, Object> params = new HashMap<>();
 			params.put("id", id);
 			params.put("message", translator.translate("common.item-inserted"));
-			
 			return Response.getJson(params);
 		} catch (Exception e) {
 			logger.error("__X__ Insert", e);
 			return Response.getText(StatusCode.INTERNAL_SERVER_ERROR, translator.translate("common.saving-problem"));
 		}
+	}
+
+	private void editValues(Map<String, Object> values, boolean insert) {
+		// TODO edit values
 	}
 }

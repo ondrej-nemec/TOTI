@@ -1,7 +1,6 @@
 import java.util.HashMap;
 import java.util.Map;
 
-import common.MapInit;
 import socketCommunication.http.HttpMethod;
 import toti.annotations.inject.Translate;
 import toti.annotations.url.Action;
@@ -12,22 +11,6 @@ import toti.annotations.url.ParamUrl;
 import toti.annotations.url.Secured;
 import toti.control.Form;
 import toti.control.Grid;
-import toti.control.Html;
-import toti.control.columns.ActionsColumn;
-import toti.control.columns.ButtonsColumn;
-import toti.control.columns.GroupAction;
-import toti.control.columns.ValueColumn;
-import toti.control.inputs.Button;
-import toti.control.inputs.Checkbox;
-import toti.control.inputs.Datetime;
-import toti.control.inputs.Email;
-import toti.control.inputs.Hidden;
-import toti.control.inputs.Number;
-import toti.control.inputs.Password;
-import toti.control.inputs.RadioList;
-import toti.control.inputs.Select;
-import toti.control.inputs.Submit;
-import toti.control.inputs.Text;
 import toti.response.Response;
 import translator.Translator;
 
@@ -53,7 +36,7 @@ public class __X__PageController {
 		/***/
 		params.put("control", grid);
 		params.put("title", translator.translate("__Y__-list"));
-		return Response.getTemplate("/__Y__/control.jsp", params);
+		return Response.getTemplate("/__Y__/__X__.jsp", params);
 	}
 	
 	@Action("add")
@@ -89,7 +72,7 @@ public class __X__PageController {
 		/***/
 		params.put("control", form);
 		params.put("title", translator.translate("__Y__-" + (id == null ? "add" : "edit")));
-		return Response.getTemplate("/__Y__/control.jsp", params);
+		return Response.getTemplate("/__Y__/__X__.jsp", params);
 	}
 	
 }

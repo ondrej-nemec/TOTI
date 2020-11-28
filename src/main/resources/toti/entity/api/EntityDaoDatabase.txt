@@ -80,7 +80,7 @@ public class __X__DaoDatabase implements __X__Dao {
 			values.forEach((name, value)->{
 				b.addValue(name, value);
 			});
-			return b.execute();
+			return Integer.parseInt(b.execute().toString());
 		});
 	}
 
