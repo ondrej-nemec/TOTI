@@ -116,46 +116,42 @@ var totiControl = {
 			}
 			return option;
 		},
+		/* onClick: function | object with settings: href, method, async, submitConfirmation */
 		button: function (onClick, title = "", params = {}, renderer = null, prevent = false) {
 			if (renderer === null) {
 				renderer = $('<button>').text(title);
 			}
-			var button = $('<a>').html(renderer);
+			var button = renderer; /* $('<a>').html(renderer);*/
 			for ([key, name] of Object.entries(params)) {
 				button.attr(key, name);
 			}
 			if (typeof onClick === 'object') {
-				var href = onClick.href;
-				var method = onClick.method;
-				var async = onClick.async;
-				var submitConfirmation = onClick.submitConfirmation;
-				button.attr("href", href).attr("method", method);
+				var clickSettings = onClick;
+				/* button.attr("href", href).attr("method", method); */
 				onClick = function(event) {
-					if (prevent) {
-						event.preventDefault();
-					}
-					if (submitConfirmation !== null && submitConfirmation !== undefined && !submitConfirmation()) {
-						event.preventDefault();
+					event.preventDefault();
+					if (clickSettings.submitConfirmation !== null
+						 && clickSettings.submitConfirmation !== undefined 
+						 && !clickSettings.submitConfirmation()) {
 						return false;
 					}
-					if (async) {
-						event.preventDefault();
-						totiControl.load.ajax(href, method, {}, function(res) {
-							// TODO need solve, add on success custom function
-							/***/
-							totiControl.display.flash("success", res);
-							/***/
+					if (clickSettings.async) {
+						totiControl.load.ajax(clickSettings.href, clickSettings.method, {}, function(res) {
+							if (clickSettings.hasOwnProperty('onSuccess')) {
+								window[clickSettings.onSuccess](res);
+							} else {
+								totiControl.display.flash("success", res);
+							}
 						}, function(xhr) {
-							// TODO need solve, add on success custom function
-							/***/
-							totiControl.display.flash("error", xhr);
-							/***/
+							if (clickSettings.hasOwnProperty('onError')) {
+								window[clickSettings.onError](xhr);
+							} else {
+								totiControl.display.flash("error", xhr);
+							}
 						}, totiControl.getHeaders());
 					} else {
-						if (!prevent) {
-							return true;
-						}
-						totiControl.load.link(href, method, {}, totiControl.getHeaders());
+						/* totiControl.load.link(href, method, {}, totiControl.getHeaders());*/
+						window.location = href;
 					}
 				};
 			}
@@ -249,7 +245,7 @@ var totiControl = {
 						}, 
 						function(xhr) {
 							if (xhr.status === 400) {
-								for (const[key, list] of Object.entries(JSON.parse(xhr.responseText))) { // xhr.responseJSON
+								for (const[key, list] of Object.entries(JSON.parse(xhr.responseText))) { /* xhr.responseJSON*/
 									var ol = $('<ul>').attr("class", "error-list");
 									list.forEach(function(item) {
 										ol.append($('<li>').text(item));
@@ -257,10 +253,8 @@ var totiControl = {
 									$('#' + form.attr('id') + '-errors-' + key + '').html(ol);
 								}
 							} else if (element.attr("onFailure") != null) {
-								// custom function calling
 								window[element.attr("onFailure")](xhr);
 							} else {
-								// TODO need solve
 								totiControl.display.flash('error', totiLang.formMessages.saveError);
 							}
 						}, 
@@ -305,9 +299,9 @@ var totiControl = {
 				window.history.pushState({},"", xhr.responseURL);
 			}
 			xhr.send(jQuery.param(data));
-			// location.reload();
-			// window.onload();
-			// console.log("onload");
+			/* location.reload();
+			 window.onload();
+			 console.log("onload");*/
 		}
 	},
 	display: {
@@ -321,7 +315,7 @@ var totiControl = {
 			alert(message);
 		},
 		flash: function(severity, message) {
-			//TODO
+			// TODO
 			console.log("Flash " + severity + ":");
 			console.log(message);
 		}
@@ -367,7 +361,7 @@ var totiAuth = {
 			"Authorization": token.token_type + " " + (access ? token.access_token : token.refresh_token)
 		};
 	},
-	// for public use
+	/* for public use */
 	getToken: function() {
 		var token = totiControl.storage.getVariable(totiAuth.variableName);
 		if (token !== null) {
@@ -401,10 +395,9 @@ var totiAuth = {
 					gettedToken.config = token.config;
 					totiAuth.setTokenRefresh(gettedToken);
 				}, 
-				function(xhr, a, error) {
+				function(xhr) {
 					totiAuth.isRefreshActive = false;
-					console.log(xhr, a, error);
-					//if (totiAuth.refreshCount > 5) {
+					/*if (period < 5000) {*/
 						totiControl.storage.removeVariable(totiAuth.variableName);
 					/*} else {
 						totiAuth.setTokenRefresh(token, period / 2);
@@ -455,10 +448,7 @@ var totiGrid = {
 				totiGrid.config[uniqueName].pages.pagesSizes, 
 				totiGrid.config[uniqueName].pages.defaultSize, 
 				totiGrid.config[uniqueName].pages.pagesButtonCount, 
-				totiGrid.config[uniqueName].actions.actionsList, 
-				totiGrid.config[uniqueName].actions.onError, // TODO look
-				totiGrid.config[uniqueName].actions.onSuccess, // TODO look
-				totiGrid.config[uniqueName].headers
+				totiGrid.config[uniqueName].actions
 			);
 			$(elementIdentifier).html(grid);
 			totiGrid.load(uniqueName, true)	
@@ -491,7 +481,7 @@ var totiGrid = {
 			urlParams,
 			function(response) {
 				window.history.pushState({"html":window.location.href},"", "?" + jQuery.param(urlParams));
-				// called from grid, must load config
+				/* called from grid, must load config */
 				totiGrid._loadDataSuccess(
 					body,
 					uniqueName,
@@ -556,20 +546,20 @@ var totiGrid = {
 		});
 		return body;
 	},
-	_loadDataFailure: function(xhr, a, b) {
+	_loadDataFailure: function(xhr) {
 		console.log(xhr);
 		return $('<tr>').html($('<td colspan=100>').text(totiLang.gridMessages.loadingError));
 	},
-	print: function(uniqueName, columns, pageSizes, defaultSize, pagesButtonCount, actions, onError, onSuccess) {
-		// filters: print: function(uniqueName, columns) columns: name, type (value, button, action), filter(optional)
-		// sorting print: function(uniqueName, columns) columns: [ {name, title, useSorting} ]
+	print: function(uniqueName, columns, pageSizes, defaultSize, pagesButtonCount, actions) {
+		/* filters: print: function(uniqueName, columns) columns: name, type (value, button, action), filter(optional)
+		 sorting print: function(uniqueName, columns) columns: [ {name, title, useSorting} ]*/
 		var head = $('<thead>')
 			.append(totiGrid.sorting.print(uniqueName, columns))
 			.append(totiGrid.filters.print(uniqueName, columns));
 		var body = $('<tbody>');
 		var footer = $('<div>');
 		if (actions.length > 0) {
-			footer.append(totiGrid.actions.print(uniqueName, actions, onError, onSuccess));
+			footer.append(totiGrid.actions.print(uniqueName, actions));
 		}
 		footer.append(totiGrid.pages.print(uniqueName, pagesButtonCount, 1))
 			.append(totiGrid.pagesSize.print(uniqueName, pageSizes, defaultSize));
@@ -630,13 +620,7 @@ var totiGrid = {
 			}
 			$('#' + uniqueName + "-filtering").children('td').each(function() {
 				var name = $(this).attr('data-name');
-				//* dont forgot comment upper decode
 				$(this).children().val(data[name]);
-				/*/
-				if (urlParams["filters[" + name + "]"] !== undefined) {
-					$(this).children().val(urlParams["filters[" + name + "]"]);
-				}
-				//*/
 			});
 		},
 		get: function(uniqueName) {
@@ -650,11 +634,7 @@ var totiGrid = {
 					filters[$(this).data('name')] = value;
 				}
 			});
-			//*
 			return JSON.stringify(filters);
-			/*/
-			return filters;
-			//*/
 		}
 	},
 	sorting: {
@@ -718,8 +698,8 @@ var totiGrid = {
 			}
 			$('#' + uniqueName + "-sorting").children('td').each(function() {
 				var name = $(this).data('name');
-				if (data.hasOwnProperty(name) /*urlParams["sorting[" + name + "]"] !== undefined*/) {
-					var val = data[name];// urlParams["sorting[" + name + "]"];
+				if (data.hasOwnProperty(name)) {
+					var val = data[name];
 					var sortType = 0;
 					if (val == 'ASC') {
 						sortType = 1;
@@ -742,7 +722,6 @@ var totiGrid = {
 				}
 			});
 			return JSON.stringify(sorts);
-			// return sorts;
 		}
 	},
 	pages: {
@@ -771,7 +750,7 @@ var totiGrid = {
 				};
 			};
 
-			// link to first page
+			/* link to first page */
 			if (actualPage > 1) {
 				pagesList.append(totiControl.inputs.button(
 					onPageClick(1),
@@ -779,7 +758,7 @@ var totiGrid = {
 				));
 				pagesList.append('&nbsp;');
 			}
-			// link to previous page
+			/* link to previous page */
 			if (actualPage > 2) {
 				pagesList.append(totiControl.inputs.button(
 					onPageClick(actualPage - 1),
@@ -787,7 +766,7 @@ var totiGrid = {
 				));
 				pagesList.append('&nbsp;');
 			}
-			// generated {pagesbuttoncount} pages links
+			/* generated {pagesbuttoncount} pages links */
 			var lower = actualPage - Math.floor(pagesList.data("pagesbuttoncount") / 2);
 			if (lower < 1) {
 				lower = 1;
@@ -803,7 +782,7 @@ var totiGrid = {
 				pagesList.append(page);
 				pagesList.append('&nbsp;');
 			}
-			// next page link
+			/* next page link */
 			if (actualPage < pagesCount) {
 				pagesList.append(totiControl.inputs.button(
 					onPageClick(actualPage + 1),
@@ -811,7 +790,7 @@ var totiGrid = {
 				));
 				pagesList.append('&nbsp;');
 			}
-			// last page link
+			/* last page link */
 			if ((actualPage + 1) < pagesCount) {
 				pagesList.append(totiControl.inputs.button(
 					onPageClick(pagesCount),
@@ -850,7 +829,7 @@ var totiGrid = {
 			{link, title, ajax, method}
 		]
 		*/
-		print: function(uniqueName, actions, onError, onSuccess) {
+		print: function(uniqueName, actions) {
 			var options = [];
 			options.push(totiControl.inputs.option('', totiLang.actions.select, {
 					"ajax": true,
@@ -893,21 +872,22 @@ var totiGrid = {
 							method,
 							{ids: ids},
 							function(result) {
-								// TODO need solve, use onSuccess
-								/***/
-								totiControl.display.flash('success', result);
-								/****/
+								if (option.attr("onSuccess") != null) {
+									window[option.attr("onSuccess")](xhr);
+								} else {
+									totiControl.display.flash('success', result);
+								}
 							},
 							function(xhr) {
-								// TODO need solve, use onError
-								/***/
-								totiControl.display.flash('error', xhr);
-								/***/
+								if (option.attr("onFailure") != null) {
+									window[option.attr("onFailure")](xhr);
+								} else {
+									totiControl.display.flash('error', xhr);
+								}
 							},
 							totiControl.getHeaders()
 						);
 					} else {
-						// TODO
 						window.location = $(this).attr("href");
 					}
 				},
@@ -918,10 +898,10 @@ var totiGrid = {
 			return actions;
 		},
 		onLoad: function(uniqueName) {
-			// empty
+			/* empty */
 		},
 		get: function(uniqueName) {
-			// empty
+			/* empty */
 		}
 	}
 };
@@ -937,7 +917,7 @@ totiForm = {
 		});
 	},
 	print: function(uniqueName, config, element) {
-		var formId = uniqueName; // config.formId;
+		var formId = uniqueName;
 		var form;
 		if (config.editable) {
 			var errors = $('<div>').attr("id", config.uniqueName + "-errors-form").append($('<span>'));
@@ -1094,29 +1074,31 @@ totiForm = {
 			bind.params, 
 			function(values) {
 				for (const[key, value] of Object.entries(values)) {
-					var val = value; // TODO escape?
+					var val = value; /* TODO escape */
 					var id = '#' + formId + ' [name=' + key + ']';
 					var element = $(id);
 					if (element.attr("type") === 'datetime-local') {
 						val = val.replace(" ", "T");
 					}
-					if (element.children('span').length > 0) { // detail:select, checkbox, radio
+					if (element.children('span').length > 0) { /* detail:select, checkbox, radio */
 						element.children('span[value="' + val + '"]').show();
 					} else if (element.length > 1) {
-						$('#' + formId + ' #' + formId + '-id-' + val + '[name=' + key + ']').prop('checked', true); // form: radio list
+						$('#' + formId + ' #' + formId + '-id-' + val + '[name=' + key + ']').prop('checked', true); /* form: radio list */
 					} else {
-						element.val(val); // form
+						element.val(val); /* form */
 						if (element.text().length == 0) {
-							element.text(val); // detail
+							element.text(val); /* detail */
 						}
-						element.prop('checked', val); // form: checkbox
+						element.prop('checked', val); /* form: checkbox */
 					}
 				}
 			}, 
-			function(xhr, a, b) {
-				bind.onFailure(xhr, a, b);
-				// TODO need solve
-				totiControl.display.flash('error', totiLang.formMessages.saveError);
+			function(xhr) {
+				if (bind.hasOwnProperty('onFailure')) {
+					bind.onFailure(xhr);
+				} else {
+					totiControl.display.flash('error', totiLang.formMessages.bindError);
+				}
 			},
 			totiControl.getHeaders()
 		);
