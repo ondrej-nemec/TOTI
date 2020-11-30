@@ -117,7 +117,7 @@ var totiControl = {
 			return option;
 		},
 		/* onClick: function | object with settings: href, method, async, submitConfirmation */
-		button: function (onClick, title = "", params = {}, renderer = null, prevent = false) {
+		button: function (onClick, title = "", params = {}, renderer = null) {
 			if (renderer === null) {
 				renderer = $('<button>').text(title);
 			}
@@ -127,7 +127,7 @@ var totiControl = {
 			}
 			if (typeof onClick === 'object') {
 				var clickSettings = onClick;
-				/* button.attr("href", href).attr("method", method); */
+				/*button.attr("href", clickSettings.href).attr("method", clickSettings.method);*/
 				onClick = function(event) {
 					event.preventDefault();
 					if (clickSettings.submitConfirmation !== null
@@ -151,7 +151,7 @@ var totiControl = {
 						}, totiControl.getHeaders());
 					} else {
 						/* totiControl.load.link(href, method, {}, totiControl.getHeaders());*/
-						window.location = href;
+						window.location = clickSettings.href;
 					}
 				};
 			}
@@ -226,22 +226,21 @@ var totiControl = {
 						form.attr("method"), 
 						data, 
 						function(response) {
-							// TODO need solve
-							/***/
 							if (element.attr("onSuccess") != null) {
 								window[element.attr("onSuccess")](response);
-							} 
+							} else {
+								totiControl.display.flash('success', response);
+							}
 							if (element.attr("redirect") != null) {
-								totiControl.load.link(
+								totiControl.display.storedFlash('success', response);
+								window.location = element.attr("redirect");
+								/*totiControl.load.link(
 									element.attr("redirect"),
 									"get", 
 									{}, 
 									totiControl.getHeaders()
-								);
-							} else {
-								totiControl.display.flash('success', response);
+								);*/
 							}
-							/****/
 						}, 
 						function(xhr) {
 							if (xhr.status === 400) {
@@ -318,6 +317,30 @@ var totiControl = {
 			// TODO
 			console.log("Flash " + severity + ":");
 			console.log(message);
+		},
+		storedFlash: function(severity, message) {
+			var name = 'flash';
+			var actual = totiControl.storage.getVariable(name);
+			if (actual === null) {
+				actual = {};
+			}
+			if (actual[severity] === undefined) {
+				actual[severity] = [];
+			}
+			actual[severity].push(message);
+			totiControl.storage.saveVariable(name, actual);
+		},
+		printStoredFlash: function() {
+			var name = 'flash';
+			var actual = totiControl.storage.getVariable(name);
+			if (actual !== null) {
+				for (const[severity, messages] of Object.entries(actual)) {
+					messages.forEach(function(message) {
+						totiControl.display.flash(severity, message);
+					});
+				}
+				totiControl.storage.removeVariable(name);
+			}
 		}
 	},
 	utils: {
@@ -514,26 +537,29 @@ var totiGrid = {
 					}));
 				} else if (column.type === 'buttons') {
 					column.buttons.forEach(function(button, index) {
-						// TODO reload data - use on success, on Error
-						td.append(
-							totiControl.inputs.button(
-								{
-									href: totiControl.utils.parametrizedString(button.href, row),
-									method: button.method,
-									async: button.ajax,
-									submitConfirmation: function() {
-										if (button.hasOwnProperty('confirmation')) {
-											return totiControl.display.confirm(button.confirmation, row);
-										}
-										return true;
+						var buttonElement = totiControl.inputs.button(
+							/* TODO IMPROVEMENT add on failure and on success callback not only flash */
+							{
+								href: totiControl.utils.parametrizedString(button.href, row),
+								method: button.method,
+								async: button.ajax,
+								submitConfirmation: function() {
+									if (button.hasOwnProperty('confirmation')) {
+										return totiControl.display.confirm(button.confirmation, row);
 									}
-								},
-								button.hasOwnProperty("title") ? button.title : "",
-								button.params,
-								button.hasOwnProperty("renderer") ? button.renderer : null,
-								button.preventDefault
-							)
+									return true;
+								}
+							},
+							button.hasOwnProperty("title") ? button.title : "",
+							button.params,
+							button.hasOwnProperty("renderer") ? button.renderer : null
 						);
+						buttonElement.click(function() {
+							setTimeout(function(){
+								totiGrid.load(uniqueName);
+							}, 500);
+						});
+						td.append(buttonElement);
 					});
 				} else if (column.hasOwnProperty("renderer")) {
 					td.html(column["renderer"](row[column.name]));
@@ -866,7 +892,7 @@ var totiGrid = {
 						totiControl.display.flash("error", totiLang.actions.noSelectedItems);
 						return false;
 					}
-					if (ajax) {
+					if (ajax === 'true') {
 						totiControl.load.ajax(
 							url,
 							method,
@@ -888,7 +914,8 @@ var totiGrid = {
 							totiControl.getHeaders()
 						);
 					} else {
-						window.location = $(this).attr("href");
+						/* TODO Improvement use link? now no params sended */
+						window.location = url;
 					}
 				},
 				totiLang.actions.execute
@@ -1074,7 +1101,7 @@ totiForm = {
 			bind.params, 
 			function(values) {
 				for (const[key, value] of Object.entries(values)) {
-					var val = value; /* TODO escape */
+					var val = value; /* TODO IMPROVEMENT escape */
 					var id = '#' + formId + ' [name=' + key + ']';
 					var element = $(id);
 					if (element.attr("type") === 'datetime-local') {
@@ -1105,3 +1132,7 @@ totiForm = {
 		
 	}
 };
+
+$(document).ready(function() {
+	totiControl.display.printStoredFlash();
+});
