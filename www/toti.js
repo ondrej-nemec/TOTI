@@ -47,7 +47,9 @@ var totiImages = {
 	/* https://www.iconfinder.com/icons/186407/up_arrow_icon */
 	"arrowUp": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDMyIDMyIiBoZWlnaHQ9IjMycHgiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAzMiAzMiIgd2lkdGg9IjMycHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxwYXRoIGQ9Ik0xOC4yMjEsNy4yMDZsOS41ODUsOS41ODVjMC44NzksMC44NzksMC44NzksMi4zMTcsMCwzLjE5NWwtMC44LDAuODAxYy0wLjg3NywwLjg3OC0yLjMxNiwwLjg3OC0zLjE5NCwwICBsLTcuMzE1LTcuMzE1bC03LjMxNSw3LjMxNWMtMC44NzgsMC44NzgtMi4zMTcsMC44NzgtMy4xOTQsMGwtMC44LTAuODAxYy0wLjg3OS0wLjg3OC0wLjg3OS0yLjMxNiwwLTMuMTk1bDkuNTg3LTkuNTg1ICBjMC40NzEtMC40NzIsMS4xMDMtMC42ODIsMS43MjMtMC42NDdDMTcuMTE1LDYuNTI0LDE3Ljc0OCw2LjczNCwxOC4yMjEsNy4yMDZ6IiBmaWxsPSIjNTE1MTUxIi8+PC9zdmc+",
 	/* https://www.iconfinder.com/icons/186411/down_arrow_icon */
-	"arrowDown": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDMyIDMyIiBoZWlnaHQ9IjMycHgiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAzMiAzMiIgd2lkdGg9IjMycHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxwYXRoIGQ9Ik0xNC43NywyMy43OTVMNS4xODUsMTQuMjFjLTAuODc5LTAuODc5LTAuODc5LTIuMzE3LDAtMy4xOTVsMC44LTAuODAxYzAuODc3LTAuODc4LDIuMzE2LTAuODc4LDMuMTk0LDAgIGw3LjMxNSw3LjMxNWw3LjMxNi03LjMxNWMwLjg3OC0wLjg3OCwyLjMxNy0wLjg3OCwzLjE5NCwwbDAuOCwwLjgwMWMwLjg3OSwwLjg3OCwwLjg3OSwyLjMxNiwwLDMuMTk1bC05LjU4Nyw5LjU4NSAgYy0wLjQ3MSwwLjQ3Mi0xLjEwNCwwLjY4Mi0xLjcyMywwLjY0N0MxNS44NzUsMjQuNDc3LDE1LjI0MywyNC4yNjcsMTQuNzcsMjMuNzk1eiIgZmlsbD0iIzUxNTE1MSIvPjwvc3ZnPg=="
+	"arrowDown": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDMyIDMyIiBoZWlnaHQ9IjMycHgiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAzMiAzMiIgd2lkdGg9IjMycHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxwYXRoIGQ9Ik0xNC43NywyMy43OTVMNS4xODUsMTQuMjFjLTAuODc5LTAuODc5LTAuODc5LTIuMzE3LDAtMy4xOTVsMC44LTAuODAxYzAuODc3LTAuODc4LDIuMzE2LTAuODc4LDMuMTk0LDAgIGw3LjMxNSw3LjMxNWw3LjMxNi03LjMxNWMwLjg3OC0wLjg3OCwyLjMxNy0wLjg3OCwzLjE5NCwwbDAuOCwwLjgwMWMwLjg3OSwwLjg3OCwwLjg3OSwyLjMxNiwwLDMuMTk1bC05LjU4Nyw5LjU4NSAgYy0wLjQ3MSwwLjQ3Mi0xLjEwNCwwLjY4Mi0xLjcyMywwLjY0N0MxNS44NzUsMjQuNDc3LDE1LjI0MywyNC4yNjcsMTQuNzcsMjMuNzk1eiIgZmlsbD0iIzUxNTE1MSIvPjwvc3ZnPg==",
+	/* https://www.iconfinder.com/icons/186389/delete_remove_icon */
+	"cross": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDMyIDMyIiBoZWlnaHQ9IjMycHgiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAzMiAzMiIgd2lkdGg9IjMycHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxwYXRoIGQ9Ik0yMC4zNzcsMTYuNTE5bDYuNTY3LTYuNTY2YzAuOTYyLTAuOTYzLDAuOTYyLTIuNTM5LDAtMy41MDJsLTAuODc2LTAuODc1Yy0wLjk2My0wLjk2NC0yLjUzOS0wLjk2NC0zLjUwMSwwICBMMTYsMTIuMTQyTDkuNDMzLDUuNTc1Yy0wLjk2Mi0wLjk2My0yLjUzOC0wLjk2My0zLjUwMSwwTDUuMDU2LDYuNDVjLTAuOTYyLDAuOTYzLTAuOTYyLDIuNTM5LDAsMy41MDJsNi41NjYsNi41NjZsLTYuNTY2LDYuNTY3ICBjLTAuOTYyLDAuOTYzLTAuOTYyLDIuNTM4LDAsMy41MDFsMC44NzYsMC44NzZjMC45NjMsMC45NjMsMi41MzksMC45NjMsMy41MDEsMEwxNiwyMC44OTZsNi41NjcsNi41NjYgIGMwLjk2MiwwLjk2MywyLjUzOCwwLjk2MywzLjUwMSwwbDAuODc2LTAuODc2YzAuOTYyLTAuOTYzLDAuOTYyLTIuNTM4LDAtMy41MDFMMjAuMzc3LDE2LjUxOXoiIGZpbGw9IiM1MTUxNTEiLz48L3N2Zz4="
 };
 
 var totiControl = {
@@ -116,7 +118,7 @@ var totiControl = {
 			}
 			return option;
 		},
-		/* onClick: function | object with settings: href, method, async, submitConfirmation */
+		/* onClick: function | object with settings: href, method, async, submitConfirmation (onSuccess, onFailure¨, type) */
 		button: function (onClick, title = "", params = {}, renderer = null) {
 			if (renderer === null) {
 				renderer = $('<button>').text(title);
@@ -126,6 +128,11 @@ var totiControl = {
 				button.attr(key, name);
 			}
 			if (typeof onClick === 'object') {
+				var originalClass = button.attr("class");
+				if (originalClass === undefined) {
+					originalClass = "";
+				}
+				button.attr("class", originalClass + " toti-button-" + onClick.type);
 				var clickSettings = onClick;
 				/*button.attr("href", clickSettings.href).attr("method", clickSettings.method);*/
 				onClick = function(event) {
@@ -229,11 +236,11 @@ var totiControl = {
 							if (element.attr("onSuccess") != null) {
 								window[element.attr("onSuccess")](response);
 							} else {
-								totiControl.display.flash('success', response);
+								totiControl.display.flash('success', response.message);
 							}
 							if (element.attr("redirect") != null) {
-								totiControl.display.storedFlash('success', response);
-								window.location = element.attr("redirect");
+								totiControl.display.storedFlash('success', response.message);
+								window.location = element.attr("redirect").replace("{id}", response.id);
 								/*totiControl.load.link(
 									element.attr("redirect"),
 									"get", 
@@ -314,7 +321,20 @@ var totiControl = {
 			alert(message);
 		},
 		flash: function(severity, message) {
-			// TODO
+			$('#flash').append(
+				$('<div>').attr('class', 'flash flash-' + severity).append(
+					$('<img>')
+						.attr("src", totiImages.cross)
+						.attr("alt", "")
+						.attr("width", "15")
+						.click(function() {
+							$(this).parent().hide();
+						})
+				).append('&nbsp;&nbsp;')
+				.append(
+					$('<span>').text(message)
+				)
+			);
 			console.log("Flash " + severity + ":");
 			console.log(message);
 		},
@@ -528,6 +548,14 @@ var totiGrid = {
 		totiGrid.pages.onLoad(uniqueName, response.pageIndex, response.itemsCount / totiGrid.pagesSize.get(uniqueName));
 		response.data.forEach(function(row, rowIndex) {
 			var tableRow = $('<tr>').attr('index', rowIndex).attr('class', 'toti-row-' + rowIndex % 2);
+			tableRow.click(function() {
+				var actualClass = $(this).attr("class");
+				if (actualClass.includes("row-selected")) {
+					$(this).attr("class", actualClass.replace(" row-selected", ""));
+				} else {
+					$(this).attr("class", actualClass + " row-selected");
+				}
+			});
 			columns.forEach(function(column, colIndex) {
 				var td = $('<td>').attr('index', colIndex);
 				if (column.type === 'actions') {
@@ -548,7 +576,8 @@ var totiGrid = {
 										return totiControl.display.confirm(button.confirmation, row);
 									}
 									return true;
-								}
+								},
+								type: button.hasOwnProperty('style') ? button.style : 'basic'
 							},
 							button.hasOwnProperty("title") ? button.title : "",
 							button.params,
@@ -583,7 +612,7 @@ var totiGrid = {
 			.append(totiGrid.sorting.print(uniqueName, columns))
 			.append(totiGrid.filters.print(uniqueName, columns));
 		var body = $('<tbody>');
-		var footer = $('<div>');
+		var footer = $('<div>').attr('class', "toti-table-footer");
 		if (actions.length > 0) {
 			footer.append(totiGrid.actions.print(uniqueName, actions));
 		}
@@ -780,7 +809,8 @@ var totiGrid = {
 			if (actualPage > 1) {
 				pagesList.append(totiControl.inputs.button(
 					onPageClick(1),
-					totiLang.pages.first
+					totiLang.pages.first,
+					{'class': 'toti-button-pages'}
 				));
 				pagesList.append('&nbsp;');
 			}
@@ -788,7 +818,8 @@ var totiGrid = {
 			if (actualPage > 2) {
 				pagesList.append(totiControl.inputs.button(
 					onPageClick(actualPage - 1),
-					totiLang.pages.previous
+					totiLang.pages.previous,
+					{'class': 'toti-button-pages'}
 				));
 				pagesList.append('&nbsp;');
 			}
@@ -800,10 +831,11 @@ var totiGrid = {
 			for (i = lower; i < Math.min(lower + pagesList.data("pagesbuttoncount"), pagesCount); i++) {
 				var page = totiControl.inputs.button(
 					onPageClick(i),
-					i
+					i,
+					{'class': 'toti-button-pages'}
 				);
 				if (i === actualPage) {
-					page.attr("class", "actualPage");
+					page.attr("class", "toti-button-pages actualPage");
 				}
 				pagesList.append(page);
 				pagesList.append('&nbsp;');
@@ -812,7 +844,8 @@ var totiGrid = {
 			if (actualPage < pagesCount) {
 				pagesList.append(totiControl.inputs.button(
 					onPageClick(actualPage + 1),
-					totiLang.pages.next
+					totiLang.pages.next,
+					{'class': 'toti-button-pages'}
 				));
 				pagesList.append('&nbsp;');
 			}
@@ -820,7 +853,8 @@ var totiGrid = {
 			if ((actualPage + 1) < pagesCount) {
 				pagesList.append(totiControl.inputs.button(
 					onPageClick(pagesCount),
-					totiLang.pages.last
+					totiLang.pages.last,
+					{'class': 'toti-button-pages'}
 				));
 				pagesList.append('&nbsp;');
 			}
@@ -918,9 +952,10 @@ var totiGrid = {
 						window.location = url;
 					}
 				},
-				totiLang.actions.execute
+				totiLang.actions.execute,
+				{'class': 'toti-button-execute'}
 			);
-			var actions = $('<div>');
+			var actions = $('<div>').attr('class', "toti-actions");
 			actions.append(select).append(execute);
 			return actions;
 		},
@@ -1015,6 +1050,7 @@ totiForm = {
 				delete field.options;
 				input = totiControl.inputs[field.type](options, field);
 			} else if (field.type === 'button') {
+				/*field.params.style = field.params.hasOwnProperty('style') ? field.params.style : "basic";*/
 				input = totiControl.inputs.button({
 						href: field.href,
 						method: field.method,
@@ -1080,9 +1116,9 @@ totiForm = {
 				}
 			} else {
 				table.append($('<tr>')
-					.append($('<td>').append(label))
-					.append($('<td>').append(input))
-					.append($('<td>').append(config.editable ? error : ""))
+					.append($('<td>').attr('class', 'toti-form-label').append(label))
+					.append($('<td>').attr('class', 'toti-form-input').append(input))
+					.append($('<td>').attr('class', 'toti-form-error').append(config.editable ? error : ""))
 				);
 			}
 		});
