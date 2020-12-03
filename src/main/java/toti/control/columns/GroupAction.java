@@ -13,6 +13,8 @@ public class GroupAction implements Jsonable {
 	private boolean ajax = true;
 	private String method = "get";
 	private String confirmation;
+	private String onFailure;
+	private String onSuccess;
 	
 	public GroupAction(String title, String link) {
 		this.title = title;
@@ -34,6 +36,16 @@ public class GroupAction implements Jsonable {
 		return this;
 	}
 
+	public GroupAction setOnFailure(String onFailure) {
+		this.onFailure = onFailure;
+		return this;
+	}
+
+	public GroupAction setOnSuccess(String onSuccess) {
+		this.onSuccess = onSuccess;
+		return this;
+	}
+
 	// @Override
 	public Map<String, Object> getGridSettings() {
 		Map<String, Object> json = new HashMap<>();
@@ -42,7 +54,13 @@ public class GroupAction implements Jsonable {
 		json.put("link", link);
 		json.put("method", method);
 		if (confirmation != null) {
-			json.put("confirmation", confirmation);
+			json.put("submitConfirmation", confirmation);
+		}
+		if (onSuccess != null) {
+			json.put("onSuccess", onSuccess);
+		}
+		if (onFailure != null) {
+			json.put("onFailure", onFailure);
 		}
 		return json;
 	}

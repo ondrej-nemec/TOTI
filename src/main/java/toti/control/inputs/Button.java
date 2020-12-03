@@ -15,7 +15,9 @@ public class Button implements Input, Jsonable {
 	private String method = "get";
 	private Html renderer = null;
 	private final Map<String, String> params = new HashMap<>();
-	private boolean preventDefault = false;
+	private String onFailure;
+	private String onSuccess;
+	private ButtonType type = ButtonType.BASIC;
 	
 	public static Button create(String url) {
 		return new Button(url);
@@ -25,6 +27,21 @@ public class Button implements Input, Jsonable {
 		this.url = url;
 	}
 
+	public Button setOnFailure(String onFailure) {
+		this.onFailure = onFailure;
+		return this;
+	}
+
+	public Button setOnSuccess(String onSuccess) {
+		this.onSuccess = onSuccess;
+		return this;
+	}
+	
+	public Button setType(ButtonType type) {
+		this.type = type;
+		return this;
+	}
+	
 	public Button setConfirmation(String confirm) {
 		this.confirmation = escapeJs(confirm);
 		return this;
@@ -32,11 +49,6 @@ public class Button implements Input, Jsonable {
 
 	public Button setTitle(String title) {
 		this.title = title;
-		return this;
-	}
-
-	public Button setPreventDefault(boolean preventDefault) {
-		this.preventDefault = preventDefault;
 		return this;
 	}
 
@@ -76,7 +88,13 @@ public class Button implements Input, Jsonable {
 		if (renderer != null) {
 			json.put("renderer", renderer);
 		}
-		json.put("preventDefault", preventDefault);
+		if (onFailure != null) {
+			json.put("onError", onFailure);
+		}
+		if (onSuccess != null) {
+			json.put("onSuccess", onSuccess);
+		}
+		json.put("style", type.toString().toLowerCase());
 		json.put("params", params);
 		return json;
 	}

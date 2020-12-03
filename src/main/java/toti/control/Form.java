@@ -12,6 +12,7 @@ public class Form implements Jsonable, Control {
 	private String bindUrl = null;
 	private String bindMethod = "get";
 	private final boolean editable;
+	private String onBindFailure;
 	
 	//private final String formId;
 	private final String formAction;
@@ -41,6 +42,11 @@ public class Form implements Jsonable, Control {
 		return this;
 	}
 	
+	public Form setOnBindFailure(String onBindFailure) {
+		this.onBindFailure = onBindFailure;
+		return this;
+	}
+	
 	public Form setFormMethod(String formMethod) {
 		this.formMethod = formMethod;
 		return this;
@@ -58,6 +64,7 @@ public class Form implements Jsonable, Control {
 			json.put("bind", bind);
 			bind.put("url", bindUrl);
 			bind.put("method", bindMethod);
+			bind.put("onFailure", onBindFailure);
 		}
 		return toJson(json);
 	}

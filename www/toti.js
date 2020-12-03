@@ -547,12 +547,16 @@ var totiGrid = {
 		}
 		totiGrid.pages.onLoad(uniqueName, response.pageIndex, response.itemsCount / totiGrid.pagesSize.get(uniqueName));
 		response.data.forEach(function(row, rowIndex) {
-			var tableRow = $('<tr>').attr('index', rowIndex).attr('class', 'toti-row-' + rowIndex % 2);
-			tableRow.click(function() {
+			var tableRow = $('<tr>').attr('index', rowIndex).attr('class', 'toti-row-' + rowIndex % 2).attr("class", "toti-row-" + uniqueName);
+			tableRow.click(function(e) {
+				if (jQuery(e.target).is('input') ||jQuery(e.target).is('button')) {
+					return;
+				}
 				var actualClass = $(this).attr("class");
-				if (actualClass.includes("row-selected")) {
+				$('.toti-row-' + uniqueName).each(function() {
 					$(this).attr("class", actualClass.replace(" row-selected", ""));
-				} else {
+				});
+				if (!actualClass.includes("row-selected")) {
 					$(this).attr("class", actualClass + " row-selected");
 				}
 			});
@@ -896,17 +900,22 @@ var totiGrid = {
 					"method": null
 				}));
 			actions.forEach(function(action) {
-				options.push(totiControl.inputs.option(action.link, action.title, {
+				var params = {
 					"ajax": action.ajax,
 					"method": action.method
-				}));
+				};
+				if (action.hasOwnProperty('onSuccess')) {
+					params.onSuccess = action.onSuccess;
+				}
+				if (action.hasOwnProperty('onFailure')) {
+					params.onFailure = action.onFailure;
+				}
+				if (action.hasOwnProperty('submitConfirmation')) {
+					params.submitConfirmation = action.submitConfirmation;
+				}
+				options.push(totiControl.inputs.option(action.link, action.title, params));
 			});
 			var select = totiControl.inputs.select(options);
-			select.change(function() {
-				$(this).next("a").attr("href", $(this).val());
-				$(this).next("a").attr("method", $(this).children("option:selected").data('method'));
-				$(this).next("a").attr("ajax", $(this).children("option:selected").data('ajax'));
-			});
 			var execute = totiControl.inputs.button(
 				function(event) {
 					event.preventDefault();
@@ -917,6 +926,7 @@ var totiGrid = {
 					var url = option.val();
 					var method = option.attr("method");
 					var ajax = option.attr("ajax");
+					var submitConfirmation = option.attr("submitConfirmation");
 
 					var ids = {};
 					$('.' + uniqueName + "-grid-action:checked").each(function() {
@@ -927,13 +937,20 @@ var totiGrid = {
 						return false;
 					}
 					if (ajax === 'true') {
+						console.log(submitConfirmation);
+						if (submitConfirmation !== null
+							&& submitConfirmation !== undefined
+							&& !totiControl.display.confirm(submitConfirmation)) {
+							event.preventDefault();
+							return false;
+						}
 						totiControl.load.ajax(
 							url,
 							method,
 							{ids: ids},
 							function(result) {
 								if (option.attr("onSuccess") != null) {
-									window[option.attr("onSuccess")](xhr);
+									window[option.attr("onSuccess")](result);
 								} else {
 									totiControl.display.flash('success', result);
 								}
@@ -949,7 +966,7 @@ var totiGrid = {
 						);
 					} else {
 						/* TODO Improvement use link? now no params sended */
-						window.location = url;
+						window.location = url + "?ids=" + JSON.stringify(ids);
 					}
 				},
 				totiLang.actions.execute,
@@ -1050,8 +1067,7 @@ totiForm = {
 				delete field.options;
 				input = totiControl.inputs[field.type](options, field);
 			} else if (field.type === 'button') {
-				/*field.params.style = field.params.hasOwnProperty('style') ? field.params.style : "basic";*/
-				input = totiControl.inputs.button({
+				var onClick = {
 						href: field.href,
 						method: field.method,
 						async: field.ajax,
@@ -1060,8 +1076,12 @@ totiForm = {
 								return totiControl.display.confirm(field.confirmation, row);
 							}
 							return true;
-						}
-					}, field.title, field.params, field.hasOwnProperty('renderer') ? field.renderer : null, field.preventDefault);
+						} 
+					};
+				if (field.hasOwnProperty('style')) {
+					onClick.type = field.style;
+				}
+				input = totiControl.inputs.button(onClick, field.title, field.params, field.hasOwnProperty('renderer') ? field.renderer : null, field.preventDefault);
 			} else if (field.type === 'radio') {
 				input = $("<div>");
 				field.radios.forEach(function(radio) {

@@ -56,9 +56,7 @@ public class Grid implements Jsonable, Control {
 		pages.put("defaultSize", defaultPageSize);
 		pages.put("pagesButtonCount", pagesButtonCount);
 		
-		Map<String, Object> groupActions = new HashMap<>();
-		json.put("actions", groupActions);
-		groupActions.put("actionsList", actions);
+		json.put("actions", actions);
 		return toJson(json);
 	}
 

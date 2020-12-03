@@ -1,32 +1,105 @@
 # TOTI Control Documentation
 
 ## TOTI Lang
+**Object:** totiLang
+
+* pages
+  * title - *Translations messages*
+  * first - *Translations messages*
+  * previous - *Translations messages*
+  * next - *Translations messages*
+  * last - *Translations messages*
+* actions
+  * select - *Translations messages*
+  * execute - *Translations messages*
+  * noSelectedItems - *Translations messages*
+* gridMessages
+  * noItemFound - *Translations messages*
+  * loadingError - *Translations messages*
+* formMessages
+  * saveError - *Translations messages*
+  * bindError - *Translations messages*
+
+### totiLang
+
+variableName - *internal* <br>
+function changeLanguage(string language) <br>
+function getLang(): string <br>
+function getLangHeader(): object - key: Accept-Language <br>
+
+## TOTI Images
+**Object:** totiImages
+
+* arrowUp - *base64 image*
+* arrowDown - *base64 image*
+* cross - *base64 image*
 
 ## TOTI Control
 **Object:** totiControl
 
 ### Inputs
-**Object:** inputs
+**Object:** inputs <br>
 
-label: function (forInput, title) <br>
-radio: function (params = {}) <br>
-checkbox: function (params = {}) <br>
-hidden: function (params = {}) <br>
-/* sugested params: step, max, min */ <br>
-number: function (params = {}) <br>
-/* sugested params: size, minlength, maxlength */ <br>
-text: function (params = {}) <br>
-/* sugested params: size, minlength, maxlength */ <br>
-password: function (params = {}) <br>
-email: function (params = {}) <br>
-datetime: function (params = {}) <br>
-select: function (options, params = {}) <br>
-option: function(value, title, params = {}) <br>
-onClick: function|object:href,method,async,submitConfirmation <br>
-button: function (onClick, title = "", params = {}, renderer = null) <br>
-submit: function (async = true, submitConfirmation = null, params = {}) <br>
+#### _createInput: function (type, attributes, data = {})
 
-### Make ajax request
-**Object:** load
-ajax: function(url, method, data, onSuccess, onFailure, headers)
-link: function(url, method, data, headers)
+Internal
+
+#### function label(string forInput, string title, params = {})
+
+#### function file(params = {})
+
+#### function hidden(params = {})
+
+#### function radio(params = {})
+
+#### function checkbox(params = {})
+
+#### function number(params = {})
+
+sugested params: step, max, min
+
+#### function text(params = {})
+
+sugested params: size, minlength, maxlength 
+
+#### function password(params = {})
+
+sugested params: size, minlength, maxlength
+
+#### function email(params = {})
+
+#### function datetime(params = {})
+
+#### function select(options, params = {})
+
+options: list of options objects
+
+#### function option(string value, string title, params = {})
+
+#### function button(onClick, title = "", params = {}, renderer = null)
+
+onClick: function OR object
+	* string href
+	* string method
+	* boolean async
+	* function submitConfirmation() [optional]: boolean
+	* string onSuccess [optional]
+	* string onError [optional]
+  * string type [optional] - values: basic, danger, warning, info
+
+renderer: html
+
+#### function submit(async = true, submitConfirmation = null, params = {})
+
+function submitConfirmation(): boolean <br>
+parent form element require:
+* action
+* method
+
+params contains:
+* string onSuccess[optional] - name of custom js function
+* string onFailure [optional] - name of custom js function
+* string redirect [optional] - {x} will be replaced
+
+### load
+// TODO
