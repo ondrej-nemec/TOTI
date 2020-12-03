@@ -6,7 +6,7 @@ repositories {
 }
 
 dependencies {
-	implementation 'com.github.ondrej-nemec:javainit:7f1f782253'
+	implementation 'com.github.ondrej-nemec:javainit:5fe4d32814'
 	
 	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
@@ -17,6 +17,9 @@ dependencies {
 	// https://mvnrepository.com/artifact/com.itextpdf.tool/xmlworker
 	compile group: 'com.itextpdf.tool', name: 'xmlworker', version: '5.5.13.1'
 */
+
+	// https://mvnrepository.com/artifact/org.postgresql/postgresql
+	testCompile group: 'org.postgresql', name: 'postgresql', version: '42.2.16'
 
 	// https://mvnrepository.com/artifact/mysql/mysql-connector-java
 	testCompile group: 'mysql', name: 'mysql-connector-java', version: '8.0.17'
