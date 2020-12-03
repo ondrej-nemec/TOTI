@@ -27,9 +27,7 @@ public class EntityValidator {
 				.addRule(ItemRules.forName("FK_id", false).setType(Integer.class).setAllowedValues(Arrays.asList(
 					"1", "2", "3", "4"
 				)))
-				.addRule(ItemRules.forName("is_main", false).setType(Boolean.class)/*.setAllowedValues(Arrays.asList(
-					"true", "false"
-				))*/)
+				.addRule(ItemRules.forName("is_main", false).setType(Boolean.class))
 			))
 			.addRule(ItemRules.forName("sorting", true).setMapSpecification(new Validator(true)
 				 // TODO values check

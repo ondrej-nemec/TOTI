@@ -2,6 +2,7 @@ package module.controllers;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import common.MapInit;
 import socketCommunication.http.HttpMethod;
@@ -11,10 +12,16 @@ import toti.annotations.url.Controller;
 import toti.annotations.url.Domain;
 import toti.annotations.url.Method;
 import toti.annotations.url.ParamUrl;
+import toti.annotations.url.Params;
 import toti.annotations.url.Secured;
 import toti.control.Form;
 import toti.control.Grid;
+import toti.control.columns.ActionsColumn;
+import toti.control.columns.ButtonsColumn;
+import toti.control.columns.GroupAction;
 import toti.control.columns.ValueColumn;
+import toti.control.inputs.Button;
+import toti.control.inputs.ButtonType;
 import toti.control.inputs.Checkbox;
 import toti.control.inputs.Datetime;
 import toti.control.inputs.Email;
@@ -39,6 +46,29 @@ public class EntityPageController {
 	public void setTranslator(Translator translator) {
 		this.translator = translator;
 	}
+	
+	@Action("action1")
+	public Response actionMethod1(@Params Properties prop) {
+		System.out.println("Action 1 properties:");
+		System.out.println(prop);
+		return Response.getText("Working 1");
+	}
+	
+	@Action("action2")
+	@Method({HttpMethod.POST})
+	public Response actionMethod2(@Params Properties prop) {
+		System.out.println("Action 2 properties:");
+		System.out.println(prop);
+		return Response.getText("Working 2");
+	}
+	
+	@Action("action3")
+	@Method({HttpMethod.POST})
+	public Response actionMethod3(@Params Properties prop) {
+		System.out.println("Action 3 properties:");
+		System.out.println(prop);
+		return Response.getText("Working 3");
+	}
 
 	@Action("list")
 	//@Secured(isApi = false, value={@Domain(name=SECURITY_DOMAIN, action=helper.Action.READ)})
@@ -47,6 +77,15 @@ public class EntityPageController {
 		/***/
 		// TODO grid
 		Grid grid = new Grid("/api/entity/all", "get");
+		grid.addColumn(new ActionsColumn("actions")).addAction(
+			new GroupAction("Sync", "/entity/action1").setAjax(false).setMethod("post")
+		).addAction(
+			new GroupAction("Async with confirmation", "/entity/action2")
+				.setAjax(true).setConfirmation("Really?").setMethod("post")
+		).addAction(
+			new GroupAction("Custom failure and succcess", "/entity/action3").setAjax(true).setMethod("post")
+			    .setOnFailure("actionFailure").setOnSuccess("actionSuccess")
+		);
 		grid.addColumn(new ValueColumn("id").setTitle(translator.translate("module.id")));
 		grid.addColumn(
 			new ValueColumn("name")
@@ -87,6 +126,17 @@ public class EntityPageController {
 					MapInit.t("true", "Yes"),
 					MapInit.t("false", "No")
 				)))
+		);
+		grid.addColumn(
+			new ButtonsColumn("buttons").setTitle(translator.translate("module.buttons"))
+				.addButton(
+					Button.create("/api/entity/delete/{id}").setAjax(true).setMethod("delete")
+						.setTitle("Delete").setConfirmation("Really delete {name}?").setType(ButtonType.DANGER)
+				)
+				.addButton(
+					Button.create("/entity/edit/{id}").setAjax(false).setMethod("get")
+						.setTitle("Edit").setType(ButtonType.INFO)
+				)
 		);
 		/***/
 		params.put("control", grid);
@@ -140,7 +190,8 @@ public class EntityPageController {
 			MapInit.t("sk_SK", "Slovak")
 		)));
 		
-		form.addInput(Submit.create("Save", "save"));
+		form.addInput(Submit.create("Save", "save").setRedirect("/entity/list"));
+		form.addInput(Button.create("/entity/list").setTitle("Cancel").setAjax(false));
 		
 		if (id != null) {
 			form.setBindMethod("get");
