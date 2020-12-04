@@ -21,29 +21,29 @@ public class ItemRules {
 	private final Boolean required;
 	private final Function<Translator, String> onRequiredError;
 	private Optional<Class<?>> expectedType = Optional.empty();
-	private Function<Translator, String> onExpectedTypeError;
+	private Function<Translator, String> onExpectedTypeError = (t)->"";
 	
 	private Optional<String> regex = Optional.empty();
-	private Function<Translator, String> onRegexError;
+	private Function<Translator, String> onRegexError = (t)->"";
 	private Optional<Integer> maxLength = Optional.empty();
-	private Function<Translator, String> onMaxLengthError;
+	private Function<Translator, String> onMaxLengthError = (t)->"";
 	private Optional<Integer> minLength = Optional.empty();
-	private Function<Translator, String> onMinLengthError;
+	private Function<Translator, String> onMinLengthError = (t)->"";
 	
 	private Optional<Number> maxValue = Optional.empty();
-	private Function<Translator, String> onMaxValueError;
+	private Function<Translator, String> onMaxValueError = (t)->"";
 	private Optional<Number> minValue = Optional.empty();
-	private Function<Translator, String> onMinValueError;
+	private Function<Translator, String> onMinValueError = (t)->"";
 	
 	private Optional<Integer> fileMaxSize = Optional.empty();
-	private Function<Translator, String> onFileMaxSizeError;
+	private Function<Translator, String> onFileMaxSizeError = (t)->"";
 	private Optional<Integer> fileMinSize = Optional.empty();
-	private Function<Translator, String> onFileMinSizeError;
+	private Function<Translator, String> onFileMinSizeError = (t)->"";
 	private Optional<Collection<Object>> allowedFileTypes = Optional.empty();
-	private Function<Translator, String> onAllowedFileTypesError;
+	private Function<Translator, String> onAllowedFileTypesError = (t)->"";
 	
 	private Optional<Collection<Object>> allowedValues = Optional.empty();
-	private Function<Translator, String> onAllowedValuesError;
+	private Function<Translator, String> onAllowedValuesError = (t)->"";
 	
 	private Optional<Validator> mapSpecification = Optional.empty();
 	

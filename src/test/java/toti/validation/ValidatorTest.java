@@ -14,6 +14,8 @@ import org.mockito.Mockito;
 
 import common.MapInit;
 import common.structures.Tuple2;
+import json.JsonStreamException;
+import json.OutputJsonWritter;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import toti.validation.ItemRules;
@@ -33,7 +35,7 @@ public class ValidatorTest {
 		assertEquals(expected, val.validate(prop, Mockito.mock(Translator.class)).isEmpty());
 	}
 	
-	public Object[] dataValidateAllowedMapWorks() {
+	public Object[] dataValidateAllowedMapWorks() throws JsonStreamException {
 		Map<String, Object> correct = new HashMap<>();
 		correct.put("val1", "text");
 		correct.put("val2", 123);
@@ -47,7 +49,7 @@ public class ValidatorTest {
 						.addRule(ItemRules.forName("val2", true).setType(Integer.class))
 						.addRule(ItemRules.forName("val3", true).setType(Boolean.class))
 				)),
-				MapInit.properties(new Tuple2<>("item1", correct)),
+				MapInit.properties(new Tuple2<>("item1", new OutputJsonWritter().write(correct))),
 				true
 			},
 			new Object[] {
@@ -58,7 +60,7 @@ public class ValidatorTest {
 							.addRule(ItemRules.forName("val3", true).setType(Boolean.class))
 							.addRule(ItemRules.forName("val4", false))
 					)),
-					MapInit.properties(new Tuple2<>("item1", correct)),
+					MapInit.properties(new Tuple2<>("item1", new OutputJsonWritter().write(correct))),
 					true
 				},
 			new Object[] {
@@ -67,7 +69,7 @@ public class ValidatorTest {
 							.addRule(ItemRules.forName("val1", true).setType(String.class))
 							.addRule(ItemRules.forName("val2", true).setType(Integer.class))
 					)),
-					MapInit.properties(new Tuple2<>("item1", correct)),
+					MapInit.properties(new Tuple2<>("item1", new OutputJsonWritter().write(correct))),
 					true
 				},
 			new Object[] {
@@ -78,7 +80,7 @@ public class ValidatorTest {
 							.addRule(ItemRules.forName("val3", true).setType(Boolean.class))
 							.addRule(ItemRules.forName("val4", true).setType(Integer.class))
 					)),
-					MapInit.properties(new Tuple2<>("item1", correct)),
+					MapInit.properties(new Tuple2<>("item1", new OutputJsonWritter().write(correct))),
 					false
 				},
 			new Object[] {
@@ -88,7 +90,7 @@ public class ValidatorTest {
 							.addRule(ItemRules.forName("val2", true).setType(Integer.class))
 							.addRule(ItemRules.forName("val3", true).setType(Boolean.class))
 					)),
-					MapInit.properties(new Tuple2<>("item1", correct)),
+					MapInit.properties(new Tuple2<>("item1", new OutputJsonWritter().write(correct))),
 					false
 				},
 		};
