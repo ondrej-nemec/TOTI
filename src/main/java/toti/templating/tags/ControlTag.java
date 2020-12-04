@@ -22,7 +22,7 @@ public class ControlTag implements Tag {
 				+ "</script>"
 				+ "\");"
 				+ "}"
-				+ "b.append(\"<div id='%s'>\");",
+				+ "b.append(\"<div id='%s' class='toti-control'>\");",
 				params.get("name"),
 				"div#control-" +params.get("name"),
 				params.get("name"),

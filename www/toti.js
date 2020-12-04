@@ -123,7 +123,7 @@ var totiControl = {
 			if (renderer === null) {
 				renderer = $('<button>').text(title);
 			}
-			var button = renderer; /* $('<a>').html(renderer);*/
+			var button = renderer;
 			for ([key, name] of Object.entries(params)) {
 				button.attr(key, name);
 			}
@@ -134,7 +134,6 @@ var totiControl = {
 				}
 				button.attr("class", originalClass + " toti-button-" + onClick.type);
 				var clickSettings = onClick;
-				/*button.attr("href", clickSettings.href).attr("method", clickSettings.method);*/
 				onClick = function(event) {
 					event.preventDefault();
 					if (clickSettings.submitConfirmation !== null
@@ -569,9 +568,7 @@ var totiGrid = {
 					}));
 				} else if (column.type === 'buttons') {
 					column.buttons.forEach(function(button, index) {
-						var buttonElement = totiControl.inputs.button(
-							/* TODO IMPROVEMENT add on failure and on success callback not only flash */
-							{
+						var settings = {
 								href: totiControl.utils.parametrizedString(button.href, row),
 								method: button.method,
 								async: button.ajax,
@@ -582,7 +579,15 @@ var totiGrid = {
 									return true;
 								},
 								type: button.hasOwnProperty('style') ? button.style : 'basic'
-							},
+							};
+						if (button.hasOwnProperty('onSuccess')) {
+							settings.onSuccess = button.onSuccess;
+						}
+						if (button.hasOwnProperty('onError')) {
+							settings.onError = button.onError;
+						}
+						var buttonElement = totiControl.inputs.button(
+							settings,
 							button.hasOwnProperty("title") ? button.title : "",
 							button.params,
 							button.hasOwnProperty("renderer") ? button.renderer : null
@@ -595,7 +600,7 @@ var totiGrid = {
 						td.append(buttonElement);
 					});
 				} else if (column.hasOwnProperty("renderer")) {
-					td.html(column["renderer"](row[column.name]));
+					td.html(window[column.renderer](row[column.name]));
 				} else {
 					td.text(row[column.name]);
 				}
@@ -719,7 +724,7 @@ var totiGrid = {
 				cell.append(name);
 			}
 			if (useSorting) {
-				cell.attr("href", "").attr("data-sort", 0).click(function(e) {
+				cell.attr("href", "").attr("class", "toti-sortable").attr("data-sort", 0).click(function(e) {
 					e.preventDefault();
 					var sortType = $(this).data('sort') + 1;
 					if (sortType === 3) {
@@ -727,25 +732,26 @@ var totiGrid = {
 					} else {
 						$(this).data('sort', sortType);
 					}
-					$(this).children(".sortType").hide();
-					$(this).children(".type" + sortType).show();
+					$(this).children().children(".sortType").hide();
+					$(this).children().children(".type" + sortType).show();
 					totiGrid.load(uniqueName);
 				});
 				cell.append(
-					$('<img>')
-						.attr("src", totiImages.arrowUp)
-						.attr("alt", "")
-						.attr("width", "15")
-						.attr("class", "sortType type1")
-						.hide()
-				);
-				cell.append(
-					$('<img>')
-						.attr("src", totiImages.arrowDown)
-						.attr("alt", "")
-						.attr("width", "15")
-						.attr("class", "sortType type2")
-						.hide()
+					$('<div>').attr('class', 'toti-sorting-arrows')
+					.append(
+						$('<img>')
+							.attr("src", totiImages.arrowUp)
+							.attr("alt", "")
+							.attr("width", "15")
+							.attr("class", "sortType type1 type3")
+					)
+					.append(
+						$('<img>')
+							.attr("src", totiImages.arrowDown)
+							.attr("alt", "")
+							.attr("width", "15")
+							.attr("class", "sortType type2 type3")
+					)
 				);
 			}
 			return cell;

@@ -3,7 +3,6 @@ package toti.control.columns;
 import java.util.HashMap;
 import java.util.Map;
 
-import toti.control.Html;
 import toti.control.Jsonable;
 import toti.templating.Template;
 
@@ -15,7 +14,7 @@ public class ValueColumn implements Jsonable, Column {
 	
 	private boolean useSorting = false;
 	private Filter filter = null;
-	private Html renderer = null;
+	private String renderer = null;
 	
 	public ValueColumn(String name) {
 		this.name = name;
@@ -38,7 +37,7 @@ public class ValueColumn implements Jsonable, Column {
 		return this;
 	}
 
-	public ValueColumn setRenderer(Html renderer) {
+	public ValueColumn setRenderer(String renderer) {
 		this.renderer = renderer;
 		return this;
 	}
