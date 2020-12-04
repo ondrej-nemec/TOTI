@@ -45,7 +45,7 @@ public class EntityModule implements Module {
 
 	@Override
 	public String getTranslationPath() {
-		return "module/resources";
+		return "module/resources/module";
 	}
 
 	@Override

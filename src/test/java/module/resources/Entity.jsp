@@ -22,6 +22,13 @@
 			alert("failure");
 			console.log(xhr);
 		}
+		function isMainRenderer(value) {
+			if (value) {
+				return "<t:trans message='module.yes' />";
+			} else {
+				return "<t:trans message='module.no' />";
+			}
+		}
 	/*$('#flash').append(totiControl.inputs.button(function() {}, title = "info", {'class': 'toti-button-info'}));
 		$('#flash').append(totiControl.inputs.button(function() {}, title = "error", {'class': 'toti-button-danger'}));
 		$('#flash').append(totiControl.inputs.button(function() {}, title = "warning", {'class': 'toti-button-warning'}));

@@ -126,6 +126,7 @@ public class EntityPageController {
 					MapInit.t("true", "Yes"),
 					MapInit.t("false", "No")
 				)))
+				.setRenderer("isMainRenderer")
 		);
 		grid.addColumn(
 			new ButtonsColumn("buttons").setTitle(translator.translate("module.buttons"))
@@ -182,13 +183,13 @@ public class EntityPageController {
 			MapInit.t("2", "Department #2"),
 			MapInit.t("3", "Department #3"),
 			MapInit.t("3", "Department #4")
-		)));
+		)).setTitle("Department"));
 		form.addInput(RadioList.input("lang", true, MapInit.hashMap(
 			MapInit.t("cs_CZ", "Czech"),
 			MapInit.t("en_GB", "English"),
 			MapInit.t("de_DE", "German"),
 			MapInit.t("sk_SK", "Slovak")
-		)));
+		)).setTitle("Language"));
 		
 		form.addInput(Submit.create("Save", "save").setRedirect("/entity/list"));
 		form.addInput(Button.create("/entity/list").setTitle("Cancel").setAjax(false));
