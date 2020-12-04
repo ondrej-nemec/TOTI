@@ -15,14 +15,15 @@ import json.JsonReader;
 import json.JsonStreamException;
 import socketCommunication.http.server.UploadedFile;
 import toti.registr.Registr;
+import translator.Translator;
 
 public class Validator {
 	
 	private final List<ItemRules> rules;
 	private final boolean strictList;
-	private final String onStrictListError;
+	private final Function<Translator, String> onStrictListError;
 	
-	public static Validator create(String uniqueName, boolean strictList, String onStrictListError) {
+	public static Validator create(String uniqueName, boolean strictList, Function<Translator, String> onStrictListError) {
 		Validator val = new Validator(strictList, onStrictListError);
 		Registr.get().addService(uniqueName, val);
 		return val;
@@ -35,10 +36,10 @@ public class Validator {
 	}
 	
 	public Validator(boolean strictList) {
-		this(strictList, "Parameters names not match expectation");
+		this(strictList, (trans)->"Parameters names not match expectation");
 	}
 	
-	public Validator(boolean strictList, String onStrictListError) {
+	public Validator(boolean strictList, Function<Translator, String> onStrictListError) {
 		this.strictList = strictList;
 		this.onStrictListError = onStrictListError;
 		this.rules = new LinkedList<>();
@@ -49,12 +50,12 @@ public class Validator {
 		return this;
 	}
 	
-	public Map<String, List<String>> validate(Properties prop) {
+	public Map<String, List<String>> validate(Properties prop, Translator translator) {
 		Map<String, List<String>> errors = new HashMap<>();
 		List<String> names = new ArrayList<>();
 		rules.forEach((rule)->{
 			names.add(rule.getName());
-			swichRules(rule, errors, prop);
+			swichRules(rule, errors, prop, translator);
 		});
 		checkRule(
 				Optional.of(new ArrayList<>(prop.keySet())),
@@ -64,19 +65,19 @@ public class Validator {
 				},
 				errors,
 				"form",
-				onStrictListError
+				onStrictListError.apply(translator)
 		);
 		return errors;
 	}
 	
-	private void swichRules(ItemRules rule, Map<String, List<String>> errors, Properties prop) {
+	private void swichRules(ItemRules rule, Map<String, List<String>> errors, Properties prop, Translator translator) {
 		if (prop.get(rule.getName()) == null) {
 			checkRule(
 					Optional.of(rule.getRequired()),
 					(required)->required,
 					errors,
 					rule.getName(), 
-					rule.getOnRequiredError()
+					rule.getOnRequiredError().apply(translator)
 			);
 		} else {
 			Object o = prop.get(rule.getName());
@@ -92,28 +93,28 @@ public class Validator {
 					},
 					errors,
 					rule.getName(),
-					rule.getOnExpectedTypeError()
+					rule.getOnExpectedTypeError().apply(translator)
 			);
 			checkRule(
 					rule.getAllowedValues(),
 					(allowedList)->!allowedList.contains(o),
 					errors,
 					rule.getName(),
-					rule.getOnAllowedValuesError()
+					rule.getOnAllowedValuesError().apply(translator)
 			);
 			checkRule(
 					rule.getMaxLength(), 
 					(maxLength)->maxLength.intValue() < o.toString().length(),
 					errors,
 					rule.getName(),
-					rule.getOnMaxLengthError()
+					rule.getOnMaxLengthError().apply(translator)
 			);
 			checkRule(
 					rule.getMinLength(),
 					(minLength)->minLength.intValue() > o.toString().length(),
 					errors,
 					rule.getName(),
-					rule.getOnMinLengthError()
+					rule.getOnMinLengthError().apply(translator)
 			);
 			checkRule(
 					rule.getMaxValue(),
@@ -127,7 +128,7 @@ public class Validator {
 					},
 					errors,
 					rule.getName(),
-					rule.getOnMaxValueError()
+					rule.getOnMaxValueError().apply(translator)
 			);
 			checkRule(
 					rule.getMinValue(),
@@ -141,7 +142,7 @@ public class Validator {
 					},
 					errors,
 					rule.getName(),
-					rule.getOnMinValueError()
+					rule.getOnMinValueError().apply(translator)
 			);
 			checkRule(
 					rule.getRegex(),
@@ -151,7 +152,7 @@ public class Validator {
 					},
 					errors,
 					rule.getName(),
-					rule.getOnRegexError()
+					rule.getOnRegexError().apply(translator)
 			);
 			checkRule(
 					rule.getFileMaxSize(),
@@ -161,7 +162,7 @@ public class Validator {
 					},
 					errors,
 					rule.getName(),
-					rule.getOnFileMaxSizeError()
+					rule.getOnFileMaxSizeError().apply(translator)
 			);
 			checkRule(
 					rule.getFileMinSize(),
@@ -171,7 +172,7 @@ public class Validator {
 					},
 					errors,
 					rule.getName(),
-					rule.getOnFileMinSizeError()
+					rule.getOnFileMinSizeError().apply(translator)
 			);
 			checkRule(
 					rule.getAllowedFileTypes(),
@@ -181,7 +182,7 @@ public class Validator {
 					},
 					errors,
 					rule.getName(),
-					rule.getOnAllowedFileTypesError()
+					rule.getOnAllowedFileTypesError().apply(translator)
 			);
 			checkRule(
 					rule.getMapSpecification(),
@@ -190,7 +191,7 @@ public class Validator {
 							Map<String, Object> json = new JsonReader().read(o.toString());
 							Properties fields = new Properties();
 							fields.putAll(json);
-							errors.putAll(validator.validate(fields));
+							errors.putAll(validator.validate(fields, translator));
 							return false;
 						} catch (JsonStreamException e) {
 							return true;
@@ -198,7 +199,7 @@ public class Validator {
 					},
 					errors,
 					rule.getName(),
-					rule.getOnAllowedFileTypesError()
+					rule.getOnAllowedFileTypesError().apply(translator)
 			);
 		}
 	}

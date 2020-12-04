@@ -230,7 +230,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			MappedUrl mapped, Properties params, Identity identity, Locale locale) throws ServerException {
 		authorize(mapped, params, identity);
 		if (mapped.getValidator().isPresent()) {
-    		Map<String,  List<String>> errors = mapped.getValidator().get().validate(params);
+    		Map<String,  List<String>> errors = mapped.getValidator().get().validate(params, translator.apply(locale));
     		Map<String,  Object> json = new HashMap<>();
     		json.putAll(errors);
     		if (!errors.isEmpty()) {

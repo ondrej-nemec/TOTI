@@ -10,6 +10,7 @@ import java.util.Properties;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 
 import common.MapInit;
 import common.structures.Tuple2;
@@ -17,6 +18,7 @@ import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import toti.validation.ItemRules;
 import toti.validation.Validator;
+import translator.Translator;
 
 @RunWith(JUnitParamsRunner.class)
 public class ValidatorTest {
@@ -28,7 +30,7 @@ public class ValidatorTest {
 		rules.forEach((rule)->{
 			val.addRule(rule);
 		});
-		assertEquals(expected, val.validate(prop).isEmpty());
+		assertEquals(expected, val.validate(prop, Mockito.mock(Translator.class)).isEmpty());
 	}
 	
 	public Object[] dataValidateAllowedMapWorks() {
@@ -99,7 +101,7 @@ public class ValidatorTest {
 		rules.forEach((rule)->{
 			val.addRule(rule);
 		});
-		assertEquals(expected, val.validate(prop).isEmpty());
+		assertEquals(expected, val.validate(prop, Mockito.mock(Translator.class)).isEmpty());
 	}
 	
 	public Object[] dataValidateAllowedListWorks() {
@@ -124,7 +126,7 @@ public class ValidatorTest {
 		rules.forEach((rule)->{
 			val.addRule(rule);
 		});
-		assertEquals(expected, val.validate(prop).isEmpty());
+		assertEquals(expected, val.validate(prop, Mockito.mock(Translator.class)).isEmpty());
 	}
 	
 	public Object[] dataValidateTypeWorks() {
@@ -184,7 +186,7 @@ public class ValidatorTest {
 		rules.forEach((rule)->{
 			val.addRule(rule);
 		});
-		assertEquals(expected, val.validate(prop).isEmpty());
+		assertEquals(expected, val.validate(prop, Mockito.mock(Translator.class)).isEmpty());
 	}
 	
 	public Object[] dataValidateNumberWorks() {
@@ -224,7 +226,7 @@ public class ValidatorTest {
 		rules.forEach((rule)->{
 			val.addRule(rule);
 		});
-		assertEquals(expected, val.validate(prop).isEmpty());
+		assertEquals(expected, val.validate(prop, Mockito.mock(Translator.class)).isEmpty());
 	}
 	
 	public Object[] dataValidateTextWorks() {
@@ -259,7 +261,7 @@ public class ValidatorTest {
 		rules.forEach((rule)->{
 			val.addRule(rule);
 		});
-		assertEquals(expected, val.validate(prop).isEmpty());
+		assertEquals(expected, val.validate(prop, Mockito.mock(Translator.class)).isEmpty());
 	}
 	
 	public Object[] dataValidateWithStrickWorks() {

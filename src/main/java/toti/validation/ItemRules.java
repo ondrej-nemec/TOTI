@@ -2,60 +2,62 @@ package toti.validation;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.function.Function;
 
 import common.exceptions.LogicException;
+import translator.Translator;
 
 public class ItemRules {
 
 	public static ItemRules forName(String name, boolean required) {
-		return new ItemRules(name, required, "This item is required");
+		return new ItemRules(name, required, (t)->"This item is required");
 	}
 
-	public static ItemRules forName(String name, boolean required, String onRequiredError) {
+	public static ItemRules forName(String name, boolean required, Function<Translator, String> onRequiredError) {
 		return new ItemRules(name, required, onRequiredError);
 	}
 	
 	private final String name;
 	private final Boolean required;
-	private final String onRequiredError;
+	private final Function<Translator, String> onRequiredError;
 	private Optional<Class<?>> expectedType = Optional.empty();
-	private String onExpectedTypeError;
+	private Function<Translator, String> onExpectedTypeError;
 	
 	private Optional<String> regex = Optional.empty();
-	private String onRegexError;
+	private Function<Translator, String> onRegexError;
 	private Optional<Integer> maxLength = Optional.empty();
-	private String onMaxLengthError;
+	private Function<Translator, String> onMaxLengthError;
 	private Optional<Integer> minLength = Optional.empty();
-	private String onMinLengthError;
+	private Function<Translator, String> onMinLengthError;
 	
 	private Optional<Number> maxValue = Optional.empty();
-	private String onMaxValueError;
+	private Function<Translator, String> onMaxValueError;
 	private Optional<Number> minValue = Optional.empty();
-	private String onMinValueError;
+	private Function<Translator, String> onMinValueError;
 	
 	private Optional<Integer> fileMaxSize = Optional.empty();
-	private String onFileMaxSizeError;
+	private Function<Translator, String> onFileMaxSizeError;
 	private Optional<Integer> fileMinSize = Optional.empty();
-	private String onFileMinSizeError;
+	private Function<Translator, String> onFileMinSizeError;
 	private Optional<Collection<Object>> allowedFileTypes = Optional.empty();
-	private String onAllowedFileTypesError;
+	private Function<Translator, String> onAllowedFileTypesError;
 	
 	private Optional<Collection<Object>> allowedValues = Optional.empty();
-	private String onAllowedValuesError;
+	private Function<Translator, String> onAllowedValuesError;
 	
 	private Optional<Validator> mapSpecification = Optional.empty();
 	
-	private ItemRules(String name, boolean required, String onRequiredError) {
+	private ItemRules(String name, boolean required, Function<Translator, String> onRequiredError) {
 		this.name = name;
 		this.required = required;
 		this.onRequiredError = onRequiredError;
 	}
 	
 	public ItemRules setAllowedValues(Collection<Object> values) {
-		return setAllowedValues(values, "Value must be one of: " + values);
+		return setAllowedValues(values, (t)->"Value must be one of: " + values);
 	}
 	
-	public ItemRules setAllowedValues(Collection<Object> values, String onAllowedValuesError) {
+	public ItemRules setAllowedValues(Collection<Object> values, Function<Translator, String> onAllowedValuesError) {
 		if (this.allowedValues.isPresent()) {
 			throw new LogicException("You cannot set an already set value");
 		}
@@ -65,10 +67,10 @@ public class ItemRules {
 	}
 	
 	public ItemRules setMaxValue(Number maxValue) {
-		return setMaxValue(maxValue, "Value must be less or equals " + maxValue);
+		return setMaxValue(maxValue, (t)->"Value must be less or equals " + maxValue);
 	}
 	
-	public ItemRules setMaxValue(Number maxValue, String onMaxValueError) {
+	public ItemRules setMaxValue(Number maxValue, Function<Translator, String> onMaxValueError) {
 		if (this.maxValue.isPresent()) {
 			throw new LogicException("You cannot set an already set value");
 		}
@@ -79,10 +81,10 @@ public class ItemRules {
 	}
 
 	public ItemRules setFileMaxSize(Integer fileMaxSize) {
-		return setFileMaxSize(fileMaxSize, "File size can be max " + fileMaxSize + "b");
+		return setFileMaxSize(fileMaxSize, (t)->"File size can be max " + fileMaxSize + "b");
 	}
 
-	public ItemRules setFileMaxSize(Integer fileMaxSize, String onFileMaxSizeError) {
+	public ItemRules setFileMaxSize(Integer fileMaxSize, Function<Translator, String> onFileMaxSizeError) {
 		if (this.fileMaxSize.isPresent()) {
 			throw new LogicException("You cannot set an already set value");
 		}
@@ -92,10 +94,10 @@ public class ItemRules {
 	}
 
 	public ItemRules setFileMinSize(Integer fileMinSize) {
-		return setFileMinSize(fileMinSize, "File size must be at least " + fileMinSize + "b");
+		return setFileMinSize(fileMinSize, (t)->"File size must be at least " + fileMinSize + "b");
 	}
 
-	public ItemRules setFileMinSize(Integer fileMinSize, String onFileMinSizeError) {
+	public ItemRules setFileMinSize(Integer fileMinSize, Function<Translator, String> onFileMinSizeError) {
 		if (this.fileMinSize.isPresent()) {
 			throw new LogicException("You cannot set an already set value");
 		}
@@ -105,10 +107,10 @@ public class ItemRules {
 	}
 
 	public ItemRules setAllowedFileTypes(Collection<Object> allowedFileTypes) {
-		return setAllowedFileTypes(allowedFileTypes, "File type is not allowed. Allowed: " + allowedFileTypes);
+		return setAllowedFileTypes(allowedFileTypes, (t)->"File type is not allowed. Allowed: " + allowedFileTypes);
 	}
 
-	public ItemRules setAllowedFileTypes(Collection<Object> allowedFileTypes, String onAllowedFileTypesError) {
+	public ItemRules setAllowedFileTypes(Collection<Object> allowedFileTypes, Function<Translator, String> onAllowedFileTypesError) {
 		if (this.allowedFileTypes.isPresent()) {
 			throw new LogicException("You cannot set an already set value");
 		}
@@ -118,10 +120,10 @@ public class ItemRules {
 	}
 	
 	public ItemRules setMinValue(Number minValue) {
-		return setMinValue(minValue, "Value must be equals or higher " + minValue);
+		return setMinValue(minValue, (t)->"Value must be equals or higher " + minValue);
 	}
 	
-	public ItemRules setMinValue(Number minValue, String onMinValueError) {
+	public ItemRules setMinValue(Number minValue, Function<Translator, String> onMinValueError) {
 		if (this.minValue.isPresent()) {
 			throw new LogicException("You cannot set an already set value");
 		}
@@ -132,10 +134,10 @@ public class ItemRules {
 	}
 	
 	public ItemRules setMinLength(int minLength) {
-		return setMinLength(minLength, "Text length must be at least " + minLength);
+		return setMinLength(minLength, (t)->"Text length must be at least " + minLength);
 	}
 	
-	public ItemRules setMinLength(int minLength, String onMinLengthError) {
+	public ItemRules setMinLength(int minLength, Function<Translator, String> onMinLengthError) {
 		if (this.minLength.isPresent()) {
 			throw new LogicException("You cannot set an already set value");
 		}
@@ -146,10 +148,10 @@ public class ItemRules {
 	}
 	
 	public ItemRules setMaxLength(int maxLength) {
-		return setMaxLength(maxLength, "Text length must be maximal " + maxLength);
+		return setMaxLength(maxLength, (t)->"Text length must be maximal " + maxLength);
 	}
 	
-	public ItemRules setMaxLength(int maxLength, String onMaxLengthError) {
+	public ItemRules setMaxLength(int maxLength, Function<Translator, String> onMaxLengthError) {
 		if (this.maxLength.isPresent()) {
 			throw new LogicException("You cannot set an already set value");
 		}
@@ -160,10 +162,10 @@ public class ItemRules {
 	}
 	
 	public ItemRules setRegex(String regex) {
-		return setRegex(regex, "Text must looks like " + regex.replace("\\", "\\\\"));
+		return setRegex(regex, (t)->"Text must looks like " + regex.replace("\\", "\\\\"));
 	}
 	
-	public ItemRules setRegex(String regex, String onRegexError) {
+	public ItemRules setRegex(String regex, Function<Translator, String> onRegexError) {
 		if (this.regex.isPresent()) {
 			throw new LogicException("You cannot set an already set value");
 		}
@@ -174,10 +176,10 @@ public class ItemRules {
 	}
 	
 	public ItemRules setType(Class<?> clazz) {
-		return setType(clazz, "Value must be " + clazz);
+		return setType(clazz, (t)->"Value must be " + clazz);
 	}
 	
-	public ItemRules setType(Class<?> clazz, String onExpectedTypeError) {
+	public ItemRules setType(Class<?> clazz, Function<Translator, String> onExpectedTypeError) {
 		if (this.expectedType.isPresent()) {
 			throw new LogicException("You cannot set an already set value");
 		}
@@ -229,35 +231,35 @@ public class ItemRules {
 		return allowedValues;
 	}
 
-	public String getOnRequiredError() {
+	public Function<Translator, String> getOnRequiredError() {
 		return onRequiredError;
 	}
 
-	public String getOnExpectedTypeError() {
+	public Function<Translator, String> getOnExpectedTypeError() {
 		return onExpectedTypeError;
 	}
 
-	public String getOnRegexError() {
+	public Function<Translator, String> getOnRegexError() {
 		return onRegexError;
 	}
 
-	public String getOnMaxLengthError() {
+	public Function<Translator, String> getOnMaxLengthError() {
 		return onMaxLengthError;
 	}
 
-	public String getOnMinLengthError() {
+	public Function<Translator, String> getOnMinLengthError() {
 		return onMinLengthError;
 	}
 
-	public String getOnMaxValueError() {
+	public Function<Translator, String> getOnMaxValueError() {
 		return onMaxValueError;
 	}
 
-	public String getOnMinValueError() {
+	public Function<Translator, String> getOnMinValueError() {
 		return onMinValueError;
 	}
 
-	public String getOnAllowedValuesError() {
+	public Function<Translator, String> getOnAllowedValuesError() {
 		return onAllowedValuesError;
 	}
 
@@ -265,7 +267,7 @@ public class ItemRules {
 		return fileMaxSize;
 	}
 
-	public String getOnFileMaxSizeError() {
+	public Function<Translator, String> getOnFileMaxSizeError() {
 		return onFileMaxSizeError;
 	}
 
@@ -273,7 +275,7 @@ public class ItemRules {
 		return fileMinSize;
 	}
 
-	public String getOnFileMinSizeError() {
+	public Function<Translator, String> getOnFileMinSizeError() {
 		return onFileMinSizeError;
 	}
 
@@ -281,7 +283,7 @@ public class ItemRules {
 		return allowedFileTypes;
 	}
 
-	public String getOnAllowedFileTypesError() {
+	public Function<Translator, String> getOnAllowedFileTypesError() {
 		return onAllowedFileTypesError;
 	}
 
