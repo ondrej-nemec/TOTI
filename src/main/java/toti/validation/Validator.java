@@ -1,6 +1,5 @@
 package toti.validation;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -118,14 +117,28 @@ public class Validator {
 			);
 			checkRule(
 					rule.getMaxValue(),
-					(maxValue)->maxValue.longValue() < new BigDecimal(o.toString()).longValue(),
+					(maxValue)->{
+						try {
+							Long value = (Long)ParseObject.parse(Long.class, o);
+							return value == null || maxValue.longValue() < value;
+						} catch (ClassCastException | NumberFormatException e) {
+							return true;
+						}
+					},
 					errors,
 					rule.getName(),
 					rule.getOnMaxValueError()
 			);
 			checkRule(
 					rule.getMinValue(),
-					(minValue)->minValue.longValue() > new BigDecimal(o.toString()).longValue(),
+					(minValue)->{
+						try {
+							Long value = (Long)ParseObject.parse(Long.class, o);
+							return value == null || minValue.longValue() > value.longValue();
+						} catch (ClassCastException | NumberFormatException e) {
+							return true;
+						}
+					},
 					errors,
 					rule.getName(),
 					rule.getOnMinValueError()
