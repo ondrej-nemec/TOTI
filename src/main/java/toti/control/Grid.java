@@ -27,6 +27,11 @@ public class Grid implements Jsonable, Control {
 		this.loadDataUrl = loadDataUrl;
 	}
 	
+	public Grid setPagesSizes(List<Integer> pagesSizes) {
+		this.pagesSizes = pagesSizes;
+		return this;
+	}
+	
 	public Grid setPagesButtonCount(int pagesButtonCount) {
 		this.pagesButtonCount = pagesButtonCount;
 		return this;
