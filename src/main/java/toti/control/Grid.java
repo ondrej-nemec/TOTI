@@ -14,8 +14,6 @@ public class Grid implements Jsonable, Control {
 	private final String loadDataUrl;
 	private final String loadDataMethod;
 	private String uniqueRowIdentifier = "id";
-	//private final List<Column> columns = new LinkedList<>();
-	//private final List<Action> actions = new LinkedList<>();
 	private final List<Map<String, Object>> columns = new LinkedList<>();
 	private final List<Map<String, Object>> actions = new LinkedList<>();
 	
@@ -27,6 +25,21 @@ public class Grid implements Jsonable, Control {
 	public Grid(String loadDataUrl, String loadDataMethod) {
 		this.loadDataMethod = loadDataMethod;
 		this.loadDataUrl = loadDataUrl;
+	}
+	
+	public Grid setPagesButtonCount(int pagesButtonCount) {
+		this.pagesButtonCount = pagesButtonCount;
+		return this;
+	}
+	
+	public Grid setDefaultPageSize(Integer defaultPageSize) {
+		this.defaultPageSize = defaultPageSize;
+		return this;
+	}
+	
+	public Grid setUniqueRowIdentifier(String uniqueRowIdentifier) {
+		this.uniqueRowIdentifier = uniqueRowIdentifier;
+		return this;
 	}
 	
 	public Grid addColumn(Column column) {
