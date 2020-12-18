@@ -1,24 +1,24 @@
-/* TOTI script version 0.0.2 */
+/* TOTI script version 0.0.3 */
 var totiLang = {
 	"pages": {
-		"title": "<t:trans message='common.grid.paging.pages'/>", /*/ "Pages:", //*/
-		"first": "<t:trans message='common.grid.paging.first' />", /*/ "First", //*/
-		"previous": "<t:trans message='common.grid.paging.previous' />", /*/ "Previous", //*/
-		"next": "<t:trans message='common.grid.paging.next' />", /*/ "Next", //*/
-		"last": "<t:trans message='common.grid.paging.last' />" /*/ "Last" //*/
+		"title": "<t:trans message='common.grid.paging.pages'/>",
+		"first": "<t:trans message='common.grid.paging.first' />",
+		"previous": "<t:trans message='common.grid.paging.previous' />",
+		"next": "<t:trans message='common.grid.paging.next' />",
+		"last": "<t:trans message='common.grid.paging.last' />"
 	},
 	"actions": {
-		"select": "<t:trans message='common.grid.action.select' />", /*/ "Select action", //*/
-		"execute": "<t:trans message='common.grid.action.execute' />", /*/ "Execute", //*/
-		"noSelectedItems": "<t:trans message='common.grid.action.no-selected-item' />" /*/ "No selected items" //*/
+		"select": "<t:trans message='common.grid.action.select' />",
+		"execute": "<t:trans message='common.grid.action.execute' />",
+		"noSelectedItems": "<t:trans message='common.grid.action.no-selected-item' />"
 	},
 	"gridMessages": {
-		"noItemsFound": "<t:trans message='common.grid.no-item-found' />", /*/ "No Item Found", //*/
-		"loadingError": "<t:trans message='common.grid.loading-error' />" /*/ "Problem with data loading" //*/
+		"noItemsFound": "<t:trans message='common.grid.no-item-found' />",
+		"loadingError": "<t:trans message='common.grid.loading-error' />"
 	},
 	"formMessages": {
-		"saveError": "<t:trans message='common.form.saving-problem' />", /*/ "Problem with form saving", //*/
-		"bindError": "<t:trans message='common.form.binding-problem' />" /*/ "Loading data failure" //*/
+		"saveError": "<t:trans message='common.form.saving-problem' />",
+		"bindError": "<t:trans message='common.form.binding-problem' />"
 	},
 	variableName: "language",
 	changeLanguage: function (language) {
@@ -76,6 +76,10 @@ var totiControl = {
 		},
 		hidden: function (params = {}) {
 			return totiControl.inputs._createInput("hidden", params);
+		},
+		/* sugested params: cols, rows */
+		textarea: function(params = {}) {
+			return totiControl.inputs._createInput("textarea", params);
 		},
 		radio: function (params = {}) {
 			return totiControl.inputs._createInput("radio", params);

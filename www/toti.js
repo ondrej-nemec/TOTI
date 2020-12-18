@@ -77,6 +77,10 @@ var totiControl = {
 		hidden: function (params = {}) {
 			return totiControl.inputs._createInput("hidden", params);
 		},
+		/* sugested params: cols, rows */
+		textarea: function(params = {}) {
+			return totiControl.inputs._createInput("textarea", params);
+		},
 		radio: function (params = {}) {
 			return totiControl.inputs._createInput("radio", params);
 		},

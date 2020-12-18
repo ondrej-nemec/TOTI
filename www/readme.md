@@ -48,6 +48,9 @@ Internal
 
 #### function file(params = {})
 
+#### textarea: function(params = {})
+ sugested params: cols, rows
+
 #### function hidden(params = {})
 
 #### function radio(params = {})
