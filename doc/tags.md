@@ -208,10 +208,11 @@ Define block for used in future. Pair
 
 ### Include
 
-Include defined block/another template file on given place. Template can be included from another module. Unpaired
+Include defined block/another template file on given place. Template can be included from another module. Block can be signed as optional, otherwise exception occur if missing. Unpaired
 
 ```
 <t:include block="" />
+<t:include block="" optional/>
 <t:include file="" />
 <t:include file="" module="" />
 ```

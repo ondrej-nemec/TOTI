@@ -85,7 +85,7 @@ onClick: function OR object
 	* function submitConfirmation() [optional]: boolean
 	* string onSuccess [optional]
 	* string onError [optional]
-  * string type [optional] - values: basic, danger, warning, info
+  * string type [optional] - values: basic, danger, warning, info, success
 
 renderer: html
 

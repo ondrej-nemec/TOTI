@@ -30,7 +30,15 @@ public class IncludeTag implements Tag {
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
 		if (params.get("block") != null) {
-			return String.format("b.append(blocks.get(\"%s\").toString());", params.get("block"));
+			StringBuilder code = new StringBuilder("{");
+			code.append(String.format("Object block = blocks.get(\"%s\");", params.get("block")));
+			code.append(String.format("if (block == null && %s) {", params.get("optional") == null ? "true" : "false"));
+			code.append(String.format("throw new RuntimeException(\"Missing block: %s\");", params.get("block")));
+			code.append("} else if (block != null) {");
+			code.append("b.append(block.toString());");
+			code.append("}");
+			code.append("}");
+			return code.toString(); // String.format("b.append(blocks.get(\"%s\").toString());", params.get("block"));
 		}
 		StringBuilder code = new StringBuilder("{");
 		if (params.get("module") == null) {
