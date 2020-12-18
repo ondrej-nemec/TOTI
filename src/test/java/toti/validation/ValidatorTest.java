@@ -26,6 +26,18 @@ import translator.Translator;
 public class ValidatorTest {
 
 	@Test
+	public void testValidateChangeValue() {
+		Validator val = new Validator(true);
+		Properties prop = new Properties();
+		prop.put("some-value", "aaaa");
+		val.addRule(ItemRules.forName("some-value", true).setChangeValue((value)->{
+			return value + "_bbbb";
+		}));
+		val.validate(prop, Mockito.mock(Translator.class));
+		assertEquals("aaaa_bbbb", prop.get("some-value"));
+	}
+
+	@Test
 	@Parameters(method = "dataValidateAllowedMapWorks")
 	public void testValidateAllowedMapWorks(List<ItemRules> rules, Properties prop, boolean expected) {
 		Validator val = new Validator(true);

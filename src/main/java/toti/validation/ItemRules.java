@@ -17,6 +17,8 @@ public class ItemRules {
 		return new ItemRules(name, required, onRequiredError);
 	}
 	
+	private Function<Object, Object> changeValue = (o)->o;
+	
 	private final String name;
 	private final Boolean required;
 	private final Function<Translator, String> onRequiredError;
@@ -192,6 +194,11 @@ public class ItemRules {
 		this.mapSpecification = Optional.of(mapSpecification);
 		return this;
 	}
+
+	public ItemRules setChangeValue(Function<Object, Object> changeValue) {
+		this.changeValue = changeValue;
+		return this;
+	}
 	
 	/*******************/
 
@@ -289,6 +296,10 @@ public class ItemRules {
 
 	public Optional<Validator> getMapSpecification() {
 		return mapSpecification;
+	}
+
+	public Function<Object, Object> getChangeValue() {
+		return changeValue;
 	}
 	
 }

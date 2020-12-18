@@ -56,6 +56,10 @@ public class Validator {
 		rules.forEach((rule)->{
 			names.add(rule.getName());
 			swichRules(rule, errors, prop, translator);
+			Object newValue = rule.getChangeValue().apply(prop.get(rule.getName()));
+			if (newValue != null) {
+				prop.put(rule.getName(), newValue);
+			}
 		});
 		checkRule(
 				Optional.of(new ArrayList<>(prop.keySet())),
