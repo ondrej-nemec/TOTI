@@ -1,6 +1,7 @@
 package toti.authentication;
 
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -98,7 +99,6 @@ public class Authenticator {
 			Identity identity = parseToken(token, apiAllowed);
 			return identity;
 		} catch (Exception e) {
-			System.err.println(header);
 			logger.debug("Missing authenticate header", e);
 			return Identity.empty();
 		}
@@ -108,30 +108,41 @@ public class Authenticator {
 		return expirationTime;
 	}
 	
-	// TODO test this method
-	protected String createToken(String random, String content) throws HashException {
-		long expired = new Date().getTime() + expirationTime;
-		// random + expired + ";" + content.length() + ";"+ con
-		// String hash = hasher.toHash(createHashingMesasge(random, expired, content));
-		String hash = hasher.toHash(createHashingMesasge(random, expired, content));
-		return String.format("%s%s-%s-%s", random, expired, content, hash);
+	private String createToken(String random, String content) throws HashException {
+		return createToken(random, new Date().getTime(), content, hasher);
 	}
 	
 	// TODO test this method
-	protected Identity parseToken(String token, boolean apiAllowed) throws HashException {
+	protected String createToken(String random, long actual, String content, Hash hasher) throws HashException {
+		long expired = actual + expirationTime;
+		String hash = hasher.toHash(createHashingMesasge(random, expired, content));
+		return String.format(
+				"%s%s%s-%s", 
+				hash,
+				random,
+				expired,
+				new String(Base64.getEncoder().encode(content.getBytes()))
+		);
+	}
+	
+	private Identity parseToken(String token, boolean apiAllowed) throws HashException {
+		return parseToken(token, apiAllowed, new Date().getTime(), hasher);
+	}
+	
+	// TODO test this method
+	protected Identity parseToken(String token, boolean apiAllowed, long now, Hash hasher) throws HashException {
 		if (token == null || token.isEmpty()) {
 			return Identity.empty();
 		}
-		String random = token.substring(0, 50);
-		String[] others = token.substring(50).split("-");
+		String hash = token.substring(0, 44);
+		String random = token.substring(44, 94);
+		String[] others = token.substring(94).split("-", 2);
 		long expired = Long.parseLong(others[0]);
-		String content = others[1];
-		String hash = others[2];
+		String content = new String(Base64.getMimeDecoder().decode(others[1].getBytes()));
 		if (!hasher.compare(createHashingMesasge(random, expired, content), hash)) {
-			logger.warn("Hash check is still not finished");
-			// TODO fix throw new RuntimeException("Token corrupted");
+			throw new RuntimeException("Token corrupted");
 		}
-		if (expired < new Date().getTime()) {
+		if (expired < now) {
 			throw new RuntimeException("Token is expired");
 		}
 		return Identity.get(content, random, expired, token, apiAllowed);
