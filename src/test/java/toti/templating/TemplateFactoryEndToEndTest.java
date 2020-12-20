@@ -26,16 +26,6 @@ public class TemplateFactoryEndToEndTest {
 		Translator translator = new Translator() {
 
 			@Override
-			public String translate(String key) {
-				return key;
-			}
-
-			@Override
-			public String translate(String key, Locale locale) {
-				return key;
-			}
-
-			@Override
 			public String translate(String key, Map<String, String> variables) {
 				return key;
 			}
@@ -43,6 +33,18 @@ public class TemplateFactoryEndToEndTest {
 			@Override
 			public String translate(String key, Map<String, String> variables, Locale locale) {
 				return key;
+			}
+
+			@Override
+			public Translator withLocale(Locale locale) {
+				// TODO Auto-generated method stub
+				return this;
+			}
+
+			@Override
+			public void setLocale(Locale locale) {
+				// TODO Auto-generated method stub
+				
 			}
 		};
 		String html = template.create(factory, variables, translator);

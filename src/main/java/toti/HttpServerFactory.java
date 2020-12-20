@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.function.Function;
 
 import common.Logger;
 import helper.Action;
@@ -27,7 +26,7 @@ public class HttpServerFactory {
 	
 	private UserSecurity security;
 	
-	private Function<Locale, Translator> translator;
+	private Translator translator;
 	private Logger logger;
 	
 	private int port = 80;
@@ -54,8 +53,8 @@ public class HttpServerFactory {
 						@Override public List<AclRole> getRoles() { return new LinkedList<>(); }
 				},
 				new RulesDao() {
-					@Override public Rules getRulesForUser(AclUser user, AclDestination domain) {
-						return new Rules(Action.ADMIN, Action.ADMIN, new LinkedList<>());
+					@Override public Rules getRulesForUserAndGroups(AclUser user, AclDestination domain) {
+						return new Rules(Action.ADMIN);
 					}
 				},
 				1000 * 60 * 10, // 10 min
@@ -98,7 +97,7 @@ public class HttpServerFactory {
 		return this;
 	}
 
-	public HttpServerFactory setTranslator(Function<Locale, Translator> translator) {
+	public HttpServerFactory setTranslator(Translator translator) {
 		this.translator = translator;
 		return this;
 	}

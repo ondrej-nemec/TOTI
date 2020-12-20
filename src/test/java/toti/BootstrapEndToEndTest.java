@@ -47,8 +47,8 @@ public class BootstrapEndToEndTest {
 								@Override public String getId() { return ""; }
 							},
 							new RulesDao() {
-								@Override public Rules getRulesForUser(AclUser user, AclDestination domain) {
-									return new Rules(Action.ADMIN, Action.ADMIN, new LinkedList<>());
+								@Override public Rules getRulesForUserAndGroups(AclUser user, AclDestination domain) {
+									return new Rules(Action.ADMIN);
 								}
 							},
 							1000*60*10,

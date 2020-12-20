@@ -14,7 +14,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,7 +68,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	
 	private final Map<String, TemplateFactory> modules;
 	private final TemplateFactory totiTemplateFactory;
-	private final Function<Locale, Translator> translator;
+	private final Translator translator;
 	
 	private final AuthorizationHelper authorizator;
 	private final Authenticator authenticator;
@@ -82,7 +81,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Router router,
 			Map<String, TemplateFactory> modules,
 			TemplateFactory totiTemplateFactory,
-			Function<Locale, Translator> translator,
+			Translator translator,
 			UserSecurity security,
 			String charset,
 			boolean dirResponseAllowed,
@@ -111,9 +110,9 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Properties header,
 			Properties params,
 			String ip) throws IOException {
-		System.err.println("URL: " + fullUrl);
+		/*System.err.println("URL: " + fullUrl);
 		System.err.println("Header: " + header);
-		System.err.println("Params: " + params);
+		System.err.println("Params: " + params);*/
 		try {
 			return getAuthenticatedResponse(method, url, params, header, ip);
 		} catch (AuthentizationException e) {
@@ -142,7 +141,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Properties header,
 			String ip) throws Exception {
 		Identity identity = authenticator.authenticate(header);
-		System.err.println("Identity: " + identity);
+		//System.err.println("Identity: " + identity);
 		return getLocalizedResponse(method, url, header, params, identity, ip);
 	}
 	
@@ -164,7 +163,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Identity identity,
 			String ip,
 			Locale locale) throws ServerException {
-		System.err.println("Locale: " + locale);
+		//System.err.println("Locale: " + locale);
 		return getRoutedResponse(method, url.endsWith("/") ? url.substring(0, url.length()-1) : url, params, identity, ip, locale);
 	}
 	
@@ -192,7 +191,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		// toti exclusive
 		if (url.startsWith("/toti/")) {
 			return Response.getTemplate(url.substring(5), new HashMap<>())
-					.getResponse(headers, totiTemplateFactory, translator.apply(locale), charset);
+					.getResponse(headers, totiTemplateFactory, translator.withLocale(locale), charset);
 		}
 		// controllers
 		for (MappedUrl mapped : mapping) {
@@ -230,7 +229,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			MappedUrl mapped, Properties params, Identity identity, Locale locale) throws ServerException {
 		authorize(mapped, params, identity);
 		if (mapped.getValidator().isPresent()) {
-    		Map<String,  List<String>> errors = mapped.getValidator().get().validate(params, translator.apply(locale));
+    		Map<String,  List<String>> errors = mapped.getValidator().get().validate(params, translator.withLocale(locale));
     		Map<String,  Object> json = new HashMap<>();
     		json.putAll(errors);
     		if (!errors.isEmpty()) {
@@ -256,7 +255,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			for (Field field : fields) {
 				String method = "set" + (field.getName().charAt(0) + "").toUpperCase() + field.getName().substring(1);
 				if (field.isAnnotationPresent(toti.annotations.inject.Translate.class)) {
-					o.getClass().getMethod(method, Translator.class).invoke(o, translator.apply(locale));
+					o.getClass().getMethod(method, Translator.class).invoke(o, translator.withLocale(locale));
 				} else if (field.isAnnotationPresent(Authenticate.class)) {
 					o.getClass().getMethod(method, Authenticator.class).invoke(o, authenticator);
 				} else if (field.isAnnotationPresent(Authorize.class)) {
@@ -281,7 +280,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	    	headers.addHeaders(authenticator.getHeaders(identity)); // FIX for cookies
 	    	headers.addHeaders(language.getHeaders(locale)); // FIX for cookies
 	    	
-			return response.getResponse(headers, templateFactory, translator.apply(locale), charset);
+			return response.getResponse(headers, templateFactory, translator.withLocale(locale), charset);
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}

@@ -2,10 +2,8 @@ package toti;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 
 import common.Logger;
 import logging.LoggerFactory;
@@ -30,7 +28,7 @@ public class HttpServer {
     		String tempPath,
     		List<Module> modules,
     		String resourcesPath,
-    		Function<Locale, Translator> translator,
+    		Translator translator,
     		UserSecurity security,
     		int maxUploadFileSize,
     		Optional<List<String>> allowedUploadFileTypes,
@@ -57,19 +55,7 @@ public class HttpServer {
 		};
 		TemplateFactory totiTemplateFactory = new TemplateFactory(tempPath, "toti/web", templateFactories, deleteDir, minimalize);
 		if (translator == null) {
-			translator = new Function<Locale, Translator>() {
-				private final Map<Locale, Translator> translators = new HashMap<>();
-				@Override
-				public Translator apply(Locale locale) {
-					if (translators.get(locale) == null) {
-						translators.put(
-							locale,
-							new PropertiesTranslator(LoggerFactory.getLogger("translator"), locale, trans)
-						);
-					}
-					return translators.get(locale);
-				}
-			};
+			translator = PropertiesTranslator.create(LoggerFactory.getLogger("translator"), trans);
 		}
 		ResponseFactory response = new ResponseFactory(
 				headers,
