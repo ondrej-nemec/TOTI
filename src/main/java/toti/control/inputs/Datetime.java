@@ -14,6 +14,7 @@ public class Datetime implements Input, Filter {
 	private final boolean required;
 	private boolean disabled = false;
 	private String value = null;
+	private int step = 1;
 	private final Map<String, String> params = new HashMap<>();
 	
 	public static Datetime input(String name, boolean required) {
@@ -51,6 +52,11 @@ public class Datetime implements Input, Filter {
 		this.disabled = disabled;
 		return this;
 	}
+	
+	public Datetime setStep(int step) {
+		this.step = step;
+		return this;
+	}
 
 	@Override
 	public String getType() {
@@ -69,6 +75,7 @@ public class Datetime implements Input, Filter {
 		json.put("name", name);
 		json.put("id", id);
 		json.put("type", type);
+		json.put("step", step);
 		if (required) {
 			json.put("required", required);
 		}
