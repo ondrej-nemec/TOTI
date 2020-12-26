@@ -45,9 +45,9 @@ public class HttpServerFactory {
 	
 	public HttpServer get(List<Module> modules) throws Exception {
 		if (security == null) {
-			// FULL control
 			this.security = new UserSecurity(
-				(identity)->new AclUser() {
+				null, // no redirect, on 4xx
+				(identity)->new AclUser() {// FULL control
 						@Override public String getId() { return ""; }
 						@Override public int getRank() { return 0; }
 						@Override public List<AclRole> getRoles() { return new LinkedList<>(); }

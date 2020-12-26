@@ -13,13 +13,16 @@ public class UserSecurity {
 	private final String tokenSalt;
 	private final long expirationTime;
 	private final RulesDao rulesDao;
+	private final String redirectUrlNoLoggedUser;
 	
 	public UserSecurity(
+			String redirectUrlNoLoggedUser,
 			Function<Identity, AclUser> identityToUser,
 			RulesDao rulesDao,
 			long expirationTime,
 			String tokenSalt, 
 			Logger logger) {
+		this.redirectUrlNoLoggedUser = redirectUrlNoLoggedUser;
 		this.logger = logger;
 		this.expirationTime = expirationTime;
 		this.tokenSalt = tokenSalt;
@@ -37,6 +40,10 @@ public class UserSecurity {
 				tokenSalt,
 				logger
 		);
+	}
+
+	public String getRedirectUrlNoLoggedUser() {
+		return redirectUrlNoLoggedUser;
 	}
 
 }

@@ -41,6 +41,7 @@ public class BootstrapEndToEndTest {
 					// TODO little bit another way
 					try {
 						factory.setUserSecurity(new UserSecurity(
+							"/sign/in",
 							(identity)->new AclUser() {
 								@Override public List<AclRole> getRoles() { return new LinkedList<>(); }
 								@Override public int getRank() { return 0; }

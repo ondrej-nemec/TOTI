@@ -72,7 +72,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	
 	private final AuthorizationHelper authorizator;
 	private final Authenticator authenticator;
-	
+	private final String redirectUrlNoLoggedUser;	
 	
 	public ResponseFactory(
 			ResponseHeaders responseHeaders,
@@ -93,6 +93,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		this.responseHeaders = responseHeaders;
 		this.authorizator = security.getAuthorizator();
 		this.authenticator = security.getAuthenticator();
+		this.redirectUrlNoLoggedUser = security.getRedirectUrlNoLoggedUser();
 		this.router = router;
 		this.modules = modules;
 		this.totiTemplateFactory = totiTemplateFactory;
@@ -227,7 +228,14 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private RestApiResponse getControllerResponse(
 			ResponseHeaders headers,
 			MappedUrl mapped, Properties params, Identity identity, Locale locale) throws ServerException {
-		authorize(mapped, params, identity);
+		try {
+			authorize(mapped, params, identity);
+		} catch (ServerException e) {
+			if (mapped.isApi() || redirectUrlNoLoggedUser == null) {
+				throw e;
+			}
+			return Response.getRedirect(redirectUrlNoLoggedUser).getResponse(headers, null, null, charset);
+		}
 		if (mapped.getValidator().isPresent()) {
     		Map<String,  List<String>> errors = mapped.getValidator().get().validate(params, translator.withLocale(locale));
     		Map<String,  Object> json = new HashMap<>();
