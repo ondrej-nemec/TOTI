@@ -14,6 +14,7 @@ public class TextArea implements Input {
 	private int rows;
 	private boolean disabled = false;
 	private String value = null;
+	private Integer maxLength;
 	private final Map<String, String> params = new HashMap<>();
 	
 	public static TextArea input(String name, boolean required) {
@@ -36,6 +37,11 @@ public class TextArea implements Input {
 	
 	public TextArea setTitle(String title) {
 		this.title = title;
+		return this;
+	}
+	
+	public TextArea setMaxLength(Integer maxLength) {
+		this.maxLength = maxLength;
 		return this;
 	}
 
@@ -81,6 +87,9 @@ public class TextArea implements Input {
 		}
 		if (value != null) {
 			json.put("value", value);
+		}
+		if (maxLength != null) {
+			json.put("maxlenght", maxLength);
 		}
 		return json;
 	}

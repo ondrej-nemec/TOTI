@@ -1,4 +1,4 @@
-/* TOTI script version 0.0.2 */
+/* TOTI script version 0.0.4 */
 var totiLang = {
 	"pages": {
 		"title": /* "<t:trans message='common.grid.paging.pages'/>", /*/ "Pages:", //*/
@@ -79,7 +79,15 @@ var totiControl = {
 		},
 		/* sugested params: cols, rows */
 		textarea: function(params = {}) {
-			return totiControl.inputs._createInput("textarea", params);
+			var textarea = $('<textarea>');
+			for ([key, name] of Object.entries(params)) {
+				if (key === "value") {
+					textarea.text(name);
+				} else {
+					textarea.attr(key, name);
+				}
+			}
+			return textarea;
 		},
 		radio: function (params = {}) {
 			return totiControl.inputs._createInput("radio", params);
