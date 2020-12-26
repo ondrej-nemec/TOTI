@@ -23,7 +23,7 @@ public class TextArea implements Input {
 	private TextArea(String name, boolean required) {
 		this.name = name;
 		this.id = "id-" + name;
-		this.type = "email";
+		this.type = "textarea";
 		this.required = required;
 		this.cols = 10;
 		this.rows = 10;
