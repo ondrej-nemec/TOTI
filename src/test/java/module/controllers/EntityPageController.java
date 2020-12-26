@@ -32,6 +32,7 @@ import toti.control.inputs.RadioList;
 import toti.control.inputs.Select;
 import toti.control.inputs.Submit;
 import toti.control.inputs.Text;
+import toti.control.inputs.TextArea;
 import toti.response.Response;
 import translator.Translator;
 
@@ -190,6 +191,7 @@ public class EntityPageController {
 			MapInit.t("de_DE", "German"),
 			MapInit.t("sk_SK", "Slovak")
 		)).setTitle("Language"));
+		form.addInput(TextArea.input("comment", false).setCols(20).setRows(30).setTitle("module.comment").setValue("aaa"));
 		
 		form.addInput(Submit.create("Save", "save").setRedirect("/entity/list"));
 		form.addInput(Button.create("/entity/list").setTitle("Cancel").setAjax(false));

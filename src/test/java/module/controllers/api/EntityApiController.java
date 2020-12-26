@@ -151,9 +151,7 @@ public class EntityApiController {
 			prop.forEach((key, value)->{
 				inserted.put(key.toString(), value);
 			});
-			inserted.remove(UNIQUE);
-			editValues(inserted, true);
-			
+			//inserted.remove(UNIQUE);
 			editValues(inserted, true);
 			
 			int id = dao.insert(inserted);
@@ -171,6 +169,7 @@ public class EntityApiController {
 	}
 
 	private void editValues(Map<String, Object> values, boolean insert) {
+		values.remove(UNIQUE);
 		if (values.get("is_main") == null) {
 			values.put("is_main", false);
 		}

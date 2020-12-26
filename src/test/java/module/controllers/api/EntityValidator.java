@@ -49,7 +49,8 @@ public class EntityValidator {
 				.addRule(ItemRules.forName("is_main", false).setType(Boolean.class))
 				.addRule(ItemRules.forName("rank", true).setType(Integer.class))
 				.addRule(ItemRules.forName("FK_id", true).setType(Integer.class))
-				.addRule(ItemRules.forName("lang", true).setType(String.class).setMaxLength(10));
+				.addRule(ItemRules.forName("lang", true).setType(String.class).setMaxLength(10))
+				.addRule(ItemRules.forName("comment", false));
 	}
 
 }

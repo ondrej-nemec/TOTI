@@ -21,6 +21,7 @@ public class M1__module_data implements Migration {
 			.addColumn("rank", ColumnType.integer(), ColumnSetting.NOT_NULL)
 			.addColumn("FK_id", ColumnType.integer(), ColumnSetting.NOT_NULL)
 			.addColumn("lang", ColumnType.string(10), ColumnSetting.NOT_NULL)
+			.addColumn("comment", ColumnType.text())
 			.execute();
 	}
 
