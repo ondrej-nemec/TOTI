@@ -1,4 +1,4 @@
-/* TOTI script version 0.0.4 */
+/* TOTI script version 0.0.5 */
 var totiLang = {
 	"pages": {
 		"title": "<t:trans message='common.grid.paging.pages'/>",
@@ -70,6 +70,9 @@ var totiControl = {
 				label.attr(key, name);
 			}
 			return label;
+		},
+		color: function(params = {}) {
+			return totiControl.inputs._createInput("color", params);
 		},
 		file: function(params = {}) {
 			return totiControl.inputs._createInput("file", params);
