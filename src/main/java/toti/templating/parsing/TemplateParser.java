@@ -97,13 +97,14 @@ public class TemplateParser {
 		TagParser tagParser = null;
 		int varIndex = 0;
 		LinkedList<VariableParser> variableParsers = new LinkedList<>();
-		while((actual = (char)br.read()) != (char)-1) {			
+		while((actual = (char)br.read()) != (char)-1) {
 			if (isComment && !commentCandidate1 && actual == '-') {
 				commentCandidate1 = true;
 			} else if (isComment && commentCandidate1 && actual == '-') {
 				commentCandidate1 = false;
 				commentCandidate2 = true;
 			} else if (isComment && commentCandidate2 && actual == '%') {
+				commentCandidate1 = false;
 				commentCandidate2 = false;
 				closingCommentCandidate = true;
 			} else if (isComment && closingCommentCandidate && actual == '>') {
@@ -207,7 +208,6 @@ public class TemplateParser {
 					} else {
 						bw.accept(actual + "");
 					}
-					
 				}
 			}
 			previous = actual;

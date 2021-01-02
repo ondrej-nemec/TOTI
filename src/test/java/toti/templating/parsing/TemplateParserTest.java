@@ -352,7 +352,7 @@ public class TemplateParserTest {
 	}
 	@Test
 	@Parameters(method = "dataCommentsWorks")
-	public void tesCommentsWorks(
+	public void testCommentsWorks(
 			String template,
 			String expectedHtml) throws IOException {
 		Tag tag = mock(Tag.class);
@@ -383,6 +383,19 @@ public class TemplateParserTest {
 					"1<%-- ${var} --%>2",
 					"12",
 				},
+			new Object[] {
+					"1<%-- <li class=\"nav-item\">Text</li> --%>2",
+					"12",
+				},
+			new Object[] {
+					"1<%-- <li class=\"nav-item\">\r\n" + 
+					"		    <a class=\"nav-link active\" aria-current=\"page\" href=\"#\">Active</a>\r\n" + 
+					"		  </li> --%>2",
+					"12",
+				},
+			
+			
+			
 		};
 	}
 	
