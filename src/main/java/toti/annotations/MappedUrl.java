@@ -103,7 +103,11 @@ public class MappedUrl {
 	
 	@Override
 	public String toString() {
-		return url;
+		String method = "";
+		for (HttpMethod m : allowedMethods) {
+			method += m + " ";
+		}
+		return String.format("%s: %s(isApi=%s)", method, url, isApi);
 	}
 
 	public boolean isRegex() {

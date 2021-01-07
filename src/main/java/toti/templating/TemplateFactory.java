@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.tools.JavaCompiler;
+import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 import common.FileExtension;
@@ -109,16 +111,22 @@ public class TemplateFactory {
 				classNameAndNamespace._1().replaceAll("/", ".")
 				+ (classNameAndNamespace._1().length() == 0 ? "" : ".")
 				+ classNameAndNamespace._2();
-
-		try (URLClassLoader loader = new URLClassLoader(new URL[] {cacheDir.toURI().toURL()});) {
+		try (URLClassLoader loader = new URLClassLoader(new URL[] {
+				cacheDir.toURI().toURL()},
+				TemplateFactory.class.getClassLoader()
+		)) {
 			try {
 				Template template = (Template)loader.loadClass(className).newInstance();
 				if (file.lastModified() != template.getLastModification()) {
+					System.err.println("Class " + className + " has change, compile "
+							+ file.lastModified() + " vs " + template.getLastModification()
+						); // TODO change to logger
 					compileNewCache(templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), file.lastModified());
 				} else {
 					return template;
 				}
 			} catch (ClassNotFoundException e) {
+				System.err.println("Class " + className + " not found, compile"); // TODO change to logger
 				compileNewCache(templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), file.lastModified());
 			}
 		}
@@ -138,7 +146,15 @@ public class TemplateFactory {
 		
 		String javaTempFile = parser.createTempCache(namespace, className, templateFile, tempPath, modificationTime);
 		File file = new File(javaTempFile);
-		compiler.run(null, null, null, file.getPath()); // streamy, kam se zapisuje
+		
+		// compiler.run(null, null, null, file.getPath()); // streamy, kam se zapisuje
+		
+		System.err.println(System.getProperty("java.class.path"));
+		StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
+		List<String> optionList = new ArrayList<String>();
+		optionList.addAll(Arrays.asList("-classpath", System.getProperty("java.class.path")));
+		compiler.getTask(null, null, null, optionList, null, fileManager.getJavaFileObjects(file)).call();
+		
 		if (deleteAuxJavaClass) {
 			file.delete();
 		}
