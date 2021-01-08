@@ -2,7 +2,9 @@ package toti.templating.parsing;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -26,6 +28,7 @@ public class TemplateParser {
 			String className,
 			String fileName, 
 			String tempPath,
+			String module,
 			long modificationTime) throws IOException {
 		String preClass = namespace.length() == 0 ? "%s" : "package %s;";
 		String clazz1 = preClass
@@ -54,7 +57,7 @@ public class TemplateParser {
 			//bw.write("Map<String,StringBuilder>blocks=new HashMap<>();");
 			bw.write("Template layout=null;");
 			bw.write("b.append(\"");			
-			loadFile(fileName, bw);
+			loadFile(fileName, bw, module);
 			bw.write("\");");
 			bw.write("if(layout!=null){"
 					+ "layout.create(templateFactory,variables,translator);"
@@ -66,14 +69,25 @@ public class TemplateParser {
 		return tempFile;
 	}
 	
-	private void loadFile(String fileName, BufferedWriter bw) throws IOException {
+	private void loadFile(String fileName, BufferedWriter bw, String module) throws IOException {
+		InputStream is = null;
+		try {
+			is = InputStreamLoader.createInputStream(this.getClass(), fileName);
+		} catch (FileNotFoundException e1) {
+			try {
+				is = InputStreamLoader.createInputStream(this.getClass(), module + "/" + fileName);
+			} catch (FileNotFoundException e2) {
+				throw new FileNotFoundException("Template file not found: " + e1.getMessage() + " OR " + e2.getMessage());
+			}
+		}
 		Text.read((br)->{
 			loadFile(br, (text)->{
 				bw.write(text);
 			});			
 			// TODO read s void
 			return null;
-		}, InputStreamLoader.createInputStream(this.getClass(), fileName), "utf-8"); // TODO maybe configurable
+		}, is, "utf-8"); // TODO maybe configurable
+		is.close();
 	}
 	
 	protected void loadFile(BufferedReader br, ThrowingConsumer<String, IOException> bw) throws IOException {

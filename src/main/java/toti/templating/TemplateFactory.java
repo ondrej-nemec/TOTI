@@ -59,14 +59,16 @@ public class TemplateFactory {
 	private final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 	private final String templatePath;
 	private final Map<String, TemplateFactory> modules;
+	private final String module;
 	
-	public TemplateFactory(String tempPath, String templatePath, Map<String, TemplateFactory> modules) {
-		this(tempPath, templatePath, modules, true, false);
+	public TemplateFactory(String tempPath, String templatePath, String module, Map<String, TemplateFactory> modules) {
+		this(tempPath, templatePath, module, modules, true, false);
 	}
 	
 	public TemplateFactory(
 			String tempPath, 
-			String templatePath, 
+			String templatePath,
+			String module,
 			Map<String, TemplateFactory> modules,
 			boolean deleteAuxJavaClass,
 			boolean minimalize) {
@@ -77,6 +79,7 @@ public class TemplateFactory {
 		this.deleteAuxJavaClass = deleteAuxJavaClass;
 		this.modules = modules;
 		this.minimalize = minimalize;
+		this.module = module;
 	}
 	
 	public Template getTemplate(String templateFile) throws Exception {
@@ -85,7 +88,7 @@ public class TemplateFactory {
 		}
 		return getTemplateWithAbsolutePath(templatePath + templateFile, (file)->{
 			return getClassName(file, templatePath);
-		});
+		}, module);
 	}
 
 	public Template getModuleTemplate(String templateFile, String module) throws Exception {
@@ -98,12 +101,13 @@ public class TemplateFactory {
 	public Template getFrameworkTemplate(String templateFile) throws Exception {
 		return getTemplateWithAbsolutePath(templateFile, (file)->{
 			return new Tuple2<>("toti", new FileExtension(file.getName()).getName());
-		});
+		}, "");
 	}
 
 	private Template getTemplateWithAbsolutePath(
 			String templateFile,
-			ThrowingFunction<File, Tuple2<String, String>, IOException> getClassNameAndNamespace) throws Exception {
+			ThrowingFunction<File, Tuple2<String, String>, IOException> getClassNameAndNamespace,
+			String module) throws Exception {
 		File file = new File(templateFile);
 		Tuple2<String, String> classNameAndNamespace = getClassNameAndNamespace.apply(file);
 		File cacheDir = new File(tempPath);
@@ -121,13 +125,13 @@ public class TemplateFactory {
 					System.err.println("Class " + className + " has change, compile "
 							+ file.lastModified() + " vs " + template.getLastModification()
 						); // TODO change to logger
-					compileNewCache(templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), file.lastModified());
+					compileNewCache(templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), file.lastModified(), module);
 				} else {
 					return template;
 				}
 			} catch (ClassNotFoundException e) {
 				System.err.println("Class " + className + " not found, compile"); // TODO change to logger
-				compileNewCache(templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), file.lastModified());
+				compileNewCache(templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), file.lastModified(), module);
 			}
 		}
 		try (URLClassLoader loader = new URLClassLoader(new URL[] {cacheDir.toURI().toURL()});) {
@@ -135,7 +139,7 @@ public class TemplateFactory {
 		}
 	}
 	
-	private void compileNewCache(String templateFile, String namespace, String className, long modificationTime) throws IOException {
+	private void compileNewCache(String templateFile, String namespace, String className, long modificationTime, String module) throws IOException {
 		File dir = new File(tempPath + "/" + namespace);
 		dir.mkdirs();
 		
@@ -144,7 +148,7 @@ public class TemplateFactory {
 		TemplateParser parser = new TemplateParser(tags.stream()
 			      .collect(Collectors.toMap(Tag::getName, tag -> tag)), minimalize);
 		
-		String javaTempFile = parser.createTempCache(namespace, className, templateFile, tempPath, modificationTime);
+		String javaTempFile = parser.createTempCache(namespace, className, templateFile, tempPath, module, modificationTime);
 		File file = new File(javaTempFile);
 		
 		// compiler.run(null, null, null, file.getPath()); // streamy, kam se zapisuje

@@ -47,13 +47,13 @@ public class HttpServer {
 		for (Module module : modules) {
 			module.addRoutes(router);
 			TemplateFactory templateFactory = new TemplateFactory(
-					tempPath, module.getTemplatesPath(), templateFactories, deleteDir, minimalize
+					tempPath, module.getTemplatesPath(), module.getName(), templateFactories, deleteDir, minimalize
 			);
 			controllers.put(module.getControllersPath(), templateFactory);
 			templateFactories.put(module.getName(), templateFactory);
 			trans[i++] = module.getTranslationPath();
 		};
-		TemplateFactory totiTemplateFactory = new TemplateFactory(tempPath, "toti/web", templateFactories, deleteDir, minimalize);
+		TemplateFactory totiTemplateFactory = new TemplateFactory(tempPath, "toti/web", "", templateFactories, deleteDir, minimalize);
 		if (translator == null) {
 			translator = PropertiesTranslator.create(LoggerFactory.getLogger("translator"), trans);
 		}
