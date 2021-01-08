@@ -150,14 +150,19 @@ public class TemplateFactory {
 		
 		String javaTempFile = parser.createTempCache(namespace, className, templateFile, tempPath, module, modificationTime);
 		File file = new File(javaTempFile);
+		/*
 		
-		// compiler.run(null, null, null, file.getPath()); // streamy, kam se zapisuje
+		compiler.run(null, null, null, file.getPath()); // streamy, kam se zapisuje
 		
-		System.err.println(System.getProperty("java.class.path"));
+		/*/
+		
+		//System.err.println(System.getProperty("java.class.path"));
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
 		List<String> optionList = new ArrayList<String>();
 		optionList.addAll(Arrays.asList("-classpath", System.getProperty("java.class.path")));
 		compiler.getTask(null, null, null, optionList, null, fileManager.getJavaFileObjects(file)).call();
+		
+		//*/
 		
 		if (deleteAuxJavaClass) {
 			file.delete();
