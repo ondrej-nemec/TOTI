@@ -112,17 +112,25 @@ public class TemplateFactory {
 			String templateFile,
 			ThrowingFunction<File, Tuple2<String, String>, IOException> getClassNameAndNamespace,
 			String module) throws Exception {
+		long lastModifition = 0;
+		URL url = null;
+		if (url == null) {
+			url = getClass().getResource("/" + module + "/" + templateFile);
+		}
+		if (url == null) {
+			File file = new File(module + "/" + templateFile);
+			url = file.toURI().toURL();
+			lastModifition = file.lastModified();
+		}
+		if (url == null) {
+			url = getClass().getResource("/" + templateFile);
+		}
+		if (url == null) {
+			File file = new File(templateFile);
+			url = file.toURI().toURL();
+			lastModifition = file.lastModified();
+		}
 		File file = new File(templateFile);
-		System.err.println("-- path " + file.getAbsolutePath());
-		System.err.println("-- path " + file.getPath());
-		System.err.println("-- modified " + file.lastModified());
-		System.err.println("-- exists " + file.exists());
-		System.err.println("-- file " + file.isFile());
-		System.err.println("-- A path " + file.getAbsoluteFile().getAbsolutePath());
-		System.err.println("-- A modified " + file.getAbsoluteFile().lastModified());
-		System.err.println("-- A exists " + file.getAbsoluteFile().exists());
-		System.err.println("-- A file " + file.getAbsoluteFile().isFile());
-		System.err.println();
 		Tuple2<String, String> classNameAndNamespace = getClassNameAndNamespace.apply(file);
 		File cacheDir = new File(tempPath);
 		String className = 
@@ -135,15 +143,15 @@ public class TemplateFactory {
 		)) {
 			try {
 				Template template = (Template)loader.loadClass(className).newInstance();
-				if (file.lastModified() != template.getLastModification()) {
-					logger.warn("Class " + className + " has change, compile " + file.lastModified() + " vs " + template.getLastModification());
-					compileNewCache(templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), file.lastModified(), module);
+				if (lastModifition != template.getLastModification()) {
+					logger.warn("Class " + className + " has change, compile " + lastModifition + " vs " + template.getLastModification());
+					compileNewCache(templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), lastModifition, module);
 				} else {
 					return template;
 				}
 			} catch (ClassNotFoundException e) {
 				logger.warn("Class " + className + " not found, compile");
-				compileNewCache(templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), file.lastModified(), module);
+				compileNewCache(templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), lastModifition, module);
 			}
 		}
 		try (URLClassLoader loader = new URLClassLoader(new URL[] {cacheDir.toURI().toURL()});) {
