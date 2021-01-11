@@ -110,6 +110,7 @@ public class TemplateFactory {
 			String module) throws Exception {
 		File file = new File(templateFile);
 		System.err.println("-- path " + file.getAbsolutePath());
+		System.err.println("-- path " + file.getPath());
 		System.err.println("-- modified " + file.lastModified());
 		System.err.println("-- exists " + file.exists());
 		System.err.println("-- file " + file.isFile());
