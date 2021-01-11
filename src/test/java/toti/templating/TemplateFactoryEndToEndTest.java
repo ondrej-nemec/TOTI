@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import common.Logger;
 import core.text.Text;
 import core.text.basic.WriteText;
 import toti.templating.Template;
@@ -20,7 +21,32 @@ public class TemplateFactoryEndToEndTest {
 		variables.put("limit", 10);
 		
 		//*
-		TemplateFactory factory = new TemplateFactory("temp/cache", "toti/templating", "", new HashMap<>(), false, false);
+		TemplateFactory factory = new TemplateFactory("temp/cache", "toti/templating", "", new HashMap<>(), false, false, new Logger() {
+			
+			@Override public void warn(Object message, Throwable t) {}
+			
+			@Override public void warn(Object message) {}
+			
+			@Override public void trace(Object message, Throwable t) {}
+			
+			@Override public void trace(Object message) {}
+			
+			@Override public void info(Object message, Throwable t) {}
+			
+			@Override public void info(Object message) {}
+			
+			@Override public void fatal(Object message, Throwable t) {}
+			
+			@Override public void fatal(Object message) {}
+			
+			@Override public void error(Object message, Throwable t) {}
+			
+			@Override public void error(Object message) {}
+			
+			@Override public void debug(Object message, Throwable t) {}
+			
+			@Override public void debug(Object message) {}
+		});
 		Template template = factory.getTemplate("dir/dir2/index.jsp");
 	//	Logger logger = LoggerFactory.getLogger("test");
 		Translator translator = new Translator() {
