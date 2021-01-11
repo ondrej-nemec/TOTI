@@ -2,11 +2,9 @@ package toti.templating.parsing;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -75,21 +73,9 @@ public class TemplateParser {
 		InputStream is = null;
 		try {
 			is = InputStreamLoader.createInputStream(this.getClass(), fileName);
-			
-			URL url = getClass().getResource("/" + fileName);
-			if (url == null) {
-				url = new File(fileName).toURI().toURL();
-			}
-			System.err.println(url);
 		} catch (FileNotFoundException e1) {
 			try {
 				is = InputStreamLoader.createInputStream(this.getClass(), module + "/" + fileName);
-				
-				URL url = getClass().getResource("/" + module + "/" + fileName);
-				if (url == null) {
-					url = new File(module + "/" + fileName).toURI().toURL();
-				}
-				System.err.println(url);
 			} catch (FileNotFoundException e2) {
 				throw new FileNotFoundException("Template file not found: " + e1.getMessage() + " OR " + e2.getMessage());
 			}
