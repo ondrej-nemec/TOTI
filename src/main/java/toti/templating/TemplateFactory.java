@@ -113,6 +113,8 @@ public class TemplateFactory {
 		System.err.println("-- " + file.lastModified());
 		System.err.println("-- exists " + file.exists());
 		System.err.println("-- file " + file.isFile());
+		System.err.println("-- A exists " + file.getAbsoluteFile().exists());
+		System.err.println("-- A file " + file.getAbsoluteFile().isFile());
 		Tuple2<String, String> classNameAndNamespace = getClassNameAndNamespace.apply(file);
 		File cacheDir = new File(tempPath);
 		String className = 
