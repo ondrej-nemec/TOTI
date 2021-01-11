@@ -109,12 +109,15 @@ public class TemplateFactory {
 			ThrowingFunction<File, Tuple2<String, String>, IOException> getClassNameAndNamespace,
 			String module) throws Exception {
 		File file = new File(templateFile);
-		System.err.println("-- " + file.getAbsolutePath());
-		System.err.println("-- " + file.lastModified());
+		System.err.println("-- path " + file.getAbsolutePath());
+		System.err.println("-- modified " + file.lastModified());
 		System.err.println("-- exists " + file.exists());
 		System.err.println("-- file " + file.isFile());
+		System.err.println("-- A path " + file.getAbsoluteFile().getAbsolutePath());
+		System.err.println("-- A modified " + file.getAbsoluteFile().lastModified());
 		System.err.println("-- A exists " + file.getAbsoluteFile().exists());
 		System.err.println("-- A file " + file.getAbsoluteFile().isFile());
+		System.err.println();
 		Tuple2<String, String> classNameAndNamespace = getClassNameAndNamespace.apply(file);
 		File cacheDir = new File(tempPath);
 		String className = 
