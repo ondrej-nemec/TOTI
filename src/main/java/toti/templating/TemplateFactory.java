@@ -17,6 +17,7 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 import common.FileExtension;
+import common.Logger;
 import common.structures.ThrowingFunction;
 import common.structures.Tuple2;
 import toti.templating.parsing.TemplateParser;
@@ -60,9 +61,10 @@ public class TemplateFactory {
 	private final String templatePath;
 	private final Map<String, TemplateFactory> modules;
 	private final String module;
+	private final Logger logger;
 	
-	public TemplateFactory(String tempPath, String templatePath, String module, Map<String, TemplateFactory> modules) {
-		this(tempPath, templatePath, module, modules, true, false);
+	public TemplateFactory(String tempPath, String templatePath, String module, Map<String, TemplateFactory> modules, Logger logger) {
+		this(tempPath, templatePath, module, modules, true, false, logger);
 	}
 	
 	public TemplateFactory(
@@ -71,7 +73,8 @@ public class TemplateFactory {
 			String module,
 			Map<String, TemplateFactory> modules,
 			boolean deleteAuxJavaClass,
-			boolean minimalize) {
+			boolean minimalize,
+			Logger logger) {
 		String cachePath = tempPath + "/cache";
 		new File(cachePath).mkdir();
 		this.tempPath = cachePath;
@@ -80,6 +83,7 @@ public class TemplateFactory {
 		this.modules = modules;
 		this.minimalize = minimalize;
 		this.module = module;
+		this.logger = logger;
 	}
 	
 	public Template getTemplate(String templateFile) throws Exception {
@@ -131,22 +135,18 @@ public class TemplateFactory {
 		)) {
 			try {
 				Template template = (Template)loader.loadClass(className).newInstance();
-		//		System.err.println("-- " + template.getLastModification());
 				if (file.lastModified() != template.getLastModification()) {
-					System.err.println("Class " + className + " has change, compile "
-							+ file.lastModified() + " vs " + template.getLastModification()
-						); // TODO change to logger
+					logger.warn("Class " + className + " has change, compile " + file.lastModified() + " vs " + template.getLastModification());
 					compileNewCache(templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), file.lastModified(), module);
 				} else {
 					return template;
 				}
 			} catch (ClassNotFoundException e) {
-				System.err.println("Class " + className + " not found, compile"); // TODO change to logger
+				logger.warn("Class " + className + " not found, compile");
 				compileNewCache(templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), file.lastModified(), module);
 			}
 		}
 		try (URLClassLoader loader = new URLClassLoader(new URL[] {cacheDir.toURI().toURL()});) {
-		//	System.err.println("-- " + ((Template)loader.loadClass(className).newInstance()).getLastModification());
 			return (Template)loader.loadClass(className).newInstance();
 		}
 	}
