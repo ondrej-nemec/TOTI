@@ -111,6 +111,7 @@ public class TemplateFactory {
 		File file = new File(templateFile);
 		System.err.println("-- " + file.getAbsolutePath());
 		System.err.println("-- " + file.lastModified());
+		System.err.println("-- " + file.exists());
 		Tuple2<String, String> classNameAndNamespace = getClassNameAndNamespace.apply(file);
 		File cacheDir = new File(tempPath);
 		String className = 
