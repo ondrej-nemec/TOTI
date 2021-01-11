@@ -109,6 +109,8 @@ public class TemplateFactory {
 			ThrowingFunction<File, Tuple2<String, String>, IOException> getClassNameAndNamespace,
 			String module) throws Exception {
 		File file = new File(templateFile);
+		System.err.println("-- " + file.getAbsolutePath());
+		System.err.println("-- " + file.lastModified());
 		Tuple2<String, String> classNameAndNamespace = getClassNameAndNamespace.apply(file);
 		File cacheDir = new File(tempPath);
 		String className = 
@@ -121,6 +123,7 @@ public class TemplateFactory {
 		)) {
 			try {
 				Template template = (Template)loader.loadClass(className).newInstance();
+		//		System.err.println("-- " + template.getLastModification());
 				if (file.lastModified() != template.getLastModification()) {
 					System.err.println("Class " + className + " has change, compile "
 							+ file.lastModified() + " vs " + template.getLastModification()
@@ -135,6 +138,7 @@ public class TemplateFactory {
 			}
 		}
 		try (URLClassLoader loader = new URLClassLoader(new URL[] {cacheDir.toURI().toURL()});) {
+		//	System.err.println("-- " + ((Template)loader.loadClass(className).newInstance()).getLastModification());
 			return (Template)loader.loadClass(className).newInstance();
 		}
 	}
