@@ -49,6 +49,7 @@ public class EntityPageController {
 	}
 	
 	@Action("action1")
+	@Secured({@Domain(name=SECURITY_DOMAIN, action=helper.Action.READ)})
 	public Response actionMethod1(@Params Properties prop) {
 		System.out.println("Action 1 properties:");
 		System.out.println(prop);
@@ -195,6 +196,9 @@ public class EntityPageController {
 		
 		form.addInput(Submit.create("Save", "save").setRedirect("/entity/list"));
 		form.addInput(Button.create("/entity/list").setTitle("Cancel").setAjax(false));
+		
+		form.setAfterBind("b");
+		form.setBeforeBind("a");
 		
 		if (id != null) {
 			form.setBindMethod("get");

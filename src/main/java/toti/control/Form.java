@@ -13,6 +13,8 @@ public class Form implements Jsonable, Control {
 	private String bindMethod = "get";
 	private final boolean editable;
 	private String onBindFailure;
+	private String beforeBind;
+	private String afterBind;
 	
 	//private final String formId;
 	private final String formAction;
@@ -52,6 +54,16 @@ public class Form implements Jsonable, Control {
 		return this;
 	}
 	
+	public Form setAfterBind(String afterBind) {
+		this.afterBind = afterBind;
+		return this;
+	}
+	
+	public Form setBeforeBind(String beforeBind) {
+		this.beforeBind = beforeBind;
+		return this;
+	}
+	
 	@Override
 	public String toString() {
 		Map<String, Object> json = new HashMap<>();
@@ -59,6 +71,12 @@ public class Form implements Jsonable, Control {
 		json.put("method", formMethod);
 		json.put("fields", fields);
 		json.put("editable", editable);
+		if (beforeBind != null) {
+			json.put("beforeBind", beforeBind);
+		}
+		if (afterBind != null) {
+			json.put("afterBind", afterBind);
+		}
 		if (bindUrl != null) {
 			Map<String, Object> bind = new HashMap<>();
 			json.put("bind", bind);

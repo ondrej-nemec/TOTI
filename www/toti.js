@@ -1,4 +1,4 @@
-/* TOTI script version 0.0.6 */
+/* TOTI script version 0.0.7 */
 var totiLang = {
 	"pages": {
 		"title": /* "<t:trans message='common.grid.paging.pages'/>", /*/ "Pages:", //*/
@@ -1012,7 +1012,15 @@ totiForm = {
 			var html = $(elementIdentifier).html();
 			$(elementIdentifier).html(totiForm.print(uniqueName, config, $(elementIdentifier)));
 			if (config.hasOwnProperty('bind')) {
-				totiForm.bind(config.bind, uniqueName);
+				totiForm.bind(config.bind, uniqueName, function() {
+					if (config.hasOwnProperty("beforeBind")) {
+						window[config.beforeBind]();
+					}
+				}, function() {
+					if (config.hasOwnProperty("afterBind")) {
+						window[config.afterBind]();
+					}
+				});
 			}
 		});
 	},
@@ -1171,12 +1179,13 @@ totiForm = {
 		
 		return form;
 	},
-	bind: function(bind, formId) {
+	bind: function(bind, formId, beforeBind, afterBind) {
 		totiControl.load.ajax(
 			bind.url, 
 			bind.method, 
 			bind.params, 
 			function(values) {
+				beforeBind();
 				for (const[key, value] of Object.entries(values)) {
 					var val = value; /* TODO IMPROVEMENT escape */
 					var id = '#' + formId + ' [name=' + key + ']';
@@ -1196,6 +1205,7 @@ totiForm = {
 						element.prop('checked', val); /* form: checkbox */
 					}
 				}
+				afterBind();
 			}, 
 			function(xhr) {
 				if (bind.hasOwnProperty('onFailure')) {

@@ -29,6 +29,12 @@
 				return "<t:trans message='module.no' />";
 			}
 		}
+		function a() {
+			console.log("before callback");
+		}
+		function b() {
+			console.log("after callback");
+		}
 	/*$('#flash').append(totiControl.inputs.button(function() {}, title = "info", {'class': 'toti-button-info'}));
 		$('#flash').append(totiControl.inputs.button(function() {}, title = "error", {'class': 'toti-button-danger'}));
 		$('#flash').append(totiControl.inputs.button(function() {}, title = "warning", {'class': 'toti-button-warning'}));
