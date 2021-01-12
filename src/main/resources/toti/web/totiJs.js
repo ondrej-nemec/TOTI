@@ -1,4 +1,4 @@
-/* TOTI script version 0.0.5 */
+/* TOTI script version 0.0.6 */
 var totiLang = {
 	"pages": {
 		"title": "<t:trans message='common.grid.paging.pages'/>",
