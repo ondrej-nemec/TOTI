@@ -1181,7 +1181,7 @@ totiForm = {
 					var val = value; /* TODO IMPROVEMENT escape */
 					var id = '#' + formId + ' [name=' + key + ']';
 					var element = $(id);
-					if (element.attr("type") === 'datetime-local') {
+					if (element.attr("type") === 'datetime-local' && val !== null) {
 						val = val.replace(" ", "T");
 					}
 					if (element.children('span').length > 0) { /* detail:select, checkbox, radio */
