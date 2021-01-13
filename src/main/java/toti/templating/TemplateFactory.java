@@ -85,7 +85,7 @@ public class TemplateFactory {
 		this.module = module;
 		this.logger = logger;
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		if (compiler = null) {
+		if (compiler == null) {
 			try {
 				compiler = (JavaCompiler)Class.forName("com.sun.tools.javac.api.JavacTool").newInstance();
 			} catch (Exception e) {
