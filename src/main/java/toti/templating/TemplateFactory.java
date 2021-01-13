@@ -57,7 +57,7 @@ public class TemplateFactory {
 	private final String tempPath;
 	private final boolean deleteAuxJavaClass;
 	private final boolean minimalize;
-	private final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+	private final JavaCompiler compiler; // = ToolProvider.getSystemJavaCompiler();
 	private final String templatePath;
 	private final Map<String, TemplateFactory> modules;
 	private final String module;
@@ -84,6 +84,15 @@ public class TemplateFactory {
 		this.minimalize = minimalize;
 		this.module = module;
 		this.logger = logger;
+		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		if (compiler = null) {
+			try {
+				compiler = (JavaCompiler)Class.forName("com.sun.tools.javac.api.JavacTool").newInstance();
+			} catch (Exception e) {
+				logger.fatal("Cannot load compiler", e);
+			}
+		}
+		this.compiler = compiler;
 	}
 	
 	public Template getTemplate(String templateFile) throws Exception {
