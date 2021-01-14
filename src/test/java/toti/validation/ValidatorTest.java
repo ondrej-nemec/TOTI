@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +17,7 @@ import json.JsonStreamException;
 import json.OutputJsonWritter;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+import socketCommunication.http.server.RequestParameters;
 import toti.validation.ItemRules;
 import toti.validation.Validator;
 import translator.Translator;
@@ -28,7 +28,7 @@ public class ValidatorTest {
 	@Test
 	public void testValidateChangeValue() {
 		Validator val = new Validator(true);
-		Properties prop = new Properties();
+		RequestParameters prop = new RequestParameters();
 		prop.put("some-value", "aaaa");
 		val.addRule(ItemRules.forName("some-value", true).setChangeValue((value)->{
 			return value + "_bbbb";
@@ -39,7 +39,7 @@ public class ValidatorTest {
 
 	@Test
 	@Parameters(method = "dataValidateAllowedMapWorks")
-	public void testValidateAllowedMapWorks(List<ItemRules> rules, Properties prop, boolean expected) {
+	public void testValidateAllowedMapWorks(List<ItemRules> rules, RequestParameters prop, boolean expected) {
 		Validator val = new Validator(true);
 		rules.forEach((rule)->{
 			val.addRule(rule);
@@ -61,7 +61,7 @@ public class ValidatorTest {
 						.addRule(ItemRules.forName("val2", true).setType(Integer.class))
 						.addRule(ItemRules.forName("val3", true).setType(Boolean.class))
 				)),
-				MapInit.properties(new Tuple2<>("item1", new OutputJsonWritter().write(correct))),
+				new RequestParameters(new Tuple2<>("item1", new OutputJsonWritter().write(correct))),
 				true
 			},
 			new Object[] {
@@ -72,7 +72,7 @@ public class ValidatorTest {
 							.addRule(ItemRules.forName("val3", true).setType(Boolean.class))
 							.addRule(ItemRules.forName("val4", false))
 					)),
-					MapInit.properties(new Tuple2<>("item1", new OutputJsonWritter().write(correct))),
+					new RequestParameters(new Tuple2<>("item1", new OutputJsonWritter().write(correct))),
 					true
 				},
 			new Object[] {
@@ -81,7 +81,7 @@ public class ValidatorTest {
 							.addRule(ItemRules.forName("val1", true).setType(String.class))
 							.addRule(ItemRules.forName("val2", true).setType(Integer.class))
 					)),
-					MapInit.properties(new Tuple2<>("item1", new OutputJsonWritter().write(correct))),
+					new RequestParameters(new Tuple2<>("item1", new OutputJsonWritter().write(correct))),
 					true
 				},
 			new Object[] {
@@ -92,7 +92,7 @@ public class ValidatorTest {
 							.addRule(ItemRules.forName("val3", true).setType(Boolean.class))
 							.addRule(ItemRules.forName("val4", true).setType(Integer.class))
 					)),
-					MapInit.properties(new Tuple2<>("item1", new OutputJsonWritter().write(correct))),
+					new RequestParameters(new Tuple2<>("item1", new OutputJsonWritter().write(correct))),
 					false
 				},
 			new Object[] {
@@ -102,7 +102,7 @@ public class ValidatorTest {
 							.addRule(ItemRules.forName("val2", true).setType(Integer.class))
 							.addRule(ItemRules.forName("val3", true).setType(Boolean.class))
 					)),
-					MapInit.properties(new Tuple2<>("item1", new OutputJsonWritter().write(correct))),
+					new RequestParameters(new Tuple2<>("item1", new OutputJsonWritter().write(correct))),
 					false
 				},
 		};
@@ -110,7 +110,7 @@ public class ValidatorTest {
 	
 	@Test
 	@Parameters(method = "dataValidateAllowedListWorks")
-	public void testValidateAllowedListWorks(List<ItemRules> rules, Properties prop, boolean expected) {
+	public void testValidateAllowedListWorks(List<ItemRules> rules, RequestParameters prop, boolean expected) {
 		Validator val = new Validator(true);
 		rules.forEach((rule)->{
 			val.addRule(rule);
@@ -122,12 +122,12 @@ public class ValidatorTest {
 		return new Object[] {
 			new Object[] {
 				Arrays.asList(ItemRules.forName("item1", true).setAllowedValues(Arrays.asList("value1", "value2"))),
-				MapInit.properties(MapInit.t("item1", "value1")),
+				new RequestParameters(MapInit.t("item1", "value1")),
 				true
 			},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setAllowedValues(Arrays.asList("value1", "value2"))),
-					MapInit.properties(MapInit.t("item1", "value")),
+					new RequestParameters(MapInit.t("item1", "value")),
 					false
 				},
 		};
@@ -135,7 +135,7 @@ public class ValidatorTest {
 	
 	@Test
 	@Parameters(method = "dataValidateTypeWorks")
-	public void testValidateTypeWorks(List<ItemRules> rules, Properties prop, boolean expected) {
+	public void testValidateTypeWorks(List<ItemRules> rules, RequestParameters prop, boolean expected) {
 		Validator val = new Validator(true);
 		rules.forEach((rule)->{
 			val.addRule(rule);
@@ -147,47 +147,47 @@ public class ValidatorTest {
 		return new Object[] {
 			new Object[] {
 				Arrays.asList(ItemRules.forName("item1", true).setType(String.class)),
-				MapInit.properties(MapInit.t("item1", "value")),
+				new RequestParameters(MapInit.t("item1", "value")),
 				true
 			},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setType(Integer.class)),
-					MapInit.properties(MapInit.t("item1", 12)),
+					new RequestParameters(MapInit.t("item1", 12)),
 					true
 				},
 			/*new Object[] {
 					Arrays.asList(Rules.forName("item1", true).setType(Number.class)),
-					MapInit.properties(MapInit.t("item1", 12)),
+					new RequestParameters(MapInit.t("item1", 12)),
 					true
 				},
 			new Object[] {
 					Arrays.asList(Rules.forName("item1", true).setType(Number.class)),
-					MapInit.properties(MapInit.t("item1", 12.4)),
+					new RequestParameters(MapInit.t("item1", 12.4)),
 					true
 				},*/
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setType(Integer.class)),
-					MapInit.properties(MapInit.t("item1", 12.4)),
+					new RequestParameters(MapInit.t("item1", 12.4)),
 					false
 				},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setType(Double.class)),
-					MapInit.properties(MapInit.t("item1", 12.4)),
+					new RequestParameters(MapInit.t("item1", 12.4)),
 					true
 				},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setType(String.class)),
-					MapInit.properties(MapInit.t("item1", 12.4)),
+					new RequestParameters(MapInit.t("item1", 12.4)),
 					true
 				},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setType(Boolean.class)),
-					MapInit.properties(MapInit.t("item1", "value")),
+					new RequestParameters(MapInit.t("item1", "value")),
 					true
 				},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setType(Boolean.class)),
-					MapInit.properties(MapInit.t("item1", "true")),
+					new RequestParameters(MapInit.t("item1", "true")),
 					true
 				},
 		};
@@ -195,7 +195,7 @@ public class ValidatorTest {
 	
 	@Test
 	@Parameters(method = "dataValidateNumberWorks")
-	public void testValidateNumberWorks(List<ItemRules> rules, Properties prop, boolean expected) {
+	public void testValidateNumberWorks(List<ItemRules> rules, RequestParameters prop, boolean expected) {
 		Validator val = new Validator(true);
 		rules.forEach((rule)->{
 			val.addRule(rule);
@@ -207,27 +207,27 @@ public class ValidatorTest {
 		return new Object[] {
 			new Object[] {
 				Arrays.asList(ItemRules.forName("item1", true).setMinValue(0).setMaxValue(10)),
-				MapInit.properties(MapInit.t("item1", 0)),
+				new RequestParameters(MapInit.t("item1", 0)),
 				true	
 			},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setMinValue(0).setMaxValue(10)),
-					MapInit.properties(MapInit.t("item1", -1)),
+					new RequestParameters(MapInit.t("item1", -1)),
 					false	
 				},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setMinValue(0).setMaxValue(10)),
-					MapInit.properties(MapInit.t("item1", 10)),
+					new RequestParameters(MapInit.t("item1", 10)),
 					true	
 				},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setMinValue(0).setMaxValue(10)),
-					MapInit.properties(MapInit.t("item1", 5)),
+					new RequestParameters(MapInit.t("item1", 5)),
 					true	
 				},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setMinValue(0).setMaxValue(10)),
-					MapInit.properties(MapInit.t("item1", 12)),
+					new RequestParameters(MapInit.t("item1", 12)),
 					false	
 				}
 		};
@@ -235,7 +235,7 @@ public class ValidatorTest {
 	
 	@Test
 	@Parameters(method = "dataValidateTextWorks")
-	public void testValidateTextWorks(List<ItemRules> rules, Properties prop, boolean expected) {
+	public void testValidateTextWorks(List<ItemRules> rules, RequestParameters prop, boolean expected) {
 		Validator val = new Validator(true);
 		rules.forEach((rule)->{
 			val.addRule(rule);
@@ -247,22 +247,22 @@ public class ValidatorTest {
 		return new Object[] {
 			new Object[] {
 				Arrays.asList(ItemRules.forName("item1", true).setMaxLength(10).setMinLength(2).setRegex(".*")),
-				MapInit.properties(MapInit.t("item1", "correct")),
+				new RequestParameters(MapInit.t("item1", "correct")),
 				true
 			},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setMaxLength(10).setMinLength(2).setRegex(".*")),
-					MapInit.properties(MapInit.t("item1", "a")),
+					new RequestParameters(MapInit.t("item1", "a")),
 					false
 				},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setMaxLength(10).setMinLength(2).setRegex(".*")),
-					MapInit.properties(MapInit.t("item1", "soooooo long")),
+					new RequestParameters(MapInit.t("item1", "soooooo long")),
 					false
 				},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setRegex("^[0-9]$")),
-					MapInit.properties(MapInit.t("item1", "not a number")),
+					new RequestParameters(MapInit.t("item1", "not a number")),
 					false
 				}
 		};
@@ -270,7 +270,7 @@ public class ValidatorTest {
 
 	@Test
 	@Parameters(method = "dataValidateWithStrickWorks")
-	public void testValidateWithStrickWorks(boolean strict, List<ItemRules> rules, Properties prop, boolean expected) {
+	public void testValidateWithStrickWorks(boolean strict, List<ItemRules> rules, RequestParameters prop, boolean expected) {
 		Validator val = new Validator(strict);
 		rules.forEach((rule)->{
 			val.addRule(rule);
@@ -284,7 +284,7 @@ public class ValidatorTest {
 				true, Arrays.asList(
 						ItemRules.forName("item1", true),
 						ItemRules.forName("item2", true)
-				), MapInit.properties(
+				), new RequestParameters(
 					MapInit.t("item1", ""),
 					MapInit.t("item2", "")
 				), true
@@ -294,7 +294,7 @@ public class ValidatorTest {
 							ItemRules.forName("item1", true),
 							ItemRules.forName("item2", true),
 							ItemRules.forName("item3", false)
-					), MapInit.properties(
+					), new RequestParameters(
 						MapInit.t("item1", ""),
 						MapInit.t("item2", "")
 					), true
@@ -304,7 +304,7 @@ public class ValidatorTest {
 							ItemRules.forName("item1", true),
 							ItemRules.forName("item2", true),
 							ItemRules.forName("item3", true)
-					), MapInit.properties(
+					), new RequestParameters(
 						MapInit.t("item1", ""),
 						MapInit.t("item2", "")
 					), false
@@ -312,7 +312,7 @@ public class ValidatorTest {
 			new Object[] {
 					true, Arrays.asList(
 							ItemRules.forName("item1", true)
-					), MapInit.properties(
+					), new RequestParameters(
 						MapInit.t("item1", ""),
 						MapInit.t("item2", "")
 					), false
@@ -322,7 +322,7 @@ public class ValidatorTest {
 							ItemRules.forName("item1", true),
 							ItemRules.forName("item2", true),
 							ItemRules.forName("item3", false)
-					), MapInit.properties(
+					), new RequestParameters(
 						MapInit.t("item1", ""),
 						MapInit.t("item3", "")
 					), false
@@ -332,7 +332,7 @@ public class ValidatorTest {
 							ItemRules.forName("item1", true),
 							ItemRules.forName("item2", true),
 							ItemRules.forName("item3", false)
-					), MapInit.properties(
+					), new RequestParameters(
 						MapInit.t("item1", ""),
 						MapInit.t("item2", ""),
 						MapInit.t("item3", "")
@@ -342,7 +342,7 @@ public class ValidatorTest {
 					true, Arrays.asList(
 							ItemRules.forName("item1", true),
 							ItemRules.forName("item2", true)
-					), MapInit.properties(
+					), new RequestParameters(
 						MapInit.t("item1", ""),
 						MapInit.t("item2", ""),
 						MapInit.t("item3", "")
@@ -352,7 +352,7 @@ public class ValidatorTest {
 					false, Arrays.asList(
 							ItemRules.forName("item1", true),
 							ItemRules.forName("item2", true)
-					), MapInit.properties(
+					), new RequestParameters(
 						MapInit.t("item1", ""),
 						MapInit.t("item2", ""),
 						MapInit.t("item3", "")
@@ -363,7 +363,7 @@ public class ValidatorTest {
 							ItemRules.forName("item1", true),
 							ItemRules.forName("item2", true),
 							ItemRules.forName("item3", false)
-					), MapInit.properties(
+					), new RequestParameters(
 						MapInit.t("item1", ""),
 						MapInit.t("item3", "")
 					), false

@@ -26,6 +26,7 @@ import exception.NotAllowedActionException;
 import helper.AuthorizationHelper;
 import socketCommunication.http.HttpMethod;
 import socketCommunication.http.StatusCode;
+import socketCommunication.http.server.RequestParameters;
 import socketCommunication.http.server.RestApiResponse;
 import socketCommunication.http.server.RestApiServerResponseFactory;
 import toti.annotations.MappedUrl;
@@ -109,7 +110,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			String fullUrl,
 			String protocol,
 			Properties header,
-			Properties params,
+			RequestParameters params,
 			String ip) throws IOException {
 		/*System.err.println("URL: " + fullUrl);
 		System.err.println("Header: " + header);
@@ -138,7 +139,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	
 	private RestApiResponse getAuthenticatedResponse(HttpMethod method,
 			String url,
-			Properties params,
+			RequestParameters params,
 			Properties header,
 			String ip) throws Exception {
 		Identity identity = authenticator.authenticate(header);
@@ -150,7 +151,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			HttpMethod method,
 			String url,
 			Properties header,
-			Properties params,
+			RequestParameters params,
 			Identity identity,
 			String ip) throws ServerException {
 		Locale locale = language.getLocale(header);
@@ -160,7 +161,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private RestApiResponse getNormalizedResponse(
 			HttpMethod method,
 			String url,
-			Properties params,
+			RequestParameters params,
 			Identity identity,
 			String ip,
 			Locale locale) throws ServerException {
@@ -171,7 +172,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private RestApiResponse getRoutedResponse(
 			HttpMethod method,
 			String url,
-			Properties params,
+			RequestParameters params,
 			Identity identity,
 			String ip,
 			Locale locale) throws ServerException {
@@ -184,7 +185,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private RestApiResponse getMappedResponse(
 			HttpMethod method,
 			String url,
-			Properties params,
+			RequestParameters params,
 			Identity identity,
 			String ip,
 			Locale locale) throws ServerException {
@@ -227,7 +228,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	
 	private RestApiResponse getControllerResponse(
 			ResponseHeaders headers,
-			MappedUrl mapped, Properties params, Identity identity, Locale locale) throws ServerException {
+			MappedUrl mapped, RequestParameters params, Identity identity, Locale locale) throws ServerException {
 		try {
 			authorize(mapped, params, identity);
 		} catch (ServerException e) {
@@ -294,7 +295,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		}
 	}
 
-	private void authorize(MappedUrl mapped, Properties params, Identity identity) throws ServerException {
+	private void authorize(MappedUrl mapped, RequestParameters params, Identity identity) throws ServerException {
 		if (mapped.isSecured()) {
 			if (!identity.isPresent()) {
 				throw new ServerException(401, "Method require logged user");

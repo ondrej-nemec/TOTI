@@ -29,6 +29,9 @@ public class ParseObject {
 			if (object.toString().isEmpty()) { return null; }
 			return Long.parseLong(object + "");
 		} else if (clazz.isAssignableFrom(Map.class)) {
+			if (object instanceof Map) {
+				return object;
+			}
 			if (object.toString().isEmpty()) { return null; }
 			try {
 				return new JsonReader().read(object.toString());

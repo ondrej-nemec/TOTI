@@ -22,7 +22,7 @@ public class HtmlTest {
 		return new Object[] {
 			new Object[] {"${name}", "\"+(item.name)+\""},
 			new Object[] {"${ name }", "\"+(item.name)+\""},
-			new Object[] {"${name123}", "\"+(item.name123)+\\\""},
+			new Object[] {"${name123}", "\"+(item.name123)+\""},
 			new Object[] {"${name_123  }", "\"+(item.name_123)+\""},
 			new Object[] {"${name-123}", "\"+(item.name-123)+\""},
 			new Object[] {"name", "name"},

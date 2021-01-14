@@ -6,13 +6,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import json.JsonReader;
 import json.JsonStreamException;
+import socketCommunication.http.server.RequestParameters;
 import socketCommunication.http.server.UploadedFile;
 import toti.registr.Registr;
 import translator.Translator;
@@ -50,7 +50,7 @@ public class Validator {
 		return this;
 	}
 	
-	public Map<String, List<String>> validate(Properties prop, Translator translator) {
+	public Map<String, List<String>> validate(RequestParameters prop, Translator translator) {
 		Map<String, List<String>> errors = new HashMap<>();
 		List<String> names = new ArrayList<>();
 		rules.forEach((rule)->{
@@ -74,7 +74,7 @@ public class Validator {
 		return errors;
 	}
 	
-	private void swichRules(ItemRules rule, Map<String, List<String>> errors, Properties prop, Translator translator) {
+	private void swichRules(ItemRules rule, Map<String, List<String>> errors, RequestParameters prop, Translator translator) {
 		if (prop.get(rule.getName()) == null) {
 			checkRule(
 					Optional.of(rule.getRequired()),
@@ -193,8 +193,9 @@ public class Validator {
 					(validator)->{
 						try {
 							Map<String, Object> json = new JsonReader().read(o.toString());
-							Properties fields = new Properties();
+							RequestParameters fields = new RequestParameters();
 							fields.putAll(json);
+							prop.put(rule.getName(), fields);
 							errors.putAll(validator.validate(fields, translator));
 							return false;
 						} catch (JsonStreamException e) {

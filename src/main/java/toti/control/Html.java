@@ -4,7 +4,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import toti.templating.Template;
-
+// TODO zjistit uzitecnost
+@Deprecated
 public class Html {
 
 	public static Html element(String element) {

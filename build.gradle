@@ -6,7 +6,9 @@ repositories {
 }
 
 dependencies {
-	implementation 'com.github.ondrej-nemec:javainit:da3a691bf8'
+	implementation 'com.github.ondrej-nemec:javainit:474f2bb494'
+	
+	// compile files("${System.properties['java.home']}/../lib/tools.jar")
 	
 	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'

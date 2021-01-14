@@ -20,17 +20,22 @@ public class EntityValidator {
 			.addRule(ItemRules.forName("pageIndex", true))
 			.addRule(ItemRules.forName("pageSize", true))
 			.addRule(ItemRules.forName("filters", true).setMapSpecification(new Validator(true)
-				// TODO values check
 				.addRule(ItemRules.forName("name", false))
 				.addRule(ItemRules.forName("rank", false).setType(Integer.class))
 				.addRule(ItemRules.forName("edited", false))
 				.addRule(ItemRules.forName("FK_id", false).setType(Integer.class).setAllowedValues(Arrays.asList(
 					"1", "2", "3", "4"
 				)))
-				.addRule(ItemRules.forName("is_main", false).setType(Boolean.class))
+				.addRule(ItemRules.forName("is_main", false).setType(Boolean.class).setChangeValue((value)->{
+					if (value != null && value.equals("true")) {
+						return "t";
+					} else if (value != null && value.equals("false")) {
+						return "f";
+					}
+					return value;
+				}))
 			))
 			.addRule(ItemRules.forName("sorting", true).setMapSpecification(new Validator(true)
-				 // TODO values check
 				.addRule(ItemRules.forName("name", false).setAllowedValues(Arrays.asList("DESC", "ASC")))
 				.addRule(ItemRules.forName("rank", false).setAllowedValues(Arrays.asList("DESC", "ASC")))
 				.addRule(ItemRules.forName("edited", false).setAllowedValues(Arrays.asList("DESC", "ASC")))
