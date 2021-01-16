@@ -24,6 +24,7 @@ public class ItemRules {
 	private final Function<Translator, String> onRequiredError;
 	private Optional<Class<?>> expectedType = Optional.empty();
 	private Function<Translator, String> onExpectedTypeError = (t)->"";
+	private boolean changeValueByType = false;
 	
 	private Optional<String> regex = Optional.empty();
 	private Function<Translator, String> onRegexError = (t)->"";
@@ -48,6 +49,7 @@ public class ItemRules {
 	private Function<Translator, String> onAllowedValuesError = (t)->"";
 	
 	private Optional<Validator> mapSpecification = Optional.empty();
+	private Optional<ItemRules> listSpecification = Optional.empty();
 	
 	private ItemRules(String name, boolean required, Function<Translator, String> onRequiredError) {
 		this.name = name;
@@ -182,9 +184,18 @@ public class ItemRules {
 	}
 	
 	public ItemRules setType(Class<?> clazz, Function<Translator, String> onExpectedTypeError) {
+		return setType(clazz, false, onExpectedTypeError);
+	}
+	
+	public ItemRules setType(Class<?> clazz, boolean changeValueByType) {
+		return setType(clazz, changeValueByType, (t)->"Value must be " + clazz);
+	}
+	
+	public ItemRules setType(Class<?> clazz, boolean changeValueByType, Function<Translator, String> onExpectedTypeError) {
 		if (this.expectedType.isPresent()) {
 			throw new LogicException("You cannot set an already set value");
 		}
+		this.changeValueByType = changeValueByType;
 		this.onExpectedTypeError = onExpectedTypeError;
 		this.expectedType = Optional.of(clazz);
 		return this;
@@ -194,7 +205,12 @@ public class ItemRules {
 		this.mapSpecification = Optional.of(mapSpecification);
 		return this;
 	}
-
+/*
+	public ItemRules setListSpecification(ItemRules listSpecification) {
+		this.listSpecification = Optional.of(listSpecification);
+		return this;
+	}
+*/
 	public ItemRules setChangeValue(Function<Object, Object> changeValue) {
 		this.changeValue = changeValue;
 		return this;
@@ -212,6 +228,10 @@ public class ItemRules {
 
 	public Optional<Class<?>> getExpectedType() {
 		return expectedType;
+	}
+	
+	public boolean getChangeValueByType() {
+		return changeValueByType;
 	}
 
 	public Optional<String> getRegex() {
@@ -296,6 +316,10 @@ public class ItemRules {
 
 	public Optional<Validator> getMapSpecification() {
 		return mapSpecification;
+	}
+
+	public Optional<ItemRules> getListSpecification() {
+		return listSpecification;
 	}
 
 	public Function<Object, Object> getChangeValue() {

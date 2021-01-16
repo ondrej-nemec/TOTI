@@ -89,7 +89,11 @@ public class Validator {
 					rule.getExpectedType(), 
 					(expectedType)->{
 						try {
-							ParseObject.parse(expectedType, o);
+							// ParseObject.parse(expectedType, o);
+							Object newO = ParseObject.parse(expectedType, o);
+							if (rule.getChangeValueByType()) {
+								prop.put(rule.getName(), newO);
+							}
 							return false;
 						} catch (ClassCastException | NumberFormatException e) {
 							return true;
@@ -191,22 +195,33 @@ public class Validator {
 			checkRule(
 					rule.getMapSpecification(),
 					(validator)->{
-						try {
-							Map<String, Object> json = new JsonReader().read(o.toString());
-							RequestParameters fields = new RequestParameters();
-							fields.putAll(json);
-							prop.put(rule.getName(), fields);
-							errors.putAll(validator.validate(fields, translator));
-							return false;
-						} catch (JsonStreamException e) {
-							return true;
+						if (o instanceof String) {
+							try {
+								Map<String, Object> json = new JsonReader().read(o.toString());
+								RequestParameters fields = new RequestParameters();
+								fields.putAll(json);
+								prop.put(rule.getName(), fields);
+								errors.putAll(validator.validate(fields, translator));
+								return false;
+							} catch (JsonStreamException e) {
+								return true;
+							}
 						}
+						RequestParameters fields = new RequestParameters();
+						fields.putAll(getMap(o));
+						errors.putAll(validator.validate(fields, translator));
+						return false;
 					},
 					errors,
 					rule.getName(),
 					rule.getOnAllowedFileTypesError().apply(translator)
 			);
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Map<String, Object> getMap(Object o) {
+		return Map.class.cast(o);
 	}
 	
 	private <T> void checkRule(

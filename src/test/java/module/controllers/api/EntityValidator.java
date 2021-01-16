@@ -1,6 +1,8 @@
 package module.controllers.api;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import toti.validation.ItemRules;
 import toti.validation.Validator;
@@ -13,6 +15,21 @@ public class EntityValidator {
 	public static void init() {
 		getGridValidator();
 		getFormValidator();
+		test();
+	}
+	
+	public static Validator test() {
+		return Validator.create("test", false)
+				.addRule(ItemRules.forName("intAsString", false).setType(Integer.class))
+				.addRule(ItemRules.forName("intAsInt", false).setType(Integer.class, true))
+				.addRule(ItemRules.forName("aa", true).setType(List.class))
+				.addRule(ItemRules.forName("b", true).setType(Map.class).setMapSpecification(
+						new Validator(false)
+						 .addRule(ItemRules.forName("a", true))
+						 .addRule(ItemRules.forName("b", true))
+						 .addRule(ItemRules.forName("c", true))
+				))
+				.addRule(ItemRules.forName("c", true).setType(Map.class));
 	}
 	
 	public static Validator getGridValidator() {

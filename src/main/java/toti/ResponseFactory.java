@@ -253,6 +253,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				classesList.add(clazz);
 				if (name == null) {
 					valuesList.add(params);
+				} else if (clazz.isInstance(params.get(name))) {
+					valuesList.add(params.get(name));
 				} else {
 					valuesList.add(ParseObject.parse(clazz, params.get(name)));
 				}

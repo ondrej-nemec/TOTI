@@ -3,12 +3,12 @@ package module.controllers.api;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import common.Logger;
 import module.AuditTrail;
 import socketCommunication.http.HttpMethod;
 import socketCommunication.http.StatusCode;
+import socketCommunication.http.server.RequestParameters;
 import toti.annotations.inject.ClientIdentity;
 import toti.annotations.inject.Translate;
 import toti.annotations.url.Action;
@@ -56,6 +56,22 @@ public class EntityApiController {
 		this.logger = logger;
 		this.auditTrail = auditTrail;
 	}
+	
+	@Secured({@Domain(name=SECURITY_DOMAIN, action=helper.Action.READ)})
+	public void empty() {}
+	
+	@Action(value = "params", validator = "test")
+	public Response params(
+			@Params RequestParameters prop,
+			@Param("json") Map<String, Object> json,
+			@Param("intAsInt") Integer in) {
+		prop.forEach((i, item)->{
+			System.err.println(i + ": " + item + " " + item.getClass());
+		});
+		System.err.println();
+		System.err.println(json);
+		return Response.getJson(StatusCode.OK, new HashMap<>());
+	}
 
 	@Action(value = "all", validator = EntityValidator.NAME_GRID)
 	@Method({HttpMethod.GET})
@@ -65,14 +81,9 @@ public class EntityApiController {
 			@Param("pageSize") Integer pageSize,
 			@Param("filters") Map<String, Object> filters,
 			@Param("sorting") Map<String, Object> sorting,
-			@Params Properties prop
+			@Params RequestParameters prop
 		) {
 		try {
-			if (filters.get("is_main") != null && filters.get("is_main").equals("true")) {
-				filters.put("is_main",  "t");
-			} else if (filters.get("is_main") != null && filters.get("is_main").equals("false")) {
-				filters.put("is_main",  "f");
-			}
 			List<Map<String, Object>> items = dao.getAll(pageIndex, pageSize, filters, sorting);
 			
 			Map<String, Object> json = new HashMap<>();
@@ -119,14 +130,10 @@ public class EntityApiController {
 	@Action(value = "update", validator = EntityValidator.NAME_FORM)
 	@Method({HttpMethod.PUT})
 	//@Secured({@Domain(name=SECURITY_DOMAIN, action=helper.Action.UPDATE)})
-	public Response update(@ParamUrl("id") Integer id, @Params Properties prop) {
+	public Response update(@ParamUrl("id") Integer id, @Params RequestParameters updated) {
 		try {
 			Map<String, Object> origin = dao.get(id);
-			Map<String, Object> updated = new HashMap<>();
-			prop.forEach((key, value)->{
-				updated.put(key.toString(), value);
-			});
-			
+						
 			editValues(updated, false);
 			
 			dao.update(id, updated);
@@ -145,12 +152,8 @@ public class EntityApiController {
 	@Action(value = "insert", validator = EntityValidator.NAME_FORM)
 	@Method({HttpMethod.PUT})
 	//@Secured({@Domain(name=SECURITY_DOMAIN, action=helper.Action.CREATE)})
-	public Response insert(@Params Properties prop) {
+	public Response insert(@Params RequestParameters inserted) {
 		try {
-			Map<String, Object> inserted = new HashMap<>();
-			prop.forEach((key, value)->{
-				inserted.put(key.toString(), value);
-			});
 			//inserted.remove(UNIQUE);
 			editValues(inserted, true);
 			
