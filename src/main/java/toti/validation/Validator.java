@@ -209,6 +209,7 @@ public class Validator {
 						}
 						RequestParameters fields = new RequestParameters();
 						fields.putAll(getMap(o));
+						prop.put(rule.getName(), fields);
 						errors.putAll(validator.validate(fields, translator));
 						return false;
 					},
