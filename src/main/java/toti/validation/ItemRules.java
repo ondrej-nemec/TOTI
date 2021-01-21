@@ -9,6 +9,10 @@ import translator.Translator;
 
 public class ItemRules {
 
+	public static ItemRules defaultRule() {
+		return new ItemRules("", false, (t)->"");
+	}
+	
 	public static ItemRules forName(String name, boolean required) {
 		return new ItemRules(name, required, (t)->"This item is required");
 	}
@@ -49,9 +53,9 @@ public class ItemRules {
 	private Function<Translator, String> onAllowedValuesError = (t)->"";
 	
 	private Optional<Validator> mapSpecification = Optional.empty();
-	private Optional<ItemRules> listSpecification = Optional.empty();
+	private Optional<Validator> listSpecification = Optional.empty();
 	
-	private ItemRules(String name, boolean required, Function<Translator, String> onRequiredError) {
+	private ItemRules(String name, Boolean required, Function<Translator, String> onRequiredError) {
 		this.name = name;
 		this.required = required;
 		this.onRequiredError = onRequiredError;
@@ -184,7 +188,7 @@ public class ItemRules {
 	}
 	
 	public ItemRules setType(Class<?> clazz, Function<Translator, String> onExpectedTypeError) {
-		return setType(clazz, false, onExpectedTypeError);
+		return setType(clazz, true, onExpectedTypeError);
 	}
 	
 	public ItemRules setType(Class<?> clazz, boolean changeValueByType) {
@@ -205,12 +209,12 @@ public class ItemRules {
 		this.mapSpecification = Optional.of(mapSpecification);
 		return this;
 	}
-/*
-	public ItemRules setListSpecification(ItemRules listSpecification) {
+
+	public ItemRules setListSpecification(Validator listSpecification) {
 		this.listSpecification = Optional.of(listSpecification);
 		return this;
 	}
-*/
+
 	public ItemRules setChangeValue(Function<Object, Object> changeValue) {
 		this.changeValue = changeValue;
 		return this;
@@ -318,7 +322,7 @@ public class ItemRules {
 		return mapSpecification;
 	}
 
-	public Optional<ItemRules> getListSpecification() {
+	public Optional<Validator> getListSpecification() {
 		return listSpecification;
 	}
 

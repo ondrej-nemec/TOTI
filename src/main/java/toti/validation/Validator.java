@@ -10,8 +10,6 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import json.JsonReader;
-import json.JsonStreamException;
 import socketCommunication.http.server.RequestParameters;
 import socketCommunication.http.server.UploadedFile;
 import toti.registr.Registr;
@@ -21,6 +19,7 @@ public class Validator {
 	
 	private final List<ItemRules> rules;
 	private final boolean strictList;
+	private final Optional<ItemRules> defaultRule;
 	private final Function<Translator, String> onStrictListError;
 	
 	public static Validator create(String uniqueName, boolean strictList, Function<Translator, String> onStrictListError) {
@@ -40,9 +39,22 @@ public class Validator {
 	}
 	
 	public Validator(boolean strictList, Function<Translator, String> onStrictListError) {
+		this(strictList, Optional.empty(), onStrictListError);
+	}
+	
+	public Validator(ItemRules defaultRule) {
+		this(false, Optional.of(defaultRule), (trans)->"Parameters not match default rule");
+	}
+	
+	public Validator(ItemRules defaultRule, Function<Translator, String> onStrictListError) {
+		this(false, Optional.of(defaultRule), onStrictListError);
+	}
+	
+	private Validator(boolean strictList, Optional<ItemRules> defaultRule, Function<Translator, String> onStrictListError) {
 		this.strictList = strictList;
 		this.onStrictListError = onStrictListError;
 		this.rules = new LinkedList<>();
+		this.defaultRule = defaultRule;
 	}
 	
 	public Validator addRule(ItemRules rule) {
@@ -55,44 +67,60 @@ public class Validator {
 		List<String> names = new ArrayList<>();
 		rules.forEach((rule)->{
 			names.add(rule.getName());
-			swichRules(rule, errors, prop, translator);
+			swichRules(rule.getName(), rule, errors, prop, translator);
 			Object newValue = rule.getChangeValue().apply(prop.get(rule.getName()));
 			if (newValue != null) {
 				prop.put(rule.getName(), newValue);
 			}
 		});
+		List<String> notChecked = new ArrayList<>(prop.keySet());
+		notChecked.removeAll(names);
 		checkRule(
-				Optional.of(new ArrayList<>(prop.keySet())),
+				Optional.of(notChecked),
 				(incomingData)->{
-					incomingData.removeAll(names);
 					return incomingData.size() > 0 && strictList;
 				},
 				errors,
 				"form",
 				onStrictListError.apply(translator)
 		);
+		if (!strictList && defaultRule.isPresent()) {
+			ItemRules rule = defaultRule.get();
+			notChecked.forEach((notCheckedName)->{
+				swichRules(notCheckedName, rule, errors, prop, translator);
+				Object newValue = rule.getChangeValue().apply(prop.get(notCheckedName));
+				if (newValue != null) {
+					prop.put(notCheckedName, newValue);
+				}
+			});
+		}
 		return errors;
 	}
 	
-	private void swichRules(ItemRules rule, Map<String, List<String>> errors, RequestParameters prop, Translator translator) {
-		if (prop.get(rule.getName()) == null) {
+	private void swichRules(
+			String propertyName,
+			ItemRules rule,
+			Map<String,
+			List<String>> errors,
+			RequestParameters prop, 
+			Translator translator) {
+		if (prop.get(propertyName) == null) {
 			checkRule(
 					Optional.of(rule.getRequired()),
 					(required)->required,
 					errors,
-					rule.getName(), 
+					propertyName, 
 					rule.getOnRequiredError().apply(translator)
 			);
 		} else {
-			Object o = prop.get(rule.getName());
+			Object o = prop.get(propertyName);
 			checkRule(
 					rule.getExpectedType(), 
 					(expectedType)->{
 						try {
-							// ParseObject.parse(expectedType, o);
 							Object newO = ParseObject.parse(expectedType, o);
 							if (rule.getChangeValueByType()) {
-								prop.put(rule.getName(), newO);
+								prop.put(propertyName, newO);
 							}
 							return false;
 						} catch (ClassCastException | NumberFormatException e) {
@@ -100,28 +128,28 @@ public class Validator {
 						}
 					},
 					errors,
-					rule.getName(),
+					propertyName,
 					rule.getOnExpectedTypeError().apply(translator)
 			);
 			checkRule(
 					rule.getAllowedValues(),
 					(allowedList)->!allowedList.contains(o),
 					errors,
-					rule.getName(),
+					propertyName,
 					rule.getOnAllowedValuesError().apply(translator)
 			);
 			checkRule(
 					rule.getMaxLength(), 
 					(maxLength)->maxLength.intValue() < o.toString().length(),
 					errors,
-					rule.getName(),
+					propertyName,
 					rule.getOnMaxLengthError().apply(translator)
 			);
 			checkRule(
 					rule.getMinLength(),
 					(minLength)->minLength.intValue() > o.toString().length(),
 					errors,
-					rule.getName(),
+					propertyName,
 					rule.getOnMinLengthError().apply(translator)
 			);
 			checkRule(
@@ -135,7 +163,7 @@ public class Validator {
 						}
 					},
 					errors,
-					rule.getName(),
+					propertyName,
 					rule.getOnMaxValueError().apply(translator)
 			);
 			checkRule(
@@ -149,7 +177,7 @@ public class Validator {
 						}
 					},
 					errors,
-					rule.getName(),
+					propertyName,
 					rule.getOnMinValueError().apply(translator)
 			);
 			checkRule(
@@ -159,7 +187,7 @@ public class Validator {
 						return !m.find();
 					},
 					errors,
-					rule.getName(),
+					propertyName,
 					rule.getOnRegexError().apply(translator)
 			);
 			checkRule(
@@ -169,7 +197,7 @@ public class Validator {
 						return file.getContent().size() > maxSize;
 					},
 					errors,
-					rule.getName(),
+					propertyName,
 					rule.getOnFileMaxSizeError().apply(translator)
 			);
 			checkRule(
@@ -179,7 +207,7 @@ public class Validator {
 						return file.getContent().size() < minSize;
 					},
 					errors,
-					rule.getName(),
+					propertyName,
 					rule.getOnFileMinSizeError().apply(translator)
 			);
 			checkRule(
@@ -189,37 +217,50 @@ public class Validator {
 						return !type.contains(file.getContentType());
 					},
 					errors,
-					rule.getName(),
+					propertyName,
 					rule.getOnAllowedFileTypesError().apply(translator)
 			);
 			checkRule(
 					rule.getMapSpecification(),
 					(validator)->{
-						if (o instanceof String) {
-							try {
-								Map<String, Object> json = new JsonReader().read(o.toString());
-								RequestParameters fields = new RequestParameters();
-								fields.putAll(json);
-								prop.put(rule.getName(), fields);
-								errors.putAll(validator.validate(fields, translator));
-								return false;
-							} catch (JsonStreamException e) {
-								return true;
-							}
-						}
 						RequestParameters fields = new RequestParameters();
-						fields.putAll(getMap(o));
-						prop.put(rule.getName(), fields);
+						fields.putAll(getMap(ParseObject.parse(Map.class, o)));
+						prop.put(propertyName, fields);
 						errors.putAll(validator.validate(fields, translator));
 						return false;
 					},
 					errors,
-					rule.getName(),
+					propertyName,
 					rule.getOnAllowedFileTypesError().apply(translator)
+			);
+			checkRule(
+					rule.getListSpecification(), 
+					(validator)->{
+						try {
+							List<Object> list = getList(ParseObject.parse(List.class, o));
+							RequestParameters fields = new RequestParameters();
+							for (int i = 0; i < list.size(); i++) {
+								fields.put(i + "", list.get(i));
+							}
+							errors.putAll(validator.validate(fields, translator));
+							prop.put(propertyName, new ArrayList<>(fields.values()));
+							return false;
+						} catch (ClassCastException | NumberFormatException e) {
+							return true;
+						}
+					},
+					errors,
+					propertyName,
+					rule.getOnExpectedTypeError().apply(translator)
 			);
 		}
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	private List<Object> getList(Object o) {
+		return List.class.cast(o);
+	}
+
 	@SuppressWarnings("unchecked")
 	private Map<String, Object> getMap(Object o) {
 		return Map.class.cast(o);

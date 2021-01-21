@@ -1,12 +1,13 @@
 package toti.validation;
 
+import java.util.List;
 import java.util.Map;
 
 import json.JsonReader;
 import json.JsonStreamException;
 
 public class ParseObject {
-
+	
 	public static Object parse(Class<?> clazz, Object object) {
 		if (object == null) {
 			return null;
@@ -35,6 +36,16 @@ public class ParseObject {
 			if (object.toString().isEmpty()) { return null; }
 			try {
 				return new JsonReader().read(object.toString());
+			} catch (JsonStreamException e) {
+				throw new RuntimeException(e);
+			}
+		} else if (clazz.isAssignableFrom(List.class)) {
+			if (object instanceof List) {
+				return object;
+			}
+			if (object.toString().isEmpty()) { return null; }
+			try {
+				return new JsonReader().read(String.format("{\"data\": %s}", object.toString())).get("data");
 			} catch (JsonStreamException e) {
 				throw new RuntimeException(e);
 			}

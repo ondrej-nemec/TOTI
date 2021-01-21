@@ -25,6 +25,9 @@ import translator.Translator;
 @RunWith(JUnitParamsRunner.class)
 public class ValidatorTest {
 
+	// TODO test default rule
+	// TODO test list specification
+	
 	@Test
 	public void testValidateChangeValue() {
 		Validator val = new Validator(true);
