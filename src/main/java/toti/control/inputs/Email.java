@@ -12,6 +12,7 @@ public class Email implements Input {
 	private final boolean required;
 	private boolean disabled = false;
 	private String value = null;
+	private String placeholder = null;
 	private final Map<String, String> params = new HashMap<>();
 	
 	public static Email input(String name, boolean required) {
@@ -44,6 +45,11 @@ public class Email implements Input {
 		this.disabled = disabled;
 		return this;
 	}
+
+	public Email setPlaceholder(String placeholder) {
+		this.placeholder = placeholder;
+		return this;
+	}
 	
 	@Override
 	public Map<String, Object> getInputSettings() {
@@ -65,6 +71,9 @@ public class Email implements Input {
 		}
 		if (value != null) {
 			json.put("value", value);
+		}
+		if (placeholder != null) {
+			json.put("placeholder", placeholder);
 		}
 		return json;
 	}

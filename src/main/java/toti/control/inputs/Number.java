@@ -12,6 +12,7 @@ public class Number implements Input, Filter {
 	private final String type;
 	private final boolean required;
 	private boolean disabled = false;
+	private String placeholder = null;
 	
 	private Integer step = null;
 	private Integer min = null;
@@ -71,6 +72,11 @@ public class Number implements Input, Filter {
 		return this;
 	}
 
+	public Number setPlaceholder(String placeholder) {
+		this.placeholder = placeholder;
+		return this;
+	}
+
 	@Override
 	public String getType() {
 		return type;
@@ -120,6 +126,9 @@ public class Number implements Input, Filter {
 		}*/
 		if (value != null) {
 			json.put("value", value);
+		}
+		if (placeholder != null) {
+			json.put("placeholder", placeholder);
 		}
 		return json;
 	}

@@ -11,6 +11,7 @@ public class Password implements Input {
 	private String title;	
 	private final boolean required;
 	private boolean disabled = false;
+	private String placeholder = null;
 	
 	private Integer size = null;
 	private Integer maxLength = null;
@@ -63,6 +64,11 @@ public class Password implements Input {
 		this.disabled = disabled;
 		return this;
 	}
+
+	public Password setPlaceholder(String placeholder) {
+		this.placeholder = placeholder;
+		return this;
+	}
 	
 	@Override
 	public Map<String, Object> getInputSettings() {
@@ -93,6 +99,9 @@ public class Password implements Input {
 		}
 		if (value != null) {
 			json.put("value", value);
+		}
+		if (placeholder != null) {
+			json.put("placeholder", placeholder);
 		}
 		return json;
 	}

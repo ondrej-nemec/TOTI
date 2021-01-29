@@ -15,6 +15,7 @@ public class TextArea implements Input {
 	private boolean disabled = false;
 	private String value = null;
 	private Integer maxLength;
+	private String placeholder = null;
 	private final Map<String, String> params = new HashMap<>();
 	
 	public static TextArea input(String name, boolean required) {
@@ -65,6 +66,11 @@ public class TextArea implements Input {
 		return this;
 	}
 
+	public TextArea setPlaceholder(String placeholder) {
+		this.placeholder = placeholder;
+		return this;
+	}
+
 	@Override
 	public Map<String, Object> getInputSettings() {
 		Map<String, Object> json = new HashMap<>();
@@ -90,6 +96,9 @@ public class TextArea implements Input {
 		}
 		if (maxLength != null) {
 			json.put("maxlenght", maxLength);
+		}
+		if (placeholder != null) {
+			json.put("placeholder", placeholder);
 		}
 		return json;
 	}

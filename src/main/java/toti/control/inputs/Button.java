@@ -3,7 +3,6 @@ package toti.control.inputs;
 import java.util.HashMap;
 import java.util.Map;
 
-import toti.control.Html;
 import toti.control.Jsonable;
 
 public class Button implements Input, Jsonable {
@@ -13,7 +12,7 @@ public class Button implements Input, Jsonable {
 	private String title = null;
 	private boolean ajax = false;
 	private String method = "get";
-	private Html renderer = null;
+//	private Html renderer = null;
 	private final Map<String, String> params = new HashMap<>();
 	private String onFailure;
 	private String onSuccess;
@@ -67,10 +66,10 @@ public class Button implements Input, Jsonable {
 		return this;
 	}
 
-	public Button setRenderer(Html renderer) {
+/*	public Button setRenderer(Html renderer) {
 		this.renderer = renderer;
 		return this;
-	}
+	}*/
 	
 	@Override
 	public Map<String, Object> getInputSettings() {
@@ -85,9 +84,9 @@ public class Button implements Input, Jsonable {
 		if (confirmation != null) {
 			json.put("confirmation", confirmation);
 		}
-		if (renderer != null) {
+		/*if (renderer != null) {
 			json.put("renderer", renderer);
-		}
+		}*/
 		if (onFailure != null) {
 			json.put("onError", onFailure);
 		}

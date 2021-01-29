@@ -18,6 +18,7 @@ public class Text implements Input, Filter {
 	private Integer maxLength = null;
 	private Integer minLength = null;
 	private String value = null;
+	private String placeholder = null;
 	private final Map<String, String> params = new HashMap<>();
 	
 	public static Text input(String name, boolean required) {
@@ -76,6 +77,11 @@ public class Text implements Input, Filter {
 		return this;
 	}
 
+	public Text setPlaceholder(String placeholder) {
+		this.placeholder = placeholder;
+		return this;
+	}
+
 	@Override
 	public Map<String, Object> getFilterSettings() {
 		Map<String, Object> set = new HashMap<>();
@@ -117,6 +123,9 @@ public class Text implements Input, Filter {
 		}*/
 		if (value != null) {
 			json.put("value", value);
+		}
+		if (placeholder != null) {
+			json.put("placeholder", placeholder);
 		}
 		params.forEach((key, param)->{
 			json.put(key, param);
