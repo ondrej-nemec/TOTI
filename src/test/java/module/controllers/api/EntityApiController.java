@@ -57,20 +57,55 @@ public class EntityApiController {
 		this.auditTrail = auditTrail;
 	}
 	
-	@Secured({@Domain(name=SECURITY_DOMAIN, action=helper.Action.READ)})
+	@Secured({@Domain(name=SECURITY_DOMAIN, action=acl.Action.READ)})
 	public void empty() {}
 	
 	@Action(value = "params", validator = "test")
 	public Response params(
 			@Params RequestParameters prop,
-			@Param("json") Map<String, Object> json,
-			@Param("intAsInt") Integer in) {
-		prop.forEach((i, item)->{
+			@Param("json-map") Map<String, Object> json,
+			@Param("json-map-2") Map<String, Object> json2
+		) {
+		/*prop.forEach((i, item)->{
 			System.err.println(i + ": " + item + " " + item.getClass());
 		});
+		System.err.println();*/
+		System.err.println(" -- Params: --");
+		print("", prop);
 		System.err.println();
-		System.err.println(json);
+		/*
+		System.err.println(" -- Json: --");
+		print("", json);
+		System.err.println();
+		
+		System.err.println(" -- Json 2: --");
+		print("", json2);
+		System.err.println();*/
 		return Response.getJson(StatusCode.OK, new HashMap<>());
+	}
+	
+	private void print(String prefix, Object o) {
+		if (o == null) {
+			System.err.println(prefix + o);
+		} else if (o instanceof Map) {
+			Map.class.cast(o).forEach((key, value)->{
+				if (!(value instanceof Map) /*&& !(value instanceof List)*/) {
+					print(prefix + key + ": ", value);
+				} else {
+					System.err.println(prefix + key + " {");
+					print(prefix + "  ", value);
+					System.err.println(prefix + "}");
+				}
+			});
+		} else if (o instanceof List) {
+			System.err.println(prefix + "[");
+			List.class.cast(o).forEach((value)->{
+				print(prefix + "  ", value);
+			});
+			System.err.println(prefix + "]");
+		} else {
+			System.err.println(prefix + o + " -- " + o.getClass());
+		}
 	}
 
 	@Action(value = "all", validator = EntityValidator.NAME_GRID)

@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import acl.Action;
+import acl.RulesDao;
+import acl.structures.AclDestination;
+import acl.structures.AclRole;
+import acl.structures.AclUser;
+import acl.structures.Rules;
 import common.Logger;
-import helper.Action;
-import helper.Rules;
-import interfaces.AclDestination;
-import interfaces.AclRole;
-import interfaces.AclUser;
-import interfaces.RulesDao;
 import socketCommunication.ServerSecuredCredentials;
 import toti.authentication.UserSecurity;
 import translator.Translator;
@@ -48,13 +48,13 @@ public class HttpServerFactory {
 			this.security = new UserSecurity(
 				null, // no redirect, on 4xx
 				(identity)->new AclUser() {// FULL control
-						@Override public String getId() { return ""; }
+						@Override public Object getId() { return ""; }
 						@Override public int getRank() { return 0; }
 						@Override public List<AclRole> getRoles() { return new LinkedList<>(); }
 				},
 				new RulesDao() {
 					@Override public Rules getRulesForUserAndGroups(AclUser user, AclDestination domain) {
-						return new Rules(Action.ADMIN);
+						return Rules.forUserWithOwner(Action.ADMIN, null);
 					}
 				},
 				1000 * 60 * 10, // 10 min

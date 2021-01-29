@@ -18,12 +18,12 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import acl.AuthorizationHelper;
+import acl.exception.AccessDeniedException;
+import acl.exception.NotAllowedActionException;
 import common.Logger;
 import common.exceptions.LogicException;
 import core.FilesList;
-import exception.AccessDeniedException;
-import exception.NotAllowedActionException;
-import helper.AuthorizationHelper;
 import socketCommunication.http.HttpMethod;
 import socketCommunication.http.StatusCode;
 import socketCommunication.http.server.RequestParameters;

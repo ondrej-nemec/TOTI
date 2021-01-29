@@ -2,10 +2,10 @@ package toti.authentication;
 
 import java.util.function.Function;
 
+import acl.AuthorizationHelper;
+import acl.RulesDao;
+import acl.structures.AclUser;
 import common.Logger;
-import helper.AuthorizationHelper;
-import interfaces.AclUser;
-import interfaces.RulesDao;
 
 public class UserSecurity {
 	

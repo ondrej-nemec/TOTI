@@ -2,7 +2,7 @@ package toti.authentication;
 
 import java.util.function.Function;
 
-import interfaces.AclUser;
+import acl.structures.AclUser;
 
 public class Identity {
 	
@@ -77,7 +77,7 @@ public class Identity {
 		return "Identity.empty";
 	}
 
-	public String getToken() {
+	protected String getToken() {
 		return identity.token;
 	}
 	

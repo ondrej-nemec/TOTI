@@ -5,12 +5,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import database.DatabaseConfig;
-import helper.Action;
-import helper.Rules;
-import interfaces.AclDestination;
-import interfaces.AclRole;
-import interfaces.AclUser;
-import interfaces.RulesDao;
+import acl.Action;
+import acl.structures.Rules;
+import acl.structures.AclDestination;
+import acl.structures.AclRole;
+import acl.structures.AclUser;
+import acl.RulesDao;
 import logging.LoggerFactory;
 import module.EntityModule;
 import toti.HttpServerFactory;
@@ -49,7 +49,7 @@ public class BootstrapEndToEndTest {
 							},
 							new RulesDao() {
 								@Override public Rules getRulesForUserAndGroups(AclUser user, AclDestination domain) {
-									return new Rules(Action.ADMIN);
+									return Rules.forUserWithOwner(Action.ADMIN, null);
 								}
 							},
 							1000*60*10,

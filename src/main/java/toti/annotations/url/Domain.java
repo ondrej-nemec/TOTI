@@ -4,7 +4,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Retention;
 
-import helper.Action;
+import acl.Action;
 
 @Retention(RUNTIME)
 public @interface Domain {
