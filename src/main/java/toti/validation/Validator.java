@@ -271,7 +271,8 @@ public class Validator {
 			Function<T, Boolean> condition,
 			Map<String, 
 			List<String>> errors, 
-			String name, String message) {
+			String name,
+			String message) {
 		if (optional.isPresent() && condition.apply(optional.get())) {
 			if (errors.get(name) == null) {
 				errors.put(name, new LinkedList<>());
