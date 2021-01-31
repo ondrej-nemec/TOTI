@@ -39,26 +39,5 @@ public class ResponseHeaders {
 	public List<String> getHeaders() {
 		return headers;
 	}
-	
-/*	
-	public ResponseHeaders withHeaders(List<String> headers) {
-		return new ResponseHeaders(getHeaders(headers));
-	}
 
-	public List<String> getHeaders() {
-		return new LinkedList<>(headers);
-	}
-
-	public List<String> getHeaders(String append) {
-		List<String> list = new LinkedList<>(headers);
-		list.add(append);
-		return list;
-	}
-
-	public List<String> getHeaders(List<String> append) {
-		List<String> list = new LinkedList<>(headers);
-		list.addAll(append);
-		return list;
-	}
-*/	
 }

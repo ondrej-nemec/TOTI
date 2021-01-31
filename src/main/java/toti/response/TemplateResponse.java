@@ -30,7 +30,11 @@ public class TemplateResponse implements Response {
 
 	@Override
 	public RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String charset) {
-		params.put("nonce", RandomStringUtils.randomAlphanumeric(50));
+		String nonce = RandomStringUtils.randomAlphanumeric(50);
+		params.put("nonce", nonce);
+		header.getHeaders().forEach((head)->{
+			head.replace("{nonce}", nonce);
+		});
 		header.addHeader(getContentType(fileName, charset));
 		return RestApiResponse.textResponse(
 			code,
