@@ -13,4 +13,6 @@ public @interface Domain {
 	
 	Action action();
 	
+	String owner() default "";
+	
 }

@@ -1,5 +1,6 @@
 package toti.authentication;
 
+import java.util.Collection;
 import java.util.function.Function;
 
 import acl.structures.AclUser;
@@ -34,6 +35,8 @@ public class Identity {
 	
 	private Ident identity;
 	
+	private Collection<Object> ids;
+	
 	private Identity() {
 		this.identity = null;
 	}
@@ -67,6 +70,14 @@ public class Identity {
 
 	protected long getExpired() {
 		return identity.expired;
+	}
+	
+	public void setIds(Collection<Object> ids) {
+		this.ids = ids;
+	}
+	
+	public Collection<Object> getAllowedIds() {
+		return ids;
 	}
 	
 	@Override

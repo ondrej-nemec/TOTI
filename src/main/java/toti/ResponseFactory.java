@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -230,7 +231,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			ResponseHeaders headers,
 			MappedUrl mapped, RequestParameters params, Identity identity, Locale locale) throws ServerException {
 		try {
-			authorize(mapped, params, identity);
+			authorize(mapped, params, identity, params);
 		} catch (ServerException e) {
 			if (mapped.isApi() || redirectUrlNoLoggedUser == null) {
 				throw e;
@@ -297,7 +298,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		}
 	}
 
-	private void authorize(MappedUrl mapped, RequestParameters params, Identity identity) throws ServerException {
+	private void authorize(MappedUrl mapped, RequestParameters params, Identity identity, RequestParameters prop) throws ServerException {
 		if (mapped.isSecured()) {
 			if (!identity.isPresent()) {
 				throw new ServerException(401, "Method require logged user");
@@ -305,10 +306,26 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			if (mapped.isApi() && !identity.isApiAllowed()) {
 				throw new ServerException(StatusCode.FORBIDDEN.getCode(), "For this url you cannot use cookie token");
 			}
+			
+			Collection<Object> ids = null;
 			for (Domain domain : mapped.getSecured()) {
-				authorizator.throwIfIsNotAllowed(identity.getUser(), ()->{
-					return domain.name();
-				}, domain.action());
+				if (domain.owner().isEmpty()) {
+					authorizator.throwIfIsNotAllowed(identity.getUser(), ()->{
+						return domain.name();
+					}, domain.action(), prop.get(domain.owner()).toString());
+				} else {
+					Collection<Object> allowedIds = authorizator.allowed(identity.getUser(), ()->{
+						return domain.name();
+					}, domain.action());
+					if (ids == null) {
+						ids = allowedIds;
+					} else {
+						ids.retainAll(allowedIds);
+					}
+				}
+			}
+			if (!ids.isEmpty()) {
+				identity.setIds(ids);
 			}
 		}
 	}
@@ -347,15 +364,16 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private List<MappedUrl> loadUrlMap(Map<String, TemplateFactory> modules) throws Exception {
 		List<MappedUrl> mapping = new LinkedList<>();
 		for (String folder : modules.keySet()) {
-			map(FilesList.get(folder, true).getFiles(), folder, mapping);
+			map(FilesList.get(folder, true).getFiles(), folder, mapping, modules.get(folder).getModuleName());
 		}
 	    return mapping;
 	}
 	
-	private void map(List<String> files, String folder, List<MappedUrl> mapping) throws Exception {
+	private void map(List<String> files, String folder, List<MappedUrl> mapping, String moduleName) throws Exception {
 		for (String file : files) {
 	    	int index = file.lastIndexOf("/");
-			String prefix = (index > 0 ? "/" + file.replace(file.substring(index), "") : "");
+			String prefix = (moduleName.length() > 0 ? "/" + moduleName : "")
+					+ (index > 0 ? "/" + file.replace(file.substring(index), "") : "");
 	    	String classPath = (folder + "/" + file).replaceAll("/", ".");
 		    Class<?> clazz =  Class.forName(classPath.replace(".class", ""));
 			if ( ! (clazz.isInterface() || clazz.isAnonymousClass() || clazz.isPrimitive()) 

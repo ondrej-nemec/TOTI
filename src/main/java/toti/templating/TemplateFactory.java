@@ -95,6 +95,10 @@ public class TemplateFactory {
 		this.compiler = compiler;
 	}
 	
+	public String getModuleName() {
+		return module;
+	}
+	
 	public Template getTemplate(String templateFile) throws Exception {
 		if (!templateFile.startsWith("/")) {
 			templateFile = "/" + templateFile;

@@ -80,7 +80,7 @@ public class HttpServer {
 				logger
 		);
 				
-		this.server = Server.create(
+		this.server = Server.createWebServer(
 				port,
 				threadPool,
 				readTimeout,
