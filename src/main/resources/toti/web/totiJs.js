@@ -1,4 +1,4 @@
-/* TOTI script version 0.0.7 */
+/* TOTI script version 0.0.8 */
 var totiLang = {
 	"pages": {
 		"title": "<t:trans message='common.grid.paging.pages'/>",
@@ -402,7 +402,7 @@ var totiControl = {
 	getHeaders: function() {
 		return {
 			...totiAuth.getAuthHeader(),
-			 ...totiLang.getLangHeader()
+			...totiLang.getLangHeader()
 		};
 	}
 };
@@ -450,7 +450,7 @@ var totiAuth = {
 				function(gettedToken) {
 					totiAuth.isRefreshActive = false;
 					gettedToken.config = token.config;
-					totiAuth.setTokenRefresh(gettedToken);
+					totiAuth.setTokenRefresh(gettedToken, -1);
 				}, 
 				function(xhr) {
 					totiAuth.isRefreshActive = false;
@@ -495,9 +495,9 @@ var totiAuth = {
 var totiGrid = {
 	config: {},
 	init: function(elementIdentifier, uniqueName, config) {
-			console.log("init", uniqueName, elementIdentifier, config);
+		//	console.log("init", uniqueName, elementIdentifier, config);
 		$(document).ready(function() {
-			console.log("init after document ready", uniqueName);
+			// console.log("init after document ready", uniqueName);
 			totiGrid.config[uniqueName] = config;
 			var grid = totiGrid.print(
 				uniqueName,
@@ -741,11 +741,11 @@ var totiGrid = {
 			if (useSorting) {
 				cell.attr("href", "").attr("class", "toti-sortable").attr("data-sort", 0).click(function(e) {
 					e.preventDefault();
-					var sortType = $(this).data('sort') + 1;
+					var sortType = parseInt($(this).attr('data-sort')) + 1;
 					if (sortType === 3) {
-						$(this).data('sort', 0);
+						$(this).attr('data-sort', 0);
 					} else {
-						$(this).data('sort', sortType);
+						$(this).attr('data-sort', sortType);
 					}
 					$(this).children().children(".sortType").hide();
 					$(this).children().children(".type" + sortType).show();
@@ -795,10 +795,14 @@ var totiGrid = {
 		},
 		get: function(uniqueName) {
 			var sorts = {};
-			$('#' + uniqueName + "-sorting").children('td').each(function() {
-				var sort = $(this).children("a").data("sort");
-				if ($(this).data('name') != '' && sort !== 0 && sort != undefined) {
-					sorts[$(this).data("name")] = (sort === 1) ? 'ASC' : 'DESC';
+			$('#' + uniqueName + "-sorting").children('th').each(function() {
+				var sort = $(this).children("a").attr("data-sort");
+				if (sort === undefined) {
+					return
+				}
+				sort = parseInt(sort);
+				if ($(this).attr('data-name') != '' && sort !== 0/* && sort != undefined*/) {
+					sorts[$(this).attr("data-name")] = (sort === 1) ? 'ASC' : 'DESC';
 				}
 			});
 			return JSON.stringify(sorts);
@@ -958,7 +962,6 @@ var totiGrid = {
 						return false;
 					}
 					if (ajax === 'true') {
-						console.log(submitConfirmation);
 						if (submitConfirmation !== null
 							&& submitConfirmation !== undefined
 							&& !totiControl.display.confirm(submitConfirmation)) {
