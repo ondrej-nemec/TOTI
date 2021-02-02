@@ -230,11 +230,9 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private RestApiResponse getControllerResponse(
 			ResponseHeaders headers,
 			MappedUrl mapped, RequestParameters params, Identity identity, Locale locale) throws ServerException {
-		Map<String,  List<String>> errors = new HashMap<>(); // TODO same values as json???
-		Map<String,  Object> json = new HashMap<>();
+		Map<String,  Object> errors = new HashMap<>();
 		if (mapped.getValidator().isPresent()) {
-			errors = mapped.getValidator().get().validate(params, translator.withLocale(locale));
-			json.putAll(errors);
+			errors.putAll(mapped.getValidator().get().validate(params, translator.withLocale(locale)));
 		}
 		// params for method
 		List<Class<?>> classesList = new ArrayList<>();
@@ -265,7 +263,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			}
 		} else {
 			// check errors after authrization
-			return Response.getJson(StatusCode.BAD_REQUEST, json).getResponse(headers, null, null, charset);
+			return Response.getJson(StatusCode.BAD_REQUEST, errors).getResponse(headers, null, null, charset);
 		}
 		try {			
 			Object o = Registr.get().getFactory(mapped.getClassName()).get();
