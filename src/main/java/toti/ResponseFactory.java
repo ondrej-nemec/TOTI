@@ -230,37 +230,44 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private RestApiResponse getControllerResponse(
 			ResponseHeaders headers,
 			MappedUrl mapped, RequestParameters params, Identity identity, Locale locale) throws ServerException {
-		try {
-			authorize(mapped, params, identity, params);
-		} catch (ServerException e) {
-			if (mapped.isApi() || redirectUrlNoLoggedUser == null) {
-				throw e;
-			}
-			return Response.getRedirect(redirectUrlNoLoggedUser).getResponse(headers, null, null, charset);
-		}
+		Map<String,  List<String>> errors = new HashMap<>();
 		if (mapped.getValidator().isPresent()) {
-    		Map<String,  List<String>> errors = mapped.getValidator().get().validate(params, translator.withLocale(locale));
-    		Map<String,  Object> json = new HashMap<>();
-    		json.putAll(errors);
-    		if (!errors.isEmpty()) {
-    			return Response.getJson(StatusCode.BAD_REQUEST, json).getResponse(headers, null, null, charset);
-    		}
+			errors = mapped.getValidator().get().validate(params, translator.withLocale(locale));
+			Map<String,  Object> json = new HashMap<>();
+			json.putAll(errors);
 		}
-		try {
-			// params for method
-			List<Class<?>> classesList = new ArrayList<>();
-			List<Object> valuesList = new ArrayList<>();
-			mapped.forEachParams((clazz, name)->{
-				classesList.add(clazz);
-				if (name == null) {
-					valuesList.add(params);
-				} else if (clazz.isInstance(params.get(name))) {
-					valuesList.add(params.get(name));
-				} else {
-					valuesList.add(ParseObject.parse(clazz, params.get(name)));
+		// params for method
+		List<Class<?>> classesList = new ArrayList<>();
+		List<Object> valuesList = new ArrayList<>();
+		if (errors.isEmpty()) {
+			try {
+				mapped.forEachParams((clazz, name)->{
+					classesList.add(clazz);
+					if (name == null) {
+						valuesList.add(params);
+					} else if (clazz.isInstance(params.get(name))) {
+						valuesList.add(params.get(name));
+					} else {
+						valuesList.add(ParseObject.parse(clazz, params.get(name)));
+						params.put(name, ParseObject.parse(clazz, params.get(name)));
+					}
+				});
+			} catch (Throwable e) {
+				throw new RuntimeException(e);
+			}	
+			try {
+				authorize(mapped, params, identity, params);
+			} catch (ServerException e) {
+				if (mapped.isApi() || redirectUrlNoLoggedUser == null) {
+					throw e;
 				}
-			});
-			
+				return Response.getRedirect(redirectUrlNoLoggedUser).getResponse(headers, null, null, charset);
+			}
+		} else {
+			// check errors after authrization
+			return Response.getJson(StatusCode.BAD_REQUEST, json).getResponse(headers, null, null, charset);
+		}
+		try {			
 			Object o = Registr.get().getFactory(mapped.getClassName()).get();
 			// inject
 			Field[] fields = o.getClass().getDeclaredFields();
