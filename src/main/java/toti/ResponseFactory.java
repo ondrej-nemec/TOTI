@@ -324,7 +324,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 					}, domain.action(), prop.get(domain.owner()).toString());
 				}
 			}
-			if (!ids.isEmpty()) {
+			if (ids != null) {
 				identity.setIds(ids);
 			}
 		}
