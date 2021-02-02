@@ -230,10 +230,10 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private RestApiResponse getControllerResponse(
 			ResponseHeaders headers,
 			MappedUrl mapped, RequestParameters params, Identity identity, Locale locale) throws ServerException {
-		Map<String,  List<String>> errors = new HashMap<>();
+		Map<String,  List<String>> errors = new HashMap<>(); // TODO same values as json???
+		Map<String,  Object> json = new HashMap<>();
 		if (mapped.getValidator().isPresent()) {
 			errors = mapped.getValidator().get().validate(params, translator.withLocale(locale));
-			Map<String,  Object> json = new HashMap<>();
 			json.putAll(errors);
 		}
 		// params for method
