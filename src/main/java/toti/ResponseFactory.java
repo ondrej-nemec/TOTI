@@ -321,7 +321,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				} else {
 					authorizator.throwIfIsNotAllowed(identity.getUser(), ()->{
 						return domain.name();
-					}, domain.action(), prop.get(domain.owner()).toString());
+					}, domain.action(), prop.get(domain.owner()));
 				}
 			}
 			if (ids != null) {
