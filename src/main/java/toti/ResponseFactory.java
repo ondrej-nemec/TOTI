@@ -310,10 +310,6 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Collection<Object> ids = null;
 			for (Domain domain : mapped.getSecured()) {
 				if (domain.owner().isEmpty()) {
-					authorizator.throwIfIsNotAllowed(identity.getUser(), ()->{
-						return domain.name();
-					}, domain.action(), prop.get(domain.owner()).toString());
-				} else {
 					Collection<Object> allowedIds = authorizator.allowed(identity.getUser(), ()->{
 						return domain.name();
 					}, domain.action());
@@ -322,6 +318,10 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 					} else {
 						ids.retainAll(allowedIds);
 					}
+				} else {
+					authorizator.throwIfIsNotAllowed(identity.getUser(), ()->{
+						return domain.name();
+					}, domain.action(), prop.get(domain.owner()).toString());
 				}
 			}
 			if (!ids.isEmpty()) {
