@@ -60,6 +60,13 @@ public class EntityApiController {
 	@Secured({@Domain(name=SECURITY_DOMAIN, action=acl.Action.READ)})
 	public void empty() {}
 	
+	@Action(value = "reporting")
+	public Response params(@Params RequestParameters params) {
+		System.err.println("Report:");
+		System.err.println(params);
+		return Response.getText("");
+	}
+	
 	@Action(value = "params", validator = "test")
 	public Response params(
 			@Params RequestParameters prop,

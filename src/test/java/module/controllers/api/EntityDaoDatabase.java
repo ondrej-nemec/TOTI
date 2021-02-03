@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import database.Database;
+import querybuilder.ColumnType;
 import querybuilder.InsertQueryBuilder;
 import querybuilder.SelectQueryBuilder;
 import querybuilder.UpdateQueryBuilder;
@@ -25,9 +26,28 @@ public class EntityDaoDatabase implements EntityDao {
 			List<Map<String, Object>> items = new LinkedList<>();
 			SelectQueryBuilder select = builder.select("*").from(table);
 			select.where("1=1");
-			filters.forEach((filter, value)->{
+			/*filters.forEach((filter, value)->{
 				select.andWhere("concat('', " + filter + ") like :" + filter + "Value")
 					.addParameter(":" + filter + "Value", value + "%");
+			});*/
+			select.addParameter(":empty", "");
+			filters.forEach((filter, value)->{
+				String where = "";
+				if (value == null) {
+					where = filter + " is null";
+				} else if (value.toString().length() > 20) {
+					where = builder.getSqlFunctions().concat(":empty", filter)
+							+ " like :" + filter + "LikeValue"
+							+ " OR " + filter + " = :" + filter + "Value";
+				} else {
+					// this is fix for derby DB - integer cannot be concat or casted to varchar only on char
+					where = builder.getSqlFunctions().cast(filter, ColumnType.charType(20))
+							+ " like :" + filter + "LikeValue"
+							+ " OR " + filter + " = :" + filter + "Value";
+				}
+				select.andWhere(where)
+				.addParameter(":" + filter + "LikeValue", value + "%")
+				.addParameter(":" + filter + "Value", value);
 			});
 			StringBuilder orderBY = new StringBuilder();
 			sorting.forEach((sort, direction)->{

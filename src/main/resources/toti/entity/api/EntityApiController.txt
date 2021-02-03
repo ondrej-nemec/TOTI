@@ -54,6 +54,27 @@ public class __X__ApiController {
 		this.auditTrail = auditTrail;
 	}
 
+	@Action("list")
+	public Response getInArray() {
+		try {
+			return Response.getJson(dao.getInArray());
+		} catch (Exception e) {
+			logger.error("__X__ List", e);
+			return Response.getJson(StatusCode.INTERNAL_SERVER_ERROR, new HashMap<>());
+		}
+	}
+	
+	@Action("list-data")
+	public Response getInArrayData() {
+		try {
+			Map<String, Object> items = dao.getInArrayData();
+			return Response.getJson(items);
+		} catch (Exception e) {
+			logger.error("__X__ ListData", e);
+			return Response.getJson(StatusCode.INTERNAL_SERVER_ERROR, new HashMap<>());
+		}
+	}
+	
 	@Action(value = "all", validator = __X__Validator.NAME_GRID)
 	@Method({HttpMethod.GET})
 	@Secured({@Domain(name=SECURITY_DOMAIN, action=helper.Action.READ)})

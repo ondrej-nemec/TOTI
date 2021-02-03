@@ -37,6 +37,15 @@ public class BootstrapEndToEndTest {
 					factory.setLogger(LoggerFactory.getLogger("server"));
 					factory.setMinimalize(false);
 					factory.setDeleteTempJavaFiles(false);
+					factory.setHeaders(new ResponseHeaders(Arrays.asList(
+						"CSP:frame-ancestors 'none'" // nacteni stranky ve framu
+						, "Content-Security-Policy-Report-Only"
+							+ " script-src 'strict-dynamic' 'nonce-{nonce}' 'unsafe-inline' http: https:;"
+							+ " object-src 'none';"
+							+ " form-action 'self';"
+							+ " report-uri '/api/entity/reporting'"
+						, "Access-Control-Allow-Origin: *"
+					)));
 					
 					// TODO little bit another way
 					try {

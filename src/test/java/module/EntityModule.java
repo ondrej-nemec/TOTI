@@ -9,6 +9,7 @@ import module.controllers.EntityPageController;
 import module.controllers.api.EntityApiController;
 import module.controllers.api.EntityDao;
 import module.controllers.api.EntityDaoDatabase;
+import module.controllers.api.SignApiController;
 import toti.Module;
 import toti.Router;
 import toti.application.Task;
@@ -26,6 +27,9 @@ public class EntityModule implements Module {
 		});
 		registr.addFactory(EntityApiController.class, ()->{
 			return new EntityApiController(dao, logger, new AuditTrail());
+		});
+		registr.addFactory(SignApiController.class, ()->{
+			return new SignApiController();
 		});
 		return Arrays.asList();
 	}

@@ -8,8 +8,42 @@
 
 <div id="flash">
 </div>
-
+<t:trans message="auth.rules.form.input-not-filled"><t:param key="name" value="1234568" /></t:trans>
 	<h1>${title}</h1>
+	<p id="login"></p>
+	<input type="button" value="Přihlásit" id="in" /><br>
+	<input type="button" value="Ohlásit" id="out" /><br>
+	
+	<script>
+		totiAuth.onLoad();
+		if (totiAuth.getToken() !== null) {
+			$('#login').text("Logged");
+		}
+		$('#in').click(function() {
+			totiControl.load.ajax("/entity/api/sign/in", "post", {
+				username: "user-name"
+			}, function(response) {
+				totiAuth.login(response, {
+					logout: {
+						url: "/entity/api/sign/out",
+						method: "post"
+					},
+					refresh: {
+						url: "/entity/api/sign/refresh",
+						method: "post"
+					}
+				});
+				location.reload();
+			}, function (xhr) {
+				totiControl.display.flash("error", "<t:trans message='auth.login.cannot-login-user' />");
+			}, {});
+		});
+		$('#out').click(function() {
+			totiAuth.logout();
+			location.reload();
+		});
+	</script>
+	
 	<div> <a href="/entity/add">Add</a> </div>
 	<t:control name="control" />
 	

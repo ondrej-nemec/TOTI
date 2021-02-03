@@ -68,6 +68,7 @@ public class __X__DaoDatabase implements __X__Dao {
 			values.forEach((name, value)->{
 				b.set(String.format("%s = :%s", name, name)).addParameter(":" + name, value);
 			});
+			b.where("id = :id").addParameter(":id", id);
 			b.execute();
 			return null;
 		});
@@ -91,4 +92,29 @@ public class __X__DaoDatabase implements __X__Dao {
 		});
 	}
 
+	@Override
+	public Map<String, Object> getInArray() throws SQLException {
+		return database.applyBuilder((builder)->{
+			List<DatabaseRow> rows = builder.select("id, name").from(table)
+					.where("is_active = :active").addParameter(":active", true)
+					.fetchAll();
+			Map<String, Object> users = new HashMap<>();
+			rows.forEach((row)->users.put(row.getValue("id").toString(), row.getValue("name").toString()));
+			return users;
+		});
+	}
+
+	@Override
+	public Map<String, Object> getInArrayData() throws SQLException {
+		return database.applyBuilder((builder)->{
+			List<DatabaseRow> rows = builder.select("id, name, layer").from(table)
+					.where("is_active = :active").addParameter(":active", true)
+					.fetchAll();
+			Map<String, Object> users = new HashMap<>();
+			rows.forEach((row)->users.put(row.getValue("id").toString(), MapInit.hashMap(
+				MapInit.t("name", row.getValue("name"))
+			)));
+			return users;
+		});
+	}
 }

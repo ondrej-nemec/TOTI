@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import common.MapInit;
 import socketCommunication.http.HttpMethod;
+import toti.annotations.inject.ClientIdentity;
 import toti.annotations.inject.Translate;
 import toti.annotations.url.Action;
 import toti.annotations.url.Controller;
@@ -14,6 +15,7 @@ import toti.annotations.url.Method;
 import toti.annotations.url.ParamUrl;
 import toti.annotations.url.Params;
 import toti.annotations.url.Secured;
+import toti.authentication.Identity;
 import toti.control.Form;
 import toti.control.Grid;
 import toti.control.columns.ActionsColumn;
@@ -40,16 +42,23 @@ import translator.Translator;
 public class EntityPageController {
 	
 	private final static String SECURITY_DOMAIN = "entity";
-	
+		
 	@Translate
 	private Translator translator;
+	
+	@ClientIdentity
+	private Identity identity;
 	
 	public void setTranslator(Translator translator) {
 		this.translator = translator;
 	}
+
+	public void setIdentity(Identity identity) {
+		this.identity = identity;
+	}
 	
 	@Action("action1")
-	@Secured({@Domain(name=SECURITY_DOMAIN, action=helper.Action.READ)})
+	@Secured({@Domain(name=SECURITY_DOMAIN, action=acl.Action.READ)})
 	public Response actionMethod1(@Params Properties prop) {
 		System.out.println("Action 1 properties:");
 		System.out.println(prop);
@@ -78,14 +87,14 @@ public class EntityPageController {
 		Map<String, Object> params = new HashMap<>();
 		/***/
 		// TODO grid
-		Grid grid = new Grid("/api/entity/all", "get");
+		Grid grid = new Grid("/entity/api/entity/all", "get");
 		grid.addColumn(new ActionsColumn("actions")).addAction(
-			new GroupAction("Sync", "/entity/action1").setAjax(false).setMethod("post")
+			new GroupAction("Sync", "/entity/entity/action1").setAjax(false).setMethod("post")
 		).addAction(
-			new GroupAction("Async with confirmation", "/entity/action2")
+			new GroupAction("Async with confirmation", "/entity/entity/action2")
 				.setAjax(true).setConfirmation("Really?").setMethod("post")
 		).addAction(
-			new GroupAction("Custom failure and succcess", "/entity/action3").setAjax(true).setMethod("post")
+			new GroupAction("Custom failure and succcess", "/entity/entity/action3").setAjax(true).setMethod("post")
 			    .setOnFailure("actionFailure").setOnSuccess("actionSuccess")
 		);
 		grid.addColumn(new ValueColumn("id").setTitle(translator.translate("module.id")));
@@ -133,11 +142,11 @@ public class EntityPageController {
 		grid.addColumn(
 			new ButtonsColumn("buttons").setTitle(translator.translate("module.buttons"))
 				.addButton(
-					Button.create("/api/entity/delete/{id}").setAjax(true).setMethod("delete")
+					Button.create("/entity/api/entity/delete/{id}").setAjax(true).setMethod("delete")
 						.setTitle("Delete").setConfirmation("Really delete {name}?").setType(ButtonType.DANGER)
 				)
 				.addButton(
-					Button.create("/entity/edit/{id}").setAjax(false).setMethod("get")
+					Button.create("/entity/entity/edit/{id}").setAjax(false).setMethod("get")
 						.setTitle("Edit").setType(ButtonType.INFO)
 				)
 		);
@@ -168,7 +177,7 @@ public class EntityPageController {
 	
 	private Response getOne(Integer id, boolean editable) {
 		Map<String, Object> params = new HashMap<>();
-		String url = "/api/entity/" +  (id == null ? "insert" : "update/" + id);
+		String url = "/entity/api/entity/" +  (id == null ? "insert" : "update/" + id);
 		/***/
 		// TODO form
 		Form form = new Form(url, editable);
@@ -195,14 +204,14 @@ public class EntityPageController {
 		form.addInput(TextArea.input("comment", false).setCols(20).setRows(30).setTitle("module.comment").setValue("aaa"));
 		
 		form.addInput(Submit.create("Save", "save").setRedirect("/entity/list"));
-		form.addInput(Button.create("/entity/list").setTitle("Cancel").setAjax(false));
+		form.addInput(Button.create("/entity/entity/list").setTitle("Cancel").setAjax(false));
 		
 		form.setAfterBind("b");
 		form.setBeforeBind("a");
 		
 		if (id != null) {
 			form.setBindMethod("get");
-			form.setBindUrl("/api/entity/get/" + id);
+			form.setBindUrl("/entity/api/entity/get/" + id);
 		}
 		/***/
 		params.put("control", form);

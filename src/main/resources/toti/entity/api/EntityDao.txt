@@ -19,4 +19,8 @@ public interface __X__Dao {
 	
 	int getTotalCount() throws Exception;
 	
+	Map<String, Object> getInArray() throws SQLException;
+	
+	Map<String, Object> getInArrayData() throws SQLException;
+	
 }
