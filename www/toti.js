@@ -53,7 +53,7 @@ var totiImages = {
 };
 
 var totiSettings = {
-	flashTimeout: 0;
+	flashTimeout: 0
 };
 
 var totiControl = {
