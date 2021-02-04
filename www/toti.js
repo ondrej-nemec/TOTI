@@ -1,4 +1,4 @@
-/* TOTI script version 0.0.8 */
+/* TOTI script version 0.0.9 */
 var totiLang = {
 	"pages": {
 		"title": /* "<t:trans message='common.grid.paging.pages'/>", /*/ "Pages:", //*/
@@ -52,6 +52,10 @@ var totiImages = {
 	"cross": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDMyIDMyIiBoZWlnaHQ9IjMycHgiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAzMiAzMiIgd2lkdGg9IjMycHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxwYXRoIGQ9Ik0yMC4zNzcsMTYuNTE5bDYuNTY3LTYuNTY2YzAuOTYyLTAuOTYzLDAuOTYyLTIuNTM5LDAtMy41MDJsLTAuODc2LTAuODc1Yy0wLjk2My0wLjk2NC0yLjUzOS0wLjk2NC0zLjUwMSwwICBMMTYsMTIuMTQyTDkuNDMzLDUuNTc1Yy0wLjk2Mi0wLjk2My0yLjUzOC0wLjk2My0zLjUwMSwwTDUuMDU2LDYuNDVjLTAuOTYyLDAuOTYzLTAuOTYyLDIuNTM5LDAsMy41MDJsNi41NjYsNi41NjZsLTYuNTY2LDYuNTY3ICBjLTAuOTYyLDAuOTYzLTAuOTYyLDIuNTM4LDAsMy41MDFsMC44NzYsMC44NzZjMC45NjMsMC45NjMsMi41MzksMC45NjMsMy41MDEsMEwxNiwyMC44OTZsNi41NjcsNi41NjYgIGMwLjk2MiwwLjk2MywyLjUzOCwwLjk2MywzLjUwMSwwbDAuODc2LTAuODc2YzAuOTYyLTAuOTYzLDAuOTYyLTIuNTM4LDAtMy41MDFMMjAuMzc3LDE2LjUxOXoiIGZpbGw9IiM1MTUxNTEiLz48L3N2Zz4="
 };
 
+var totiSettings = {
+	flashTimeout: 0;
+};
+
 var totiControl = {
 	inputs: {
 		_createInput: function (type, attributes, data = {}) {
@@ -74,23 +78,41 @@ var totiControl = {
 		color: function(params = {}) {
 			return totiControl.inputs._createInput("color", params);
 		},
+		date: function(params = {}) {
+			return totiControl.inputs._createInput("date", params);
+		},
+		week: function(params = {}) {
+			return totiControl.inputs._createInput("week", params);
+		},
+		time: function(params = {}) {
+			return totiControl.inputs._createInput("time", params);
+		},
+		month: function(params = {}) {
+			return totiControl.inputs._createInput("month", params);
+		},
+		tel: function(params = {}) {
+			return totiControl.inputs._createInput("tel", params);
+		},
+		search: function(params = {}) {
+			return totiControl.inputs._createInput("search", params);
+		},
+		image: function(params = {}) {
+			return totiControl.inputs._createInput("image", params);
+		},
+		url: function(params = {}) {
+			return totiControl.inputs._createInput("url", params);
+		},
+		reset: function(params = {}) {
+			return totiControl.inputs._createInput("reset", params);
+		},
+		range: function(params = {}) {
+			return totiControl.inputs._createInput("range", params);
+		},
 		file: function(params = {}) {
 			return totiControl.inputs._createInput("file", params);
 		},
 		hidden: function (params = {}) {
 			return totiControl.inputs._createInput("hidden", params);
-		},
-		/* sugested params: cols, rows */
-		textarea: function(params = {}) {
-			var textarea = $('<textarea>');
-			for ([key, name] of Object.entries(params)) {
-				if (key === "value") {
-					textarea.text(name);
-				} else {
-					textarea.attr(key, name);
-				}
-			}
-			return textarea;
 		},
 		radio: function (params = {}) {
 			return totiControl.inputs._createInput("radio", params);
@@ -116,6 +138,18 @@ var totiControl = {
 		datetime: function (params = {}) {
 			return totiControl.inputs._createInput("datetime-local", params);
 		},
+		/* sugested params: cols, rows */
+		textarea: function(params = {}) {
+			var textarea = $('<textarea>');
+			for ([key, name] of Object.entries(params)) {
+				if (key === "value") {
+					textarea.text(name);
+				} else {
+					textarea.attr(key, name);
+				}
+			}
+			return textarea;
+		},
 		select: function (options, params = {}) {
 			var select = $('<select>');
 			for ([key, name] of Object.entries(params)) {
@@ -134,11 +168,8 @@ var totiControl = {
 			return option;
 		},
 		/* onClick: function | object with settings: href, method, async, submitConfirmation (onSuccess, onFailure¨, type) */
-		button: function (onClick, title = "", params = {}, renderer = null) {
-			if (renderer === null) {
-				renderer = $('<button>').text(title);
-			}
-			var button = renderer;
+		button: function (onClick, title = "", params = {}) {
+			var button = totiControl.inputs._createInput("button", params);
 			for ([key, name] of Object.entries(params)) {
 				button.attr(key, name);
 			}
@@ -255,12 +286,6 @@ var totiControl = {
 							if (element.attr("redirect") != null) {
 								totiControl.display.storedFlash('success', response.message);
 								window.location = element.attr("redirect").replace("{id}", response.id);
-								/*totiControl.load.link(
-									element.attr("redirect"),
-									"get", 
-									{}, 
-									totiControl.getHeaders()
-								);*/
 							}
 						}, 
 						function(xhr) {
@@ -335,8 +360,7 @@ var totiControl = {
 			alert(message);
 		},
 		flash: function(severity, message) {
-			$('#flash').append(
-				$('<div>').attr('class', 'flash flash-' + severity).append(
+			var div = $('<div>').attr('class', 'flash flash-' + severity).append(
 					$('<img>')
 						.attr("src", totiImages.cross)
 						.attr("alt", "")
@@ -347,8 +371,13 @@ var totiControl = {
 				).append('&nbsp;&nbsp;')
 				.append(
 					$('<span>').text(message)
-				)
-			);
+				);
+			if (totiSettings.flashTimeout > 0) {
+				setTimeout(function() {
+					div.hide();
+				}, totiSettings.flashTimeout);
+			}
+			$('#flash').append(div);
 			console.log("Flash " + severity + ":");
 			console.log(message);
 		},
