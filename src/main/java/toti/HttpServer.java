@@ -37,7 +37,8 @@ public class HttpServer {
     		Logger logger,
     		boolean deleteDir,
     		boolean dirResponseAllowed,
-    		boolean minimalize) throws Exception {
+    		boolean minimalize,
+    		List<String> developIps) throws Exception {
 
 		Router router = new Router();
 		Map<String, TemplateFactory> controllers = new HashMap<>();
@@ -77,6 +78,7 @@ public class HttpServer {
 				security,
 				charset,
 				dirResponseAllowed,
+				developIps,
 				logger
 		);
 				

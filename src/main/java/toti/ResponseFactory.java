@@ -63,6 +63,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private final Language language;
 	private final boolean dirResponseAllowed;
 	private final Logger logger;
+	private final List<String> developIps;
 	
 	private final List<MappedUrl> mapping;	
 	private final String resourcesDir;
@@ -87,6 +88,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			UserSecurity security,
 			String charset,
 			boolean dirResponseAllowed,
+			List<String> developIps,
 			Logger logger) throws Exception {
 		this.resourcesDir = resourcesDir;
 		this.charset = charset;
@@ -102,6 +104,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		this.logger = logger;
 		this.language = language;
 		this.dirResponseAllowed = dirResponseAllowed;
+		this.developIps = developIps;
 	}
 
 	@Override
@@ -116,46 +119,90 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		/*System.err.println("URL: " + fullUrl);
 		System.err.println("Header: " + header);
 		System.err.println("Params: " + params);*/
-		try {
-			return getAuthenticatedResponse(method, url, params, header, ip);
-		} catch (AuthentizationException e) {
-			return onException(401, e, fullUrl);
-		} catch (NotAllowedActionException | AccessDeniedException e) {
-			return onException(403, e, fullUrl);
-		} catch (ServerException e) {
-			return onException(e.getCode(), e, fullUrl);
-		} catch (Exception e) {
-			return onException(500, e, fullUrl);
-		}
+		Locale locale = language.getLocale(header);
+		return getCatchedResponse(method, url, fullUrl, protocol, header, params, locale, ip);
 	}
 	
-	private RestApiResponse onException(int code, Throwable t, String fullUrl) {
+	private RestApiResponse getCatchedResponse(
+			HttpMethod method,
+			String url,
+			String fullUrl,
+			String protocol,
+			Properties header,
+			RequestParameters params,
+			Locale locale,
+			String ip) {
+		try {
+			return getAuthenticatedResponse(method, url, header, params, ip, locale);
+		} catch (AuthentizationException e) {
+			return onException(401, method, url, fullUrl, protocol, header, params, locale, ip, e);
+		} catch (NotAllowedActionException | AccessDeniedException e) {
+			return onException(403, method, url, fullUrl, protocol, header, params, locale, ip, e);
+		} catch (ServerException e) {
+			return onException(e.getCode(), method, url, fullUrl, protocol, header, params, locale, ip, e);
+		} catch (Exception e) {
+			return onException(500, method, url, fullUrl, protocol, header, params, locale, ip, e);
+		}
+		
+	}
+	
+	private RestApiResponse onException(int code, 
+			HttpMethod method,
+			String url,
+			String fullUrl,
+			String protocol,
+			Properties header,
+			RequestParameters params,
+			Locale locale,
+			String ip, 
+			Throwable t) {
 		logger.error(String.format("Exception occured %s URL: %s", code, fullUrl), t);
 		// TODO maybe some custom handler
 		/*List<String> h = headers.getHeaders();
 		h.add("WWW-Authenticate: basic realm=\"User Visible Realm\"");*/
-		return Response.getFile(StatusCode.forCode(code), String.format("toti/errors/%s.html", code))
-				.getResponse(responseHeaders.get(), null, null, charset);
+		if (developIps.contains(ip)) {
+			return printException(code, method, url, fullUrl, protocol, header, params, locale, ip, t);
+		}
+		// TODO own exception catcher
+		/*return Response.getFile(StatusCode.forCode(code), String.format("toti/errors/%s.html", code))
+				.getResponse(responseHeaders.get(), null, null, charset);*/
+		return Response.getTemplate(String.format("toti/errors/%s.html", code), new HashMap<>())
+				.getResponse(responseHeaders.get(), totiTemplateFactory, translator.withLocale(locale), charset);
+	}
+	
+	private RestApiResponse printException(int code, 
+			HttpMethod method,
+			String url,
+			String fullUrl,
+			String protocol,
+			Properties header,
+			RequestParameters params,
+			Locale locale,
+			String ip,
+			Throwable t) {
+		t.printStackTrace();
+		Map<String, Object> variables = new HashMap<>();
+		variables.put("code", code);
+		variables.put("url", url);
+		variables.put("fullUrl", fullUrl);
+		variables.put("method", method);
+		variables.put("protocol", protocol);
+		variables.put("ip", ip);
+		variables.put("headers", header);
+		variables.put("parameters", params);
+		variables.put("t", t);
+		return Response.getTemplate("/exception.jsp", variables)
+				.getResponse(responseHeaders.get(), totiTemplateFactory, translator.withLocale(locale), charset);
 	}
 	
 	private RestApiResponse getAuthenticatedResponse(HttpMethod method,
 			String url,
-			RequestParameters params,
 			Properties header,
-			String ip) throws Exception {
+			RequestParameters params,
+			String ip,
+			Locale locale) throws Exception {
 		Identity identity = authenticator.authenticate(header);
 		//System.err.println("Identity: " + identity);
-		return getLocalizedResponse(method, url, header, params, identity, ip);
-	}
-	
-	private RestApiResponse getLocalizedResponse(
-			HttpMethod method,
-			String url,
-			Properties header,
-			RequestParameters params,
-			Identity identity,
-			String ip) throws ServerException {
-		Locale locale = language.getLocale(header);
 		return getNormalizedResponse(method, url, params, identity, ip, locale);
 	}
 	
@@ -348,24 +395,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				}
 		});
 	}
-	/*
-	@Override
-	public RestApiResponse onException(HttpMethod method, String url, String fullUrl, String protocol,
-			Properties header, Properties params, Throwable t) throws IOException {
-		t.printStackTrace();
-		
-		return RestApiResponse.textResponse(
-			StatusCode.OK,
-			headers.getHeaders("Content-Type: text/html; charset=" + charset),
-			(bw)->{
-				try {
-					bw.write(new ExceptionTemplate(t).create(null, null, null));
-				} catch (Exception e) {
-					throw new RuntimeException(e);
-				}
-		});
-	}
-	*/
+	
 	private List<MappedUrl> loadUrlMap(Map<String, TemplateFactory> modules) throws Exception {
 		List<MappedUrl> mapping = new LinkedList<>();
 		for (String folder : modules.keySet()) {

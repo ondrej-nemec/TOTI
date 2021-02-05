@@ -40,6 +40,7 @@ public class HttpServerFactory {
 	private boolean deleteTempJavaFiles = true;
 	private boolean dirResponseAllowed = true;
 	private boolean minimalize = true;
+	private List<String> developIps = Arrays.asList("127.0.0.1", "/0:0:0:0:0:0:0:1");
 	private int maxUploadFileSize = 0;
 	private Optional<List<String>> allowedUploadFileTypes = Optional.of(new LinkedList<>());
 	
@@ -68,7 +69,7 @@ public class HttpServerFactory {
 				translator, security,
 				maxUploadFileSize, allowedUploadFileTypes,
 				charset, defLang,
-				logger, deleteTempJavaFiles, dirResponseAllowed, minimalize
+				logger, deleteTempJavaFiles, dirResponseAllowed, minimalize, developIps
 		);
 	}
 
@@ -154,6 +155,11 @@ public class HttpServerFactory {
 
 	public HttpServerFactory setMinimalize(boolean minimalize) {
 		this.minimalize = minimalize;
+		return this;
+	}
+
+	public HttpServerFactory setDevelopIpAdresses(List<String> developIps) {
+		this.developIps = developIps;
 		return this;
 	}
 
