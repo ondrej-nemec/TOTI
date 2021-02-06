@@ -2,10 +2,12 @@ package toti.validation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -62,12 +64,16 @@ public class Validator {
 		return this;
 	}
 	
-	public Map<String, List<String>> validate(RequestParameters prop, Translator translator) {
-		Map<String, List<String>> errors = new HashMap<>();
+	public Map<String, Set<String>> validate(RequestParameters prop, Translator translator) {
+		return validate("%s", prop, translator);
+	}
+	
+	private Map<String, Set<String>> validate(String format, RequestParameters prop, Translator translator) {
+		Map<String, Set<String>> errors = new HashMap<>();
 		List<String> names = new ArrayList<>();
 		rules.forEach((rule)->{
 			names.add(rule.getName());
-			swichRules(rule.getName(), rule, errors, prop, translator);
+			swichRules(String.format(format, rule.getName()), rule.getName(), rule, errors, prop, translator);
 			Object newValue = rule.getChangeValue().apply(prop.get(rule.getName()));
 			if (newValue != null) {
 				prop.put(rule.getName(), newValue);
@@ -87,7 +93,7 @@ public class Validator {
 		if (!strictList && defaultRule.isPresent()) {
 			ItemRules rule = defaultRule.get();
 			notChecked.forEach((notCheckedName)->{
-				swichRules(notCheckedName, rule, errors, prop, translator);
+				swichRules(String.format(format, notCheckedName), notCheckedName, rule, errors, prop, translator);
 				Object newValue = rule.getChangeValue().apply(prop.get(notCheckedName));
 				if (newValue != null) {
 					prop.put(notCheckedName, newValue);
@@ -99,12 +105,12 @@ public class Validator {
 	
 	private void swichRules(
 			String propertyName,
+			String ruleName,
 			ItemRules rule,
-			Map<String,
-			List<String>> errors,
+			Map<String, Set<String>> errors,
 			RequestParameters prop, 
 			Translator translator) {
-		if (prop.get(propertyName) == null) {
+		if (prop.get(ruleName) == null) {
 			checkRule(
 					Optional.of(rule.getRequired()),
 					(required)->required,
@@ -113,14 +119,14 @@ public class Validator {
 					rule.getOnRequiredError().apply(translator)
 			);
 		} else {
-			Object o = prop.get(propertyName);
+			Object o = prop.get(ruleName);
 			checkRule(
 					rule.getExpectedType(), 
 					(expectedType)->{
 						try {
 							Object newO = ParseObject.parse(expectedType, o);
 							if (rule.getChangeValueByType()) {
-								prop.put(propertyName, newO);
+								prop.put(ruleName, newO);
 							}
 							return false;
 						} catch (ClassCastException | NumberFormatException e) {
@@ -225,8 +231,8 @@ public class Validator {
 					(validator)->{
 						RequestParameters fields = new RequestParameters();
 						fields.putAll(getMap(ParseObject.parse(Map.class, o)));
-						prop.put(propertyName, fields);
-						errors.putAll(validator.validate(fields, translator));
+						errors.putAll(validator.validate(propertyName + "[%s]", fields, translator));
+						prop.put(ruleName, fields);
 						return false;
 					},
 					errors,
@@ -242,8 +248,8 @@ public class Validator {
 							for (int i = 0; i < list.size(); i++) {
 								fields.put(i + "", list.get(i));
 							}
-							errors.putAll(validator.validate(fields, translator));
-							prop.put(propertyName, new ArrayList<>(fields.values()));
+							errors.putAll(validator.validate(propertyName + "[]", fields, translator));
+							prop.put(ruleName, new ArrayList<>(fields.values()));
 							return false;
 						} catch (ClassCastException | NumberFormatException e) {
 							return true;
@@ -269,13 +275,12 @@ public class Validator {
 	private <T> void checkRule(
 			Optional<T> optional,
 			Function<T, Boolean> condition,
-			Map<String, 
-			List<String>> errors, 
+			Map<String, Set<String>> errors, 
 			String name,
 			String message) {
 		if (optional.isPresent() && condition.apply(optional.get())) {
 			if (errors.get(name) == null) {
-				errors.put(name, new LinkedList<>());
+				errors.put(name, new HashSet<>());
 			}
 			errors.get(name).add(message);
 		}
