@@ -43,9 +43,10 @@ public class BootstrapEndToEndTest {
 							+ " script-src 'strict-dynamic' 'nonce-{nonce}' 'unsafe-inline' http: https:;"
 							+ " object-src 'none';"
 							+ " form-action 'self';"
-							+ " report-uri '/api/entity/reporting'"
+							+ " report-uri '/entity/api/entity/reporting'"
 						, "Access-Control-Allow-Origin: *"
 					)));
+				//	factory.setDevelopIpAdresses(Arrays.asList());
 					
 					// TODO little bit another way
 					try {

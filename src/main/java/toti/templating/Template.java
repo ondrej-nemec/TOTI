@@ -30,4 +30,9 @@ public interface Template {
 			return (Iterable<T>) o;
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	static <K, V> Map<K, V> toMap(Object o, Class<K> keyClass, Class<V> valueClass) {
+		return (Map<K, V>)o;
+	}
 }

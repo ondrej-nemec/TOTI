@@ -122,7 +122,18 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		Locale locale = language.getLocale(header);
 		return getCatchedResponse(method, url, fullUrl, protocol, header, params, locale, ip);
 	}
-	
+	/*
+	private RestApiResponse getAuthenticatedResponse(HttpMethod method,
+			String url,
+			Properties header,
+			RequestParameters params,
+			String ip,
+			Locale locale) throws Exception {
+		Identity identity = authenticator.authenticate(header);
+		//System.err.println("Identity: " + identity);
+		return getNormalizedResponse(method, url, params, identity, ip, locale);
+	}
+	*/
 	private RestApiResponse getCatchedResponse(
 			HttpMethod method,
 			String url,
@@ -132,16 +143,18 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			RequestParameters params,
 			Locale locale,
 			String ip) {
+		Identity identity = authenticator.authenticate(header);
 		try {
-			return getAuthenticatedResponse(method, url, header, params, ip, locale);
-		} catch (AuthentizationException e) {
-			return onException(401, method, url, fullUrl, protocol, header, params, locale, ip, e);
+			return getNormalizedResponse(method, url, params, identity, ip, locale);
+			// return getAuthenticatedResponse(method, url, header, params, ip, locale);
+		/*} catch (AuthentizationException e) {
+			return onException(401, method, url, fullUrl, protocol, header, params, locale, ip, e);*/
 		} catch (NotAllowedActionException | AccessDeniedException e) {
-			return onException(403, method, url, fullUrl, protocol, header, params, locale, ip, e);
+			return onException(403, method, url, fullUrl, protocol, header, params, locale, identity, ip, e);
 		} catch (ServerException e) {
-			return onException(e.getCode(), method, url, fullUrl, protocol, header, params, locale, ip, e);
+			return onException(e.getCode(), method, url, fullUrl, protocol, header, params, locale, identity, ip, e);
 		} catch (Exception e) {
-			return onException(500, method, url, fullUrl, protocol, header, params, locale, ip, e);
+			return onException(500, method, url, fullUrl, protocol, header, params, locale, identity, ip, e);
 		}
 		
 	}
@@ -154,6 +167,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Properties header,
 			RequestParameters params,
 			Locale locale,
+			Identity identity,
 			String ip, 
 			Throwable t) {
 		logger.error(String.format("Exception occured %s URL: %s", code, fullUrl), t);
@@ -161,12 +175,14 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		/*List<String> h = headers.getHeaders();
 		h.add("WWW-Authenticate: basic realm=\"User Visible Realm\"");*/
 		if (developIps.contains(ip)) {
-			return printException(code, method, url, fullUrl, protocol, header, params, locale, ip, t);
+			return printException(code, method, url, fullUrl, protocol, header, params, locale, identity, ip, t);
 		}
 		// TODO own exception catcher
 		/*return Response.getFile(StatusCode.forCode(code), String.format("toti/errors/%s.html", code))
 				.getResponse(responseHeaders.get(), null, null, charset);*/
-		return Response.getTemplate(String.format("toti/errors/%s.html", code), new HashMap<>())
+		Map<String, Object> variables = new HashMap<>();
+		variables.put("code", StatusCode.forCode(code));
+		return Response.getTemplate("/errors/error.jsp", variables)
 				.getResponse(responseHeaders.get(), totiTemplateFactory, translator.withLocale(locale), charset);
 	}
 	
@@ -178,6 +194,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Properties header,
 			RequestParameters params,
 			Locale locale,
+			Identity identity,
 			String ip,
 			Throwable t) {
 		t.printStackTrace();
@@ -188,22 +205,13 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		variables.put("method", method);
 		variables.put("protocol", protocol);
 		variables.put("ip", ip);
+		variables.put("locale", locale);
 		variables.put("headers", header);
 		variables.put("parameters", params);
+		variables.put("identity", identity);
 		variables.put("t", t);
-		return Response.getTemplate("/exception.jsp", variables)
+		return Response.getTemplate("/errors/exception.jsp", variables)
 				.getResponse(responseHeaders.get(), totiTemplateFactory, translator.withLocale(locale), charset);
-	}
-	
-	private RestApiResponse getAuthenticatedResponse(HttpMethod method,
-			String url,
-			Properties header,
-			RequestParameters params,
-			String ip,
-			Locale locale) throws Exception {
-		Identity identity = authenticator.authenticate(header);
-		//System.err.println("Identity: " + identity);
-		return getNormalizedResponse(method, url, params, identity, ip, locale);
 	}
 	
 	private RestApiResponse getNormalizedResponse(

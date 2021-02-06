@@ -27,34 +27,70 @@
 			<th>IP</th>
 			<td>${ip}</td>
 		</tr>
+		<tr>
+			<th>Locale</th>
+			<td>${locale}</td>
+		</tr>
+	</table>	
+	
+	<h3>Identity</h3>
+	<t:if cond="(Boolean)${identity.isPresent()}" >
+		<table>
+		<tr>
+			<th>Is API allowed</th>
+			<td>${identity.isApiAllowed()}</td>
+		</tr>
+		<tr>
+			<th>Content</th>
+			<td>${identity.getContent()}</td>
+		</tr>
+		<tr>
+			<th>User</th>
+			<td>${identity.getUser()}</td>
+		</tr>
+		<tr>
+			<th>Allowed IDs</th>
+			<td>${identity.getAllowedIds()}</td>
+		</tr>
 	</table>
-	<h3>Paramenters</h3>
-	<p>${parameters}</p>
+	<t:else />
+		<p>No logged user</p>
+	</t:if>
 	
-	<h3>Headers</h3>
-	<p>${headers}</p>
-	
-	<%--
 	<h3>Paramenters</h3>
 	<table>
-		<t:foreach item="Object key" collection="${parameters.keySet()}">
+		<t:foreach key="String key" value="Object value" map="${parameters}">
 			<tr>
 				<th><t:out name="key" /></th>
-				<td><t:out name="${parameters.get(key)}" /></td>
+				<t:if cond="value == null">
+					<td><t:out name="value" /></td>
+					<td></td>
+				<t:else>
+					<td><t:out name="value" /></td>
+					<td><t:out name="value.getClass().getName()" /></td>
+				</t:if>
+				
 			</tr>
 		</t:foreach>
 	</table>
 	
 	<h3>Headers</h3>
 	<table>
-		<t:foreach item="Object key" collection="${headers.keySet()}">
+		<t:foreach key="String key" value="Object value" map="${headers}">
 			<tr>
 				<th><t:out name="key" /></th>
-				<td><t:out name="${headers.get(key)}" /></td>
+				<t:if cond="value == null">
+					<td><t:out name="value" /></td>
+					<td></td>
+				<t:else>
+					<td><t:out name="value" /></td>
+					<td><t:out name="value.getClass().getName()" /></td>
+				</t:if>
+				
 			</tr>
 		</t:foreach>
 	</table>
-	--%>
+	
 	<h2>StackTrace</h2>
 	<t:var type="java.lang.Throwable" name="t" value="(java.lang.Throwable)${t}" />
 	<t:while cond="t != null">
