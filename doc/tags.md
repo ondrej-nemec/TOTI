@@ -99,10 +99,11 @@ Java for cycle. Paired
 
 ### Foreach
 
-Java foreach cycle. Paired
+Java foreach cycle. Allow any Iterable include primitive array or Map. Paired
 
 ```
 <t:foreach item="" collection=""></t:foreach>
+<t:foreach key="" value="" map=""></t:foreach>
 ```
 
 ### While
