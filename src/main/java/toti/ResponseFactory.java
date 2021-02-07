@@ -44,7 +44,6 @@ import toti.annotations.url.ParamUrl;
 import toti.annotations.url.Params;
 import toti.annotations.url.Secured;
 import toti.authentication.Authenticator;
-import toti.authentication.AuthentizationException;
 import toti.authentication.Identity;
 import toti.authentication.Language;
 import toti.authentication.UserSecurity;
