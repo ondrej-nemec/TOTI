@@ -158,7 +158,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		
 	}
 	
-	private RestApiResponse onException(int code, 
+	private RestApiResponse onException(int responseCode, 
 			HttpMethod method,
 			String url,
 			String fullUrl,
@@ -169,10 +169,11 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Identity identity,
 			String ip, 
 			Throwable t) {
-		logger.error(String.format("Exception occured %s URL: %s", code, fullUrl), t);
+		logger.error(String.format("Exception occured %s URL: %s", responseCode, fullUrl), t);
 		// TODO maybe some custom handler
 		/*List<String> h = headers.getHeaders();
 		h.add("WWW-Authenticate: basic realm=\"User Visible Realm\"");*/
+		StatusCode code = StatusCode.forCode(responseCode);
 		if (developIps.contains(ip)) {
 			return printException(code, method, url, fullUrl, protocol, header, params, locale, identity, ip, t);
 		}
@@ -180,12 +181,12 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		/*return Response.getFile(StatusCode.forCode(code), String.format("toti/errors/%s.html", code))
 				.getResponse(responseHeaders.get(), null, null, charset);*/
 		Map<String, Object> variables = new HashMap<>();
-		variables.put("code", StatusCode.forCode(code));
-		return Response.getTemplate("/errors/error.jsp", variables)
+		variables.put("code", code);
+		return Response.getTemplate(code, "/errors/error.jsp", variables)
 				.getResponse(responseHeaders.get(), totiTemplateFactory, translator.withLocale(locale), charset);
 	}
 	
-	private RestApiResponse printException(int code, 
+	private RestApiResponse printException(StatusCode code, 
 			HttpMethod method,
 			String url,
 			String fullUrl,
@@ -196,7 +197,6 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Identity identity,
 			String ip,
 			Throwable t) {
-		t.printStackTrace();
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("code", code);
 		variables.put("url", url);
@@ -209,7 +209,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		variables.put("parameters", params);
 		variables.put("identity", identity);
 		variables.put("t", t);
-		return Response.getTemplate("/errors/exception.jsp", variables)
+		return Response.getTemplate(code, "/errors/exception.jsp", variables)
 				.getResponse(responseHeaders.get(), totiTemplateFactory, translator.withLocale(locale), charset);
 	}
 	

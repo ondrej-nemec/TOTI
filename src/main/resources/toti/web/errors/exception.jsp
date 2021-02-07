@@ -3,7 +3,7 @@
 	<title>Exception ${code}</title>
 </head>
 <body>
-	<h1>Exception occured: ${code}</h1>
+	<h1>Exception occured: ${code.getCode()} ${code.getDescription()}</h1>
 	<p>${t.getClass()}: ${t.getMessage()}</p>
 	<h2>Request</h2>
 	<table>
