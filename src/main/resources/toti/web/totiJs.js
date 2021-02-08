@@ -170,9 +170,12 @@ var totiControl = {
 		/* onClick: function | object with settings: href, method, async, submitConfirmation (onSuccess, onFailure¨, type) */
 		button: function (onClick, title = "", params = {}, renderer = null) {
 			if (renderer === null) {
-				renderer = totiControl.inputs._createInput("button", params);; /*$('<button>').text(title);*/
+				renderer = $('<button>').text(title);
 			}
 			var button = renderer;
+			for ([key, name] of Object.entries(params)) {
+				button.attr(key, name);
+			}
 			if (typeof onClick === 'object') {
 				var originalClass = button.attr("class");
 				if (originalClass === undefined) {
