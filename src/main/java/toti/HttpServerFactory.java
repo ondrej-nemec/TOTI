@@ -123,8 +123,8 @@ public class HttpServerFactory {
 		return this;
 	}
 
-	public HttpServerFactory setCerts(Optional<ServerSecuredCredentials> certs) {
-		this.certs = certs;
+	public HttpServerFactory setCerts(ServerSecuredCredentials certs) {
+		this.certs = Optional.of(certs);
 		return this;
 	}
 

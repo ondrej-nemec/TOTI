@@ -3,10 +3,12 @@ package toti.application;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import database.Database;
 import database.DatabaseConfig;
 import logging.LoggerFactory;
+import socketCommunication.ServerSecuredCredentials;
 import toti.HttpServer;
 import toti.HttpServerFactory;
 import toti.Module;
@@ -111,21 +113,69 @@ public class Application {
 	
 	public HttpServerFactory createServerFactory(Env env, Registr registr) throws Exception {
 		HttpServerFactory factory = new HttpServerFactory();
-		factory.setPort(env.getInt("http.port"));
-		factory.setThreadPool(env.getInt("http.thread-pool"));
-		factory.setReadTimeout(env.getInt("http.read-timeout"));
-		factory.setHeaders(new ResponseHeaders(env.getList("http.headers", "\\|")));
-		factory.setLogger(LoggerFactory.getLogger("server"));
-		factory.setMinimalize(false);
-		
-		// TODO little bit another way
-		try {
-			factory.setUserSecurity(registr.getService(USER_SECURITY_SERVICE, UserSecurityFactory.class).get(
-				env.getInt("http.token-expired"),
-				env.getString("http.token-salt"),
-				LoggerFactory.getLogger("auth")
-			));
-		} catch (RuntimeException ignored) {}
+		if (env != null) {
+			if (env.getString("http.port") != null) {
+				factory.setPort(env.getInt("http.port"));
+			}
+			if (env.getString("http.thread-pool") != null) {
+				factory.setThreadPool(env.getInt("http.thread-pool"));
+			}
+			if (env.getString("http.read-timeout") != null) {
+				factory.setReadTimeout(env.getInt("http.read-timeout"));
+			}
+			if (env.getString("http.headers") != null) {
+				factory.setHeaders(new ResponseHeaders(env.getList("http.headers", "\\|")));
+			}
+		//	if (env.getString("") != null) {
+				factory.setLogger(LoggerFactory.getLogger("server"));
+		//	}
+			if (env.getString("http.charset") != null) {
+				factory.setCharset(env.getString("http.charset"));
+			}
+			if (env.getString("http.temp") != null) {
+				factory.setTempPath(env.getString("http.temp"));
+			}
+			if (env.getString("http.resource-path") != null) {
+				factory.setResourcesPath(env.getString("http.resource-path"));
+			}
+			if (env.getString("http.minimalize-templates") != null) {
+				factory.setMinimalize(env.getBoolean("http.minimalize-templates"));
+			}
+			if (env.getString("http.minimalize-templates") != null) {
+				factory.setDeleteTempJavaFiles(env.getBoolean("http.delete-temp-java"));
+			}
+			if (env.getString("http.dir-allowed") != null) {
+				factory.setDirResponseAllowed(env.getBoolean("http.dir-allowed"));
+			}
+			if (env.getString("http.locale") != null) {
+				factory.setDefLang(env.getString("http.locale"));
+			}
+			if (env.getString("http.token-expired") != null && env.getString("http.token-salt") != null) {
+				try {
+					factory.setUserSecurity(registr.getService(USER_SECURITY_SERVICE, UserSecurityFactory.class).get(
+						env.getInt("http.token-expired"),
+						env.getString("http.token-salt"),
+						LoggerFactory.getLogger("auth")
+					));
+				} catch (RuntimeException ignored) {}
+			}
+			if (env.getString("http.key-store") != null && env.getString("http.key-store-password") != null) {
+				factory.setCerts(new ServerSecuredCredentials(
+					env.getString("http.key-store"),
+					env.getString("http.key-store-password"),
+					env.getString("http.trust-store") != null ? Optional.of(env.getString("http.trust-store")) : Optional.empty(),
+					env.getString("http.trust-store-password") != null ? Optional.of(env.getString("http.trust-store-password")) : Optional.empty()
+				));
+			}
+			if (env.getString("http.ip") != null) {
+				factory.setDevelopIpAdresses(env.getList("http.ip", "\\|"));
+			}
+			/*
+			private Translator translator;
+			private int maxUploadFileSize = 0;
+			private Optional<List<String>> allowedUploadFileTypes = Optional.of(new LinkedList<>());
+			*/
+		}
 		return factory;
 	}
 	
