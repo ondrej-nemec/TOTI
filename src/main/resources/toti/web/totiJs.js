@@ -645,7 +645,7 @@ var totiGrid = {
 						td.append(buttonElement);
 					});
 				} else if (column.hasOwnProperty("renderer")) {
-					td.html(window[column.renderer](row[column.name]));
+					td.html(window[column.renderer](row[column.name], row));
 				} else {
 					td.text(row[column.name]);
 				}
