@@ -1,4 +1,50 @@
 var totiControl = {
+	label: function (forInput, title, params = {}) {
+		var label = document.createElement("label");
+		label.innerText = title;
+		label.setAttribute("for", forInput);
+		for ([key, name] of Object.entries(params)) {
+			label.setAttribute(key, name);
+		}
+		return label;
+	},
+	button: function(attributes) {
+		var button = document.createElement('button');
+		for ([key, name] of Object.entries(attributes)) {
+			if (key === "value") {
+				button.innerHTML = name;
+			} else {
+				button.setAttribute(key, name);
+			}
+		}
+		return button;
+	},
+	input: function (attributes) {
+		if (!attributes.hasOwnProperty('type')) {
+			console.error("Missing attribute type", attributes);
+			return;
+		}
+		var type = attributes.type;
+		delete attributes.type;
+
+		if (type === "checkbox" && attributes.value) {
+			attributes.checked = "checked";
+		}
+
+		if (type === 'datetime') {
+			return totiControl.inputs._createInput("datetime-local", attributes);
+		} else if (type === 'textarea') {
+			return totiControl.inputs.textarea(attributes);
+		} else if (type === 'select') {
+			return totiControl.inputs.select(attributes);
+		} else if (type === 'option') {
+			return totiControl.inputs.option(attributes);
+		} else if (type === 'radiolist') {
+			return totiControl.inputs.radiolist(attributes);
+		} else {
+			return totiControl.inputs._createInput(type, attributes);
+		}
+	},
 	inputs: {
 		_createInput: function (type, attributes) {
 			var input = document.createElement("input");
@@ -8,177 +54,107 @@ var totiControl = {
 			}
 			return input;
 		},
-		label: function (forInput, title, params = {}) {
-			var label = document.createElement("label");
-			label.innertHTML = title;
-			label.setAttribute("for", forInput);
-			for ([key, name] of Object.entries(params)) {
-				label.setAttribute(key, name);
-			}
-			return label;
+		radiolist: function(params) {
+			var input = document.createElement("div");
+			params.radios.forEach(function(radio) {
+				var item = document.createElement("div");
+				var id = params.name + "-" + radio.id;
+				item.setAttribute('id', id + "-block");
+				if (radio.hasOwnProperty('title')) {
+					item.appendChild(totiControl.label(params.id, radio.title, {
+						id: id + "-label"
+					}));
+				}
+				var settings = {
+					id: id,
+					name: params.name,
+					form: params.formName,
+					value: radio.value,
+					type: "radio"
+				};
+				if (radio.value === params.value) {
+					settings.checked = "checked";
+				}
+				if (params.hasOwnProperty('required')) {
+					settings.required = params.required;
+				}
+				if (params.hasOwnProperty('disabled')) {
+					settings.disabled = params.disabled;
+				}
+				item.appendChild(totiControl.input(settings));
+				input.appendChild(item);
+			});
+			return input;
 		},
-		datetime: function (params = {}) {
-			return totiControl.inputs._createInput("datetime-local", params);
-		},
-		/* sugested params: cols, rows */
-		textarea: function(params = {}) {
+		textarea: function(params) {
 			var textarea = document.createElement('textarea');
 			for ([key, name] of Object.entries(params)) {
 				if (key === "value") {
-					textarea.innertHTML = name;
+					textarea.innerHTML = name;
 				} else {
 					textarea.setAttribute(key, name);
 				}
 			}
 			return textarea;
 		},
-		select: function (options, params = {}) {
+		select: function (params) {
 			var select = document.createElement('select');
-			for ([key, name] of Object.entries(params)) {
-				select.setAttribute(key, name);
+			for ([key, value] of Object.entries(params)) {
+				if (key === "options") {
+					value.forEach(function(option, index) {
+						if (typeof option === 'object') {
+							option.type = "option";
+							select.appendChild(totiControl.input(option));
+						} else {
+							select.appendChild(option);
+						}
+					});
+				} else {
+					select.setAttribute(key, value);
+				}
 			}
-			options.forEach(function(option, index) {
-				select.appendChild(option);
-			});
+			
 			return select;
 		},
-		option: function(value, title, params = {}) {
+		option: function(params) {
 			var option = document.createElement('option');
-			option.setAttribute("value", value);
-			option.innertHTML = title;
-			for ([key, name] of Object.entries(params)) {
-				option.setAttribute(key, name);
+			for ([key, value] of Object.entries(params)) {
+				if (key === "title") {
+					option.innerHTML = value;
+				} else {
+					option.setAttribute(key, value);
+				}
+				
 			}
 			return option;
-		},
-		/* onClick: function | object with settings: href, method, async, submitConfirmation (onSuccess, onFailure¨, type) */
-		button: function (onClick, title = "", params = {}, renderer = null) {
-			if (renderer === null) {
-				//renderer = totiControl.inputs._createInput("button", params);
-				renderer = document.createElement('button');
-				renderer.innertHTML = title;
-			}
-			var button = renderer;
-			for ([key, name] of Object.entries(params)) {
-				button.setAttribute(key, name);
-			}
-			if (typeof onClick === 'object') {
-				var originalClass = button.getAttribute("class");
-				if (originalClass === undefined) {
-					originalClass = "";
-				}
-				button.setAttribute("class", originalClass + " toti-button-" + onClick.type);
-				var clickSettings = onClick;
-				onClick = function(event) {
-					event.preventDefault();
-					if (clickSettings.submitConfirmation !== null
-						 && clickSettings.submitConfirmation !== undefined 
-						 && !clickSettings.submitConfirmation()) {
-						return false;
-					}
-					if (clickSettings.async) {
-						totiLoad.ajax(clickSettings.href, clickSettings.method, {}, totiLoad.getHeaders(), function(res) {
-							if (clickSettings.hasOwnProperty('onSuccess')) {
-								window[clickSettings.onSuccess](res);
-							} else {
-								totiDisplay.flash("success", res);
-							}
-						}, function(xhr) {
-							if (clickSettings.hasOwnProperty('onError')) {
-								window[clickSettings.onError](xhr);
-							} else {
-								totiDisplay.flash("error", xhr);
-							}
-						});
-					} else {
-						/* totiControl.load.link(href, method, {}, totiControl.getHeaders());*/
-						window.location = clickSettings.href;
-					}
-				};
-			}
-			button.onclick = onClick;
-			return button;
-		},
-		submit: function (async = true, submitConfirmation = null, params = {}) {
-			var submit = totiControl.inputs._createInput("submit", params);
-			submit.onclick = function(event) {
-				document.getElementByClass('error-list').remove();
-				var form = document.forms[submit.getAttribute("form")];
-				if (!form[0].reportValidity()) {
-					return false;
-				}
-
-				var data = {};
-				$.each(form.serializeArray(), function(index, item) {
-					var input = form.find('[name="' + item.name + '"]');
-					var value = item.value;
-					if (input.attr('type') === 'datetime-local') {
-						value = value.replace("T", " ");
-					}
-					data[item.name] = value;
-				});
-				var formConfig = {};
-				var useFiles = false;
-				form.find('[type="file"]').each(function() {
-					useFiles = useFiles ? true : $(this).val().length > 0;
-				});
-				if (form.attr("enctype") !== undefined && useFiles) {
-					var formData = new FormData(form[0]);
-					for (var key of formData.keys()) {
-						if (form.find('input[name="' + key + '"]').attr('type') === 'datetime-local') {
-							formData.set(key, formData.get(key).replace("T", " "));
-						}
-					}
-					/*formData.append("thefile", file);*/
-					
-				}
-
-				if (submitConfirmation !== null && !submitConfirmation(data)) {
-					event.preventDefault();
-					return false;
-				}
-				if (async) {
-					event.preventDefault();
-					var header = totiControl.getHeaders();
-					if (form.attr("enctype") !== undefined) {
-						header.enctype = form.attr("enctype");
-					}
-					totiControl.load.ajax(
-						form.attr("action"), 
-						form.attr("method"), 
-						data, 
-						function(response) {
-							if (element.attr("onSuccess") != null) {
-								window[element.attr("onSuccess")](response);
-							} else {
-								totiControl.display.flash('success', response.message);
-							}
-							if (element.attr("redirect") != null) {
-								totiControl.display.storedFlash('success', response.message);
-								window.location = element.attr("redirect").replace("{id}", response.id);
-							}
-						}, 
-						function(xhr) {
-							if (xhr.status === 400) {
-								for (const[key, list] of Object.entries(JSON.parse(xhr.responseText))) { /* xhr.responseJSON*/
-									var ol = $('<ul>').attr("class", "error-list");
-									list.forEach(function(item) {
-										ol.append($('<li>').text(item));
-									});
-									$('#' + form.attr('id') + '-errors-' + key + '').html(ol);
-								}
-							} else if (element.attr("onFailure") != null) {
-								window[element.attr("onFailure")](xhr);
-							} else {
-								totiControl.display.flash('error', totiLang.formMessages.saveError);
-							}
-						}, 
-						header,
-						formConfig
-					);
-				}
-			};
-			return submit;
 		}
+	},
+	getAction: function(clickSettings) {
+		return function(event) {
+			event.preventDefault();
+			if (clickSettings.submitConfirmation !== null
+				 && clickSettings.submitConfirmation !== undefined 
+				 && !clickSettings.submitConfirmation()) {
+				return false;
+			}
+			if (clickSettings.async) {
+				totiLoad.async(clickSettings.href, clickSettings.method, {}, totiLoad.getHeaders(), function(res) {
+					if (clickSettings.hasOwnProperty('onSuccess')) {
+						window[clickSettings.onSuccess](res);
+					} else {
+						totiDisplay.flash("success", res);
+					}
+				}, function(xhr) {
+					if (clickSettings.hasOwnProperty('onError')) {
+						window[clickSettings.onError](xhr);
+					} else {
+						totiDisplay.flash("error", xhr);
+					}
+				});
+			} else {
+				// totiControl.load.link(href, method, {}, totiControl.getHeaders());
+				window.location = clickSettings.href;
+			}
+		};
 	}
 };

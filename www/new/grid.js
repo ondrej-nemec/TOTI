@@ -1,22 +1,26 @@
+class TotiGrid {
+
+	constructor(config) {
+		this.config = config;
+	}
+}
+
+
+
 var totiGrid = {
 	config: {},
 	init: function(elementIdentifier, uniqueName, config) {
-		//	console.log("init", uniqueName, elementIdentifier, config);
-		$(document).ready(function() {
-			// console.log("init after document ready", uniqueName);
-			totiGrid.config[uniqueName] = config;
-			var grid = totiGrid.print(
-				uniqueName,
-				totiGrid.config[uniqueName].columns,
-				totiGrid.config[uniqueName].pages.pagesSizes, 
-				totiGrid.config[uniqueName].pages.defaultSize, 
-				totiGrid.config[uniqueName].pages.pagesButtonCount, 
-				totiGrid.config[uniqueName].actions
-			);
-			$(elementIdentifier).html(grid);
-			totiGrid.load(uniqueName, true)	
-		});
-		
+		totiGrid.config[uniqueName] = config;
+		var grid = totiGrid.print(
+			uniqueName,
+			totiGrid.config[uniqueName].columns,
+			totiGrid.config[uniqueName].pages.pagesSizes, 
+			totiGrid.config[uniqueName].pages.defaultSize, 
+			totiGrid.config[uniqueName].pages.pagesButtonCount, 
+			totiGrid.config[uniqueName].actions
+		);
+		document.querySelector(elementIdentifier).appendChild(grid);
+		totiGrid.load(uniqueName, true)	
 	},
 	load: function(uniqueName, initialLoad = false) {
 		var urlParams = {};
@@ -36,14 +40,15 @@ var totiGrid = {
 				sorting: totiGrid.sorting.get(uniqueName)
 			};
 		}
-		var body = $('#' + uniqueName + "-control table tbody");
-		body.html('');
-		totiControl.load.ajax(
+		var body = document.querySelector('#' + uniqueName + "-control table tbody");
+		body.innerHTML = '';
+		totiLoad.async(
 			totiGrid.config[uniqueName].dataLoadUrl,
 			totiGrid.config[uniqueName].dataLoadMethod,
 			urlParams,
+			totiLoad.getHeaders(),
 			function(response) {
-				window.history.pushState({"html":window.location.href},"", "?" + jQuery.param(urlParams));
+				window.history.pushState({"html":window.location.href},"", "?" + new URLSearchParams(urlParams).toString();
 				/* called from grid, must load config */
 				totiGrid._loadDataSuccess(
 					body,
@@ -56,13 +61,15 @@ var totiGrid = {
 			},
 			function(xhr, a, b) {
 				body.html(totiGrid._loadDataFailure(xhr, a, b));
-			},
-			totiControl.getHeaders()
+			}
 		);
 	},
 	_loadDataSuccess: function(body, uniqueName, response, columns, headers, identifier) {
 		if (response.data.length === 0) {
-			body.html($('<tr>').html($('<td colspan=100>').text(totiLang.gridMessages.noItemsFound)));
+			var td = document.createElement("td");
+			td.setAttribute("colspan", 100);
+			td.innerText = totiTranslations.gridMessages.noItemsFound;
+			body.appendChild(document.createElement("tr").appendChild(td));
 			return;
 		}
 		totiGrid.pages.onLoad(uniqueName, response.pageIndex, response.itemsCount / totiGrid.pagesSize.get(uniqueName));

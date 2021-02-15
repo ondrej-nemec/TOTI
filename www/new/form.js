@@ -1,55 +1,75 @@
-totiForm = {
-	init: function(elementIdentifier, uniqueName, config) {
-		$(document).ready(function() {
-			var html = $(elementIdentifier).html();
-			$(elementIdentifier).html(totiForm.print(uniqueName, config, $(elementIdentifier)));
-			if (config.hasOwnProperty('bind')) {
-				totiForm.bind(config.bind, uniqueName, function() {
-					if (config.hasOwnProperty("beforeBind")) {
-						window[config.beforeBind]();
-					}
-				}, function() {
-					if (config.hasOwnProperty("afterBind")) {
-						window[config.afterBind]();
-					}
-				});
+class TotiForm {
+
+	constructor(config) {
+		this.config = config;
+	}
+
+	init(elementIdentifier, uniqueName) {
+		var object = this;
+		document.addEventListener("DOMContentLoaded", function(event) { 
+			document.querySelector(elementIdentifier).appendChild(
+				object.create(uniqueName, document.querySelector(elementIdentifier))
+			);
+			if (object.config.hasOwnProperty('bind')) {
+				object.bind(uniqueName, object.config.bind);
 			}
 		});
-	},
-	print: function(uniqueName, config, element) {
-		var formId = uniqueName;
-		var form;
-		if (config.editable) {
-			var errors = $('<div>').attr("id", config.uniqueName + "-errors-form").append($('<span>'));
-			form = $('<form>')
-				.attr("id", formId)
-				.attr("action", config.action)
-				.attr("method", config.method)
-				.append(errors);
-		} else {
-			form = $('<div>')
-				.attr("id", formId);
-		}
-		var table = $('<table>');
+	}
 
+	create(uniqueName, element) {
 		var printSelectFunc = function (field, optionsName) {
-			var input = $('<div>');
+			var input = document.createElement('div');
 			var options = field[optionsName];
 			delete field[optionsName];
 			for ([key, name] of Object.entries(field)) {
-				input.attr(key, name);
+				input.setAttribute(key, name);
 			}
 			options.forEach(function(option) {
-				input.append($('<span>').attr("value", option.value).text(option.title).hide());
+				var span = document.createElement('span');
+				span.setAttribute("value", option.value);
+				span.innerText = option.title;
+				if (field.value !== option.value) {
+					span.style.display = "none";
+				}
+				input.appendChild(span);
 			});
 			return input;
 		}
-		config.fields.forEach(function(field, index) {
+
+		var form;
+		if (this.config.editable) {
+			var errors = document.createElement("div");
+			errors.setAttribute("id", uniqueName + "-errors-form");
+			errors.appendChild(document.createElement("span"));
+			form = document.createElement("form");
+			form.setAttribute("id", uniqueName);
+			form.setAttribute("action", this.config.action);
+			form.setAttribute("method", this.config.method);
+			form.appendChild(errors);
+		} else {
+			form = document.createElement("div");
+			form.setAttribute("id", uniqueName);
+		}
+		var table;
+		var useTemplate = false;
+		if (element.innerHTML.length === 0) {
+			table = document.createElement("table");
+		} else {
+			useTemplate = true;
+			table = document.createElement("div");
+			table.innerHTML = element.innerHTML;
+			element.innerHTML = "";
+		}
+		form.appendChild(table);
+		
+		var config = this.config;
+		var object = this;
+		this.config.fields.forEach(function(field, index) {
 			field.id = uniqueName + "-" + field.id;
-			field.form = formId;
+			field.form = uniqueName;
 			var label = null;
-			if (field.hasOwnProperty('title') && field.type !== 'button') {
-				label = totiControl.inputs.label(field.id, field.title, {
+			if (field.hasOwnProperty('title')) {
+				label = totiControl.label(field.id, field.title, {
 					id: uniqueName +  "-" + field.id + "-label"
 				});
 			}
@@ -57,156 +77,240 @@ totiForm = {
 			if (!config.editable && field.type !== 'button') {
 				if (field.type === 'select') {
 					input = printSelectFunc(field, 'options');
-				} else if (field.type === 'radio') {
+				} else if (field.type === 'radiolist') {
 					input = printSelectFunc(field, 'radios');
 				} else if (field.type === 'checkbox') {
 					input = printSelectFunc(field, 'values');
 				} else if (field.type !== 'submit' && field.type !== 'hidden') {
-					input = $('<div>');
+					input = document.createElement("div");
 					for ([key, name] of Object.entries(field)) {
-						input.attr(key, name);
-					}
-				}
-			} else if (field.type === 'submit') {
-				input = totiControl.inputs.submit(
-					field.ajax, function(data) {
-						if (field.hasOwnProperty("confirmation")) {
-							return totiControl.display.confirm(field.confirmation, data);
+						if (key === "value") {
+							input.innerText = name;
+						} else {
+							input.setAttribute(key, name);
 						}
-						return true;
-					}, field
-				);
-			} else if (field.type === 'select') {
-				var options = [];
-				field.options.forEach(function(option) {
-					var params = {};
-					if (option.hasOwnProperty('params')) {
-						params = option.params;
-					}
-					options.push(totiControl.inputs.option(option.value, option.title, params));
-				});
-				delete field.options;
-				input = totiControl.inputs[field.type](options, field);
-			} else if (field.type === 'button') {
-				var onClick = {
+					}				
+				} else {
+					input = document.createElement('span');
+				}
+			} else {
+				if (field.type === 'file') {
+					form.setAttribute("enctype", "multipart/form-data");
+				} else if (field.type === 'radiolist') {
+					field.formName = uniqueName;
+				}
+				var type = field.type;
+				input = totiControl.input(field);
+
+				if (type === 'submit' || type === 'image') {
+					input.onclick = object.getSubmit(uniqueName, input);
+				} else if (type === 'button') {
+					var onClick = totiControl.getAction({
 						href: field.href,
 						method: field.method,
 						async: field.ajax,
 						submitConfirmation: function() {
 							if (field.hasOwnProperty('confirmation')) {
-								return totiControl.display.confirm(field.confirmation, row);
+								return totiDisplay.confirm(field.confirmation, row);
 							}
 							return true;
-						} 
-					};
-				if (field.hasOwnProperty('style')) {
-					onClick.type = field.style;
+						}/*,
+						onSuccess: "",
+						onFailure: ""*/
+					});
+					input.onclick = onClick;
 				}
-				input = totiControl.inputs.button(onClick, field.title, field.params, field.hasOwnProperty('renderer') ? field.renderer : null, field.preventDefault);
-			} else if (field.type === 'radio') {
-				input = $("<div>");
-				field.radios.forEach(function(radio) {
-					var item = $('<div>');
-					var id = formId + "-" + radio.id;
-					item.attr('id', id + "-block");
-					if (radio.hasOwnProperty('title')) {
-						item.append(totiControl.inputs.label(field.id, radio.title, {
-							id: id + "-label"
-						}));
-					}
-					var settings = {
-							id: id,
-							name: field.name,
-							form: formId,
-							value: radio.value
-						};
-					if (radio.value === field.value) {
-						settings.checked = "checked";
-					}
-					if (field.hasOwnProperty('required')) {
-						settings.required = field.required;
-					}
-					if (field.hasOwnProperty('disabled')) {
-						settings.disabled = field.disabled;
-					}
-					item.append(totiControl.inputs.radio(settings));
-					input.append(item);
-				});
-			} else {
-				if (field.type === 'file') {
-					form.attr("enctype", "multipart/form-data");
-				}
-				var fieldType = field.type;
-				delete field.type;
-				input = totiControl.inputs[fieldType](field);
 			}
-
-			var error = $('<div>').attr('id', uniqueName + '-errors-' + field.name);
-			if (element.html().length > 0) {
-				var labelElement = element.find("#form-label-" + field.name);
-				if (labelElement.length > 0) {
-					labelElement.html(label);
+			var error = document.createElement("div");
+			error.setAttribute("id", uniqueName + '-errors-' + field.name);
+			if (useTemplate) {
+				var labelElement = form.querySelector("#form-label-" + field.name);
+				if (labelElement !== null && label !== null) {
+					labelElement.appendChild(label);
 				}
-				var inputElement = element.find("#form-input-" + field.name);
-				if (inputElement.length > 0) {
-					inputElement.html(input);
+				var inputElement = form.querySelector("#form-input-" + field.name);
+				if (inputElement !== null) {
+					inputElement.appendChild(input);
 				}
-				var errorElement = element.find("#form-error-" + field.name);
-				if (config.editable && errorElement.length > 0) {
-					errorElement.html(error);
+				var errorElement = form.querySelector("#form-error-" + field.name);
+				if (config.editable && errorElement !== null) {
+					errorElement.appendChild(error);
 				}
 			} else {
-				table.append($('<tr>')
-					.append($('<td>').attr('class', 'toti-form-label').append(label))
-					.append($('<td>').attr('class', 'toti-form-input').append(input))
-					.append($('<td>').attr('class', 'toti-form-error').append(config.editable ? error : ""))
-				);
+				var first = document.createElement("td");
+				first.setAttribute("class", 'toti-form-label');
+				if (label !== null) {
+					first.appendChild(label);
+				}
+
+				var second = document.createElement("td");
+				second.setAttribute("class", 'toti-form-input');
+				second.appendChild(input);
+
+				var third = document.createElement("td");
+				third.setAttribute("class", 'toti-form-error');
+				third.appendChild(error);
+
+				var row = document.createElement("tr");
+				row.appendChild(first);
+				row.appendChild(second);
+				row.appendChild(third);
+				var tableContent = document.createElement("div");
+				table.appendChild(row);
 			}
 		});
-		if (element.html().length > 0) {
-			form.append(element.html());
-		} else {
-			form.append(table);
-		}
-		
 		return form;
-	},
-	bind: function(bind, formId, beforeBind, afterBind) {
-		totiControl.load.ajax(
+	}
+
+	getSubmit(uniqueName, submit) {
+		return function(event) {
+			// event.preventDefault();
+			Array.prototype.forEach.call(document.getElementsByClassName('error-list'), function(el) {
+			    el.remove();
+			});
+
+			var form = document.getElementById(uniqueName);
+			if (!form.reportValidity()) {
+				return false;
+			}
+			var data = new FormData(form); 
+			Array.prototype.forEach.call(form.elements, function(input) {
+				var type = input.getAttribute("type");
+				var name = input.getAttribute("name");
+				if (type === "datetime-local") {
+					value = input.value;
+					value = value.replace("T", " ");
+					data.append(name, value);
+				} else if (type === "textarea") {
+					data.append(name, input.innerText);
+				} else if (input.tagName === "SELECT") {
+					var option = input.querySelector("[selected='true']");
+					data.append(name, value);
+				} else if (type === "submit" || type === "button") {
+					// ignored
+				} else if (type === "radio") {
+					if (input.checked) {
+						data.append(name, input.value);
+					}
+				} else if (type === "file") {
+					if (input.files.length > 0) {
+						data.append(name, input.value);
+					}
+				} else {
+					data.append(name, input.value);
+				}
+			});
+
+			var submitConfirmation = function() {
+				if (submit.hasOwnProperty('confirmation')) {
+					return totiDisplay.confirm(submit.confirmation);
+				}
+				return true;
+			};
+			if (submitConfirmation !== null && !submitConfirmation(data)) {
+				event.preventDefault();
+				return false;
+			}
+			if (submit.getAttribute("ajax")) {
+				event.preventDefault();
+				var header = totiLoad.getHeaders();
+				if (form.getAttribute("enctype") !== null) {
+					header.enctype = form.getAttribute("enctype");
+				}
+				// header['Content-type'] = 'application/x-www-form-urlencoded';
+				totiLoad.async(
+					form.getAttribute("action"), 
+					form.getAttribute("method"), 
+					data, 
+					header, 
+					function(response) {
+						if (submit.getAttribute("onSuccess") != null) {
+							window[submit.getAttribute("onSuccess")](response);
+						} else {
+							totiDisplay.flash('success', response.message);
+						}
+						if (submit.getAttribute("redirect") != null) {
+							totiDisplay.storedFlash('success', response.message);
+							window.location = submit.getAttribute("redirect").replace("{id}", response.id);
+						}
+					}, 
+					function(xhr) {
+						if (xhr.status === 400) {
+							for (const[key, list] of Object.entries(JSON.parse(xhr.responseText))) {
+								var ol = document.createElement("ul");
+								ol.setAttribute("class", "error-list");
+								list.forEach(function(item) {
+									var li = document.createElement("li");
+									li.innerText = item;
+									ol.appendChild(li);
+								});
+								document.querySelector('#' + uniqueName + '-errors-' + key + '').innerHTML = ol;
+							}
+						} else if (element.getAttribute("onFailure") != null) {
+							window[element.getAttribute("onFailure")](xhr);
+						} else {
+							totiDisplay.flash('error', totiTranslations.formMessages.saveError);
+						}
+					}
+				);
+			}
+		};
+	}
+
+	/**
+	bind: url, method, jsonObject params, String beforeBind(optional), String afterBind(optional), String onFailure(optional)
+	*/
+	bind(formId, bind) {
+		totiLoad.async(
 			bind.url, 
 			bind.method, 
-			bind.params, 
+			bind.params,
+			totiLoad.getHeaders(), 
 			function(values) {
-				beforeBind();
-				for (const[key, value] of Object.entries(values)) {
-					var val = value; /* TODO IMPROVEMENT escape */
-					var id = '#' + formId + ' [name=' + key + ']';
-					var element = $(id);
-					if (element.attr("type") === 'datetime-local' && val !== null) {
-						val = val.replace(" ", "T");
+				if (bind.hasOwnProperty("beforeBind")) {
+					window[bind.beforeBind]();
+				}
+				var form  = document.getElementById(formId);
+				for (const[key, val] of Object.entries(values)) {
+					var value = val;
+					var element = form.querySelector('[name="' + key + '"]');
+					if (element === null) {
+						continue;
 					}
-					if (element.children('span').length > 0) { /* detail:select, checkbox, radio */
-						element.children('span[value="' + val + '"]').show();
-					} else if (element.length > 1) {
-						$('#' + formId + ' #' + formId + '-id-' + val + '[name=' + key + ']').prop('checked', true); /* form: radio list */
+					if (element.type === "datetime-local" && value !== null) {
+						value = value.replace(" ", "T");
+					}
+					if (element.querySelector("span") != null) {
+						element.querySelectorAll("span").forEach(function(el) {
+							el.style.display = "none";
+						});
+						element.querySelector("[value=" + value + "]").style.display = "block";
 					} else {
-						element.val(val); /* form */
-						if (element.text().length == 0) {
-							element.text(val); /* detail */
+						if (element.type === "checkbox") {
+							element.checked = value ? "checked" : false;
+						} else if (element.type === "radio") {
+							form.querySelector('[name="' + key + '"][value="' + value + '"]').setAttribute("checked", true);
+						} else if (element.type === "textarea") {
+							element.innerText = value;
+						} else if (element.type === "select-one") {
+							var option = element.querySelector("[value='" + value + "']");
+							option.setAttribute("selected", true);
+						} else {
+							element.setAttribute("value", value);
 						}
-						element.prop('checked', val); /* form: checkbox */
 					}
 				}
-				afterBind();
+				if (bind.hasOwnProperty("afterBind")) {
+					window[bind.afterBind]();
+				}
 			}, 
 			function(xhr) {
 				if (bind.hasOwnProperty('onFailure')) {
-					bind.onFailure(xhr);
+					window[bind.onFailure](xhr);
 				} else {
-					totiControl.display.flash('error', totiLang.formMessages.bindError);
+					totiDisplay.flash('error', totiTranslations.formMessages.bindError);
 				}
-			},
-			totiControl.getHeaders()
+			}
 		);
 	}
-};
+}

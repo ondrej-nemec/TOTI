@@ -1,4 +1,4 @@
-var utils = {
+var totiUtils = {
 	// TODO is used?
 	parseUrlToObject: function (data) {
 		return JSON.parse('{"' + data.replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');

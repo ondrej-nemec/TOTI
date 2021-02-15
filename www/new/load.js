@@ -1,27 +1,27 @@
 var totiLoad = {
 	async: function(url, method, data, headers, onSuccess, onFailure) {
-		totiLoad.request(true, url, method, data, headers, onSuccess, onFailure);
-	},
-	sync: function(url, method, data, headers, onSuccess, onFailure) {
-		totiLoad.request(false, url, method, data, headers, onSuccess, onFailure);
-	},
-	request: function(async, url, method, data, headers, onSuccess, onFailure) {
+		var params = new URLSearchParams(data).toString();
 		var xhr = new XMLHttpRequest();
-		xhr.open(method, url, async);
+		if (method.toLowerCase() === "get") {
+			url += "?" + new URLSearchParams(data).toString();
+		}
+		xhr.open(method, url, true);
 		for (const[name, value] of Object.entries(headers)) {
 			xhr.setRequestHeader(name, value);
 		}
 		xhr.onload = function() {
+			var response = xhr.response;
 			try {
-        		onSuccess(JSON.parse(xhr.response), xhr);
+        		response = JSON.parse(xhr.response);
 		    } catch (e) {
-		        onSuccess(xhr.response, xhr);
+		    	response = xhr.response;
 		    }
+		    onSuccess(response, xhr);
 		};
 		xhr.onerror = function () {
 		    onFailure(xhr);
 		};
-		xhr.send(new URLSearchParams(data).toString());
+		xhr.send(params);
 	},
 	link: function(url, method, data, headers) {
 		var xhr = new XMLHttpRequest()
@@ -41,7 +41,7 @@ var totiLoad = {
 		//xhr.onerror = onFinish();
 		xhr.send(new URLSearchParams(data).toString());
 	},
-	// TODO wll be here
+	// TODO wll be here ?
 	getHeaders: function() {
 		return {
 			...totiAuth.getAuthHeader(),
