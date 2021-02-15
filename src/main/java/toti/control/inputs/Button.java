@@ -7,23 +7,24 @@ import toti.control.Jsonable;
 
 public class Button implements Input, Jsonable {
 		
+	private final String name;
 	private final String url;
 	private String confirmation = null;
 	private String title = null;
 	private boolean ajax = false;
 	private String method = "get";
-//	private Html renderer = null;
 	private final Map<String, String> params = new HashMap<>();
 	private String onFailure;
 	private String onSuccess;
 	private ButtonType type = ButtonType.BASIC;
 	
-	public static Button create(String url) {
-		return new Button(url);
+	public static Button create(String url, String name) {
+		return new Button(url, name);
 	}
 	
-	private Button(String url) {
+	private Button(String url, String name) {
 		this.url = url;
+		this.name = name;
 	}
 
 	public Button setOnFailure(String onFailure) {
@@ -77,9 +78,10 @@ public class Button implements Input, Jsonable {
 		json.put("href", url);
 		json.put("ajax", ajax);
 		json.put("type", "button");
+		json.put("name", name);
 		json.put("method", method);
 		if (title != null) {
-			json.put("title", title);
+			json.put("value", title);
 		}
 		if (confirmation != null) {
 			json.put("confirmation", confirmation);

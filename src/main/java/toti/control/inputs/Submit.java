@@ -33,6 +33,11 @@ public class Submit implements Jsonable, Input {
 		return this;
 	}
 
+	public Submit setAsync(boolean async) {
+		this.ajax = async;
+		return this;
+	}
+
 	public Submit setOnSuccess(String onSuccess) {
 		this.onSuccess = onSuccess;
 		return this;
@@ -60,6 +65,7 @@ public class Submit implements Jsonable, Input {
 		json.put("value", title);
 		json.put("ajax", ajax);
 		json.put("id", name);
+		json.put("name", name);
 		params.forEach((key, param)->{
 			json.put(key, param);
 		});

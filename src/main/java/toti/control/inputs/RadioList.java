@@ -30,7 +30,7 @@ public class RadioList implements Input {
 			radio.put("title", title);
 			this.radios.add(radio);
 		});
-		this.type = "radio";
+		this.type = "radiolist";
 		this.required = required;
 	}
 	
