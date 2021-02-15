@@ -171,13 +171,15 @@ Java finally statement. Always after start try tag or catch tag and before closi
 
 ### Translate
 
-Translate text with given Translator instance.<br>
+Translate text/value of variable with given Translator instance.<br>
 Unpaired: translate single message
 Paired: translate with parameters - see translate parameters
 
 ```
 <t:trans message="" />
 <t:trans message=""></t:trans>
+<t:trans variable="" />
+<t:trans variable=""></t:trans>
 ```
 
 ### Translate parameter
@@ -223,9 +225,11 @@ Include defined block/another template file on given place. Template can be incl
 ### Control
 
 Show grid/form object. For grid always unpaired. For form unpaired for default view, paired for custom view (see Error, Label and Input). Name is grid/form variable name.
+Can be used in JS, with 'jsObject' returns new configured TotiForm/TotiGrid object.
 
 ```
 <t:control name="" />
+<t:control name="" jsObject/>
 ```
 
 ### Error, Label, Input

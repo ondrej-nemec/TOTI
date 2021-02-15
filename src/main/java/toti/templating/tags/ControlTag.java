@@ -13,12 +13,21 @@ public class ControlTag implements Tag {
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
+		if (params.get("jsObject") != null) {
+			return String.format("{"
+					+ "toti.control.Control control=(toti.control.Control)(variables.get(\"%s\"));"
+					+ "b.append(\"new Toti\"+control.getType()+\"(\"+control.toString()+\")\");"
+					+ "}",
+					params.get("name")
+			);
+		}
 		return String.format(
 				"{"
 				+ "toti.control.Control control=(toti.control.Control)(variables.get(\"%s\"));"
 				+ "b.append(\""
 				+ "<script>"
-				+ "toti\"+control.getType()+\".init('%s', 'toti-\" + control.getType() + \"-%s', \"+control.toString()+\");"
+				+ "new Toti\"+control.getType()+\"(\"+control.toString()+\")"
+				+ ".init('%s', 'toti-\" + control.getType() + \"-%s', );"
 				+ "</script>"
 				+ "\");"
 				+ "}"

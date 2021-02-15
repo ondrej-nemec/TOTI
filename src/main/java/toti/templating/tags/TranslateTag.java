@@ -13,6 +13,12 @@ public class TranslateTag implements Tag {
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
+		if (params.get("variable") != null) {
+			return String.format(
+					"b.append(Template.escapeVariable(translator.translate(%s, common.MapInit.hashMap(/*",
+					params.get("variable")
+			);
+		}
 		return String.format(
 				"b.append(Template.escapeVariable(translator.translate(\"%s\", common.MapInit.hashMap(/*",
 				params.get("message")
@@ -26,6 +32,9 @@ public class TranslateTag implements Tag {
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
+		if (params.get("variable") != null) {
+			return String.format("b.append(Template.escapeVariable(translator.translate(%s)));", params.get("variable"));
+		}
 		return String.format("b.append(Template.escapeVariable(translator.translate(\"%s\")));", params.get("message"));
 	}
 
