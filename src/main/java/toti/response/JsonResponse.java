@@ -36,7 +36,7 @@ public class JsonResponse implements Response {
 				try {
 					OutputJsonStream stream = new OutputJsonStream(new OutputReaderProvider(bw));
 					OutputJsonWritter writter = new OutputJsonWritter ();
-					write(stream, json);
+					writter.write(stream, json);
 					/*stream.startDocument();
 					for (String key : json.keySet()) {
 						writeObject(stream, json.get(key), key);
