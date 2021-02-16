@@ -10,16 +10,18 @@ var totiLoad = {
 			xhr.setRequestHeader(name, value);
 		}
 		xhr.onload = function() {
-			var response = xhr.response;
-			try {
-        		response = JSON.parse(xhr.response);
-		    } catch (e) {
-		    	response = xhr.response;
-		    }
-		    onSuccess(response, xhr);
-		};
-		xhr.onerror = function () {
-		    onFailure(xhr);
+			if (xhr.status >= 400) {
+				onFailure(xhr);
+			} else {
+				var response = xhr.response;
+				try {
+	        		response = JSON.parse(xhr.response);
+			    } catch (e) {
+			    	response = xhr.response;
+			    }
+			    onSuccess(response, xhr);
+			}
+			// TODO rs 300 ???
 		};
 		xhr.send(params);
 	},
