@@ -46,7 +46,7 @@ public class CreateEntity {
 	public static void main(String[] args) {
 		CreateEntity e = new CreateEntity();
 		try {
-			e.generate("entity", "User");
+			e.generate("src/test/java/toti/entity", "Entity");
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
