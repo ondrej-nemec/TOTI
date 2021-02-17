@@ -20,13 +20,21 @@ class TotiGrid {
 		head.appendChild(this.createFiltering(uniqueName, this.config.columns));
 
 		var body = document.createElement("tbody");
+		/***********/
+		var space = document.createElement("span");
+		space.innerHTML = '&nbsp;';
 		var footer = document.createElement("td");
 		footer.setAttribute("colspan", 100);
 		if (this.config.actions.length > 0) {
-			// TODO footer.appendChild(this.createActions(uniqueName, this.config.actions));
+			footer.appendChild(this.createActions(uniqueName, this.config.actions));
+			footer.appendChild(space);
+			footer.appendChild(space);
 		}
 		footer.appendChild(this.createPages(uniqueName, this.config.pages.pagesButtonCount, 1));
+		footer.appendChild(space);
+		footer.appendChild(space);
 		footer.appendChild(this.createPagesSize(uniqueName, this.config.pages.pagesSizes, this.config.pages.defaultSize));
+		/***********/
 
 		var table = document.createElement("table");
 		table.setAttribute("class", "toti-table");
@@ -35,7 +43,7 @@ class TotiGrid {
 		table.appendChild(body);
 		var footerTr = document.createElement("tr");
 		footerTr.appendChild(footer);
-		var tFooter = document.createElement("tfooter");
+		var tFooter = document.createElement("tfoot");
 		tFooter.appendChild(footerTr);
 
 		document.createElement("tfooter");
@@ -126,7 +134,7 @@ class TotiGrid {
 					}
 				};
 				cell.appendChild(checkbox);
-				cell.setAttribute("no-folters", "");
+				cell.setAttribute("no-filters", "");
 			} else if (column.hasOwnProperty('filter')) {
 				if (column.filter.type === "select") {
 					/*var options = [];
@@ -158,16 +166,104 @@ class TotiGrid {
 	}
 
 	createActions(uniqueName, actions) {
-		// TODO
+		//TODO
+		var options = [];
+		options.push({
+			"ajax": true,
+			"method": null,
+			"title": totiTranslations.actions.select,
+			"value": ""
+		});
+		actions.forEach(function(action) {
+			action.value = action.link;
+			options.push(action);
+		});
+		var select = totiControl.input({
+			options: options,
+			type: "select"
+		});
+		var execute = totiControl.button({
+			'class': 'toti-button-execute',
+			value: totiTranslations.actions.execute
+		});
+		execute.onclick = function(event) {
+			event.preventDefault();
+			var option = select.querySelector("option[value='" + select.value + "']");
+			if (option.value === '') {
+				return false;
+			}
+			var url = option.value;
+			var method = option.getAttribute("method");
+			var ajax = option.getAttribute("ajax");
+			var submitConfirmation = option.getAttribute("submitConfirmation");
+			
+			var ids = [];
+			document.querySelectorAll('.' + uniqueName + "-grid-action:checked").forEach(function(checkbox) {
+				ids.push(checkbox.getAttribute("data-unique"));
+			});
+			if (ids.length === 0) {
+				totiDisplay.flash("error", totiTranslations.actions.noSelectedItems);
+				return false;
+			}
+			var params = {"ids": ids};
+			if (ajax === 'true') {
+				if (submitConfirmation !== null
+					&& submitConfirmation !== undefined
+					&& !totiDisplay.confirm(submitConfirmation)) {
+					event.preventDefault();
+					return false;
+				}
+				totiLoad.async(
+					url,
+					method,
+					params,
+					totiLoad.getHeaders(),
+					function(result) {
+						if (option.attr("onSuccess") != null) {
+							window[option.attr("onSuccess")](result);
+						} else {
+							totiDisplay.flash('success', result);
+						}
+					},
+					function(xhr) {
+						if (option.attr("onFailure") != null) {
+							window[option.attr("onFailure")](xhr);
+						} else {
+							totiDisplay.flash('error', xhr);
+						}
+					}
+				);
+			} else {
+				totiLoad.link(url, method, params, totiLoad.getHeaders());
+			}
+		};
+/*
+function(event) {
+				event.preventDefault();
+				var option = select.children('option:selected');
+				if (option.val() === '') {
+					return false;
+				}
+			}
+		*/
+		var actions = document.createElement("div");
+		actions.setAttribute('class', "toti-actions");
+		actions.setAttribute('style', "display: inline");
+		actions.appendChild(select);
+		actions.appendChild(execute);
+		return actions;
 	}
 
 	createPages(uniqueName, pagesButtonCount, actualPage) {
 		var pagging = document.createElement("div");
 		pagging.setAttribute("id", uniqueName + "-pages");
+		pagging.setAttribute("style", "display: inline");
 		var span = document.createElement("span");
 		span.innerText = totiTranslations.pages.title;
 		pagging.appendChild(span);
-		pagging.innerText = '&nbsp;';
+		var space = document.createElement("span");
+		space.innerHTML = '&nbsp;';
+		pagging.appendChild(space);
 		var list = document.createElement("span");
 		list.setAttribute("id", uniqueName + "-pages-list");
 		list.setAttribute("data-pagesbuttoncount", pagesButtonCount);
@@ -192,19 +288,6 @@ class TotiGrid {
 			object.load(uniqueName);
 		};
 		return select;
-			/*
-		print: function(uniqueName, pageSizes, defaultSize) {
-			var options = [];
-			pageSizes.forEach(function(size, index) {
-				options[index] = totiControl.inputs.option(size, size);
-			});
-			var select = totiControl.inputs.select(options, { "id": uniqueName + "-pageSize" });
-			select.val(defaultSize);
-			select.change(function() {
-				totiGrid.load(uniqueName);
-			});
-			return select;
-		},*/
 	}
 
 	load(uniqueName, initialLoad = false) {
@@ -217,24 +300,24 @@ class TotiGrid {
 				body.appendChild(document.createElement("tr").appendChild(td));
 				return;
 			}
-			object.pagesOnLoad(uniqueName, response.pageIndex, response.itemsCount / totiGrid.pagesSize.get(uniqueName));
+			object.pagesOnLoad(uniqueName, response.pageIndex, response.itemsCount / object.pagesSizeGet(uniqueName));
 			response.data.forEach(function(row, rowIndex) {
 				var tableRow = document.createElement("tr");
 				tableRow.setAttribute("index", rowIndex);
-				tableRow.setAttribute("class", "toti-row" + (rowIndex %2) + " toti-row-" + uniqueName);
+				tableRow.setAttribute("class", "toti-row-" + (rowIndex %2) + " toti-row-" + uniqueName);
 				tableRow.onclick = function(event) {
-					// TODO 
-					/*if (jQuery(e.target).is('input') ||jQuery(e.target).is('button')) {
+					// TODO only if set
+					if (event.target.type !== undefined) { /*is input*/
 						return;
-					}*/
+					}
 					var actualClass = tableRow.getAttribute("class");
-					document.getElementsByClassName("row-selected").forEach(function(element) {
-						var clazz = element.getAttribute("class");
+					Array.prototype.forEach.call(document.getElementsByClassName('row-selected'), function(element) {
+			    		var clazz = element.getAttribute("class");
 						element.setAttribute("class", clazz.replace("row-selected", ""));
 					});
 					var clazz = tableRow.getAttribute("class");
 					if (!actualClass.includes("row-selected")) {
-						element.setAttribute("class", actualClass + " row-selected");
+						tableRow.setAttribute("class", actualClass + " row-selected");
 					}
 				};
 
@@ -250,29 +333,30 @@ class TotiGrid {
 					} else if (column.type === 'buttons') {
 						column.buttons.forEach(function(button, index) {
 							var settings = {
-								href: totiControl.utils.parametrizedString(button.href, row),
+								href: totiUtils.parametrizedString(button.href, row),
 								method: button.method,
 								async: button.ajax,
 								submitConfirmation: function() {
 									if (button.hasOwnProperty('confirmation')) {
-										return totiControl.display.confirm(button.confirmation, row);
+										var message = totiUtils.parametrizedString(button.confirmation, row);
+										return totiDisplay.confirm(message);
 									}
 									return true;
 								},
 								type: button.hasOwnProperty('style') ? button.style : 'basic'
 							};
 							var buttonElement = totiControl.button(button);
-							buttonElement.onclick(function(event) {
+							buttonElement.onclick = function(event) {
 								totiControl.getAction(settings)(event);
 								setTimeout(function(){
 									object.load(uniqueName);
 								}, 500);
-							});
+							};
 							td.appendChild(buttonElement);
 						});
 					} else if (column.hasOwnProperty("renderer")) {
 						// TODO RENDERER TODO
-						td.appendChild(window[column.renderer](row[column.name], row));
+						td.innerText = window[column.renderer](row[column.name], row);
 					} else {
 						td.innerText = row[column.name];
 					}
@@ -332,7 +416,7 @@ class TotiGrid {
 		if (urlParams.filters !== undefined) {
 			data = JSON.parse(urlParams.filters);
 		}
-		document.getElementById(uniqueName + "-filtering").querySelectorAll("td").forEach(function(element) {
+		document.getElementById(uniqueName + "-filtering").querySelectorAll("th").forEach(function(element) {
 			var name = element.getAttribute('data-name');
 			element.children.value = data[name];
 		});
@@ -343,7 +427,7 @@ class TotiGrid {
 		if (urlParams.sorting != undefined) {
 			data = JSON.parse(urlParams.sorting);
 		}
-		document.getElementById( uniqueName + "-sorting").querySelectorAll('td').forEach(function(sort) {
+		document.getElementById( uniqueName + "-sorting").querySelectorAll('th').forEach(function(sort) {
 			var name = sort.getAttribute('data-name');
 			if (data.hasOwnProperty(name)) {
 				var val = data[name];
@@ -382,7 +466,7 @@ class TotiGrid {
 		var createButton = function(list, title, index, clazz = "") {
 			var button = totiControl.button({
 				'class': 'toti-button-pages' + clazz,
-				title: title
+				value: title
 			});
 			button.onclick = onPageClick(index);
 			list.appendChild(button);
@@ -404,7 +488,7 @@ class TotiGrid {
 		if (lower < 1) {
 			lower = 1;
 		}
-		for (i = lower; i < Math.min(lower + pagesList.getAttribute("data-pagesbuttoncount"), pagesCount); i++) {
+		for (var i = lower; i < Math.min(lower + pagesList.getAttribute("data-pagesbuttoncount"), pagesCount); i++) {
 			var clazz = "";
 			if (i === actualPage) {
 				clazz = " actualPage";
@@ -438,7 +522,7 @@ class TotiGrid {
 			}
 			sort = parseInt(sort);
 			if (element.getAttribute('data-name') != '' && sort !== 0/* && sort != undefined*/) {
-				sorts[element.querySelector("data-name")] = (sort === 1) ? 'ASC' : 'DESC';
+				sorts[element.getAttribute("data-name")] = (sort === 1) ? 'ASC' : 'DESC';
 			}
 		});
 		return JSON.stringify(sorts);
@@ -446,113 +530,16 @@ class TotiGrid {
 	
 	filtersGet(uniqueName) {
 		var filters = {};
-		document.getElementById(uniqueName + "-filtering").querySelectorAll('td').forEach(function(element, index) {
-			if (element.getAttribute('no-filters') !== null) {
+		document.getElementById(uniqueName + "-filtering").querySelectorAll('th').forEach(function(element, index) {
+			if (element.getAttribute('no-filters') !== null || element.children.length === 0) {
 				return;
 			}
-			var value = element.children.value;
-			if (element.getAttribute('data-name') != '' && value !== null && value !== '') {
+			var value = element.children[0].value;
+			if (element.getAttribute('data-name') != '' && value !== undefined && value !== '') {
 				filters[element.getAttribute('data-name')] = value;
 			}
 		});
 		return JSON.stringify(filters);
 	}
 	
-
 }
-
-/*
-
-var totiGrid = {
-	actions: {
-		//actions: [ {link, title, ajax, method} ]
-		print: function(uniqueName, actions) {
-			var options = [];
-			options.push(totiControl.inputs.option('', totiLang.actions.select, {
-					"ajax": true,
-					"method": null
-				}));
-			actions.forEach(function(action) {
-				var params = {
-					"ajax": action.ajax,
-					"method": action.method
-				};
-				if (action.hasOwnProperty('onSuccess')) {
-					params.onSuccess = action.onSuccess;
-				}
-				if (action.hasOwnProperty('onFailure')) {
-					params.onFailure = action.onFailure;
-				}
-				if (action.hasOwnProperty('submitConfirmation')) {
-					params.submitConfirmation = action.submitConfirmation;
-				}
-				options.push(totiControl.inputs.option(action.link, action.title, params));
-			});
-			var select = totiControl.inputs.select(options);
-			var execute = totiControl.inputs.button(
-				function(event) {
-					event.preventDefault();
-					var option = select.children('option:selected');
-					if (option.val() === '') {
-						return false;
-					}
-					var url = option.val();
-					var method = option.attr("method");
-					var ajax = option.attr("ajax");
-					var submitConfirmation = option.attr("submitConfirmation");
-
-					var ids = {};
-					$('.' + uniqueName + "-grid-action:checked").each(function() {
-						ids[$(this).data("unique")] = $(this).data("unique");
-					});
-					if (Object.keys(ids).length === 0) {
-						totiControl.display.flash("error", totiLang.actions.noSelectedItems);
-						return false;
-					}
-					if (ajax === 'true') {
-						if (submitConfirmation !== null
-							&& submitConfirmation !== undefined
-							&& !totiControl.display.confirm(submitConfirmation)) {
-							event.preventDefault();
-							return false;
-						}
-						totiControl.load.ajax(
-							url,
-							method,
-							{ids: ids},
-							function(result) {
-								if (option.attr("onSuccess") != null) {
-									window[option.attr("onSuccess")](result);
-								} else {
-									totiControl.display.flash('success', result);
-								}
-							},
-							function(xhr) {
-								if (option.attr("onFailure") != null) {
-									window[option.attr("onFailure")](xhr);
-								} else {
-									totiControl.display.flash('error', xhr);
-								}
-							},
-							totiControl.getHeaders()
-						);
-					} else {
-						// TODO Improvement use link? now no params sended 
-						window.location = url + "?ids=" + JSON.stringify(ids);
-					}
-				},
-				totiLang.actions.execute,
-				{'class': 'toti-button-execute'}
-			);
-			var actions = $('<div>').attr('class', "toti-actions");
-			actions.append(select).append(execute);
-			return actions;
-		},
-		onLoad: function(uniqueName) {
-			// empty
-		},
-		get: function(uniqueName) {
-			// empty 
-		}
-	}
-};*/

@@ -6,8 +6,7 @@ import java.util.Map;
 import toti.control.Jsonable;
 
 public class Button implements Input, Jsonable {
-		
-	private final String name;
+	
 	private final String url;
 	private String confirmation = null;
 	private String title = null;
@@ -18,13 +17,12 @@ public class Button implements Input, Jsonable {
 	private String onSuccess;
 	private ButtonType type = ButtonType.BASIC;
 	
-	public static Button create(String url, String name) {
-		return new Button(url, name);
+	public static Button create(String url) {
+		return new Button(url);
 	}
 	
-	private Button(String url, String name) {
+	private Button(String url) {
 		this.url = url;
-		this.name = name;
 	}
 
 	public Button setOnFailure(String onFailure) {
@@ -78,7 +76,7 @@ public class Button implements Input, Jsonable {
 		json.put("href", url);
 		json.put("ajax", ajax);
 		json.put("type", "button");
-		json.put("name", name);
+		json.put("name", "");
 		json.put("method", method);
 		if (title != null) {
 			json.put("value", title);
@@ -96,7 +94,7 @@ public class Button implements Input, Jsonable {
 			json.put("onSuccess", onSuccess);
 		}
 		json.put("style", type.toString().toLowerCase());
-		json.put("params", params);
+		json.putAll(params);
 		return json;
 	}
 
