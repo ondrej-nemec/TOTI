@@ -228,3 +228,8 @@ form.init(String elementIdWhereWillBePrinted, String uniqueFormName);
   * string afterBind (optional, function name)
   * string onFailure (optional, function name)
 
+## Grid
+
+Translated:
+* button confirm
+* button link

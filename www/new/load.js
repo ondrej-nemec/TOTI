@@ -26,6 +26,8 @@ var totiLoad = {
 		xhr.send(params);
 	},
 	link: function(url, method, data, headers) {
+		window.location = url + "?ids=" + new URLSearchParams(data).toString();
+/*
 		var xhr = new XMLHttpRequest()
 		xhr.open(method, url, true);
 		for (const[name, value] of Object.entries(headers)) {
@@ -35,13 +37,13 @@ var totiLoad = {
 			document.documentElement.innerHTML = xhr.response;
 			window.history.pushState({},"", xhr.responseURL);
 			totiDisplay.printStoredFlash();
-		/* location.reload();
-		 window.onload();
-		 console.log("onload");*/
 		};
 		xhr.onload = onFinish();
 		//xhr.onerror = onFinish();
-		xhr.send(new URLSearchParams(data).toString());
+		xhr.send(new URLSearchParams(data).toString());*/
+		/* location.reload();
+		 window.onload();
+		 console.log("onload");*/
 	},
 	// TODO wll be here ?
 	getHeaders: function() {

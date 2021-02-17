@@ -164,7 +164,6 @@ class TotiForm {
 
 	getSubmit(uniqueName, submit) {
 		return function(event) {
-			// event.preventDefault();
 			Array.prototype.forEach.call(document.getElementsByClassName('error-list'), function(el) {
 			    el.remove();
 			});
