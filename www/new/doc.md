@@ -230,6 +230,42 @@ form.init(String elementIdWhereWillBePrinted, String uniqueFormName);
 
 ## Grid
 
-Translated:
+```
+var grid = new TotiGrid(config);
+
+grid.init(String elementIdWhereWillBePrinted, String uniqueGridName);
+```
+
+### Config
+* dataLoadUrl
+* dataLoadMethod
+* String identifier
+* array columns - each object in array
+  * string name
+  * boolean useSorting
+  * string|null title
+  * filter - input settings
+  * ['actions'|'buttons'|null] type
+    * buttons
+       * href
+       * method
+       * boolean ajax
+       * string confirmation (optional)
+       * string style [info, warning, error,...] (optional)
+    * null
+       * renderer (optional)
+* array actions - each object in array
+  * link
+  * meethod
+  * boolean ajax
+  * string submitConfirmation
+  * onSuccess (optional)
+  * onFailure (optional)
+* pages
+  * int pagesButtonCount
+  * array[int] pagesSizes
+  * int defaultSize
+
+### Substitute:
 * button confirm
 * button link

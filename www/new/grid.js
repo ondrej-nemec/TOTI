@@ -136,24 +136,9 @@ class TotiGrid {
 				cell.appendChild(checkbox);
 				cell.setAttribute("no-filters", "");
 			} else if (column.hasOwnProperty('filter')) {
-				if (column.filter.type === "select") {
-					/*var options = [];
-					column.filter.options.forEach(function(option) {
-						var params = {};
-						if (option.hasOwnProperty('params')) {
-							params = option.params;
-						}
-						options.push(totiControl.input(option.value, option.title, params));
-					});
-					delete column.filter.options;*/
-					cell.appendChild(
-						totiControl.input(column.filter)
-					);
-				} else {
-					cell.appendChild(
-						totiControl.input(column.filter)
-					);
-				}
+				cell.appendChild(
+					totiControl.input(column.filter)
+				);
 				cell.onchange = function() {
 					object.load(uniqueName);
 				};
@@ -219,15 +204,15 @@ class TotiGrid {
 					params,
 					totiLoad.getHeaders(),
 					function(result) {
-						if (option.attr("onSuccess") != null) {
-							window[option.attr("onSuccess")](result);
+						if (option.getAttribute("onSuccess") != null) {
+							window[option.getAttribute("onSuccess")](result);
 						} else {
 							totiDisplay.flash('success', result);
 						}
 					},
 					function(xhr) {
-						if (option.attr("onFailure") != null) {
-							window[option.attr("onFailure")](xhr);
+						if (option.getAttribute("onFailure") != null) {
+							window[option.getAttribute("onFailure")](xhr);
 						} else {
 							totiDisplay.flash('error', xhr);
 						}
@@ -237,15 +222,6 @@ class TotiGrid {
 				totiLoad.link(url, method, params, totiLoad.getHeaders());
 			}
 		};
-/*
-function(event) {
-				event.preventDefault();
-				var option = select.children('option:selected');
-				if (option.val() === '') {
-					return false;
-				}
-			}
-		*/
 		var actions = document.createElement("div");
 		actions.setAttribute('class', "toti-actions");
 		actions.setAttribute('style', "display: inline");
@@ -292,7 +268,7 @@ function(event) {
 
 	load(uniqueName, initialLoad = false) {
 		var object = this;
-		var loadDataSuccess = function(body, uniqueName, response, columns, headers, identifier) {
+		var loadDataSuccess = function(body, uniqueName, response, columns, identifier) {
 			if (response.data.length === 0) {
 				var td = document.createElement("td");
 				td.setAttribute("colspan", 100);
@@ -356,7 +332,7 @@ function(event) {
 						});
 					} else if (column.hasOwnProperty("renderer")) {
 						// TODO RENDERER TODO
-						td.innerText = window[column.renderer](row[column.name], row);
+						td.innerHTML = window[column.renderer](row[column.name], row);
 					} else {
 						td.innerText = row[column.name];
 					}
@@ -398,7 +374,6 @@ function(event) {
 					uniqueName,
 					response, 
 					object.config.columns,
-					object.config.headers,
 					object.config.identifier
 				);
 			},
