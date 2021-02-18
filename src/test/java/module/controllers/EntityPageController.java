@@ -1,17 +1,22 @@
 package module.controllers;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
 import common.MapInit;
+import common.structures.Tuple2;
 import socketCommunication.http.HttpMethod;
+import socketCommunication.http.server.RequestParameters;
+import socketCommunication.http.server.UploadedFile;
 import toti.annotations.inject.ClientIdentity;
 import toti.annotations.inject.Translate;
 import toti.annotations.url.Action;
 import toti.annotations.url.Controller;
 import toti.annotations.url.Domain;
 import toti.annotations.url.Method;
+import toti.annotations.url.Param;
 import toti.annotations.url.ParamUrl;
 import toti.annotations.url.Params;
 import toti.annotations.url.Secured;
@@ -27,7 +32,9 @@ import toti.control.inputs.ButtonType;
 import toti.control.inputs.Checkbox;
 import toti.control.inputs.Datetime;
 import toti.control.inputs.Email;
+import toti.control.inputs.File;
 import toti.control.inputs.Hidden;
+import toti.control.inputs.Input;
 import toti.control.inputs.Number;
 import toti.control.inputs.Password;
 import toti.control.inputs.RadioList;
@@ -57,9 +64,78 @@ public class EntityPageController {
 		this.identity = identity;
 	}
 	
+	@Action("form")
+	public Response form() {
+		Form form = new Form("/entity/entity/save", true);
+		form.setFormMethod("post");
+		form.setBindUrl("/entity/entity/bind");
+		form.addInput(Text.input("simple", false).setTitle("Simple text"));
+		form.addInput(Text.input("xss", false).setTitle("XSS"));
+		form.addInput(TextArea.input("area", false).setTitle("Area"));
+		form.addInput(Datetime.input("datetimeInput", false).setTitle("Datetime"));
+		form.addInput(RadioList.input("radioInput", false, MapInit.hashMap(
+			new Tuple2<>("a", "A"),
+			new Tuple2<>("b", "B"),
+			new Tuple2<>("c", "C")
+		)));
+		form.addInput(Checkbox.input("no-def-no-override", false).setTitle("no def no override"));
+		form.addInput(Checkbox.input("no-def-override", false).setTitle("no def override"));
+		form.addInput(Checkbox.input("def-no-override", false).setDefaultValue("true").setTitle("def no overrirde"));
+		form.addInput(Checkbox.input("def-override", false).setDefaultValue("true").setTitle("deff overrirde"));
+		form.addInput(Select.input("selectInput", false, MapInit.hashMap(
+				new Tuple2<>("aa", "AA"),
+				new Tuple2<>("bb", "BB"),
+				new Tuple2<>("cc", "CC")
+			)));
+		form.addInput(File.input("pdf", false));
+		
+		form.addInput(Button.create("/entity/entity/list").setTitle("Back").setConfirmation("Really?"));
+		form.addInput(Submit.create("Save", "save").setConfirmation("realy?"));
+		form.addInput(Submit.create("Sync", "save2").setConfirmation("realy?").setAsync(false));
+		form.addInput(Submit.create("Save and back", "save-back").setRedirect("/entity/entity/list"));
+		
+		Map<String, Object> params = new HashMap<>();
+		params.put("testForm", form);
+		params.put("testForm2", form);
+		return Response.getTemplate("/Form.jsp", params);
+	}
+	
+	@Action("bind")
+	public Response bind() {
+		Map<String, Object> params = new HashMap<>();
+		params.put("simple", "Lorem ipsum");
+		params.put("area", "Text area content");
+		params.put("datetimeInput", "2021-02-14 23:35");
+		params.put("radioInput", "b");
+		params.put("selectInput", "cc");
+		params.put("no-def-override", true);
+		params.put("def-override", false);
+		params.put("xss", "<script>Alert('XSS');</script>");
+		
+		return Response.getJson(params);
+	}
+	
+	@Action("save")
+	public Response save(@Params RequestParameters params/*, @Param("pdf") UploadedFile file*/) {
+		params.forEach((key, value)->{
+			System.err.println(key + ": " + value + " " + (value == null ? "" : value.getClass()));
+		});
+		/*try {
+			System.err.println(file.getFileName());
+			System.err.println(file.getContentType());
+			System.err.println(file.getContent().size());
+			file.save("www");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+		return Response.getJson(MapInit.hashMap(new Tuple2<>("id", 1), new Tuple2<>("message", "saved")));
+	}
+	
+	
 	@Action("action1")
-	@Secured({@Domain(name=SECURITY_DOMAIN, action=acl.Action.READ)})
-	public Response actionMethod1(@Params Properties prop) {
+	@Secured()
+	public Response actionMethod1(@Params RequestParameters prop) {
 		System.out.println("Action 1 properties:");
 		System.out.println(prop);
 		return Response.getText("Working 1");
@@ -67,7 +143,8 @@ public class EntityPageController {
 	
 	@Action("action2")
 	@Method({HttpMethod.POST})
-	public Response actionMethod2(@Params Properties prop) {
+	@Secured(isApi = false)
+	public Response actionMethod2(@Params RequestParameters prop) {
 		System.out.println("Action 2 properties:");
 		System.out.println(prop);
 		return Response.getText("Working 2");
@@ -75,10 +152,12 @@ public class EntityPageController {
 	
 	@Action("action3")
 	@Method({HttpMethod.POST})
-	public Response actionMethod3(@Params Properties prop) {
+	public Response actionMethod3(@Params RequestParameters prop) {
 		System.out.println("Action 3 properties:");
 		System.out.println(prop);
-		return Response.getText("Working 3");
+		Map<String, Object> a = new HashMap<>();
+		a.put("text", "Working 3");
+		return Response.getJson(a);
 	}
 
 	@Action("list")
@@ -149,6 +228,10 @@ public class EntityPageController {
 					Button.create("/entity/entity/edit/{id}").setAjax(false).setMethod("get")
 						.setTitle("Edit").setType(ButtonType.INFO)
 				)
+				.addButton(
+						Button.create("/entity/entity/detail/{id}").setAjax(false).setMethod("get")
+							.setTitle("Detail").setType(ButtonType.SUCCESS)
+					)
 		);
 		/***/
 		params.put("control", grid);
@@ -203,7 +286,7 @@ public class EntityPageController {
 		)).setTitle("Language"));
 		form.addInput(TextArea.input("comment", false).setCols(20).setRows(30).setTitle("module.comment").setValue("aaa"));
 		
-		form.addInput(Submit.create("Save", "save").setRedirect("/entity/list"));
+		form.addInput(Submit.create("Save", "save").setRedirect("/entity/entity/list"));
 		form.addInput(Button.create("/entity/entity/list").setTitle("Cancel").setAjax(false));
 		
 		form.setAfterBind("b");

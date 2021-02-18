@@ -20,12 +20,33 @@ public class EntityValidator {
 	
 	public static Validator test() {
 		return Validator.create("test", false)
+				.addRule(ItemRules.forName("html-list", true).setListSpecification(new Validator(
+					ItemRules.defaultRule().setType(Integer.class)
+				)))
+				.addRule(ItemRules.forName("html-map", true).setMapSpecification(new Validator(true)
+					.addRule(ItemRules.forName("a", true).setType(Integer.class))
+					.addRule(ItemRules.forName("b", true).setType(Integer.class))
+					.addRule(ItemRules.forName("c", true).setType(Integer.class))
+				))
+				.addRule(ItemRules.forName("html-map2", true).setMapSpecification(new Validator(true)
+					.addRule(ItemRules.forName("a", true).setMapSpecification(new Validator(true)
+						.addRule(ItemRules.forName("aa", true).setType(Integer.class))
+						.addRule(ItemRules.forName("ab", true).setType(Integer.class))
+					))
+				))
+				.addRule(ItemRules.forName("html-map-list", true).setMapSpecification(new Validator(true)
+					.addRule(ItemRules.forName("a", true).setListSpecification(new Validator(
+						ItemRules.defaultRule().setType(Integer.class)
+					)))
+				))
+			/*	
 			.addRule(ItemRules.forName("number-as-text", true).setType(Integer.class, false))
 			.addRule(ItemRules.forName("number-as-number", true).setType(Integer.class))
 			
 			.addRule(ItemRules.forName("text-value", true).setType(String.class).setChangeValue((val)->{
 				return val.toString().length() > 5;
 			}))
+			//*/
 			/*
 			// working
 			.addRule(ItemRules.forName("json-map", true).setType(Map.class))
@@ -36,7 +57,7 @@ public class EntityValidator {
 			.addRule(ItemRules.forName("json-list", true).setType(List.class))
 			//*/
 			
-			//*
+			/*
 			// working
 			.addRule(ItemRules.forName("html-map", true).setMapSpecification(new Validator(true)
 				.addRule(ItemRules.forName("a", true).setType(Integer.class))
@@ -46,7 +67,7 @@ public class EntityValidator {
 				.addRule(ItemRules.forName("c", true))
 			))
 			//*/
-			
+			/*
 			.addRule(ItemRules.forName("html-list", true).setListSpecification(new Validator(
 					ItemRules.forName(null, false).setType(Integer.class)
 				)
@@ -54,6 +75,7 @@ public class EntityValidator {
 					return v + " " + v;
 				}))
 			))
+			//*/
 			// html-list - simple list
 			// html-map - simple map
 			// html-map2 - complicated map

@@ -90,6 +90,7 @@ public class EntityDaoDatabase implements EntityDao {
 			values.forEach((name, value)->{
 				b.set(String.format("%s = :%s", name, name)).addParameter(":" + name, value);
 			});
+			b.where("id = :id").addParameter(":id", id);
 			b.execute();
 			return null;
 		});
