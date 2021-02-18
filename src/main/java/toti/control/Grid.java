@@ -6,16 +6,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import json.Jsonable;
 import toti.control.columns.Column;
 import toti.control.columns.GroupAction;
 
-public class Grid implements Jsonable, Control {
+public class Grid implements Control {
 
 	private final String loadDataUrl;
 	private final String loadDataMethod;
 	private String uniqueRowIdentifier = "id";
-	private final List<Map<String, Object>> columns = new LinkedList<>();
-	private final List<Map<String, Object>> actions = new LinkedList<>();
+	private final List<Jsonable> columns = new LinkedList<>();
+	private final List<Jsonable> actions = new LinkedList<>();
 	
 	// paging
 	private List<Integer> pagesSizes = Arrays.asList(5, 10, 20, 50, 100);
@@ -48,12 +49,12 @@ public class Grid implements Jsonable, Control {
 	}
 	
 	public Grid addColumn(Column column) {
-		columns.add(column.getGridSettings());
+		columns.add(column);
 		return this;
 	}
 	
 	public Grid addAction(GroupAction action) {
-		actions.add(action.getGridSettings());
+		actions.add(action);
 		return this;
 	}
 	

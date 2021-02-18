@@ -3,10 +3,9 @@ package toti.control.columns;
 import java.util.HashMap;
 import java.util.Map;
 
-import toti.control.Jsonable;
 import toti.templating.Template;
 
-public class ValueColumn implements Jsonable, Column {
+public class ValueColumn implements Column {
 	
 	private final String name;
 	private final String type; // value, buttons, actions

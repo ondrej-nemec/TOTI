@@ -3,9 +3,9 @@ package toti.control.inputs;
 import java.util.HashMap;
 import java.util.Map;
 
-import toti.control.Jsonable;
+import toti.control.Control;
 
-public class Button implements Input, Jsonable {
+public class Button implements Input {
 	
 	private final String url;
 	private String confirmation = null;
@@ -41,7 +41,7 @@ public class Button implements Input, Jsonable {
 	}
 	
 	public Button setConfirmation(String confirm) {
-		this.confirmation = escapeJs(confirm);
+		this.confirmation = Control.escapeJs(confirm);
 		return this;
 	}
 

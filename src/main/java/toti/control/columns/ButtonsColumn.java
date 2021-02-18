@@ -5,11 +5,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import toti.control.Jsonable;
 import toti.control.inputs.Button;
 import toti.templating.Template;
 
-public class ButtonsColumn implements Jsonable, Column {
+public class ButtonsColumn implements Column {
 	
 	private final String name;
 	private final String type; // value, buttons, actions

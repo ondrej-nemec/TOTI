@@ -3,7 +3,8 @@ package toti.control.columns;
 import java.util.HashMap;
 import java.util.Map;
 
-import toti.control.Jsonable;
+import json.Jsonable;
+import toti.control.Control;
 import toti.templating.Template;
 
 public class GroupAction implements Jsonable {
@@ -22,7 +23,7 @@ public class GroupAction implements Jsonable {
 	}
 
 	public GroupAction setConfirmation(String confirm) {
-		this.confirmation = escapeJs(confirm);
+	    this.confirmation = Control.escapeJs(confirm);
 		return this;
 	}
 
@@ -46,8 +47,8 @@ public class GroupAction implements Jsonable {
 		return this;
 	}
 
-	// @Override
-	public Map<String, Object> getGridSettings() {
+	@Override
+	public Object toJson() {
 		Map<String, Object> json = new HashMap<>();
 		json.put("ajax", ajax);
 		json.put("title", Template.escapeVariable(title));

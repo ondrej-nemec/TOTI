@@ -7,7 +7,7 @@ import java.util.Map;
 
 import toti.control.inputs.Input;
 
-public class Form implements Jsonable, Control {
+public class Form implements Control {
 
 	private String bindUrl = null;
 	private String bindMethod = "get";

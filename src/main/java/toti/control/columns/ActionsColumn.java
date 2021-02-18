@@ -3,10 +3,9 @@ package toti.control.columns;
 import java.util.HashMap;
 import java.util.Map;
 
-import toti.control.Jsonable;
 import toti.templating.Template;
 
-public class ActionsColumn implements Jsonable, Column {
+public class ActionsColumn implements Column {
 
 	private final String name;
 	private final String type;
@@ -23,8 +22,8 @@ public class ActionsColumn implements Jsonable, Column {
 		this.title = title;
 		return this;
 	}
-
-	// @Override
+	
+	@Override
 	public Map<String, Object> getGridSettings() {
 		Map<String, Object> json = new HashMap<>();
 		json.put("name", Template.escapeVariable(name));
