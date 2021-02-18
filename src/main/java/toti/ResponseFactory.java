@@ -22,6 +22,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import acl.AuthorizationHelper;
 import acl.exception.AccessDeniedException;
 import acl.exception.NotAllowedActionException;
+import acl.structures.AclDestination;
 import common.Logger;
 import common.exceptions.LogicException;
 import core.FilesList;
@@ -264,7 +265,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		    		is = true;
 		    	}
 			} else {
-					is = url.equals(mapped.getUrl()) && methodMatch;
+				is = url.equals(mapped.getUrl()) && methodMatch;
 			}
 	    	if (is) {
 	    		return getControllerResponse(headers, mapped, params, identity, locale);
@@ -378,8 +379,9 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 						ids.retainAll(allowedIds);
 					}
 				} else {
-					authorizator.throwIfIsNotAllowed(identity.getUser(), ()->{
-						return domain.name();
+					authorizator.throwIfIsNotAllowed(identity.getUser(), new AclDestination() {
+						@Override public Object getId() { return domain.name(); }
+						@Override public String toString() { return domain.name(); }
 					}, domain.action(), prop.get(domain.owner()));
 				}
 			}
