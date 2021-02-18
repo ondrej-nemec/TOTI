@@ -7,7 +7,9 @@ import common.Logger;
 import database.Database;
 import example.dao.ExampleDao;
 import example.web.controllers.ExamplePageController;
+import example.web.controllers.SignPageController;
 import example.web.controllers.api.ExampleApiController;
+import example.web.controllers.api.SignApiController;
 import toti.Module;
 import toti.Router;
 import toti.application.Task;
@@ -20,13 +22,19 @@ public class ExampleModule implements Module {
 	public List<Task> initInstances(Env env, Registr registr, Database database, Logger logger) throws Exception {
 		AuditTrail auditTrail = new AuditTrail();
 		ExampleDao dao = new ExampleDao(registr.getService("database", Database.class));
+		
+		registr.addFactory(SignPageController.class, ()->new SignPageController());
+		registr.addFactory(SignApiController.class, ()->new SignApiController());
+		
 		registr.addFactory(ExamplePageController.class, ()->new ExamplePageController());
 		registr.addFactory(ExampleApiController.class, ()->new ExampleApiController(dao, logger, auditTrail));
 		return Arrays.asList();
 	}
 
 	@Override
-	public void addRoutes(Router router) {}
+	public void addRoutes(Router router) {
+		router.addUrl("", "/example-module/example/list");
+	}
 
 	@Override
 	public String getTemplatesPath() {

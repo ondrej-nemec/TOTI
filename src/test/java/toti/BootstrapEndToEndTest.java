@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import database.DatabaseConfig;
+import example.ExampleModule;
 import acl.Action;
 import acl.structures.Rules;
 import acl.structures.AclDestination;
@@ -24,7 +25,8 @@ public class BootstrapEndToEndTest {
 	public static void main(String[] args) {
 		try {
 			List<Module> modules = Arrays.asList(
-				new EntityModule()
+				new EntityModule(),
+				new ExampleModule()
 			);
 			Application.APP_CONFIG_FILE = null;
 			Application a = new Application(modules) {
@@ -51,7 +53,7 @@ public class BootstrapEndToEndTest {
 					// TODO little bit another way
 					try {
 						factory.setUserSecurity(new UserSecurity(
-							"/sign/in",
+							"/example-module/sign/in",
 							(identity)->new AclUser() {
 								@Override public List<AclRole> getRoles() { return new LinkedList<>(); }
 								@Override public int getRank() { return 0; }
@@ -59,7 +61,7 @@ public class BootstrapEndToEndTest {
 							},
 							new RulesDao() {
 								@Override public Rules getRulesForUserAndGroups(AclUser user, AclDestination domain) {
-									return Rules.forUserWithOwner(Action.ADMIN, null);
+									return Rules.forUserWithOwner(Action.ADMIN, Arrays.asList());
 								}
 							},
 							1000*60*10,

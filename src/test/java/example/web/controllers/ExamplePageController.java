@@ -3,6 +3,8 @@ package example.web.controllers;
 import java.util.HashMap;
 import java.util.Map;
 
+import common.MapInit;
+import common.structures.Tuple2;
 import socketCommunication.http.HttpMethod;
 import toti.annotations.inject.Translate;
 import toti.annotations.url.Action;
@@ -13,6 +15,29 @@ import toti.annotations.url.ParamUrl;
 import toti.annotations.url.Secured;
 import toti.control.Form;
 import toti.control.Grid;
+import toti.control.columns.ButtonsColumn;
+import toti.control.columns.ValueColumn;
+import toti.control.inputs.Button;
+import toti.control.inputs.ButtonType;
+import toti.control.inputs.Checkbox;
+import toti.control.inputs.Color;
+import toti.control.inputs.Date;
+import toti.control.inputs.Datetime;
+import toti.control.inputs.Email;
+import toti.control.inputs.File;
+import toti.control.inputs.Hidden;
+import toti.control.inputs.Month;
+import toti.control.inputs.Number;
+import toti.control.inputs.Password;
+import toti.control.inputs.RadioList;
+import toti.control.inputs.Range;
+import toti.control.inputs.Reset;
+import toti.control.inputs.Select;
+import toti.control.inputs.Submit;
+import toti.control.inputs.Text;
+import toti.control.inputs.TextArea;
+import toti.control.inputs.Time;
+import toti.control.inputs.Week;
 import toti.response.Response;
 import translator.Translator;
 
@@ -35,9 +60,52 @@ public class ExamplePageController {
 		Map<String, Object> params = new HashMap<>();
 		Grid grid = new Grid("/example-module/api/example/all", "get");
 		// HERE
+		grid.addColumn(new ValueColumn("id"));
+		grid.addColumn(new ValueColumn("name").setTitle("Name").setFilter(Text.filter()).setUseSorting(true));
+		grid.addColumn(
+			new ValueColumn("age").setTitle("Age").setFilter(Number.filter()).setUseSorting(true)
+		);
+		grid.addColumn(
+			new ValueColumn("active").setTitle("Active").setFilter(Select.filter(MapInit.hashMap(
+				new Tuple2<>("", "---"),
+				new Tuple2<>("true", "YES"),
+				new Tuple2<>("no", "NO")
+			))).setUseSorting(true) // TODO renderer
+		);
+		grid.addColumn(
+			new ValueColumn("parent").setTitle("Parent").setFilter(Select.filter(MapInit.hashMap(
+				new Tuple2<>("", "---")
+			))).setUseSorting(true) // TODO binding options AND renderer
+		);
 		
+		grid.addColumn(
+			new ValueColumn("simple_date").setTitle("Simple date").setFilter(Date.filter()).setUseSorting(true)
+		); // TODO renderer
+		grid.addColumn(
+			new ValueColumn("dt_local").setTitle("Datetime local").setFilter(Datetime.filter()).setUseSorting(true)
+		); // TODO renderer
+		grid.addColumn(
+			new ValueColumn("month").setTitle("Month").setFilter(Month.filter()).setUseSorting(true)
+		); // TODO renderer
+		grid.addColumn(
+			new ValueColumn("week").setTitle("Week").setFilter(Week.filter()).setUseSorting(true)
+		); // TODO renderer
+		grid.addColumn(
+			new ValueColumn("time").setTitle("Time").setFilter(Time.filter()).setUseSorting(true)
+		); // TODO renderer
+		
+		// COMMON
+		grid.addColumn(new ButtonsColumn("Actions")
+			.addButton(Button.create("/example-module/example/edit/{id}").setTitle("Edit").setType(ButtonType.WARNING))
+			.addButton(Button.create("/example-module/example/detail/{id}").setTitle("Detail").setType(ButtonType.INFO))
+			.addButton(
+				Button.create("/example-module/example/delete/{id}")
+					.setTitle("Delete").setType(ButtonType.DANGER)
+					.setMethod("delete").setAjax(true).setConfirmation("Really delete {name}?")
+			)
+		);
 		// END
-		params.put("control", grid);
+		params.put("exampleControl", grid);
 		params.put("title", translator.translate("messages.example-list"));
 		return Response.getTemplate(JSP_PAGE, params);
 	}
@@ -66,13 +134,49 @@ public class ExamplePageController {
 		String url = "/example-module/api/example/" +  (id == null ? "insert" : "update/" + id);
 		Form form = new Form(url, editable);
 		// HERE
+		form.addInput(Hidden.input("id"));
+		form.addInput(Text.input("name", false).setTitle("Name"));
+		form.addInput(Email.input("email", false).setTitle("Email"));
+		form.addInput(Number.input("age", false).setTitle("Age"));
+		form.addInput(Password.input("pasw", false).setTitle("Password"));
+		form.addInput(Range.input("range", false).setTitle("Range"));
 		
+		form.addInput(Checkbox.input("active", false).setTitle("Active")); // TODO renderer ?
+		form.addInput(Checkbox.input("defValue", true).setTitle("DefValue").setDefaultValue("true")); // TODO renderer ?
+		form.addInput(RadioList.input("sex", false, MapInit.hashMap(
+			new Tuple2<>("male", "Male"),
+			new Tuple2<>("female", "Feale")
+		)).setTitle("Sex"));
+		form.addInput(Select.input("parent", false, MapInit.hashMap(
+			new Tuple2<>("", "---")
+		)).setTitle("Parent")); // TODO binding options AND renderer
+		
+		form.addInput(Date.input("simple_date", false).setTitle("Date")); // TODO renderer
+		form.addInput(Datetime.input("dt_local", false).setTitle("DateTime Local")); // TODO renderer
+		form.addInput(Month.input("month", false).setTitle("Month")); // TODO renderer
+		form.addInput(Time.input("time", false).setTitle("Time")); // TODO renderer
+		form.addInput(Week.input("week", false).setTitle("Week")); // TODO renderer
+		
+		form.addInput(Color.input("favorite_color", false).setTitle("Favorite color"));
+		form.addInput(File.input("file", false).setTitle("File"));
+		form.addInput(TextArea.input("comment", false).setTitle("Comment").setRows(10).setCols(50));
+		
+		form.addInput(Reset.create().setTitle("Reset button"));
+		form.addInput(Button.create("/example-module/example/list").setTitle("Back"));
+		form.addInput(
+			Submit.create("Save", "save").setConfirmation("You will save it")
+			   .setRedirect("/example-module/example/edit/{id}").setAsync(true)
+		);
+		form.addInput(
+			Submit.create("Save And Return", "save-back").setAsync(true)
+			   .setRedirect("/example-module/example/list")
+		);
 		// END
 		if (id != null) {
 			form.setBindMethod("get");
 			form.setBindUrl("/example-module/api/example/get/" + id);
 		}
-		params.put("control", form);
+		params.put("exampleControl", form);
 		params.put("title", translator.translate("example-" + (id == null ? "add" : "edit")));
 		return Response.getTemplate(JSP_PAGE, params);
 	}
