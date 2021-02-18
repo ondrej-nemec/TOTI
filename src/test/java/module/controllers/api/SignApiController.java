@@ -3,7 +3,6 @@ package module.controllers.api;
 import java.util.HashMap;
 import java.util.Map;
 
-import common.Logger;
 import socketCommunication.http.HttpMethod;
 import socketCommunication.http.StatusCode;
 import toti.annotations.inject.Authenticate;
