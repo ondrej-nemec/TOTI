@@ -14,7 +14,7 @@ import org.mockito.Mockito;
 import common.MapInit;
 import common.structures.Tuple2;
 import json.JsonStreamException;
-import json.OutputJsonWritter;
+import json.JsonWritter;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import socketCommunication.http.server.RequestParameters;
@@ -64,7 +64,7 @@ public class ValidatorTest {
 						.addRule(ItemRules.forName("val2", true).setType(Integer.class))
 						.addRule(ItemRules.forName("val3", true).setType(Boolean.class))
 				)),
-				new RequestParameters(new Tuple2<>("item1", new OutputJsonWritter().write(correct))),
+				new RequestParameters(new Tuple2<>("item1", new JsonWritter().write(correct))),
 				true
 			},
 			new Object[] {
@@ -75,7 +75,7 @@ public class ValidatorTest {
 							.addRule(ItemRules.forName("val3", true).setType(Boolean.class))
 							.addRule(ItemRules.forName("val4", false))
 					)),
-					new RequestParameters(new Tuple2<>("item1", new OutputJsonWritter().write(correct))),
+					new RequestParameters(new Tuple2<>("item1", new JsonWritter().write(correct))),
 					true
 				},
 			new Object[] {
@@ -84,7 +84,7 @@ public class ValidatorTest {
 							.addRule(ItemRules.forName("val1", true).setType(String.class))
 							.addRule(ItemRules.forName("val2", true).setType(Integer.class))
 					)),
-					new RequestParameters(new Tuple2<>("item1", new OutputJsonWritter().write(correct))),
+					new RequestParameters(new Tuple2<>("item1", new JsonWritter().write(correct))),
 					true
 				},
 			new Object[] {
@@ -95,7 +95,7 @@ public class ValidatorTest {
 							.addRule(ItemRules.forName("val3", true).setType(Boolean.class))
 							.addRule(ItemRules.forName("val4", true).setType(Integer.class))
 					)),
-					new RequestParameters(new Tuple2<>("item1", new OutputJsonWritter().write(correct))),
+					new RequestParameters(new Tuple2<>("item1", new JsonWritter().write(correct))),
 					false
 				},
 			new Object[] {
@@ -105,7 +105,7 @@ public class ValidatorTest {
 							.addRule(ItemRules.forName("val2", true).setType(Integer.class))
 							.addRule(ItemRules.forName("val3", true).setType(Boolean.class))
 					)),
-					new RequestParameters(new Tuple2<>("item1", new OutputJsonWritter().write(correct))),
+					new RequestParameters(new Tuple2<>("item1", new JsonWritter().write(correct))),
 					false
 				},
 		};

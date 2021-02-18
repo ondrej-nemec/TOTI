@@ -6,7 +6,7 @@ import java.util.Map;
 import json.JsonStreamException;
 import json.OutputJsonStream;
 import json.providers.OutputReaderProvider;
-import json.OutputJsonWritter;
+import json.JsonWritter;
 import socketCommunication.http.StatusCode;
 import socketCommunication.http.server.RestApiResponse;
 import toti.ResponseHeaders;
@@ -35,7 +35,7 @@ public class JsonResponse implements Response {
 			(bw)->{
 				try {
 					OutputJsonStream stream = new OutputJsonStream(new OutputReaderProvider(bw));
-					OutputJsonWritter writter = new OutputJsonWritter ();
+					JsonWritter writter = new JsonWritter ();
 					writter.write(stream, json);
 					/*stream.startDocument();
 					for (String key : json.keySet()) {

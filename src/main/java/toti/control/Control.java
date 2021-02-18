@@ -2,19 +2,15 @@ package toti.control;
 
 import java.util.Map;
 
-import json.JsonStreamException;
-import json.OutputJsonWritter;
+import json.JsonWritter;
 
 public interface Control {
 
 	String getType();
 	
 	default String toJson(Map<String, Object> json) {
-		OutputJsonWritter writer = new OutputJsonWritter();
-		try {
-			return writer.write(json);
-		} catch (JsonStreamException e) {/*ignored, no reason for occuring*/}
-		return "";
+		JsonWritter writer = new JsonWritter();
+		return writer.write(json);
 	}
 	
 	static String escapeJs(String text) {

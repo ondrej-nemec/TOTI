@@ -115,13 +115,13 @@ public class Application {
 		HttpServerFactory factory = new HttpServerFactory();
 		if (env != null) {
 			if (env.getString("http.port") != null) {
-				factory.setPort(env.getInt("http.port"));
+				factory.setPort(env.getInteger("http.port"));
 			}
 			if (env.getString("http.thread-pool") != null) {
-				factory.setThreadPool(env.getInt("http.thread-pool"));
+				factory.setThreadPool(env.getInteger("http.thread-pool"));
 			}
 			if (env.getString("http.read-timeout") != null) {
-				factory.setReadTimeout(env.getInt("http.read-timeout"));
+				factory.setReadTimeout(env.getInteger("http.read-timeout"));
 			}
 			if (env.getString("http.headers") != null) {
 				factory.setHeaders(new ResponseHeaders(env.getList("http.headers", "\\|")));
@@ -153,7 +153,7 @@ public class Application {
 			if (env.getString("http.token-expired") != null && env.getString("http.token-salt") != null) {
 				try {
 					factory.setUserSecurity(registr.getService(USER_SECURITY_SERVICE, UserSecurityFactory.class).get(
-						env.getInt("http.token-expired"),
+						env.getInteger("http.token-expired"),
 						env.getString("http.token-salt"),
 						LoggerFactory.getLogger("auth")
 					));
@@ -189,7 +189,7 @@ public class Application {
 				env.getString("database.password"),
 				migrations,
 				env.getString("database.timezone"),
-				env.getInt("database.pool-size")
+				env.getInteger("database.pool-size")
 		);
 	}
 	

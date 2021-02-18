@@ -46,7 +46,7 @@ public class ParseObject {
 			}
 			if (object.toString().isEmpty()) { return null; }
 			try {
-				return new JsonReader().read(String.format("{\"data\": %s}", object.toString())).get("data");
+				return new JsonReader().read(object.toString());
 			} catch (JsonStreamException e) {
 				throw new RuntimeException(e);
 			}
