@@ -61,8 +61,8 @@ public class Range implements Input, Filter {
 		return this;
 	}
 	
-	public Range setDefaultValue(String value) {
-		this.value = value;
+	public Range setDefaultValue(Object value) {
+		this.value = value.toString();
 		return this;
 	}
 	

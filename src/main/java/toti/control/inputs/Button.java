@@ -2,11 +2,13 @@ package toti.control.inputs;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import toti.control.Control;
 
 public class Button implements Input {
 	
+	private final String name;
 	private final String url;
 	private String confirmation = null;
 	private String title = null;
@@ -16,13 +18,19 @@ public class Button implements Input {
 	private String onFailure;
 	private String onSuccess;
 	private ButtonType type = ButtonType.BASIC;
-	
+
+	@Deprecated
 	public static Button create(String url) {
-		return new Button(url);
+		return new Button(url, "button_" + new Random().nextInt(100));
+	}
+
+	public static Button create(String url, String name) {
+		return new Button(url, name);
 	}
 	
-	private Button(String url) {
+	private Button(String url, String name) {
 		this.url = url;
+		this.name = name;
 	}
 
 	public Button setOnFailure(String onFailure) {
@@ -76,7 +84,8 @@ public class Button implements Input {
 		json.put("href", url);
 		json.put("ajax", ajax);
 		json.put("type", "button");
-		json.put("name", "");
+		json.put("name", name);
+		json.put("id", name);
 		json.put("method", method);
 		if (title != null) {
 			json.put("value", title);

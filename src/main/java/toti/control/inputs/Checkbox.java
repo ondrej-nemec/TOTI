@@ -38,8 +38,8 @@ public class Checkbox implements Input {
 		return this;
 	}
 	
-	public Checkbox setDefaultValue(String value) {
-		this.value = value;
+	public Checkbox setDefaultValue(Object value) {
+		this.value = value.toString();
 		return this;
 	}
 	

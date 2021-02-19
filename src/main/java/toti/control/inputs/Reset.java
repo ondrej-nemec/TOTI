@@ -5,14 +5,17 @@ import java.util.Map;
 
 public class Reset implements Input {
 
+	private final String name;
 	private String title = null;
 	private final Map<String, String> params = new HashMap<>();
 
-	public static Reset create() {
-		return new Reset();
+	public static Reset create(String name) {
+		return new Reset(name);
 	}
 	
-	private Reset() {}
+	private Reset(String name) {
+		this.name = name;
+	}
 	
 	public Reset setTitle(String title) {
 		this.title = title;
@@ -27,7 +30,8 @@ public class Reset implements Input {
 	public Map<String, Object> getInputSettings() {
 		Map<String, Object> json = new HashMap<>();
 		json.put("type", "reset");
-		json.put("name", "");
+		json.put("name", name);
+		json.put("id", name);
 		if (title != null) {
 			json.put("value", title);
 		}

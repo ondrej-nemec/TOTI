@@ -62,8 +62,8 @@ public class Number implements Input, Filter {
 		return this;
 	}
 	
-	public Number setDefaultValue(String value) {
-		this.value = value;
+	public Number setDefaultValue(Object value) {
+		this.value = value.toString();
 		return this;
 	}
 	
