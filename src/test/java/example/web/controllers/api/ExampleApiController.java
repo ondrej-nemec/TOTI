@@ -147,7 +147,7 @@ public class ExampleApiController {
 	@Method({HttpMethod.PUT})
 	@Secured({@Domain(name=SECURITY_DOMAIN, action=acl.Action.CREATE)})
 	public Response insert(@Params RequestParameters inserted) {
-		try {			
+		try {
 			editValues(inserted, true);
 			
 			int id = dao.insert(inserted);
@@ -166,7 +166,9 @@ public class ExampleApiController {
 
 	private void editValues(Map<String, Object> values, boolean insert) {
 		values.remove(UNIQUE);
-		values.put("edited_at", DateTime.format("yyyy-MM-dd H:m:s")); // TODO not as string
-		values.put("edited_by", identity.getUser().getId());
+	//	values.put("edited_at", DateTime.format("yyyy-MM-dd H:m:s")); // TODO not as string
+	//	values.put("edited_by", identity.getUser().getId());
+		
+		values.remove("file");
 	}
 }

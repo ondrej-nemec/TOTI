@@ -96,10 +96,10 @@ public class ExamplePageController {
 		
 		// COMMON
 		grid.addColumn(new ButtonsColumn("Actions")
-			.addButton(Button.create("/example-module/example/edit/{id}").setTitle("Edit").setType(ButtonType.WARNING))
-			.addButton(Button.create("/example-module/example/detail/{id}").setTitle("Detail").setType(ButtonType.INFO))
+			.addButton(Button.create("/example-module/example/edit/{id}", "edit").setTitle("Edit").setType(ButtonType.WARNING))
+			.addButton(Button.create("/example-module/example/detail/{id}", "detail").setTitle("Detail").setType(ButtonType.INFO))
 			.addButton(
-				Button.create("/example-module/example/delete/{id}")
+				Button.create("/example-module/example/delete/{id}", "delete")
 					.setTitle("Delete").setType(ButtonType.DANGER)
 					.setMethod("delete").setAjax(true).setConfirmation("Really delete {name}?")
 			)
@@ -133,36 +133,49 @@ public class ExamplePageController {
 		Map<String, Object> params = new HashMap<>();
 		String url = "/example-module/api/example/" +  (id == null ? "insert" : "update/" + id);
 		Form form = new Form(url, editable);
+		form.setFormMethod("put");
 		// HERE
 		form.addInput(Hidden.input("id"));
 		form.addInput(Text.input("name", false).setTitle("Name"));
 		form.addInput(Email.input("email", false).setTitle("Email"));
-		form.addInput(Number.input("age", false).setTitle("Age"));
+		form.addInput(Number.input("age", false).setTitle("Age").setMax(100).setMin(0).setDefaultValue(18));
 		form.addInput(Password.input("pasw", false).setTitle("Password"));
-		form.addInput(Range.input("range", false).setTitle("Range"));
+		form.addInput(Range.input("range", false).setTitle("Range").setMax(100).setMin(0).setDefaultValue(20));
 		
 		form.addInput(Checkbox.input("active", false).setTitle("Active")); // TODO renderer ?
-		form.addInput(Checkbox.input("defValue", true).setTitle("DefValue").setDefaultValue("true")); // TODO renderer ?
+		form.addInput(Checkbox.input("defvalue", false).setTitle("DefValue").setDefaultValue(true)); // TODO renderer ?
 		form.addInput(RadioList.input("sex", false, MapInit.hashMap(
 			new Tuple2<>("male", "Male"),
 			new Tuple2<>("female", "Feale")
-		)).setTitle("Sex"));
+		)).setTitle("Sex").setDefaultValue("female"));
 		form.addInput(Select.input("parent", false, MapInit.hashMap(
 			new Tuple2<>("", "---")
 		)).setTitle("Parent")); // TODO binding options AND renderer
 		
-		form.addInput(Date.input("simple_date", false).setTitle("Date")); // TODO renderer
-		form.addInput(Datetime.input("dt_local", false).setTitle("DateTime Local")); // TODO renderer
-		form.addInput(Month.input("month", false).setTitle("Month")); // TODO renderer
-		form.addInput(Time.input("time", false).setTitle("Time")); // TODO renderer
-		form.addInput(Week.input("week", false).setTitle("Week")); // TODO renderer
+		form.addInput(
+			Date.input("simple_date", false).setTitle("Date")
+				.setDefaultValue("2021-02-19")
+		); // TODO renderer
+		form.addInput(
+			Datetime.input("dt_local", false)
+				.setTitle("DateTime Local").setDefaultValue("2021-02-19T22:55")
+		); // TODO renderer
+		form.addInput(
+			Month.input("month", false).setTitle("Month").setDefaultValue("2021-02")
+		); // TODO renderer
+		form.addInput(
+			Time.input("time", false).setTitle("Time").setDefaultValue("22:55")
+		); // TODO renderer
+		form.addInput(
+			Week.input("week", false).setTitle("Week").setDefaultValue("2021-W07")
+		); // TODO renderer
 		
 		form.addInput(Color.input("favorite_color", false).setTitle("Favorite color"));
 		form.addInput(File.input("file", false).setTitle("File"));
 		form.addInput(TextArea.input("comment", false).setTitle("Comment").setRows(10).setCols(50));
 		
-		form.addInput(Reset.create().setTitle("Reset button"));
-		form.addInput(Button.create("/example-module/example/list").setTitle("Back"));
+		form.addInput(Reset.create("reset").setTitle("Reset button"));
+		form.addInput(Button.create("/example-module/example/list", "back").setTitle("Back"));
 		form.addInput(
 			Submit.create("Save", "save").setConfirmation("You will save it")
 			   .setRedirect("/example-module/example/edit/{id}").setAsync(true)
