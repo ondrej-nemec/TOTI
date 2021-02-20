@@ -2,9 +2,8 @@
 <head>
 	<title></title>
 	<link rel="stylesheet" href="/toti.css" />
-	<!-- 
 		<script src="/toti.js" crossorigin="anonymous"></script>
-	 -->
+	<!-- 
 	<script src="/new/settings.js"></script>
 	<script src="/new/images.js" ></script>
 	<script src="/new/utils.js" ></script>
@@ -17,6 +16,7 @@
 	<script src="/new/control.js" ></script>
 	<script src="/new/form.js" ></script>
 	<script src="/new/grid.js" ></script>
+	 -->
 </head>
 <body>
 	<script>
