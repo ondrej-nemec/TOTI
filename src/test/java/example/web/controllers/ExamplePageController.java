@@ -69,13 +69,13 @@ public class ExamplePageController {
 			new ValueColumn("active").setTitle("Active").setFilter(Select.filter(MapInit.hashMap(
 				new Tuple2<>("", "---"),
 				new Tuple2<>("true", "YES"),
-				new Tuple2<>("no", "NO")
+				new Tuple2<>("false", "NO")
 			))).setUseSorting(true) // TODO renderer
 		);
 		grid.addColumn(
 			new ValueColumn("parent").setTitle("Parent").setFilter(Select.filter(MapInit.hashMap(
 				new Tuple2<>("", "---")
-			))).setUseSorting(true) // TODO binding options AND renderer
+			)).setLoadData("/example-module/api/example/help", "get")).setUseSorting(true)
 		);
 		
 		grid.addColumn(
@@ -142,16 +142,20 @@ public class ExamplePageController {
 		form.addInput(Password.input("pasw", false).setTitle("Password"));
 		form.addInput(Range.input("range", false).setTitle("Range").setMax(100).setMin(0).setDefaultValue(20));
 		
-		form.addInput(Checkbox.input("active", false).setTitle("Active")); // TODO renderer ?
-		form.addInput(Checkbox.input("defvalue", false).setTitle("DefValue").setDefaultValue(true)); // TODO renderer ?
+		form.addInput(Checkbox.input("active", false).setTitle("Active"));
+		form.addInput(Checkbox.input("defvalue", false).setTitle("DefValue").setDefaultValue(true));
 		form.addInput(RadioList.input("sex", false, MapInit.hashMap(
 			new Tuple2<>("male", "Male"),
 			new Tuple2<>("female", "Feale")
 		)).setTitle("Sex").setDefaultValue("female"));
 		form.addInput(Select.input("parent", false, MapInit.hashMap(
 			new Tuple2<>("", "---")
-		)).setTitle("Parent")); // TODO binding options AND renderer
-		
+		)).setTitle("Parent").setLoadData("/example-module/api/example/help", "get"));
+		form.addInput(Select.input("select1", false, MapInit.hashMap(
+			new Tuple2<>("1", "A1"),
+			new Tuple2<>("2", "A2"),
+			new Tuple2<>("3", "A3")
+		)).setTitle("Parent2"));
 		form.addInput(
 			Date.input("simple_date", false).setTitle("Date")
 				.setDefaultValue("2021-02-19")

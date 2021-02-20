@@ -61,6 +61,7 @@ public class ExampleApiController {
 	}
 
 	@Action("help")
+	@Method({HttpMethod.GET})
 	public Response getInArray() {
 		try {
 			return Response.getJson(dao.getHelp(identity.getAllowedIds()));
@@ -165,6 +166,7 @@ public class ExampleApiController {
 	}
 
 	private void editValues(Map<String, Object> values, boolean insert) {
+		System.err.println(values);
 		values.remove(UNIQUE);
 	//	values.put("edited_at", DateTime.format("yyyy-MM-dd H:m:s")); // TODO not as string
 	//	values.put("edited_by", identity.getUser().getId());

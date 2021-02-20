@@ -55,6 +55,7 @@ public class ExampleValidator {
 				.addRule(ItemRules.forName("defvalue", false).setType(Boolean.class))
 				.addRule(ItemRules.forName("sex", false).setType(String.class))
 				.addRule(ItemRules.forName("parent", false).setType(Integer.class))
+				.addRule(ItemRules.forName("select1", false).setType(Integer.class))
 				.addRule(ItemRules.forName("simple_date", false).setType(String.class))
 				.addRule(ItemRules.forName("dt_local", false).setType(String.class))
 				.addRule(ItemRules.forName("month", false).setType(String.class))
