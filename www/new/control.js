@@ -100,18 +100,36 @@ var totiControl = {
 		select: function (params) {
 			var select = document.createElement('select');
 			for ([key, value] of Object.entries(params)) {
-				if (key === "options") {
-					value.forEach(function(option, index) {
-						if (typeof option === 'object') {
-							option.type = "option";
-							select.appendChild(totiControl.input(option));
-						} else {
-							select.appendChild(option);
-						}
-					});
+				if (key === "options" || key === "load") {
+					// ignored now, done soon
 				} else {
 					select.setAttribute(key, value);
 				}
+			}
+			var addOption = function(option) {
+				if (typeof option === 'object') {
+					option.type = "option";
+					select.appendChild(totiControl.input(option));
+				} else {
+					select.appendChild(option);
+				}
+			};
+			totiUtils.forEach(params.options, function(v, option) {
+				addOption(option);
+			});
+			if (params.hasOwnProperty("load")) {
+				totiLoad.async(params.load.url, params.load.method, params.load.params, totiLoad.getHeaders(), function(loaded) {
+					totiUtils.forEach(loaded, function(value, title) {
+						var option = {
+							"value": value,
+							"title": title
+						};
+						params.options[value] = option; // for value renderer
+						addOption(option);
+					});
+				}, function(xhr) {
+					console.log(xhr);
+				}, false);
 			}
 			
 			return select;

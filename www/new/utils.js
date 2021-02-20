@@ -8,5 +8,16 @@ var totiUtils = {
 			string = string.replaceAll("\{" + name + "\}", value);
 		}
 		return string;
+	},
+	forEach: function(array, callback) {
+		if (typeof array === 'object') {
+			for (const[key, item] of Object.entries(array)) {
+				callback(key, item);
+			}
+		} else {
+			array.forEach(function(item, index) {
+				callback(index, item);
+			});
+		}
 	}
 };

@@ -24,7 +24,7 @@ class TotiForm {
 			for ([key, name] of Object.entries(field)) {
 				input.setAttribute(key, name);
 			}
-			options.forEach(function(option) {
+			var withOption = function(i, option) {
 				var span = document.createElement('span');
 				span.setAttribute("value", option.value);
 				span.innerText = option.title;
@@ -32,7 +32,8 @@ class TotiForm {
 					span.style.display = "none";
 				}
 				input.appendChild(span);
-			});
+			};
+			totiUtils.forEach(options, withOption);
 			return input;
 		}
 
@@ -76,6 +77,7 @@ class TotiForm {
 			var input;
 			if (!config.editable && field.type !== 'button') {
 				if (field.type === 'select') {
+					totiControl.inputs.select(field); // load select options if are
 					input = printSelectFunc(field, 'options');
 				} else if (field.type === 'radiolist') {
 					input = printSelectFunc(field, 'radios');
@@ -176,22 +178,19 @@ class TotiForm {
 			Array.prototype.forEach.call(form.elements, function(input) {
 				var type = input.getAttribute("type");
 				var name = input.getAttribute("name");
-				// TODO check value
 				if (type === "datetime-local") {
 					value = input.value;
 					value = value.replace("T", " ");
 					data.append(name, value);
-				} else if (type === "textarea") {
-					data.append(name, input.innerText);
-				} else if (input.tagName === "SELECT") {
-					var option = input.querySelector("[selected='true']");
-					data.append(name, input.value);
-				} else if (type === "submit" || type === "button") {
+				} else if (type === "submit" || type === "button" || type === "reset") {
 					// ignored
+					// TODO img too ??
 				} else if (type === "radio") {
 					if (input.checked) {
 						data.append(name, input.value);
 					}
+				} else if (type === "checkbox") {
+					data.append(name, input.checked);
 				} else if (type === "file") {
 					if (input.files.length > 0) {
 						data.append(name, input.value);
@@ -246,8 +245,8 @@ class TotiForm {
 								});
 								document.querySelector('#' + uniqueName + '-errors-' + key + '').innerHTML = ol;
 							}
-						} else if (element.getAttribute("onFailure") != null) {
-							window[element.getAttribute("onFailure")](xhr);
+						} else if (submit.getAttribute("onFailure") != null) {
+							window[submit.getAttribute("onFailure")](xhr);
 						} else {
 							totiDisplay.flash('error', totiTranslations.formMessages.saveError);
 						}
@@ -277,30 +276,33 @@ class TotiForm {
 					if (element === null) {
 						continue;
 					}
-					if (element.type === "datetime-local" && value !== null) {
-						value = value.replace(" ", "T");
-					}
-					if (element.querySelector("span") != null) {
-						element.querySelectorAll("span").forEach(function(el) {
-							el.style.display = "none";
-						});
-						element.querySelector("[value=" + value + "]").style.display = "block";
-					} else {
-						element.value = value;
-						/*
+					if (element.type === undefined) { // detail
+						if (element.querySelector("span") != null) { // select or radio list
+							element.querySelectorAll("span").forEach(function(el) {
+								el.style.display = "none";
+							});
+							if (value === null) {
+								element.querySelector("[value=''").style.display = "block";
+							} else {
+								element.querySelector("[value='" + value + "']").style.display = "block";
+							}
+						} else {
+							element.innerText = value;
+						}
+					} else { // form
+						if (element.type === "datetime-local" && value !== null) {
+							value = value.replace(" ", "T");
+						}
 						if (element.type === "checkbox") {
 							element.checked = value ? "checked" : false;
 						} else if (element.type === "radio") {
 							form.querySelector('[name="' + key + '"][value="' + value + '"]').setAttribute("checked", true);
-						} else if (element.type === "textarea") {
-							element.innerText = value;
-						} else if (element.type === "select-one") {
-							var option = element.querySelector("[value='" + value + "']");
-							option.setAttribute("selected", true);
 						} else {
-							element.setAttribute("value", value);
+							element.value = value;
 						}
-						*/
+						//} else if (element.type === "select-one") {
+						//	var option = element.querySelector("[value='" + value + "']");
+						//	option.setAttribute("selected", true);
 					}
 				}
 				if (bind.hasOwnProperty("afterBind")) {

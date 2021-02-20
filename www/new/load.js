@@ -1,11 +1,11 @@
 var totiLoad = {
-	async: function(url, method, data, headers, onSuccess, onFailure) {
+	async: function(url, method, data, headers, onSuccess, onFailure, async = true) {
 		var params = new URLSearchParams(data).toString();
 		var xhr = new XMLHttpRequest();
 		if (method.toLowerCase() === "get") {
 			url += "?" + new URLSearchParams(data).toString();
 		}
-		xhr.open(method, url, true);
+		xhr.open(method, url, async);
 		for (const[name, value] of Object.entries(headers)) {
 			xhr.setRequestHeader(name, value);
 		}

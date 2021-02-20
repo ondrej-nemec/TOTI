@@ -135,6 +135,11 @@ class TotiGrid {
 				};
 				cell.appendChild(checkbox);
 				cell.setAttribute("no-filters", "");
+			} else if (column.type == "buttons") {
+				var reset = totiControl.input({
+					type: "reset"
+				});
+				cell.appendChild(reset);
 			} else if (column.hasOwnProperty('filter')) {
 				cell.appendChild(
 					totiControl.input(column.filter)
@@ -151,7 +156,6 @@ class TotiGrid {
 	}
 
 	createActions(uniqueName, actions) {
-		//TODO
 		var options = [];
 		options.push({
 			"ajax": true,
@@ -333,6 +337,14 @@ class TotiGrid {
 					} else if (column.hasOwnProperty("renderer")) {
 						// TODO RENDERER TODO
 						td.innerHTML = window[column.renderer](row[column.name], row);
+					} else if (column.hasOwnProperty("filter") && column.filter.hasOwnProperty("options")) {
+						var value = row[column.name];
+						if (value !== null) {
+							td.innerText = 
+								column.filter.options.hasOwnProperty(value)
+								 ? column.filter.options[value].title
+								 : value;
+						}
 					} else {
 						td.innerText = row[column.name];
 					}
@@ -362,6 +374,14 @@ class TotiGrid {
 		}
 		var body = document.querySelector('#' + uniqueName + "-control").querySelector("table").querySelector("tbody");
 		body.innerHTML = '';
+		var onError = function(xhr) {
+			var td = document.createElement("td");
+			td.setAttribute("colspan", 100);
+			td.innerText = totiTranslations.gridMessages.loadingError;
+			var tr = document.createElement("tr");
+			tr.appendChild(td);
+			body.appendChild(tr);
+		};
 		totiLoad.async(
 			this.config.dataLoadUrl,
 			this.config.dataLoadMethod,
@@ -369,20 +389,20 @@ class TotiGrid {
 			totiLoad.getHeaders(),
 			function(response) {
 				window.history.pushState({"html":window.location.href},"", "?" + new URLSearchParams(urlParams).toString());
-				loadDataSuccess(
-					body,
-					uniqueName,
-					response, 
-					object.config.columns,
-					object.config.identifier
-				);
+				try {
+					loadDataSuccess(
+						body,
+						uniqueName,
+						response, 
+						object.config.columns,
+						object.config.identifier
+					);
+				} catch (e) {
+					console.error(e);
+					onError();
+				}
 			},
-			function(xhr) {
-				var tr = document.createElement("tr");
-				tr.setAttribute("colspan", 100);
-				tr.innerText = totiTranslations.gridMessages.loadingError;
-				body.appendChild(tr);
-			}
+			onError
 		);
 	}
 	

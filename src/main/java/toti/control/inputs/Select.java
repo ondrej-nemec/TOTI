@@ -1,8 +1,6 @@
 package toti.control.inputs;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import toti.control.columns.Filter;
@@ -19,6 +17,7 @@ public class Select implements Input, Filter {
 	private final Map<String, String> options;
 	private String value = null;
 	private final Map<String, String> params = new HashMap<>();
+	private Map<String, Object> load;
 	
 	public static Select input(String name, boolean required, Map<String, String> options) {
 		return new Select(name, required, options);
@@ -57,6 +56,18 @@ public class Select implements Input, Filter {
 		return this;
 	}
 
+	public Select setLoadData(String url, String method) {
+		return setLoadData(url, method, new HashMap<>());
+	}
+	
+	public Select setLoadData(String url, String method, Map<String, String> params) {
+		this.load = new HashMap<>();
+		load.put("url", url);
+		load.put("method", method);
+		load.put("params", params);
+		return this;
+	}
+
 	@Override
 	public String getType() {
 		return type;
@@ -65,6 +76,7 @@ public class Select implements Input, Filter {
 	@Override
 	public Map<String, Object> getFilterSettings() {
 		Map<String, Object> set = new HashMap<>();
+		/*
 		List<Map<String, Object>> opt = new LinkedList<>();
 		options.forEach((value, text)->{
 			Map<String, Object> param = new HashMap<>();
@@ -73,6 +85,18 @@ public class Select implements Input, Filter {
 			opt.add(param);
 		});
 		set.put("options", opt);
+		*/
+		Map<String, Object> opt = new HashMap<>();
+		options.forEach((value, text)->{
+			Map<String, Object> param = new HashMap<>();
+			param.put("value", value);
+			param.put("title", Template.escapeVariable(text));
+			opt.put(value, param);
+		});
+		set.put("options", opt);
+		if (load != null) {
+			set.put("load", load);
+		}
 		return set;
 	}
 	
