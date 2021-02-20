@@ -345,6 +345,8 @@ class TotiGrid {
 								 ? column.filter.options[value].title
 								 : value;
 						}
+					} else if (column.hasOwnProperty("filter")  && column.filter.hasOwnProperty("originType")) {
+						td.innerText = totiControl.parseValue(column.filter.originType, row[column.name]);
 					} else {
 						td.innerText = row[column.name];
 					}

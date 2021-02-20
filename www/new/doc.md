@@ -78,7 +78,7 @@ jsonObject getLangHeader()
 
 ### Asynchronious request
 
-void async(String url, String method, jsonObject data, jsonObject headers, function onSuccess, function onFailure)
+void async(String url, String method, jsonObject data, jsonObject headers, function onSuccess, function onFailure, boolean async = false)
 
 ### Synchronious request
 

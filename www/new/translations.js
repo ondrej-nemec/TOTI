@@ -18,5 +18,16 @@ var totiTranslations = {
 	"formMessages": {
 		"saveError": /* "<t:trans message='common.form.saving-problem' />", /*/ "Problem with form saving", //*/
 		"bindError": /* "<t:trans message='common.form.binding-problem' />" /*/ "Loading data failure" //*/
+	},
+	"timestamp": {
+		dateString: {
+			"date": {"year": "numeric", "month": "long", "day": "numeric"},
+			"datetime-local": {"year": "numeric", "month": "long", "day": "numeric", "hour": "numeric", "minute": "numeric", "second": "numeric"},
+			"month": {"year": "numeric", "month": "long"},
+		},
+		timeString: {
+			"time": {"hour": "numeric", "minute": "numeric", "second": "numeric"},
+		},
+		"week": {"year": "numeric", "week": "numeric"},
 	}
 };

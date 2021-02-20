@@ -25,15 +25,17 @@ var totiControl = {
 			return;
 		}
 		var type = attributes.type;
+		attributes.originType = type;
 		delete attributes.type;
 
 		if (type === "checkbox" && attributes.value) {
 			attributes.checked = "checked";
 		}
 
-		if (type === 'datetime') {
+		// IMP datetime 
+		/*if (type === 'datetime') {
 			return totiControl.inputs._createInput("datetime-local", attributes);
-		} else if (type === 'textarea') {
+		} else*/if (type === 'textarea') {
 			return totiControl.inputs.textarea(attributes);
 		} else if (type === 'select') {
 			return totiControl.inputs.select(attributes);
@@ -119,11 +121,16 @@ var totiControl = {
 			});
 			if (params.hasOwnProperty("load")) {
 				totiLoad.async(params.load.url, params.load.method, params.load.params, totiLoad.getHeaders(), function(loaded) {
-					totiUtils.forEach(loaded, function(value, title) {
-						var option = {
-							"value": value,
-							"title": title
-						};
+					totiUtils.forEach(loaded, function(value, opt) {
+						var option = { "value": value };
+						if (typeof opt === "object") {
+							option.title = opt.title;
+							if (opt.disabled) {
+								option.disabled = "disabled";
+							}
+						} else {
+							option.title = opt;
+						}
 						params.options[value] = option; // for value renderer
 						addOption(option);
 					});
@@ -146,6 +153,23 @@ var totiControl = {
 			}
 			return option;
 		}
+	},
+	parseValue: function(type, value) {
+		// TODO week
+		if (totiTranslations.timestamp.dateString.hasOwnProperty(type)) {
+			return new Date(value).toLocaleDateString(
+            	totiLang.getLang().replace("_", "-"),
+				totiTranslations.timestamp.dateString[type]
+			);
+		}
+		if (totiTranslations.timestamp.timeString.hasOwnProperty(type)) {
+			value = "1970-01-01 " + value;
+			return new Date(value).toLocaleTimeString(
+            	totiLang.getLang().replace("_", "-"),
+				totiTranslations.timestamp.timeString[type]
+			);
+		}
+		return value;
 	},
 	getAction: function(clickSettings) {
 		return function(event) {
@@ -170,7 +194,7 @@ var totiControl = {
 					}
 				});
 			} else {
-				// totiControl.load.link(href, method, {}, totiControl.getHeaders());
+				/* totiControl.load.link(href, method, {}, totiControl.getHeaders()); */
 				window.location = clickSettings.href;
 			}
 		};

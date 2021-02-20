@@ -178,11 +178,13 @@ class TotiForm {
 			Array.prototype.forEach.call(form.elements, function(input) {
 				var type = input.getAttribute("type");
 				var name = input.getAttribute("name");
-				if (type === "datetime-local") {
+
+				// IMP datetime
+				/*if (type === "datetime-local") {
 					value = input.value;
 					value = value.replace("T", " ");
 					data.append(name, value);
-				} else if (type === "submit" || type === "button" || type === "reset") {
+				} else */if (type === "submit" || type === "button" || type === "reset") {
 					// ignored
 					// TODO img too ??
 				} else if (type === "radio") {
@@ -277,6 +279,7 @@ class TotiForm {
 						continue;
 					}
 					if (element.type === undefined) { // detail
+						value = totiControl.parseValue(element.getAttribute("type"), value);
 						if (element.querySelector("span") != null) { // select or radio list
 							element.querySelectorAll("span").forEach(function(el) {
 								el.style.display = "none";
@@ -290,9 +293,10 @@ class TotiForm {
 							element.innerText = value;
 						}
 					} else { // form
-						if (element.type === "datetime-local" && value !== null) {
+						// IMP datetime
+						/*if (element.type === "datetime-local" && value !== null) {
 							value = value.replace(" ", "T");
-						}
+						}*/
 						if (element.type === "checkbox") {
 							element.checked = value ? "checked" : false;
 						} else if (element.type === "radio") {

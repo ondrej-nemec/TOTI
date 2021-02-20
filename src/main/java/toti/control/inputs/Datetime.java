@@ -29,7 +29,7 @@ public class Datetime implements Input, Filter {
 	private Datetime(String name, boolean required) {
 		this.name = name;
 		this.id = "id-" + name;
-		this.type = "datetime";
+		this.type = "datetime-local";
 		this.required = required;
 	}
 
