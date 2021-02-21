@@ -15,10 +15,10 @@ import translator.Translator;
 
 public class JsonResponse implements Response {
 	
-	private final Map<String, Object> json;
+	private final Object json;
 	private final StatusCode code;
 
-	public JsonResponse(StatusCode code, Map<String, Object> json) {
+	public JsonResponse(StatusCode code, Object json) {
 		this.json = json;
 		this.code = code;
 	}
@@ -37,11 +37,6 @@ public class JsonResponse implements Response {
 					OutputJsonStream stream = new OutputJsonStream(new OutputReaderProvider(bw));
 					JsonWritter writter = new JsonWritter ();
 					writter.write(stream, json);
-					/*stream.startDocument();
-					for (String key : json.keySet()) {
-						writeObject(stream, json.get(key), key);
-					}
-					stream.endDocument();*/
 				} catch (JsonStreamException e) {
 					throw new RuntimeException(e);
 				}
