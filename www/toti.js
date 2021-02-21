@@ -62,6 +62,7 @@ var totiUtils = {
 		return string;
 	},
 	forEach: function(array, callback) {
+		/*Array.prototype.forEach.call()*/
 		if (typeof array === 'object') {
 			for (const[key, item] of Object.entries(array)) {
 				callback(key, item);
@@ -367,6 +368,7 @@ var totiControl = {
 		}
 	},
 	inputs: {
+		_selectCache: {},
 		_createInput: function (type, attributes) {
 			var input = document.createElement("input");
 			input.setAttribute("type", type);
@@ -439,7 +441,12 @@ var totiControl = {
 				addOption(option);
 			});
 			if (params.hasOwnProperty("load")) {
-				totiLoad.async(params.load.url, params.load.method, params.load.params, totiLoad.getHeaders(), function(loaded) {
+				var cacheKey = JSON.stringify({
+					"url": params.load.url,
+					"method": params.load.method,
+					"params": params.load.params
+				});
+				var onSuccess = function(loaded) {
 					totiUtils.forEach(loaded, function(value, opt) {
 						var option = { "value": value };
 						if (typeof opt === "object") {
@@ -453,9 +460,17 @@ var totiControl = {
 						params.options[value] = option; /* for value renderer*/
 						addOption(option);
 					});
-				}, function(xhr) {
-					console.log(xhr);
-				}, false);
+				};
+				if (totiControl.inputs._selectCache.hasOwnProperty(cacheKey)) {
+					onSuccess(totiControl.inputs._selectCache[cacheKey]);
+				} else {
+					totiLoad.async(params.load.url, params.load.method, params.load.params, totiLoad.getHeaders(), function(loaded) {
+						onSuccess(loaded);
+						totiControl.inputs._selectCache[cacheKey] = loaded;
+					}, function(xhr) {
+						console.log(xhr);
+					}, false);
+				}
 			}
 			
 			return select;
@@ -587,103 +602,114 @@ class TotiForm {
 		
 		var config = this.config;
 		var object = this;
-		this.config.fields.forEach(function(field, index) {
-			field.id = uniqueName + "-" + field.id;
-			field.form = uniqueName;
-			var label = null;
-			if (field.hasOwnProperty('title')) {
-				label = totiControl.label(field.id, field.title, {
-					id: uniqueName +  "-" + field.id + "-label"
-				});
-			}
-			var input;
-			if (!config.editable && field.type !== 'button') {
-				field.originType = field.type;
-				if (field.type === 'select') {
-					totiControl.inputs.select(field); /* load select options if are*/
-					input = printSelectFunc(field, 'options');
-				} else if (field.type === 'radiolist') {
-					input = printSelectFunc(field, 'radios');
-				} else if (field.type === 'checkbox') {
-					input = printSelectFunc(field, 'values');
-				} else if (field.type !== 'submit' && field.type !== 'hidden') {
-					input = document.createElement("div");
-					for ([key, name] of Object.entries(field)) {
-						if (key === "value") {
-							input.innerText = name;
-						} else {
-							input.setAttribute(key, name);
-						}
-					}				
-				} else {
-					input = document.createElement('span');
+		var createInputs = function(fields, parent = null) {
+			fields.forEach(function(field, index) {
+				if (parent !== null) {
+					field.name = parent + "[" + (field.hasOwnProperty("name") ? field.name : "") + "]";
 				}
-			} else {
-				if (field.type === 'file') {
-					form.setAttribute("enctype", "multipart/form-data");
-				} else if (field.type === 'radiolist') {
-					field.formName = uniqueName;
+				if (field.type === "list") {
+					createInputs(field.fields, field.name);
+					return;
 				}
-				var type = field.type;
-				input = totiControl.input(field);
 
-				if (type === 'submit' || type === 'image') {
-					input.onclick = object.getSubmit(uniqueName, input);
-				} else if (type === 'button') {
-					var onClick = totiControl.getAction({
-						href: field.href,
-						method: field.method,
-						async: field.ajax,
-						submitConfirmation: function() {
-							if (field.hasOwnProperty('confirmation')) {
-								return totiDisplay.confirm(field.confirmation, row);
-							}
-							return true;
-						}/*,
-						onSuccess: "",
-						onFailure: ""*/
+				field.id = uniqueName + "-" + field.id;
+				field.form = uniqueName;
+				var label = null;
+				if (field.hasOwnProperty('title')) {
+					label = totiControl.label(field.id, field.title, {
+						id: uniqueName +  "-" + field.id + "-label"
 					});
-					input.onclick = onClick;
 				}
-			}
-			var error = document.createElement("div");
-			error.setAttribute("id", uniqueName + '-errors-' + field.name);
-			if (useTemplate) {
-				var labelElement = form.querySelector("#form-label-" + field.name);
-				if (labelElement !== null && label !== null) {
-					labelElement.appendChild(label);
-				}
-				var inputElement = form.querySelector("#form-input-" + field.name);
-				if (inputElement !== null) {
-					inputElement.appendChild(input);
-				}
-				var errorElement = form.querySelector("#form-error-" + field.name);
-				if (config.editable && errorElement !== null) {
-					errorElement.appendChild(error);
-				}
-			} else {
-				var first = document.createElement("td");
-				first.setAttribute("class", 'toti-form-label');
-				if (label !== null) {
-					first.appendChild(label);
-				}
+				var input;
+				if (!config.editable && field.type !== 'button') {
+					field.originType = field.type;
+					if (field.type === 'select') {
+						totiControl.inputs.select(field); /* load select options if are*/
+						input = printSelectFunc(field, 'options');
+					} else if (field.type === 'radiolist') {
+						input = printSelectFunc(field, 'radios');
+					} else if (field.type === 'checkbox') {
+						input = printSelectFunc(field, 'values');
+					} else if (field.type !== 'submit' && field.type !== 'hidden') {
+						input = document.createElement("div");
+						for ([key, name] of Object.entries(field)) {
+							if (key === "value") {
+								input.innerText = name;
+							} else {
+								input.setAttribute(key, name);
+							}
+						}				
+					} else {
+						input = document.createElement('span');
+					}
+				} else {
+					if (field.type === 'file') {
+						form.setAttribute("enctype", "multipart/form-data");
+					} else if (field.type === 'radiolist') {
+						field.formName = uniqueName;
+					}
+					var type = field.type;
+					input = totiControl.input(field);
 
-				var second = document.createElement("td");
-				second.setAttribute("class", 'toti-form-input');
-				second.appendChild(input);
+					if (type === 'submit' || type === 'image') {
+						input.onclick = object.getSubmit(uniqueName, input);
+					} else if (type === 'button') {
+						var onClick = totiControl.getAction({
+							href: field.href,
+							method: field.method,
+							async: field.ajax,
+							submitConfirmation: function() {
+								if (field.hasOwnProperty('confirmation')) {
+									return totiDisplay.confirm(field.confirmation, row);
+								}
+								return true;
+							}/*,
+							onSuccess: "",
+							onFailure: ""*/
+						});
+						input.onclick = onClick;
+					}
+				}
+				var error = document.createElement("div");
+				error.setAttribute("id", uniqueName + '-errors-' + field.name);
+				if (useTemplate) {
+					var labelElement = form.querySelector("#form-label-" + field.name);
+					if (labelElement !== null && label !== null) {
+						labelElement.appendChild(label);
+					}
+					var inputElement = form.querySelector("#form-input-" + field.name);
+					if (inputElement !== null) {
+						inputElement.appendChild(input);
+					}
+					var errorElement = form.querySelector("#form-error-" + field.name);
+					if (config.editable && errorElement !== null) {
+						errorElement.appendChild(error);
+					}
+				} else {
+					var first = document.createElement("td");
+					first.setAttribute("class", 'toti-form-label');
+					if (label !== null) {
+						first.appendChild(label);
+					}
 
-				var third = document.createElement("td");
-				third.setAttribute("class", 'toti-form-error');
-				third.appendChild(error);
+					var second = document.createElement("td");
+					second.setAttribute("class", 'toti-form-input');
+					second.appendChild(input);
 
-				var row = document.createElement("tr");
-				row.appendChild(first);
-				row.appendChild(second);
-				row.appendChild(third);
-				var tableContent = document.createElement("div");
-				table.appendChild(row);
-			}
-		});
+					var third = document.createElement("td");
+					third.setAttribute("class", 'toti-form-error');
+					third.appendChild(error);
+
+					var row = document.createElement("tr");
+					row.appendChild(first);
+					row.appendChild(second);
+					row.appendChild(third);
+					var tableContent = document.createElement("div");
+					table.appendChild(row);
+				}
+			});
+		}
+		createInputs(this.config.fields);
 		return form;
 	}
 
@@ -767,7 +793,7 @@ class TotiForm {
 									li.innerText = item;
 									ol.appendChild(li);
 								});
-								document.querySelector('#' + uniqueName + '-errors-' + key + '').innerHTML = ol;
+								document.querySelector('#' + uniqueName + '-errors-' + key + '').appendChild(ol);
 							}
 						} else if (submit.getAttribute("onFailure") != null) {
 							window[submit.getAttribute("onFailure")](xhr);
