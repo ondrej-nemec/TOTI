@@ -25,11 +25,11 @@ public interface Response {
 		return new FileResponse(code, fileName);
 	}
 	
-	static Response getJson(StatusCode code, Map<String, Object> json) {
+	static Response getJson(StatusCode code, Object json) {
 		return new JsonResponse(code, json);
 	}
 	
-	static Response getJson(Map<String, Object> json) {
+	static Response getJson(Object json) {
 		return new JsonResponse(StatusCode.ACCEPTED, json);
 	}
 	
