@@ -785,6 +785,7 @@ class TotiForm {
 					}, 
 					function(xhr) {
 						if (xhr.status === 400) {
+							console.log(JSON.parse(xhr.responseText));
 							for (const[key, list] of Object.entries(JSON.parse(xhr.responseText))) {
 								var ol = document.createElement("ul");
 								ol.setAttribute("class", "error-list");
@@ -793,7 +794,11 @@ class TotiForm {
 									li.innerText = item;
 									ol.appendChild(li);
 								});
-								document.querySelector('#' + uniqueName + '-errors-' + key + '').appendChild(ol);
+								var elementId = key.replaceAll("[", "\\[").replaceAll("]", "\\]");
+								console.log(key, list, document.querySelectorAll('#' + uniqueName + '-errors-' + elementId + ''));
+								/*TODO need solve id - list*/
+								document.querySelector('#' + uniqueName + '-errors-' + elementId + '').appendChild(ol);
+								//document.querySelector('#' + uniqueName + '-errors-' + key + '').appendChild(ol);
 							}
 						} else if (submit.getAttribute("onFailure") != null) {
 							window[submit.getAttribute("onFailure")](xhr);

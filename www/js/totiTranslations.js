@@ -1,3 +1,4 @@
+/* TOTI Translations version 0.0.1 */
 var totiTranslations = {
 	"pages": {
 		"title": /* "<t:trans message='common.grid.paging.pages'/>", /*/ "Pages:", //*/
@@ -19,10 +20,14 @@ var totiTranslations = {
 		"saveError": /* "<t:trans message='common.form.saving-problem' />", /*/ "Problem with form saving", //*/
 		"bindError": /* "<t:trans message='common.form.binding-problem' />" /*/ "Loading data failure" //*/
 	},
+	/* TODO use translations with JSON.parse() ??? */
 	"timestamp": {
 		dateString: {
 			"date": {"year": "numeric", "month": "long", "day": "numeric"},
-			"datetime-local": {"year": "numeric", "month": "long", "day": "numeric", "hour": "numeric", "minute": "numeric", "second": "numeric"},
+			"datetime-local": {
+				"year": "numeric", "month": "long", "day": "numeric",
+				"hour": "numeric", "minute": "numeric", "second": "numeric"
+			},
 			"month": {"year": "numeric", "month": "long"},
 		},
 		timeString: {

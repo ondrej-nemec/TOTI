@@ -1,3 +1,4 @@
+/* TOTI Load version 0.0.1 */
 var totiLoad = {
 	async: function(url, method, data, headers, onSuccess, onFailure, async = true) {
 		var params = new URLSearchParams(data).toString();
@@ -21,7 +22,7 @@ var totiLoad = {
 			    }
 			    onSuccess(response, xhr);
 			}
-			// TODO rs 300 ???
+			/* TODO rs 300 ???*/
 		};
 		xhr.send(params);
 	},
@@ -45,7 +46,7 @@ var totiLoad = {
 		 window.onload();
 		 console.log("onload");*/
 	},
-	// TODO wll be here ?
+	/* TODO wll be here ?*/
 	getHeaders: function() {
 		return {
 			...totiAuth.getAuthHeader(),

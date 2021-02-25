@@ -1,11 +1,10 @@
-// depends on totiStorage storage.js
+/* TOTI Display version 0.0.1 */
 var totiDisplay = {
 	prompt: function(message, defValue = "") {
 		return prompt(message, defValue);
 	},
-	confirm: function(message /*, params = {}*/ ) {
+	confirm: function(message) {
 		return confirm(message);
-		//return confirm(totiControl.utils.parametrizedString(message, params));
 	},
 	alert: function(message) {
 		alert(message);

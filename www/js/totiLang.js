@@ -1,4 +1,4 @@
-// depends on totiStorage - storage.js
+/* TOTI Lang version 0.0.1 */
 var totiLang = {
 	variableName: "language",
 	changeLanguage: function (language) {

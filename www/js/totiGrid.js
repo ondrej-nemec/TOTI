@@ -1,3 +1,4 @@
+/* TOTI Grid version 0.0.1 */
 class TotiGrid {
 
 	constructor(config) {
@@ -48,7 +49,7 @@ class TotiGrid {
 
 		document.createElement("tfooter");
 		table.appendChild(tFooter);
-		// TODO caption s x from y
+		/* TODO caption s x from y*/
 
 		var grid = document.createElement("div");
 		grid.setAttribute("id", uniqueName + "-control");
@@ -286,7 +287,7 @@ class TotiGrid {
 				tableRow.setAttribute("index", rowIndex);
 				tableRow.setAttribute("class", "toti-row-" + (rowIndex %2) + " toti-row-" + uniqueName);
 				tableRow.onclick = function(event) {
-					// TODO only if set
+					/* TODO only if settings select row == true */
 					if (event.target.type !== undefined) { /*is input*/
 						return;
 					}
@@ -335,7 +336,6 @@ class TotiGrid {
 							td.appendChild(buttonElement);
 						});
 					} else if (column.hasOwnProperty("renderer")) {
-						// TODO RENDERER TODO
 						td.innerHTML = window[column.renderer](row[column.name], row);
 					} else if (column.hasOwnProperty("filter") && column.filter.hasOwnProperty("options")) {
 						var value = row[column.name];
@@ -538,5 +538,8 @@ class TotiGrid {
 		});
 		return JSON.stringify(filters);
 	}
-	
 }
+
+document.addEventListener("DOMContentLoaded", function(event) { 
+	totiDisplay.printStoredFlash();
+});

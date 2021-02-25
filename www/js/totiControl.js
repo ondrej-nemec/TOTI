@@ -1,3 +1,4 @@
+/* TOTI Control version 0.0.1 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -32,7 +33,7 @@ var totiControl = {
 			attributes.checked = "checked";
 		}
 
-		// IMP datetime 
+		/* IMP datetime */
 		/*if (type === 'datetime') {
 			return totiControl.inputs._createInput("datetime-local", attributes);
 		} else*/if (type === 'textarea') {
@@ -48,6 +49,7 @@ var totiControl = {
 		}
 	},
 	inputs: {
+		_selectCache: {},
 		_createInput: function (type, attributes) {
 			var input = document.createElement("input");
 			input.setAttribute("type", type);
@@ -103,7 +105,7 @@ var totiControl = {
 			var select = document.createElement('select');
 			for ([key, value] of Object.entries(params)) {
 				if (key === "options" || key === "load") {
-					// ignored now, done soon
+					/* ignored now, done soon*/
 				} else {
 					select.setAttribute(key, value);
 				}
@@ -120,7 +122,12 @@ var totiControl = {
 				addOption(option);
 			});
 			if (params.hasOwnProperty("load")) {
-				totiLoad.async(params.load.url, params.load.method, params.load.params, totiLoad.getHeaders(), function(loaded) {
+				var cacheKey = JSON.stringify({
+					"url": params.load.url,
+					"method": params.load.method,
+					"params": params.load.params
+				});
+				var onSuccess = function(loaded) {
 					totiUtils.forEach(loaded, function(value, opt) {
 						var option = { "value": value };
 						if (typeof opt === "object") {
@@ -131,12 +138,20 @@ var totiControl = {
 						} else {
 							option.title = opt;
 						}
-						params.options[value] = option; // for value renderer
+						params.options[value] = option; /* for value renderer*/
 						addOption(option);
 					});
-				}, function(xhr) {
-					console.log(xhr);
-				}, false);
+				};
+				if (totiControl.inputs._selectCache.hasOwnProperty(cacheKey)) {
+					onSuccess(totiControl.inputs._selectCache[cacheKey]);
+				} else {
+					totiLoad.async(params.load.url, params.load.method, params.load.params, totiLoad.getHeaders(), function(loaded) {
+						onSuccess(loaded);
+						totiControl.inputs._selectCache[cacheKey] = loaded;
+					}, function(xhr) {
+						console.log(xhr);
+					}, false);
+				}
 			}
 			
 			return select;
@@ -155,14 +170,14 @@ var totiControl = {
 		}
 	},
 	parseValue: function(type, value) {
-		// TODO week
-		if (totiTranslations.timestamp.dateString.hasOwnProperty(type)) {
+		/* TODO week*/
+		if (totiTranslations.timestamp.dateString.hasOwnProperty(type) && value !== '' && value !== null) {
 			return new Date(value).toLocaleDateString(
             	totiLang.getLang().replace("_", "-"),
 				totiTranslations.timestamp.dateString[type]
 			);
 		}
-		if (totiTranslations.timestamp.timeString.hasOwnProperty(type)) {
+		if (totiTranslations.timestamp.timeString.hasOwnProperty(type) && value !== '' && value !== null) {
 			value = "1970-01-01 " + value;
 			return new Date(value).toLocaleTimeString(
             	totiLang.getLang().replace("_", "-"),

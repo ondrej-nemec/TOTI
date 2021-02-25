@@ -2,21 +2,22 @@
 <head>
 	<title></title>
 	<link rel="stylesheet" href="/toti.css" />
-		<script src="/toti.js" crossorigin="anonymous"></script>
 	<!-- 
-	<script src="/new/settings.js"></script>
-	<script src="/new/images.js" ></script>
-	<script src="/new/utils.js" ></script>
-	<script src="/new/translations.js" ></script>
-	<script src="/new/storage.js" ></script>
-	<script src="/new/lang.js" ></script>
-	<script src="/new/load.js" ></script>
-	<script src="/new/auth.js" ></script>
-	<script src="/new/display.js" ></script>
-	<script src="/new/control.js" ></script>
-	<script src="/new/form.js" ></script>
-	<script src="/new/grid.js" ></script>
+	<script src="/toti/totiJs.js"></script>
 	 -->
+	<script src="/js/totiSettings.js"></script>
+	<script src="/js/totiImages.js" ></script>
+	<script src="/js/totiUtils.js" ></script>
+	<script src="/js/totiTranslations.js" ></script>
+	<script src="/js/totiStorage.js" ></script>
+	<script src="/js/totiLang.js" ></script>
+	<script src="/js/totiLoad.js" ></script>
+	<script src="/js/totiAuth.js" ></script>
+	<script src="/js/totiDisplay.js" ></script>
+	<script src="/js/totiControl.js" ></script>
+	<script src="/js/totiForm.js" ></script>
+	<script src="/js/totiGrid.js" ></script>
+
 </head>
 <body>
 	<script>

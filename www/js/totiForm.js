@@ -1,3 +1,4 @@
+/* TOTI Form version 0.0.1 */
 class TotiForm {
 
 	constructor(config) {
@@ -65,102 +66,114 @@ class TotiForm {
 		
 		var config = this.config;
 		var object = this;
-		this.config.fields.forEach(function(field, index) {
-			field.id = uniqueName + "-" + field.id;
-			field.form = uniqueName;
-			var label = null;
-			if (field.hasOwnProperty('title')) {
-				label = totiControl.label(field.id, field.title, {
-					id: uniqueName +  "-" + field.id + "-label"
-				});
-			}
-			var input;
-			if (!config.editable && field.type !== 'button') {
-				if (field.type === 'select') {
-					totiControl.inputs.select(field); // load select options if are
-					input = printSelectFunc(field, 'options');
-				} else if (field.type === 'radiolist') {
-					input = printSelectFunc(field, 'radios');
-				} else if (field.type === 'checkbox') {
-					input = printSelectFunc(field, 'values');
-				} else if (field.type !== 'submit' && field.type !== 'hidden') {
-					input = document.createElement("div");
-					for ([key, name] of Object.entries(field)) {
-						if (key === "value") {
-							input.innerText = name;
-						} else {
-							input.setAttribute(key, name);
-						}
-					}				
-				} else {
-					input = document.createElement('span');
+		var createInputs = function(fields, parent = null) {
+			fields.forEach(function(field, index) {
+				if (parent !== null) {
+					field.name = parent + "[" + (field.hasOwnProperty("name") ? field.name : "") + "]";
 				}
-			} else {
-				if (field.type === 'file') {
-					form.setAttribute("enctype", "multipart/form-data");
-				} else if (field.type === 'radiolist') {
-					field.formName = uniqueName;
+				if (field.type === "list") {
+					createInputs(field.fields, field.name);
+					return;
 				}
-				var type = field.type;
-				input = totiControl.input(field);
 
-				if (type === 'submit' || type === 'image') {
-					input.onclick = object.getSubmit(uniqueName, input);
-				} else if (type === 'button') {
-					var onClick = totiControl.getAction({
-						href: field.href,
-						method: field.method,
-						async: field.ajax,
-						submitConfirmation: function() {
-							if (field.hasOwnProperty('confirmation')) {
-								return totiDisplay.confirm(field.confirmation, row);
-							}
-							return true;
-						}/*,
-						onSuccess: "",
-						onFailure: ""*/
+				field.id = uniqueName + "-" + field.id;
+				field.form = uniqueName;
+				var label = null;
+				if (field.hasOwnProperty('title')) {
+					label = totiControl.label(field.id, field.title, {
+						id: uniqueName +  "-" + field.id + "-label"
 					});
-					input.onclick = onClick;
 				}
-			}
-			var error = document.createElement("div");
-			error.setAttribute("id", uniqueName + '-errors-' + field.name);
-			if (useTemplate) {
-				var labelElement = form.querySelector("#form-label-" + field.name);
-				if (labelElement !== null && label !== null) {
-					labelElement.appendChild(label);
-				}
-				var inputElement = form.querySelector("#form-input-" + field.name);
-				if (inputElement !== null) {
-					inputElement.appendChild(input);
-				}
-				var errorElement = form.querySelector("#form-error-" + field.name);
-				if (config.editable && errorElement !== null) {
-					errorElement.appendChild(error);
-				}
-			} else {
-				var first = document.createElement("td");
-				first.setAttribute("class", 'toti-form-label');
-				if (label !== null) {
-					first.appendChild(label);
-				}
+				var input;
+				if (!config.editable && field.type !== 'button') {
+					field.originType = field.type;
+					if (field.type === 'select') {
+						totiControl.inputs.select(field); /* load select options if are*/
+						input = printSelectFunc(field, 'options');
+					} else if (field.type === 'radiolist') {
+						input = printSelectFunc(field, 'radios');
+					} else if (field.type === 'checkbox') {
+						input = printSelectFunc(field, 'values');
+					} else if (field.type !== 'submit' && field.type !== 'hidden') {
+						input = document.createElement("div");
+						for ([key, name] of Object.entries(field)) {
+							if (key === "value") {
+								input.innerText = name;
+							} else {
+								input.setAttribute(key, name);
+							}
+						}				
+					} else {
+						input = document.createElement('span');
+					}
+				} else {
+					if (field.type === 'file') {
+						form.setAttribute("enctype", "multipart/form-data");
+					} else if (field.type === 'radiolist') {
+						field.formName = uniqueName;
+					}
+					var type = field.type;
+					input = totiControl.input(field);
 
-				var second = document.createElement("td");
-				second.setAttribute("class", 'toti-form-input');
-				second.appendChild(input);
+					if (type === 'submit' || type === 'image') {
+						input.onclick = object.getSubmit(uniqueName, input);
+					} else if (type === 'button') {
+						var onClick = totiControl.getAction({
+							href: field.href,
+							method: field.method,
+							async: field.ajax,
+							submitConfirmation: function() {
+								if (field.hasOwnProperty('confirmation')) {
+									return totiDisplay.confirm(field.confirmation, row);
+								}
+								return true;
+							}/*,
+							onSuccess: "",
+							onFailure: ""*/
+						});
+						input.onclick = onClick;
+					}
+				}
+				var error = document.createElement("div");
+				error.setAttribute("id", uniqueName + '-errors-' + field.name);
+				if (useTemplate) {
+					var labelElement = form.querySelector("#form-label-" + field.name);
+					if (labelElement !== null && label !== null) {
+						labelElement.appendChild(label);
+					}
+					var inputElement = form.querySelector("#form-input-" + field.name);
+					if (inputElement !== null) {
+						inputElement.appendChild(input);
+					}
+					var errorElement = form.querySelector("#form-error-" + field.name);
+					if (config.editable && errorElement !== null) {
+						errorElement.appendChild(error);
+					}
+				} else {
+					var first = document.createElement("td");
+					first.setAttribute("class", 'toti-form-label');
+					if (label !== null) {
+						first.appendChild(label);
+					}
 
-				var third = document.createElement("td");
-				third.setAttribute("class", 'toti-form-error');
-				third.appendChild(error);
+					var second = document.createElement("td");
+					second.setAttribute("class", 'toti-form-input');
+					second.appendChild(input);
 
-				var row = document.createElement("tr");
-				row.appendChild(first);
-				row.appendChild(second);
-				row.appendChild(third);
-				var tableContent = document.createElement("div");
-				table.appendChild(row);
-			}
-		});
+					var third = document.createElement("td");
+					third.setAttribute("class", 'toti-form-error');
+					third.appendChild(error);
+
+					var row = document.createElement("tr");
+					row.appendChild(first);
+					row.appendChild(second);
+					row.appendChild(third);
+					var tableContent = document.createElement("div");
+					table.appendChild(row);
+				}
+			});
+		}
+		createInputs(this.config.fields);
 		return form;
 	}
 
@@ -179,14 +192,14 @@ class TotiForm {
 				var type = input.getAttribute("type");
 				var name = input.getAttribute("name");
 
-				// IMP datetime
+				/*IMP datetime*/
 				/*if (type === "datetime-local") {
 					value = input.value;
 					value = value.replace("T", " ");
 					data.append(name, value);
 				} else */if (type === "submit" || type === "button" || type === "reset") {
-					// ignored
-					// TODO img too ??
+					/* ignored*/
+					/* TODO img too ??*/
 				} else if (type === "radio") {
 					if (input.checked) {
 						data.append(name, input.value);
@@ -218,7 +231,6 @@ class TotiForm {
 				if (form.getAttribute("enctype") !== null) {
 					header.enctype = form.getAttribute("enctype");
 				}
-				// header['Content-type'] = 'application/x-www-form-urlencoded';
 				totiLoad.async(
 					form.getAttribute("action"), 
 					form.getAttribute("method"), 
@@ -237,6 +249,7 @@ class TotiForm {
 					}, 
 					function(xhr) {
 						if (xhr.status === 400) {
+							console.log(JSON.parse(xhr.responseText));
 							for (const[key, list] of Object.entries(JSON.parse(xhr.responseText))) {
 								var ol = document.createElement("ul");
 								ol.setAttribute("class", "error-list");
@@ -245,7 +258,11 @@ class TotiForm {
 									li.innerText = item;
 									ol.appendChild(li);
 								});
-								document.querySelector('#' + uniqueName + '-errors-' + key + '').innerHTML = ol;
+								var elementId = key.replaceAll("[", "\\[").replaceAll("]", "\\]");
+								console.log(key, list, document.querySelectorAll('#' + uniqueName + '-errors-' + elementId + ''));
+								/*TODO need solve id - list*/
+								document.querySelector('#' + uniqueName + '-errors-' + elementId + '').appendChild(ol);
+								//document.querySelector('#' + uniqueName + '-errors-' + key + '').appendChild(ol);
 							}
 						} else if (submit.getAttribute("onFailure") != null) {
 							window[submit.getAttribute("onFailure")](xhr);
@@ -278,9 +295,9 @@ class TotiForm {
 					if (element === null) {
 						continue;
 					}
-					if (element.type === undefined) { // detail
-						value = totiControl.parseValue(element.getAttribute("type"), value);
-						if (element.querySelector("span") != null) { // select or radio list
+					if (element.type === undefined) { /* detail*/
+						value = totiControl.parseValue(element.getAttribute("originType"), value);
+						if (element.querySelector("span") != null) { /* select or radio list*/
 							element.querySelectorAll("span").forEach(function(el) {
 								el.style.display = "none";
 							});
@@ -292,8 +309,8 @@ class TotiForm {
 						} else {
 							element.innerText = value;
 						}
-					} else { // form
-						// IMP datetime
+					} else { /*form*/
+						/* IMP datetime*/
 						/*if (element.type === "datetime-local" && value !== null) {
 							value = value.replace(" ", "T");
 						}*/
@@ -304,9 +321,6 @@ class TotiForm {
 						} else {
 							element.value = value;
 						}
-						//} else if (element.type === "select-one") {
-						//	var option = element.querySelector("[value='" + value + "']");
-						//	option.setAttribute("selected", true);
 					}
 				}
 				if (bind.hasOwnProperty("afterBind")) {

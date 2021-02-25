@@ -1,3 +1,4 @@
+/* TOTI Storage version 0.0.1 */
 var totiStorage = {
 	saveVariable: function(name, value) {
 		localStorage[name] = JSON.stringify(value);

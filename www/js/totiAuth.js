@@ -1,5 +1,4 @@
-// depends on totiStorage storage.js
-// depends on totiLoad load.js
+/* TOTI Auth version 0.0.1 */
 var totiAuth = {
 	variableName: "authentication",
 	getAuthHeader: function(access = true) {

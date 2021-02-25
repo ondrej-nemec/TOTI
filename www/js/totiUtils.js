@@ -1,5 +1,6 @@
+/* TOTI Utils version 0.0.1 */
 var totiUtils = {
-	// TODO is used?
+	/* TODO is used? */
 	parseUrlToObject: function (data) {
 		return JSON.parse('{"' + data.replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
 	},
@@ -10,6 +11,7 @@ var totiUtils = {
 		return string;
 	},
 	forEach: function(array, callback) {
+		/*Array.prototype.forEach.call()*/
 		if (typeof array === 'object') {
 			for (const[key, item] of Object.entries(array)) {
 				callback(key, item);
