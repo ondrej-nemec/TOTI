@@ -19,7 +19,7 @@ import translator.Translator;
 
 public class HttpServerFactory {
 	
-	// todo maybe regist here too
+	// todo maybe regist here too OR only list - new header in creating response
 	private ResponseHeaders headers = new ResponseHeaders(Arrays.asList(
 			"Access-Control-Allow-Origin: *"
 	));
