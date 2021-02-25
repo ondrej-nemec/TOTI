@@ -14,6 +14,18 @@ var totiControl = {
 		for ([key, name] of Object.entries(attributes)) {
 			if (key === "value") {
 				button.innerHTML = name;
+			} else if (key === "action") {
+				if (typeof attributes.action === "object") {
+					button.onclick = totiControl.getAction(attributes.action);
+				} else {
+					button.onclick = function(event) {
+						window[attributes.action](event);
+					};
+				}
+			} else if (key === "style") {
+				button.className += " toti-button-" + name;
+			} else if (key === "class") {
+				button.className += " " + name;
 			} else {
 				button.setAttribute(key, name);
 			}
@@ -33,10 +45,15 @@ var totiControl = {
 			attributes.checked = "checked";
 		}
 
-		/* IMP datetime */
-		/*if (type === 'datetime') {
+		if (type === 'datetime') {
+			if (attributes.hasOwnProperty("value")) {
+				attributes.value = attributes.value.replace(" ", "T");
+			}
+			if (browser.includes("chrom") || browser === "opera") {
+				console.error("Your browser probably not support datetime-local");
+			}
 			return totiControl.inputs._createInput("datetime-local", attributes);
-		} else*/if (type === 'textarea') {
+		} else if (type === 'textarea') {
 			return totiControl.inputs.textarea(attributes);
 		} else if (type === 'select') {
 			return totiControl.inputs.select(attributes);
@@ -44,6 +61,8 @@ var totiControl = {
 			return totiControl.inputs.option(attributes);
 		} else if (type === 'radiolist') {
 			return totiControl.inputs.radiolist(attributes);
+		} else if (type === 'button') {
+			return totiControl.inputs.button(attributes);
 		} else {
 			return totiControl.inputs._createInput(type, attributes);
 		}
@@ -57,6 +76,28 @@ var totiControl = {
 				input.setAttribute(key, name);
 			}
 			return input;
+		},
+		button: function(attributes) {
+			var button = document.createElement("input");
+			button.setAttribute("type", "button");
+			for ([key, name] of Object.entries(attributes)) {
+				if (key === "action") {
+					if (typeof attributes.action === "object") {
+						button.onclick = totiControl.getAction(attributes.action);
+					} else {
+						button.onclick = function(event) {
+							window[attributes.action](event);
+						};
+					}
+				} else if (key === "style") {
+					button.className += " toti-button-" + name;
+				} else if (key === "class") {
+					button.className += " " + name;
+				} else {
+					button.setAttribute(key, name);
+				}
+			}
+			return button;
 		},
 		radiolist: function(params) {
 			var input = document.createElement("div");
@@ -167,7 +208,32 @@ var totiControl = {
 				
 			}
 			return option;
-		}
+		}/*,
+		datetime: function(attributes) {
+			var date = totiControl.inputs._createInput("date", attributes);
+			var time = totiControl.inputs._createInput("time", attributes);
+			
+			var div = document.createElement("button");
+			var datetime = div;
+			div.appendChild(date);
+			div.appendChild(time);
+			
+			date.onchange = function(event) {
+				console.log("date", date.value, time.value);
+			};
+			time.onchange = function(event) {
+				console.log("time", time.value, date.value);
+			};
+			datetime.onchange = function(event) {
+				console.log("datetime on change", datetime.value, date.value, time.value);
+				if (date.value === '' || time.value === '') {
+					event.preventDefault();
+				} else {
+					datetime.value = date.value + "T" + time.value;
+				}
+			};
+			return div;
+		}*/
 	},
 	parseValue: function(type, value) {
 		/* TODO week*/
