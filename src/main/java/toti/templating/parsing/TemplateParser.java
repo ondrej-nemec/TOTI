@@ -161,7 +161,7 @@ public class TemplateParser {
 			//	isQuoteNow = true;
 			} else if (!tagCandidate1 && actual == '<' && !isDoubleQuoted && !isSingleQuoted) {
 				if (isTag || tagCandidate2) {
-					// TODO throw tags cannot be in tags
+					throw new RuntimeException("Tag cannot be in tag");
 				}
 				tagCandidate1 = true;
 			} else if (tagCandidate1 && actual == '/') {
