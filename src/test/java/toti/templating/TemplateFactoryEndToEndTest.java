@@ -62,16 +62,10 @@ public class TemplateFactoryEndToEndTest {
 			}
 
 			@Override
-			public Translator withLocale(Locale locale) {
-				// TODO Auto-generated method stub
-				return this;
-			}
+			public Translator withLocale(Locale locale) {return this;}
 
 			@Override
-			public void setLocale(Locale locale) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void setLocale(Locale locale) {}
 		};
 		String html = template.create(factory, variables, translator);
 		System.out.println(html);

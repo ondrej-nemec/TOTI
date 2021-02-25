@@ -16,6 +16,21 @@ public class EntityValidator {
 		getGridValidator();
 		getFormValidator();
 		test();
+		sub();
+	}
+	
+	public static Validator sub() {
+		return Validator.create("uniq", true)
+				.addRule(ItemRules.forName("textinput", true).setMaxLength(5))
+				.addRule(ItemRules.forName("list", true).setMapSpecification(new Validator(true)
+					.addRule(ItemRules.forName("subText", true).setAllowedValues(Arrays.asList("deff")))
+					.addRule(ItemRules.forName("subText2", true))
+					.addRule(ItemRules.forName("subText3", true))
+					.addRule(ItemRules.forName("sublist", true).setListSpecification(
+						new Validator(ItemRules.defaultRule().setMaxLength(3))
+					))
+				))
+				;
 	}
 	
 	public static Validator test() {

@@ -38,7 +38,6 @@ public class DirectoryTemplate implements Template {
 		}
 		
 		for(File file : files) {
-			// TODO icon
 			builder.append(String.format("<a href='%s'>%s</a>", filePath + file.getName(), file.getName()));			
 			builder.append("<br>");
 		}

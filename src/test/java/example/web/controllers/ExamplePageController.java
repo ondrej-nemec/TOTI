@@ -70,7 +70,7 @@ public class ExamplePageController {
 				new Tuple2<>("", "---"),
 				new Tuple2<>("true", "YES"),
 				new Tuple2<>("false", "NO")
-			))).setUseSorting(true) // TODO renderer
+			))).setUseSorting(true)
 		);
 		grid.addColumn(
 			new ValueColumn("parent").setTitle("Parent").setFilter(Select.filter(MapInit.hashMap(
@@ -80,19 +80,19 @@ public class ExamplePageController {
 		
 		grid.addColumn(
 			new ValueColumn("simple_date").setTitle("Simple date").setFilter(Date.filter()).setUseSorting(true)
-		); // TODO renderer
+		);
 		grid.addColumn(
 			new ValueColumn("dt_local").setTitle("Datetime local").setFilter(Datetime.filter()).setUseSorting(true)
-		); // TODO renderer
+		);
 		grid.addColumn(
 			new ValueColumn("month").setTitle("Month").setFilter(Month.filter()).setUseSorting(true)
-		); // TODO renderer
+		);
 		grid.addColumn(
 			new ValueColumn("week").setTitle("Week").setFilter(Week.filter()).setUseSorting(true)
-		); // TODO renderer
+		);
 		grid.addColumn(
 			new ValueColumn("time").setTitle("Time").setFilter(Time.filter()).setUseSorting(true)
-		); // TODO renderer
+		);
 		
 		// COMMON
 		grid.addColumn(new ButtonsColumn("Actions")
@@ -159,20 +159,20 @@ public class ExamplePageController {
 		form.addInput(
 			Date.input("simple_date", false).setTitle("Date")
 				.setDefaultValue("2021-02-19")
-		); // TODO renderer
+		);
 		form.addInput(
 			Datetime.input("dt_local", false)
 				.setTitle("DateTime Local").setDefaultValue("2021-02-19T22:55")
-		); // TODO renderer
+		);
 		form.addInput(
 			Month.input("month", false).setTitle("Month").setDefaultValue("2021-02")
-		); // TODO renderer
+		);
 		form.addInput(
 			Time.input("time", false).setTitle("Time").setDefaultValue("22:55")
-		); // TODO renderer
+		);
 		form.addInput(
 			Week.input("week", false).setTitle("Week").setDefaultValue("2021-W07")
-		); // TODO renderer
+		);
 		
 		form.addInput(Color.input("favorite_color", false).setTitle("Favorite color"));
 		form.addInput(File.input("file", false).setTitle("File"));

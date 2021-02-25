@@ -48,7 +48,6 @@ public class AdminerModule implements Module {
 
 	@Override
 	public String getMigrationsPath() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

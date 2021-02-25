@@ -28,7 +28,6 @@ public class E1__example_table implements Migration {
 			.addColumn("month", ColumnType.string(20))
 			.addColumn("time", ColumnType.string(20))
 			.addColumn("week", ColumnType.string(20))
-			// TODO solve
 			/*
 			.addColumn("simple_date", ColumnType.datetime())
 			.addColumn("dt_local", ColumnType.datetime())

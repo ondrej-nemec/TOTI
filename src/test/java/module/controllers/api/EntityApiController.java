@@ -57,8 +57,11 @@ public class EntityApiController {
 		this.auditTrail = auditTrail;
 	}
 	
-	@Secured({@Domain(name=SECURITY_DOMAIN, action=acl.Action.READ)})
-	public void empty() {}
+	@Action(value = "unique", validator="uniq")
+	public Response empty(@Params RequestParameters params) {
+		System.err.println(params);
+		return Response.getText("OK");
+	}
 	
 	@Action(value = "reporting")
 	public Response params(@Params RequestParameters params) {
@@ -146,7 +149,7 @@ public class EntityApiController {
 		try {
 			Map<String, Object> item = dao.get(id);
 			/***/
-			// TODO edit item
+			
 			/***/
 			return Response.getJson(item);
 		} catch (Exception e) {
