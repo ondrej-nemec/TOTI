@@ -30,7 +30,8 @@ public class VariableDefineTag implements Tag {
 		if (params.get("value") != null) {
 			define += String.format("=%s", params.get("value"));
 		}
-		return define + ";";
+		return define + ";"
+				+ String.format("variables.put(\"%s\", %s);", params.get("name"), params.get("name"));
 	}
 
 }

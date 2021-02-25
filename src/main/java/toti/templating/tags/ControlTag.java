@@ -41,6 +41,9 @@ public class ControlTag implements Tag {
 
 	@Override
 	public String getPairEndCode(Map<String, String> params) {
+		if (params.get("jsObject") != null) {
+			return "";
+		}
 		return "b.append(\"</div>\");";
 	}
 

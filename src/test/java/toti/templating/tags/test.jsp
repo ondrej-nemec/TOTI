@@ -1,0 +1,1 @@
+<t:control name="control" jsObject/>

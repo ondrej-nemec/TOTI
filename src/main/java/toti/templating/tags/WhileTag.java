@@ -13,7 +13,7 @@ public class WhileTag implements Tag {
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
-		return String.format("while(%s){", params.get("cond"));
+		return String.format("while((boolean)(%s)){", params.get("cond"));
 	}
 
 	@Override
