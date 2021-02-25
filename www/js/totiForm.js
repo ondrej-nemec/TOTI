@@ -12,7 +12,7 @@ class TotiForm {
 				object.create(uniqueName, document.querySelector(elementIdentifier), object.config.editable)
 			);
 			if (object.hasOwnProperty("afterPrint")) {
-				window[object.afterPrint]();
+				window[object.afterPrint](); // TODO can be function, not just string
 			}
 			if (object.config.hasOwnProperty('bind')) {
 				object.bindUrl(uniqueName, object.config.bind);
@@ -206,9 +206,8 @@ class TotiForm {
 					value = input.value;
 					value = value.replace("T", " ");
 					data.append(name, value);
-				} else if (type === "submit" || type === "button" || type === "reset") {
+				} else if (type === "submit" || type === "button" || type === "reset" || type === "image") {
 					/* ignored*/
-					/* TODO img too ??*/
 				} else if (type === "radio") {
 					if (input.checked) {
 						data.append(name, input.value);

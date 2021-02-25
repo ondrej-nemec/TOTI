@@ -137,10 +137,11 @@ class TotiGrid {
 				cell.appendChild(checkbox);
 				cell.setAttribute("no-filters", "");
 			} else if (column.type == "buttons") {
-				var reset = totiControl.input({
+				// TODO reset filters button
+				/*var reset = totiControl.input({
 					type: "reset"
 				});
-				cell.appendChild(reset);
+				cell.appendChild(reset);*/
 			} else if (column.hasOwnProperty('filter')) {
 				cell.appendChild(
 					totiControl.input(column.filter)

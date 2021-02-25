@@ -137,10 +137,11 @@ class TotiGrid {
 				cell.appendChild(checkbox);
 				cell.setAttribute("no-filters", "");
 			} else if (column.type == "buttons") {
-				var reset = totiControl.input({
+				// TODO reset filters button
+				/*var reset = totiControl.input({
 					type: "reset"
 				});
-				cell.appendChild(reset);
+				cell.appendChild(reset);*/
 			} else if (column.hasOwnProperty('filter')) {
 				cell.appendChild(
 					totiControl.input(column.filter)
@@ -281,6 +282,7 @@ class TotiGrid {
 				body.appendChild(document.createElement("tr").appendChild(td));
 				return;
 			}
+			/* TODO itmesCount is not working if filtering is active */
 			object.pagesOnLoad(uniqueName, response.pageIndex, response.itemsCount / object.pagesSizeGet(uniqueName));
 			response.data.forEach(function(row, rowIndex) {
 				var tableRow = document.createElement("tr");
@@ -336,7 +338,12 @@ class TotiGrid {
 							td.appendChild(buttonElement);
 						});
 					} else if (column.hasOwnProperty("renderer")) {
-						td.innerHTML = window[column.renderer](row[column.name], row);
+						var renderer = window[column.renderer](row[column.name], row);
+						if (typeof renderer === "object") {
+							td.appendChild(renderer);
+						} else {
+							td.innerText = renderer;
+						}
 					} else if (column.hasOwnProperty("filter") && column.filter.hasOwnProperty("options")) {
 						var value = row[column.name];
 						if (value !== null) {
@@ -539,7 +546,3 @@ class TotiGrid {
 		return JSON.stringify(filters);
 	}
 }
-
-document.addEventListener("DOMContentLoaded", function(event) { 
-	totiDisplay.printStoredFlash();
-});
