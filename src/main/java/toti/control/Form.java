@@ -15,6 +15,7 @@ public class Form implements Control {
 	private String onBindFailure;
 	private String beforeBind;
 	private String afterBind;
+	private String afterPrint;
 	
 	//private final String formId;
 	private final String formAction;
@@ -59,6 +60,11 @@ public class Form implements Control {
 		return this;
 	}
 	
+	public Form setAfterPrint(String afterPrint) {
+		this.afterPrint = afterPrint;
+		return this;
+	}
+	
 	public Form setBeforeBind(String beforeBind) {
 		this.beforeBind = beforeBind;
 		return this;
@@ -71,11 +77,8 @@ public class Form implements Control {
 		json.put("method", formMethod);
 		json.put("fields", fields);
 		json.put("editable", editable);
-		if (beforeBind != null) {
-			json.put("beforeBind", beforeBind);
-		}
-		if (afterBind != null) {
-			json.put("afterBind", afterBind);
+		if (afterPrint != null) {
+			json.put("afterPrint", afterPrint);
 		}
 		if (bindUrl != null) {
 			Map<String, Object> bind = new HashMap<>();
@@ -83,6 +86,12 @@ public class Form implements Control {
 			bind.put("url", bindUrl);
 			bind.put("method", bindMethod);
 			bind.put("onFailure", onBindFailure);
+			if (beforeBind != null) {
+				bind.put("beforeBind", beforeBind);
+			}
+			if (afterBind != null) {
+				bind.put("afterBind", afterBind);
+			}
 		}
 		return toJson(json);
 	}
