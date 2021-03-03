@@ -126,9 +126,7 @@ public class Application {
 			if (env.getString("http.headers") != null) {
 				factory.setHeaders(new ResponseHeaders(env.getList("http.headers", "\\|")));
 			}
-		//	if (env.getString("") != null) {
-				factory.setLogger(LoggerFactory.getLogger("server"));
-		//	}
+			factory.setLogger(LoggerFactory.getLogger("server"));
 			if (env.getString("http.charset") != null) {
 				factory.setCharset(env.getString("http.charset"));
 			}
@@ -141,7 +139,7 @@ public class Application {
 			if (env.getString("http.minimalize-templates") != null) {
 				factory.setMinimalize(env.getBoolean("http.minimalize-templates"));
 			}
-			if (env.getString("http.minimalize-templates") != null) {
+			if (env.getString("http.delete-temp-java") != null) {
 				factory.setDeleteTempJavaFiles(env.getBoolean("http.delete-temp-java"));
 			}
 			if (env.getString("http.dir-allowed") != null) {
