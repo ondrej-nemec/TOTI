@@ -1,4 +1,4 @@
-/* TOTI Utils version 0.0.1 */
+/* TOTI Utils version 0.1.0 */
 var totiUtils = {
 	/* TODO is used? */
 	parseUrlToObject: function (data) {
@@ -12,20 +12,20 @@ var totiUtils = {
 	},
 	forEach: function(array, callback) {
 		/*Array.prototype.forEach.call()*/
-		if (typeof array === 'object') {
+		/*if (typeof array === 'object') {*/
 			for (const[key, item] of Object.entries(array)) {
 				callback(key, item);
 			}
-		} else {
+	/*	} else {
 			array.forEach(function(item, index) {
 				callback(index, item);
 			});
-		}
+		}*/
 	},
 	browser: function() {
 		/* https://stackoverflow.com/a/9851769 */
 		/* Opera 8.0+ */
-		f ((!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0) {
+		if ((!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0) {
 			return "opera";
 		}
 		/* Firefox 1.0+ */
@@ -60,5 +60,18 @@ var totiUtils = {
 		/* Blink engine detection
 		var isBlink = (isChrome || isOpera) && !!window.CSS; */
 		return "";
+	},
+	execute: function(callback, args = []) {
+		if (callback === null) {
+			return;
+		}
+		if (typeof callback === 'function') {
+		   callback(...args);
+		} else {
+			window[callback](...args);
+		}
+	},
+	clone: function(object) {
+		return JSON.parse(JSON.stringify(object));
 	}
 };
