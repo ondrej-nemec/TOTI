@@ -248,7 +248,11 @@ public class Validator {
 							for (int i = 0; i < list.size(); i++) {
 								fields.put(i + "", list.get(i));
 							}
-							errors.putAll(validator.validate(propertyName + "[]", fields, translator));
+							errors.putAll(validator.validate(
+								(propertyName.contains(":") ? "" : "%s:") + propertyName + "[]",
+								fields,
+								translator
+							));
 							prop.put(ruleName, new ArrayList<>(fields.values()));
 							return false;
 						} catch (ClassCastException | NumberFormatException e) {
