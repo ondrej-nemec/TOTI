@@ -1,4 +1,4 @@
-/* TOTI Auth version 0.0.1 */
+/* TOTI Auth version 0.0.2 */
 var totiAuth = {
 	variableName: "authentication",
 	getAuthHeader: function(access = true) {
@@ -51,7 +51,8 @@ var totiAuth = {
 						totiStorage.removeVariable(totiAuth.variableName);
 					/*} else {
 						totiAuth.setTokenRefresh(token, period / 2);
-					}	*/				
+					}	*/
+					location.reload();			
 				}
 			);
 		}, period);
