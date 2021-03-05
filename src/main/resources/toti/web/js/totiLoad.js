@@ -1,10 +1,15 @@
-/* TOTI Load version 0.0.1 */
+/* TOTI Load version 0.0.2 */
 var totiLoad = {
 	async: function(url, method, data, headers, onSuccess, onFailure, async = true) {
-		var params = new URLSearchParams(data).toString();
 		var xhr = new XMLHttpRequest();
 		if (method.toLowerCase() === "get") {
 			url += "?" + new URLSearchParams(data).toString();
+		}
+		var params;
+		if (data instanceof FormData) {
+			params = data
+		} else {
+			params = new URLSearchParams(data).toString();
 		}
 		xhr.open(method, url, async);
 		for (const[name, value] of Object.entries(headers)) {
