@@ -17,7 +17,7 @@ var totiTranslations = {
 		"loadingError": "<t:trans message='common.grid.loading-error' />"
 	},
 	"formMessages": {
-		"saveError":  "<t:trans message='common.form.saving-problem' />",
+		"saveError":  "<t:trans message='common.form.saving-problem', />"
 		"bindError":  "<t:trans message='common.form.binding-problem' />"
 	},
 	"formButtons": {

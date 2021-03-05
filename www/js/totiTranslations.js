@@ -21,7 +21,7 @@ var totiTranslations = {
 		"bindError": /* "<t:trans message='common.form.binding-problem' />" /*/ "Loading data failure" //*/
 	},
 	"formButtons": {
-		"add": /* "<t:trans message='common.form.add-variant' />" /*/ "Add Variant" //*/,
+		"add": /* "<t:trans message='common.form.add-variant' />" /*/ "Add Variant", //*/
 		"remove": /* "<t:trans message='common.form.remove-variant' />" /*/ "Remove Variant" //*/
 	},
 	/* TODO use translations with JSON.parse() ??? */
