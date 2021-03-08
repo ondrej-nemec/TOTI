@@ -66,6 +66,11 @@ public class Month implements Input, Filter {
 	@Override
 	public Map<String, Object> getFilterSettings() {
 		Map<String, Object> set = new HashMap<>();
+		set.putAll(params);
+		if (value != null) {
+			set.put("value", value);
+		}
+		set.put("step", step);
 		return set;
 	}
 
@@ -75,21 +80,14 @@ public class Month implements Input, Filter {
 		json.put("name", name);
 		json.put("id", id);
 		json.put("type", type);
-		json.put("step", step);
 		if (required) {
 			json.put("required", required);
 		}
 		if (disabled) {
 			json.put("disabled", disabled);
 		}
-		params.forEach((key, param)->{
-			json.put(key, param);
-		});
 		if (title != null) {
 			json.put("title", title);
-		}
-		if (value != null) {
-			json.put("value", value);
 		}
 		return json;
 	}

@@ -1,10 +1,11 @@
 package toti.control.inputs;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import toti.control.columns.Filter;
-import toti.templating.Template;
 
 public class Select implements Input, Filter {
 	
@@ -14,21 +15,34 @@ public class Select implements Input, Filter {
 	private String title;	
 	private final boolean required;
 	private boolean disabled = false;
-	private final Map<String, String> options;
+	private final List<Option> options;
 	private String value = null;
 	private final Map<String, String> params = new HashMap<>();
 	private Map<String, Object> load;
 	
+	@Deprecated
 	public static Select input(String name, boolean required, Map<String, String> options) {
+		List<Option> opts = new LinkedList<>();
+		options.forEach((value, title)->{
+			opts.add(Option.input(value, title));
+		});
+		return new Select(name, required, opts);
+	}
+
+	@Deprecated
+	public static Select filter(Map<String, String> options) {
+		return Select.input("", false, options);
+	}
+	
+	public static Select input(String name, boolean required, List<Option> options) {
 		return new Select(name, required, options);
 	}
 	
-	public static Select filter(Map<String, String> options) {
-		String name = "";
-		return new Select(name, false, options);
+	public static Select filter(List<Option> options) {
+		return new Select("", false, options);
 	}
 	
-	private Select(String name, boolean required, Map<String, String> options) {
+	private Select(String name, boolean required, List<Option> options) {
 		this.name = name;
 		this.id = "id-" + name;
 		this.type = "select";
@@ -76,39 +90,32 @@ public class Select implements Input, Filter {
 	@Override
 	public Map<String, Object> getFilterSettings() {
 		Map<String, Object> set = new HashMap<>();
-		/*
-		List<Map<String, Object>> opt = new LinkedList<>();
+		/*Map<String, Object> opt = new HashMap<>();
 		options.forEach((value, text)->{
 			Map<String, Object> param = new HashMap<>();
 			param.put("value", value);
 			param.put("title", Template.escapeVariable(text));
-			opt.add(param);
-		});
-		set.put("options", opt);
-		*/
-		Map<String, Object> opt = new HashMap<>();
-		options.forEach((value, text)->{
-			Map<String, Object> param = new HashMap<>();
-			param.put("value", value);
-			param.put("title", Template.escapeVariable(text));
+			
+			// disabled, groupname
 			opt.put(value, param);
-		});
-		set.put("options", opt);
+		});*/
+		set.put("options", options);
 		if (load != null) {
 			set.put("load", load);
+		}
+		set.putAll(params);
+		if (value != null) {
+			set.put("value", value);
 		}
 		return set;
 	}
 	
 	@Override
 	public Map<String, Object> getInputSettings() {
-		Map<String, Object> json = new HashMap<>(getFilterSettings());
+		Map<String, Object> json = getFilterSettings();
 		json.put("name", name);
 		json.put("id", id);
 		json.put("type", type);
-		params.forEach((key, param)->{
-			json.put(key, param);
-		});
 		if (required) {
 			json.put("required", required);
 		}
@@ -117,17 +124,6 @@ public class Select implements Input, Filter {
 		}
 		if (title != null) {
 			json.put("title", title);
-		}
-	/*	List<Map<String, Object>> opt = new LinkedList<>();
-		options.forEach((value, text)->{
-			Map<String, Object> param = new HashMap<>();
-			param.put("value", value);
-			param.put("text", Template.escapeVariable(text));
-			opt.add(param);
-		});
-		json.put("options", opt);*/
-		if (value != null) {
-			json.put("value", value);
 		}
 		return json;
 	}

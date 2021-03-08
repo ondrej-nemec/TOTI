@@ -94,12 +94,16 @@ public class Number implements Input, Filter {
 		if (min != null) {
 			set.put("min", min);
 		}
+		if (value != null) {
+			set.put("value", value);
+		}
+		set.putAll(params);
 		return set;
 	}
 	
 	@Override
 	public Map<String, Object> getInputSettings() {
-		Map<String, Object> json = new HashMap<>(getFilterSettings());
+		Map<String, Object> json = getFilterSettings();
 		json.put("name", name);
 		json.put("id", id);
 		json.put("type", type);
@@ -109,23 +113,8 @@ public class Number implements Input, Filter {
 		if (disabled) {
 			json.put("disabled", disabled);
 		}
-		params.forEach((key, param)->{
-			json.put(key, param);
-		});
 		if (title != null) {
 			json.put("title", title);
-		}
-		/*if (step != null) {
-			json.put("step", step);
-		}
-		if (max != null) {
-			json.put("max", max);
-		}
-		if (min != null) {
-			json.put("min", min);
-		}*/
-		if (value != null) {
-			json.put("value", value);
 		}
 		if (placeholder != null) {
 			json.put("placeholder", placeholder);
