@@ -32,6 +32,7 @@ public class Option implements Input {
 	@Override
 	public Map<String, Object> getInputSettings() {
 		Map<String, Object> set = new HashMap<>();
+		set.put("type", "option");
 		set.put("value", value);
 		set.put("title", title);
 		if (disabled) {
