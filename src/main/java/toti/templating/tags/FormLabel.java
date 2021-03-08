@@ -23,7 +23,7 @@ public class FormLabel implements Tag {
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
-		return String.format("b.append(\"<div name='form-label-%s'></div>\");", params.get("name"));
+		return String.format("b.append(\"<div name='form-label-%s' class='dynamic-container-part'></div>\");", params.get("name"));
 	}
 
 }
