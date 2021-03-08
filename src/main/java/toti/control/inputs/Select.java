@@ -19,6 +19,7 @@ public class Select implements Input, Filter {
 	private String value = null;
 	private final Map<String, String> params = new HashMap<>();
 	private Map<String, Object> load;
+	private String optionGroup;
 	
 	@Deprecated
 	public static Select input(String name, boolean required, Map<String, String> options) {
@@ -69,6 +70,11 @@ public class Select implements Input, Filter {
 		this.disabled = disabled;
 		return this;
 	}
+	
+	public Select setShowedOptionGroup(String optionGroup) {
+		this.optionGroup = optionGroup;
+		return this;
+	}
 
 	public Select setLoadData(String url, String method) {
 		return setLoadData(url, method, new HashMap<>());
@@ -99,6 +105,9 @@ public class Select implements Input, Filter {
 			// disabled, groupname
 			opt.put(value, param);
 		});*/
+		if (optionGroup != null) {
+			set.put("optionGroup", optionGroup);
+		}
 		set.put("options", options);
 		if (load != null) {
 			set.put("load", load);
