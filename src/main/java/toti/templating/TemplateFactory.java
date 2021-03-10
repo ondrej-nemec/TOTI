@@ -125,7 +125,7 @@ public class TemplateFactory {
 			String templateFile,
 			ThrowingFunction<File, Tuple2<String, String>, IOException> getClassNameAndNamespace,
 			String module) throws Exception {
-		long lastModifition = 0;
+		long lastModifition = -1;
 		URL url = null;
 		if (url == null) {
 			url = getClass().getResource("/" + module + "/" + templateFile);
@@ -138,7 +138,7 @@ public class TemplateFactory {
 		if (url == null) {
 			url = getClass().getResource("/" + templateFile);
 		}
-		if (url == null) {
+		if (url == null || lastModifition == 0) {
 			File file = new File(templateFile);
 			url = file.toURI().toURL();
 			lastModifition = file.lastModified();
@@ -204,6 +204,12 @@ public class TemplateFactory {
 	
 	// TODO test it
 	private Tuple2<String, String> getClassName(File file, String templatePath) throws IOException {
+		if (!file.getCanonicalPath().contains(file.getName())) {
+			throw new RuntimeException(
+				"File name is misspeled: " + file.getName()
+				+ ". Did you mean " + file.getCanonicalFile().getName() + " (" + file.getCanonicalPath() + ")?"
+			);
+		}
 		String moduleName = templatePath.replaceAll("\\\\", "_").replaceAll("/", "_");
 		String namespace = moduleName + file.getCanonicalPath()
 				.replace(new File(templatePath).getCanonicalPath(), "")
