@@ -1,4 +1,4 @@
-/* TOTI Grid version 0.0.1 */
+/* TOTI Grid version 0.0.2 */
 class TotiGrid {
 
 	constructor(config) {
@@ -137,7 +137,7 @@ class TotiGrid {
 				cell.appendChild(checkbox);
 				cell.setAttribute("no-filters", "");
 			} else if (column.type == "buttons") {
-				// TODO reset filters button
+				/* TODO reset filters button*/
 				/*var reset = totiControl.input({
 					type: "reset"
 				});
@@ -282,7 +282,6 @@ class TotiGrid {
 				body.appendChild(document.createElement("tr").appendChild(td));
 				return;
 			}
-			/* TODO itmesCount is not working if filtering is active */
 			object.pagesOnLoad(uniqueName, response.pageIndex, response.itemsCount / object.pagesSizeGet(uniqueName));
 			response.data.forEach(function(row, rowIndex) {
 				var tableRow = document.createElement("tr");
@@ -488,11 +487,11 @@ class TotiGrid {
 			createButton(pagesList, totiTranslations.pages.previous, actualPage - 1);
 		}
 		/* generated {pagesbuttoncount} pages links */
-		var lower = actualPage - Math.floor(pagesList.getAttribute("data-pagesbuttoncount") / 2);
+		var lower = actualPage - parseInt(Math.floor(pagesList.getAttribute("data-pagesbuttoncount")) / 2);
 		if (lower < 1) {
 			lower = 1;
 		}
-		for (var i = lower; i < Math.min(lower + pagesList.getAttribute("data-pagesbuttoncount"), pagesCount); i++) {
+		for (var i = lower; i < Math.min(lower + parseInt(pagesList.getAttribute("data-pagesbuttoncount")), pagesCount); i++) {
 			var clazz = "";
 			if (i === actualPage) {
 				clazz = " actualPage";
