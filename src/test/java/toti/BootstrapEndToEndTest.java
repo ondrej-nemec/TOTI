@@ -3,6 +3,7 @@ package toti;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import database.DatabaseConfig;
 import example.ExampleModule;
@@ -48,6 +49,8 @@ public class BootstrapEndToEndTest {
 							+ " report-uri '/entity/api/entity/reporting'"
 						, "Access-Control-Allow-Origin: *"
 					)));
+					factory.setAllowedUploadFileTypes(Optional.empty());
+					factory.setMaxUploadFileSize(1000000);
 				//	factory.setDevelopIpAdresses(Arrays.asList());
 					
 					// TODO little bit another way

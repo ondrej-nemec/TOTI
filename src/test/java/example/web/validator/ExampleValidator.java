@@ -16,7 +16,7 @@ public class ExampleValidator {
 	}
 	
 	public static Validator getGridValidator() {
-		return Validator.create(NAME_GRID, false)
+		return Validator.create(NAME_GRID, true)
 			.addRule(ItemRules.forName("pageIndex", true))
 			.addRule(ItemRules.forName("pageSize", true))
 			.addRule(ItemRules.forName("filters", true).setMapSpecification(new Validator(true)
@@ -44,7 +44,7 @@ public class ExampleValidator {
 	}
 	
 	public static Validator getFormValidator() {
-		return Validator.create(NAME_FORM, true) // TODO validator
+		return Validator.create(NAME_FORM, false) // TODO validator
 				.addRule(ItemRules.forName("id", false).setType(Integer.class))
 				.addRule(ItemRules.forName("name", false).setType(String.class))
 				.addRule(ItemRules.forName("email", false).setType(String.class))
@@ -64,6 +64,19 @@ public class ExampleValidator {
 				.addRule(ItemRules.forName("favorite_color", false).setType(String.class))
 				.addRule(ItemRules.forName("file", false))
 				.addRule(ItemRules.forName("comment", false).setType(String.class))
+				.addRule(ItemRules.forName("map", false).setMapSpecification(new Validator(false)
+					.addRule(ItemRules.forName("subText1", false).setType(String.class).setMaxLength(10))
+					.addRule(ItemRules.forName("subText2", false).setType(String.class).setMaxLength(10))
+				))
+				.addRule(ItemRules.forName("list", false).setListSpecification(
+					new Validator(ItemRules.defaultRule().setType(String.class).setMaxLength(10))
+				))
+				.addRule(ItemRules.forName("pairs", false).setMapSpecification(
+					new Validator(ItemRules.defaultRule().setMapSpecification(new Validator(false)
+						.addRule(ItemRules.forName("first-in-pair", true).setMaxLength(5))
+						.addRule(ItemRules.forName("second-in-pair", true).setMaxLength(5))
+					))
+				))
 				;
 	}
 }

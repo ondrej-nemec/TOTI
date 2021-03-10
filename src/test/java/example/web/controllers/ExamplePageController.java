@@ -1,5 +1,6 @@
 package example.web.controllers;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ import toti.annotations.url.Action;
 import toti.annotations.url.Controller;
 import toti.annotations.url.Domain;
 import toti.annotations.url.Method;
+import toti.annotations.url.Param;
 import toti.annotations.url.ParamUrl;
 import toti.annotations.url.Secured;
 import toti.control.Form;
@@ -23,11 +25,14 @@ import toti.control.inputs.Checkbox;
 import toti.control.inputs.Color;
 import toti.control.inputs.Date;
 import toti.control.inputs.Datetime;
+import toti.control.inputs.DynamicList;
 import toti.control.inputs.Email;
 import toti.control.inputs.File;
 import toti.control.inputs.Hidden;
+import toti.control.inputs.InputList;
 import toti.control.inputs.Month;
 import toti.control.inputs.Number;
+import toti.control.inputs.Option;
 import toti.control.inputs.Password;
 import toti.control.inputs.RadioList;
 import toti.control.inputs.Range;
@@ -66,15 +71,15 @@ public class ExamplePageController {
 			new ValueColumn("age").setTitle("Age").setFilter(Number.filter()).setUseSorting(true)
 		);
 		grid.addColumn(
-			new ValueColumn("active").setTitle("Active").setFilter(Select.filter(MapInit.hashMap(
-				new Tuple2<>("", "---"),
-				new Tuple2<>("true", "YES"),
-				new Tuple2<>("false", "NO")
+			new ValueColumn("active").setTitle("Active").setFilter(Select.filter( Arrays.asList(
+				Option.input("", "---"),
+				Option.input("true", "YES"),
+				Option.input("false", "NO")
 			))).setUseSorting(true)
 		);
 		grid.addColumn(
-			new ValueColumn("parent").setTitle("Parent").setFilter(Select.filter(MapInit.hashMap(
-				new Tuple2<>("", "---")
+			new ValueColumn("parent").setTitle("Parent").setFilter(Select.filter( Arrays.asList(
+					Option.input("", "---")
 			)).setLoadData("/example-module/api/example/help", "get")).setUseSorting(true)
 		);
 		
@@ -98,6 +103,10 @@ public class ExamplePageController {
 		grid.addColumn(new ButtonsColumn("Actions")
 			.addButton(Button.create("/example-module/example/edit/{id}", "edit").setTitle("Edit").setType(ButtonType.WARNING))
 			.addButton(Button.create("/example-module/example/detail/{id}", "detail").setTitle("Detail").setType(ButtonType.INFO))
+			
+			.addButton(Button.create("/example-module/example/edit/{id}?template=2", "edit").setTitle("Edit").setType(ButtonType.WARNING))
+			.addButton(Button.create("/example-module/example/detail/{id}?template=2", "detail").setTitle("Detail").setType(ButtonType.INFO))
+			
 			.addButton(
 				Button.create("/example-module/example/delete/{id}", "delete")
 					.setTitle("Delete").setType(ButtonType.DANGER)
@@ -113,23 +122,23 @@ public class ExamplePageController {
 	@Action("add")
 	@Secured(isApi = false, value={@Domain(name=SECURITY_DOMAIN, action=acl.Action.CREATE)})
 	public Response add() {
-		return getOne(null, true);
+		return getOne(null, true, null);
 	}
 
 	@Action("edit")
 	@Secured(isApi = false, value={@Domain(name=SECURITY_DOMAIN, action=acl.Action.UPDATE)})
-	public Response edit(@ParamUrl("id") Integer id) {
-		return getOne(id, true);
+	public Response edit(@ParamUrl("id") Integer id, @Param("template") String template) {
+		return getOne(id, true, template);
 	}
 
 	@Action("detail")
 	@Method({HttpMethod.GET})
 	@Secured(isApi = false, value={@Domain(name=SECURITY_DOMAIN, action=acl.Action.READ)})
-	public Response detail(@ParamUrl("id") Integer id) {
-		return getOne(id, false);
+	public Response detail(@ParamUrl("id") Integer id, @Param("template") String template) {
+		return getOne(id, false, template);
 	}
 	
-	private Response getOne(Integer id, boolean editable) {
+	private Response getOne(Integer id, boolean editable, String template) {
 		Map<String, Object> params = new HashMap<>();
 		String url = "/example-module/api/example/" +  (id == null ? "insert" : "update/" + id);
 		Form form = new Form(url, editable);
@@ -148,13 +157,13 @@ public class ExamplePageController {
 			new Tuple2<>("male", "Male"),
 			new Tuple2<>("female", "Feale")
 		)).setTitle("Sex").setDefaultValue("female"));
-		form.addInput(Select.input("parent", false, MapInit.hashMap(
-			new Tuple2<>("", "---")
+		form.addInput(Select.input("parent", false, Arrays.asList(
+			Option.input("", "---")
 		)).setTitle("Parent").setLoadData("/example-module/api/example/help", "get"));
-		form.addInput(Select.input("select1", false, MapInit.hashMap(
-			new Tuple2<>("1", "A1"),
-			new Tuple2<>("2", "A2"),
-			new Tuple2<>("3", "A3")
+		form.addInput(Select.input("select1", false, Arrays.asList(
+			Option.input("1", "A1"),
+			Option.input("2", "A2"),
+			Option.input("3", "A3")
 		)).setTitle("Parent2"));
 		form.addInput(
 			Date.input("simple_date", false).setTitle("Date")
@@ -178,6 +187,40 @@ public class ExamplePageController {
 		form.addInput(File.input("file", false).setTitle("File"));
 		form.addInput(TextArea.input("comment", false).setTitle("Comment").setRows(10).setCols(50));
 		
+		form.addInput(
+			InputList.input("map")
+			.addInput(Text.input("subText1", false).setTitle("Map Sub Text 1"))
+			.addInput(Text.input("subText2", false).setTitle("Map Sub Text 2"))
+		);
+		
+		form.addInput(
+			InputList.input("list")
+			.addInput(
+				Select.input("", false, Arrays.asList(Option.input("", "---")))
+					.setLoadData("/example-module/api/example/help", "get")
+					.setTitle("List Sub Text 1")
+					.setShowedOptionGroup("Opt Group #0")
+			)
+			.addInput(
+				Select.input("", false, Arrays.asList(Option.input("", "---")))
+					.setLoadData("/example-module/api/example/help", "get")
+					.setTitle("List Sub Text 1")
+					.setShowedOptionGroup("Opt Group #1")
+			)
+			.addInput(
+				Select.input("", false, Arrays.asList(Option.input("", "---")))
+					.setTitle("List Sub Text 1")
+					.setLoadData("/example-module/api/example/help", "get")
+					.setShowedOptionGroup("Opt Group #2")
+			)
+		);
+		
+		form.addInput(
+			DynamicList.input("pairs")
+				.addInput(Text.input("first-in-pair", false).setTitle("First In Pair"))
+				.addInput(Text.input("second-in-pair", false).setTitle("Second In Pair"))
+		);
+		
 		form.addInput(Reset.create("reset").setTitle("Reset button"));
 		form.addInput(Button.create("/example-module/example/list", "back").setTitle("Back"));
 		form.addInput(
@@ -195,6 +238,6 @@ public class ExamplePageController {
 		}
 		params.put("exampleControl", form);
 		params.put("title", translator.translate("example-" + (id == null ? "add" : "edit")));
-		return Response.getTemplate(JSP_PAGE, params);
+		return Response.getTemplate((template == null ? JSP_PAGE : "Example2.jsp"), params);
 	}
 }
