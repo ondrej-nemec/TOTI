@@ -88,7 +88,7 @@ public interface EntityDao {
 			//select.limit(pageSize, (pageIndex-1)*pageSize);
 			List<DatabaseRow> rows = select.fetchAll();
 			List<Object> items = new LinkedList<>();
-			rows.subList((pageIndex-1)*pageSize, pageIndex*pageSize).forEach((row)->{
+			rows.subList((pageIndex-1)*pageSize, Math.min(pageIndex*pageSize, rows.size())).forEach((row)->{
 				items.add(row.getValues());
 			});
 			return new GridDataSet(items, rows.size(), pageIndex);
