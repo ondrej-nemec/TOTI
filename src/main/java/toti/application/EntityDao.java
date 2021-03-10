@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import database.Database;
+import database.support.DatabaseRow;
 import querybuilder.ColumnType;
 import querybuilder.InsertQueryBuilder;
 import querybuilder.SelectQueryBuilder;
@@ -16,7 +17,7 @@ import querybuilder.UpdateQueryBuilder;
 
 public interface EntityDao {
 	
-	List<Map<String, Object>> getAll(
+	GridDataSet getAll(
 			int pageIndex,
 			int pageSize, 
 			Map<String, Object> filters,
@@ -35,7 +36,7 @@ public interface EntityDao {
 	
 	Map<String, Object> getHelp(Collection<Object> forOwners) throws SQLException;
 	
-	default List<Map<String, Object>> getAll(
+	default GridDataSet getAll(
 			Database database,
 			String table,
 			Optional<String> ownerColumnName,
@@ -45,7 +46,6 @@ public interface EntityDao {
 			Map<String, Object> sorting,
 			Collection<Object> forOwners) throws SQLException {
 		return database.applyBuilder((builder)->{
-			List<Map<String, Object>> items = new LinkedList<>();
 			SelectQueryBuilder select = builder.select("*").from(table);
 			select.where("1=1");
 			if (ownerColumnName.isPresent()) {
@@ -85,11 +85,13 @@ public interface EntityDao {
 			if (!sorting.isEmpty()) {
 				select.orderBy(orderBY.toString());
 			}
-			select.limit(pageSize, (pageIndex-1)*pageSize);
-			select.fetchAll().forEach((row)->{
+			//select.limit(pageSize, (pageIndex-1)*pageSize);
+			List<DatabaseRow> rows = select.fetchAll();
+			List<Object> items = new LinkedList<>();
+			rows.subList((pageIndex-1)*pageSize, pageIndex*pageSize).forEach((row)->{
 				items.add(row.getValues());
 			});
-			return items;
+			return new GridDataSet(items, rows.size(), pageIndex);
 		});
 	}
 	

@@ -2,12 +2,12 @@ package example.dao;
 
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import database.Database;
 import toti.application.EntityDao;
+import toti.application.GridDataSet;
 
 public class ExampleDao implements EntityDao {
 
@@ -18,7 +18,7 @@ public class ExampleDao implements EntityDao {
 		this.database = database;
 	}
 	@Override
-	public List<Map<String, Object>> getAll(int pageIndex, int pageSize, Map<String, Object> filters,
+	public GridDataSet getAll(int pageIndex, int pageSize, Map<String, Object> filters,
 			Map<String, Object> sorting, Collection<Object> forOwners) throws SQLException {
 		return getAll(database, table, Optional.empty(), pageIndex, pageSize, filters, sorting, forOwners);
 	}
