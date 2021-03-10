@@ -64,12 +64,16 @@ class TotiForm {
 			}
 			if (field.type === "dynamic") {
 				var template = this.createInputArea(uniqueName, field, index, editable, useTemplate, form, container);
+				field.template = template;
 				var object = this;
 				var dynamicCount = "dynamiccount";
 				var addButton = template.querySelector("[name='add']");
 				if (addButton !== null) {
 					if (editable) {
-						addButton.setAttribute(dynamicCount, template.querySelectorAll('[name="toti-list-item"]').length);
+						addButton.setAttribute(
+							dynamicCount, 
+							template.querySelectorAll('[name="toti-list-item-' + field.name + '"]').length
+						);
 						addButton.onclick = function() {
 							var count = parseInt(addButton.getAttribute(dynamicCount))+ 1;
 							object.dynamic[field.name](count, field.name)
@@ -80,11 +84,11 @@ class TotiForm {
 				}
 				this.dynamic[field.name] = function(position, inputName) {
 					addButton.setAttribute(dynamicCount, parseInt(addButton.getAttribute(dynamicCount))+ 1);
-					var itemTemplate = template;
+					var itemTemplate = field.template;
 					var removeFunc = null;
 					if (useTemplate) {
 						itemTemplate = document.createElement("div");
-						itemTemplate.setAttribute("name", "toti-list-item");
+						itemTemplate.setAttribute("name", "toti-list-item-" + field.name);
 						var pattern = template.querySelector('[name="pattern"]');
 						itemTemplate.innerHTML = pattern.innerHTML;
 
@@ -112,24 +116,22 @@ class TotiForm {
 						}
 					} else if (editable && field.removeButton) {
 						var spanIdent = document.createElement("span");
-						spanIdent.setAttribute("name", "toti-list-item");
+						spanIdent.setAttribute("name", "toti-list-item-" + field.name);
 
 						var removeButton = document.createElement("div");
 						removeButton.setAttribute("name", "remove");
 						removeButton.innerText = totiTranslations.formButtons.remove;
 
-						if (editable) {
-							removeButton.onclick = function() {
-								Array.prototype.forEach.call(
-									document.querySelectorAll("[name^='" + inputName + "[" + position + "']"),
-									function(item) {
-										itemTemplate.removeChild(item.parentNode.parentNode);
-									}
-								);
-								itemTemplate.removeChild(removeButton);
-								itemTemplate.removeChild(spanIdent);
-							};
-						}
+						removeButton.onclick = function() {
+							Array.prototype.forEach.call(
+								document.querySelectorAll("[name^='" + inputName + "[" + position + "']"),
+								function(item) {
+									itemTemplate.removeChild(item.parentNode.parentNode);
+								}
+							);
+							itemTemplate.removeChild(removeButton);
+							itemTemplate.removeChild(spanIdent);
+						};
 
 						itemTemplate.appendChild(spanIdent);
 						itemTemplate.appendChild(removeButton);
@@ -207,7 +209,7 @@ class TotiForm {
 			container.appendChild(tr);
 			td.setAttribute("colspan", 3);
 			var table = document.createElement("table");
-			table.setAttribute("name", "toti-list-item");
+			table.setAttribute("name", "toti-list-item-" + field.name);
 			td.appendChild(table);
 			
 			var addTr = document.createElement("tr");

@@ -37,7 +37,7 @@ public class DynamicList implements Input {
 	}
 	
 	/**
-	 * Has evect only without form template
+	 * Has effect only without form template
 	 * @param useAddButton
 	 * @return
 	 */
