@@ -1,4 +1,4 @@
-/* TOTI Control version 0.0.2 */
+/* TOTI Control version 0.0.3 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -45,12 +45,18 @@ var totiControl = {
 			attributes.checked = "checked";
 		}
 
-		if (type === 'datetime') {
+		if (type === 'datetime-local') {
 			if (attributes.hasOwnProperty("value")) {
 				attributes.value = attributes.value.replace(" ", "T");
 			}
-			if (browser.includes("chrom") || browser === "opera") {
-				console.error("Your browser probably not support datetime-local");
+			if (!attributes.strict) {
+				return totiControl.inputs.datetime(attributes);
+			}
+			var browser = totiUtils.browser();
+			if (browser !== "opera" && !browser.includes("chrom")) {
+				console.log(browser);
+				return totiControl.inputs.datetime(attributes);
+				/*console.error("Your browser probably not support datetime-local");*/
 			}
 			return totiControl.inputs._createInput("datetime-local", attributes);
 		} else if (type === 'textarea') {
@@ -242,32 +248,67 @@ var totiControl = {
 				
 			}
 			return option;
-		}/*,
+		},
 		datetime: function(attributes) {
-			var date = totiControl.inputs._createInput("date", attributes);
-			var time = totiControl.inputs._createInput("time", attributes);
+			var dateAttr = {};
+			dateAttr.id = attributes.id + "-date";
+			var date = totiControl.inputs._createInput("date", dateAttr);
+
+			var timeAttr = {};
+			timeAttr.id = attributes.id + "-time"
+			if (attributes.hasOwnProperty("step")) {
+				timeAttr.step = attributes.step;
+			}
+			var time = totiControl.inputs._createInput("time", timeAttr);
 			
 			var div = document.createElement("button");
+			for ([key, name] of Object.entries(attributes)) {
+				div.setAttribute(key, name);
+			}
 			var datetime = div;
+			/*datetime.setAttribute("type", "datetime-local");
+			datetime.setAttribute("origintype", "datetime-local");*/
 			div.appendChild(date);
 			div.appendChild(time);
-			
-			date.onchange = function(event) {
-				console.log("date", date.value, time.value);
+
+			var setValue = function(value) {
+				var values = attributes.value.split("T");
+				console.log(value, values);
+				if (values.length !== 2) {
+					return;
+				}
+				date.value = values[0];
+				time.value = values[1];
 			};
-			time.onchange = function(event) {
-				console.log("time", time.value, date.value);
-			};
+
+			if (attributes.hasOwnProperty("value")) {
+				setValue(attributes.value);
+			}
+
 			datetime.onchange = function(event) {
-				console.log("datetime on change", datetime.value, date.value, time.value);
-				if (date.value === '' || time.value === '') {
-					event.preventDefault();
+				if (attributes.strict) {
+					if (date.value === '' || time.value === '') {
+						event.preventDefault();
+					} else {
+						datetime.value = date.value + "T" + time.value;
+					}
 				} else {
-					datetime.value = date.value + "T" + time.value;
+					if (date.value === '' && time.value === '') {
+						event.preventDefault();
+					} else if (date.value === '') {
+						datetime.value = time.value;
+					} else if (time.value === '') {
+						datetime.value = date.value;
+					} else {
+						datetime.value = date.value + "T" + time.value;
+					}
 				}
 			};
+			datetime.onclick = function(event) {
+				event.preventDefault();
+			};
 			return div;
-		}*/
+		}
 	},
 	parseValue: function(type, value) {
 		/* TODO week*/
