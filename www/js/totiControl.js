@@ -1,4 +1,4 @@
-/* TOTI Control version 0.0.3 */
+/* TOTI Control version 0.0.4 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -227,7 +227,7 @@ var totiControl = {
 						totiControl.inputs._selectCache[cacheKey] = loaded;
 					}, function(xhr) {
 						console.log(xhr);
-					}, false);
+					});
 				}
 			}
 			/* value */
