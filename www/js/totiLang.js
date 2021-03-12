@@ -1,4 +1,4 @@
-/* TOTI Lang version 0.0.1 */
+/* TOTI Lang version 0.0.2 */
 var totiLang = {
 	variableName: "language",
 	changeLanguage: function (language) {
@@ -9,7 +9,7 @@ var totiLang = {
 		var lang = totiStorage.getVariable(totiLang.variableName);
 		/* TODO problem in firefox - lang is only "cs"*/
 		if (lang === null) {
-			return navigator.language.toLowerCase().replace("-", "_");
+			return navigator.language.toLowerCase();
 		}
 		return lang;
 	},

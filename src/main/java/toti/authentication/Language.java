@@ -18,15 +18,19 @@ public class Language {
 	public Locale getLocale(Properties header) {
 		String cookieLang = Cookie.getCookieValue(header, COOKIE_NAME);
 		if (cookieLang != null) {
-			return new Locale(cookieLang);
+			return resolveLocale(cookieLang);
 		}
 		String lang = header.getProperty("Accept-Language");
 		if (lang == null) {
-			return new Locale(defLang);
+			return resolveLocale(defLang);
 		} else {
-			String locale = lang.split(" ", 2)[0].split(";")[0].split(",")[0].trim().replace("-", "_");
-			return new Locale(locale);
+			String locale = lang.split(" ", 2)[0].split(";")[0].split(",")[0].trim();
+			return resolveLocale(locale);
 		}
+	}
+	
+	private Locale resolveLocale(String locale) {
+		return locale.contains("_") ? new Locale(locale) : Locale.forLanguageTag(locale);
 	}
 	
 	public List<String> getHeaders(Locale locale) {
