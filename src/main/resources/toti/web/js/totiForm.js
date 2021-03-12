@@ -1,4 +1,4 @@
-/* TOTI Form version 0.0.2 */
+/* TOTI Form version 0.0.3 */
 class TotiForm {
 
 	constructor(config) {
@@ -53,7 +53,7 @@ class TotiForm {
 		return form;
 	}
 
-	iterateFields(uniqueName, fields, form, container, editable, useTemplate, parent = null) {
+	iterateFields(uniqueName, fields, form, container, editable, useTemplate, parent = null, listPosition = null) {
 		for (const[index, field] of Object.entries(fields)) {
 			if (parent !== null) {
 				field.id = (parent.id === null ? "" : parent.id + "-") + field.id;
@@ -61,6 +61,9 @@ class TotiForm {
 					field.id += "_" + index;
 				}
 				field.name = parent.name + "[" + (field.hasOwnProperty("name") ? field.name : "") + "]";
+			}
+			if (listPosition !== null && field.hasOwnProperty("title")) {
+				field.title = field.title.replace("{i}", listPosition);
 			}
 			if (field.type === "dynamic") {
 				var template = this.createInputArea(uniqueName, field, index, editable, useTemplate, form, container);
@@ -75,7 +78,7 @@ class TotiForm {
 							template.querySelectorAll('[name="toti-list-item-' + field.name + '"]').length
 						);
 						addButton.onclick = function() {
-							var count = parseInt(addButton.getAttribute(dynamicCount))+ 1;
+							var count = parseInt(addButton.getAttribute(dynamicCount));
 							object.dynamic[field.name](count, field.name)
 						};
 					} else {
@@ -89,7 +92,7 @@ class TotiForm {
 					if (useTemplate) {
 						itemTemplate = document.createElement("div");
 						itemTemplate.setAttribute("name", "toti-list-item-" + field.name);
-						var pattern = template.querySelector('[name="pattern"]');
+						var pattern = template.querySelector('template[name="pattern"]');
 						itemTemplate.innerHTML = pattern.innerHTML;
 
 						Array.prototype.forEach.call(
@@ -99,7 +102,6 @@ class TotiForm {
 							}
 						);
 
-						pattern.style.display = "none";
 						template.appendChild(itemTemplate);
 						removeFunc = function () {
 							itemTemplate.parentNode.removeChild(itemTemplate);
@@ -145,7 +147,8 @@ class TotiForm {
 						{
 							name: field.name + "[" + position + "]",
 							id: field.id + "_" + position
-						}
+						},
+						position
 					);
 				};
 			} else if (field.type === "list") {
@@ -210,7 +213,16 @@ class TotiForm {
 			td.setAttribute("colspan", 3);
 			var table = document.createElement("table");
 			table.setAttribute("name", "toti-list-item-" + field.name);
-			td.appendChild(table);
+			
+			var fieldset = document.createElement("fieldset");
+			if (field.hasOwnProperty("title")) {
+				var legend = document.createElement("legend");
+				legend.innerText = field.title;
+				fieldset.appendChild(legend);
+			}
+			fieldset.appendChild(table);
+
+			td.appendChild(fieldset);
 			
 			var addTr = document.createElement("tr");
 			var addTd1 = document.createElement("td");
@@ -218,10 +230,7 @@ class TotiForm {
 			addTr.appendChild(addTd1);			
 			addTr.appendChild(addTd2);
 			table.appendChild(addTr);
-			
-			if (field.hasOwnProperty("title")) {
-				addTd1.innerText = field.title;
-			}
+
 			if (field.addButton) {
 				var addButton = document.createElement("div");
 				addButton.setAttribute("name", "add");
@@ -377,7 +386,7 @@ class TotiForm {
 				} else {
 					data.append(name, input.value);
 				}
-			});			
+			});		
 			var submitConfirmation = function() {
 				if (submit.hasOwnProperty('confirmation')) {
 					return totiDisplay.confirm(submit.confirmation);
@@ -491,7 +500,6 @@ class TotiForm {
 			}
 			var key = createKey === null ? k : createKey(k, addedNewDynamic);
 			var value = val;
-			
 			if (value !== null && typeof value === "object") {
 				this.bindValues(value, form, function(newKey, addedNewInput) {
 					if (Array.isArray(value) && !addedNewInput) {
@@ -502,7 +510,7 @@ class TotiForm {
 				}, key);
 				continue;
 			}
-
+			
 			var elements = form.querySelectorAll('[name="' + key + '"]');
 			if (elements.length === 0) {
 				continue;
@@ -545,6 +553,9 @@ class TotiForm {
 				}
 			} else { /*form*/
 				if (element.type === "datetime-local" && value !== null) {
+					value = value.replace(" ", "T");
+				} else if (element.getAttribute("type") === "datetime-local" && value !== null) {
+					/* datetime-local renderer by button */
 					value = value.replace(" ", "T");
 				}
 				if (element.type === "checkbox") {
