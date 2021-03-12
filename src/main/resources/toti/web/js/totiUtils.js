@@ -1,4 +1,4 @@
-/* TOTI Utils version 0.1.0 */
+/* TOTI Utils version 0.1.1 */
 var totiUtils = {
 	/* TODO is used? */
 	parseUrlToObject: function (data) {
@@ -48,7 +48,7 @@ var totiUtils = {
 			return "edge";
 		}
 		/* Chrome 1 - 79 */
-		var isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
+		var isChrome = !!window.chrome; /* && (!!window.chrome.webstore || !!window.chrome.runtime);*/
 		/* Edge (based on chromium) detection */
 		var isEdgeChromium = isChrome && (navigator.userAgent.indexOf("Edg") != -1);
 		if (isEdgeChromium) {
