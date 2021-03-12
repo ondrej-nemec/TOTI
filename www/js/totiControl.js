@@ -54,7 +54,6 @@ var totiControl = {
 			}
 			var browser = totiUtils.browser();
 			if (browser !== "opera" && !browser.includes("chrom")) {
-				console.log(browser);
 				return totiControl.inputs.datetime(attributes);
 				/*console.error("Your browser probably not support datetime-local");*/
 			}
