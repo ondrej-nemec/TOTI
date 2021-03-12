@@ -89,8 +89,8 @@
 			<t:label name="list[]" />
 			<t:input name="list[]" />
 		<hr>
-		<div name="pairs-container">
-			<div name="pattern">
+		<fieldset name="pairs-container">
+			<template name="pattern">
 				<t:error name="pairs[%s][first-in-pair]" />
 				<t:label name="pairs[%s][first-in-pair]" />
 				<t:input name="pairs[%s][first-in-pair]" /> <br>
@@ -100,9 +100,9 @@
 				<t:input name="pairs[%s][second-in-pair]" /> <br>
 				
 				<span name="remove">Remove</span>
-			</div>
+			</template>
 			<span name="add">Add</span>
-		</div>
+		</fieldset>
 		
 		<hr>
 		<t:input name="reset" />
