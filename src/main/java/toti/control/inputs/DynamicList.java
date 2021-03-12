@@ -12,7 +12,7 @@ public class DynamicList implements Input {
 	private final String id;
 	private final List<Input> fields;
 	
-	private String title = null;;
+	private String title = null;
 	private boolean useAddButton = true;
 	private boolean useRemoveButton = true;
 	
