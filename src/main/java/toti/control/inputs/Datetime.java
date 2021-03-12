@@ -15,22 +15,24 @@ public class Datetime implements Input, Filter {
 	private boolean disabled = false;
 	private String value = null;
 	private int step = 1;
+	private boolean strict = true;
 	private final Map<String, String> params = new HashMap<>();
 	
 	public static Datetime input(String name, boolean required) {
-		return new Datetime(name, required);
+		return new Datetime(name, required, true);
 	}
 
 	public static Datetime filter() {
 		String name = "";
-		return new Datetime(name, false);
+		return new Datetime(name, false, false);
 	}
 	
-	private Datetime(String name, boolean required) {
+	private Datetime(String name, boolean required, boolean strict) {
 		this.name = name;
 		this.id = "id-" + name;
 		this.type = "datetime-local";
 		this.required = required;
+		this.strict = strict;
 	}
 
 	public Datetime addParam(String name, String value) {
@@ -45,6 +47,11 @@ public class Datetime implements Input, Filter {
 	
 	public Datetime setDefaultValue(String value) {
 		this.value = value;
+		return this;
+	}
+	
+	public Datetime setStrict(boolean strict) {
+		this.strict = strict;
 		return this;
 	}
 	
@@ -71,6 +78,7 @@ public class Datetime implements Input, Filter {
 		if (value != null) {
 			set.put("value", value);
 		}
+		set.put("strict", strict);
 		return set;
 	}
 
