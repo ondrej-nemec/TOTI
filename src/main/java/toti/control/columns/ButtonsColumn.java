@@ -14,7 +14,7 @@ public class ButtonsColumn implements Column {
 	private final String type; // value, buttons, actions
 	private String title;
 	
-	private final boolean useSorting = false;
+	private boolean useResetButton = true;
 	private final List<Map<String, Object>> buttons = new LinkedList<>();
 	
 	public ButtonsColumn(String name) {
@@ -25,6 +25,11 @@ public class ButtonsColumn implements Column {
 	
 	public ButtonsColumn addButton(Button button) {
 		buttons.add(button.getInputSettings());
+		return this;
+	}
+	
+	public ButtonsColumn setResetFiltersButton(boolean useResetButton) {
+		this.useResetButton = useResetButton;
 		return this;
 	}
 	
@@ -39,7 +44,8 @@ public class ButtonsColumn implements Column {
 		json.put("name", Template.escapeVariable(name));
 		json.put("type", type);
 		json.put("title", Template.escapeVariable(title));
-		json.put("sorting", useSorting);
+		json.put("reset", useResetButton);
+		json.put("sorting", false);
 		json.put("buttons", buttons);
 		return json;
 	}
