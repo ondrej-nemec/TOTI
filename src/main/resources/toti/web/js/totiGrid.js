@@ -1,4 +1,4 @@
-/* TOTI Grid version 0.0.2 */
+/* TOTI Grid version 0.0.3 */
 class TotiGrid {
 
 	constructor(config) {
@@ -53,7 +53,9 @@ class TotiGrid {
 
 		var grid = document.createElement("div");
 		grid.setAttribute("id", uniqueName + "-control");
-		grid.appendChild(table);
+		var tableContainer = document.createElement("form");
+		tableContainer.appendChild(table);
+		grid.appendChild(tableContainer);
 		return grid;
 	}
 
@@ -136,12 +138,19 @@ class TotiGrid {
 				};
 				cell.appendChild(checkbox);
 				cell.setAttribute("no-filters", "");
-			} else if (column.type == "buttons") {
-				/* TODO reset filters button*/
-				/*var reset = totiControl.input({
-					type: "reset"
-				});
-				cell.appendChild(reset);*/
+			} else if (column.type == "buttons") { // && column.useReset
+				if (column.reset) {
+					var reset = totiControl.input({
+						type: "reset"
+					});
+					reset.onclick = function() {
+						/*set timeout is fix - onclick is fired before crearing*/
+						setTimeout(function() {
+							object.load(uniqueName);
+						}, 10);
+					};
+					cell.appendChild(reset);
+				}
 			} else if (column.hasOwnProperty('filter')) {
 				cell.appendChild(
 					totiControl.input(column.filter)
