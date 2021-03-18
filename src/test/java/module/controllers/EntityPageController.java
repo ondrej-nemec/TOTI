@@ -278,7 +278,7 @@ public class EntityPageController {
 			MapInit.t("de_DE", "German"),
 			MapInit.t("sk_SK", "Slovak")
 		)).setTitle("Language"));
-		form.addInput(TextArea.input("comment", false).setCols(20).setRows(30).setTitle("module.comment").setValue("aaa"));
+		form.addInput(TextArea.input("comment", false).setCols(20).setRows(30).setTitle("module.comment").setDefaultValue("aaa"));
 		
 		form.addInput(Submit.create("Save", "save").setRedirect("/entity/entity/list"));
 		form.addInput(Button.create("/entity/entity/list").setTitle("Cancel").setAjax(false));

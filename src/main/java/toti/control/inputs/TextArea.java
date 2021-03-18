@@ -61,7 +61,7 @@ public class TextArea implements Input {
 		return this;
 	}
 
-	public TextArea setValue(String value) {
+	public TextArea setDefaultValue(String value) {
 		this.value = value;
 		return this;
 	}

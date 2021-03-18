@@ -97,6 +97,9 @@ public class Number implements Input, Filter {
 		if (value != null) {
 			set.put("value", value);
 		}
+		if (placeholder != null) {
+			set.put("placeholder", placeholder);
+		}
 		set.putAll(params);
 		return set;
 	}
@@ -115,9 +118,6 @@ public class Number implements Input, Filter {
 		}
 		if (title != null) {
 			json.put("title", title);
-		}
-		if (placeholder != null) {
-			json.put("placeholder", placeholder);
 		}
 		return json;
 	}

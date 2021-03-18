@@ -67,7 +67,7 @@ public class Text implements Input, Filter {
 		return this;
 	}
 	
-	public Text setValue(String value) {
+	public Text setDefaultValue(String value) {
 		this.value = value;
 		return this;
 	}
