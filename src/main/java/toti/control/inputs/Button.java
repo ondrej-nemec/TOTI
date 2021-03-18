@@ -72,11 +72,6 @@ public class Button implements Input {
 		this.method = method;
 		return this;
 	}
-
-/*	public Button setRenderer(Html renderer) {
-		this.renderer = renderer;
-		return this;
-	}*/
 	
 	@Override
 	public Map<String, Object> getInputSettings() {
@@ -93,9 +88,6 @@ public class Button implements Input {
 		if (confirmation != null) {
 			json.put("confirmation", confirmation);
 		}
-		/*if (renderer != null) {
-			json.put("renderer", renderer);
-		}*/
 		if (onFailure != null) {
 			json.put("onError", onFailure);
 		}

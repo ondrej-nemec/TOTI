@@ -67,7 +67,7 @@ public class Text implements Input, Filter {
 		return this;
 	}
 	
-	public Text setDefaultValue(String value) {
+	public Text setValue(String value) {
 		this.value = value;
 		return this;
 	}
@@ -98,6 +98,9 @@ public class Text implements Input, Filter {
 		if (value != null) {
 			set.put("value", value);
 		}
+		if (placeholder != null) {
+			set.put("placeholder", placeholder);
+		}
 		return set;
 	}
 	
@@ -115,9 +118,6 @@ public class Text implements Input, Filter {
 		}
 		if (title != null) {
 			json.put("title", title);
-		}
-		if (placeholder != null) {
-			json.put("placeholder", placeholder);
 		}
 		return json;
 	}
