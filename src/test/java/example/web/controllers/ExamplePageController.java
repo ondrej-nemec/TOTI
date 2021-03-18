@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import common.MapInit;
+import common.structures.MapInit;
 import common.structures.Tuple2;
 import socketCommunication.http.HttpMethod;
 import toti.annotations.inject.Translate;
@@ -89,6 +89,9 @@ public class ExamplePageController {
 		grid.addColumn(
 			new ValueColumn("dt_local").setTitle("Datetime local").setFilter(Datetime.filter()).setUseSorting(true)
 		);
+		grid.addColumn(
+				new ValueColumn("dt_local").setTitle("Datetime local").setFilter(Datetime.filter().setStrict(true)).setUseSorting(true)
+			);
 		grid.addColumn(
 			new ValueColumn("month").setTitle("Month").setFilter(Month.filter()).setUseSorting(true)
 		);
@@ -204,12 +207,12 @@ public class ExamplePageController {
 			.addInput(
 				Select.input("", false, Arrays.asList(Option.input("", "---")))
 					.setLoadData("/example-module/api/example/help", "get")
-					.setTitle("List Sub Text 1")
+					.setTitle("List Sub Text 2")
 					.setShowedOptionGroup("Opt Group #1")
 			)
 			.addInput(
 				Select.input("", false, Arrays.asList(Option.input("", "---")))
-					.setTitle("List Sub Text 1")
+					.setTitle("List Sub Text 3")
 					.setLoadData("/example-module/api/example/help", "get")
 					.setShowedOptionGroup("Opt Group #2")
 			)
@@ -217,8 +220,9 @@ public class ExamplePageController {
 		
 		form.addInput(
 			DynamicList.input("pairs")
-				.addInput(Text.input("first-in-pair", false).setTitle("First In Pair"))
-				.addInput(Text.input("second-in-pair", false).setTitle("Second In Pair"))
+				.setTitle("Pairs")
+				.addInput(Text.input("first-in-pair", false).setTitle("First In Pair ({i})"))
+				.addInput(Text.input("second-in-pair", false).setTitle("Second In Pair ({i})"))
 		);
 		
 		form.addInput(Reset.create("reset").setTitle("Reset button"));

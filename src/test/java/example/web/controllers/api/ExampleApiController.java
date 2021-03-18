@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import common.Logger;
-import common.MapInit;
+import common.structures.MapInit;
 import common.structures.Tuple2;
 import example.AuditTrail;
 import example.dao.ExampleDao;
@@ -105,13 +105,15 @@ public class ExampleApiController {
 		try {
 			Map<String, Object> item = dao.get(id);
 			Map<String, String> map = new HashMap<>();
-			map.put("subText1", "aaa");
-			map.put("subText2", "bbb");
+			map.put("subText1", "<script>alert('XSS!');</script>");
+			//  element.querySelector("[value='" + value + "']");
+			map.put("subText2", "\\\"]'); alert('Successfull XSS'); // ");
+		//	map.put("sex", "\\\"]'); alert('Successfull XSS1'); // ");
 			List<String> list= new LinkedList<>();
 			list.add("1");
 			list.add("#1");
 			list.add("#6");
-			list.add("#8");
+		//	list.add("\\\"]'); alert('Successfull XSS2'); // ");
 			
 			item.put("pairs", Arrays.asList(
 				MapInit.hashMap(
@@ -201,6 +203,18 @@ public class ExampleApiController {
 		System.err.println(values.get("map"));
 		System.err.println(values.get("list"));
 		System.err.println(values.get("pairs"));
+		
+		try {
+			UploadedFile file = (UploadedFile)values.get("file");
+			System.err.println(file.getFileName());
+			System.err.println(file.getContentType());
+			System.err.println(file.getContent().size());
+			System.err.println();
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
+		
+		
 		values.remove(UNIQUE);
 	//	values.put("edited_at", DateTime.format("yyyy-MM-dd H:m:s")); // TODO not as string
 	//	values.put("edited_by", identity.getUser().getId());

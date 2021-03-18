@@ -3,7 +3,7 @@ package toti.templating.parsing;
 import java.io.IOException;
 import java.util.LinkedList;
 
-import common.Implode;
+import common.functions.Implode;
 import toti.templating.enums.VarParseState;
 
 public class VariableParser {

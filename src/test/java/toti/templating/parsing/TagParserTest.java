@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.mockito.Mockito.*;
-import static common.MapInit.*;
+import static common.structures.MapInit.*;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;

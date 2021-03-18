@@ -25,7 +25,7 @@ import acl.exception.NotAllowedActionException;
 import acl.structures.AclDestination;
 import common.Logger;
 import common.exceptions.LogicException;
-import core.FilesList;
+import common.functions.FilesList;
 import socketCommunication.http.HttpMethod;
 import socketCommunication.http.StatusCode;
 import socketCommunication.http.server.RequestParameters;

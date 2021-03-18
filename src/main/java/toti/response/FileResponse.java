@@ -1,7 +1,7 @@
 package toti.response;
 
+import common.functions.InputStreamLoader;
 import core.text.Binary;
-import core.text.InputStreamLoader;
 import socketCommunication.http.StatusCode;
 import socketCommunication.http.server.RestApiResponse;
 import toti.ResponseHeaders;
@@ -28,7 +28,7 @@ public class FileResponse implements Response {
 			header.addHeader(head);
 		}
 		return RestApiResponse.binaryResponse(code, header.getHeaders(), (bout)->{
-			Binary.read((bin)->{
+			Binary.get().read((bin)->{
 				byte[] b = new byte[2048];
 				int len = 0;
 				while((len = bin.read(b)) != -1) {

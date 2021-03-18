@@ -66,11 +66,16 @@ public class TemplateFactoryEndToEndTest {
 
 			@Override
 			public void setLocale(Locale locale) {}
+
+			@Override
+			public Locale getLocale() {
+				return null;
+			}
 		};
 		String html = template.create(factory, variables, translator);
 		System.out.println(html);
-		Text.write((bw)->{
-			WriteText.write(bw, html);
+		Text.get().write((bw)->{
+			WriteText.get().write(bw, html);
 		}, "test/index.html", false);
 		/*/
 		index in = new index();

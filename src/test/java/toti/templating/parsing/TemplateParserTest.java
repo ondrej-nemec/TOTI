@@ -12,7 +12,7 @@ import org.mockito.stubbing.OngoingStubbing;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
-import static common.MapInit.*;
+import static common.structures.MapInit.*;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;

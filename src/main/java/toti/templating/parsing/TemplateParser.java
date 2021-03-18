@@ -8,8 +8,8 @@ import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.Map;
 
+import common.functions.InputStreamLoader;
 import common.structures.ThrowingConsumer;
-import core.text.InputStreamLoader;
 import core.text.Text;
 import toti.templating.Tag;
 
@@ -37,6 +37,7 @@ public class TemplateParser {
 				+ "import java.util.HashMap;"
 				+ "import translator.Translator;"
 				+ "import toti.templating.TemplateFactory;"
+				+ "import acl.AuthorizationHelper;"
 				+ "public class %s implements Template{"
 					+ "public StringBuilder b = new StringBuilder();"
 					//+ "public StringBuilder main=b;"
@@ -50,7 +51,7 @@ public class TemplateParser {
 		String clazz2 = "}}";
 		String tempFile = tempPath + "/" + namespace + "/" + className + ".java";
 		
-		Text.write((bw)->{
+		Text.get().write((bw)->{
 			bw.write(String.format(clazz1, namespace.replaceAll("/", "."), className, modificationTime));
 			//bw.write("StringBuilder b = new StringBuilder();");
 			bw.write("StringBuilder main=b;");
@@ -80,7 +81,7 @@ public class TemplateParser {
 				throw new FileNotFoundException("Template file not found: " + e1.getMessage() + " OR " + e2.getMessage());
 			}
 		}
-		Text.read((br)->{
+		Text.get().read((br)->{
 			loadFile(br, (text)->{
 				bw.write(text);
 			});			

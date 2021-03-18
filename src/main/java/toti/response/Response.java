@@ -2,7 +2,7 @@ package toti.response;
 
 import java.util.Map;
 
-import common.FileExtension;
+import common.functions.FileExtension;
 import socketCommunication.http.StatusCode;
 import socketCommunication.http.server.RestApiResponse;
 import toti.ResponseHeaders;

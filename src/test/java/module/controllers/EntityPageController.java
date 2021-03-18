@@ -1,22 +1,17 @@
 package module.controllers;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
-import common.MapInit;
+import common.structures.MapInit;
 import common.structures.Tuple2;
 import socketCommunication.http.HttpMethod;
 import socketCommunication.http.server.RequestParameters;
-import socketCommunication.http.server.UploadedFile;
 import toti.annotations.inject.ClientIdentity;
 import toti.annotations.inject.Translate;
 import toti.annotations.url.Action;
 import toti.annotations.url.Controller;
-import toti.annotations.url.Domain;
 import toti.annotations.url.Method;
-import toti.annotations.url.Param;
 import toti.annotations.url.ParamUrl;
 import toti.annotations.url.Params;
 import toti.annotations.url.Secured;
@@ -34,7 +29,6 @@ import toti.control.inputs.Datetime;
 import toti.control.inputs.Email;
 import toti.control.inputs.File;
 import toti.control.inputs.Hidden;
-import toti.control.inputs.Input;
 import toti.control.inputs.Number;
 import toti.control.inputs.Password;
 import toti.control.inputs.RadioList;

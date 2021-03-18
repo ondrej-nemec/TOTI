@@ -3,7 +3,7 @@ package toti;
 import java.io.File;
 import java.io.IOException;
 
-import common.FileExtension;
+import common.functions.FileExtension;
 import core.text.Text;
 import core.text.basic.ReadText;
 import core.text.basic.WriteText;
@@ -35,11 +35,11 @@ public class CreateEntity {
 	}
 	
 	private void createFile(String fileName, String destination, String name, String domain) throws IOException {
-		String content = Text.read((br)->{
-			return ReadText.asString(br);
+		String content = Text.get().read((br)->{
+			return ReadText.get().asString(br);
 		}, getClass().getResourceAsStream(fileName)).replaceAll("__X__", name).replaceAll("__Y__", domain);
-		Text.write((bw)->{
-			WriteText.write(bw, content);
+		Text.get().write((bw)->{
+			WriteText.get().write(bw, content);
 		}, destination, false);
 	}
 	

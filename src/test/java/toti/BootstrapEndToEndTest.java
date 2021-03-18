@@ -9,6 +9,7 @@ import database.DatabaseConfig;
 import example.ExampleModule;
 import acl.Action;
 import acl.structures.Rules;
+import common.functions.Env;
 import acl.structures.AclDestination;
 import acl.structures.AclRole;
 import acl.structures.AclUser;
@@ -19,7 +20,6 @@ import toti.HttpServerFactory;
 import toti.application.Application;
 import toti.authentication.UserSecurity;
 import toti.registr.Registr;
-import utils.Env;
 
 public class BootstrapEndToEndTest {
 

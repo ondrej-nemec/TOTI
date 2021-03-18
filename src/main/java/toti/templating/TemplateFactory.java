@@ -16,8 +16,8 @@ import javax.tools.JavaCompiler;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
-import common.FileExtension;
 import common.Logger;
+import common.functions.FileExtension;
 import common.structures.ThrowingFunction;
 import common.structures.Tuple2;
 import toti.templating.parsing.TemplateParser;
