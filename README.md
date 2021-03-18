@@ -3,11 +3,16 @@
 [![](https://jitpack.io/v/ondrej-nemec/MVC.svg)](https://jitpack.io/#ondrej-nemec/MVC)
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/ondrej-nemec/MVC/blob/master/LICENSE)
 
-TOTI - **T**ip **O**f **T**he **I**ceberg - is Java MVC and Rest API framework. Create interface between you server and users.
+<img src="logo.png">
+
+TOTI - **T**ip **O**f **T**he **I**ceberg - is Java MVC and Rest API framework. Create interface between your server and users or other systems.
 
 * [Include in your project](#include-in-your-project)
 * [Get started](doc/get-started.md)
-* [Documentation]()
+* Documentation
+	* [List of filters and inputs](doc/controls.md)
+	* [List of template tags](doc/tags.md)
+	* [Validation rules](doc/validation-rules.md)
 	
 ## Include in your project
 
