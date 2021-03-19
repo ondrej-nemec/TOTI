@@ -71,7 +71,7 @@ public class ExampleApiController {
 		try {
 			Map<String, Object> values = dao.getHelp(identity.getAllowedIds());
 			for (int i = 0; i < 10; i++) {
-				values.put("#" + i, Option.input("#" + i, "Option #" + i).setOptGroup("Opt Group #" + i%3));
+				values.put("#" + i, Option.create("#" + i, "Option #" + i).setOptGroup("Opt Group #" + i%3));
 			}
 			return Response.getJson(values);
 		} catch (Exception e) {

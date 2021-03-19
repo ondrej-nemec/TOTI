@@ -72,14 +72,14 @@ public class ExamplePageController {
 		);
 		grid.addColumn(
 			new ValueColumn("active").setTitle("Active").setFilter(Select.filter( Arrays.asList(
-				Option.input("", "---"),
-				Option.input("true", "YES"),
-				Option.input("false", "NO")
+				Option.create("", "---"),
+				Option.create("true", "YES"),
+				Option.create("false", "NO")
 			))).setUseSorting(true)
 		);
 		grid.addColumn(
 			new ValueColumn("parent").setTitle("Parent").setFilter(Select.filter( Arrays.asList(
-					Option.input("", "---")
+					Option.create("", "---")
 			)).setLoadData("/example-module/api/example/help", "get")).setUseSorting(true)
 		);
 		
@@ -161,12 +161,12 @@ public class ExamplePageController {
 			new Tuple2<>("female", "Feale")
 		)).setTitle("Sex").setDefaultValue("female"));
 		form.addInput(Select.input("parent", false, Arrays.asList(
-			Option.input("", "---")
+			Option.create("", "---")
 		)).setTitle("Parent").setLoadData("/example-module/api/example/help", "get"));
 		form.addInput(Select.input("select1", false, Arrays.asList(
-			Option.input("1", "A1"),
-			Option.input("2", "A2"),
-			Option.input("3", "A3")
+			Option.create("1", "A1"),
+			Option.create("2", "A2"),
+			Option.create("3", "A3")
 		)).setTitle("Parent2"));
 		form.addInput(
 			Date.input("simple_date", false).setTitle("Date")
@@ -199,19 +199,19 @@ public class ExamplePageController {
 		form.addInput(
 			InputList.input("list")
 			.addInput(
-				Select.input("", false, Arrays.asList(Option.input("", "---")))
+				Select.input("", false, Arrays.asList(Option.create("", "---")))
 					.setLoadData("/example-module/api/example/help", "get")
 					.setTitle("List Sub Text 1")
 					.setShowedOptionGroup("Opt Group #0")
 			)
 			.addInput(
-				Select.input("", false, Arrays.asList(Option.input("", "---")))
+				Select.input("", false, Arrays.asList(Option.create("", "---")))
 					.setLoadData("/example-module/api/example/help", "get")
 					.setTitle("List Sub Text 2")
 					.setShowedOptionGroup("Opt Group #1")
 			)
 			.addInput(
-				Select.input("", false, Arrays.asList(Option.input("", "---")))
+				Select.input("", false, Arrays.asList(Option.create("", "---")))
 					.setTitle("List Sub Text 3")
 					.setLoadData("/example-module/api/example/help", "get")
 					.setShowedOptionGroup("Opt Group #2")

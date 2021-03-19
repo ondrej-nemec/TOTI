@@ -137,30 +137,128 @@ Create input: `Range.input(String name, boolean required)`
 ### Date
 
 ### Time
+
 ### Datetime
+
 ### Month
+
 ### Week
 
 ## Action
 
 ### Submit
+
 ### Button
+
 ### Reset
 
 ## Selection
 
 ### Checkbox
+
+For Yes/No selection. HTML standard tag
+
+Create input: `Checkbox.input(String name, boolea required)`
+
+#### Optional parameters
+
+* Title `setTitle` (effect input only): label of input
+* Default value `setDefaultValue`: default value
+* Disabled `setDisabled`: change disabled
+* Values render `setValuesRender(String checked, String notChecked)`: how will be displayed in not-editable form. Default Yes and No
+
 ### Radiolist
+
+Show list of radio (HTML standard input).
+
+Create input: `RadioList.input(String name, boolean required, Map<String, String> radios)`. Radios are value-title map.
+
+#### Optional parameters
+
+* Title `setTitle` (effect input only): label of input
+* Default value `setDefaultValue`: default value
+* Disabled `setDisabled`: change disabled
+
 ### Select
+
+Select from list of values. HTML standard tag
+
+Create filter: `Select.filter(List<Option> options)`. For `Option` see [Option](#option)
+
+Create input: `Select.input(String name, boolean required, List<Option> options)`. For `Option` see [Option](#option)
+
+#### Optional parameters
+
+* Title `setTitle` (effect input only): label of input
+* Default value `setDefaultValue`: default value
+* Disabled `setDisabled`: change disabled
+
+Options into select can be loaded from URL. For required data format see TODO EntityDao.
+
+Load data from URL:
+
+```
+select.setLoadData(String url, String method);
+// or with request parameters
+select.setLoadData(String url, String method, Map<String, String> params);
+```
+
+If you load data from URL, you can specify which Option Group have to be showed in this select:
+
+```
+select.setShowedOptionGroup(String optionGroup);
+```
+
 ### Option
+
+Child element of select. HTML standard tag
+
+Create into filter/input: `Option.create(String value, String title)`
+
+#### Optional parameters
+
+* Option Group `setOptGroup`: name of Option Group this option belong
+* Disabled `setDisabled`: change disabled
 
 ## Special
 
 ### Hidden
+
+Value is hidden. HTML standard tag
+
+Create input: `Range.input(String name)`
+
+#### Optional parameters
+
+* Default value `setDefaultValue`: default value
+
 ### Color
+
+Show color picker. HTML standard tag
+
+**NOTE:** this tag not support empty value
+
+Create input: `Color.input(String name, boolean required)`
+
+#### Optional parameters
+
+* Title `setTitle`: label of input
+* Default value `setDefaultValue`: default value
+* Disabled `setDisabled`: change disabled
+
 ### File
+
+For uploading file. HTML standard tag
+
+Create input: `File.input(String name, boolean required)`
+
+#### Optional parameters
+
+* Title `setTitle`: label of input
+* Disabled `setDisabled`: change disabled
 
 ## TOTI specific
 
-### Inputlist
-### Dynamiclist
+### InputList
+
+### DynamicList

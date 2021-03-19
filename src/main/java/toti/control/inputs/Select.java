@@ -25,7 +25,7 @@ public class Select implements Input, Filter {
 	public static Select input(String name, boolean required, Map<String, String> options) {
 		List<Option> opts = new LinkedList<>();
 		options.forEach((value, title)->{
-			opts.add(Option.input(value, title));
+			opts.add(Option.create(value, title));
 		});
 		return new Select(name, required, opts);
 	}

@@ -10,7 +10,7 @@ public class Option implements Input {
 	private boolean disabled;
 	private String group;
 	
-	public static Option input(String value, String title) {
+	public static Option create(String value, String title) {
 		return new Option(value, title);
 	}
 	
