@@ -369,20 +369,19 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			
 			Collection<Object> ids = null;
 			for (Domain domain : mapped.getSecured()) {
+				AclDestination destination = new AclDestination() {
+					@Override public Object getId() { return domain.name(); }
+					@Override public String toString() { return domain.name(); }
+				};
 				if (domain.owner().isEmpty()) {
-					Collection<Object> allowedIds = authorizator.allowed(identity.getUser(), ()->{
-						return domain.name();
-					}, domain.action());
+					Collection<Object> allowedIds = authorizator.allowed(identity.getUser(), destination, domain.action());
 					if (ids == null) {
 						ids = allowedIds;
 					} else {
 						ids.retainAll(allowedIds);
 					}
 				} else {
-					authorizator.throwIfIsNotAllowed(identity.getUser(), new AclDestination() {
-						@Override public Object getId() { return domain.name(); }
-						@Override public String toString() { return domain.name(); }
-					}, domain.action(), prop.get(domain.owner()));
+					authorizator.throwIfIsNotAllowed(identity.getUser(), destination, domain.action(), prop.get(domain.owner()));
 				}
 			}
 			if (ids != null) {
