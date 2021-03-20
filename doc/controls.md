@@ -136,13 +136,76 @@ Create input: `Range.input(String name, boolean required)`
 
 ### Date
 
+Picker for date with localized messages. HTML standard tag
+
+Create filter: `Date.filter();`
+
+Create input: `Date.filter(String name, boolean required);`
+
+#### Optional parameters
+
+* Title `setTitle` (effect input only): label of input
+* Default value `setDefaultValue`: default value
+* Disabled `setDisabled`: change disabled
+
 ### Time
+
+Picker for time with localized messages. HTML standard tag
+
+Create filter: `Time.filter();`
+
+Create input: `Time.filter(String name, boolean required);`
+
+#### Optional parameters
+
+* Title `setTitle` (effect input only): label of input
+* Default value `setDefaultValue`: default value
+* Disabled `setDisabled`: change disabled
+* Time deep `setStep`: "1" means use hours, minutes and hours, "60" means use hours and minutes, "3600" means use only hours
 
 ### Datetime
 
+Picker for date and time with localized messages. Some browsers like Firefox not support `datetime-local` so for Firefox is used little TOTI modification.
+
+Create filter: `Datetime.filter();`
+
+Create input: `Datetime.input(String name, boolean required);`
+
+#### Optional parameters
+
+* Title `setTitle` (effect input only): label of input
+* Default value `setDefaultValue`: default value
+* Disabled `setDisabled`: change disabled
+* Time deep `setStep`: "1" means use hours, minutes and hours, "60" means use hours and minutes, "3600" means use only hours
+* Use full value `setStrict` (effect filter only): if false allows use only date or only time
+
 ### Month
 
+Create filter: `Month.filter();`
+
+Create input: `Month.filter(String name, boolean required);`
+
+Picker for selecting month with localized messages. HTML standard tag. Not supported by some browsers like Firefox.
+
+### Optional parameters
+
+* Title `setTitle` (effect input only): label of input
+* Default value `setDefaultValue`: default value
+* Disabled `setDisabled`: change disabled
+
 ### Week
+
+Picker for selecting week with localized messages. HTML standard tag
+
+Create filter: `Week.filter();`
+
+Create input: `Week.filter(String name, boolean required);`
+
+### Optional parameters
+
+* Title `setTitle` (effect input only): label of input
+* Default value `setDefaultValue`: default value
+* Disabled `setDisabled`: change disabled
 
 ## Action
 

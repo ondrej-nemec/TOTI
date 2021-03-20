@@ -14,7 +14,6 @@ public class Date implements Input, Filter {
 	private final boolean required;
 	private boolean disabled = false;
 	private String value = null;
-	private int step = 1;
 	private final Map<String, String> params = new HashMap<>();
 	
 	public static Date input(String name, boolean required) {
@@ -52,11 +51,6 @@ public class Date implements Input, Filter {
 		this.disabled = disabled;
 		return this;
 	}
-	
-	public Date setStep(int step) {
-		this.step = step;
-		return this;
-	}
 
 	@Override
 	public String getType() {
@@ -66,7 +60,6 @@ public class Date implements Input, Filter {
 	@Override
 	public Map<String, Object> getFilterSettings() {
 		Map<String, Object> set = new HashMap<>();
-		set.put("step", step);
 		set.putAll(params);
 		if (value != null) {
 			set.put("value", value);

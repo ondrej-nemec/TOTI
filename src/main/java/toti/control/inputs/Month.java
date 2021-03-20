@@ -14,7 +14,6 @@ public class Month implements Input, Filter {
 	private final boolean required;
 	private boolean disabled = false;
 	private String value = null;
-	private int step = 1;
 	private final Map<String, String> params = new HashMap<>();
 	
 	public static Month input(String name, boolean required) {
@@ -52,11 +51,6 @@ public class Month implements Input, Filter {
 		this.disabled = disabled;
 		return this;
 	}
-	
-	public Month setStep(int step) {
-		this.step = step;
-		return this;
-	}
 
 	@Override
 	public String getType() {
@@ -70,7 +64,6 @@ public class Month implements Input, Filter {
 		if (value != null) {
 			set.put("value", value);
 		}
-		set.put("step", step);
 		return set;
 	}
 
