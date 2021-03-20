@@ -113,7 +113,7 @@ public class ExamplePageController {
 			.addButton(
 				Button.create("/example-module/example/delete/{id}", "delete")
 					.setTitle("Delete").setType(ButtonType.DANGER)
-					.setMethod("delete").setAjax(true).setConfirmation("Really delete {name}?")
+					.setMethod("delete").setAsync(true).setConfirmation("Really delete {name}?")
 			)
 		);
 		// END

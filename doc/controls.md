@@ -148,9 +148,50 @@ Create input: `Range.input(String name, boolean required)`
 
 ### Submit
 
+Submit form. HTML standard tag
+
+Create input `Submit.create(String title, String name);
+
+### Optional parameters
+* Send form asynchroniously `setAsync`
+
+Only for async:
+
+* Redirect after success `setRedirect`: URL redirect to. If URL `{id}` is it replaced with input 'id' from form.
+* Do after success `setOnSuccess`: name of JS function. As parameters are used (in order) response, submit and form.
+* Do after failure `setOnFailure`: name of JS function. As parameters are used (in order) response, submit and form.
+* Confirmation before `setConfirmation`: text of confirmation. If no text set, no confirmation appear.
+
 ### Button
 
+Navigate from form but not submit values. HTML standard tag
+
+Create input: `Button.create(String url, String name);`
+
+If used in grid, you can parametrize URL with '{*name-of-parameter*}'. F.e. '/{name}/edit/{id}' will be '/cars/edit/2'
+
+#### Optional parameters
+
+* Title `setTitle` (effect input only): label of input
+* Asynchronious request `setAsync`: if send request synchroniously (redirect) or not
+* Style `setType`: set type of button, just visual
+
+Settings only for async:
+
+* Request method `setMethod`: GET, POST,...
+* Do after success response `setOnSuccess`: name of JS function called after success response. Response is used as parameter
+* Do after failure response `setOnFailure`: name of JS function called after failure response. Response is used as parameter
+* Confirmation before `setConfirmation`: text of confirmation. If no text set, no confirmation appear. If used in grid, you can parametrize URL with '{*name-of-parameter*}'.
+
 ### Reset
+
+Return form state to default values. HTML standard tag
+
+Create input: `Reset.create(String name);`
+
+#### Optional parameters
+
+* Title `setTitle` (effect input only): label of input
 
 ## Selection
 

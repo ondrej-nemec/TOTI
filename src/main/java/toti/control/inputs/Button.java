@@ -58,8 +58,8 @@ public class Button implements Input {
 		return this;
 	}
 
-	public Button setAjax(boolean ajax) {
-		this.ajax = ajax;
+	public Button setAsync(boolean async) {
+		this.ajax = async;
 		return this;
 	}
 

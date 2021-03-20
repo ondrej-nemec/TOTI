@@ -1,4 +1,4 @@
-/* TOTI Form version 0.0.3 */
+/* TOTI Form version 0.0.4 */
 class TotiForm {
 
 	constructor(config) {
@@ -410,7 +410,7 @@ class TotiForm {
 					header, 
 					function(response) {
 						if (submit.getAttribute("onSuccess") != null) {
-							window[submit.getAttribute("onSuccess")](response);
+							window[submit.getAttribute("onSuccess")](response, submit, form);
 						} else {
 							totiDisplay.flash('success', response.message);
 						}
@@ -442,7 +442,7 @@ class TotiForm {
 								}
 							}
 						} else if (submit.getAttribute("onFailure") != null) {
-							window[submit.getAttribute("onFailure")](xhr);
+							window[submit.getAttribute("onFailure")](xhr, submit, form);
 						} else {
 							totiDisplay.flash('error', totiTranslations.formMessages.saveError);
 						}

@@ -215,15 +215,15 @@ public class EntityPageController {
 		grid.addColumn(
 			new ButtonsColumn("buttons").setTitle(translator.translate("module.buttons"))
 				.addButton(
-					Button.create("/entity/api/entity/delete/{id}").setAjax(true).setMethod("delete")
+					Button.create("/entity/api/entity/delete/{id}").setAsync(true).setMethod("delete")
 						.setTitle("Delete").setConfirmation("Really delete {name}?").setType(ButtonType.DANGER)
 				)
 				.addButton(
-					Button.create("/entity/entity/edit/{id}").setAjax(false).setMethod("get")
+					Button.create("/entity/entity/edit/{id}").setAsync(false).setMethod("get")
 						.setTitle("Edit").setType(ButtonType.INFO)
 				)
 				.addButton(
-						Button.create("/entity/entity/detail/{id}").setAjax(false).setMethod("get")
+						Button.create("/entity/entity/detail/{id}").setAsync(false).setMethod("get")
 							.setTitle("Detail").setType(ButtonType.SUCCESS)
 					)
 		);
@@ -281,7 +281,7 @@ public class EntityPageController {
 		form.addInput(TextArea.input("comment", false).setCols(20).setRows(30).setTitle("module.comment").setDefaultValue("aaa"));
 		
 		form.addInput(Submit.create("Save", "save").setRedirect("/entity/entity/list"));
-		form.addInput(Button.create("/entity/entity/list").setTitle("Cancel").setAjax(false));
+		form.addInput(Button.create("/entity/entity/list").setTitle("Cancel").setAsync(false));
 		
 		form.setAfterBind("b");
 		form.setBeforeBind("a");
