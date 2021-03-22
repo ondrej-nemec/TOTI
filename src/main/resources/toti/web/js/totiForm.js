@@ -1,4 +1,4 @@
-/* TOTI Form version 0.0.5 */
+/* TOTI Form version 0.0.6 */
 class TotiForm {
 
 	constructor(config) {
@@ -485,10 +485,10 @@ class TotiForm {
 		);
 	}
 	bind(formId, values, beforeBind, afterBind) {
-		totiUtils.execute(beforeBind);
+		totiUtils.execute(beforeBind, [values]);
 		var form  = document.getElementById(formId);
 		this.bindValues(values, form);
-		totiUtils.execute(afterBind);
+		totiUtils.execute(afterBind, [values]);
 	}
 
 	bindValues(values, form, createKey = null, originKey = null) {
