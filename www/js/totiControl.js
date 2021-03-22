@@ -1,4 +1,4 @@
-/* TOTI Control version 0.0.4 */
+/* TOTI Control version 0.0.5 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -260,15 +260,13 @@ var totiControl = {
 			}
 			var time = totiControl.inputs._createInput("time", timeAttr);
 			
-			var div = document.createElement("button");
+			var datetime = document.createElement("fieldset");
 			for ([key, name] of Object.entries(attributes)) {
-				div.setAttribute(key, name);
+				datetime.setAttribute(key, name);
 			}
-			var datetime = div;
-			/*datetime.setAttribute("type", "datetime-local");
-			datetime.setAttribute("origintype", "datetime-local");*/
-			div.appendChild(date);
-			div.appendChild(time);
+
+			datetime.appendChild(date);
+			datetime.appendChild(time);
 
 			var setValue = function(value) {
 				var values = attributes.value.split("T");
@@ -283,6 +281,18 @@ var totiControl = {
 			if (attributes.hasOwnProperty("value")) {
 				setValue(attributes.value);
 			}
+
+			var formWaiting = function() {
+				if (datetime.form === null) {
+					setTimeout(formWaiting, 50);
+				} else {
+					datetime.form.onreset = function() {
+						datetime.value = '';
+					};
+				}
+				
+			};
+			formWaiting();
 
 			datetime.onchange = function(event) {
 				if (attributes.strict) {
@@ -303,10 +313,7 @@ var totiControl = {
 					}
 				}
 			};
-			datetime.onclick = function(event) {
-				event.preventDefault();
-			};
-			return div;
+			return datetime;
 		}
 	},
 	parseValue: function(type, value) {
