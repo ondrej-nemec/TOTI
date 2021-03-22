@@ -1,4 +1,4 @@
-/* TOTI Grid version 0.0.3 */
+/* TOTI Grid version 0.0.4 */
 class TotiGrid {
 
 	constructor(config) {
@@ -336,7 +336,11 @@ class TotiGrid {
 								},
 								type: button.hasOwnProperty('style') ? button.style : 'basic'
 							};
-							var buttonElement = totiControl.button(button);
+
+							var buttonClone = totiUtils.clone(button);
+							buttonClone.id += "_" + rowIndex;
+
+							var buttonElement = totiControl.button(buttonClone);
 							buttonElement.onclick = function(event) {
 								totiControl.getAction(settings)(event);
 								setTimeout(function(){
