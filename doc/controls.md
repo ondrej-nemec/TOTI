@@ -365,4 +365,34 @@ Create input: `File.input(String name, boolean required)`
 
 ### InputList
 
+`InputList` is container for other inputs. These inputs are available on page with name `InputListName[indexOfInput][inputName]`.
+
+Create input: `InputList.input(String name)`
+
+Add input to list: `inputList.addInput(Input input);`
+
 ### DynamicList
+
+In `DynamicList` you define input. This input appears on page n-times depends on Add/Remove buttons and binding. If you wish bind values to `DynamicList`, in values is required List on DynamicListName key.
+
+Example:
+
+```
+{
+	first: "some-value",
+	second: "another-value",
+	dynamic: [
+		"first",
+		123,
+		false
+	]
+}
+```
+
+Add input to list: `dynamicList.addInput(Input input);`
+
+#### Optional parameters
+
+* Title `setTitle`: label of input
+* Use Add Button `useAddButton`: if user can add input
+* Use Remote Button `useRemoteButton`: if user can remove input

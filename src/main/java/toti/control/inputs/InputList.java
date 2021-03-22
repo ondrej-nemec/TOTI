@@ -15,11 +15,11 @@ public class InputList implements Input {
 	public static InputList input(String name) {
 		return new InputList(name);
 	}
-	
+/*
 	public static InputList input() {
 		return new InputList(null);
 	}
-	
+*/
 	private InputList(String name) {
 		this.name = name;
 		this.id = "id-" + name;
