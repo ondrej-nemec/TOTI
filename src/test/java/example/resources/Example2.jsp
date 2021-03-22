@@ -115,4 +115,13 @@
 		<hr>
 	
 	</t:control>
+	
+	<script>
+		function afterBind(values) {
+			console.log(values);
+		}
+		function beforeBind(values) {
+			console.log(values);
+		}
+	</script>
 </t:block>

@@ -107,7 +107,7 @@ public class ExampleApiController {
 			Map<String, String> map = new HashMap<>();
 			map.put("subText1", "<script>alert('XSS!');</script>");
 			//  element.querySelector("[value='" + value + "']");
-			map.put("subText2", "\\\"]'); alert('Successfull XSS'); // ");
+		//	map.put("subText2", "\\\"]'); alert('Successfull XSS'); // ");
 		//	map.put("sex", "\\\"]'); alert('Successfull XSS1'); // ");
 			List<String> list= new LinkedList<>();
 			list.add("1");

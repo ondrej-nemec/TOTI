@@ -240,6 +240,8 @@ public class ExamplePageController {
 			form.setBindMethod("get");
 			form.setBindUrl("/example-module/api/example/get/" + id);
 		}
+		form.setAfterBind("afterBind");
+		form.setBeforeBind("beforeBind");
 		params.put("exampleControl", form);
 		params.put("title", translator.translate("example-" + (id == null ? "add" : "edit")));
 		return Response.getTemplate((template == null ? JSP_PAGE : "Example2.jsp"), params);
