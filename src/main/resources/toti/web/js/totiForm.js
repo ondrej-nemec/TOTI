@@ -12,8 +12,8 @@ class TotiForm {
 			document.querySelector(elementIdentifier).appendChild(
 				object.create(uniqueName, document.querySelector(elementIdentifier), object.config.editable)
 			);
-			if (object.hasOwnProperty("afterPrint")) {
-				totiUtils.execute(object.afterPrint);
+			if (object.config.hasOwnProperty("afterPrint")) {
+				totiUtils.execute(object.config.afterPrint);
 			}
 			if (object.config.hasOwnProperty('bind')) {
 				object.bindUrl(uniqueName, object.config.bind);
