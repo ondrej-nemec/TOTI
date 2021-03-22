@@ -1,4 +1,4 @@
-/* TOTI Form version 0.0.4 */
+/* TOTI Form version 0.0.5 */
 class TotiForm {
 
 	constructor(config) {

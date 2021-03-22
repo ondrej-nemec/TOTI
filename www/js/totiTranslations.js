@@ -1,4 +1,4 @@
-/* TOTI Translations version 0.1.0 */
+/* TOTI Translations version 0.1.1 */
 var totiTranslations = {
 	"pages": {
 		"title": /* "<t:trans message='common.grid.paging.pages'/>", /*/ "Pages:", //*/
@@ -21,7 +21,7 @@ var totiTranslations = {
 		"bindError": /* "<t:trans message='common.form.binding-problem' />" /*/ "Loading data failure" //*/
 	},
 	"formButtons": {
-		"add": /* "<t:trans message='common.form.add-variant' />" /*/ "Add Variant", //*/
+		"add": /* "<t:trans message='common.form.add-variant' />", /*/ "Add Variant", //*/
 		"remove": /* "<t:trans message='common.form.remove-variant' />" /*/ "Remove Variant" //*/
 	},
 	/* TODO use translations with JSON.parse() ??? */

@@ -1,4 +1,4 @@
-/* TOTI Translations version 0.1.0 */
+/* TOTI Translations version 0.1.1 */
 var totiTranslations = {
 	"pages": {
 		"title": "<t:trans message='common.grid.paging.pages'/>",
