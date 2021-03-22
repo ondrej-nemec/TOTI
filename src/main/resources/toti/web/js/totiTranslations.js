@@ -17,12 +17,12 @@ var totiTranslations = {
 		"loadingError": "<t:trans message='common.grid.loading-error' />"
 	},
 	"formMessages": {
-		"saveError":  "<t:trans message='common.form.saving-problem', />"
+		"saveError":  "<t:trans message='common.form.saving-problem', />",
 		"bindError":  "<t:trans message='common.form.binding-problem' />"
 	},
 	"formButtons": {
-		"add": /* "<t:trans message='common.form.add-variant' />" /*/ "Add Variant" //*/,
-		"remove": /* "<t:trans message='common.form.remove-variant' />" /*/ "Remove Variant" //*/
+		"add": "<t:trans message='common.form.add-variant' />",
+		"remove": "<t:trans message='common.form.remove-variant' />"
 	},
 	/* TODO use translations with JSON.parse() ??? */
 	"timestamp": {
