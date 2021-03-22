@@ -78,6 +78,7 @@ public class Datetime implements Input, Filter {
 		if (value != null) {
 			set.put("value", value);
 		}
+		set.put("id", id);
 		set.put("strict", strict);
 		return set;
 	}
@@ -86,7 +87,6 @@ public class Datetime implements Input, Filter {
 	public Map<String, Object> getInputSettings() {
 		Map<String, Object> json = getFilterSettings();
 		json.put("name", name);
-		json.put("id", id);
 		json.put("type", type);
 		if (required) {
 			json.put("required", required);
