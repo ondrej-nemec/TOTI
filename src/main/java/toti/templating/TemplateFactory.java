@@ -17,6 +17,7 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 import common.Logger;
+import common.exceptions.LogicException;
 import common.functions.FileExtension;
 import common.structures.ThrowingFunction;
 import common.structures.Tuple2;
@@ -110,9 +111,6 @@ public class TemplateFactory {
 
 	public Template getModuleTemplate(String templateFile, String module) throws Exception {
 		return modules.get(module).getTemplate(templateFile);
-	/*	return getTemplateWithAbsolutePath(module + "/" + templateFile, (file)->{
-			return new Tuple2<>(module, new FileExtension(file.getName()).getName());
-		});*/
 	}
 
 	public Template getFrameworkTemplate(String templateFile) throws Exception {
@@ -125,6 +123,9 @@ public class TemplateFactory {
 			String templateFile,
 			ThrowingFunction<File, Tuple2<String, String>, IOException> getClassNameAndNamespace,
 			String module) throws Exception {
+		if (templatePath == null) {
+			throw new LogicException("No template path set for this module: '" + module + "'");
+		}
 		long lastModifition = -1;
 		URL url = null;
 		if (url == null) {

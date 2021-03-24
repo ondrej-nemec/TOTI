@@ -15,6 +15,7 @@ import toti.HttpServerFactory;
 import toti.Module;
 import toti.ResponseHeaders;
 import toti.registr.Registr;
+import translator.Translator;
 
 public class Application {
 
@@ -35,7 +36,7 @@ public class Application {
 	private Database database;
 	private final List<Task> tasks = new LinkedList<>();
 	
-	public Application(List<Module> modules) {
+	public <T extends Module> Application(List<T> modules) {
 		LoggerFactory.setConfigFile(LOG_CONFIG_FILE);
 		LoggerFactory.getLogger("main").info("Initialization...");
 		try {
@@ -77,6 +78,10 @@ public class Application {
 	}
 	
 	/************/
+	
+	public Translator getTranslator() {
+		return server.getTranslator();
+	}
 	
 	public void start() {
 		LoggerFactory.getLogger("main").info("Starting...");
@@ -178,6 +183,9 @@ public class Application {
 	}
 	
 	public DatabaseConfig createDatabaseConfig(Env env, List<String> migrations) {
+		if (env.getString("database.type") == null) {
+			return null;
+		}
 		return new DatabaseConfig(
 				env.getString("database.type"),
 				env.getString("database.url"),

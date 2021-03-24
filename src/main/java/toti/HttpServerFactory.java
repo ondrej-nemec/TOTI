@@ -44,7 +44,7 @@ public class HttpServerFactory {
 	private int maxUploadFileSize = 0;
 	private Optional<List<String>> allowedUploadFileTypes = Optional.of(new LinkedList<>());
 	
-	public HttpServer get(List<Module> modules) throws Exception {
+	public <T extends Module> HttpServer get(List<T> modules) throws Exception {
 		if (security == null) {
 			this.security = new UserSecurity(
 				null, // no redirect, on 4xx

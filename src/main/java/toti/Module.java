@@ -9,19 +9,25 @@ import toti.application.Task;
 import toti.registr.Registr;
 
 public interface Module {
+	
+	String getName();
+	
+	String getControllersPath();
 
 	List<Task> initInstances(Env env, Registr registr, Database database, Logger logger) throws Exception;
 	
-	void addRoutes(Router router);
+	default void addRoutes(Router router) {}
 	
-	String getTemplatesPath();
+	default String getTranslationPath() {
+		return null;
+	}
 	
-	String getControllersPath();
+	default String getMigrationsPath() {
+		return null;
+	}
 	
-	String getTranslationPath();
-	
-	String getMigrationsPath();
-	
-	String getName();
+	default String getTemplatesPath() {
+		return null;
+	}
 	
 }
