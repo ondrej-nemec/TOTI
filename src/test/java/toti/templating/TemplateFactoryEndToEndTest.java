@@ -52,12 +52,12 @@ public class TemplateFactoryEndToEndTest {
 		Translator translator = new Translator() {
 
 			@Override
-			public String translate(String key, Map<String, String> variables) {
+			public String translate(String key, Map<String, Object> variables) {
 				return key;
 			}
 
 			@Override
-			public String translate(String key, Map<String, String> variables, Locale locale) {
+			public String translate(String key, Map<String, Object> variables, Locale locale) {
 				return key;
 			}
 
