@@ -1,4 +1,4 @@
-/* TOTI Control version 0.0.5 */
+/* TOTI Control version 0.0.6 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -250,70 +250,82 @@ var totiControl = {
 		},
 		datetime: function(attributes) {
 			var dateAttr = {};
+			if (attributes.id.endsWith("-")) {
+				attributes.id += Math.floor(Math.random() * 1000);
+			}
 			dateAttr.id = attributes.id + "-date";
-			var date = totiControl.inputs._createInput("date", dateAttr);
+		    if (attributes.hasOwnProperty('required')) {
+		        dateAttr.required = attributes.required;
+		     }
+		    var date = totiControl.inputs._createInput("date", dateAttr);
 
-			var timeAttr = {};
-			timeAttr.id = attributes.id + "-time"
-			if (attributes.hasOwnProperty("step")) {
-				timeAttr.step = attributes.step;
-			}
-			var time = totiControl.inputs._createInput("time", timeAttr);
-			
-			var datetime = document.createElement("fieldset");
-			for ([key, name] of Object.entries(attributes)) {
-				datetime.setAttribute(key, name);
-			}
+		    var timeAttr = {};
+		    timeAttr.id = attributes.id + "-time"
+		    if (attributes.hasOwnProperty("step")) {
+		        timeAttr.step = attributes.step;
+		    }
+		    if (attributes.hasOwnProperty('required')) {
+		        timeAttr.required = attributes.required;
+		    }
+		    var time = totiControl.inputs._createInput("time", timeAttr);
 
-			datetime.appendChild(date);
-			datetime.appendChild(time);
+		    var datetime = document.createElement("fieldset");
+		    for ([key, name] of Object.entries(attributes)) {
+		        datetime.setAttribute(key, name);
+		    }
 
-			var setValue = function(value) {
-				var values = attributes.value.split("T");
-				console.log(value, values);
-				if (values.length !== 2) {
-					return;
-				}
-				date.value = values[0];
-				time.value = values[1];
-			};
+		    datetime.appendChild(date);
+		    datetime.appendChild(time);
 
-			if (attributes.hasOwnProperty("value")) {
-				setValue(attributes.value);
-			}
+		    var setValue = function(value) {
+		        var values = value.split("T");
+		        if (values.length !== 2) {
+		             return;
+		        }
+		        date.value = values[0];
+		        time.value = values[1];
+		    };
 
-			var formWaiting = function() {
-				if (datetime.form === null) {
-					setTimeout(formWaiting, 50);
-				} else {
-					datetime.form.onreset = function() {
-						datetime.value = '';
-					};
-				}
-				
-			};
-			formWaiting();
+		    if (attributes.hasOwnProperty("value")) {
+		        setValue(attributes.value);
+		    }
 
-			datetime.onchange = function(event) {
-				if (attributes.strict) {
-					if (date.value === '' || time.value === '') {
-						event.preventDefault();
-					} else {
-						datetime.value = date.value + "T" + time.value;
-					}
-				} else {
-					if (date.value === '' && time.value === '') {
-						event.preventDefault();
-					} else if (date.value === '') {
-						datetime.value = time.value;
-					} else if (time.value === '') {
-						datetime.value = date.value;
-					} else {
-						datetime.value = date.value + "T" + time.value;
-					}
-				}
-			};
-			return datetime;
+		    var formWaiting = function() {
+		        if (datetime.form === null) {
+		              setTimeout(formWaiting, 50);
+		       } else {
+		             datetime.form.onreset = function() {
+		                 datetime.value = '';
+		             };
+		        }
+		    };
+
+		    formWaiting();
+	
+		    datetime.onbind = function() {
+		        setValue(datetime.value);
+		    };
+
+		    datetime.onchange = function(event) {
+		        if (attributes.strict) {
+		             if (date.value === '' || time.value === '') {
+		                event.preventDefault();
+		             } else {
+		                 datetime.value = date.value + "T" + time.value;
+		             }
+		        } else {
+		             if (date.value === '' && time.value === '') {
+		                 event.preventDefault();
+		             } else if (date.value === '') {
+		                 datetime.value = time.value;
+		             } else if (time.value === '') {
+		                  datetime.value = date.value;
+		            } else {
+		                 datetime.value = date.value + "T" + time.value;
+		             }
+		        }
+		    };
+		    return datetime;
 		}
 	},
 	parseValue: function(type, value) {

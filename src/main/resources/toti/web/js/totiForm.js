@@ -1,4 +1,4 @@
-/* TOTI Form version 0.0.6 */
+/* TOTI Form version 0.0.7 */
 class TotiForm {
 
 	constructor(config) {
@@ -552,20 +552,23 @@ class TotiForm {
 					element.innerText = value;
 				}
 			} else { /*form*/
-				if (element.type === "datetime-local" && value !== null) {
-					value = value.replace(" ", "T");
-				} else if (element.getAttribute("type") === "datetime-local" && value !== null) {
-					/* datetime-local renderer by button */
-					value = value.replace(" ", "T");
-				}
-				if (element.type === "checkbox") {
-					element.checked = value ? "checked" : false;
-				} else if (element.type === "radio") {
-					form.querySelector('[name="' + key + '"][value="' + value + '"]').setAttribute("checked", true);
-				} else {
-					element.value = value;
-				}
-			}
+                if (element.type === "datetime-local" && value !== null) {
+                    value = value.replace(" ", "T");
+                } else if (element.getAttribute("origintype") === "datetime-local" && value !== null) {
+                    /* datetime-local renderer */
+                    value = value.replace(" ", "T");
+                }
+                if (element.type === "checkbox") {
+                    element.checked = value ? "checked" : false;
+                } else if (element.type === "radio") {
+                    form.querySelector('[name="' + key + '"][value="' + value + '"]').setAttribute("checked", true);
+                } else {
+                    element.value = value;
+                }
+                if (element.getAttribute("origintype") === "datetime-local" && element.type === "fieldset") {
+                    element.onbind();
+                }
+            }
 		}
 	}
 }
