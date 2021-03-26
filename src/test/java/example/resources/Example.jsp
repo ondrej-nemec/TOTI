@@ -11,5 +11,6 @@
 		function beforeBind(values) {
 			console.log("before", values);
 		}
+		console.log(document.body);
 	</script>
 </t:block>

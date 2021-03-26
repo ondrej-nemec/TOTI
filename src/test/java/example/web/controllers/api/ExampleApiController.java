@@ -65,6 +65,15 @@ public class ExampleApiController {
 		this.auditTrail = auditTrail;
 	}
 
+	@Action(value = "test", validator = ExampleValidator.TEST)
+	@Method({HttpMethod.GET})
+	public Response test(@Params RequestParameters params) {
+		params.forEach((key, name)->{
+			System.err.println(key + ": " + name);
+		});
+		return Response.getJson(StatusCode.ACCEPTED, new HashMap<>());
+	}
+	
 	@Action("help")
 	@Method({HttpMethod.GET})
 	public Response getInArray(@Param("view") Boolean viewOnly) {

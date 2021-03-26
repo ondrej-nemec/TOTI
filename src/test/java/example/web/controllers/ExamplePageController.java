@@ -246,4 +246,55 @@ public class ExamplePageController {
 		params.put("title", translator.translate("example-" + (id == null ? "add" : "edit")));
 		return Response.getTemplate((template == null ? JSP_PAGE : "Example2.jsp"), params);
 	}
+
+	@Action("test")
+	public Response test() {
+		Map<String, Object> params = new HashMap<>();
+		Form form = new Form("/example-module/api/example/test", true);
+		form.addInput(InputList.input("list")
+			.addInput(Text.input("", false).setTitle("List 1").setDefaultValue("A1"))
+			.addInput(Text.input("", false).setTitle("List 2").setDefaultValue("A2"))
+			.addInput(Text.input("", false).setTitle("List 3").setDefaultValue("A3"))
+		);
+		form.addInput(InputList.input("map")
+			.addInput(Text.input("a", false).setTitle("Map 1").setDefaultValue("B1"))
+			.addInput(Text.input("b", false).setTitle("Map 2").setDefaultValue("B2"))
+			.addInput(Text.input("c", false).setTitle("Map 3").setDefaultValue("B3"))
+		);
+		form.addInput(InputList.input("listmap")
+			.addInput(InputList.input("")
+				.addInput(Text.input("a1", false).setTitle("A1").setDefaultValue("Ca1"))
+				.addInput(Text.input("a2", false).setTitle("A2").setDefaultValue("Ca2"))
+			)
+			.addInput(InputList.input("")
+				.addInput(Text.input("a1", false).setTitle("A1").setDefaultValue("Cb1"))
+				.addInput(Text.input("a2", false).setTitle("A2").setDefaultValue("Cb2"))
+			)
+			.addInput(InputList.input("")
+				.addInput(Text.input("a1", false).setTitle("A1").setDefaultValue("Cc1"))
+				.addInput(Text.input("a2", false).setTitle("A2").setDefaultValue("Cc2"))
+			)
+		);
+		form.addInput(InputList.input("maplist")
+				.addInput(InputList.input("a")
+					.addInput(Text.input("", false).setTitle("B1").setDefaultValue("Da1"))
+					.addInput(Text.input("", false).setTitle("B2").setDefaultValue("Da2"))
+				)
+				.addInput(InputList.input("b")
+					.addInput(Text.input("", false).setTitle("B1").setDefaultValue("Db1"))
+					.addInput(Text.input("", false).setTitle("B2").setDefaultValue("Db2"))
+				)
+				.addInput(InputList.input("c")
+					.addInput(Text.input("", false).setTitle("B1").setDefaultValue("Dc1"))
+					.addInput(Text.input("", false).setTitle("B2").setDefaultValue("Dc2"))
+				)
+			);
+		form.addInput(DynamicList.input("dynamic")
+			.addInput(Text.input("", false).setTitle("Item {i}"))
+		);
+		form.setFormMethod("get");
+		form.addInput(Submit.create("Submit", "submit").setAsync(false));
+		params.put("exampleControl", form);
+		return Response.getTemplate(JSP_PAGE, params);
+	}
 }

@@ -9,12 +9,14 @@ public class ExampleValidator {
 
 	public static final String NAME_FORM = "exampleFormValidator";
 	public static final String NAME_GRID = "exampleGridValidator";
+	public static final String TEST = "exampleTes";
 	
 	public static void init() {
 		getGridValidator();
 		getFormValidator();
+		getTestValidator();
 	}
-	
+
 	public static Validator getGridValidator() {
 		return Validator.create(NAME_GRID, true)
 			.addRule(ItemRules.forName("pageIndex", true))
@@ -78,5 +80,45 @@ public class ExampleValidator {
 					))
 				))
 				;
+	}
+	
+	private static void getTestValidator() {
+		Validator.create(TEST, false)
+			.addRule(ItemRules.forName("list", false)
+				.setListSpecification(new Validator(ItemRules.defaultRule().setType(String.class)
+					.setAllowedValues(Arrays.asList("A1", "A2", "A3"))
+				))
+			)
+			.addRule(ItemRules.forName("map", false)
+				.setMapSpecification(new Validator(ItemRules.defaultRule().setAllowedValues(Arrays.asList("B1", "B2", "B3")))
+					/*.addRule(ItemRules.forName("a", false).setAllowedValues(Arrays.asList("B1")))
+					.addRule(ItemRules.forName("b", false).setAllowedValues(Arrays.asList("B2")))
+					.addRule(ItemRules.forName("c", false).setAllowedValues(Arrays.asList("B3")))*/
+				)
+			)
+			.addRule(ItemRules.forName("maplist", false)
+				.setMapSpecification(
+					new Validator(false)
+						.addRule(ItemRules.forName("a", false).setListSpecification(
+							new Validator(ItemRules.defaultRule().setMaxLength(3))
+						))
+						.addRule(ItemRules.forName("b", false).setListSpecification(
+							new Validator(ItemRules.defaultRule().setMaxLength(3))
+						))
+						.addRule(ItemRules.forName("c", false).setListSpecification(
+							new Validator(ItemRules.defaultRule().setMaxLength(3))
+						))
+				)
+			)
+			/*.addRule(ItemRules.forName("listmap", false).setChangeValue((value)->{
+				System.err.println(value + " " + value.getClass());
+				return value;
+			}))*/
+			.addRule(ItemRules.forName("dynamic", false).setChangeValue((value)->{
+				System.err.println(value + " " + (value == null ? "" : value.getClass()));
+				return value;
+			}))
+			;
+		
 	}
 }

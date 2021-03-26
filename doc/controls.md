@@ -365,15 +365,15 @@ Create input: `File.input(String name, boolean required)`
 
 ### InputList
 
-`InputList` is container for other inputs. These inputs are available on page with name `InputListName[indexOfInput][inputName]`.
+`InputList` is container for other inputs. These inputs are available on page with name `InputListName[nameOfList][inputName]` (in TOTI called Map) or `InputListName[][inputName]` (in TOTI called List).
 
-Create input: `InputList.input(String name)`
+Create input: `InputList.input(String name)`. If you wish use list let name empty string (**not null**).
 
 Add input to list: `inputList.addInput(Input input);`
 
 ### DynamicList
 
-In `DynamicList` you define input. This input appears on page n-times depends on Add/Remove buttons and binding. If you wish bind values to `DynamicList`, in values is required List on DynamicListName key.
+In `DynamicList` you define input. This input appears on page n-times depends on Add/Remove buttons and binding. The inputs are available on page with name `DynamicListName[index][inputName]`. If you wish bind values to `DynamicList`, in values is required List on DynamicListName key.
 
 Example:
 
