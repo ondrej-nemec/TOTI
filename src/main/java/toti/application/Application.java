@@ -189,7 +189,7 @@ public class Application {
 		return new DatabaseConfig(
 				env.getString("database.type"),
 				env.getString("database.url"),
-				env.getBoolean("database.external"),
+				env.getBoolean("database.external") == null ? true : env.getBoolean("database.external"),
 				env.getString("database.schema-name"),
 				env.getString("database.login"),
 				env.getString("database.password"),
