@@ -83,6 +83,11 @@ public class HttpServerFactory {
 		return this;
 	}
 
+	/**
+	 * 
+	 * @param allowedUploadFileTypes - empty Optional means all types, Optional with empty list means no types
+	 * @return
+	 */
 	public HttpServerFactory setAllowedUploadFileTypes(Optional<List<String>> allowedUploadFileTypes) {
 		this.allowedUploadFileTypes = allowedUploadFileTypes;
 		return this;

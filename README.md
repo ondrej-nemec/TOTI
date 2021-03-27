@@ -99,7 +99,7 @@ HttpServer server = factory.get(modules);
 
 `Stop` stop the server.
 
-``getTranslator` returns translator initialized with translation files from modules (see [JI Translator](https://github.com/ondrej-nemec/javainit/tree/master/ji-translator)).
+`getTranslator` returns translator initialized with translation files from modules (see [JI Translator](https://github.com/ondrej-nemec/javainit/tree/master/ji-translator)).
 
 ### Modules
 
@@ -109,7 +109,7 @@ HttpServer server = factory.get(modules);
 * `getControllersPath` - path to module controllers in classpath. For example: directory tree `projectname/src/main/java/example/web/controllers` so here the path will be `example/web/controllers`. See [more about controllers](#controllers)
 * `initInstances` -> `List<Task> initInstances(Env env, Registr registr, Database database, Logger logger) throws Exception;`
 
-`Env` is class representing configuration file, `Registr` see below, `Database` was described upper and `Logger` is suggested logger - not nessessary need to use.
+`Env` is class representing configuration file, `Registr` see [below](#registr), `Database` was described upper and `Logger` is suggested logger - not nessessary need to use.
 
 Example:
 
@@ -176,15 +176,74 @@ Task in TOTI is something what starts with `Application` start and ends with `Ap
 
 ### Controllers
 
+Controller in TOTI accept client request and returns response. 
+This type of class you have to develop and register to `Regist` as factory.
+Every Controller is marked with `Controller` annotation. The annotation require URL as parameter. 
+A method that can handle request is marked with `Action` annotation and returns `Response` instance (see [Response](#responses)). 
+The annotation requires next part of URL as parameter.
+Optionally you can specify which HTTP methods are allowed with `Method` annotation.
+This annotation need list of `HttpMethod`. If is not this annotation present, all methods are allowed.
+
+Both URLs filled in `Controller` and `Action` cannot start or end with `/`, but can be empty string.
+
+Controller example:
+
+```
+@Controller("my-controller")
+public class MyController {
+	...
+}
+```
+
+Method example:
+
+```
+@Action("my-action")
+@Method({HttpMethod.GET, HttpMethod.POST})
+public Response myMethod() {
+	return null;
+}
+```
+
+#### Request parameters
+
+All request parameters can be passed to handling method.
+You can ask for all request parameters:
+
+```
+public Response myMethod(@Params RequestParams params) {....
+```
+
+Or define each parameter separately:
+
+```
+public Response myMethod(@Param("id") Integer id, @Param("name") String name) {...
+```
+
+Or you can combine both ways:
+
+```
+public Response myMethod(@Param("id") Integer id, @Params RequestParams params) {...
+```
+
+[Validation](#request-parameters-validation) of `RequestParameters` is highly recommended.
+
+Parameters can be casted to all primitives except `byte` and `char`. Next allow `List` and `Map` using [HTML list TODO](TODO)
+or from JSON. If you wish upload file, the parameter type is `UploadedFile` - see [Uploading files TODO](TODO)
+
+#### Request parameters validation
+
 #### Routing
 
 #### Responses
 
-#### Request parameters validation
-
 #### Injections
+* odkaz na translator
+* identity
 
 #### Permissions
+* user security factory
+* odkaz na acl
 
 ### Grids
 

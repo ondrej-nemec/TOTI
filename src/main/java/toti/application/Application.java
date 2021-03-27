@@ -175,10 +175,14 @@ public class Application {
 			if (env.getString("http.ip") != null) {
 				factory.setDevelopIpAdresses(env.getList("http.ip", "\\|"));
 			}
+			if (env.getString("http.max-upload-size") != null) {
+				factory.setMaxUploadFileSize(env.getInteger("http.max-upload-size"));
+			}
+			if (env.getString("http.allowed-file-types") != null) {
+				factory.setAllowedUploadFileTypes(Optional.of(env.getList("http.allowed-file-types", "|")));
+			}
 			/*
 			private Translator translator;
-			private int maxUploadFileSize = 0;
-			private Optional<List<String>> allowedUploadFileTypes = Optional.of(new LinkedList<>());
 			*/
 		}
 		return factory;

@@ -62,6 +62,20 @@ All values are optional. If no value specified, default used.
 		<td>http.resource-path</td>
 	</tr>
 	<tr>
+		<td>Maximal allowed file size</td>
+		<td>0</td>
+		<td>Maximal allowed size of uploaded file in bytes</td>
+		<td>setMaxUploadFileSize(int size)</td>
+		<td>http.max-upload-size</td>
+	</tr>
+	<tr>
+		<td>Allowed file types</td>
+		<td>Optional.of(new LinkedList<>())</td>
+		<td>Specify allowed file types</td>
+		<td>setAllowedUploadFileTypes(Optional<List<String>> types) - empty Optional means all types, Optional with empty list means no types</td>
+		<td>http.allowed-file-types - splited by '|'</td>
+	</tr>
+	<tr>
 		<td>Dir response allowed</td>
 		<td>true</td>
 		<td>If URL is directory in resource folder, allow list files</td>
@@ -69,7 +83,7 @@ All values are optional. If no value specified, default used.
 		<td>http.dir-allowed</td>
 	</tr>
 	<tr>
-		<td>minimalize templates</td>
+		<td>Minimalize templates</td>
 		<td>true</td>
 		<td>Remove spaces and new lines from templates. <strong>NOTE: '//' in template JS will hide everything after.</strong></td>
 		<td>setMinimalize(boolean minimalize)</td>
