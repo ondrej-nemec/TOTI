@@ -13,6 +13,7 @@ Main purpose of this framework is create GUI for java servers f.e. in Industry 4
 * [Get started](#get-started)
 	* [Initialize](#initialize)
 	* [Modules](#modules)
+	* [Registr](#registr)
 	* [Tasks](#tasks)
 	* [Controllers](#controllers)
 	* [Templates](#templates)
@@ -63,10 +64,15 @@ For initialization you have two ways. The first is quick and easy, the second al
 
 #### Quick initialization
 
-Quick initialization is realized by `Application` class. After creating new instance, `Application`:
-1. Load configuration file. By default the file is `conf/app.properties` (can be in classpath or dir tree). Location can be changed before creating instance `Application.APP_CONFIG_FILE = "your conf file";`
+Quick initialization is realized by `Application` class. After creating new instance, `Application`. Only one thing that is required is list of [modules](#modules).
+
+```
+Application app = new Application(modules);
+```
+
+1. Load configuration file. By default the file is `conf/app.properties` (can be in classpath or dir tree). Location can be changed before creating instance `Application.APP_CONFIG_FILE = "your conf file";`. See [List of server configuration](doc/server-configuration.md).
 1. Prepare database and database migrations (see [JI Database](https://github.com/ondrej-nemec/javainit/tree/master/ji-database)).
-1. Prepare all tasks defined in modules configurations (see below).
+1. Prepare all tasks defined in modules configurations.
 1. Prepare class `HttpServer`
 
 `Application` has two methods for controlling server: `start` and `stop`.
@@ -79,9 +85,94 @@ Quick initialization is realized by `Application` class. After creating new inst
 
 #### Custom initialization
 
+If you do not want to use the first way, you can manage everythins yourself. For that you need `HttpServerFactory` class and - again - list of modules. After creating factory and before getting server, you can configure the server. [List of server configuration](doc/server-configuration.md)
+
+```
+HttpServerFactory factory = new HttpServerFactory();
+// configuration
+HttpServer server = factory.get(modules);
+```
+
+`HttpServer` has same methods like application: `start`, `stop` and `getTranslator`.
+
+`Start` start the server.
+
+`Stop` stop the server.
+
+``getTranslator` returns translator initialized with translation files from modules (see [JI Translator](https://github.com/ondrej-nemec/javainit/tree/master/ji-translator)).
+
 ### Modules
 
+`Module` represent one unit of your application, f.e. one gradle module. `Module` interface contains methods:
+
+* `getName` - name of module. Have to be unique. If you have only one module, you can let it empty (not null).
+* `getControllersPath` - path to module controllers in classpath. For example: directory tree `projectname/src/main/java/example/web/controllers` so here the path will be `example/web/controllers`. See [more about controllers](#controllers)
+* `initInstances` -> `List<Task> initInstances(Env env, Registr registr, Database database, Logger logger) throws Exception;`
+
+`Env` is class representing configuration file, `Registr` see below, `Database` was described upper and `Logger` is suggested logger - not nessessary need to use.
+
+Example:
+
+```
+@Override
+public List<Task> initInstances(Env env, Registr registr, Database database, Logger logger) throws Exception {
+	ExampleDao dao = new ExampleDao(database);
+	
+	registr.addFactory(SignPageController.class, ()->new SignPageController());
+	registr.addFactory(SignApiController.class, ()->new SignApiController());
+	
+	registr.addFactory(ExamplePageController.class, ()->new ExamplePageController());
+	registr.addFactory(ExampleApiController.class, ()->new ExampleApiController(dao, logger));
+	return Arrays.asList(new ExampleTask(dao));
+}
+```
+
+Except of this, there are some optional methods:
+
+* `addRouter` - you give `Router` as parameter. Allow you change one URL to another one. See [Router](#routing)
+* `getTemplatePath` - specify path to module template folder. Default is `null` and means 'no folder'.
+* `getTranslationPath` - specify path to module translations files. Default is `null` and means 'no translations'.
+* `getMigrationsPath` - specify path to module Database migrations. Default is `null` and means 'no migrations'.
+
+### Registr
+
+`Regist` is container for objects. Contains two types of objects: services and factories. Service is created by you and only once.
+ On the other hand, factory is for creating new instance every time is needed (typically usage is for controllers).
+
+Add service example:
+
+```java
+regist.addService("some-my-service", new MyService());
+```
+
+Get service example:
+
+```
+MyService myService = registr.getService("some-my-service", MyService.class);
+```
+
+Add factory example:
+
+```
+registr.addFactory(MyFactory.class, ()->{
+	return new MyFactory();
+});
+// or
+registr.addFactory("myFactory", ()->{
+	return new MyFactory();
+});
+```
+
+Get factory example (this is used internal very often, but probably no reason for using by you):
+
+```
+ThrowingSupplier<MyFactory> factory = registr.getFactory(MyFactory.class.getName());
+```
+
 ### Tasks
+
+Task in TOTI is something what starts with `Application` start and ends with `Application` stop. So `Task` interface contains only `start` and `stop` methods.
+ **Threads are completely on you. This methods are blocking.**
 
 ### Controllers
 

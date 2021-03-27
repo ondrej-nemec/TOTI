@@ -7,7 +7,7 @@ import common.structures.ThrowingSupplier;
 
 public class Registr {
 	
-	private final static Registr registr = new Registr();;
+	private final static Registr registr = new Registr();
 	
 	public static Registr get() {
 		return registr;
