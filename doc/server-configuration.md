@@ -34,65 +34,65 @@ All values are optional. If no value specified, default used.
 		<td>http.read-timeout</td>
 	</tr>
 	<tr>
-		<td>headers split |</td>
-		<td></td>
-		<td></td>
+		<td>Response headers</td>
+		<td>Arrays.asList("Access-Control-Allow-Origin: *")</td>
+		<td>List of response headers. </td>
 		<td>new ResponseHeaders(List<String> headers)<br>setHeaders(ResponseHeaders headers)</td>
-		<td>http.headers</td>
+		<td>http.headers - splited by '|'</td>
 	</tr>
 	<tr>
-		<td>charset</td>
-		<td></td>
-		<td></td>
+		<td>Charset</td>
+		<td>UTF-8</td>
+		<td>Charset</td>
 		<td>setCharset(String charset)</td>
 		<td>http.charset</td>
 	</tr>
 	<tr>
-		<td>temp folder</td>
-		<td></td>
-		<td></td>
+		<td>Temp folder</td>
+		<td>temp</td>
+		<td>Folder for TOTI temporary files</td>
 		<td>setTempPath(String path)</td>
 		<td>http.temp</td>
 	</tr>
 	<tr>
-		<td>resource path -- www folder</td>
-		<td></td>
-		<td></td>
+		<td>Resource folder</td>
+		<td>www</td>
+		<td>Resource (or 'www') folder. Files here will be available in brower</td>
 		<td>setResourcesPath(String path)</td>
 		<td>http.resource-path</td>
 	</tr>
 	<tr>
-		<td>dir allowed</td>
-		<td></td>
-		<td></td>
+		<td>Dir response allowed</td>
+		<td>true</td>
+		<td>If URL is directory in resource folder, allow list files</td>
 		<td>setDirResponseAllowed(boolean allowed)</td>
 		<td>http.dir-allowed</td>
 	</tr>
 	<tr>
 		<td>minimalize templates</td>
-		<td></td>
-		<td></td>
+		<td>true</td>
+		<td>Remove spaces and new lines from templates. <strong>NOTE: '//' in template JS will hide everything after.</strong></td>
 		<td>setMinimalize(boolean minimalize)</td>
 		<td>http.minimalize-templates</td>
 	</tr>
 	<tr>
-		<td>allowed ips split |</td>
-		<td></td>
-		<td></td>
+		<td>Developing IP addresses</td>
+		<td>Arrays.asList("127.0.0.1", "/0:0:0:0:0:0:0:1")</td>
+		<td>Developing IP addresses. Allow show request exception in browser.</td>
 		<td>setDevelopIpAddresses(List<String> ips)</td>
-		<td>http.ip</td>
+		<td>http.ip - splited by '|'</td>
 	</tr>
 	<tr>
-		<td>locale</td>
-		<td></td>
-		<td></td>
+		<td>Default locale</td>
+		<td>Locale.getDefault()</td>
+		<td>Used if request not contains language information.</td>
 		<td>setDefLang(String lang)</td>
 		<td>http.locale</td>
 	</tr>
 	<tr>
-		<td>token expired</td>
-		<td></td>
-		<td></td>
+		<td>Token expiration</td>
+		<td>600000 ms => 10 min</td>
+		<td>Token expiration time in miliseconds</td>
 		<td rowspan="2">setUserSecurity(userSecurityFactory.get(
 			<br>
 			long tokenExpirationTime, <br>
@@ -102,15 +102,15 @@ All values are optional. If no value specified, default used.
 		<td>http.token-expired</td>
 	</tr>
 	<tr>
-		<td>token-salt</td>
-		<td></td>
-		<td></td>
+		<td>Token salt</td>
+		<td>--empty-string--</td>
+		<td>Custom token salt</td>
 		<td>http.token-salt</td>
 	</tr>
 	<tr>
-		<td>key store</td>
-		<td></td>
-		<td></td>
+		<td>Key store</td>
+		<td>--not-used--</td>
+		<td>If keystore is specified, the server can provide secured HTTPS connection. A JKS keystore is required</td>
 		<td rowspan="4">
 			setCerts(new ServerSecuredCredentials(
 			<br>
@@ -118,27 +118,26 @@ All values are optional. If no value specified, default used.
 				String keyStorePassword,<br>
 				Optional<String> trustStore,<br>
 				Optional<String> trustStorePassword<br>
-			<br>
 			))
 		</td>
 		<td>http.key-store</td>
 	</tr>
 	<tr>
-		<td>keystore password</td>
-		<td></td>
-		<td></td>
+		<td>Key store password</td>
+		<td>--not-used--</td>
+		<td>Password for key store</td>
 		<td>http.key-store-password</td>
 	</tr>
 	<tr>
-		<td>thust store</td>
-		<td></td>
-		<td></td>
+		<td>Trust store</td>
+		<td>--not-used--</td>
+		<td>A JKS store for trusted clients certificates. If not specified or is Optional.empty() all clients are allowed.</td>
 		<td>http.trust-store</td>
 	</tr>
 	<tr>
-		<td>trust store password</td>
-		<td></td>
-		<td></td>
+		<td>Trust store password</td>
+		<td>--not-used--</td>
+		<td>Password for trust store</td>
 		<td>http.trust-store-password</td>
 	</tr>
 </table>
