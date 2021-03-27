@@ -93,7 +93,12 @@ All values are optional. If no value specified, default used.
 		<td>token expired</td>
 		<td></td>
 		<td></td>
-		<td rowspan="2">setUserSecurity(userSecurityFactory.get(long tokenExpirationTime, String tokenSalt, Logger logger))</td>
+		<td rowspan="2">setUserSecurity(userSecurityFactory.get(
+			<br>
+			long tokenExpirationTime, <br>
+			String tokenSalt,<br>
+			Logger logger<br>
+		 ))</td>
 		<td>http.token-expired</td>
 	</tr>
 	<tr>
@@ -106,29 +111,35 @@ All values are optional. If no value specified, default used.
 		<td>key store</td>
 		<td></td>
 		<td></td>
-		<td></td>
-		<td>http.</td>
+		<td rowspan="4">
+			setCerts(new ServerSecuredCredentials(
+			<br>
+				String keyStore,<br>
+				String keyStorePassword,<br>
+				Optional<String> trustStore,<br>
+				Optional<String> trustStorePassword<br>
+			<br>
+			))
+		</td>
+		<td>http.key-store</td>
 	</tr>
 	<tr>
 		<td>keystore password</td>
 		<td></td>
 		<td></td>
-		<td></td>
-		<td>http.</td>
+		<td>http.key-store-password</td>
 	</tr>
 	<tr>
 		<td>thust store</td>
 		<td></td>
 		<td></td>
-		<td></td>
-		<td>http.</td>
+		<td>http.trust-store</td>
 	</tr>
 	<tr>
 		<td>trust store password</td>
 		<td></td>
 		<td></td>
-		<td></td>
-		<td>http.</td>
+		<td>http.trust-store-password</td>
 	</tr>
 </table>
 
