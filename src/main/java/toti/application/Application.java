@@ -49,7 +49,9 @@ public class Application {
 			/*** creating db ****/
 			List<String> migrations = new LinkedList<>();
 			modules.forEach((config)->{
-				migrations.add(config.getMigrationsPath());
+				if (config.getMigrationsPath() != null) {
+					migrations.add(config.getMigrationsPath());
+				}
 			});
 			DatabaseConfig databaseConfig = createDatabaseConfig(env, migrations);
 			if (databaseConfig == null) {
