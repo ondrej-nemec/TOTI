@@ -37,7 +37,7 @@ public class BootstrapEndToEndTest {
 					factory.setPort(81);
 					factory.setThreadPool(10);
 					factory.setReadTimeout(60000);
-					factory.setLogger(LoggerFactory.getLogger("server"));
+					factory.setLogger(LoggerFactory.getLogger("toti"));
 					factory.setMinimalize(false);
 					factory.setDeleteTempJavaFiles(false);
 					factory.setHeaders(new ResponseHeaders(Arrays.asList(
