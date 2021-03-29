@@ -1,4 +1,4 @@
-/* TOTI Form version 0.0.7 */
+/* TOTI Form version 0.0.8 */
 class TotiForm {
 
 	constructor(config) {
@@ -512,9 +512,11 @@ class TotiForm {
 			}
 			
 			var elements = form.querySelectorAll('[name="' + key + '"]');
-			if (elements.length === 0) {
-				continue;
-			}
+            if (elements.length === 0) {
+                key = key + "[]";
+                elements = form.querySelectorAll('[name="' + key + '"]');
+            }
+
 			var element;
 			if (elements.length === 1) {
 				element = elements[0];
