@@ -76,7 +76,7 @@ public class TemplateFactory {
 			boolean deleteAuxJavaClass,
 			boolean minimalize,
 			Logger logger) {
-		String cachePath = tempPath + "/cache";
+		String cachePath = tempPath + "/cache/" + module;
 		new File(cachePath).mkdir();
 		this.tempPath = cachePath;
 		this.templatePath = templatePath;
