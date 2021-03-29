@@ -54,7 +54,7 @@ public class HttpServer {
 					module.getName(), 
 					templateFactories, 
 					deleteDir, minimalize,
-					LoggerFactory.getLogger("template-factory")
+					logger
 			);
 			controllers.put(module.getControllersPath(), templateFactory);
 			templateFactories.put(module.getName(), templateFactory);
@@ -65,7 +65,7 @@ public class HttpServer {
 		TemplateFactory totiTemplateFactory = new TemplateFactory(
 				tempPath, "toti/web", "", templateFactories,
 				deleteDir, minimalize,
-				LoggerFactory.getLogger("template-factory")
+				logger
 		);
 		if (translator == null) {
 			String[] translators = new String[trans.size()];

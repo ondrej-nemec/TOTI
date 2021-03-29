@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+import common.Logger;
 import common.functions.Env;
 import database.Database;
 import database.DatabaseConfig;
@@ -35,14 +36,20 @@ public class Application {
 	private HttpServer server;
 	private Database database;
 	private final List<Task> tasks = new LinkedList<>();
+	private final Logger logger;
 	
 	public <T extends Module> Application(List<T> modules) {
+		this(modules, LoggerFactory.getLogger("toti"));
+	}
+	
+	public <T extends Module> Application(List<T> modules, Logger logger) {
+		this.logger = logger;
 		LoggerFactory.setConfigFile(LOG_CONFIG_FILE);
-		LoggerFactory.getLogger("main").info("Initialization...");
+		logger.info("Initialization...");
 		try {
 			Env env = null;
 			if (APP_CONFIG_FILE == null) {
-				LoggerFactory.getLogger("main").warn("No config file specified. Env is null");
+				logger.warn("No config file specified. Env is null");
 			} else {
 				env = new Env(APP_CONFIG_FILE);
 			}
@@ -56,7 +63,7 @@ public class Application {
 			DatabaseConfig databaseConfig = createDatabaseConfig(env, migrations);
 			if (databaseConfig == null) {
 				database = null;
-				LoggerFactory.getLogger("main").warn("Database config is null, so database is null");
+				logger.warn("Database config is null, so database is null");
 			} else {
 				database = new Database(databaseConfig, LoggerFactory.getLogger("database"));
 			}
@@ -73,10 +80,10 @@ public class Application {
 			}
 			this.server = createServerFactory(env, registr).get(modules);
 		} catch (Exception e) {
-			LoggerFactory.getLogger("main").error("Start failed", e);
+			logger.error("Start failed", e);
 			System.exit(1);
 		}
-		LoggerFactory.getLogger("main").info("Initialized");
+		logger.info("Initialized");
 	}
 	
 	/************/
@@ -86,7 +93,7 @@ public class Application {
 	}
 	
 	public void start() {
-		LoggerFactory.getLogger("main").info("Starting...");
+		logger.info("Starting...");
 		try {
 			if (database != null) {
 				database.createDbAndMigrate();
@@ -96,24 +103,24 @@ public class Application {
 			}
 			server.start();
 		} catch (Exception e) {
-			LoggerFactory.getLogger("main").error("Start failed", e);
+			logger.error("Start failed", e);
 			System.exit(1);
 		}
-		LoggerFactory.getLogger("main").info("Started");
+		logger.info("Started");
 	}
 	
 	public void stop() {
-		LoggerFactory.getLogger("main").info("Stopping...");
+		logger.info("Stopping...");
 		try {
 			for (Task task : tasks) {
 				task.stop();
 			}
 			server.stop();
 		} catch (Exception e) {
-			LoggerFactory.getLogger("main").error("Stoped with failure", e);
+			logger.error("Stoped with failure", e);
 			System.exit(0);
 		}
-		LoggerFactory.getLogger("main").info("Stopped");
+		logger.info("Stopped");
 	}
 	
 	/************/
@@ -133,7 +140,7 @@ public class Application {
 			if (env.getString("http.headers") != null) {
 				factory.setHeaders(new ResponseHeaders(env.getList("http.headers", "\\|")));
 			}
-			factory.setLogger(LoggerFactory.getLogger("server"));
+			factory.setLogger(logger);
 			if (env.getString("http.charset") != null) {
 				factory.setCharset(env.getString("http.charset"));
 			}
