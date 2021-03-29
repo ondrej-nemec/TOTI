@@ -39,12 +39,15 @@ public class Application {
 	private final Logger logger;
 	
 	public <T extends Module> Application(List<T> modules) {
-		this(modules, LoggerFactory.getLogger("toti"));
+		this(modules, null);
 	}
 	
 	public <T extends Module> Application(List<T> modules, Logger logger) {
-		this.logger = logger;
 		LoggerFactory.setConfigFile(LOG_CONFIG_FILE);
+		if (logger == null) {
+			logger = LoggerFactory.getLogger("toti");
+		}
+		this.logger = logger;
 		logger.info("Initialization...");
 		try {
 			Env env = null;
