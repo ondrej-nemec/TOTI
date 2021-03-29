@@ -2,7 +2,7 @@
 
 # TOTI
 
-[![](https://jitpack.io/v/ondrej-nemec/TOTI.svg)](https://jitpack.io/#ondrej-nemec/MVC)
+[![](https://jitpack.io/v/ondrej-nemec/TOTI.svg)](https://jitpack.io/#ondrej-nemec/TOTI)
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/ondrej-nemec/TOTI/blob/master/LICENSE)
 
 TOTI - **T**ip **O**f **T**he **I**ceberg - is Java web framework. Provide HTTP(S) interface between users and your Java application. With TOTI you can create Rest API, generate HTML pages from templates or just web server (like f.e. Apache but begging)
@@ -27,7 +27,9 @@ Main purpose of this framework is create GUI for java servers f.e. in Industry 4
 * [How to do](#how-to-do)
 	* [Login](#login)
 	* [Change language](#change-language)
-	* [Controllers method for grid and form](#controllers-method-for-grid-and-form)
+	* [Controller's method for grid and form](#controller-s-method-for-grid-and-form)
+	* [Validator for Dynamic List](#validator-for-dynamic-list)
+	* [Validator for Input List in Input List](#validator-for-input-list-in-input-list)
 * Documentation
 	* [List of filters and inputs](doc/controls.md)
 	* [List of template tags](doc/tags.md)
@@ -233,6 +235,8 @@ or from JSON. If you wish upload file, the parameter type is `UploadedFile` - se
 
 #### Request parameters validation
 
+`Validator` class can validate incoming values
+
 #### Routing
 
 #### Responses
@@ -257,4 +261,8 @@ or from JSON. If you wish upload file, the parameter type is `UploadedFile` - se
 
 ### Change language
 
-### Controllers method for grid and form
+### Controller's method for grid and form
+
+### Validator for Dynamic List
+
+### Validator for Input List in Input List
