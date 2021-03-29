@@ -1,13 +1,9 @@
 package example.dao;
 
-import java.sql.SQLException;
-import java.util.Collection;
-import java.util.Map;
 import java.util.Optional;
 
 import database.Database;
 import toti.application.EntityDao;
-import toti.application.GridDataSet;
 
 public class ExampleDao implements EntityDao {
 
@@ -17,40 +13,30 @@ public class ExampleDao implements EntityDao {
 	public ExampleDao(Database database) {
 		this.database = database;
 	}
+
 	@Override
-	public GridDataSet getAll(int pageIndex, int pageSize, Map<String, Object> filters,
-			Map<String, Object> sorting, Collection<Object> forOwners) throws SQLException {
-		return getAll(database, table, Optional.empty(), pageIndex, pageSize, filters, sorting, forOwners);
+	public Database getDatabase() {
+		return database;
 	}
 
 	@Override
-	public Map<String, Object> get(int id) throws SQLException {
-		return get(database, table, id);
+	public String getTableName() {
+		return table;
 	}
 
 	@Override
-	public Map<String, Object> delete(int id) throws SQLException {
-		return delete(database, table, id);
+	public Optional<String> getOwnerColumnName() {
+		return Optional.empty();
 	}
 
 	@Override
-	public void update(int id, Map<String, Object> values) throws SQLException {
-		update(database, table, id, values);
+	public String getHelpKey() {
+		return "id";
 	}
 
 	@Override
-	public int insert(Map<String, Object> values) throws SQLException {
-		return insert(database, table, values);
-	}
-
-	@Override
-	public int getTotalCount() throws SQLException {
-		return getTotalCount(database, table);
-	}
-
-	@Override
-	public Map<String, Object> getHelp(Collection<Object> forOwners) throws SQLException {
-		return getHelp(database, table, Optional.empty(), forOwners, "id", "name");
+	public String getHelpValue() {
+		return "name";
 	}
 
 }

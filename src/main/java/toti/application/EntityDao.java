@@ -16,7 +16,7 @@ import querybuilder.SelectQueryBuilder;
 import querybuilder.UpdateQueryBuilder;
 
 public interface EntityDao {
-	
+	/*
 	GridDataSet getAll(
 			int pageIndex,
 			int pageSize, 
@@ -35,22 +35,30 @@ public interface EntityDao {
 	int getTotalCount() throws SQLException;
 	
 	Map<String, Object> getHelp(Collection<Object> forOwners) throws SQLException;
+	*/
+	
+	Database getDatabase();
+	
+	String getTableName();
+	
+	Optional<String> getOwnerColumnName();
+	
+	String getHelpKey();
+	
+	String getHelpValue();
 	
 	default GridDataSet getAll(
-			Database database,
-			String table,
-			Optional<String> ownerColumnName,
 			int pageIndex,
 			int pageSize, 
 			Map<String, Object> filters,
 			Map<String, Object> sorting,
 			Collection<Object> forOwners) throws SQLException {
-		return database.applyBuilder((builder)->{
-			SelectQueryBuilder select = builder.select("*").from(table);
+		return getDatabase().applyBuilder((builder)->{
+			SelectQueryBuilder select = builder.select("*").from(getTableName());
 			select.where("1=1");
-			if (ownerColumnName.isPresent()) {
+			if (getOwnerColumnName().isPresent()) {
 				if (!forOwners.isEmpty()) {
-					select.andWhere(ownerColumnName.get() + " in (:in)")
+					select.andWhere(getOwnerColumnName().get() + " in (:in)")
 						.addParameter(":in", forOwners);
 				} else {
 					select.andWhere("1=2"); // no results
@@ -95,23 +103,25 @@ public interface EntityDao {
 		});
 	}
 	
-	default Map<String, Object> get(Database database, String table, int id) throws SQLException {
-		return database.applyBuilder((builder)->{
-			return builder.select("*").from(table).where("id = :id").addParameter(":id", id).fetchRow().getValues();
+	default Map<String, Object> get(int id) throws SQLException {
+		return getDatabase().applyBuilder((builder)->{
+			return builder.select("*").from(getTableName())
+					.where("id = :id").addParameter(":id", id).fetchRow().getValues();
 		});
 	}
 	
-	default Map<String, Object> delete(Database database, String table, int id) throws SQLException {
-		return database.applyBuilder((builder)->{
-			Map<String, Object> item = builder.select("*").from(table).where("id = :id").addParameter(":id", id).fetchRow().getValues();
-			builder.delete(table).where("id = :id").addParameter(":id", id).execute();
+	default Map<String, Object> delete(int id) throws SQLException {
+		return getDatabase().applyBuilder((builder)->{
+			Map<String, Object> item = builder.select("*").from(getTableName()).where("id = :id")
+					.addParameter(":id", id).fetchRow().getValues();
+			builder.delete(getTableName()).where("id = :id").addParameter(":id", id).execute();
 			return item;
 		});
 	}
 	
-	default void update(Database database, String table, int id, Map<String, Object> values) throws SQLException {
-		database.applyBuilder((builder)->{
-			UpdateQueryBuilder b = builder.update(table);
+	default void update(int id, Map<String, Object> values) throws SQLException {
+		getDatabase().applyBuilder((builder)->{
+			UpdateQueryBuilder b = builder.update(getTableName());
 			values.forEach((name, value)->{
 				b.set(String.format("%s = :%s", name, name)).addParameter(":" + name, value);
 			});
@@ -121,9 +131,9 @@ public interface EntityDao {
 		});
 	}
 	
-	default int insert(Database database, String table, Map<String, Object> values) throws SQLException {
-		return database.applyBuilder((builder)->{
-			InsertQueryBuilder b = builder.insert(table);
+	default int insert(Map<String, Object> values) throws SQLException {
+		return getDatabase().applyBuilder((builder)->{
+			InsertQueryBuilder b = builder.insert(getTableName());
 			values.forEach((name, value)->{
 				b.addValue(name, value);
 			});
@@ -137,25 +147,19 @@ public interface EntityDao {
 		});
 	}
 	
-	default Map<String, Object> getHelp(
-			Database database,
-			String table,
-			Optional<String> ownerColumnName,
-			Collection<Object> forOwners,
-			String keyName,
-			String valueName) throws SQLException {
-		return database.applyBuilder((builder)->{
+	default Map<String, Object> getHelp(Collection<Object> forOwners) throws SQLException {
+		return getDatabase().applyBuilder((builder)->{
 			Map<String, Object> items = new HashMap<>();
-			SelectQueryBuilder select = builder.select(keyName + "," + valueName).from(table);
-			if (ownerColumnName.isPresent()) {
+			SelectQueryBuilder select = builder.select(getHelpKey() + "," + getHelpValue()).from(getTableName());
+			if (getOwnerColumnName().isPresent()) {
 				if (!forOwners.isEmpty()) {
-					select.where(ownerColumnName.get() + " in (:in)").addParameter(":in", forOwners);
+					select.where(getOwnerColumnName().get() + " in (:in)").addParameter(":in", forOwners);
 				} else {
 					select.where("1=2"); // no results
 				}
 			}
 			select.fetchAll().forEach((row)->{
-				items.put(row.getString(keyName), row.getValue(valueName));
+				items.put(row.getString(getHelpKey()), row.getValue(getHelpValue()));
 			});
 			return items;
 		});
