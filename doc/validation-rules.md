@@ -18,6 +18,7 @@
 * [Map Specification](#map-specification)
 * [List Specification](#list-specification)
 * [Change value](#change-value)
+* [Global Rule](#global-rule)
 
 ## Creating ItemRules
 
@@ -183,4 +184,18 @@ Allow change value by given function. Called after all other validation.
 
 ```
 setChangeValue(Function<Object, Object> changeValue);
+```
+
+## Global Rule
+
+If you wish compare two values or do anything else with parameters before passing to controller, you wil appraise `setGlobalFunction` on `Validator`. Parameter to this function is `BiFunction` that consume `RequestParameters` and `Translator` and returns `Set` of Strings (errors). Empty `Set` means 'no error'. This `BiFunction` is applied after all other validation rules and **only if no error appear before**.
+
+```
+new Validator(true)
+	...
+	.setGlobalFunction((parameters, translator)->{
+		Set<String> set = new HashSet<>();
+		set.add("You cannot save this form");
+		return set;
+	});
 ```

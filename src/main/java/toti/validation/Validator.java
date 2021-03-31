@@ -8,10 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import common.exceptions.LogicException;
 import socketCommunication.http.server.RequestParameters;
 import socketCommunication.http.server.UploadedFile;
 import toti.registr.Registr;
@@ -23,6 +25,7 @@ public class Validator {
 	private final boolean strictList;
 	private final Optional<ItemRules> defaultRule;
 	private final Function<Translator, String> onStrictListError;
+	private Optional<BiFunction<RequestParameters, Translator, Set<String>>> globalFunc = Optional.empty();
 	
 	public static Validator create(String uniqueName, boolean strictList, Function<Translator, String> onStrictListError) {
 		Validator val = new Validator(strictList, onStrictListError);
@@ -64,6 +67,14 @@ public class Validator {
 		return this;
 	}
 	
+	public Validator setGlobalFunction(BiFunction<RequestParameters, Translator, Set<String>> globalFunction) {
+		if (this.globalFunc.isPresent()) {
+			throw new LogicException("Global function is already set");
+		}
+		this.globalFunc = Optional.of(globalFunction);
+		return this;
+	}
+	
 	public Map<String, Set<String>> validate(RequestParameters prop, Translator translator) {
 		return validate("%s", prop, translator);
 	}
@@ -100,6 +111,12 @@ public class Validator {
 				}
 			});
 		}
+		if (globalFunc.isPresent() && errors.isEmpty()) {
+			Set<String> globalErrors = globalFunc.get().apply(prop, translator);
+			if (!globalErrors.isEmpty()) {
+				errors.put("form", globalErrors);
+			}
+		}
 		return errors;
 	}
 	
@@ -115,8 +132,8 @@ public class Validator {
 					Optional.of(rule.getRequired()),
 					(required)->required,
 					errors,
-					propertyName, 
-					rule.getOnRequiredError().apply(translator)
+					"form", 
+					propertyName + ": " + rule.getOnRequiredError().apply(translator)
 			);
 		} else {
 			Object o = prop.get(ruleName);

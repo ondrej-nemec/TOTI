@@ -1,6 +1,8 @@
 package example.web.validator;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import toti.validation.ItemRules;
 import toti.validation.Validator;
@@ -79,6 +81,13 @@ public class ExampleValidator {
 						.addRule(ItemRules.forName("second-in-pair", true).setMaxLength(5))
 					))
 				))
+				.addRule(ItemRules.forName("aaaaaaaa", true))
+				.setGlobalFunction((prop, t)->{
+					System.err.println("Working!!!");
+					Set<String> set = new HashSet<>();
+					set.add("Working :-)");
+					return set;
+				})
 				;
 	}
 	
