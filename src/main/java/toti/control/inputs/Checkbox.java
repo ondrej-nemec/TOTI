@@ -39,7 +39,11 @@ public class Checkbox implements Input {
 	}
 	
 	public Checkbox setDefaultValue(Object value) {
-		this.value = value.toString();
+		if (value != null) {
+			this.value = value.toString();
+		} else {
+			this.value = null;
+		}
 		return this;
 	}
 	

@@ -63,7 +63,11 @@ public class Number implements Input, Filter {
 	}
 	
 	public Number setDefaultValue(Object value) {
-		this.value = value.toString();
+		if (value != null) {
+			this.value = value.toString();
+		} else {
+			this.value = null;
+		}
 		return this;
 	}
 	

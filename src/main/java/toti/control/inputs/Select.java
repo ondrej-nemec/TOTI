@@ -61,8 +61,12 @@ public class Select implements Input, Filter {
 		return this;
 	}
 	
-	public Select setDefaultValue(String value) {
-		this.value = value;
+	public Select setDefaultValue(Object value) {
+		if (value != null) {
+			this.value = value.toString();
+		} else {
+			this.value = null;
+		}
 		return this;
 	}
 	
