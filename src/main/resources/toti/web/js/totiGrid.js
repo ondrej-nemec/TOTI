@@ -1,4 +1,4 @@
-/* TOTI Grid version 0.0.5 */
+/* TOTI Grid version 0.0.6 */
 class TotiGrid {
 
 	constructor(config) {
@@ -327,6 +327,7 @@ class TotiGrid {
 								href: totiUtils.parametrizedString(button.href, row),
 								method: button.method,
 								async: button.ajax,
+								params: button.requestParams,
 								submitConfirmation: function() {
 									if (button.hasOwnProperty('confirmation')) {
 										var message = totiUtils.parametrizedString(button.confirmation, row);

@@ -245,6 +245,7 @@ Settings only for async:
 * Do after success response `setOnSuccess`: name of JS function called after success response. Response is used as parameter
 * Do after failure response `setOnFailure`: name of JS function called after failure response. Response is used as parameter
 * Confirmation before `setConfirmation`: text of confirmation. If no text set, no confirmation appear. If used in grid, you can parametrize URL with '{*name-of-parameter*}'.
+* Request parameters `addRequestParam`: add new request parameter (can be called more times)
 
 ### Reset
 

@@ -1,4 +1,4 @@
-/* TOTI Form version 0.0.8 */
+/* TOTI Form version 0.0.9 */
 class TotiForm {
 
 	constructor(config) {
@@ -309,6 +309,7 @@ class TotiForm {
 					href: field.href,
 					method: field.method,
 					async: field.ajax,
+					params: field.requestParams,
 					submitConfirmation: function() {
 						if (field.hasOwnProperty('confirmation')) {
 							return totiDisplay.confirm(field.confirmation, row);

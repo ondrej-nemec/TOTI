@@ -66,7 +66,7 @@ public class ExampleApiController {
 	}
 
 	@Action(value = "test", validator = ExampleValidator.TEST)
-	@Method({HttpMethod.GET})
+	@Method({HttpMethod.GET, HttpMethod.POST})
 	public Response test(@Params RequestParameters params) {
 		params.forEach((key, name)->{
 			System.err.println(key + ": " + name);

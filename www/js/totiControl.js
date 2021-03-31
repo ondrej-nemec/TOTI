@@ -1,4 +1,4 @@
-/* TOTI Control version 0.0.7 */
+/* TOTI Control version 0.0.8 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -354,7 +354,7 @@ var totiControl = {
 				return false;
 			}
 			if (clickSettings.async) {
-				totiLoad.async(clickSettings.href, clickSettings.method, {}, totiLoad.getHeaders(), function(res) {
+				totiLoad.async(clickSettings.href, clickSettings.method, clickSettings.params, totiLoad.getHeaders(), function(res) {
 					if (clickSettings.hasOwnProperty('onSuccess')) {
 						window[clickSettings.onSuccess](res);
 					} else {

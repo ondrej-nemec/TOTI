@@ -115,6 +115,11 @@ public class ExamplePageController {
 					.setTitle("Delete").setType(ButtonType.DANGER)
 					.setMethod("delete").setAsync(true).setConfirmation("Really delete {name}?")
 			)
+			
+			.addButton(
+					Button.create("/example-module/api/example/test", "test").setMethod("post")
+					.addRequestParam("a", "a").addRequestParam("b", "bb").setAsync(true)
+			)
 		);
 		// END
 		params.put("exampleControl", grid);
@@ -234,6 +239,11 @@ public class ExamplePageController {
 		form.addInput(
 			Submit.create("Save And Return", "save-back").setAsync(true)
 			   .setRedirect("/example-module/example/list")
+		);
+		
+		form.addInput(
+				Button.create("/example-module/api/example/test", "test").setMethod("post")
+				.addRequestParam("a", "a").addRequestParam("b", "bb").setAsync(true)
 		);
 		// END
 		if (id != null) {

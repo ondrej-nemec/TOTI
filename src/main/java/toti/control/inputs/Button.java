@@ -14,6 +14,7 @@ public class Button implements Input {
 	private String title = null;
 	private boolean ajax = false;
 	private String method = "get";
+	private Map<String, String> requestParams = new HashMap<>();
 	private final Map<String, String> params = new HashMap<>();
 	private String onFailure;
 	private String onSuccess;
@@ -62,6 +63,11 @@ public class Button implements Input {
 		this.ajax = async;
 		return this;
 	}
+	
+	public Button addRequestParam(String name, String value) {
+		this.requestParams.put(name, value);
+		return this;
+	}
 
 	public Button addParam(String name, String value) {
 		params.put(name, value);
@@ -82,6 +88,7 @@ public class Button implements Input {
 		json.put("name", name);
 		json.put("id", name);
 		json.put("method", method);
+		json.put("requestParams", requestParams);
 		if (title != null) {
 			json.put("value", title);
 		}
