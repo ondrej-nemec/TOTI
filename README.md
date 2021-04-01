@@ -249,6 +249,16 @@ Validator v = new Validator(true)
 
 Here `RequestParameters` can contains only key `id` and optionally `name` but nothing more. And `id` must be castable to `Integer`. [Here](doc/validation-rules.md) is list of all `ItemRules` options.
 
+However, instead of `boolean strict` you can specify default `ItemRules` that will be used if `ItemRules` is missing.
+
+```
+Validator v = new Validator(ItemRules.defaultRule().setType(Boolean.class))
+	.addRule(ItemRules.forName("id", true).setType(Integer.class))
+	.addRule(ItemRules.forName("name", false));
+```
+
+In this case, `RequestParameters` have to contains `id` as `Integer`, can contains `name` and can contains any other parameters if a value is `boolean`.
+
 **How validate request:**
 
 1. Inside you method calling `validate` method. This method returns Map of errors, where keys are input names. If empty, `RequestParameters` are OK.
@@ -338,3 +348,4 @@ tagy
 ### Validator for Dynamic List
 
 ### Validator for Input List in Input List
+– zmínit single value a skupinu hodnot
