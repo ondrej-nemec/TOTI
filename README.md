@@ -228,18 +228,87 @@ Or you can combine both ways:
 public Response myMethod(@Param("id") Integer id, @Params RequestParams params) {...
 ```
 
+If you wish read parameter from URL (for example `/entity/edit/1`), use instead of `@Param("id")` -> `@ParamUrl("id")`
+
 [Validation](#request-parameters-validation) of `RequestParameters` is highly recommended.
 
-Parameters can be casted to all primitives except `byte` and `char`. Next allow `List` and `Map` using [HTML list TODO](TODO)
-or from JSON. If you wish upload file, the parameter type is `UploadedFile` - see [Uploading files TODO](TODO)
+Parameters can be casted to all primitives except `byte` and `char`. Next allow `List` and `Map` using [HTML list](https://github.com/ondrej-nemec/javainit/tree/master/ji-communication#request-parameters)
+or from JSON. If you wish upload file, the parameter type is `UploadedFile` - see [Uploading files](https://github.com/ondrej-nemec/javainit/tree/master/ji-communication#request-parameters)
 
 #### Request parameters validation
 
-`Validator` class can validate incoming values
+`Validator` class validate incoming values. Constructor requires one parameter: `boolean strict`. This parameter says if `RequestParameters` can contains more than specific (`strict == false`) values or only specified in this `Validator`  instance (`strict == true`). For validation of one request param you have to add `ItemRules` into `Validator`.
+
+Example:
+
+```
+Validator v = new Validator(true)
+	.addRule(ItemRules.forName("id", true).setType(Integer.class))
+	.addRule(ItemRules.forName("name", false));
+```
+
+Here `RequestParameters` can contains only key `id` and optionally `name` but nothing more. And `id` must be castable to `Integer`. [Here](doc/validation-rules.md) is list of all `ItemRules` options.
+
+**How validate request:**
+
+1. Inside you method calling `validate` method. This method returns Map of errors, where keys are input names. If empty, `RequestParameters` are OK.
+1. Let TOTI validate parameters before calling your method:
+
+Firstly add your `Validator` instance as service to register:
+
+```
+register.addService("uniqueServiceName", myValidatorInstance);
+```
+
+OR using `Validator` factory method
+
+```
+Validator.create("uniqueServiceName", true) // second parameter is 'strict'
+	// ... add rule ...
+```
+
+And secondary add parameter to `Action` annotation of method:
+
+```
+// FROM
+@Action("myAction")
+// TO
+@Action(value="myAction", validator="uniqueServiceName")
+```
+
+If `RequestParameters` will not valid, response with code 400 and list of errors is returned before calling your method.
 
 #### Routing
 
+Part of final URI is specified in `Controller` and `Action` annotations. If value is empty string, is ignored. Complete URI is looks like: `/<module-name>[/<path>]/<controller-anotation>/<action-annotation>[/<url-parameter>]`.
+
+`module-name` - name of your module you specify in `Module`. If empty, is ignored.
+
+`path` - the controller path specified in `Module` is base path for controllers for given module. Every sub packages are the path.
+
+Example:
+
+The controller path is `com.example.web.controllers`. This package contains `FirstController` class and sub package `api` with `SecondController` class. The module name is `example`. So, URL for `FirstController` will be `/example/first/...` and for second `/example/api/second/...`.
+
+##### Changing one route to another
+
+With `Router` class you can change one URI to another. Just:
+
+```
+router.addUrl("", "/home");
+```
+
+**NOTE:** `Router` is one instance for all modules, so one module can override configuration from another.
+**NOTE:** This is not redirect. Just instead of content one URL use another.
+
 #### Responses
+
+1. File response - sends specified file as response (can be binary, absolute of relative path). Create: `Response.getFile(StatusCode code, String path)` OR `Response.getFile(String path)` (code is 200)
+1. JSON response - sends given object (most time Map or List) as JSON see [JSON generation](https://github.com/ondrej-nemec/javainit/tree/master/ji-files#objects-and-json). Create: `Response.getJson(StatusCode code, Object toJson)` OR `Response.getJson(Object toJson)` (code is 202)
+1. Text response - sends given text as response. Create: `Response.getText(StatusCode code, String text)` OR `Response.getText(String text)` (code is 200)
+1. Redirect response - sends redirection response. Create: `Response.getRedirect(StatusCode code, String url)` OR `Response.getRedirect(String url)` (code is 307)
+1. Template response - gives specified file from your template folder of current module and use as template to create response. See more about [Templates](#templates). Create: `Response.getTemplate(StatusCode code, String fileName, Map<String, Object> params)` OR `Response.getTemplate(String fileName, Map<String, Object> params)` (code is 200)
+Example: module template path is `project-dir/core-module/templates` and `fileName` is `/entities/main.jsp`. In this case the file `project-dir/core-module/templates/entities/main.jsp` is used as template.
 
 #### Injections
 * odkaz na translator
@@ -254,6 +323,9 @@ or from JSON. If you wish upload file, the parameter type is `UploadedFile` - se
 ### Forms
 
 ### Templates
+
+parametry + nonce
+tagy
 
 ## How to do
 

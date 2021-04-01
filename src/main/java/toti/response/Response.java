@@ -13,6 +13,7 @@ public interface Response {
 
 	RestApiResponse getResponse(ResponseHeaders header, TemplateFactory templateFactory, Translator translator, String charset);
 	
+	@Deprecated
 	void addParam(String name, Object value);
 	
 	/***********/

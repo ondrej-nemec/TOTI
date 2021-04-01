@@ -21,7 +21,7 @@ Set value to defined variable. Unpaired
 
 ### Print on page
 
-Print variable to html page. With `nonescape` parameter, value will not be escaped. Unpaired
+Print variable to HTML page. With `nonescape` parameter, value will not be escaped. Unpaired
 
 ```
 <t:out name="" />
@@ -41,7 +41,7 @@ Print variable/text to system console. Unpaired
 
 ### Switch
 
-Java switch. Paired
+Java *switch*. Paired
 
 ```
 <t:switch object=""></t:switch>
@@ -49,7 +49,7 @@ Java switch. Paired
 
 ### Case
 
-Java switch case. Always between start and closing switch tag. Unpaired
+Java switch *case*. Always between start and closing switch tag. Unpaired
 
 ```
 <t:case cond="" />
@@ -57,7 +57,7 @@ Java switch case. Always between start and closing switch tag. Unpaired
 
 ### Default
 
-Java default switch state. Always after start switch tag or case tag and before closing switch tag. Unpaired
+Java *default* switch state. Always after start switch tag or case tag and before closing switch tag. Unpaired
 
 ```
 <t:default />
@@ -65,7 +65,7 @@ Java default switch state. Always after start switch tag or case tag and before 
 
 ### If
 
-Java if condition. Paired
+Java *if* statement. Paired
 
 ```
 <t:if cond=""></t:if>
@@ -73,7 +73,7 @@ Java if condition. Paired
 
 ### Else if
 
-Java else-if condition. Always between start and closing if tag. Unpaired
+Java *else-if* statement. Always between start and closing if tag. Unpaired
 
 ```
 <t:elseif cond="" />
@@ -81,7 +81,7 @@ Java else-if condition. Always between start and closing if tag. Unpaired
 
 ### Else
 
-Java else statement. Always after start if tag or else-if tag and before closing if tag. Unpaired
+Java *else* statement. Always after start if tag or else-if tag and before closing if tag. Unpaired
 
 ```
 <t:else />
@@ -91,7 +91,7 @@ Java else statement. Always after start if tag or else-if tag and before closing
 
 ### For
 
-Java for cycle. Paired
+Java *for* cycle. Paired
 
 ```
 <t:for from="" to="" change=""></t:for>
@@ -99,7 +99,7 @@ Java for cycle. Paired
 
 ### Foreach
 
-Java foreach cycle. Allow any Iterable include primitive array or Map. Paired
+Java *foreach* cycle. Allow any Iterable include primitive array or Map. Paired
 
 ```
 <t:foreach item="" collection=""></t:foreach>
@@ -108,7 +108,7 @@ Java foreach cycle. Allow any Iterable include primitive array or Map. Paired
 
 ### While
 
-Java while cycle. Paired
+Java *while* cycle. Paired
 
 ```
 <t:while cond=""></t:while>
@@ -116,7 +116,7 @@ Java while cycle. Paired
 
 ### Do-while
 
-Java do-while cycle. Paired
+Java *do-while* cycle. Paired
 
 ```
 <t:dowhile cond=""></t:dowhile>
@@ -126,7 +126,7 @@ Java do-while cycle. Paired
 
 ### Continue
 
-Java continue keyword. Unpaired
+Java *continue* keyword. Unpaired
 
 ```
 <t:continue />
@@ -134,7 +134,7 @@ Java continue keyword. Unpaired
 
 ### Break
 
-Java break keyword. Unpaired
+Java *break* keyword. Unpaired
 
 ```
 <t:break />
@@ -144,7 +144,7 @@ Java break keyword. Unpaired
 
 ### Try
 
-Java try statement. Pair
+Java *try* statement. Pair
 
 ```
 <t:try></t:try>
@@ -152,7 +152,7 @@ Java try statement. Pair
 
 ### Catch
 
-Java catch statement. Always between start and closing try tag. Unpaired
+Java *catch* statement. Always between start and closing try tag. Unpaired
 
 ```
 <t:catch exception="" name="" />
@@ -161,7 +161,7 @@ Java catch statement. Always between start and closing try tag. Unpaired
 
 ### Finally
 
-Java finally statement. Always after start try tag or catch tag and before closing try tag. Unpaired
+Java *finally* statement. Always after start try tag or catch tag and before closing try tag. Unpaired
 
 ```
 <t:finally />
