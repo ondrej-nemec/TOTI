@@ -1,5 +1,104 @@
 # TOTI JS
 
+* [Settings](#settings)
+* [Translations](#translations)
+* [Images](#images)
+* [Utils](#utils)
+* [Load](#load)
+* [Browser storage](#browser-storage)
+* [Authentication](#authentication)
+* [Language](#language)
+* [Display](#display)
+* [Control](#control)
+* [Form](#form)
+* [Grid](#grid)
+
+## Settings
+
+Associative array `totiSettings`.
+
+* `flashTimeout`: default 0
+
+## Translations
+
+Associative array `totiTranslations`. Contains grid and form messages.
+
+* pages
+  * title
+  * first
+  * previous
+  * next
+  * last
+* actions
+  * select
+  * execute
+  * noSelectedItems
+ * gridMessages
+   * noItemsFound
+   * loadingError
+ * formMessages
+   * saveError
+   * bindError
+ * formButtons
+   * add
+   * remove
+
+## Images
+
+Associative array `totiImages`. Contains svg images.
+
+* arrowUp
+* arrowDown
+* cross
+
+## Utils
+
+Associative array `totiUtils`. Contains functions.
+
+* `parseUrlToObject(data)`
+	* parameter `data`: string reprezentation of URL parameters
+	* returns: JSON object - parsed URL
+* `parametrizedString(string, params)`
+	* parameter `string`: string
+	* parameter `params`: JSON object with parameters to substitute
+	* returns: origin string where replace each `{key}` with value
+* `forEach(array, callback)`
+	* parameter `array`: array or JSON object
+	* parameter `callback`: function called on each item
+	* returns: void
+* `browser`
+	* returns: string reprezantion of used browser
+* `execute(callback, args = [])`
+	* parameter `callback`: function or string - name of function
+	* parameter `args`: array, argument passed to function
+	* returns: result of function
+* `clone(object)`
+	* parameter `object`: object to clone
+	* returns: new object, especially for cloning arrays
+s
+
+## Load
+
+## Browser Storage
+
+## Authentication
+
+## Language
+
+## Display
+
+## Control
+
+## Form
+
+## Grid
+
+
+
+
+
+
+
 ## Settings
 
 * flashTimeout, default 0

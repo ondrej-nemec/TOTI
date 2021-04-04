@@ -1,5 +1,13 @@
 # Available tags
 
+## Comment
+
+Comment part of your code, so TOTI will ignore it.
+
+```
+<%-- comment here --%>
+```
+
 ## Variables
 
 ### Define new variable

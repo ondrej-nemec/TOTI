@@ -13,17 +13,18 @@ Main purpose of this framework is create GUI for java servers f.e. in Industry 4
 * [Get started](#get-started)
 	* [Initialize](#initialize)
 	* [Modules](#modules)
-	* [Registr](#registr)
+	* [Register](#register)
 	* [Tasks](#tasks)
 	* [Controllers](#controllers)
+		* [Request parameters validation](#request-parameters-validation)
+		* [Routing](#routing)
+		* [Responses](#responses)
+		* [Permissions](#permissions)
+		* [Injections](#injections)
 	* [Templates](#templates)
 	* [Grids](#grids)
 	* [Forms](#forms)
-	* [Routing](#routing)
-	* [Responses](#responses)
-	* [Request parameters validation](#request-parameters-validation)
-	* [Injections](#injections)
-	* [Permissions](#permissions)
+	* [Exceptions](#exceptions)
 * [How to do](#how-to-do)
 	* [Login](#login)
 	* [Change language](#change-language)
@@ -111,7 +112,7 @@ HttpServer server = factory.get(modules);
 * `getControllersPath` - path to module controllers in classpath. For example: directory tree `projectname/src/main/java/example/web/controllers` so here the path will be `example/web/controllers`. See [more about controllers](#controllers)
 * `initInstances` -> `List<Task> initInstances(Env env, Registr registr, Database database, Logger logger) throws Exception;`
 
-`Env` is class representing configuration file, `Registr` see [below](#registr), `Database` was described upper and `Logger` is suggested logger - not nessessary need to use.
+`Env` is class representing configuration file, `Registr` see [below](#register), `Database` was described upper and `Logger` is suggested logger - not nessessary need to use.
 
 Example:
 
@@ -136,7 +137,7 @@ Except of this, there are some optional methods:
 * `getTranslationPath` - specify path to module translations files. Default is `null` and means 'no translations'.
 * `getMigrationsPath` - specify path to module Database migrations. Default is `null` and means 'no migrations'.
 
-### Registr
+### Register
 
 `Regist` is container for objects. Contains two types of objects: services and factories. Service is created by you and only once.
  On the other hand, factory is for creating new instance every time is needed (typically usage is for controllers).
@@ -320,22 +321,84 @@ router.addUrl("", "/home");
 1. Template response - gives specified file from your template folder of current module and use as template to create response. See more about [Templates](#templates). Create: `Response.getTemplate(StatusCode code, String fileName, Map<String, Object> params)` OR `Response.getTemplate(String fileName, Map<String, Object> params)` (code is 200)
 Example: module template path is `project-dir/core-module/templates` and `fileName` is `/entities/main.jsp`. In this case the file `project-dir/core-module/templates/entities/main.jsp` is used as template.
 
-#### Injections
-* odkaz na translator
-* identity
-
 #### Permissions
+
+TODO
+* @secured
 * user security factory
+* identity
 * odkaz na acl
+* authenticator vx authorizator
+
+#### Injections
+
+Sometimes you need some class used by TOTI like `Translator`, `Authenticator` or something else. For that TOTI provide feature called Injection.
+
+In your controller you define private/protected/public but not final attribute. Then you make standard setter (for `someVariable` -> `setSomeVariable`). At the end, annotate the variable. TOTI set value after creating controller instance but before calling action method.
+
+Supported annotations:
+
+* `Translate` - set `Translator` class with actual selected language.
+* `Authenticate` - set `Authenticator` class
+* `Authorize` - set `AuthorizatorHelper` class
+* `ClientIdentity` - set `Identity` class
+* `Lang` - set `Locale` class
+
+Example with `Translator`:
+
+```
+@Controller("url")
+public class MyController {
+
+	@Translate
+	private Translator translator;
+	
+	public void setTranslator(Translator translator) {
+		this.translator = translator;
+	}
+	
+}
+```
+### Templates
+
+TOTI provide you simple templating system. Templates do not require special file format. You can create HTML template, JSON template or something else.
+
+**Variables to template**
+
+You can pass variables to your template. For printing variable in template, write: `${variable-name}`. If variable is object, you can call method on them. For example: variable with name `info` is instance of `Map`:
+
+```
+${info.get("overview")}<br>
+${info.get("main")}
+```
+
+You can pass the variable to tags.
+
+**NOTE:** TOTI automatically add parameter `nonce` and in response headers replace `{nonce}`. Nonce is some random string unique for request and is used secure your JS scripts.
+
+```
+<script src="..." nonce="${nonce}"></script>
+```
+
+Nonce is sended in header and same nonce is used on page. With this browser (check if your browser support it) will not link JS script with another nonce or without.
+
+**Tags**
+
+TOTI tags allow you f. e. merge more files to one, iterate `Map` or `Iterable` and define new variable. [List of all TOIT tags](doc/tags.md). This tags look very similar to HTML tags, but can be used in any types of templates.
+
+Example of creating String variable `greetings`, set value to "Hello, World!" and print.
+
+```
+<t:var type="String" name="greetings" />
+<t:set name="greetings" value="Hello, World" />
+<t:out name="greetings" />
+```
 
 ### Grids
 
 ### Forms
 
-### Templates
-
-parametry + nonce
-tagy
+### Exceptions
 
 ## How to do
 
