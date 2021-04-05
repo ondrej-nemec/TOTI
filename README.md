@@ -59,6 +59,18 @@ If you would like use TOTI templating system on computer without JDK (JRE only) 
 compile files("${System.properties['java.home']}/../lib/tools.jar")
 ```
 
+For using TOTI JS functionality (forms, grids etc) include this in your HTML page:
+
+```
+<script src="/toti/totiJs.js"></script>
+```
+
+And optionally this:
+
+```
+<link rel="stylesheet" href="/toti/toti.css" />
+```
+
 ## Get started
 
 ### Initialize
@@ -395,6 +407,40 @@ Example of creating String variable `greetings`, set value to "Hello, World!" an
 ```
 
 ### Grids
+
+Showing data in grid or table or dataset - what you like. For build grid on page, you have to do this steps:
+
+1. Create `Grid` instance and configure. See [Grid configuration](#grid-configuration)
+1. Pass your instance to template as parameter
+1. Use `<t:control name="name-of-your-parameter" />` (print grid) or `<t:control name="name-of-your-parameter" jsObject/>` (get JS object - use only in JS) in template
+1. Create Rest API for grid (technically this step should be first). Example:
+
+```
+public Response getAll(
+		@Param("pageIndex") Integer pageIndex,
+		@Param("pageSize") Integer pageSize,
+		@Param("filters") Map<String, Object> filters,
+		@Param("sorting") Map<String, Object> sorting
+	) {
+	// ...
+}
+```
+
+What is what:
+* `pageIndex`: index of current page
+* `pageSize`: how many result rows are requested
+* `filters`: condition for values. Keys are names of columns, values contains expected value to be exactly or like
+* `sorting`: how order the data. Keys are columns, value is always "ASC" or "DESC"
+
+This action has to return JSON response with this parameters:
+
+* `itemsCount`: count of items that **can** be displayed - used for paging
+* `pageIndex`: index of current page
+* `data`: list of object. Each item in list is one row. 
+
+[How to do it easy](#controller-s-method-for-grid-and-form)
+
+#### Grid configuration
 
 ### Forms
 
