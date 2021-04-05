@@ -1,4 +1,4 @@
-/* TOTI Utils version 0.1.1 */
+/* TOTI Utils version 0.1.2 */
 var totiUtils = {
 	/* TODO is used? */
 	parseUrlToObject: function (data) {
@@ -66,9 +66,9 @@ var totiUtils = {
 			return;
 		}
 		if (typeof callback === 'function') {
-		   callback(...args);
+		    return callback(...args);
 		} else {
-			window[callback](...args);
+			return window[callback](...args);
 		}
 	},
 	clone: function(object) {
