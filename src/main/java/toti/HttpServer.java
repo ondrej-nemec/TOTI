@@ -10,8 +10,8 @@ import common.Logger;
 import logging.LoggerFactory;
 import socketCommunication.Server;
 import socketCommunication.ServerSecuredCredentials;
-import toti.authentication.Language;
-import toti.authentication.UserSecurity;
+import toti.security.Authenticator;
+import toti.security.IdentityFactory;
 import toti.templating.TemplateFactory;
 import translator.PropertiesTranslator;
 import translator.Translator;
@@ -31,11 +31,12 @@ public class HttpServer {
     		List<T> modules,
     		String resourcesPath,
     		Translator translator,
-    		UserSecurity security,
     		int maxUploadFileSize,
     		Optional<List<String>> allowedUploadFileTypes,
     		String charset,
     		String defLang,
+    		String tokenCustomSalt,
+    		long tokenExpiration,
     		Logger logger,
     		boolean deleteDir,
     		boolean dirResponseAllowed,
@@ -74,13 +75,14 @@ public class HttpServer {
 		this.translator = translator;
 		ResponseFactory response = new ResponseFactory(
 				headers,
-				new Language(defLang),
+			//	new Language(defLang),
 				resourcesPath,
 				router,
 				controllers,
 				totiTemplateFactory,
 				translator,
-				security,
+				new IdentityFactory(defLang),
+				new Authenticator(tokenExpiration, tokenCustomSalt, tempPath, logger),
 				charset,
 				dirResponseAllowed,
 				developIps,

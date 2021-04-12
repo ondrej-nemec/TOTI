@@ -15,7 +15,7 @@ import toti.annotations.url.Method;
 import toti.annotations.url.ParamUrl;
 import toti.annotations.url.Params;
 import toti.annotations.url.Secured;
-import toti.authentication.Identity;
+import toti.security.Identity;
 import toti.control.Form;
 import toti.control.Grid;
 import toti.control.columns.ActionsColumn;

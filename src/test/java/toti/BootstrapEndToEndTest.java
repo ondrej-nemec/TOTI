@@ -1,24 +1,16 @@
 package toti;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
 import database.DatabaseConfig;
 import example.ExampleModule;
-import acl.Action;
-import acl.structures.Rules;
 import common.functions.Env;
-import acl.structures.AclDestination;
-import acl.structures.AclRole;
-import acl.structures.AclUser;
-import acl.RulesDao;
 import logging.LoggerFactory;
 import module.EntityModule;
 import toti.HttpServerFactory;
 import toti.application.Application;
-import toti.authentication.UserSecurity;
 import toti.registr.Registr;
 
 public class BootstrapEndToEndTest {
@@ -54,7 +46,7 @@ public class BootstrapEndToEndTest {
 				//	factory.setDevelopIpAdresses(Arrays.asList());
 					
 					// TODO little bit another way
-					try {
+					/*try {
 						factory.setUserSecurity(new UserSecurity(
 							"/example-module/sign/in",
 							(identity)->new AclUser() {
@@ -71,7 +63,7 @@ public class BootstrapEndToEndTest {
 							"",
 							LoggerFactory.getLogger("auth")
 						));
-					} catch (RuntimeException ignored) {}
+					} catch (RuntimeException ignored) {}*/
 					return factory;
 				}
 				

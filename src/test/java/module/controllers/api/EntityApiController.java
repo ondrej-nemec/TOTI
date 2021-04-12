@@ -19,7 +19,7 @@ import toti.annotations.url.Param;
 import toti.annotations.url.ParamUrl;
 import toti.annotations.url.Params;
 import toti.annotations.url.Secured;
-import toti.authentication.Identity;
+import toti.security.Identity;
 import toti.response.Response;
 import translator.Translator;
 
@@ -164,7 +164,7 @@ public class EntityApiController {
 	public Response delete(@ParamUrl("id") Integer id) {
 		try {
 			Map<String, Object> deleted = dao.delete(id);
-			auditTrail.delete(identity.getUser().getId(), deleted);
+		//	auditTrail.delete(identity.getUser().getId(), deleted);
 			return Response.getText(translator.translate("common.item-deleted"));
 		} catch (Exception e) {
 			logger.error("Entity Delete", e);
@@ -182,7 +182,7 @@ public class EntityApiController {
 			editValues(updated, false);
 			
 			dao.update(id, updated);
-			auditTrail.update(identity.getUser().getId(), origin, updated);
+		//	auditTrail.update(identity.getUser().getId(), origin, updated);
 			
 			Map<String, Object> params = new HashMap<>();
 			params.put("id", id);
@@ -204,7 +204,7 @@ public class EntityApiController {
 			
 			int id = dao.insert(inserted);
 			inserted.put(UNIQUE, id);
-			auditTrail.insert(identity.getUser().getId(), inserted);
+		//	auditTrail.insert(identity.getUser().getId(), inserted);
 			
 			Map<String, Object> params = new HashMap<>();
 			params.put("id", id);

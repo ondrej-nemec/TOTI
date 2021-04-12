@@ -23,19 +23,27 @@
 			<th>Protocol</th>
 			<td>${protocol}</td>
 		</tr>
-		<tr>
+		<%--<tr>
 			<th>IP</th>
 			<td>${ip}</td>
 		</tr>
 		<tr>
 			<th>Locale</th>
 			<td>${locale}</td>
-		</tr>
+		</tr> --%>
 	</table>	
 	
 	<h3>Identity</h3>
-	<t:if cond="(Boolean)${identity.isPresent()}" >
 		<table>
+		<tr>
+			<th>IP</th>
+			<td>${identity.getIP()}</td>
+		</tr>
+		<tr>
+			<th>Locale</th>
+			<td>${identity.getLocale()}</td>
+		</tr>
+	<t:if cond="(Boolean)${identity.isPresent()}" >
 		<tr>
 			<th>Is API allowed</th>
 			<td>${identity.isApiAllowed()}</td>
@@ -52,10 +60,8 @@
 			<th>Allowed IDs</th>
 			<td>${identity.getAllowedIds()}</td>
 		</tr>
-	</table>
-	<t:else />
-		<p>No logged user</p>
 	</t:if>
+	</table>
 	
 	<h3>Paramenters</h3>
 	<table>

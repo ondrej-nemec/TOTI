@@ -165,14 +165,11 @@ public class Application {
 			if (env.getString("http.locale") != null) {
 				factory.setDefLang(env.getString("http.locale"));
 			}
-			if (env.getString("http.token-expired") != null && env.getString("http.token-salt") != null) {
-				try {
-					factory.setUserSecurity(registr.getService(USER_SECURITY_SERVICE, UserSecurityFactory.class).get(
-						env.getInteger("http.token-expired"),
-						env.getString("http.token-salt"),
-						LoggerFactory.getLogger("auth")
-					));
-				} catch (RuntimeException ignored) {}
+			if (env.getString("http.token-expired") != null) {
+				factory.setTokenExpirationTime(env.getLong("http.token-expired"));
+			}
+			if (env.getString("http.token-salt") != null) {
+				factory.setTokenCustomSalt(env.getString("http.token-salt"));
 			}
 			if (env.getString("http.key-store") != null && env.getString("http.key-store-password") != null) {
 				factory.setCerts(new ServerSecuredCredentials(

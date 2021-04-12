@@ -1,5 +1,6 @@
 package toti.security;
 
+import java.util.Collection;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -49,14 +50,26 @@ public class Identity {
 	protected void clear() {
 		this.token = null;
 		this.id = null;
-		this.expired = 0;
+		this.expired = -1;
 		this.content = null;
+	}
+	
+	protected String getId() {
+		return id;
 	}
 	
 	/*************/
 	
+	public Collection<Object> getAllowedIds() {
+		return null;
+	}
+	
 	public boolean isAnonymous() {
 		return id == null;
+	}
+	
+	public boolean isPresent() {
+		return !isAnonymous();
 	}
 	
 	public Properties getHeaders() {

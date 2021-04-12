@@ -12,9 +12,9 @@ import toti.annotations.url.Controller;
 import toti.annotations.url.Method;
 import toti.annotations.url.Param;
 import toti.annotations.url.Secured;
-import toti.authentication.Authenticator;
+import toti.security.Authenticator;
 import toti.authentication.AuthentizationException;
-import toti.authentication.Identity;
+import toti.security.Identity;
 import toti.response.Response;
 
 @Controller("sign")

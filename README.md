@@ -38,7 +38,7 @@ Main purpose of this framework is create GUI for java servers f.e. in Industry 4
 	
 ## Include in your project
 
-TOTI uses for publication <a href="https://jitpack.io/">JitPack</a>. Allow you include this project by using Gradle or Maven.
+TOTI uses for publication <a href="https://jitpack.io/">JitPack</a>. It allows you to include this project by using Gradle or Maven.
 
 ### Include using Gradle
 

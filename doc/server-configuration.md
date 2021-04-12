@@ -107,18 +107,14 @@ All values are optional. If no value specified, default used.
 		<td>Token expiration</td>
 		<td>600000 ms => 10 min</td>
 		<td>Token expiration time in miliseconds</td>
-		<td rowspan="2">setUserSecurity(userSecurityFactory.get(
-			<br>
-			long tokenExpirationTime, <br>
-			String tokenSalt,<br>
-			Logger logger<br>
-		 ))</td>
+		<td>setTokenExpirationTime(long tokenExpirationTime)</td>
 		<td>http.token-expired</td>
 	</tr>
 	<tr>
 		<td>Token salt</td>
 		<td>--empty-string--</td>
 		<td>Custom token salt</td>
+		<td>setTokenCustomSalt(String tokenCustomSalt)</td>
 		<td>http.token-salt</td>
 	</tr>
 	<tr>

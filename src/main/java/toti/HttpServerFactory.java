@@ -6,15 +6,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import acl.Action;
-import acl.RulesDao;
-import acl.structures.AclDestination;
-import acl.structures.AclRole;
-import acl.structures.AclUser;
-import acl.structures.Rules;
 import common.Logger;
 import socketCommunication.ServerSecuredCredentials;
-import toti.authentication.UserSecurity;
 import translator.Translator;
 
 public class HttpServerFactory {
@@ -23,8 +16,6 @@ public class HttpServerFactory {
 	private ResponseHeaders headers = new ResponseHeaders(Arrays.asList(
 			"Access-Control-Allow-Origin: *"
 	));
-	
-	private UserSecurity security;
 	
 	private Translator translator;
 	private Logger logger;
@@ -43,9 +34,12 @@ public class HttpServerFactory {
 	private List<String> developIps = Arrays.asList("127.0.0.1", "/0:0:0:0:0:0:0:1");
 	private int maxUploadFileSize = 0;
 	private Optional<List<String>> allowedUploadFileTypes = Optional.of(new LinkedList<>());
+	private long tokenExpirationTime = 1000 * 60 * 10;
+	private String tokenCustomSalt = "";
+	
 	
 	public <T extends Module> HttpServer get(List<T> modules) throws Exception {
-		if (security == null) {
+		/*if (security == null) {
 			this.security = new UserSecurity(
 				null, // no redirect, on 4xx
 				(identity)->new AclUser() {// FULL control
@@ -62,13 +56,13 @@ public class HttpServerFactory {
 				"", // salt
 				logger
 			);
-		}
+		}*/
 		return new HttpServer(
 				port, threadPool, readTimeout, headers,
 				certs, tempPath, modules, resourcesPath,
-				translator, security,
+				translator,
 				maxUploadFileSize, allowedUploadFileTypes,
-				charset, defLang,
+				charset, defLang, tokenCustomSalt, tokenExpirationTime,
 				logger, deleteTempJavaFiles, dirResponseAllowed, minimalize, developIps
 		);
 	}
@@ -95,11 +89,6 @@ public class HttpServerFactory {
 
 	public HttpServerFactory setHeaders(ResponseHeaders headers) {
 		this.headers = headers;
-		return this;
-	}
-
-	public HttpServerFactory setUserSecurity(UserSecurity security) {
-		this.security = security;
 		return this;
 	}
 
@@ -145,6 +134,16 @@ public class HttpServerFactory {
 
 	public HttpServerFactory setDefLang(String defLang) {
 		this.defLang = defLang;
+		return this;
+	}
+	
+	public HttpServerFactory setTokenExpirationTime(long tokenExpirationTime) {
+		this.tokenExpirationTime = tokenExpirationTime;
+		return this;
+	}
+	
+	public HttpServerFactory setTokenCustomSalt(String tokenCustomSalt) {
+		this.tokenCustomSalt = tokenCustomSalt;
 		return this;
 	}
 

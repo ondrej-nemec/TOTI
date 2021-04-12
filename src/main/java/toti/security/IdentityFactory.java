@@ -1,6 +1,5 @@
 package toti.security;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -28,7 +27,7 @@ public class IdentityFactory {
 				+ "; Path=/"
 				+ "; SameSite=Strict");
 		if (!identity.isAnonymous()) {
-			return Arrays.asList(
+			headers.add(
 				"Set-Cookie: "
 				+ SESSION_COOKIE_NAME + "=" + identity.getToken()
 				+ "; HttpOnly"
@@ -36,6 +35,15 @@ public class IdentityFactory {
 				+ "; SameSite=Strict"
 				+ "; Max-Age=" + (identity.getExpirationTime() / 1000)
 			);
+		} else if (identity.getExpirationTime() < 0) {
+			headers.add(
+					"Set-Cookie: "
+					+ SESSION_COOKIE_NAME + "="
+					+ "; HttpOnly"
+					+ "; Path=/"
+					+ "; SameSite=Strict"
+					+ "; Max-Age=" + 0
+				);
 		}
 		return headers;
 	}
