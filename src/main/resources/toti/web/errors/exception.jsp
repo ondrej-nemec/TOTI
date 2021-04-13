@@ -56,10 +56,10 @@
 			<th>User</th>
 			<td>${identity.getUser()}</td>
 		</tr>
-		<tr>
+		<%-- <tr>
 			<th>Allowed IDs</th>
 			<td>${identity.getAllowedIds()}</td>
-		</tr>
+		</tr> --%>
 	</t:if>
 	</table>
 	
