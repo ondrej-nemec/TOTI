@@ -10,11 +10,14 @@ import common.Logger;
 import logging.LoggerFactory;
 import socketCommunication.Server;
 import socketCommunication.ServerSecuredCredentials;
+import toti.security.AuthenticationCache;
 import toti.security.Authenticator;
+import toti.security.Authorizator;
 import toti.security.IdentityFactory;
 import toti.templating.TemplateFactory;
 import translator.PropertiesTranslator;
 import translator.Translator;
+import utils.security.Hash;
 
 public class HttpServer {
 	
@@ -72,17 +75,18 @@ public class HttpServer {
 			String[] translators = new String[trans.size()];
 			translator = PropertiesTranslator.create(LoggerFactory.getLogger("translator"), trans.toArray(translators));
 		}
+		AuthenticationCache authenticationCache = new AuthenticationCache(tempPath);
 		this.translator = translator;
 		ResponseFactory response = new ResponseFactory(
 				headers,
-			//	new Language(defLang),
 				resourcesPath,
 				router,
 				controllers,
 				totiTemplateFactory,
 				translator,
-				new IdentityFactory(defLang),
-				new Authenticator(tokenExpiration, tokenCustomSalt, tempPath, logger),
+				new IdentityFactory(defLang, authenticationCache),
+				new Authenticator(tokenExpiration, tokenCustomSalt, authenticationCache, new Hash("SHA-256"), logger),
+				new Authorizator(),
 				charset,
 				dirResponseAllowed,
 				developIps,

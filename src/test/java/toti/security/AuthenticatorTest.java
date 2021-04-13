@@ -29,7 +29,7 @@ public class AuthenticatorTest {
 	
 	@Test
 	// TODO test corrupted token and expired token
-	public void testAuthenticateWorks() throws HashException, IOException {
+	public void testAuthenticateWorks() throws HashException, IOException, ClassNotFoundException {
 		Hash hash = Mockito.mock(Hash.class);
 		Mockito.when(hash.toHash(Mockito.anyString())).thenReturn("hash");
 		Mockito.when(hash.compare(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
@@ -43,6 +43,7 @@ public class AuthenticatorTest {
 				false
 		);
 		auth.authenticate(identity, 1234567890122L);
+		// TODO nesedi, protoze id neni obsazeno v aktivnich
 		assertEquals("id1id2id3id4id5id6id7id8id9id0", identity.getId());
 		assertEquals(1234567890123L, identity.getExpirationTime());
 	}

@@ -6,11 +6,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
@@ -19,10 +17,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import acl.AuthorizationHelper;
-import acl.exception.AccessDeniedException;
-import acl.exception.NotAllowedActionException;
-import acl.structures.AclDestination;
 import common.Logger;
 import common.exceptions.LogicException;
 import common.functions.FilesList;
@@ -35,7 +29,6 @@ import toti.annotations.MappedUrl;
 import toti.annotations.inject.Authenticate;
 import toti.annotations.inject.Authorize;
 import toti.annotations.inject.ClientIdentity;
-import toti.annotations.inject.Lang;
 import toti.annotations.url.Action;
 import toti.annotations.url.Controller;
 import toti.annotations.url.Domain;
@@ -44,12 +37,14 @@ import toti.annotations.url.Param;
 import toti.annotations.url.ParamUrl;
 import toti.annotations.url.Params;
 import toti.annotations.url.Secured;
-import toti.authentication.Authenticator;
-import toti.authentication.Identity;
-import toti.authentication.Language;
-import toti.authentication.UserSecurity;
 import toti.registr.Registr;
 import toti.response.Response;
+import toti.security.AccessDeniedException;
+import toti.security.Authenticator;
+import toti.security.Authorizator;
+import toti.security.Identity;
+import toti.security.IdentityFactory;
+import toti.security.NotAllowedActionException;
 import toti.templating.DirectoryTemplate;
 import toti.templating.TemplateFactory;
 import toti.validation.ParseObject;
@@ -60,7 +55,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	
 	private final ResponseHeaders responseHeaders;
 	private final String charset;
-	private final Language language;
+	//private final Language language;
 	private final boolean dirResponseAllowed;
 	private final Logger logger;
 	private final List<String> developIps;
@@ -73,19 +68,21 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private final TemplateFactory totiTemplateFactory;
 	private final Translator translator;
 	
-	private final AuthorizationHelper authorizator;
+	private final Authorizator authorizator;
 	private final Authenticator authenticator;
+	private final IdentityFactory identityFactory;
 	private final String redirectUrlNoLoggedUser;	
 	
 	public ResponseFactory(
 			ResponseHeaders responseHeaders,
-			Language language,
 			String resourcesDir,
 			Router router,
 			Map<String, TemplateFactory> modules,
 			TemplateFactory totiTemplateFactory,
 			Translator translator,
-			UserSecurity security,
+			IdentityFactory identityFactory,
+			Authenticator authenticator,
+			Authorizator authorizator,
 			String charset,
 			boolean dirResponseAllowed,
 			List<String> developIps,
@@ -95,14 +92,14 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		this.translator = translator;
 		this.mapping = loadUrlMap(modules);
 		this.responseHeaders = responseHeaders;
-		this.authorizator = security.getAuthorizator();
-		this.authenticator = security.getAuthenticator();
-		this.redirectUrlNoLoggedUser = security.getRedirectUrlNoLoggedUser();
+		this.authorizator = authorizator;
+		this.identityFactory = identityFactory;
+		this.authenticator = authenticator;
+		this.redirectUrlNoLoggedUser = ""; // TODO security.getRedirectUrlNoLoggedUser();
 		this.router = router;
 		this.modules = modules;
 		this.totiTemplateFactory = totiTemplateFactory;
 		this.logger = logger;
-		this.language = language;
 		this.dirResponseAllowed = dirResponseAllowed;
 		this.developIps = developIps;
 	}
@@ -119,8 +116,9 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		/*System.err.println("URL: " + fullUrl);
 		System.err.println("Header: " + header);
 		System.err.println("Params: " + params);*/
-		Locale locale = language.getLocale(header);
-		return getCatchedResponse(method, url, fullUrl, protocol, header, params, locale, ip);
+		// Locale locale = language.getLocale(header);
+		Identity identity = identityFactory.createIdentity(header, ip);
+		return getCatchedResponse(method, url, fullUrl, protocol, header, params, identity);
 	}
 	/*
 	private RestApiResponse getAuthenticatedResponse(HttpMethod method,
@@ -141,20 +139,19 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			String protocol,
 			Properties header,
 			RequestParameters params,
-			Locale locale,
-			String ip) {
-		Identity identity = authenticator.authenticate(header);
+			Identity identity) {
+		authenticator.authenticate(identity);
 		try {
-			return getNormalizedResponse(method, url, params, identity, ip, locale);
+			return getNormalizedResponse(method, url, params, identity);
 			// return getAuthenticatedResponse(method, url, header, params, ip, locale);
 		/*} catch (AuthentizationException e) {
 			return onException(401, method, url, fullUrl, protocol, header, params, locale, ip, e);*/
 		} catch (NotAllowedActionException | AccessDeniedException e) {
-			return onException(403, method, url, fullUrl, protocol, header, params, locale, identity, ip, e);
+			return onException(403, method, url, fullUrl, protocol, header, params, identity, e);
 		} catch (ServerException e) {
-			return onException(e.getCode(), method, url, fullUrl, protocol, header, params, locale, identity, ip, e);
+			return onException(e.getCode(), method, url, fullUrl, protocol, header, params, identity, e);
 		} catch (Exception e) {
-			return onException(500, method, url, fullUrl, protocol, header, params, locale, identity, ip, e);
+			return onException(500, method, url, fullUrl, protocol, header, params, identity, e);
 		}
 		
 	}
@@ -166,17 +163,12 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			String protocol,
 			Properties header,
 			RequestParameters params,
-			Locale locale,
-			Identity identity,
-			String ip, 
+			Identity identity, 
 			Throwable t) {
 		logger.error(String.format("Exception occured %s URL: %s", responseCode, fullUrl), t);
-		// TODO maybe some custom handler
-		/*List<String> h = headers.getHeaders();
-		h.add("WWW-Authenticate: basic realm=\"User Visible Realm\"");*/
 		StatusCode code = StatusCode.forCode(responseCode);
-		if (developIps.contains(ip)) {
-			return printException(code, method, url, fullUrl, protocol, header, params, locale, identity, ip, t);
+		if (developIps.contains(identity.getIP())) {
+			return printException(code, method, url, fullUrl, protocol, header, params, identity, t);
 		}
 		// TODO own exception catcher
 		/*return Response.getFile(StatusCode.forCode(code), String.format("toti/errors/%s.html", code))
@@ -184,7 +176,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("code", code);
 		return Response.getTemplate(code, "/errors/error.jsp", variables)
-				.getResponse(responseHeaders.get(), totiTemplateFactory, translator.withLocale(locale), charset);
+				.getResponse(responseHeaders.get(), totiTemplateFactory, translator.withLocale(identity.getLocale()), charset);
 	}
 	
 	private RestApiResponse printException(StatusCode code, 
@@ -194,9 +186,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			String protocol,
 			Properties header,
 			RequestParameters params,
-			Locale locale,
 			Identity identity,
-			String ip,
 			Throwable t) {
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("code", code);
@@ -204,52 +194,44 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		variables.put("fullUrl", fullUrl);
 		variables.put("method", method);
 		variables.put("protocol", protocol);
-		variables.put("ip", ip);
-		variables.put("locale", locale);
 		variables.put("headers", header);
 		variables.put("parameters", params);
 		variables.put("identity", identity);
 		variables.put("t", t);
 		return Response.getTemplate(code, "/errors/exception.jsp", variables)
-				.getResponse(responseHeaders.get(), totiTemplateFactory, translator.withLocale(locale), charset);
+				.getResponse(responseHeaders.get(), totiTemplateFactory, translator.withLocale(identity.getLocale()), charset);
 	}
 	
 	private RestApiResponse getNormalizedResponse(
 			HttpMethod method,
 			String url,
 			RequestParameters params,
-			Identity identity,
-			String ip,
-			Locale locale) throws ServerException {
+			Identity identity) throws ServerException {
 		//System.err.println("Locale: " + locale);
-		return getRoutedResponse(method, url.endsWith("/") ? url.substring(0, url.length()-1) : url, params, identity, ip, locale);
+		return getRoutedResponse(method, url.endsWith("/") ? url.substring(0, url.length()-1) : url, params, identity);
 	}
 	
 	private RestApiResponse getRoutedResponse(
 			HttpMethod method,
 			String url,
 			RequestParameters params,
-			Identity identity,
-			String ip,
-			Locale locale) throws ServerException {
+			Identity identity) throws ServerException {
 		if (router.getUrlMapping(url) == null) {
-			return getMappedResponse(method, url, params, identity, ip, locale);
+			return getMappedResponse(method, url, params, identity);
 		}
-		return getMappedResponse(method, router.getUrlMapping(url), params, identity, ip, locale);
+		return getMappedResponse(method, router.getUrlMapping(url), params, identity);
 	}
 	
 	private RestApiResponse getMappedResponse(
 			HttpMethod method,
 			String url,
 			RequestParameters params,
-			Identity identity,
-			String ip,
-			Locale locale) throws ServerException {
+			Identity identity) throws ServerException {
 		ResponseHeaders headers = responseHeaders.get();
 		// toti exclusive
 		if (url.startsWith("/toti/")) {
 			return Response.getTemplate(url.substring(5), new HashMap<>())
-					.getResponse(headers, totiTemplateFactory, translator.withLocale(locale), charset);
+					.getResponse(headers, totiTemplateFactory, translator.withLocale(identity.getLocale()), charset);
 		}
 		// controllers
 		for (MappedUrl mapped : mapping) {
@@ -268,7 +250,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				is = url.equals(mapped.getUrl()) && methodMatch;
 			}
 	    	if (is) {
-	    		return getControllerResponse(headers, mapped, params, identity, locale);
+	    		return getControllerResponse(headers, mapped, params, identity);
 	    	}
 		}
 		// files
@@ -284,10 +266,10 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	
 	private RestApiResponse getControllerResponse(
 			ResponseHeaders headers,
-			MappedUrl mapped, RequestParameters params, Identity identity, Locale locale) throws ServerException {
+			MappedUrl mapped, RequestParameters params, Identity identity) throws ServerException {
 		Map<String,  Object> errors = new HashMap<>();
 		if (mapped.getValidator().isPresent()) {
-			errors.putAll(mapped.getValidator().get().validate(params, translator.withLocale(locale)));
+			errors.putAll(mapped.getValidator().get().validate(params, translator.withLocale(identity.getLocale())));
 		}
 		// params for method
 		List<Class<?>> classesList = new ArrayList<>();
@@ -327,15 +309,13 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			for (Field field : fields) {
 				String method = "set" + (field.getName().charAt(0) + "").toUpperCase() + field.getName().substring(1);
 				if (field.isAnnotationPresent(toti.annotations.inject.Translate.class)) {
-					o.getClass().getMethod(method, Translator.class).invoke(o, translator.withLocale(locale));
+					o.getClass().getMethod(method, Translator.class).invoke(o, translator.withLocale(identity.getLocale()));
 				} else if (field.isAnnotationPresent(Authenticate.class)) {
 					o.getClass().getMethod(method, Authenticator.class).invoke(o, authenticator);
 				} else if (field.isAnnotationPresent(Authorize.class)) {
-					o.getClass().getMethod(method, AuthorizationHelper.class).invoke(o, authorizator);
+					o.getClass().getMethod(method, Authorizator.class).invoke(o, authorizator);
 				} else if (field.isAnnotationPresent(ClientIdentity.class)) {
 					o.getClass().getMethod(method, Identity.class).invoke(o, identity);
-				} else if (field.isAnnotationPresent(Lang.class)) {
-					o.getClass().getMethod(method, Locale.class).invoke(o, locale);
 				}
 			}			
 			
@@ -349,10 +329,9 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	    	Response response = (Response)o.getClass()
 	    				.getMethod(mapped.getMethodName(), classes).invoke(o, values);
 	    	
-	    	headers.addHeaders(authenticator.getHeaders(identity)); // FIX for cookies
-	    	headers.addHeaders(language.getHeaders(locale)); // FIX for cookies
+	    	headers.addHeaders(identityFactory.getResponseHeaders(identity)); // FIX for cookies
 	    	
-			return response.getResponse(headers, templateFactory, translator.withLocale(locale), charset);
+			return response.getResponse(headers, templateFactory, translator.withLocale(identity.getLocale()), charset);
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
@@ -360,32 +339,18 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 
 	private void authorize(MappedUrl mapped, RequestParameters params, Identity identity, RequestParameters prop) throws ServerException {
 		if (mapped.isSecured()) {
-			if (!identity.isPresent()) {
+			if (identity.isAnonymous()) {
 				throw new ServerException(401, "Method require logged user");
 			}
 			if (mapped.isApi() && !identity.isApiAllowed()) {
 				throw new ServerException(StatusCode.FORBIDDEN.getCode(), "For this url you cannot use cookie token");
 			}
-			
-			Collection<Object> ids = null;
 			for (Domain domain : mapped.getSecured()) {
-				AclDestination destination = new AclDestination() {
-					@Override public Object getId() { return domain.name(); }
-					@Override public String toString() { return domain.name(); }
-				};
 				if (domain.owner().isEmpty()) {
-					Collection<Object> allowedIds = authorizator.allowed(identity.getUser(), destination, domain.action());
-					if (ids == null) {
-						ids = allowedIds;
-					} else {
-						ids.retainAll(allowedIds);
-					}
+					authorizator.authorize(identity.getUser(), domain.name(), domain.action());
 				} else {
-					authorizator.throwIfIsNotAllowed(identity.getUser(), destination, domain.action(), prop.get(domain.owner()));
+					authorizator.authorize(identity.getUser(), domain.name(), domain.action(), domain.owner());
 				}
-			}
-			if (ids != null) {
-				identity.setIds(ids);
 			}
 		}
 	}

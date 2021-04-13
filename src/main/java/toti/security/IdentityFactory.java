@@ -1,5 +1,6 @@
 package toti.security;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -15,12 +16,14 @@ public class IdentityFactory {
 	private final static String SESSION_HEADER_NAME = "Authorization";
 	
 	private final String defLang;
+	private final AuthenticationCache cache;
 	
-	public IdentityFactory(String defLang) {
+	public IdentityFactory(String defLang, AuthenticationCache cache) {
 		this.defLang = defLang;
+		this.cache = cache;
 	}
 	
-	public List<String> getResponseHeaders(Identity identity) {
+	public List<String> getResponseHeaders(Identity identity) throws IOException {
 		List<String> headers = new LinkedList<>();
 		headers.add("Set-Cookie: "
 				+ LOCALE_COOKIE_NAME + "=" + identity.getLocale() // .toLanguageTag()
@@ -45,6 +48,7 @@ public class IdentityFactory {
 					+ "; Max-Age=" + 0
 				);
 		}
+		cache.save(identity.getId(), identity.getUser());
 		return headers;
 	}
 	

@@ -60,7 +60,7 @@ public class ExamplePageController {
 	}
 	
 	@Action("list")
-	@Secured(isApi = false, value={@Domain(name=SECURITY_DOMAIN, action=acl.Action.READ)})
+	@Secured(isApi = false, value={@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.READ)})
 	public Response grid() {
 		Map<String, Object> params = new HashMap<>();
 		Grid grid = new Grid("/example-module/api/example/all", "get");
@@ -128,20 +128,20 @@ public class ExamplePageController {
 	}
 	
 	@Action("add")
-	@Secured(isApi = false, value={@Domain(name=SECURITY_DOMAIN, action=acl.Action.CREATE)})
+	@Secured(isApi = false, value={@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.CREATE)})
 	public Response add() {
 		return getOne(null, true, null);
 	}
 
 	@Action("edit")
-	@Secured(isApi = false, value={@Domain(name=SECURITY_DOMAIN, action=acl.Action.UPDATE)})
+	@Secured(isApi = false, value={@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.UPDATE)})
 	public Response edit(@ParamUrl("id") Integer id, @Param("template") String template) {
 		return getOne(id, true, template);
 	}
 
 	@Action("detail")
 	@Method({HttpMethod.GET})
-	@Secured(isApi = false, value={@Domain(name=SECURITY_DOMAIN, action=acl.Action.READ)})
+	@Secured(isApi = false, value={@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.READ)})
 	public Response detail(@ParamUrl("id") Integer id, @Param("template") String template) {
 		return getOne(id, false, template);
 	}

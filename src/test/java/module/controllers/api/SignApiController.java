@@ -15,6 +15,7 @@ import toti.annotations.url.Secured;
 import toti.security.Authenticator;
 import toti.authentication.AuthentizationException;
 import toti.security.Identity;
+import toti.security.User;
 import toti.response.Response;
 
 @Controller("sign")
@@ -61,7 +62,7 @@ public class SignApiController {
 	
 	private Response generateToken(String username) {
 		try {
-			String bearer = authenticator.login(username, identity);
+			String bearer = authenticator.login(username, identity, new User(12));
 			Map<String, Object> json = new HashMap<>();
 			json.put("access_token", bearer);
 			json.put("token_type", "bearer");

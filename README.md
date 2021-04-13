@@ -354,7 +354,6 @@ Supported annotations:
 * `Authenticate` - set `Authenticator` class
 * `Authorize` - set `AuthorizatorHelper` class
 * `ClientIdentity` - set `Identity` class
-* `Lang` - set `Locale` class
 
 Example with `Translator`:
 

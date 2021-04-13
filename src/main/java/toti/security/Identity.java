@@ -1,6 +1,5 @@
 package toti.security;
 
-import java.util.Collection;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -15,8 +14,7 @@ public class Identity {
 	private String id;
 	private long expired;
 	private String content; // content saved in token
-	// TODO user // user loaded from cache
-
+	private User user; // user loaded from cache
 	
 	protected Identity(String IP, Locale locale, Properties requestHeaders, String token, boolean isApiAllowed) {
 		this.IP = IP;
@@ -26,17 +24,19 @@ public class Identity {
 		this.token = token;
 	}
 	
-	protected void setUser(String id, long expired, String content) {
+	protected void setUser(String id, long expired, String content, User user) {
 		this.id = id;
 		this.expired = expired;
 		this.content = content;
+		this.user = user;
 	}
 	
-	protected void loginUser(String token, String id, long expired, String content) {
+	protected void loginUser(String token, String id, long expired, String content, User user) {
 		this.token = token;
 		this.id = id;
 		this.expired = expired;
 		this.content = content;
+		this.user = user;
 	}
 	
 	protected long getExpirationTime() {
@@ -60,16 +60,16 @@ public class Identity {
 	
 	/*************/
 	
-	public Collection<Object> getAllowedIds() {
-		return null;
-	}
-	
 	public boolean isAnonymous() {
 		return id == null;
 	}
 	
 	public boolean isPresent() {
 		return !isAnonymous();
+	}
+	
+	public User getUser() {
+		return user;
 	}
 	
 	public Properties getHeaders() {

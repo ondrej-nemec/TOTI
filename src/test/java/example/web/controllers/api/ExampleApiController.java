@@ -78,7 +78,7 @@ public class ExampleApiController {
 	@Method({HttpMethod.GET})
 	public Response getInArray(@Param("view") Boolean viewOnly) {
 		try {
-			Map<String, Object> values = dao.getHelp(identity.getAllowedIds());
+			Map<String, Object> values = dao.getHelp(identity.getUser().getAllowedIds());
 			for (int i = 0; i < 10; i++) {
 				values.put("#" + i, Option.create("#" + i, "Option #" + i).setOptGroup("Opt Group #" + i%3));
 			}
@@ -91,7 +91,7 @@ public class ExampleApiController {
 	
 	@Action(value = "all", validator = ExampleValidator.NAME_GRID)
 	@Method({HttpMethod.GET})
-	@Secured({@Domain(name=SECURITY_DOMAIN, action=acl.Action.READ)})
+	@Secured({@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.READ)})
 	public Response getAll(
 			@Param("pageIndex") Integer pageIndex,
 			@Param("pageSize") Integer pageSize,
@@ -100,7 +100,7 @@ public class ExampleApiController {
 			@Params RequestParameters prop
 		) {
 		try {
-			return Response.getJson(dao.getAll(pageIndex, pageSize, filters, sorting, identity.getAllowedIds()));
+			return Response.getJson(dao.getAll(pageIndex, pageSize, filters, sorting, identity.getUser().getAllowedIds()));
 		} catch (Exception e) {
 			logger.error("Example GetAll", e);
 			return Response.getJson(StatusCode.INTERNAL_SERVER_ERROR, new HashMap<>());
@@ -109,7 +109,7 @@ public class ExampleApiController {
 
 	@Action("get")
 	@Method({HttpMethod.GET})
-	@Secured({@Domain(name=SECURITY_DOMAIN, action=acl.Action.READ)})
+	@Secured({@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.READ)})
 	public Response get(@ParamUrl("id") Integer id) {
 		try {
 			Map<String, Object> item = dao.get(id);
@@ -150,11 +150,11 @@ public class ExampleApiController {
 
 	@Action("delete")
 	@Method({HttpMethod.DELETE})
-	@Secured({@Domain(name=SECURITY_DOMAIN, action=acl.Action.DELETE)})
+	@Secured({@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.DELETE)})
 	public Response delete(@ParamUrl("id") Integer id) {
 		try {
 			Map<String, Object> deleted = dao.delete(id);
-		//	auditTrail.delete(identity.getUser().getId(), deleted);
+			auditTrail.delete(identity.getUser().getId(), deleted);
 			return Response.getText(translator.translate("common.item-deleted"));
 		} catch (Exception e) {
 			logger.error("Example Delete", e);
@@ -164,7 +164,7 @@ public class ExampleApiController {
 
 	@Action(value = "update", validator = ExampleValidator.NAME_FORM)
 	@Method({HttpMethod.PUT})
-	@Secured({@Domain(name=SECURITY_DOMAIN, action=acl.Action.UPDATE)})
+	@Secured({@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.UPDATE)})
 	public Response update(@ParamUrl("id") Integer id, @Params RequestParameters updated) {
 		try {
 			Map<String, Object> origin = dao.get(id);
@@ -172,7 +172,7 @@ public class ExampleApiController {
 			editValues(updated, false);
 			
 			dao.update(id, updated);
-		//	auditTrail.update(identity.getUser().getId(), origin, updated);
+			auditTrail.update(identity.getUser().getId(), origin, updated);
 			
 			Map<String, Object> params = new HashMap<>();
 			params.put("id", id);
@@ -186,7 +186,7 @@ public class ExampleApiController {
 
 	@Action(value = "insert", validator = ExampleValidator.NAME_FORM)
 	@Method({HttpMethod.PUT})
-	@Secured({@Domain(name=SECURITY_DOMAIN, action=acl.Action.CREATE)})
+	@Secured({@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.CREATE)})
 	public Response insert(@Params RequestParameters inserted, @Param("file") UploadedFile file) {
 		try {
 			// file.save("www");
@@ -195,7 +195,7 @@ public class ExampleApiController {
 			
 			int id = dao.insert(inserted);
 			inserted.put(UNIQUE, id);
-		//	auditTrail.insert(identity.getUser().getId(), inserted);
+			auditTrail.insert(identity.getUser().getId(), inserted);
 			
 			Map<String, Object> params = new HashMap<>();
 			params.put("id", id);
