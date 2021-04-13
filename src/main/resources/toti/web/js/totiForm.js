@@ -1,4 +1,4 @@
-/* TOTI Form version 0.0.9 */
+/* TOTI Form version 0.0.10 */
 class TotiForm {
 
 	constructor(config) {
@@ -88,7 +88,12 @@ class TotiForm {
 				this.dynamic[field.name] = function(position, inputName) {
 					addButton.setAttribute(dynamicCount, parseInt(addButton.getAttribute(dynamicCount))+ 1);
 					var itemTemplate = field.template;
-					var removeFunc = null;
+					var removeFunc = function () {
+						addButton.setAttribute(
+                            dynamicCount,
+							 parseInt(addButton.getAttribute(dynamicCount)) - 1
+                        );
+					};
 					if (useTemplate) {
 						itemTemplate = document.createElement("div");
 						itemTemplate.setAttribute("name", "toti-list-item-" + field.name);
@@ -103,14 +108,12 @@ class TotiForm {
 						);
 
 						template.appendChild(itemTemplate);
-						removeFunc = function () {
-							itemTemplate.parentNode.removeChild(itemTemplate);
-						};
 						var removeButton = itemTemplate.querySelector("[name='remove']");
 						if (removeButton !== null) {
 							if (editable) {
 								removeButton.onclick = function() {
 									itemTemplate.parentNode.removeChild(itemTemplate);
+									removeFunc();
 								};
 							} else {
 								removeButton.style.display = "none";
@@ -133,6 +136,7 @@ class TotiForm {
 							);
 							itemTemplate.removeChild(removeButton);
 							itemTemplate.removeChild(spanIdent);
+							removeFunc();
 						};
 
 						itemTemplate.appendChild(spanIdent);
