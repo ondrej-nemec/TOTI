@@ -50,9 +50,19 @@ public class ParseObject {
 			} catch (JsonStreamException e) {
 				throw new RuntimeException(e);
 			}
+		} else if (clazz.isEnum()) {
+			if (object instanceof Enum) {
+				return object;
+			}
+			return parseEnum(clazz, object);
 		} else {
 			return clazz.cast(object);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <E extends Enum<E>> Object parseEnum(Class<?> clazz, Object object) {
+		return Enum.valueOf((Class<E>)clazz, object.toString());
 	}
 	
 }
