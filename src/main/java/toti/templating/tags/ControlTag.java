@@ -15,14 +15,18 @@ public class ControlTag implements Tag {
 	public String getPairStartCode(Map<String, String> params) {
 		if (params.get("jsObject") != null) {
 			return String.format("{"
+					+ "if(variables.get(\"%s\") == null) {throw new RuntimeException(\"Missing control varialble: '%s'\");}"
 					+ "toti.control.Control control=(toti.control.Control)(variables.get(\"%s\"));"
 					+ "b.append(\"new Toti\"+control.getType()+\"(\"+control.toString()+\")\");"
 					+ "}",
+					params.get("name"),
+					params.get("name"),
 					params.get("name")
 			);
 		}
 		return String.format(
 				"{"
+				+ "if(variables.get(\"%s\") == null) {throw new RuntimeException(\"Missing control varialble: '%s'\");}"
 				+ "toti.control.Control control=(toti.control.Control)(variables.get(\"%s\"));"
 				+ "b.append(\""
 				+ "<script>"
@@ -32,6 +36,8 @@ public class ControlTag implements Tag {
 				+ "\");"
 				+ "}"
 				+ "b.append(\"<div id='%s' class='toti-control'>\");",
+				params.get("name"),
+				params.get("name"),
 				params.get("name"),
 				"div#control-" +params.get("name"),
 				params.get("name"),
