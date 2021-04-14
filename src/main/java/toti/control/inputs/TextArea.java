@@ -13,6 +13,8 @@ public class TextArea implements Input {
 	private int cols;
 	private int rows;
 	private boolean disabled = false;
+	private Boolean exclude = null; // TODO setry
+	private boolean editable = false; // TODO setry
 	private String value = null;
 	private Integer maxLength;
 	private String placeholder = null;
@@ -58,6 +60,9 @@ public class TextArea implements Input {
 
 	public TextArea setDisabled(boolean disabled) {
 		this.disabled = disabled;
+		if (exclude == null) {
+			exclude = disabled;
+		}
 		return this;
 	}
 
@@ -68,6 +73,16 @@ public class TextArea implements Input {
 
 	public TextArea setPlaceholder(String placeholder) {
 		this.placeholder = placeholder;
+		return this;
+	}
+	
+	public TextArea setExclude(boolean exclude) {
+		this.exclude = exclude;
+		return this;
+	}
+	
+	public TextArea setEditable(boolean editable) {
+		this.editable = editable;
 		return this;
 	}
 
@@ -82,6 +97,12 @@ public class TextArea implements Input {
 		}
 		if (disabled) {
 			json.put("disabled", disabled);
+		}
+		if (exclude != null && exclude) {
+			json.put("exclude", exclude);
+		}
+		if (editable) {
+			json.put("editable", editable);
 		}
 		json.put("cols", cols);
 		json.put("rows", rows);

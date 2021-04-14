@@ -12,6 +12,8 @@ public class Number implements Input, Filter {
 	private final String type;
 	private final boolean required;
 	private boolean disabled = false;
+	private Boolean exclude = null; // TODO setry
+	private boolean editable = false; // TODO setry
 	private String placeholder = null;
 	
 	private Integer step = null;
@@ -73,11 +75,24 @@ public class Number implements Input, Filter {
 	
 	public Number setDisabled(boolean disabled) {
 		this.disabled = disabled;
+		if (exclude == null) {
+			exclude = disabled;
+		}
 		return this;
 	}
 
 	public Number setPlaceholder(String placeholder) {
 		this.placeholder = placeholder;
+		return this;
+	}
+	
+	public Number setExclude(boolean exclude) {
+		this.exclude = exclude;
+		return this;
+	}
+	
+	public Number setEditable(boolean editable) {
+		this.editable = editable;
 		return this;
 	}
 
@@ -119,6 +134,12 @@ public class Number implements Input, Filter {
 		}
 		if (disabled) {
 			json.put("disabled", disabled);
+		}
+		if (exclude != null && exclude) {
+			json.put("exclude", exclude);
+		}
+		if (editable) {
+			json.put("editable", editable);
 		}
 		if (title != null) {
 			json.put("title", title);

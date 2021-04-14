@@ -11,6 +11,8 @@ public class Email implements Input {
 	private String title;	
 	private final boolean required;
 	private boolean disabled = false;
+	private Boolean exclude = null; // TODO setry
+	private boolean editable = false; // TODO setry
 	private String value = null;
 	private String placeholder = null;
 	private final Map<String, String> params = new HashMap<>();
@@ -43,6 +45,19 @@ public class Email implements Input {
 	
 	public Email setDisabled(boolean disabled) {
 		this.disabled = disabled;
+		if (exclude == null) {
+			exclude = disabled;
+		}
+		return this;
+	}
+	
+	public Email setExclude(boolean exclude) {
+		this.exclude = exclude;
+		return this;
+	}
+	
+	public Email setEditable(boolean editable) {
+		this.editable = editable;
 		return this;
 	}
 
@@ -62,6 +77,12 @@ public class Email implements Input {
 		}
 		if (disabled) {
 			json.put("disabled", disabled);
+		}
+		if (exclude != null && exclude) {
+			json.put("exclude", exclude);
+		}
+		if (editable) {
+			json.put("editable", editable);
 		}
 		params.forEach((key, param)->{
 			json.put(key, param);

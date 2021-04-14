@@ -12,6 +12,8 @@ public class RadioList implements Input {
 	private final String type;
 	private final boolean required;
 	private boolean disabled = false;
+	private Boolean exclude = null; // TODO setry
+	private boolean editable = false; // TODO setry
 	private String value = null;
 	private String title = null;
 	private final Map<String, String> params = new HashMap<>();
@@ -51,6 +53,19 @@ public class RadioList implements Input {
 	
 	public RadioList setDisabled(boolean disabled) {
 		this.disabled = disabled;
+		if (exclude == null) {
+			exclude = disabled;
+		}
+		return this;
+	}
+	
+	public RadioList setExclude(boolean exclude) {
+		this.exclude = exclude;
+		return this;
+	}
+	
+	public RadioList setEditable(boolean editable) {
+		this.editable = editable;
 		return this;
 	}
 	
@@ -71,6 +86,12 @@ public class RadioList implements Input {
 		}
 		if (disabled) {
 			json.put("disabled", disabled);
+		}
+		if (exclude != null && exclude) {
+			json.put("exclude", exclude);
+		}
+		if (editable) {
+			json.put("editable", editable);
 		}
 		if (value != null) {
 			json.put("value", value);

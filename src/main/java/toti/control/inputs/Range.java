@@ -12,6 +12,8 @@ public class Range implements Input, Filter {
 	private final String type;
 	private final boolean required;
 	private boolean disabled = false;
+	private Boolean exclude = null; // TODO setry
+	private boolean editable = false; // TODO setry
 	
 	private Integer step = null;
 	private Integer min = null;
@@ -72,6 +74,19 @@ public class Range implements Input, Filter {
 	
 	public Range setDisabled(boolean disabled) {
 		this.disabled = disabled;
+		if (exclude == null) {
+			exclude = disabled;
+		}
+		return this;
+	}
+	
+	public Range setExclude(boolean exclude) {
+		this.exclude = exclude;
+		return this;
+	}
+	
+	public Range setEditable(boolean editable) {
+		this.editable = editable;
 		return this;
 	}
 
@@ -110,6 +125,12 @@ public class Range implements Input, Filter {
 		}
 		if (disabled) {
 			json.put("disabled", disabled);
+		}
+		if (exclude != null && exclude) {
+			json.put("exclude", exclude);
+		}
+		if (editable) {
+			json.put("editable", editable);
 		}
 		if (title != null) {
 			json.put("title", title);

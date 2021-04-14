@@ -13,6 +13,8 @@ public class Datetime implements Input, Filter {
 	private String title;	
 	private final boolean required;
 	private boolean disabled = false;
+	private Boolean exclude = null; // TODO setry
+	private boolean editable = false; // TODO setry
 	private String value = null;
 	private int step = 1;
 	private boolean strict = true;
@@ -57,11 +59,24 @@ public class Datetime implements Input, Filter {
 	
 	public Datetime setDisabled(boolean disabled) {
 		this.disabled = disabled;
+		if (exclude == null) {
+			exclude = disabled;
+		}
 		return this;
 	}
 	
 	public Datetime setStep(int step) {
 		this.step = step;
+		return this;
+	}
+	
+	public Datetime setExclude(boolean exclude) {
+		this.exclude = exclude;
+		return this;
+	}
+	
+	public Datetime setEditable(boolean editable) {
+		this.editable = editable;
 		return this;
 	}
 
@@ -93,6 +108,12 @@ public class Datetime implements Input, Filter {
 		}
 		if (disabled) {
 			json.put("disabled", disabled);
+		}
+		if (exclude != null && exclude) {
+			json.put("exclude", exclude);
+		}
+		if (editable) {
+			json.put("editable", editable);
 		}
 		if (title != null) {
 			json.put("title", title);

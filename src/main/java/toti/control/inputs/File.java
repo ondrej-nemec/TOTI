@@ -11,6 +11,8 @@ public class File implements Input {
 	private String title;	
 	private final boolean required;
 	private boolean disabled = false;
+	private Boolean exclude = null; // TODO setry
+	private boolean editable = false; // TODO setry
 	private final Map<String, String> params = new HashMap<>();
 
 	public static File input(String name, boolean required) {
@@ -36,6 +38,19 @@ public class File implements Input {
 	
 	public File setDisabled(boolean disabled) {
 		this.disabled = disabled;
+		if (exclude == null) {
+			exclude = disabled;
+		}
+		return this;
+	}
+	
+	public File setExclude(boolean exclude) {
+		this.exclude = exclude;
+		return this;
+	}
+	
+	public File setEditable(boolean editable) {
+		this.editable = editable;
 		return this;
 	}
 	
@@ -50,6 +65,12 @@ public class File implements Input {
 		}
 		if (disabled) {
 			json.put("disabled", disabled);
+		}
+		if (exclude != null && exclude) {
+			json.put("exclude", exclude);
+		}
+		if (editable) {
+			json.put("editable", editable);
 		}
 		if (title != null) {
 			json.put("title", title);

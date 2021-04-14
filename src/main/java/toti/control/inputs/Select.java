@@ -15,11 +15,14 @@ public class Select implements Input, Filter {
 	private String title;	
 	private final boolean required;
 	private boolean disabled = false;
+	private Boolean exclude = null; // TODO setry
+	private boolean editable = false; // TODO setry
 	private final List<Option> options;
 	private String value = null;
 	private final Map<String, String> params = new HashMap<>();
 	private Map<String, Object> load;
 	private String optionGroup;
+	private String depends = null;
 	
 	@Deprecated
 	public static Select input(String name, boolean required, Map<String, String> options) {
@@ -72,6 +75,9 @@ public class Select implements Input, Filter {
 	
 	public Select setDisabled(boolean disabled) {
 		this.disabled = disabled;
+		if (exclude == null) {
+			exclude = disabled;
+		}
 		return this;
 	}
 	
@@ -89,6 +95,16 @@ public class Select implements Input, Filter {
 		load.put("url", url);
 		load.put("method", method);
 		load.put("params", params);
+		return this;
+	}
+	
+	public Select setExclude(boolean exclude) {
+		this.exclude = exclude;
+		return this;
+	}
+	
+	public Select setEditable(boolean editable) {
+		this.editable = editable;
 		return this;
 	}
 
@@ -135,8 +151,17 @@ public class Select implements Input, Filter {
 		if (disabled) {
 			json.put("disabled", disabled);
 		}
+		if (exclude != null && exclude) {
+			json.put("exclude", exclude);
+		}
+		if (editable) {
+			json.put("editable", editable);
+		}
 		if (title != null) {
 			json.put("title", title);
+		}
+		if (depends != null) {
+			json.put("depends", depends);
 		}
 		return json;
 	}

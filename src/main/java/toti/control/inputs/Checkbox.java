@@ -12,6 +12,8 @@ public class Checkbox implements Input {
 	private String title;	
 	private final boolean required;
 	private boolean disabled = false;
+	private Boolean exclude = null; // TODO setry
+	private boolean editable = false; // TODO setry
 	private String value = null;
 	private final Map<String, String> params = new HashMap<>();
 	private String checked = "Yes";
@@ -49,12 +51,25 @@ public class Checkbox implements Input {
 	
 	public Checkbox setDisabled(boolean disabled) {
 		this.disabled = disabled;
+		if (exclude == null) {
+			exclude = disabled;
+		}
 		return this;
 	}
 	
 	public Checkbox setValuesRender(String checked, String unchecked) {
 		this.checked = checked;
 		this.unchecked = unchecked;
+		return this;
+	}
+	
+	public Checkbox setExclude(boolean exclude) {
+		this.exclude = exclude;
+		return this;
+	}
+	
+	public Checkbox setEditable(boolean editable) {
+		this.editable = editable;
 		return this;
 	}
 	
@@ -72,6 +87,12 @@ public class Checkbox implements Input {
 		}
 		if (disabled) {
 			json.put("disabled", disabled);
+		}
+		if (exclude != null && exclude) {
+			json.put("exclude", exclude);
+		}
+		if (editable) {
+			json.put("editable", editable);
 		}
 		if (title != null) {
 			json.put("title", title);
