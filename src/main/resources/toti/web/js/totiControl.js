@@ -1,4 +1,4 @@
-/* TOTI Control version 0.0.8 */
+/* TOTI Control version 0.0.9 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -150,86 +150,104 @@ var totiControl = {
 		select: function (params) {
 			var select = document.createElement('select');
 			for ([key, value] of Object.entries(params)) {
-				if (key === "options" || key === "load" || key === "value") {
+				if (key === "options" || key === "load" || key === "value" || key === "depends") {
 					/* ignored now, done soon */
 				} else {
 					select.setAttribute(key, value);
 				}
 			}
-			var addOption = function(option, parent) {
-				if (option instanceof HTMLOptionElement) {
-		            parent.appendChild(option);
-		        } else {
-	            	option.type = "option";
-	                if (option.hasOwnProperty("optgroup")) {
-	                  	var optGroup = parent.querySelector('[label="' + option.optgroup + '"]');
-		                if (optGroup === null) {
-		                    optGroup = document.createElement("optgroup");
-		                    optGroup.setAttribute("label", option.optgroup);
-		                    parent.appendChild(optGroup);
-		                }
-		                optGroup.appendChild(totiControl.input(option));
-		            } else {
-		             	parent.appendChild(totiControl.input(option));
-		            }
-		            /*if (option.type === "optGroup") {
-		                var optGroup = document.createElement("optgroup");
-		                optGroup.setAttribute("label", option.title);
-		                option.options.forEach(function(item, index) {
-		                    addOption(item, optGroup);
-		                });
-		                parent.appendChild(optGroup);
-		            }*/
-	        	}
-     		};
-     		/* options */
-			totiUtils.forEach(params.options, function(v, option) {
-				addOption(option, select);
-			});
-			/* load */
-			if (params.hasOwnProperty("load")) {
-				var cacheKey = JSON.stringify({
-					"url": params.load.url,
-					"method": params.load.method,
-					"params": params.load.params
+			var addOptions = function(parentInput, selectedOptGroup) {
+				var addOption = function(option, parent) {
+					if (option instanceof HTMLOptionElement) {
+			            parent.appendChild(option);
+			        } else {
+		            	option.type = "option";
+		                if (option.hasOwnProperty("optgroup")) {
+		                  	var optGroup = parent.querySelector('[label="' + option.optgroup + '"]');
+			                if (optGroup === null) {
+			                    optGroup = document.createElement("optgroup");
+			                    optGroup.setAttribute("label", option.optgroup);
+			                    parent.appendChild(optGroup);
+			                }
+			                optGroup.appendChild(totiControl.input(option));
+			            } else {
+			             	parent.appendChild(totiControl.input(option));
+			            }
+			            /*if (option.type === "optGroup") {
+			                var optGroup = document.createElement("optgroup");
+			                optGroup.setAttribute("label", option.title);
+			                option.options.forEach(function(item, index) {
+			                    addOption(item, optGroup);
+			                });
+			                parent.appendChild(optGroup);
+			            }*/
+		        	}
+	     		};
+	     		/* options */
+				totiUtils.forEach(params.options, function(v, option) {
+					addOption(option, parentInput);
 				});
-				var onSuccess = function(loaded) {
-					totiUtils.forEach(loaded, function(value, opt) {
-                		var option = { "value": value };
-                		var use = true;
-                  		if (typeof opt === "object") {
-                       		option.title = opt.title;
-                       		if (opt.disabled) {
-	                            option.disabled = "disabled";
-	                        }
-                       		if (opt.optgroup) {
-								if (params.hasOwnProperty("optionGroup")) {
-									use = opt.optgroup === params.optionGroup;
-								} else {
-									option.optgroup = opt.optgroup;
-								}
-                       		}
-	                    } else {
-	                       option.title = opt;
-	                    }
-	                    if (use) {
-	                    	params.options[value] = option; /* for value renderer*/
-                  			addOption(option, select);
-	                    }
-                  		
-               		});
-				};
-				if (totiControl.inputs._selectCache.hasOwnProperty(cacheKey)) {
-					onSuccess(totiControl.inputs._selectCache[cacheKey]);
-				} else {
-					totiLoad.async(params.load.url, params.load.method, params.load.params, totiLoad.getHeaders(), function(loaded) {
-						onSuccess(loaded);
-						totiControl.inputs._selectCache[cacheKey] = loaded;
-					}, function(xhr) {
-						console.log(xhr);
-					}, false);
+				/* load */
+				if (params.hasOwnProperty("load")) {
+					var cacheKey = JSON.stringify({
+						"url": params.load.url,
+						"method": params.load.method,
+						"params": params.load.params
+					});
+					var onSuccess = function(loaded) {
+						totiUtils.forEach(loaded, function(value, opt) {
+	                		var option = { "value": value };
+	                		var use = true;
+	                  		if (typeof opt === "object") {
+	                       		option.title = opt.title;
+	                       		if (opt.disabled) {
+		                            option.disabled = "disabled";
+		                        }
+	                       		if (opt.optgroup) {
+									if (selectedOptGroup !== null) {
+                                    	use = opt.optgroup === selectedOptGroup;
+                                	} else if (params.hasOwnProperty("optionGroup")) {
+										use = opt.optgroup === params.optionGroup;
+									} else {
+										option.optgroup = opt.optgroup;
+									}
+	                       		}
+		                    } else {
+		                       option.title = opt;
+		                    }
+		                    if (use) {
+		                    	params.options[value] = option; /* for value renderer*/
+	                  			addOption(option, parentInput);
+		                    }
+	                  		
+	               		});
+					};
+					if (totiControl.inputs._selectCache.hasOwnProperty(cacheKey)) {
+						onSuccess(totiControl.inputs._selectCache[cacheKey]);
+					} else {
+						totiLoad.async(params.load.url, params.load.method, params.load.params, totiLoad.getHeaders(), function(loaded) {
+							onSuccess(loaded);
+							totiControl.inputs._selectCache[cacheKey] = loaded;
+						}, function(xhr) {
+							console.log(xhr);
+						}, false);
+					}
 				}
 			}
+			if (params.hasOwnProperty("depends")) {
+		        setTimeout(function() {
+	                var depends = document.getElementById(params.form).querySelector("[name='" + params.depends + "']");
+	                depends.onchange = function() {
+		                select.innerHTML = "";
+		                params.options = [];
+		                addOptions(select, depends.value);
+		                select.value = null;
+	             	};
+	                addOptions(select, depends.value);
+         		}, 10);
+	    	} else {
+	        	addOptions(select, null);
+	    	}
 			/* value */
 			if (params.hasOwnProperty("value")) {
 				select.value = params.value;

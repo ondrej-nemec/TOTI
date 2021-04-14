@@ -1,4 +1,4 @@
-/* TOTI Form version 0.0.10 */
+/* TOTI Form version 0.0.11 */
 class TotiForm {
 
 	constructor(config) {
@@ -46,6 +46,11 @@ class TotiForm {
 			container = document.createElement("div");
 			container.innerHTML = element.innerHTML;
 			element.innerHTML = "";
+
+			var errors = document.createElement("div");
+            errors.setAttribute("id", uniqueName + "-errors-form");
+            errors.appendChild(document.createElement("span"));
+            container.querySelector('[name="form-error-form"]').appendChild(errors);
 		}
 		form.appendChild(container);
 		
@@ -53,8 +58,9 @@ class TotiForm {
 		return form;
 	}
 
-	iterateFields(uniqueName, fields, form, container, editable, useTemplate, parent = null, listPosition = null) {
+	iterateFields(uniqueName, fields, form, container, defaultEditable, useTemplate, parent = null, listPosition = null) {
 		for (const[index, field] of Object.entries(fields)) {
+			var editable = field.hasOwnProperty("editable") ? field.editable : defaultEditable;
 			if (parent !== null) {
 				field.id = (parent.id === null ? "" : parent.id + "-") + field.id;
 				if (!field.hasOwnProperty("name") || field.name === "") {
@@ -86,7 +92,9 @@ class TotiForm {
 					}
 				}
 				this.dynamic[field.name] = function(position, inputName) {
-					addButton.setAttribute(dynamicCount, parseInt(addButton.getAttribute(dynamicCount))+ 1);
+					if (addButton !== null) {
+						addButton.setAttribute(dynamicCount, parseInt(addButton.getAttribute(dynamicCount))+ 1);
+					}
 					var itemTemplate = field.template;
 					var removeFunc = function () {
 						addButton.setAttribute(
@@ -103,7 +111,10 @@ class TotiForm {
 						Array.prototype.forEach.call(
 							itemTemplate.getElementsByClassName("dynamic-container-part"),
 							function(item, index) {
-								item.setAttribute("name", item.getAttribute("name").replace("%s", position));
+								item.setAttribute(
+									"name",
+									item.getAttribute("name").replace("%p", inputName).replace("%s", position)
+								);
 							}
 						);
 
@@ -364,10 +375,6 @@ class TotiForm {
 			Array.prototype.forEach.call(form.elements, function(input) {
 				var type = input.getAttribute("type");
 				var name = input.getAttribute("name");
-				/* TODO need configuration - can be disabled, but send, can be enabled but not send */
-				if (input.getAttribute("disabled") !== null) {
-					return;
-				}
 				if (name === null || input.getAttribute("exclude") !== null) {
 					return;
 				}
@@ -571,6 +578,9 @@ class TotiForm {
                     form.querySelector('[name="' + key + '"][value="' + value + '"]').setAttribute("checked", true);
                 } else {
                     element.value = value;
+                }
+                if (typeof element.onchange === "function") {
+                	element.onchange();
                 }
                 if (element.getAttribute("origintype") === "datetime-local" && element.type === "fieldset") {
                     element.onbind();
