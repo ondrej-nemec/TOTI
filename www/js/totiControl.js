@@ -234,20 +234,45 @@ var totiControl = {
 					}
 				}
 			}
-			if (params.hasOwnProperty("depends")) {
-		        setTimeout(function() {
-	                var depends = document.getElementById(params.form).querySelector("[name='" + params.depends + "']");
-	                depends.onchange = function() {
-		                select.innerHTML = "";
-		                params.options = [];
+			var originOptions = totiUtils.clone(params.options);
+
+		    var optGroupRenderer = function(depends) {
+		        var groups = select.querySelectorAll("optgroup");
+		        Array.prototype.forEach.call(groups, function(group) {
+		            var label = depends.querySelector("[value='"+ group.getAttribute("label") + "']");
+		            group.setAttribute("label", label.innerText);
+		        });
+		        depends.onchange = function() {
+			        select.innerHTML = "";
+		            params.options = totiUtils.clone(originOptions);
+		            if (depends.value === "") {
+		                addOptions(select, null);
+		            } else {
 		                addOptions(select, depends.value);
-		                select.value = null;
-	             	};
-	                addOptions(select, depends.value);
-         		}, 10);
-	    	} else {
-	        	addOptions(select, null);
-	    	}
+		            }
+		            select.value = null;
+		        };
+		    }
+
+		    // TODO editable can not exists, add condition for existing params.form
+		    if (params.hasOwnProperty("depends") && params.editable == "true" && params.hasOwnProperty("form")) {
+		        /* only for forms */
+		        setTimeout(function() {
+		             var depends = document.getElementById(params.form).querySelector("[name='" + params.depends + "']");
+		             addOptions(select, depends.value);
+		             optGroupRenderer(depends);
+		        }, 1);
+		    } else if (params.hasOwnProperty("depends") && !params.hasOwnProperty("form")) {
+		        /* for grid only */
+		        addOptions(select, null);
+		        setTimeout(function() {
+		            var depends = select.parentElement.parentElement.querySelector("[data-name='" + params.depends + "'] select");
+		            optGroupRenderer(depends);
+		        }, 1);
+		    } else {
+		        addOptions(select, null);
+		    }
+			
 			/* value */
 			if (params.hasOwnProperty("value")) {
 				select.value = params.value;

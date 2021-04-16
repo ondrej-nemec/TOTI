@@ -375,9 +375,12 @@ class TotiForm {
 			Array.prototype.forEach.call(form.elements, function(input) {
 				var type = input.getAttribute("type");
 				var name = input.getAttribute("name");
-				if (name === null || input.getAttribute("exclude") !== null) {
-					return;
-				}
+                if (name === null ) {
+                    return;
+                }
+                if (input.getAttribute("exclude") !== null && input.getAttribute("exclude") == false) {
+                    return;
+                }
 				/******/
 				if (type === "datetime-local") {
 					value = input.value;

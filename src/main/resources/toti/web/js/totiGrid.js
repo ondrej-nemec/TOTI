@@ -1,4 +1,4 @@
-/* TOTI Grid version 0.0.6 */
+/* TOTI Grid version 0.0.7 */
 class TotiGrid {
 
 	constructor(config) {
@@ -7,7 +7,8 @@ class TotiGrid {
 
 	init(elementIdentifier, uniqueName) {
 		var object = this;
-		document.addEventListener("DOMContentLoaded", function(event) { 
+		document.addEventListener("DOMContentLoaded", function(event) {
+            document.querySelector(elementIdentifier).innerHTML = "";
 			document.querySelector(elementIdentifier).appendChild(
 				object.create(uniqueName, document.querySelector(elementIdentifier))
 			);
