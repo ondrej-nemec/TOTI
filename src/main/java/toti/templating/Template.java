@@ -2,6 +2,8 @@ package toti.templating;
 
 import java.util.Map;
 
+import common.structures.ListDictionary;
+import common.structures.MapDictionary;
 import toti.security.Authorizator;
 import translator.Translator;
 
@@ -29,7 +31,9 @@ public interface Template {
 	
 	@SuppressWarnings("unchecked")
 	static <T> Iterable<T> toIterable(Object o, Class<T> clazz) {
-		if (o.getClass().isArray()) {
+		if (o instanceof ListDictionary) {
+			return ListDictionary.class.cast(o).toList();
+		} else if (o.getClass().isArray()) {
 			return java.util.Arrays.asList((T[])o);
 		} else /*if (o16_1 instanceof Iterable<?>)*/ {
 			return (Iterable<T>) o;
@@ -38,6 +42,9 @@ public interface Template {
 	
 	@SuppressWarnings("unchecked")
 	static <K, V> Map<K, V> toMap(Object o, Class<K> keyClass, Class<V> valueClass) {
+		if (o instanceof MapDictionary) {
+			return MapDictionary.class.cast(o).toMap();
+		}
 		return (Map<K, V>)o;
 	}
 }
