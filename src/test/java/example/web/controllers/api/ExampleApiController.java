@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import common.Logger;
+import common.structures.MapDictionary;
 import common.structures.MapInit;
 import common.structures.Tuple2;
 import example.AuditTrail;
@@ -171,8 +172,8 @@ public class ExampleApiController {
 			
 			editValues(updated, false);
 			
-			dao.update(id, updated);
-			auditTrail.update(identity.getUser().getId(), origin, updated);
+			dao.update(id, updated.toMap());
+			auditTrail.update(identity.getUser().getId(), origin, updated.toMap());
 			
 			Map<String, Object> params = new HashMap<>();
 			params.put("id", id);
@@ -193,9 +194,9 @@ public class ExampleApiController {
 			
 			editValues(inserted, true);
 			
-			int id = dao.insert(inserted);
+			int id = dao.insert(inserted.toMap());
 			inserted.put(UNIQUE, id);
-			auditTrail.insert(identity.getUser().getId(), inserted);
+			auditTrail.insert(identity.getUser().getId(), inserted.toMap());
 			
 			Map<String, Object> params = new HashMap<>();
 			params.put("id", id);
@@ -207,7 +208,7 @@ public class ExampleApiController {
 		}
 	}
 
-	private void editValues(Map<String, Object> values, boolean insert) {
+	private void editValues(MapDictionary<String, Object> values, boolean insert) {
 		System.err.println(values);
 		System.err.println(values.get("map"));
 		System.err.println(values.get("list"));

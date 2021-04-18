@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import common.Logger;
+import common.structures.MapDictionary;
 import module.AuditTrail;
 import socketCommunication.http.HttpMethod;
 import socketCommunication.http.StatusCode;
@@ -181,7 +182,7 @@ public class EntityApiController {
 						
 			editValues(updated, false);
 			
-			dao.update(id, updated);
+			dao.update(id, updated.toMap());
 		//	auditTrail.update(identity.getUser().getId(), origin, updated);
 			
 			Map<String, Object> params = new HashMap<>();
@@ -202,7 +203,7 @@ public class EntityApiController {
 			//inserted.remove(UNIQUE);
 			editValues(inserted, true);
 			
-			int id = dao.insert(inserted);
+			int id = dao.insert(inserted.toMap());
 			inserted.put(UNIQUE, id);
 		//	auditTrail.insert(identity.getUser().getId(), inserted);
 			
@@ -216,7 +217,7 @@ public class EntityApiController {
 		}
 	}
 
-	private void editValues(Map<String, Object> values, boolean insert) {
+	private void editValues(MapDictionary<String, Object> values, boolean insert) {
 		values.remove(UNIQUE);
 		if (values.get("is_main") == null) {
 			values.put("is_main", false);
