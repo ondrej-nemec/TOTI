@@ -12,5 +12,8 @@
 		function beforeBind(values) {
 			console.log("before", values);
 		}
+		function colCondition(row) {
+			return row.active;
+		}
 	</script>
 </t:block>

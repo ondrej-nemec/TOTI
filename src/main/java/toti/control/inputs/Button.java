@@ -19,6 +19,8 @@ public class Button implements Input {
 	private String onFailure;
 	private String onSuccess;
 	private ButtonType type = ButtonType.BASIC;
+	private String condition = null;
+	private boolean evaluate = false;
 
 	@Deprecated
 	public static Button create(String url) {
@@ -79,6 +81,16 @@ public class Button implements Input {
 		return this;
 	}
 	
+	public Button setCondition(String condition) {
+		return setCondition(condition, false);
+	}
+	
+	public Button setCondition(String condition, boolean evaluate) {
+		this.condition = condition;
+		this.evaluate = evaluate;
+		return this;
+	}
+	
 	@Override
 	public Map<String, Object> getInputSettings() {
 		Map<String, Object> json = new HashMap<>();
@@ -100,6 +112,10 @@ public class Button implements Input {
 		}
 		if (onSuccess != null) {
 			json.put("onSuccess", onSuccess);
+		}
+		if (condition != null) {
+			json.put("condition", condition);
+			json.put("evaluate", evaluate);
 		}
 		json.put("style", type.toString().toLowerCase());
 		json.putAll(params);

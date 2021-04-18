@@ -1,4 +1,4 @@
-/* TOTI Utils version 0.1.2 */
+/* TOTI Utils version 0.1.3 */
 var totiUtils = {
 	/* TODO is used? */
 	parseUrlToObject: function (data) {
@@ -61,14 +61,17 @@ var totiUtils = {
 		var isBlink = (isChrome || isOpera) && !!window.CSS; */
 		return "";
 	},
-	execute: function(callback, args = []) {
+	execute: function(callback, args = [], evaluate = false) {
 		if (callback === null) {
 			return;
 		}
 		if (typeof callback === 'function') {
 		    return callback(...args);
-		} else {
+		} else if (window.hasOwnProperty(callback)) {
 			return window[callback](...args);
+		} else if (evaluate === true) {
+			/* return eval(totiUtils.parametrizedString(callback, args));*/
+			return eval(callback);
 		}
 	},
 	clone: function(object) {

@@ -1,4 +1,4 @@
-/* TOTI Grid version 0.0.7 */
+/* TOTI Grid version 0.0.8 */
 class TotiGrid {
 
 	constructor(config) {
@@ -323,7 +323,16 @@ class TotiGrid {
 							"data-unique": row[identifier]
 						}));
 					} else if (column.type === 'buttons') {
+						var showButton = function(rowData, condition, evaluate) {
+							if (evaluate) {
+								condition = totiUtils.parametrizedString(condition, rowData);
+							}
+							return totiUtils.execute(condition, [rowData], evaluate);
+						};
 						column.buttons.forEach(function(button, index) {
+							if (button.hasOwnProperty("condition") && !showButton(row, button.condition, button.evaluate)) {
+								return;
+							}
 							var settings = {
 								href: totiUtils.parametrizedString(button.href, row),
 								method: button.method,

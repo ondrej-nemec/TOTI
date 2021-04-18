@@ -114,10 +114,13 @@ public class ExamplePageController {
 				Button.create("/example-module/example/delete/{id}", "delete")
 					.setTitle("Delete").setType(ButtonType.DANGER)
 					.setMethod("delete").setAsync(true).setConfirmation("Really delete {name}?")
+					.setCondition("colCondition")
 			)
 			
 			.addButton(
 					Button.create("/example-module/api/example/test", "test").setMethod("post")
+					.setTitle("Last button")
+					.setCondition("!{active}", true)
 					.addRequestParam("a", "a").addRequestParam("b", "bb").setAsync(true)
 			)
 		);

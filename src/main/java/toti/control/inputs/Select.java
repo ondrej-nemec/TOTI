@@ -116,15 +116,6 @@ public class Select implements Input, Filter {
 	@Override
 	public Map<String, Object> getFilterSettings() {
 		Map<String, Object> set = new HashMap<>();
-		/*Map<String, Object> opt = new HashMap<>();
-		options.forEach((value, text)->{
-			Map<String, Object> param = new HashMap<>();
-			param.put("value", value);
-			param.put("title", Template.escapeVariable(text));
-			
-			// disabled, groupname
-			opt.put(value, param);
-		});*/
 		if (optionGroup != null) {
 			set.put("optionGroup", optionGroup);
 		}
@@ -135,6 +126,9 @@ public class Select implements Input, Filter {
 		set.putAll(params);
 		if (value != null) {
 			set.put("value", value);
+		}
+		if (depends != null) {
+			set.put("depends", depends);
 		}
 		return set;
 	}
@@ -159,9 +153,6 @@ public class Select implements Input, Filter {
 		}
 		if (title != null) {
 			json.put("title", title);
-		}
-		if (depends != null) {
-			json.put("depends", depends);
 		}
 		return json;
 	}
