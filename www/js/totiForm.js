@@ -1,4 +1,4 @@
-/* TOTI Form version 0.0.11 */
+/* TOTI Form version 0.0.12 */
 class TotiForm {
 
 	constructor(config) {
@@ -50,7 +50,11 @@ class TotiForm {
 			var errors = document.createElement("div");
             errors.setAttribute("id", uniqueName + "-errors-form");
             errors.appendChild(document.createElement("span"));
-            container.querySelector('[name="form-error-form"]').appendChild(errors);
+            var errorContainer = container.querySelector('[name="form-error-form"]');
+            if (errorContainer !== null) {
+				errorContainer.appendChild(errors);
+            }
+            
 		}
 		form.appendChild(container);
 		
@@ -375,19 +379,21 @@ class TotiForm {
 			Array.prototype.forEach.call(form.elements, function(input) {
 				var type = input.getAttribute("type");
 				var name = input.getAttribute("name");
-                if (name === null ) {
+                if (name === null || type === null) {
                     return;
                 }
                 if (input.getAttribute("exclude") !== null && input.getAttribute("exclude") == false) {
                     return;
+                }
+                if (type === "submit" || type === "button" || type === "reset" || type === "image" || type === "fieldset") {
+					/* ignored*/
+					return;
                 }
 				/******/
 				if (type === "datetime-local") {
 					value = input.value;
 					value = value.replace("T", " ");
 					data.append(name, value);
-				} else if (type === "submit" || type === "button" || type === "reset" || type === "image") {
-					/* ignored*/
 				} else if (type === "radio") {
 					if (input.checked) {
 						data.append(name, input.value);
@@ -401,7 +407,8 @@ class TotiForm {
 				} else {
 					data.append(name, input.value);
 				}
-			});		
+			});
+
 			var submitConfirmation = function() {
 				if (submit.hasOwnProperty('confirmation')) {
 					return totiDisplay.confirm(submit.confirmation);
