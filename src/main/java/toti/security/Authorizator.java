@@ -56,7 +56,7 @@ public class Authorizator {
 		}
 		allowedIds.removeAll(forbidden);
 		Rule privilegedRule = rules.getPrivilegedRule();
-		if (privilegedRule.getAction() != Action.UNDEFINED) {
+		if (privilegedRule != null && privilegedRule.getAction() != Action.UNDEFINED) {
 			if (privilegedRule.getOwners() == null) {
 				throw new NotAllowedActionException("Owners for User Rule are not defined");
 			}
@@ -134,7 +134,7 @@ public class Authorizator {
 	
 	private boolean isAllowed(Action finded, Action asked) {
 		if (finded != Action.FORBIDDEN) {
-			return finded.ordinal() <= asked.ordinal();
+			return finded.ordinal() >= asked.ordinal();
 		}
 		return false;
 	}
