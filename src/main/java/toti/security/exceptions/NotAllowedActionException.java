@@ -1,6 +1,6 @@
-package toti.security;
+package toti.security.exceptions;
 
-import acl.Action;
+import toti.security.Action;
 
 public class NotAllowedActionException extends RuntimeException {
 

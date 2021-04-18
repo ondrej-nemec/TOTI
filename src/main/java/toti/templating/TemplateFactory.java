@@ -42,6 +42,7 @@ import toti.templating.tags.FormLabel;
 import toti.templating.tags.IfTag;
 import toti.templating.tags.IncludeTag;
 import toti.templating.tags.LayoutTag;
+import toti.templating.tags.PermissionsTag;
 import toti.templating.tags.SwitchTag;
 import toti.templating.tags.TranslateParamTag;
 import toti.templating.tags.TranslateTag;
@@ -255,6 +256,7 @@ public class TemplateFactory {
 		tags.add(new FormError());
 		tags.add(new FormInput());
 		tags.add(new FormLabel());
+		tags.add(new PermissionsTag());
 		return tags;
 	}
 	

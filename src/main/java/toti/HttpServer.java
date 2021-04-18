@@ -7,13 +7,14 @@ import java.util.Map;
 import java.util.Optional;
 
 import common.Logger;
+import common.structures.ThrowingFunction;
 import logging.LoggerFactory;
 import socketCommunication.Server;
 import socketCommunication.ServerSecuredCredentials;
-import toti.security.AuthenticationCache;
 import toti.security.Authenticator;
 import toti.security.Authorizator;
 import toti.security.IdentityFactory;
+import toti.security.User;
 import toti.templating.TemplateFactory;
 import translator.PropertiesTranslator;
 import translator.Translator;
@@ -32,6 +33,7 @@ public class HttpServer {
     		Optional<ServerSecuredCredentials> certs,
     		String tempPath,
     		List<T> modules,
+    		ThrowingFunction<String, User, Exception> userFactory,
     		String resourcesPath,
     		Translator translator,
     		int maxUploadFileSize,
@@ -75,7 +77,7 @@ public class HttpServer {
 			String[] translators = new String[trans.size()];
 			translator = PropertiesTranslator.create(LoggerFactory.getLogger("translator"), trans.toArray(translators));
 		}
-		AuthenticationCache authenticationCache = new AuthenticationCache(tempPath);
+	//	AuthenticationCache authenticationCache = new AuthenticationCache(tempPath, false); // TODO enable??
 		this.translator = translator;
 		ResponseFactory response = new ResponseFactory(
 				headers,
@@ -84,9 +86,9 @@ public class HttpServer {
 				controllers,
 				totiTemplateFactory,
 				translator,
-				new IdentityFactory(defLang, authenticationCache),
-				new Authenticator(tokenExpiration, tokenCustomSalt, authenticationCache, new Hash("SHA-256"), logger),
-				new Authorizator(),
+				new IdentityFactory(defLang/*, authenticationCache*/),
+				new Authenticator(tokenExpiration, tokenCustomSalt, userFactory, /*authenticationCache,*/ new Hash("SHA-256"), logger),
+				new Authorizator(logger),
 				charset,
 				dirResponseAllowed,
 				developIps,

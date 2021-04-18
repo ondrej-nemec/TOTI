@@ -21,7 +21,7 @@ public class ControlTagEndToEndTest {
 			Template template = templateFactory.getTemplate("test.jsp");
 			Map<String, Object> params = new HashMap<>();
 			params.put("control", new Form("action", false));
-			System.out.println(template.create(templateFactory, params, null));
+			System.out.println(template.create(templateFactory, params, null, null));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

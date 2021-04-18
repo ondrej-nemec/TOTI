@@ -39,12 +39,12 @@ import toti.annotations.url.Params;
 import toti.annotations.url.Secured;
 import toti.registr.Registr;
 import toti.response.Response;
-import toti.security.AccessDeniedException;
 import toti.security.Authenticator;
 import toti.security.Authorizator;
 import toti.security.Identity;
 import toti.security.IdentityFactory;
-import toti.security.NotAllowedActionException;
+import toti.security.exceptions.AccessDeniedException;
+import toti.security.exceptions.NotAllowedActionException;
 import toti.templating.DirectoryTemplate;
 import toti.templating.TemplateFactory;
 import toti.validation.ParseObject;
@@ -176,7 +176,14 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("code", code);
 		return Response.getTemplate(code, "/errors/error.jsp", variables)
-				.getResponse(responseHeaders.get(), totiTemplateFactory, translator.withLocale(identity.getLocale()), charset);
+				.getResponse(
+					responseHeaders.get(), 
+					totiTemplateFactory, 
+					translator.withLocale(identity.getLocale()), 
+					authorizator,
+					identity,
+					charset
+				);
 	}
 	
 	private RestApiResponse printException(StatusCode code, 
@@ -199,7 +206,11 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		variables.put("identity", identity);
 		variables.put("t", t);
 		return Response.getTemplate(code, "/errors/exception.jsp", variables)
-				.getResponse(responseHeaders.get(), totiTemplateFactory, translator.withLocale(identity.getLocale()), charset);
+				.getResponse(
+					responseHeaders.get(), totiTemplateFactory, 
+					translator.withLocale(identity.getLocale()),
+					authorizator, identity, charset
+				);
 	}
 	
 	private RestApiResponse getNormalizedResponse(
@@ -231,7 +242,10 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		// toti exclusive
 		if (url.startsWith("/toti/")) {
 			return Response.getTemplate(url.substring(5), new HashMap<>())
-					.getResponse(headers, totiTemplateFactory, translator.withLocale(identity.getLocale()), charset);
+					.getResponse(
+						headers, totiTemplateFactory, translator.withLocale(identity.getLocale()),
+						authorizator, identity, charset
+					);
 		}
 		// controllers
 		for (MappedUrl mapped : mapping) {
@@ -261,7 +275,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		if (file.isDirectory()) {
 			return getDirResponse(headers, file.listFiles(), url);
 		}
-		return Response.getFile(resourcesDir + url).getResponse(headers, null, null, charset);
+		return Response.getFile(resourcesDir + url).getResponse(headers, null, null, null, null, charset);
 	}
 	
 	private RestApiResponse getControllerResponse(
@@ -296,11 +310,11 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				if (mapped.isApi() || redirectUrlNoLoggedUser == null) {
 					throw e;
 				}
-				return Response.getRedirect(redirectUrlNoLoggedUser).getResponse(headers, null, null, charset);
+				return Response.getRedirect(redirectUrlNoLoggedUser).getResponse(headers, null, null, null, null, charset);
 			}
 		} else {
 			// check errors after authrization
-			return Response.getJson(StatusCode.BAD_REQUEST, errors).getResponse(headers, null, null, charset);
+			return Response.getJson(StatusCode.BAD_REQUEST, errors).getResponse(headers, null, null, null, null, charset);
 		}
 		try {			
 			Object o = Registr.get().getFactory(mapped.getClassName()).get();
@@ -331,7 +345,11 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	    	
 	    	headers.addHeaders(identityFactory.getResponseHeaders(identity)); // FIX for cookies
 	    	
-			return response.getResponse(headers, templateFactory, translator.withLocale(identity.getLocale()), charset);
+			return response.getResponse(
+				headers, templateFactory, 
+				translator.withLocale(identity.getLocale()), 
+				authorizator, identity, charset
+			);
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
@@ -362,7 +380,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			headers.getHeaders(),
 			(bw)->{
 				try {
-					bw.write(new DirectoryTemplate(files, path).create(null, null, null));
+					bw.write(new DirectoryTemplate(files, path).create(null, null, null, null));
 				} catch (Exception e) {
 					throw new RuntimeException(e);
 				}

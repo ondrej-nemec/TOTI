@@ -7,7 +7,9 @@ import java.util.Locale;
 import java.util.Optional;
 
 import common.Logger;
+import common.structures.ThrowingFunction;
 import socketCommunication.ServerSecuredCredentials;
+import toti.security.User;
 import translator.Translator;
 
 public class HttpServerFactory {
@@ -38,28 +40,10 @@ public class HttpServerFactory {
 	private String tokenCustomSalt = "";
 	
 	
-	public <T extends Module> HttpServer get(List<T> modules) throws Exception {
-		/*if (security == null) {
-			this.security = new UserSecurity(
-				null, // no redirect, on 4xx
-				(identity)->new AclUser() {// FULL control
-						@Override public Object getId() { return ""; }
-						@Override public int getRank() { return 0; }
-						@Override public List<AclRole> getRoles() { return new LinkedList<>(); }
-				},
-				new RulesDao() {
-					@Override public Rules getRulesForUserAndGroups(AclUser user, AclDestination domain) {
-						return Rules.forUserWithOwner(Action.ADMIN, null);
-					}
-				},
-				1000 * 60 * 10, // 10 min
-				"", // salt
-				logger
-			);
-		}*/
+	public <T extends Module> HttpServer get(List<T> modules, ThrowingFunction<String, User, Exception> userFactory) throws Exception {
 		return new HttpServer(
 				port, threadPool, readTimeout, headers,
-				certs, tempPath, modules, resourcesPath,
+				certs, tempPath, modules, userFactory, resourcesPath,
 				translator,
 				maxUploadFileSize, allowedUploadFileTypes,
 				charset, defLang, tokenCustomSalt, tokenExpirationTime,

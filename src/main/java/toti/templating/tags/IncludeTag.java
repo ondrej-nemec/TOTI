@@ -52,7 +52,7 @@ public class IncludeTag implements Tag {
 		code.append(
 				"temp.getClass().getDeclaredField(\"b\").set(temp,b);"
 				+ "temp.getClass().getDeclaredField(\"blocks\").set(temp,blocks);"
-				+ "temp.create(templateFactory,variables,translator);"
+				+ "temp.create(templateFactory,variables,translator, authorizator);"
 				+ "}"
 		);
 		return code.toString();

@@ -16,11 +16,11 @@ public class IdentityFactory {
 	private final static String SESSION_HEADER_NAME = "Authorization";
 	
 	private final String defLang;
-	private final AuthenticationCache cache;
+	//private final AuthenticationCache cache;
 	
-	public IdentityFactory(String defLang, AuthenticationCache cache) {
+	public IdentityFactory(String defLang/*, AuthenticationCache cache*/) {
 		this.defLang = defLang;
-		this.cache = cache;
+	//	this.cache = cache;
 	}
 	
 	public List<String> getResponseHeaders(Identity identity) throws IOException {
@@ -48,7 +48,7 @@ public class IdentityFactory {
 					+ "; Max-Age=" + 0
 				);
 		}
-		cache.save(identity.getId(), identity.getUser());
+		//cache.save(identity.getId(), identity.getUser());
 		return headers;
 	}
 	

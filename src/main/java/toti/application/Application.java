@@ -1,12 +1,12 @@
 package toti.application;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
 import common.Logger;
 import common.functions.Env;
+import common.structures.ThrowingBiFunction;
 import database.Database;
 import database.DatabaseConfig;
 import logging.LoggerFactory;
@@ -16,17 +16,10 @@ import toti.HttpServerFactory;
 import toti.Module;
 import toti.ResponseHeaders;
 import toti.registr.Registr;
+import toti.security.User;
 import translator.Translator;
 
 public class Application {
-
-	public static void main(String[] args) {
-		// or api for service,...
-		Application a = new Application(Arrays.asList());
-		a.start();
-	}
-	
-	/****************/
 	
 	public static String APP_CONFIG_FILE = "conf/app.properties";
 	public static String LOG_CONFIG_FILE = "conf/ji-logging.properties";
@@ -38,11 +31,14 @@ public class Application {
 	private final List<Task> tasks = new LinkedList<>();
 	private final Logger logger;
 	
-	public <T extends Module> Application(List<T> modules) {
-		this(modules, null);
+	public <T extends Module> Application(List<T> modules, ThrowingBiFunction<String, Registr, User, Exception> userFactory) {
+		this(modules, userFactory, null);
 	}
 	
-	public <T extends Module> Application(List<T> modules, Logger logger) {
+	public <T extends Module> Application(
+			List<T> modules, 
+			ThrowingBiFunction<String, Registr, User, Exception> userFactory,
+			Logger logger) {
 		LoggerFactory.setConfigFile(LOG_CONFIG_FILE);
 		if (logger == null) {
 			logger = LoggerFactory.getLogger("toti");
@@ -81,7 +77,9 @@ public class Application {
 					LoggerFactory.getLogger(module.getName())
 				));
 			}
-			this.server = createServerFactory(env, registr).get(modules);
+			this.server = createServerFactory(env, registr).get(modules, (content)->{
+				return userFactory.apply(content, registr);
+			});
 		} catch (Exception e) {
 			logger.error("Start failed", e);
 			System.exit(1);

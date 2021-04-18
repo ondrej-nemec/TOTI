@@ -198,6 +198,16 @@ Parameters for translation message. Always between start and closing trans tag. 
 <t:param key="" value="" />
 ```
 
+## Authorize
+
+### Allowed
+
+Show inherit content if there is logged user AND currently logged user is allowed for domain and action. Paired
+
+```
+<t:allowed domain="" action=""></t:allowed>
+```
+
 ## Templating
 
 ### Layout

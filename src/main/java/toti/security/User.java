@@ -1,46 +1,39 @@
 package toti.security;
 
-import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashMap;
 
-import java.util.Map;
+import toti.security.permissions.Permissions;
 
-import common.structures.Dictionary;
-
-public class User implements Dictionary, Serializable {
-
-	private static final long serialVersionUID = 1L;
-	
-	private final Map<String, Object> params = new HashMap<>();
+public class User {
 	
 	private final Object id;
+	private Collection<Object> allowedIds;
+	private final Permissions permissions;
 	
-	public User(Object id) {
+	public User(Object id, Permissions permissions) {
+		this.permissions = permissions;
 		this.id = id;
+	}
+	
+	protected Permissions getPermissions() {
+		return permissions;
+	}
+	
+	protected void setAllowedIds(Collection<Object> allowedIds) {
+		this.allowedIds = allowedIds;
 	}
 	
 	public Object getId() {
 		return id;
 	}
 	
-	public User addParam(String name, Object value) {
-		params.put(name, value);
-		return this;
-	}
-	
 	public Collection<Object> getAllowedIds() {
-		return null; // TODO
+		return allowedIds;
 	}
 
 	@Override
-	public Object getValue(String name) {
-		return params.get(name);
-	}
-	
-	@Override
 	public String toString() {
-		return String.format("User[%s]: params", id, params);
+		return String.format("User[%s]: %s", id, allowedIds);
 	}
 	
 }

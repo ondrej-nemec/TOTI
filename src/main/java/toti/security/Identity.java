@@ -52,6 +52,7 @@ public class Identity {
 		this.id = null;
 		this.expired = -1;
 		this.content = null;
+		this.user = null;
 	}
 	
 	protected String getId() {
@@ -70,6 +71,10 @@ public class Identity {
 	
 	public User getUser() {
 		return user;
+	}
+	
+	public <U extends User> U getUser(Class<U> clazz) {
+		return clazz.cast(user);
 	}
 	
 	public Properties getHeaders() {

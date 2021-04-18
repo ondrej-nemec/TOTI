@@ -1,6 +1,5 @@
 package toti.security;
 
-import java.io.IOException;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashSet;
@@ -9,6 +8,7 @@ import java.util.Set;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import common.Logger;
+import common.structures.ThrowingFunction;
 import toti.authentication.AuthentizationException;
 import utils.security.Hash;
 import utils.security.HashException;
@@ -19,38 +19,45 @@ public class Authenticator {
 	private final String tokenSalt;
 	private final Logger logger;
 	private final Hash hasher;
-	private final AuthenticationCache cache;
+	//private final AuthenticationCache cache;
 	private final Set<String> activeTokens = new HashSet<>();
+	private final ThrowingFunction<String, User, Exception> userFactory;
 	
-	public Authenticator(long expirationTime, String tokenSalt, AuthenticationCache cache, Hash hasher, Logger logger) {
+	public Authenticator(
+			long expirationTime,
+			String tokenSalt,
+			ThrowingFunction<String, User, Exception> userFactory,
+			/*AuthenticationCache cache,*/ 
+			Hash hasher,
+			Logger logger) {
 		this.expirationTime = expirationTime;
 		this.tokenSalt = tokenSalt;
 		this.logger = logger;
 		this.hasher = hasher;
-		this.cache = cache;
-		// TODO load active from files, periodically check
-		// TODO automatic delete expired files
+		this.userFactory = userFactory;
+		//this.cache = cache;
+		// TODO load active from files
 	}
 	
-	public String login(String content, Identity identity, User user) throws AuthentizationException {
-		return getToken(content, identity, user);
+	public String login(String content, Identity identity) throws AuthentizationException {
+		return getToken(content, identity);
 	}
 	
 	public String refresh(Identity identity) throws AuthentizationException {
-		return getToken(identity.getContent(), identity, identity.getUser());
+		return getToken(identity.getContent(), identity);
 	}
 	
 	public void logout(Identity identity) {
 		try {
 			activeTokens.remove(identity.getId());
-			cache.delete(identity.getId());
+			//cache.delete(identity.getId());
 			identity.clear();
 		} catch (Exception e) {
 			logger.warn("Problem with log out", e);
 		}
 	}
 	
-	private String getToken(String content, Identity identity, User user) throws AuthentizationException {
+	private String getToken(String content, Identity identity) throws AuthentizationException {
 		try {
 			if (content == null) {
 				content = "";
@@ -60,11 +67,15 @@ public class Authenticator {
 			String random = RandomStringUtils.randomAlphanumeric(50);
 			long expired = now + expirationTime;
 			String token = createToken(random, id, now, identity.getContent(), expired);
-			//activeTokens.remove(identity.get);
+			User user = identity.isAnonymous() ? userFactory.apply(content) : identity.getUser();
 			identity.loginUser(token, id, expirationTime, content, user);
+			/*
 			if (activeTokens.add(id)) {
 				cache.save(id, user);
 			}
+			/*/
+			activeTokens.add(id);
+			//*/
 			return token;
 		} catch (Exception e) {
 			throw new AuthentizationException(e);
@@ -75,7 +86,7 @@ public class Authenticator {
 		try {
 			authenticate(identity, new Date().getTime());
 		} catch (Exception e) {
-			logger.debug("Missing authenticate header", e);
+			logger.debug("Problem with authentication", e);
 		}
 	}
 
@@ -88,7 +99,7 @@ public class Authenticator {
 		return String.format("%s%s%s%s%s", hash, random, id, expired, content);
 	}
 
-	protected void authenticate(Identity identity, long now) throws IOException, HashException, ClassNotFoundException {
+	protected void authenticate(Identity identity, long now) throws Exception {
 		String token = identity.getToken();
 		if (token == null || token.isEmpty()) {
 			return;
@@ -105,7 +116,9 @@ public class Authenticator {
 			throw new RuntimeException("Token is expired");
 		}
 		if (activeTokens.contains(id)) {
-			identity.setUser(id, expirationTime, content, cache.get(id));
+			//User c = cache.get(id);
+			//c.setExpired(expired);
+			identity.setUser(id, expirationTime, content, userFactory.apply(content));
 		} else {
 			logger.warn("Session id " + id + " is not in active tokens.");
 			identity.clear();

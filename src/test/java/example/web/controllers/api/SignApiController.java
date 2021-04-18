@@ -62,7 +62,7 @@ public class SignApiController {
 	
 	private Response generateToken(String username) {
 		try {
-			String bearer = authenticator.login(username, identity, new User("superUser").addParam("aa", "bb"));
+			String bearer = authenticator.login(username, identity);
 			Map<String, Object> json = new HashMap<>();
 			json.put("access_token", bearer);
 			json.put("token_type", "bearer");

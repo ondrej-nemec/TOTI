@@ -12,6 +12,11 @@ import module.EntityModule;
 import toti.HttpServerFactory;
 import toti.application.Application;
 import toti.registr.Registr;
+import toti.security.Action;
+import toti.security.User;
+import toti.security.permissions.Permissions;
+import toti.security.permissions.Rule;
+import toti.security.permissions.Rules;
 
 public class BootstrapEndToEndTest {
 
@@ -22,7 +27,26 @@ public class BootstrapEndToEndTest {
 				new ExampleModule()
 			);
 			Application.APP_CONFIG_FILE = null;
-			Application a = new Application(modules) {
+			Application a = new Application(modules, (content, registr)->{
+				return new User("User: " + content, new Permissions() {
+					
+					@Override
+					public Rules getRulesForDomain(String domain) {
+						if (domain.equals("test1")) {
+							return new Rules(null, Arrays.asList(
+								new Rule(Action.UPDATE, ()->Arrays.asList())
+							));
+						}
+						if (domain.equals("test2")) {
+							return new Rules(null, Arrays.asList(
+								new Rule(Action.UPDATE, ()->Arrays.asList())
+							));
+						}
+						return new Rules(new Rule(Action.ADMIN, ()->Arrays.asList()), Arrays.asList());
+					}
+				});
+			}) {
+				
 				@Override
 				public HttpServerFactory createServerFactory(Env env, Registr registr) throws Exception {
 					HttpServerFactory factory = new HttpServerFactory();

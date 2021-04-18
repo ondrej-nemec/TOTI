@@ -53,8 +53,12 @@
 			<td>${identity.getContent()}</td>
 		</tr>
 		<tr>
-			<th>User</th>
-			<td>${identity.getUser()}</td>
+			<th>User: Id</th>
+			<td>${identity.getUser().getId()}</td>
+		</tr>
+		<tr>
+			<th>User: Allowed Owners</th>
+			<td>${identity.getUser().getAllowedIds()}</td>
 		</tr>
 		<%-- <tr>
 			<th>Allowed IDs</th>

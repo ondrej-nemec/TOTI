@@ -2,13 +2,18 @@ package toti.templating;
 
 import java.util.Map;
 
+import toti.security.Authorizator;
 import translator.Translator;
 
 public interface Template {
 
 	long getLastModification();
 	
-	String create(TemplateFactory templateFactory, Map<String, Object>variables, Translator translator) throws Exception;
+	String create(
+			TemplateFactory templateFactory, 
+			Map<String, Object>variables, 
+			Translator translator, 
+			Authorizator authorizator) throws Exception;
 	
 	static String escapeVariable(Object variable) {
 		if (variable == null) {

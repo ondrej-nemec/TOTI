@@ -82,7 +82,7 @@ For initialization you have two ways. The first is quick and easy, the second al
 Quick initialization is realized by `Application` class. After creating new instance, `Application`. Only one thing that is required is list of [modules](#modules).
 
 ```
-Application app = new Application(modules);
+Application app = new Application(modules, ThrowingBiFunction<String, Registr, User, Exception> userFactory);
 ```
 
 1. Load configuration file. By default the file is `conf/app.properties` (can be in classpath or dir tree). Location can be changed before creating instance `Application.APP_CONFIG_FILE = "your conf file";`. See [List of server configuration](doc/server-configuration.md).
@@ -105,7 +105,7 @@ If you do not want to use the first way, you can manage everythins yourself. For
 ```
 HttpServerFactory factory = new HttpServerFactory();
 // configuration
-HttpServer server = factory.get(modules);
+HttpServer server = factory.get(modules, ThrowingFunction<String, User, Exception> userFactory);
 ```
 
 `HttpServer` has same methods like application: `start`, `stop` and `getTranslator`.

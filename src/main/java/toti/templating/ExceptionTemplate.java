@@ -2,6 +2,7 @@ package toti.templating;
 
 import java.util.Map;
 
+import toti.security.Authorizator;
 import translator.Translator;
 
 public class ExceptionTemplate implements Template {
@@ -18,7 +19,7 @@ public class ExceptionTemplate implements Template {
 	}
 
 	@Override
-	public String create(TemplateFactory templateFactory, Map<String, Object> variables, Translator translator)
+	public String create(TemplateFactory templateFactory, Map<String, Object> variables, Translator translator, Authorizator authorizator)
 			throws Exception {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Exception occured:<br>");

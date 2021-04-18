@@ -2,12 +2,11 @@ package toti.security;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
-
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import common.Logger;
+import common.structures.ThrowingFunction;
 import utils.security.Hash;
 import utils.security.HashException;
 
@@ -17,7 +16,7 @@ public class AuthenticatorTest {
 	public void testCreateTokenReturnsCorrectTokenWithoutCustomData() throws HashException {
 		Hash hash = Mockito.mock(Hash.class);
 		Mockito.when(hash.toHash(Mockito.anyString())).thenReturn("hash");
-		Authenticator auth = new Authenticator(123, "salt", Mockito.mock(AuthenticationCache.class), hash, Mockito.mock(Logger.class));
+		Authenticator auth = new Authenticator(123, "salt", Mockito.mock(ThrowingFunction.class), /* Mockito.mock(AuthenticationCache.class),*/ hash, Mockito.mock(Logger.class));
 		assertEquals("hashr@ndomid2000", auth.createToken(
 				"r@ndom", 
 				"id", 
@@ -29,11 +28,11 @@ public class AuthenticatorTest {
 	
 	@Test
 	// TODO test corrupted token and expired token
-	public void testAuthenticateWorks() throws HashException, IOException, ClassNotFoundException {
+	public void testAuthenticateWorks() throws Exception {
 		Hash hash = Mockito.mock(Hash.class);
 		Mockito.when(hash.toHash(Mockito.anyString())).thenReturn("hash");
 		Mockito.when(hash.compare(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
-		Authenticator auth = new Authenticator(123, "salt", Mockito.mock(AuthenticationCache.class), hash, Mockito.mock(Logger.class));
+		Authenticator auth = new Authenticator(123, "salt", Mockito.mock(ThrowingFunction.class), /*Mockito.mock(AuthenticationCache.class),*/ hash, Mockito.mock(Logger.class));
 		Identity identity = new Identity("", null, null, 
 				// "QlKvbHfY5F4wgrK0tlmrcRImLCx6t59RWq8XvTqmIL4=f1jmBdmnjIgFCEczXFkOYGE7tFulK9pJ1R3EleUauqvMT4WcgMqQqHSXrHW7i8wrFrOLJLHPd2X7Re2D1618244602626"
 				"has1has2has3has4has5has6has7has8has9has0hash"

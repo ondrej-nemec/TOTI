@@ -36,6 +36,7 @@ public class TemplateParser {
 				+ "import java.util.Map;"
 				+ "import java.util.HashMap;"
 				+ "import translator.Translator;"
+				+ "import toti.security.Authorizator;"
 				+ "import toti.templating.TemplateFactory;"
 				+ "import acl.AuthorizationHelper;"
 				+ "public class %s implements Template{"
@@ -46,7 +47,8 @@ public class TemplateParser {
 				+ "public String create("
 					+ "TemplateFactory templateFactory,"
 					+ "Map<String, Object>variables,"
-					+ "Translator translator"
+					+ "Translator translator,"
+					+ "Authorizator authorizator"
 				+ ")throws Exception{";
 		String clazz2 = "}}";
 		String tempFile = tempPath + "/" + namespace + "/" + className + ".java";
@@ -61,7 +63,7 @@ public class TemplateParser {
 			loadFile(fileName, bw, module);
 			bw.write("\");");
 			bw.write("if(layout!=null){"
-					+ "layout.create(templateFactory,variables,translator);"
+					+ "layout.create(templateFactory,variables,translator, authorizator);"
 					+ "}");
 			bw.write("return b.toString();");
 			bw.write(clazz2);

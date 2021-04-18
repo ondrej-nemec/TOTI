@@ -4,11 +4,11 @@ import java.util.Map;
 
 import toti.templating.Tag;
 
-public class IfTag implements Tag {
+public class PermissionsTag implements Tag {
 
 	@Override
 	public String getName() {
-		return "if";
+		return "allowed";
 	}
 
 	@Override
@@ -23,7 +23,15 @@ public class IfTag implements Tag {
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
-		return String.format("if((boolean)(%s))", params.get("cond"));
+		return String.format(
+			"if(authorizator.isAllowed("
+				+ "toti.security.User.class.cast(variables.get(\"totiUser\")),"
+				+ " \"%s\", "
+				+ "toti.security.Action.valueOf(\"%s\"))"
+			+ ")",
+			params.get("domain"),
+			params.get("action").toUpperCase()
+		);
 	}
 
 }
