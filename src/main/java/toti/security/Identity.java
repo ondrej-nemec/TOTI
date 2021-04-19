@@ -96,4 +96,12 @@ public class Identity {
 	public boolean isApiAllowed() {
 		return isApiAllowed;
 	}
+
+	@Override
+	public String toString() {
+		return "Identity [IP=" + IP + ", locale=" + locale + ", token=" + token
+				+ ", isApiAllowed=" + isApiAllowed + ", id=" + id + ", expired=" + expired + ", content=" + content
+				+ ", user=" + user + ", requestHeaders=" + requestHeaders + "]";
+	}
+	
 }

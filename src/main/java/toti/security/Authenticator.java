@@ -66,7 +66,7 @@ public class Authenticator {
 			String id = identity.isAnonymous() ? RandomStringUtils.randomAlphanumeric(30) : identity.getId();
 			String random = RandomStringUtils.randomAlphanumeric(50);
 			long expired = now + expirationTime;
-			String token = createToken(random, id, now, identity.getContent(), expired);
+			String token = createToken(random, id, now, content, expired);
 			User user = identity.isAnonymous() ? userFactory.apply(content) : identity.getUser();
 			identity.loginUser(token, id, expirationTime, content, user);
 			/*
@@ -108,7 +108,8 @@ public class Authenticator {
 		String random = token.substring(44, 94);
 		String id = token.substring(94, 124);
 		long expired = Long.parseLong(token.substring(124, 137)); // length == 13, OK until Sat Nov 20 18:46:39 CET 2286
-		String content = new String(Base64.getMimeDecoder().decode(token.substring(137).getBytes()));
+		// String content = new String(Base64.getMimeDecoder().decode(token.substring(137).getBytes()));
+		String content = token.substring(137);
 		if (!hasher.compare(createHashMessage(random, id, expired, content), hash)) {
 			throw new RuntimeException("Token corrupted");
 		}
@@ -118,7 +119,9 @@ public class Authenticator {
 		if (activeTokens.contains(id)) {
 			//User c = cache.get(id);
 			//c.setExpired(expired);
-			identity.setUser(id, expirationTime, content, userFactory.apply(content));
+			identity.setUser(id, expirationTime, content, userFactory.apply(
+				new String(Base64.getMimeDecoder().decode(content.getBytes()))
+			));
 		} else {
 			logger.warn("Session id " + id + " is not in active tokens.");
 			identity.clear();
