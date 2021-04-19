@@ -6,7 +6,7 @@ repositories {
 }
 
 dependencies {
-	implementation 'com.github.ondrej-nemec:javainit:51a4e0fa20'
+	implementation 'com.github.ondrej-nemec:javainit:915d7650e7'
 	
 	// compile files("${System.properties['java.home']}/../lib/tools.jar")
 	
