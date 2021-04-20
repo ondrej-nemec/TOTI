@@ -31,13 +31,17 @@ public class Application {
 	private final List<Task> tasks = new LinkedList<>();
 	private final Logger logger;
 	
-	public <T extends Module> Application(List<T> modules, ThrowingBiFunction<String, Registr, User, Exception> userFactory) {
-		this(modules, userFactory, null);
+	public <T extends Module> Application(
+			List<T> modules, 
+			ThrowingBiFunction<String, Registr, User, Exception> userFactory,
+			String redirectIfNoUser) {
+		this(modules, userFactory, redirectIfNoUser, null);
 	}
 	
 	public <T extends Module> Application(
 			List<T> modules, 
 			ThrowingBiFunction<String, Registr, User, Exception> userFactory,
+			String redirectIfNoUser,
 			Logger logger) {
 		LoggerFactory.setConfigFile(LOG_CONFIG_FILE);
 		if (logger == null) {
@@ -77,7 +81,7 @@ public class Application {
 					LoggerFactory.getLogger(module.getName())
 				));
 			}
-			this.server = createServerFactory(env, registr).get(modules, (content)->{
+			this.server = createServerFactory(env, registr, redirectIfNoUser).get(modules, (content)->{
 				return userFactory.apply(content, registr);
 			});
 		} catch (Exception e) {
@@ -126,8 +130,10 @@ public class Application {
 	
 	/************/
 	
-	public HttpServerFactory createServerFactory(Env env, Registr registr) throws Exception {
+	public HttpServerFactory createServerFactory(Env env, Registr registr, String redirect) throws Exception {
 		HttpServerFactory factory = new HttpServerFactory();
+		factory.setLogger(logger);
+		factory.setRedirectNoLoggerdUser(redirect);
 		if (env != null) {
 			if (env.getString("http.port") != null) {
 				factory.setPort(env.getInteger("http.port"));
@@ -141,7 +147,6 @@ public class Application {
 			if (env.getString("http.headers") != null) {
 				factory.setHeaders(new ResponseHeaders(env.getList("http.headers", "\\|")));
 			}
-			factory.setLogger(logger);
 			if (env.getString("http.charset") != null) {
 				factory.setCharset(env.getString("http.charset"));
 			}

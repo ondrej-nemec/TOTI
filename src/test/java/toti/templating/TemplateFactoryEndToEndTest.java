@@ -74,7 +74,7 @@ public class TemplateFactoryEndToEndTest {
 				return null;
 			}
 		};
-		Authorizator authorizator = new Authorizator(LoggerFactory.getLogger("temlateTest"));
+		Authorizator authorizator = new Authorizator("", LoggerFactory.getLogger("temlateTest"));
 		String html = template.create(factory, variables, translator, authorizator);
 		System.out.println(html);
 		Text.get().write((bw)->{

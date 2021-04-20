@@ -46,7 +46,8 @@ public class HttpServer {
     		boolean deleteDir,
     		boolean dirResponseAllowed,
     		boolean minimalize,
-    		List<String> developIps) throws Exception {
+    		List<String> developIps,
+    		String redirectNoLoggerdUser) throws Exception {
 
 		Router router = new Router();
 		Map<String, TemplateFactory> controllers = new HashMap<>();
@@ -88,7 +89,7 @@ public class HttpServer {
 				translator,
 				new IdentityFactory(defLang/*, authenticationCache*/),
 				new Authenticator(tokenExpiration, tokenCustomSalt, userFactory, /*authenticationCache,*/ new Hash("SHA-256"), logger),
-				new Authorizator(logger),
+				new Authorizator(redirectNoLoggerdUser, logger),
 				charset,
 				dirResponseAllowed,
 				developIps,

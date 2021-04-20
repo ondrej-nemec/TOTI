@@ -38,7 +38,7 @@ public class HttpServerFactory {
 	private Optional<List<String>> allowedUploadFileTypes = Optional.of(new LinkedList<>());
 	private long tokenExpirationTime = 1000 * 60 * 10;
 	private String tokenCustomSalt = "";
-	
+	private String redirectNoLoggerdUser = null;
 	
 	public <T extends Module> HttpServer get(List<T> modules, ThrowingFunction<String, User, Exception> userFactory) throws Exception {
 		return new HttpServer(
@@ -47,7 +47,7 @@ public class HttpServerFactory {
 				translator,
 				maxUploadFileSize, allowedUploadFileTypes,
 				charset, defLang, tokenCustomSalt, tokenExpirationTime,
-				logger, deleteTempJavaFiles, dirResponseAllowed, minimalize, developIps
+				logger, deleteTempJavaFiles, dirResponseAllowed, minimalize, developIps, redirectNoLoggerdUser
 		);
 	}
 
@@ -151,4 +151,9 @@ public class HttpServerFactory {
 		return this;
 	}
 
+	public HttpServerFactory setRedirectNoLoggerdUser(String redirectNoLoggerdUser) {
+		this.redirectNoLoggerdUser = redirectNoLoggerdUser;
+		return this;
+	}
+	
 }

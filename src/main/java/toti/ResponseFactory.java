@@ -71,7 +71,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private final Authorizator authorizator;
 	private final Authenticator authenticator;
 	private final IdentityFactory identityFactory;
-	private final String redirectUrlNoLoggedUser;	
+	// private final String redirectUrlNoLoggedUser;	
 	
 	public ResponseFactory(
 			ResponseHeaders responseHeaders,
@@ -95,7 +95,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		this.authorizator = authorizator;
 		this.identityFactory = identityFactory;
 		this.authenticator = authenticator;
-		this.redirectUrlNoLoggedUser = ""; // TODO security.getRedirectUrlNoLoggedUser();
+		// this.redirectUrlNoLoggedUser = ""; // TODO security.getRedirectUrlNoLoggedUser();
 		this.router = router;
 		this.modules = modules;
 		this.totiTemplateFactory = totiTemplateFactory;
@@ -307,10 +307,11 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			try {
 				authorize(mapped, params, identity, params);
 			} catch (ServerException e) {
-				if (mapped.isApi() || redirectUrlNoLoggedUser == null) {
+				if (mapped.isApi() || authorizator.getRedirectUrlNoLoggedUser() == null) {
 					throw e;
 				}
-				return Response.getRedirect(redirectUrlNoLoggedUser).getResponse(headers, null, null, null, null, charset);
+				return Response.getRedirect(authorizator.getRedirectUrlNoLoggedUser())
+						.getResponse(headers, null, null, null, null, charset);
 			}
 		} else {
 			// check errors after authrization

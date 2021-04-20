@@ -45,11 +45,12 @@ public class BootstrapEndToEndTest {
 						return new Rules(new Rule(Action.ADMIN, ()->Arrays.asList()), Arrays.asList());
 					}
 				});
-			}) {
+			}, "/example-module/sign/in") {
 				
 				@Override
-				public HttpServerFactory createServerFactory(Env env, Registr registr) throws Exception {
+				public HttpServerFactory createServerFactory(Env env, Registr registr, String redirect) throws Exception {
 					HttpServerFactory factory = new HttpServerFactory();
+					factory.setRedirectNoLoggerdUser(redirect);
 					factory.setPort(81);
 					factory.setThreadPool(10);
 					factory.setReadTimeout(60000);
