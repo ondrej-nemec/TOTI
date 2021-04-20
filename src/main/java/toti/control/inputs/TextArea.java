@@ -101,9 +101,9 @@ public class TextArea implements Input {
 		if (exclude != null && exclude) {
 			json.put("exclude", exclude);
 		}
-		if (editable) {
+		//if (editable) {
 			json.put("editable", editable);
-		}
+		//}
 		json.put("cols", cols);
 		json.put("rows", rows);
 		params.forEach((key, param)->{
