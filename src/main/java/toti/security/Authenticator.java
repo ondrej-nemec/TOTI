@@ -119,12 +119,10 @@ public class Authenticator {
 		if (activeTokens.contains(id)) {
 			//User c = cache.get(id);
 			//c.setExpired(expired);
-			System.err.println("--1>" + content);
+			//System.err.println("--1>" + content);
 			content = new String(Base64.getMimeDecoder().decode(content.getBytes()));
-			System.err.println("--2>" + content);
-			identity.setUser(id, expirationTime, content, userFactory.apply(
-				new String(Base64.getMimeDecoder().decode(content.getBytes()))
-			));
+			//System.err.println("--2>" + content);
+			identity.setUser(id, expirationTime, content, userFactory.apply(content));
 		} else {
 			logger.warn("Session id " + id + " is not in active tokens.");
 			identity.clear();
