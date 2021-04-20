@@ -12,8 +12,8 @@ public class RadioList implements Input {
 	private final String type;
 	private final boolean required;
 	private boolean disabled = false;
-	private Boolean exclude = null; // TODO setry
-	private boolean editable = false; // TODO setry
+	private Boolean exclude = null;
+	private boolean editable = false;
 	private String value = null;
 	private String title = null;
 	private final Map<String, String> params = new HashMap<>();

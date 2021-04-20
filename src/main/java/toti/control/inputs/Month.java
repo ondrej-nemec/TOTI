@@ -13,8 +13,8 @@ public class Month implements Input, Filter {
 	private String title;	
 	private final boolean required;
 	private boolean disabled = false;
-	private Boolean exclude = null; // TODO setry
-	private boolean editable = false; // TODO setry
+	private Boolean exclude = null;
+	private boolean editable = false;
 	private String value = null;
 	private final Map<String, String> params = new HashMap<>();
 	

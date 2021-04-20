@@ -13,8 +13,8 @@ public class TextArea implements Input {
 	private int cols;
 	private int rows;
 	private boolean disabled = false;
-	private Boolean exclude = null; // TODO setry
-	private boolean editable = false; // TODO setry
+	private Boolean exclude = null;
+	private boolean editable = false;
 	private String value = null;
 	private Integer maxLength;
 	private String placeholder = null;
@@ -101,9 +101,9 @@ public class TextArea implements Input {
 		if (exclude != null && exclude) {
 			json.put("exclude", exclude);
 		}
-		//if (editable) {
+		if (editable) {
 			json.put("editable", editable);
-		//}
+		}
 		json.put("cols", cols);
 		json.put("rows", rows);
 		params.forEach((key, param)->{

@@ -367,7 +367,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				if (domain.owner().isEmpty()) {
 					authorizator.authorize(identity.getUser(), domain.name(), domain.action());
 				} else {
-					authorizator.authorize(identity.getUser(), domain.name(), domain.action(), domain.owner());
+					authorizator.authorize(identity.getUser(), domain.name(), domain.action(), params.get(domain.owner()));
 				}
 			}
 		}

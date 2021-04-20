@@ -12,8 +12,8 @@ public class Number implements Input, Filter {
 	private final String type;
 	private final boolean required;
 	private boolean disabled = false;
-	private Boolean exclude = null; // TODO setry
-	private boolean editable = false; // TODO setry
+	private Boolean exclude = null;
+	private boolean editable = false;
 	private String placeholder = null;
 	
 	private Integer step = null;
