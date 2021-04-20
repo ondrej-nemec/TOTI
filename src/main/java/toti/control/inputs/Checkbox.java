@@ -91,9 +91,9 @@ public class Checkbox implements Input {
 		if (exclude != null && exclude) {
 			json.put("exclude", exclude);
 		}
-		if (editable) {
+		//if (editable) {
 			json.put("editable", editable);
-		}
+		//}
 		if (title != null) {
 			json.put("title", title);
 		}
