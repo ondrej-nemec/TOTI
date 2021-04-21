@@ -24,10 +24,10 @@ public class Validator {
 	private final List<ItemRules> rules;
 	private final boolean strictList;
 	private final Optional<ItemRules> defaultRule;
-	private final Function<Translator, String> onStrictListError;
+	private final BiFunction<Translator, List<String>, String> onStrictListError;
 	private Optional<BiFunction<RequestParameters, Translator, Set<String>>> globalFunc = Optional.empty();
 	
-	public static Validator create(String uniqueName, boolean strictList, Function<Translator, String> onStrictListError) {
+	public static Validator create(String uniqueName, boolean strictList, BiFunction<Translator, List<String>, String> onStrictListError) {
 		Validator val = new Validator(strictList, onStrictListError);
 		Registr.get().addService(uniqueName, val);
 		return val;
@@ -40,22 +40,22 @@ public class Validator {
 	}
 	
 	public Validator(boolean strictList) {
-		this(strictList, (trans)->"Parameters names not match expectation");
+		this(strictList, (trans, params)->"Missing parameters: " + params);
 	}
 	
-	public Validator(boolean strictList, Function<Translator, String> onStrictListError) {
+	public Validator(boolean strictList, BiFunction<Translator, List<String>, String> onStrictListError) {
 		this(strictList, Optional.empty(), onStrictListError);
 	}
 	
 	public Validator(ItemRules defaultRule) {
-		this(false, Optional.of(defaultRule), (trans)->"Parameters not match default rule");
+		this(false, Optional.of(defaultRule), (trans, params)->"Parameters not match default rule: " + params);
 	}
 	
-	public Validator(ItemRules defaultRule, Function<Translator, String> onStrictListError) {
+	public Validator(ItemRules defaultRule, BiFunction<Translator, List<String>, String> onStrictListError) {
 		this(false, Optional.of(defaultRule), onStrictListError);
 	}
 	
-	private Validator(boolean strictList, Optional<ItemRules> defaultRule, Function<Translator, String> onStrictListError) {
+	private Validator(boolean strictList, Optional<ItemRules> defaultRule, BiFunction<Translator, List<String>, String> onStrictListError) {
 		this.strictList = strictList;
 		this.onStrictListError = onStrictListError;
 		this.rules = new LinkedList<>();
@@ -99,7 +99,7 @@ public class Validator {
 				},
 				errors,
 				"form",
-				onStrictListError.apply(translator)
+				onStrictListError.apply(translator, notChecked)
 		);
 		if (!strictList && defaultRule.isPresent()) {
 			ItemRules rule = defaultRule.get();
