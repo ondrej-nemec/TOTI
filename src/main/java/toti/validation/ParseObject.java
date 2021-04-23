@@ -3,6 +3,8 @@ package toti.validation;
 import java.util.List;
 import java.util.Map;
 
+import common.structures.ListDictionary;
+import common.structures.MapDictionary;
 import json.JsonReader;
 import json.JsonStreamException;
 
@@ -34,6 +36,9 @@ public class ParseObject {
 			if (object instanceof Map) {
 				return object;
 			}
+			if (object instanceof MapDictionary) {
+			    return MapDictionary.class.cast(object).toMap();
+			}
 			if (object.toString().isEmpty()) { return null; }
 			try {
 				return new JsonReader().read(object.toString());
@@ -43,6 +48,9 @@ public class ParseObject {
 		} else if (clazz.isAssignableFrom(List.class)) {
 			if (object instanceof List) {
 				return object;
+			}
+			if (object instanceof ListDictionary) {
+			    return ListDictionary.class.cast(object).toList();
 			}
 			if (object.toString().isEmpty()) { return null; }
 			try {
