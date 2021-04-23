@@ -14,7 +14,7 @@ public class Month implements Input, Filter {
 	private final boolean required;
 	private boolean disabled = false;
 	private Boolean exclude = null;
-	private boolean editable = false;
+	private Boolean editable = null;
 	private String value = null;
 	private final Map<String, String> params = new HashMap<>();
 	
@@ -94,10 +94,10 @@ public class Month implements Input, Filter {
 		if (disabled) {
 			json.put("disabled", disabled);
 		}
-		if (exclude != null && exclude) {
+		if (exclude != null) {
 			json.put("exclude", exclude);
 		}
-		if (editable) {
+		if (editable != null) {
 			json.put("editable", editable);
 		}
 		if (title != null) {

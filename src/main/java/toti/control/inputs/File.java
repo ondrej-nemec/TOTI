@@ -12,7 +12,7 @@ public class File implements Input {
 	private final boolean required;
 	private boolean disabled = false;
 	private Boolean exclude = null;
-	private boolean editable = false;
+	private Boolean editable = null;
 	private final Map<String, String> params = new HashMap<>();
 
 	public static File input(String name, boolean required) {
@@ -66,10 +66,10 @@ public class File implements Input {
 		if (disabled) {
 			json.put("disabled", disabled);
 		}
-		if (exclude != null && exclude) {
+		if (exclude != null) {
 			json.put("exclude", exclude);
 		}
-		if (editable) {
+		if (editable != null) {
 			json.put("editable", editable);
 		}
 		if (title != null) {

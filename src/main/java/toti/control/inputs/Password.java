@@ -12,7 +12,7 @@ public class Password implements Input {
 	private final boolean required;
 	private boolean disabled = false;
 	private Boolean exclude = null;
-	private boolean editable = false;
+	private Boolean editable = null;
 	private String placeholder = null;
 	
 	private Integer size = null;
@@ -97,10 +97,10 @@ public class Password implements Input {
 		if (disabled) {
 			json.put("disabled", disabled);
 		}
-		if (exclude != null && exclude) {
+		if (exclude != null) {
 			json.put("exclude", exclude);
 		}
-		if (editable) {
+		if (editable != null) {
 			json.put("editable", editable);
 		}
 		params.forEach((key, param)->{
