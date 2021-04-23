@@ -1,4 +1,4 @@
-/* TOTI Control version 0.0.9 */
+/* TOTI Control version 0.0.10 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -173,6 +173,7 @@ var totiControl = {
 			            } else {
 			             	parent.appendChild(totiControl.input(option));
 			            }
+			            params.renderOptions[option.value]=option.title; /* for value renderer*/
 			            /*if (option.type === "optGroup") {
 			                var optGroup = document.createElement("optgroup");
 			                optGroup.setAttribute("label", option.title);
@@ -183,6 +184,7 @@ var totiControl = {
 			            }*/
 		        	}
 	     		};
+              	params.renderOptions = {};
 	     		/* options */
 				totiUtils.forEach(params.options, function(v, option) {
 					addOption(option, parentInput);
@@ -216,7 +218,7 @@ var totiControl = {
 		                       option.title = opt;
 		                    }
 		                    if (use) {
-		                    	params.options[value] = option; /* for value renderer*/
+		                    	params.options[value] = option;
 	                  			addOption(option, parentInput);
 		                    }
 	                  		
@@ -252,6 +254,10 @@ var totiControl = {
 		            }
 		            select.value = null;
 		        };
+	            var option = select.querySelector("option[value='" + params.value +"']");
+	            if (option !== null) {
+	            	select.value = option.value;
+	            }
 		    }
 
 		    // TODO editable can not exists, add condition for existing params.form

@@ -1,4 +1,4 @@
-/* TOTI Form version 0.0.12 */
+/* TOTI Form version 0.0.13 */
 class TotiForm {
 
 	constructor(config) {
@@ -379,13 +379,13 @@ class TotiForm {
 			Array.prototype.forEach.call(form.elements, function(input) {
 				var type = input.getAttribute("type");
 				var name = input.getAttribute("name");
-                if (name === null || type === null) {
+                if (name === null) {
                     return;
                 }
-                if (input.getAttribute("exclude") !== null && input.getAttribute("exclude") == false) {
+                if (input.getAttribute("exclude") !== null && input.getAttribute("exclude") === "true") {
                     return;
                 }
-                if (type === "submit" || type === "button" || type === "reset" || type === "image" || type === "fieldset") {
+                if (type === "submit" || type === "button" || type === "reset" || type === "image" || input.type === "fieldset") {
 					/* ignored*/
 					return;
                 }

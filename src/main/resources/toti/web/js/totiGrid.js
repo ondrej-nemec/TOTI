@@ -1,4 +1,4 @@
-/* TOTI Grid version 0.0.8 */
+/* TOTI Grid version 0.0.9 */
 class TotiGrid {
 
 	constructor(config) {
@@ -367,11 +367,11 @@ class TotiGrid {
 						} else {
 							td.innerText = renderer;
 						}
-					} else if (column.hasOwnProperty("filter") && column.filter.hasOwnProperty("options")) {
+					} else if (column.hasOwnProperty("filter") && column.filter.hasOwnProperty("renderOptions")) {
 						var value = row[column.name];
                         if (value !== null) {
                             if (column.filter.options.hasOwnProperty(value)) {
-                                td.innerText = column.filter.options[value].title;
+                                td.innerText = column.filter.renderOptions[value].title;
                             } else {
                                 /* for yes/no renderer */
                                 var find = column.filter.options.find(element => element.value === value + "");
