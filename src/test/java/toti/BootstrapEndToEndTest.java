@@ -49,12 +49,12 @@ public class BootstrapEndToEndTest {
 				
 				@Override
 				public HttpServerFactory createServerFactory(Env env, Registr registr, String redirect) throws Exception {
-					HttpServerFactory factory = new HttpServerFactory();
+					HttpServerFactory factory = new HttpServerFactory(LoggerFactory.getLogger("toti"));
 					factory.setRedirectNoLoggerdUser(redirect);
 					factory.setPort(81);
 					factory.setThreadPool(10);
 					factory.setReadTimeout(60000);
-					factory.setLogger(LoggerFactory.getLogger("toti"));
+					// factory.setLogger(LoggerFactory.getLogger("toti"));
 					factory.setMinimalize(false);
 					factory.setDeleteTempJavaFiles(false);
 					factory.setHeaders(new ResponseHeaders(Arrays.asList(

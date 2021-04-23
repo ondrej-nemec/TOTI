@@ -13,6 +13,13 @@ All values are optional. If no value specified, default used.
 		<th>Property name</th>
 	</tr>
 	<tr>
+		<td>Login URL</td>
+		<td>null</td>
+		<td>URL of login page. On this URL will be redirected if somebody try request on secured URL without being logged.</td>
+		<td>setRedirectNoLoggerdUser(String redirect)</td>
+		<td></td>
+	</tr>
+	<tr>
 		<td>Port</td>
 		<td>80</td>
 		<td>Port where will be application listening</td>

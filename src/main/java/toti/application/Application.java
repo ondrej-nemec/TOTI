@@ -131,8 +131,8 @@ public class Application {
 	/************/
 	
 	public HttpServerFactory createServerFactory(Env env, Registr registr, String redirect) throws Exception {
-		HttpServerFactory factory = new HttpServerFactory();
-		factory.setLogger(logger);
+		HttpServerFactory factory = new HttpServerFactory(logger);
+		// factory.setLogger(logger);
 		factory.setRedirectNoLoggerdUser(redirect);
 		if (env != null) {
 			if (env.getString("http.port") != null) {

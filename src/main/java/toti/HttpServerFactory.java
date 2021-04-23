@@ -20,7 +20,7 @@ public class HttpServerFactory {
 	));
 	
 	private Translator translator;
-	private Logger logger;
+	private final Logger logger;
 	
 	private int port = 80;
 	private int threadPool = 5;
@@ -39,6 +39,10 @@ public class HttpServerFactory {
 	private long tokenExpirationTime = 1000 * 60 * 10;
 	private String tokenCustomSalt = "";
 	private String redirectNoLoggerdUser = null;
+	
+	public HttpServerFactory(Logger logger) {
+		this.logger = logger;
+	}
 	
 	public <T extends Module> HttpServer get(List<T> modules, ThrowingFunction<String, User, Exception> userFactory) throws Exception {
 		return new HttpServer(
@@ -80,12 +84,12 @@ public class HttpServerFactory {
 		this.translator = translator;
 		return this;
 	}
-
+/*
 	public HttpServerFactory setLogger(Logger logger) {
 		this.logger = logger;
 		return this;
 	}
-
+*/
 	public HttpServerFactory setPort(int port) {
 		this.port = port;
 		return this;

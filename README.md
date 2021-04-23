@@ -7,7 +7,7 @@
 
 TOTI - **T**ip **O**f **T**he **I**ceberg - is Java web framework. Provide HTTP(S) interface between users and your Java application. With TOTI you can create Rest API, generate HTML pages from templates or just web server (like f.e. Apache but begging)
 
-Main purpose of this framework is create GUI for java servers f.e. in Industry 4.0 or IoT. TOTI framework can be used as MVC framework (like Symfony or Nette in PHP) but **this is not main purpose**.
+Main purpose of this framework is create GUI for java servers f.e. in Industry 4.0 or IoT. TOTI framework can be used as MVC framework (like Symfony or Nette in PHP, or ASP.NET in C#) but **this is not main purpose**.
 
 * [Include in your project](#include-in-your-project)
 * [Get started](#get-started)
@@ -79,13 +79,21 @@ For initialization you have two ways. The first is quick and easy, the second al
 
 #### Quick initialization
 
-Quick initialization is realized by `Application` class. After creating new instance, `Application`. Only one thing that is required is list of [modules](#modules).
+Quick initialization is realized by `Application` class.
 
 ```
-Application app = new Application(modules, ThrowingBiFunction<String, Registr, User, Exception> userFactory);
+Application app = new Application(List<Module> modules, ThrowingBiFunction<String, Registr, User, Exception> userFactory, String redirectIfNoUser);
 ```
 
-1. Load configuration file. By default the file is `conf/app.properties` (can be in classpath or dir tree). Location can be changed before creating instance `Application.APP_CONFIG_FILE = "your conf file";`. See [List of server configuration](doc/server-configuration.md).
+Parameters:
+
+1. List of [modules](#modules).
+1. How from session content create `User`. See [Permissions](#permissions).
+1. URL of login page. On this URL will be redirected if somebody try request on secured URL without being logged. See [Permissions](#permissions).
+
+After creating new instance, `Application` class:
+
+1. Load configuration file. By default the file is `conf/app.properties` (can be in classpath or dir tree). Location can be changed before creating instance: `Application.APP_CONFIG_FILE = "your conf file";`. See [List of server configuration](doc/server-configuration.md).
 1. Prepare database and database migrations (see [JI Database](https://github.com/ondrej-nemec/javainit/tree/master/ji-database)).
 1. Prepare all tasks defined in modules configurations.
 1. Prepare class `HttpServer`
@@ -103,7 +111,7 @@ Application app = new Application(modules, ThrowingBiFunction<String, Registr, U
 If you do not want to use the first way, you can manage everythins yourself. For that you need `HttpServerFactory` class and - again - list of modules. After creating factory and before getting server, you can configure the server. [List of server configuration](doc/server-configuration.md)
 
 ```
-HttpServerFactory factory = new HttpServerFactory();
+HttpServerFactory factory = new HttpServerFactory(Logger logger);
 // configuration
 HttpServer server = factory.get(modules, ThrowingFunction<String, User, Exception> userFactory);
 ```
@@ -250,7 +258,7 @@ or from JSON. If you wish upload file, the parameter type is `UploadedFile` - se
 
 #### Request parameters validation
 
-`Validator` class validate incoming values. Constructor requires one parameter: `boolean strict`. This parameter says if `RequestParameters` can contains more than specific (`strict == false`) values or only specified in this `Validator`  instance (`strict == true`). For validation of one request param you have to add `ItemRules` into `Validator`.
+`Validator` class validate incoming values. Constructor requires one parameter: `boolean strict`. This parameter says if `RequestParameters` can contains more than specific (`strict == false`) values or only specified in this `Validator`  instance (`strict == true`). For validation of one request parameter you have to add `ItemRules` into `Validator`.
 
 Example:
 
@@ -337,9 +345,8 @@ Example: module template path is `project-dir/core-module/templates` and `fileNa
 
 TODO
 * @secured
-* user security factory
+* user factory
 * identity
-* odkaz na acl
 * authenticator vx authorizator
 
 #### Injections
