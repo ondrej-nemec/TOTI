@@ -12,6 +12,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import common.exceptions.LogicException;
 import socketCommunication.http.server.RequestParameters;
@@ -40,7 +41,7 @@ public class Validator {
 	}
 	
 	public Validator(boolean strictList) {
-		this(strictList, (trans, params)->"Missing parameters: " + params);
+		this(strictList, (trans, params)->"Not expected parameters: " + params);
 	}
 	
 	public Validator(boolean strictList, BiFunction<Translator, List<String>, String> onStrictListError) {
@@ -92,6 +93,7 @@ public class Validator {
 		});
 		List<String> notChecked = new ArrayList<>(prop.keySet());
 		notChecked.removeAll(names);
+		notChecked = notChecked.stream().map(a->String.format(format, a)).collect(Collectors.toList());
 		checkRule(
 				Optional.of(notChecked),
 				(incomingData)->{
@@ -132,8 +134,8 @@ public class Validator {
 					Optional.of(rule.getRequired()),
 					(required)->required,
 					errors,
-					"form", 
-					propertyName + ": " + rule.getOnRequiredError().apply(translator)
+					"form",
+					rule.getOnRequiredError().apply(translator, propertyName)
 			);
 		} else {
 			Object o = prop.get(ruleName);

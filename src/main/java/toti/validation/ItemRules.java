@@ -2,6 +2,7 @@ package toti.validation;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import common.exceptions.LogicException;
@@ -10,14 +11,14 @@ import translator.Translator;
 public class ItemRules {
 
 	public static ItemRules defaultRule() {
-		return new ItemRules("", false, (t)->"");
+		return new ItemRules("", false, (t, param)->"");
 	}
 	
 	public static ItemRules forName(String name, boolean required) {
-		return new ItemRules(name, required, (t)->"This item is required");
+		return new ItemRules(name, required, (t, param)->"This item is required: " + param);
 	}
 
-	public static ItemRules forName(String name, boolean required, Function<Translator, String> onRequiredError) {
+	public static ItemRules forName(String name, boolean required, BiFunction<Translator, String, String> onRequiredError) {
 		return new ItemRules(name, required, onRequiredError);
 	}
 	
@@ -25,7 +26,7 @@ public class ItemRules {
 	
 	private final String name;
 	private final Boolean required;
-	private final Function<Translator, String> onRequiredError;
+	private final BiFunction<Translator, String, String> onRequiredError;
 	private Optional<Class<?>> expectedType = Optional.empty();
 	private Function<Translator, String> onExpectedTypeError = (t)->"";
 	private boolean changeValueByType = false;
@@ -55,7 +56,7 @@ public class ItemRules {
 	private Optional<Validator> mapSpecification = Optional.empty();
 	private Optional<Validator> listSpecification = Optional.empty();
 	
-	private ItemRules(String name, Boolean required, Function<Translator, String> onRequiredError) {
+	private ItemRules(String name, Boolean required, BiFunction<Translator, String, String> onRequiredError) {
 		this.name = name;
 		this.required = required;
 		this.onRequiredError = onRequiredError;
@@ -262,7 +263,7 @@ public class ItemRules {
 		return allowedValues;
 	}
 
-	public Function<Translator, String> getOnRequiredError() {
+	public BiFunction<Translator, String, String> getOnRequiredError() {
 		return onRequiredError;
 	}
 
