@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import common.structures.MapInit;
-import common.structures.Tuple2;
 import socketCommunication.http.HttpMethod;
 import toti.annotations.inject.Translate;
 import toti.annotations.url.Action;
@@ -164,10 +163,11 @@ public class ExamplePageController {
 		
 		form.addInput(Checkbox.input("active", false).setTitle("Active"));
 		form.addInput(Checkbox.input("defvalue", false).setTitle("DefValue").setDefaultValue(true));
-		form.addInput(RadioList.input("sex", false, MapInit.hashMap(
-			new Tuple2<>("male", "Male"),
-			new Tuple2<>("female", "Feale")
-		)).setTitle("Sex").setDefaultValue("female"));
+		form.addInput(RadioList.input("sex", false, new MapInit<String, String>()
+			.append("male", "Male")
+			.append("female", "Feale")
+			.toMap()
+		).setTitle("Sex").setDefaultValue("female"));
 		form.addInput(Select.input("parent", false, Arrays.asList(
 			Option.create("", "---")
 		)).setTitle("Parent").setLoadData("/example-module/api/example/help", "get"));
@@ -231,6 +231,33 @@ public class ExamplePageController {
 				.setTitle("Pairs")
 				.addInput(Text.input("first-in-pair", false).setTitle("First In Pair ({i})"))
 				.addInput(Text.input("second-in-pair", false).setTitle("Second In Pair ({i})"))
+		);
+		
+		form.addInput(
+				Text.input("disabled-not-send", false)
+				.setDisabled(true)
+				.setTitle("Disabled not send")
+				.setDefaultValue("A")
+		);
+		form.addInput(
+				Text.input("disabled-but-send", false)
+				.setDisabled(true)
+				.setExclude(false)
+				.setTitle("Disabled but send")
+				.setDefaultValue("B")
+		);
+		form.addInput(
+				Text.input("editable-not-send", false)
+				.setExclude(true)
+				.setTitle("Editable not send")
+				.setDefaultValue("C")
+		);
+		form.addInput(
+				Text.input("not-editable", false)
+				.setExclude(false)
+				.setEditable(false)
+				.setTitle("Not editable")
+				.setDefaultValue("D")
 		);
 		
 		form.addInput(Reset.create("reset").setTitle("Reset button"));
