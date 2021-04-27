@@ -1,4 +1,4 @@
-/* TOTI Form version 0.0.13 */
+/* TOTI Form version 0.0.14 */
 class TotiForm {
 
 	constructor(config) {
@@ -107,10 +107,14 @@ class TotiForm {
                         );
 					};
 					if (useTemplate) {
-						itemTemplate = document.createElement("div");
+						var pattern = template.querySelector('template[name="pattern"]').content.cloneNode(true);
+						if (pattern.childElementCount === 1) {
+							itemTemplate = pattern.firstElementChild;
+						} else {
+							itemTemplate =  document.createElement("div");
+							itemTemplate.append(...pattern.children);
+						}
 						itemTemplate.setAttribute("name", "toti-list-item-" + field.name);
-						var pattern = template.querySelector('template[name="pattern"]');
-						itemTemplate.innerHTML = pattern.innerHTML;
 
 						Array.prototype.forEach.call(
 							itemTemplate.getElementsByClassName("dynamic-container-part"),
