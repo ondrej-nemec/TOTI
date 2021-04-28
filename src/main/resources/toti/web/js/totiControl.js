@@ -1,4 +1,4 @@
-/* TOTI Control version 0.0.10 */
+/* TOTI Control version 0.0.11 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -261,7 +261,7 @@ var totiControl = {
 		    }
 
 		    // TODO editable can not exists, add condition for existing params.form
-		    if (params.hasOwnProperty("depends") && params.editable == "true" && params.hasOwnProperty("form")) {
+		    if (params.hasOwnProperty("depends") && params.editable && params.hasOwnProperty("form")) {
 		        /* only for forms */
 		        setTimeout(function() {
 		             var depends = document.getElementById(params.form).querySelector("[name='" + params.depends + "']");
