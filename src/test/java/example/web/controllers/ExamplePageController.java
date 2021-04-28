@@ -260,6 +260,12 @@ public class ExamplePageController {
 				.setDefaultValue("D")
 		);
 		
+		form.addInput(
+			DynamicList.input("main")
+				.addInput(Text.input("text1", false).setTitle("Text {i}-1"))
+				.addInput(Text.input("text2", false).setTitle("Text {i}-2"))
+		);
+		
 		form.addInput(Reset.create("reset").setTitle("Reset button"));
 		form.addInput(Button.create("/example-module/example/list", "back").setTitle("Back"));
 		form.addInput(
@@ -275,6 +281,7 @@ public class ExamplePageController {
 				Button.create("/example-module/api/example/test", "test").setMethod("post")
 				.addRequestParam("a", "a").addRequestParam("b", "bb").setAsync(true)
 		);
+		
 		// END
 		if (id != null) {
 			form.setBindMethod("get");

@@ -1,4 +1,4 @@
-/* TOTI Form version 0.0.14 */
+/* TOTI Form version 0.0.15 */
 class TotiForm {
 
 	constructor(config) {
@@ -107,7 +107,7 @@ class TotiForm {
                         );
 					};
 					if (useTemplate) {
-						var pattern = template.querySelector('template[name="pattern"]').content.cloneNode(true);
+						var pattern = itemTemplate.querySelector('template[name="pattern"]').content.cloneNode(true);
 						if (pattern.childElementCount === 1) {
 							itemTemplate = pattern.firstElementChild;
 						} else {
@@ -126,7 +126,7 @@ class TotiForm {
 							}
 						);
 
-						template.appendChild(itemTemplate);
+						field.template.appendChild(itemTemplate);
 						var removeButton = itemTemplate.querySelector("[name='remove']");
 						if (removeButton !== null) {
 							if (editable) {

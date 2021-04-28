@@ -104,6 +104,19 @@
 			<span name="add">Add</span>
 		</fieldset>
 		
+		<fieldset name="main-container">
+			<template name="pattern">
+				<t:error name="main[%s][text1]" />
+				<t:label name="main[%s][text1]" />
+				<t:input name="main[%s][text1]" /> <br>
+				
+				<t:error name="main[%s][text2]" />
+				<t:label name="main[%s][text2]" />
+				<t:input name="main[%s][text2]" /> <br>
+				
+			</template>
+			
+		</fieldset>
 		<hr>
 		<t:input name="reset" />
 		<hr>
