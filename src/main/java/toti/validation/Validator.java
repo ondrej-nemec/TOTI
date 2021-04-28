@@ -93,7 +93,6 @@ public class Validator {
 		});
 		List<String> notChecked = new ArrayList<>(prop.keySet());
 		notChecked.removeAll(names);
-		notChecked = notChecked.stream().map(a->String.format(format, a)).collect(Collectors.toList());
 		checkRule(
 				Optional.of(notChecked),
 				(incomingData)->{
@@ -101,7 +100,7 @@ public class Validator {
 				},
 				errors,
 				"form",
-				onStrictListError.apply(translator, notChecked)
+				onStrictListError.apply(translator, notChecked.stream().map(a->String.format(format, a)).collect(Collectors.toList()))
 		);
 		if (!strictList && defaultRule.isPresent()) {
 			ItemRules rule = defaultRule.get();
