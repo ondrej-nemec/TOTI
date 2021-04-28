@@ -38,7 +38,7 @@ public class TemplateParser {
 				+ "import translator.Translator;"
 				+ "import toti.security.Authorizator;"
 				+ "import toti.templating.TemplateFactory;"
-				+ "import acl.AuthorizationHelper;"
+				+ "import toti.security.Authorizator;"
 				+ "public class %s implements Template{"
 					+ "public StringBuilder b = new StringBuilder();"
 					//+ "public StringBuilder main=b;"
