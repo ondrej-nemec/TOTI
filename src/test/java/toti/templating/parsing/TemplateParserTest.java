@@ -10,9 +10,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.stubbing.OngoingStubbing;
 
+import common.structures.MapInit;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
-import static common.structures.MapInit.*;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -93,7 +94,9 @@ public class TemplateParserTest {
 					+ "Object o0_1=variables.get(\"var\");"
 					+ "/* starting-tag */b.append(\"",
 					getVerify((tag)->{
-						verify(tag, times(1)).getPairStartCode(hashMap(t("id", "o0_1"), t("class", "")));
+						verify(tag, times(1)).getPairStartCode(
+							new MapInit<String, String>().append("id", "o0_1").append("class", "").toMap()
+						);
 					})
 				},
 			new Object[] {

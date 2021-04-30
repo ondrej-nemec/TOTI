@@ -6,13 +6,13 @@ import java.util.Map;
 
 import json.Jsonable;
 
-public class GridDataSet implements Jsonable {
+public class GridDataSet<T extends Entity> implements Jsonable {
 	
-	private final List<Object> items;
+	private final List<T> items;
 	private final int totalCount;
 	private final int pageIndex;
 
-	public GridDataSet(List<Object> items, int totalCount, int pageIndex) {
+	public GridDataSet(List<T> items, int totalCount, int pageIndex) {
 		this.items = items;
 		this.totalCount = totalCount;
 		this.pageIndex = pageIndex;

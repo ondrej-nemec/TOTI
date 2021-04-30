@@ -7,8 +7,10 @@ import java.util.function.Consumer;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import common.structures.MapInit;
+
 import static org.mockito.Mockito.*;
-import static common.structures.MapInit.*;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -137,63 +139,97 @@ public class TagParserTest {
 					"testingTag class=\"body1\" id=\"body2\">",
 					"\");starting-tagb.append(\"",
 					getVerify((tag)->{
-						verify(tag, times(1)).getPairStartCode(hashMap(t("class", "body1"), t("id", "body2")));
+						verify(tag, times(1)).getPairStartCode(
+							new MapInit<String, String>()
+							.append("class", "body1")
+							.append("id", "body2")
+							.toMap());
 					}), false
 				},
 			new Object[] {
 					"testingTag class=\"body1\" id='body2'/>",
 					"\");non-pair-tagb.append(\"",
 					getVerify((tag)->{
-						verify(tag, times(1)).getNotPairCode(hashMap(t("class", "body1"), t("id", "body2")));
+						verify(tag, times(1)).getNotPairCode(
+								new MapInit<String, String>()
+								.append("class", "body1")
+								.append("id", "body2")
+								.toMap());
 						}), false
 				},
 			new Object[] {
 					"testingTag class=\"body1\" id='body2' >",
 					"\");starting-tagb.append(\"",
 					getVerify((tag)->{
-						verify(tag, times(1)).getPairStartCode(hashMap(t("class", "body1"), t("id", "body2")));
+						verify(tag, times(1)).getPairStartCode(
+								new MapInit<String, String>()
+								.append("class", "body1")
+								.append("id", "body2")
+								.toMap());
 						}), false
 				},
 			new Object[] {
 					"testingTag class=\"body1\" id='body2' />",
 					"\");non-pair-tagb.append(\"",
 					getVerify((tag)->{
-						verify(tag, times(1)).getNotPairCode(hashMap(t("class", "body1"), t("id", "body2")));
+						verify(tag, times(1)).getNotPairCode(
+								new MapInit<String, String>()
+								.append("class", "body1")
+								.append("id", "body2")
+								.toMap());
 						}), false
 				},
 			new Object[] {
 					"testingTag id=\"<> \\ \\\" ' \">",
 					"\");starting-tagb.append(\"",
 					getVerify((tag)->{
-						verify(tag, times(1)).getPairStartCode(hashMap(t("id", "<> \\ \\\" ' ")));
+						verify(tag, times(1)).getPairStartCode(
+								new MapInit<String, String>()
+								.append("id", "<> \\ \\\" ' ")
+								.toMap());
 						}), false
 				},
 			new Object[] {
 					"testingTag id='<> \\ \" \\' '>",
 					"\");starting-tagb.append(\"",
 					getVerify((tag)->{
-						verify(tag, times(1)).getPairStartCode(hashMap(t("id", "<> \\ \" \\' ")));
+						verify(tag, times(1)).getPairStartCode(
+								new MapInit<String, String>()
+								.append("id", "<> \\ \" \\' ")
+								.toMap());
 						}), false
 				},
 			new Object[] {
 					"testingTag class=\"body1\"id='body2' >",
 					"\");starting-tagb.append(\"",
 					getVerify((tag)->{
-						verify(tag, times(1)).getPairStartCode(hashMap(t("class", "body1"), t("id", "body2")));
+						verify(tag, times(1)).getPairStartCode(
+								new MapInit<String, String>()
+								.append("class", "body1")
+								.append("id", "body2")
+								.toMap());
 						}), false
 				},
 			new Object[] {
 					"testingTag  class=\"body1\"  id='body2' >",
 					"\");starting-tagb.append(\"",
 					getVerify((tag)->{
-						verify(tag, times(1)).getPairStartCode(hashMap(t("class", "body1"), t("id", "body2")));
+						verify(tag, times(1)).getPairStartCode(
+								new MapInit<String, String>()
+								.append("class", "body1")
+								.append("id", "body2")
+								.toMap());
 						}), false
 				},
 			new Object[] {
 					"testingTag  class id='body2' >",
 					"\");starting-tagb.append(\"",
 					getVerify((tag)->{
-						verify(tag, times(1)).getPairStartCode(hashMap(t("class", ""), t("id", "body2")));
+						verify(tag, times(1)).getPairStartCode(
+								new MapInit<String, String>()
+								.append("class", "")
+								.append("id", "body2")
+								.toMap());
 						}), false
 				},
 		};

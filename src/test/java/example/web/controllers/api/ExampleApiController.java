@@ -9,8 +9,8 @@ import java.util.Map;
 import common.Logger;
 import common.structures.MapDictionary;
 import common.structures.MapInit;
-import common.structures.Tuple2;
 import example.AuditTrail;
+import example.dao.Example;
 import example.dao.ExampleDao;
 import example.web.validator.ExampleValidator;
 import socketCommunication.http.HttpMethod;
@@ -126,18 +126,18 @@ public class ExampleApiController {
 		//	list.add("\\\"]'); alert('Successfull XSS2'); // ");
 			
 			item.put("pairs", Arrays.asList(
-				MapInit.hashMap(
-					new Tuple2<>("first-in-pair", "A1"),
-					new Tuple2<>("second-in-pair", "A2")
-				),
-				MapInit.hashMap(
-						new Tuple2<>("first-in-pair", "B1"),
-						new Tuple2<>("second-in-pair", "B2")
-				),
-				MapInit.hashMap(
-						new Tuple2<>("first-in-pair", "C1"),
-						new Tuple2<>("second-in-pair", "C2")
-				)
+				new MapInit<String, Object>()
+					.append("first-in-pair", "A1")
+					.append("second-in-pair", "A2")
+				.toMap(),
+				new MapInit<String, Object>()
+					.append("first-in-pair", "B1")
+					.append("second-in-pair", "B2")
+					.toMap(),
+				new MapInit<String, Object>()
+					.append("first-in-pair", "C1")
+					.append("second-in-pair", "C2")
+					.toMap()
 			));
 			
 			item.put("map", map);
@@ -172,7 +172,7 @@ public class ExampleApiController {
 			
 			editValues(updated, false);
 			
-			dao.update(id, updated.toMap());
+			dao.update(id, new Example(updated));
 			auditTrail.update(identity.getUser().getId(), origin, updated.toMap());
 			
 			Map<String, Object> params = new HashMap<>();
@@ -194,7 +194,7 @@ public class ExampleApiController {
 			
 			editValues(inserted, true);
 			
-			int id = dao.insert(inserted.toMap());
+			int id = dao.insert(new Example(inserted));
 			inserted.put(UNIQUE, id);
 			auditTrail.insert(identity.getUser().getId(), inserted.toMap());
 			

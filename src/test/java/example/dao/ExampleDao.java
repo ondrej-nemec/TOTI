@@ -3,9 +3,10 @@ package example.dao;
 import java.util.Optional;
 
 import database.Database;
+import database.support.DatabaseRow;
 import toti.application.EntityDao;
 
-public class ExampleDao implements EntityDao {
+public class ExampleDao implements EntityDao<Example> {
 
 	private final Database database;
 	private final String table = "Example";
@@ -37,6 +38,11 @@ public class ExampleDao implements EntityDao {
 	@Override
 	public String getHelpValue() {
 		return "name";
+	}
+
+	@Override
+	public Example createEntity(DatabaseRow row) {
+		return new Example(row);
 	}
 
 }

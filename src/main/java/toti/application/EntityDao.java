@@ -15,7 +15,7 @@ import querybuilder.InsertQueryBuilder;
 import querybuilder.SelectQueryBuilder;
 import querybuilder.UpdateQueryBuilder;
 
-public interface EntityDao {
+public interface EntityDao<T extends Entity> {
 	
 	Database getDatabase();
 	
@@ -27,7 +27,18 @@ public interface EntityDao {
 	
 	String getHelpValue();
 	
-	default GridDataSet getAll(
+	T createEntity(DatabaseRow row);
+	
+	default List<T> getAll() throws SQLException {
+		return getDatabase().applyBuilder((builder)->{
+			return builder.select("*").from(getTableName())
+			.fetchAll((row)->{
+				return createEntity(row);
+			});
+		});
+	}
+	
+	default GridDataSet<T> getAll(
 			int pageIndex,
 			int pageSize, 
 			Map<String, Object> filters,
@@ -75,34 +86,38 @@ public interface EntityDao {
 			}
 			//select.limit(pageSize, (pageIndex-1)*pageSize);
 			List<DatabaseRow> rows = select.fetchAll();
-			List<Object> items = new LinkedList<>();
+			List<T> items = new LinkedList<>();
 			rows.subList((pageIndex-1)*pageSize, Math.min(pageIndex*pageSize, rows.size())).forEach((row)->{
-				items.add(row.getValues());
+				items.add(createEntity(row));
 			});
-			return new GridDataSet(items, rows.size(), pageIndex);
+			return new GridDataSet<>(items, rows.size(), pageIndex);
 		});
 	}
 	
-	default Map<String, Object> get(int id) throws SQLException {
+	default T get(int id) throws SQLException {
 		return getDatabase().applyBuilder((builder)->{
-			return builder.select("*").from(getTableName())
-					.where("id = :id").addParameter(":id", id).fetchRow().getValues();
+			return createEntity(
+				builder.select("*").from(getTableName())
+					.where("id = :id").addParameter(":id", id).fetchRow()
+				);
 		});
 	}
 	
-	default Map<String, Object> delete(int id) throws SQLException {
+	default T delete(int id) throws SQLException {
 		return getDatabase().applyBuilder((builder)->{
-			Map<String, Object> item = builder.select("*").from(getTableName()).where("id = :id")
-					.addParameter(":id", id).fetchRow().getValues();
+			T item = createEntity(
+				builder.select("*").from(getTableName()).where("id = :id")
+					.addParameter(":id", id).fetchRow()
+			);
 			builder.delete(getTableName()).where("id = :id").addParameter(":id", id).execute();
 			return item;
 		});
 	}
 	
-	default void update(int id, Map<String, Object> values) throws SQLException {
+	default void update(int id, T entity) throws SQLException {
 		getDatabase().applyBuilder((builder)->{
 			UpdateQueryBuilder b = builder.update(getTableName());
-			values.forEach((name, value)->{
+			entity.toMap().forEach((name, value)->{
 				b.set(String.format("%s = :%s", name, name)).addParameter(":" + name, value);
 			});
 			b.where("id = :id").addParameter(":id", id);
@@ -111,19 +126,13 @@ public interface EntityDao {
 		});
 	}
 	
-	default int insert(Map<String, Object> values) throws SQLException {
+	default int insert(T entity) throws SQLException {
 		return getDatabase().applyBuilder((builder)->{
 			InsertQueryBuilder b = builder.insert(getTableName());
-			values.forEach((name, value)->{
+			entity.toMap().forEach((name, value)->{
 				b.addValue(name, value);
 			});
 			return Integer.parseInt(b.execute().toString());
-		});
-	}
-	
-	default int getTotalCount(Database database, String table) throws SQLException {
-		return database.applyBuilder((builder)->{
-			return Integer.parseInt(builder.select("count(*)").from(table).fetchSingle().toString());
 		});
 	}
 	
