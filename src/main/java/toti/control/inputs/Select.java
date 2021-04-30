@@ -1,7 +1,6 @@
 package toti.control.inputs;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,21 +22,7 @@ public class Select implements Input, Filter {
 	private Map<String, Object> load;
 	private String optionGroup;
 	private String depends = null;
-	
-	@Deprecated
-	public static Select input(String name, boolean required, Map<String, String> options) {
-		List<Option> opts = new LinkedList<>();
-		options.forEach((value, title)->{
-			opts.add(Option.create(value, title));
-		});
-		return new Select(name, required, opts);
-	}
 
-	@Deprecated
-	public static Select filter(Map<String, String> options) {
-		return Select.input("", false, options);
-	}
-	
 	public static Select input(String name, boolean required, List<Option> options) {
 		return new Select(name, required, options);
 	}

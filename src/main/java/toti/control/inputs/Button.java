@@ -2,7 +2,6 @@ package toti.control.inputs;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import toti.control.Control;
 
@@ -21,11 +20,6 @@ public class Button implements Input {
 	private ButtonType type = ButtonType.BASIC;
 	private String condition = null;
 	private boolean evaluate = false;
-
-	@Deprecated
-	public static Button create(String url) {
-		return new Button(url, "button_" + new Random().nextInt(100));
-	}
 
 	public static Button create(String url, String name) {
 		return new Button(url, name);

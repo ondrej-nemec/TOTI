@@ -1,5 +1,6 @@
 package module.controllers;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +31,7 @@ import toti.control.inputs.Email;
 import toti.control.inputs.File;
 import toti.control.inputs.Hidden;
 import toti.control.inputs.Number;
+import toti.control.inputs.Option;
 import toti.control.inputs.Password;
 import toti.control.inputs.RadioList;
 import toti.control.inputs.Select;
@@ -42,7 +44,7 @@ import translator.Translator;
 @Controller("entity")
 public class EntityPageController {
 	
-	private final static String SECURITY_DOMAIN = "entity";
+	// private final static String SECURITY_DOMAIN = "entity";
 		
 	@Translate
 	private Translator translator;
@@ -67,23 +69,24 @@ public class EntityPageController {
 		form.addInput(Text.input("xss", false).setTitle("XSS"));
 		form.addInput(TextArea.input("area", false).setTitle("Area"));
 		form.addInput(Datetime.input("datetimeInput", false).setTitle("Datetime"));
-		form.addInput(RadioList.input("radioInput", false, MapInit.hashMap(
-			new Tuple2<>("a", "A"),
-			new Tuple2<>("b", "B"),
-			new Tuple2<>("c", "C")
-		)));
+		form.addInput(RadioList.input("radioInput", false, new MapInit<String, String>()
+				.append("a", "A")
+				.append("b", "B")
+				.append("c", "C")
+			.toMap()
+		));
 		form.addInput(Checkbox.input("no-def-no-override", false).setTitle("no def no override"));
 		form.addInput(Checkbox.input("no-def-override", false).setTitle("no def override"));
 		form.addInput(Checkbox.input("def-no-override", false).setDefaultValue("true").setTitle("def no overrirde"));
 		form.addInput(Checkbox.input("def-override", false).setDefaultValue("true").setTitle("deff overrirde"));
-		form.addInput(Select.input("selectInput", false, MapInit.hashMap(
-				new Tuple2<>("aa", "AA"),
-				new Tuple2<>("bb", "BB"),
-				new Tuple2<>("cc", "CC")
+		form.addInput(Select.input("selectInput", false, Arrays.asList(
+				Option.create("aa", "AA"),
+				Option.create("bb", "BB"),
+				Option.create("cc", "CC")
 			)));
 		form.addInput(File.input("pdf", false));
 		
-		form.addInput(Button.create("/entity/entity/list").setTitle("Back").setConfirmation("Really?"));
+		form.addInput(Button.create("/entity/entity/list", "list").setTitle("Back").setConfirmation("Really?"));
 		form.addInput(Submit.create("Save", "save").setConfirmation("realy?"));
 		form.addInput(Submit.create("Sync", "save2").setConfirmation("realy?").setAsync(false));
 		form.addInput(Submit.create("Save and back", "save-back").setRedirect("/entity/entity/list"));
@@ -123,7 +126,7 @@ public class EntityPageController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		return Response.getJson(MapInit.hashMap(new Tuple2<>("id", 1), new Tuple2<>("message", "saved")));
+		return Response.getJson(Arrays.asList(new Tuple2<>("id", 1), new Tuple2<>("message", "saved")));
 	}
 	
 	
@@ -193,37 +196,37 @@ public class EntityPageController {
 			new ValueColumn("FK_id")
 				.setTitle(translator.translate("module.fk-id"))
 				.setUseSorting(true)
-				.setFilter(Select.filter(MapInit.hashMap(
-					MapInit.t("", "---"),
-					MapInit.t("1", "Department #1"),
-					MapInit.t("2", "Department #2"),
-					MapInit.t("3", "Department #3"),
-					MapInit.t("4", "Department #4")
+				.setFilter(Select.filter(Arrays.asList(
+					Option.create("", "---"),
+					Option.create("1", "Department #1"),
+					Option.create("2", "Department #2"),
+					Option.create("3", "Department #3"),
+					Option.create("4", "Department #4")
 				)))
 		);
 		grid.addColumn(
 			new ValueColumn("is_main")
 				.setTitle(translator.translate("module.is_main"))
 				.setUseSorting(true)
-				.setFilter(Select.filter(MapInit.hashMap(
-					MapInit.t("", "---"),
-					MapInit.t("true", "Yes"),
-					MapInit.t("false", "No")
+				.setFilter(Select.filter(Arrays.asList(
+					Option.create("", "---"),
+					Option.create("true", "Yes"),
+					Option.create("false", "No")
 				)))
 				.setRenderer("isMainRenderer")
 		);
 		grid.addColumn(
 			new ButtonsColumn("buttons").setTitle(translator.translate("module.buttons"))
 				.addButton(
-					Button.create("/entity/api/entity/delete/{id}").setAsync(true).setMethod("delete")
+					Button.create("/entity/api/entity/delete/{id}", "delete").setAsync(true).setMethod("delete")
 						.setTitle("Delete").setConfirmation("Really delete {name}?").setType(ButtonType.DANGER)
 				)
 				.addButton(
-					Button.create("/entity/entity/edit/{id}").setAsync(false).setMethod("get")
+					Button.create("/entity/entity/edit/{id}", "edit").setAsync(false).setMethod("get")
 						.setTitle("Edit").setType(ButtonType.INFO)
 				)
 				.addButton(
-						Button.create("/entity/entity/detail/{id}").setAsync(false).setMethod("get")
+						Button.create("/entity/entity/detail/{id}", "detail").setAsync(false).setMethod("get")
 							.setTitle("Detail").setType(ButtonType.SUCCESS)
 					)
 		);
@@ -266,22 +269,22 @@ public class EntityPageController {
 		form.addInput(Datetime.input("edited", true).setTitle(translator.translate("module.edited")));
 		form.addInput(Checkbox.input("is_main", false).setTitle(translator.translate("module.is-main")));
 		form.addInput(Number.input("rank", true).setTitle(translator.translate("module.rank")));
-		form.addInput(Select.input("FK_id", true, MapInit.hashMap(
-			MapInit.t("1", "Department #1"),
-			MapInit.t("2", "Department #2"),
-			MapInit.t("3", "Department #3"),
-			MapInit.t("3", "Department #4")
+		form.addInput(Select.input("FK_id", true, Arrays.asList(
+			Option.create("1", "Department #1"),
+			Option.create("2", "Department #2"),
+			Option.create("3", "Department #3"),
+			Option.create("3", "Department #4")
 		)).setTitle("Department"));
-		form.addInput(RadioList.input("lang", true, MapInit.hashMap(
-			MapInit.t("cs_CZ", "Czech"),
-			MapInit.t("en_GB", "English"),
-			MapInit.t("de_DE", "German"),
-			MapInit.t("sk_SK", "Slovak")
-		)).setTitle("Language"));
+		form.addInput(RadioList.input("lang", true, new MapInit<String, String>()
+			.append("cs_CZ", "Czech")
+			.append("en_GB", "English")
+			.append("de_DE", "German")
+			.append("sk_SK", "Slovak")
+		.toMap()).setTitle("Language"));
 		form.addInput(TextArea.input("comment", false).setCols(20).setRows(30).setTitle("module.comment").setDefaultValue("aaa"));
 		
 		form.addInput(Submit.create("Save", "save").setRedirect("/entity/entity/list"));
-		form.addInput(Button.create("/entity/entity/list").setTitle("Cancel").setAsync(false));
+		form.addInput(Button.create("/entity/entity/list", "list").setTitle("Cancel").setAsync(false));
 		
 		form.setAfterBind("b");
 		form.setBeforeBind("a");
