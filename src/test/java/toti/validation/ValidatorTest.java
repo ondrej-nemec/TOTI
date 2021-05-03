@@ -11,8 +11,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
-import common.structures.MapInit;
-import common.structures.Tuple2;
 import json.JsonStreamException;
 import json.JsonWritter;
 import junitparams.JUnitParamsRunner;
@@ -64,7 +62,7 @@ public class ValidatorTest {
 						.addRule(ItemRules.forName("val2", true).setType(Integer.class))
 						.addRule(ItemRules.forName("val3", true).setType(Boolean.class))
 				)),
-				new RequestParameters(new Tuple2<>("item1", new JsonWritter().write(correct))),
+				new RequestParameters().put("item1", new JsonWritter().write(correct)),
 				true
 			},
 			new Object[] {
@@ -75,7 +73,7 @@ public class ValidatorTest {
 							.addRule(ItemRules.forName("val3", true).setType(Boolean.class))
 							.addRule(ItemRules.forName("val4", false))
 					)),
-					new RequestParameters(new Tuple2<>("item1", new JsonWritter().write(correct))),
+					new RequestParameters().put("item1", new JsonWritter().write(correct)),
 					true
 				},
 			new Object[] {
@@ -84,7 +82,7 @@ public class ValidatorTest {
 							.addRule(ItemRules.forName("val1", true).setType(String.class))
 							.addRule(ItemRules.forName("val2", true).setType(Integer.class))
 					)),
-					new RequestParameters(new Tuple2<>("item1", new JsonWritter().write(correct))),
+					new RequestParameters().put("item1", new JsonWritter().write(correct)),
 					true
 				},
 			new Object[] {
@@ -95,7 +93,7 @@ public class ValidatorTest {
 							.addRule(ItemRules.forName("val3", true).setType(Boolean.class))
 							.addRule(ItemRules.forName("val4", true).setType(Integer.class))
 					)),
-					new RequestParameters(new Tuple2<>("item1", new JsonWritter().write(correct))),
+					new RequestParameters().put("item1", new JsonWritter().write(correct)),
 					false
 				},
 			new Object[] {
@@ -105,7 +103,7 @@ public class ValidatorTest {
 							.addRule(ItemRules.forName("val2", true).setType(Integer.class))
 							.addRule(ItemRules.forName("val3", true).setType(Boolean.class))
 					)),
-					new RequestParameters(new Tuple2<>("item1", new JsonWritter().write(correct))),
+					new RequestParameters().put("item1", new JsonWritter().write(correct)),
 					false
 				},
 		};
@@ -125,12 +123,12 @@ public class ValidatorTest {
 		return new Object[] {
 			new Object[] {
 				Arrays.asList(ItemRules.forName("item1", true).setAllowedValues(Arrays.asList("value1", "value2"))),
-				new RequestParameters(MapInit.t("item1", "value1")),
+				new RequestParameters().put("item1", "value1"),
 				true
 			},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setAllowedValues(Arrays.asList("value1", "value2"))),
-					new RequestParameters(MapInit.t("item1", "value")),
+					new RequestParameters().put("item1", "value1"),
 					false
 				},
 		};
@@ -150,47 +148,47 @@ public class ValidatorTest {
 		return new Object[] {
 			new Object[] {
 				Arrays.asList(ItemRules.forName("item1", true).setType(String.class)),
-				new RequestParameters(MapInit.t("item1", "value")),
+				new RequestParameters().put("item1", "value"),
 				true
 			},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setType(Integer.class)),
-					new RequestParameters(MapInit.t("item1", 12)),
+					new RequestParameters().put("item1", 12),
 					true
 				},
 			/*new Object[] {
 					Arrays.asList(Rules.forName("item1", true).setType(Number.class)),
-					new RequestParameters(MapInit.t("item1", 12)),
+					new RequestParameters().put("item1", 12)),
 					true
 				},
 			new Object[] {
 					Arrays.asList(Rules.forName("item1", true).setType(Number.class)),
-					new RequestParameters(MapInit.t("item1", 12.4)),
+					new RequestParameters().put("item1", 12.4)),
 					true
 				},*/
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setType(Integer.class)),
-					new RequestParameters(MapInit.t("item1", 12.4)),
+					new RequestParameters().put("item1", 12.4),
 					false
 				},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setType(Double.class)),
-					new RequestParameters(MapInit.t("item1", 12.4)),
+					new RequestParameters().put("item1", 12.4),
 					true
 				},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setType(String.class)),
-					new RequestParameters(MapInit.t("item1", 12.4)),
+					new RequestParameters().put("item1", 12.4),
 					true
 				},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setType(Boolean.class)),
-					new RequestParameters(MapInit.t("item1", "value")),
+					new RequestParameters().put("item1", "value"),
 					true
 				},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setType(Boolean.class)),
-					new RequestParameters(MapInit.t("item1", "true")),
+					new RequestParameters().put("item1", "true"),
 					true
 				},
 		};
@@ -210,27 +208,27 @@ public class ValidatorTest {
 		return new Object[] {
 			new Object[] {
 				Arrays.asList(ItemRules.forName("item1", true).setMinValue(0).setMaxValue(10)),
-				new RequestParameters(MapInit.t("item1", 0)),
+				new RequestParameters().put("item1", 0),
 				true	
 			},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setMinValue(0).setMaxValue(10)),
-					new RequestParameters(MapInit.t("item1", -1)),
+					new RequestParameters().put("item1", -1),
 					false	
 				},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setMinValue(0).setMaxValue(10)),
-					new RequestParameters(MapInit.t("item1", 10)),
+					new RequestParameters().put("item1", 10),
 					true	
 				},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setMinValue(0).setMaxValue(10)),
-					new RequestParameters(MapInit.t("item1", 5)),
+					new RequestParameters().put("item1", 5),
 					true	
 				},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setMinValue(0).setMaxValue(10)),
-					new RequestParameters(MapInit.t("item1", 12)),
+					new RequestParameters().put("item1", 12),
 					false	
 				}
 		};
@@ -250,22 +248,22 @@ public class ValidatorTest {
 		return new Object[] {
 			new Object[] {
 				Arrays.asList(ItemRules.forName("item1", true).setMaxLength(10).setMinLength(2).setRegex(".*")),
-				new RequestParameters(MapInit.t("item1", "correct")),
+				new RequestParameters().put("item1", "correct"),
 				true
 			},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setMaxLength(10).setMinLength(2).setRegex(".*")),
-					new RequestParameters(MapInit.t("item1", "a")),
+					new RequestParameters().put("item1", "a"),
 					false
 				},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setMaxLength(10).setMinLength(2).setRegex(".*")),
-					new RequestParameters(MapInit.t("item1", "soooooo long")),
+					new RequestParameters().put("item1", "soooooo long"),
 					false
 				},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setRegex("^[0-9]$")),
-					new RequestParameters(MapInit.t("item1", "not a number")),
+					new RequestParameters().put("item1", "not a number"),
 					false
 				}
 		};
@@ -287,89 +285,89 @@ public class ValidatorTest {
 				true, Arrays.asList(
 						ItemRules.forName("item1", true),
 						ItemRules.forName("item2", true)
-				), new RequestParameters(
-					MapInit.t("item1", ""),
-					MapInit.t("item2", "")
-				), true
+				), new RequestParameters()
+					.put("item1", "")
+					.put("item2", "")
+				, true
 			},
 			new Object[] {
 					true, Arrays.asList(
 							ItemRules.forName("item1", true),
 							ItemRules.forName("item2", true),
 							ItemRules.forName("item3", false)
-					), new RequestParameters(
-						MapInit.t("item1", ""),
-						MapInit.t("item2", "")
-					), true
+					), new RequestParameters()
+						.put("item1", "")
+						.put("item2", "")
+					, true
 				},
 			new Object[] {
 					true, Arrays.asList(
 							ItemRules.forName("item1", true),
 							ItemRules.forName("item2", true),
 							ItemRules.forName("item3", true)
-					), new RequestParameters(
-						MapInit.t("item1", ""),
-						MapInit.t("item2", "")
-					), false
+					), new RequestParameters()
+						.put("item1", "")
+						.put("item2", "")
+					, false
 				},
 			new Object[] {
 					true, Arrays.asList(
 							ItemRules.forName("item1", true)
-					), new RequestParameters(
-						MapInit.t("item1", ""),
-						MapInit.t("item2", "")
-					), false
+					), new RequestParameters()
+						.put("item1", "")
+						.put("item2", "")
+					, false
 				},
 			new Object[] {
 					true, Arrays.asList(
 							ItemRules.forName("item1", true),
 							ItemRules.forName("item2", true),
 							ItemRules.forName("item3", false)
-					), new RequestParameters(
-						MapInit.t("item1", ""),
-						MapInit.t("item3", "")
-					), false
+					), new RequestParameters()
+						.put("item1", "")
+						.put("item3", "")
+					, false
 				},
 			new Object[] {
 					true, Arrays.asList(
 							ItemRules.forName("item1", true),
 							ItemRules.forName("item2", true),
 							ItemRules.forName("item3", false)
-					), new RequestParameters(
-						MapInit.t("item1", ""),
-						MapInit.t("item2", ""),
-						MapInit.t("item3", "")
-					), true
+					), new RequestParameters()
+						.put("item1", "")
+						.put("item2", "")
+						.put("item3", "")
+					, true
 				},
 			new Object[] {
 					true, Arrays.asList(
 							ItemRules.forName("item1", true),
 							ItemRules.forName("item2", true)
-					), new RequestParameters(
-						MapInit.t("item1", ""),
-						MapInit.t("item2", ""),
-						MapInit.t("item3", "")
-					), false
+					), new RequestParameters()
+						.put("item1", "")
+						.put("item2", "")
+						.put("item3", "")
+					, false
 				},
 			new Object[] {
 					false, Arrays.asList(
 							ItemRules.forName("item1", true),
 							ItemRules.forName("item2", true)
-					), new RequestParameters(
-						MapInit.t("item1", ""),
-						MapInit.t("item2", ""),
-						MapInit.t("item3", "")
-					), true
+					), new RequestParameters()
+						.put("item1", "")
+						.put("item2", "")
+						.put("item3", "")
+					, true
 				},
 			new Object[] {
 					false, Arrays.asList(
 							ItemRules.forName("item1", true),
 							ItemRules.forName("item2", true),
 							ItemRules.forName("item3", false)
-					), new RequestParameters(
-						MapInit.t("item1", ""),
-						MapInit.t("item3", "")
-					), false
+					), new RequestParameters()
+						.put("item1", "")
+						.put("item3", "")
+					, false
 				}
 		};
 	}

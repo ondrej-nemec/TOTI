@@ -4,7 +4,6 @@
 	
 	<div> <a href="/example-module/example/add"><t:trans message="messages.add-button" /></a> </div>
 	<t:control name="exampleControl" />
-	
 	<script>
 		function afterBind(values) {
 			console.log("after", values);

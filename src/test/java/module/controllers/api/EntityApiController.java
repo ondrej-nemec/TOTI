@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import common.Logger;
+import common.structures.DictionaryValue;
 import common.structures.MapDictionary;
 import module.AuditTrail;
 import socketCommunication.http.HttpMethod;
@@ -14,12 +15,10 @@ import toti.annotations.inject.ClientIdentity;
 import toti.annotations.inject.Translate;
 import toti.annotations.url.Action;
 import toti.annotations.url.Controller;
-import toti.annotations.url.Domain;
 import toti.annotations.url.Method;
 import toti.annotations.url.Param;
 import toti.annotations.url.ParamUrl;
 import toti.annotations.url.Params;
-import toti.annotations.url.Secured;
 import toti.security.Identity;
 import toti.response.Response;
 import translator.Translator;
@@ -27,7 +26,7 @@ import translator.Translator;
 @Controller("entity")
 public class EntityApiController {
 	
-	private final static String SECURITY_DOMAIN = "entity";
+	//private final static String SECURITY_DOMAIN = "entity";
 	private final static String UNIQUE = "id";
 	
 	static {
@@ -50,12 +49,12 @@ public class EntityApiController {
 	
 	private final EntityDao dao;
 	private final Logger logger;
-	private final AuditTrail auditTrail;
+	//private final AuditTrail auditTrail;
 	
 	public EntityApiController(EntityDao dao, Logger logger, AuditTrail auditTrail) {
 		this.dao = dao;
 		this.logger = logger;
-		this.auditTrail = auditTrail;
+	//	this.auditTrail = auditTrail;
 	}
 	
 	@Action(value = "unique", validator="uniq")
@@ -99,7 +98,7 @@ public class EntityApiController {
 		if (o == null) {
 			System.err.println(prefix + o);
 		} else if (o instanceof Map) {
-			Map.class.cast(o).forEach((key, value)->{
+			new DictionaryValue(o).getMap().forEach((key, value)->{
 				if (!(value instanceof Map) /*&& !(value instanceof List)*/) {
 					print(prefix + key + ": ", value);
 				} else {
@@ -110,7 +109,7 @@ public class EntityApiController {
 			});
 		} else if (o instanceof List) {
 			System.err.println(prefix + "[");
-			List.class.cast(o).forEach((value)->{
+			new DictionaryValue(o).getList().forEach((value)->{
 				print(prefix + "  ", value);
 			});
 			System.err.println(prefix + "]");
@@ -164,7 +163,7 @@ public class EntityApiController {
 	//@Secured({@Domain(name=SECURITY_DOMAIN, action=helper.Action.DELETE)})
 	public Response delete(@ParamUrl("id") Integer id) {
 		try {
-			Map<String, Object> deleted = dao.delete(id);
+			/*Map<String, Object> deleted = */dao.delete(id);
 		//	auditTrail.delete(identity.getUser().getId(), deleted);
 			return Response.getText(translator.translate("common.item-deleted"));
 		} catch (Exception e) {
@@ -178,7 +177,7 @@ public class EntityApiController {
 	//@Secured({@Domain(name=SECURITY_DOMAIN, action=helper.Action.UPDATE)})
 	public Response update(@ParamUrl("id") Integer id, @Params RequestParameters updated) {
 		try {
-			Map<String, Object> origin = dao.get(id);
+			/*Map<String, Object> origin =*/ dao.get(id);
 						
 			editValues(updated, false);
 			

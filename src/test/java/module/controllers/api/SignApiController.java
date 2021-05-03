@@ -15,7 +15,6 @@ import toti.annotations.url.Secured;
 import toti.security.Authenticator;
 import toti.authentication.AuthentizationException;
 import toti.security.Identity;
-import toti.security.User;
 import toti.response.Response;
 
 @Controller("sign")
