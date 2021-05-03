@@ -113,7 +113,7 @@ public class ExampleApiController {
 	@Secured({@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.READ)})
 	public Response get(@ParamUrl("id") Integer id) {
 		try {
-			Map<String, Object> item = dao.get(id);
+			Example item = dao.get(id);
 			Map<String, String> map = new HashMap<>();
 			map.put("subText1", "<script>alert('XSS!');</script>");
 			//  element.querySelector("[value='" + value + "']");
@@ -154,7 +154,7 @@ public class ExampleApiController {
 	@Secured({@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.DELETE)})
 	public Response delete(@ParamUrl("id") Integer id) {
 		try {
-			Map<String, Object> deleted = dao.delete(id);
+			Example deleted = dao.delete(id);
 			auditTrail.delete(identity.getUser().getId(), deleted);
 			return Response.getText(translator.translate("common.item-deleted"));
 		} catch (Exception e) {
@@ -168,7 +168,7 @@ public class ExampleApiController {
 	@Secured({@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.UPDATE)})
 	public Response update(@ParamUrl("id") Integer id, @Params RequestParameters updated) {
 		try {
-			Map<String, Object> origin = dao.get(id);
+			Example origin = dao.get(id);
 			
 			editValues(updated, false);
 			
