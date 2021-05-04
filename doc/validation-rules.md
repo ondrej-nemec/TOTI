@@ -28,10 +28,10 @@
 ItemRules rules = ItemRules.forName(String name, boolean required);
 ```
 
-The second appends third parameter - function that is called if input is required but not filled.
+The second appends third parameter - `BiFunction` that is called if input is required but not filled. This callback get `Translator` and name of missing parameter and expects returning of error message.
 
 ```
-ItemRules rules = ItemRules.forName(String name, boolean required, Function<Translator, String> onRequiredError);
+ItemRules rules = ItemRules.forName(String name, boolean required, BiFunction<Translator, String, String> onRequiredError);
 ```
 
 The third and last method is **only** for creating default rule. This `ItemRules` can be used in `Validator` constructor. The default rule is used if rule for item name not founded.
