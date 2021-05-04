@@ -84,6 +84,8 @@ public class Application {
 			this.server = createServerFactory(env, registr, redirectIfNoUser).get(modules, (content)->{
 				return userFactory.apply(content, registr);
 			});
+			// TODO fix - move to module
+			registr.addService(Translator.class.getName(), server.getTranslator());
 		} catch (Exception e) {
 			logger.error("Start failed", e);
 			System.exit(1);
