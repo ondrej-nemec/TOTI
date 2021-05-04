@@ -5,9 +5,9 @@
 [![](https://jitpack.io/v/ondrej-nemec/TOTI.svg)](https://jitpack.io/#ondrej-nemec/TOTI)
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/ondrej-nemec/TOTI/blob/master/LICENSE)
 
-TOTI - **T**ip **O**f **T**he **I**ceberg - is Java web framework. Provide HTTP(S) interface between users and your Java application. With TOTI you can create Rest API, generate HTML pages from templates or just web server (like f.e. Apache but begging)
+TOTI - **T**ip **O**f **T**he **I**ceberg - is Java web framework. Provide HTTP(S) interface between users and your Java application. With TOTI you can create Rest API, generate HTML pages from templates or just web server (like f.e. Apache but begging).
 
-Main purpose of this framework is create GUI for java servers f.e. in Industry 4.0 or IoT. TOTI framework can be used as MVC framework (like Symfony or Nette in PHP, or ASP.NET in C#) but **this is not main purpose**.
+Main purpose of this framework is create GUI for java servers f.e. in Industry 4.0 or IoT. And is prepared for easy embedded into desktop applications. TOTI framework can be used as MVC framework (like Symfony or Nette in PHP, or ASP.NET in C#) but **this is not main purpose**.
 
 * [Include in your project](#include-in-your-project)
 * [Get started](#get-started)
@@ -59,7 +59,7 @@ If you would like use TOTI templating system on computer without JDK (JRE only) 
 compile files("${System.properties['java.home']}/../lib/tools.jar")
 ```
 
-For using TOTI JS functionality (forms, grids etc) include this in your HTML page:
+For using TOTI JS functionality (forms, grids etc) include this in your HTML page (do not worry about physical file `totiJs.js`):
 
 ```
 <script src="/toti/totiJs.js"></script>
@@ -89,7 +89,7 @@ Parameters:
 
 1. List of [modules](#modules).
 1. How from session content create `User`. See [Permissions](#permissions).
-1. URL of login page. On this URL will be redirected if somebody try request on secured URL without being logged. See [Permissions](#permissions).
+1. URL of login page. On this URL will be redirected if somebody try request on secured URL without being logged. `NULL` means no redirection and Error 403 will be occured.
 
 After creating new instance, `Application` class:
 
@@ -159,19 +159,22 @@ Except of this, there are some optional methods:
 
 ### Register
 
-`Regist` is container for objects. Contains two types of objects: services and factories. Service is created by you and only once.
- On the other hand, factory is for creating new instance every time is needed (typically usage is for controllers).
+`Regist` is container for objects. Contains two types of objects: services and factories. Service is created by you and only once. On the other hand, factory is for creating new instance every time is needed (typically usage is for controllers).
 
 Add service example:
 
 ```java
 regist.addService("some-my-service", new MyService());
+// OR
+regist.addService(new MyService()); // class name is used instead of service name
 ```
 
 Get service example:
 
 ```
 MyService myService = registr.getService("some-my-service", MyService.class);
+// OR
+MyService myService = registr.getService(MyService.class); // class name is used instead of service name
 ```
 
 Add factory example:

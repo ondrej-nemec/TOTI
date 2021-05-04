@@ -37,8 +37,16 @@ public class Registr {
 		return result;
 	}
 
+    public void addService(Object object) {
+    	addService(object.getClass().getName(), object);
+    }
+
     public void addService(String name, Object object) {
         SERVICES.put(name, object);
+    }
+    
+    public <T> T getService(Class<T> clazz) throws Exception {
+    	return getService(clazz.getName(), clazz);
     }
     
     @SuppressWarnings("unchecked")
