@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import common.Logger;
-import common.structures.MapDictionary;
 import common.structures.MapInit;
 import example.AuditTrail;
 import example.dao.Example;
@@ -36,7 +35,7 @@ import translator.Translator;
 public class ExampleApiController {
 
 	private final static String SECURITY_DOMAIN = "example";
-	private final static String UNIQUE = "id";
+	//private final static String UNIQUE = "id";
 	
 	static {
 		ExampleValidator.init();
@@ -79,7 +78,7 @@ public class ExampleApiController {
 	@Method({HttpMethod.GET})
 	public Response getInArray(@Param("view") Boolean viewOnly) {
 		try {
-			Map<String, Object> values = dao.getHelp(identity.getUser().getAllowedIds());
+			Map<Object, Object> values = dao.getHelp(identity.getUser().getAllowedIds());
 			for (int i = 0; i < 10; i++) {
 				values.put("#" + i, Option.create("#" + i, "Option #" + i).setOptGroup("Opt Group #" + i%3));
 			}
@@ -125,7 +124,7 @@ public class ExampleApiController {
 			list.add("#6");
 		//	list.add("\\\"]'); alert('Successfull XSS2'); // ");
 			
-			item.put("pairs", Arrays.asList(
+			item.setPairs(Arrays.asList(
 				new MapInit<String, Object>()
 					.append("first-in-pair", "A1")
 					.append("second-in-pair", "A2")
@@ -139,9 +138,8 @@ public class ExampleApiController {
 					.append("second-in-pair", "C2")
 					.toMap()
 			));
-			
-			item.put("map", map);
-			item.put("list", list);
+			item.setMap(map);
+			item.setList(list);
 			return Response.getJson(item);
 		} catch (Exception e) {
 			logger.error("Example Get", e);
@@ -166,13 +164,14 @@ public class ExampleApiController {
 	@Action(value = "update", validator = ExampleValidator.NAME_FORM)
 	@Method({HttpMethod.PUT})
 	@Secured({@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.UPDATE)})
-	public Response update(@ParamUrl("id") Integer id, @Params RequestParameters updated) {
+	// public Response update(@ParamUrl("id") Integer id, @Params RequestParameters updated) {
+	public Response update(@ParamUrl("id") Integer id, @Params Example updated, @Params RequestParameters p) {
 		try {
 			Example origin = dao.get(id);
 			
 			editValues(updated, false);
 			
-			dao.update(id, new Example(updated));
+			dao.update(id, updated);
 			auditTrail.update(identity.getUser().getId(), origin, updated.toMap());
 			
 			Map<String, Object> params = new HashMap<>();
@@ -188,14 +187,15 @@ public class ExampleApiController {
 	@Action(value = "insert", validator = ExampleValidator.NAME_FORM)
 	@Method({HttpMethod.PUT})
 	@Secured({@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.CREATE)})
-	public Response insert(@Params RequestParameters inserted, @Param("file") UploadedFile file) {
+	// public Response insert(@Params RequestParameters inserted, @Param("file") UploadedFile file) {
+	public Response insert(@Params Example inserted, @Param("file") UploadedFile file) {
 		try {
 			// file.save("www");
 			
 			editValues(inserted, true);
 			
-			int id = dao.insert(new Example(inserted));
-			inserted.put(UNIQUE, id);
+			int id = dao.insert(inserted);
+			inserted.setId(id);
 			auditTrail.insert(identity.getUser().getId(), inserted.toMap());
 			
 			Map<String, Object> params = new HashMap<>();
@@ -208,12 +208,12 @@ public class ExampleApiController {
 		}
 	}
 
-	private void editValues(MapDictionary<String, Object> values, boolean insert) {
+	private void editValues(Example values, boolean insert) {
 		System.err.println(values);
-		System.err.println(values.get("map"));
-		System.err.println(values.get("list"));
-		System.err.println(values.get("pairs"));
-		
+		System.err.println(values.getMap());
+		System.err.println(values.getList());
+		System.err.println(values.getPairs());
+		/*
 		try {
 			UploadedFile file = (UploadedFile)values.get("file");
 			System.err.println(file.getFileName());
@@ -223,15 +223,15 @@ public class ExampleApiController {
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
-		
-		
-		values.remove(UNIQUE);
+		*/
+		values.setToDbSerialize(true);
+		//values.remove(UNIQUE);
 	//	values.put("edited_at", DateTime.format("yyyy-MM-dd H:m:s")); // TODO not as string
 	//	values.put("edited_by", identity.getUser().getId());
 		
-		values.remove("file");
-		values.remove("map");
-		values.remove("list");
-		values.remove("pairs");
+		//values.remove("file");
+		//values.remove("map");
+		//values.remove("list");
+		//values.remove("pairs");
 	}
 }

@@ -1,8 +1,6 @@
 package example.web.validator;
 
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import toti.validation.ItemRules;
 import toti.validation.Validator;
@@ -49,7 +47,7 @@ public class ExampleValidator {
 	
 	public static Validator getFormValidator() {
 		return Validator.create(NAME_FORM, false) // TODO validator
-				.addRule(ItemRules.forName("id", false).setType(Integer.class))
+				/*.addRule(ItemRules.forName("id", false).setType(Integer.class))
 				.addRule(ItemRules.forName("name", false).setType(String.class))
 				.addRule(ItemRules.forName("email", false).setType(String.class))
 				.addRule(ItemRules.forName("age", false).setType(Integer.class))
@@ -65,9 +63,9 @@ public class ExampleValidator {
 				.addRule(ItemRules.forName("month", false).setType(String.class))
 				.addRule(ItemRules.forName("time", false).setType(String.class))
 				.addRule(ItemRules.forName("week", false).setType(String.class))
-				.addRule(ItemRules.forName("favorite_color", false).setType(String.class))
+				.addRule(ItemRules.forName("favorite_color", false).setType(String.class))*/
 				.addRule(ItemRules.forName("file", false))
-				.addRule(ItemRules.forName("comment", false).setType(String.class))
+				//.addRule(ItemRules.forName("comment", false).setType(String.class))
 				.addRule(ItemRules.forName("map", false).setMapSpecification(new Validator(false)
 					.addRule(ItemRules.forName("subText1", false).setType(String.class).setMaxLength(10))
 					.addRule(ItemRules.forName("subText2", false).setType(String.class).setMaxLength(10))
@@ -81,13 +79,13 @@ public class ExampleValidator {
 						.addRule(ItemRules.forName("second-in-pair", true).setMaxLength(5))
 					))
 				))
-				.addRule(ItemRules.forName("aaaaaaaa", true))
-				.setGlobalFunction((prop, t)->{
+				//.addRule(ItemRules.forName("aaaaaaaa", true))
+				/*.setGlobalFunction((prop, t)->{
 					System.err.println("Working!!!");
 					Set<String> set = new HashSet<>();
 					set.add("Working :-)");
 					return set;
-				})
+				})*/
 				;
 	}
 	

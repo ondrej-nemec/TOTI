@@ -42,7 +42,11 @@ public class ExampleDao implements EntityDao<Example> {
 
 	@Override
 	public Example createEntity(DatabaseRow row) {
-		return new Example(row);
+		try {
+			return row.parse(Example.class);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

@@ -293,12 +293,13 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				mapped.forEachParams((clazz, name)->{
 					classesList.add(clazz);
 					if (name == null) {
-						valuesList.add(params);
+						valuesList.add(ParseObject.parse(clazz, params));
 					} else if (clazz.isInstance(params.get(name))) {
 						valuesList.add(params.get(name));
 					} else {
-						valuesList.add(ParseObject.parse(clazz, params.get(name)));
-						params.put(name, ParseObject.parse(clazz, params.get(name)));
+						Object v = ParseObject.parse(clazz, params.get(name));
+						valuesList.add(v);
+						params.put(name, v);
 					}
 				});
 			} catch (Throwable e) {
@@ -340,7 +341,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			classesList.toArray(classes);
 			Object[] values = new Object[valuesList.size()];
 			valuesList.toArray(values);
-				
+			
 	    	Response response = (Response)o.getClass()
 	    				.getMethod(mapped.getMethodName(), classes).invoke(o, values);
 	    	

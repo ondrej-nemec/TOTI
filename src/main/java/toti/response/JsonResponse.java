@@ -43,7 +43,7 @@ public class JsonResponse implements Response {
 			(bw)->{
 				try {
 					OutputJsonStream stream = new OutputJsonStream(new OutputWriterProvider(bw));
-					JsonWritter writter = new JsonWritter ();
+					JsonWritter writter = new JsonWritter();
 					writter.write(stream, json);
 				} catch (JsonStreamException e) {
 					throw new RuntimeException(e);

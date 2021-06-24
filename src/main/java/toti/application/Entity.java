@@ -2,15 +2,13 @@ package toti.application;
 
 import java.util.Map;
 
-import json.Jsonable;
+import common.functions.Mapper;
 
-public interface Entity extends Jsonable {
+public interface Entity {
 
-	Map<String, Object> toMap();
-	
-	@Override
-	default Object toJson() {
-		return toMap();
+	default Map<String, Object> toMap() {
+		return Mapper.get().serialize(this);
 	}
+	
 	
 }

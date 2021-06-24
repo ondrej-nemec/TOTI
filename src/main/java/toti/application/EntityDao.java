@@ -136,9 +136,9 @@ public interface EntityDao<T extends Entity> {
 		});
 	}
 	
-	default Map<String, Object> getHelp(Collection<Object> forOwners) throws SQLException {
+	default Map<Object, Object> getHelp(Collection<Object> forOwners) throws SQLException {
 		return getDatabase().applyBuilder((builder)->{
-			Map<String, Object> items = new HashMap<>();
+			Map<Object, Object> items = new HashMap<>();
 			SelectQueryBuilder select = builder.select(getHelpKey() + "," + getHelpValue()).from(getTableName());
 			if (getOwnerColumnName().isPresent()) {
 				if (!forOwners.isEmpty()) {
@@ -148,7 +148,7 @@ public interface EntityDao<T extends Entity> {
 				}
 			}
 			select.fetchAll().forEach((row)->{
-				items.put(row.getString(getHelpKey()), row.getValue(getHelpValue()));
+				items.put(row.getValue(getHelpKey()), row.getValue(getHelpValue()));
 			});
 			return items;
 		});
