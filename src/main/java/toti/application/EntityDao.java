@@ -21,13 +21,19 @@ public interface EntityDao<T extends Entity> {
 	
 	String getTableName();
 	
-	Optional<String> getOwnerColumnName();
-	
-	String getHelpKey();
-	
-	String getHelpValue();
-	
 	T createEntity(DatabaseRow row);
+	
+	default Optional<String> getOwnerColumnName() {
+		return Optional.empty();
+	}
+	
+	default String getHelpKey() {
+		return null;
+	}
+	
+	default String getHelpValue() {
+		return null;
+	}
 	
 	default List<T> getAll() throws SQLException {
 		return getDatabase().applyBuilder((builder)->{
@@ -114,15 +120,14 @@ public interface EntityDao<T extends Entity> {
 		});
 	}
 	
-	default void update(int id, T entity) throws SQLException {
-		getDatabase().applyBuilder((builder)->{
+	default int update(int id, T entity) throws SQLException {
+		return getDatabase().applyBuilder((builder)->{
 			UpdateQueryBuilder b = builder.update(getTableName());
 			entity.toMap().forEach((name, value)->{
 				b.set(String.format("%s = :%s", name, name)).addParameter(":" + name, value);
 			});
 			b.where("id = :id").addParameter(":id", id);
-			b.execute();
-			return null;
+			return b.execute();
 		});
 	}
 	
