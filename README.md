@@ -19,14 +19,14 @@ Main purpose of this framework is create GUI for java servers f.e. in Industry 4
 		* [Request parameters validation](#request-parameters-validation)
 		* [Routing](#routing)
 		* [Responses](#responses)
-		* [Permissions](#permissions)
+		* [Permissions](doc/permissions)
 		* [Injections](#injections)
 	* [Templates](#templates)
 	* [Grids](#grids)
 	* [Forms](#forms)
 	* [Exceptions](#exceptions)
 * [How to do](#how-to-do)
-	* [Login](#login)
+	* [Login in JS](#login-in-js)
 	* [Change language](#change-language)
 	* [Controller's method for grid and form](#controller-s-method-for-grid-and-form)
 	* [Validator for Dynamic List](#validator-for-dynamic-list)
@@ -88,7 +88,7 @@ Application app = new Application(List<Module> modules, ThrowingBiFunction<Strin
 Parameters:
 
 1. List of [modules](#modules).
-1. How from session content create `User`. See [Permissions](#permissions).
+1. How from session content create `User`. See [Permissions](doc/permissions).
 1. URL of login page. On this URL will be redirected if somebody try request on secured URL without being logged. `NULL` means no redirection and Error 403 will be occured.
 
 After creating new instance, `Application` class:
@@ -344,14 +344,6 @@ router.addUrl("", "/home");
 1. Template response - gives specified file from your template folder of current module and use as template to create response. See more about [Templates](#templates). Create: `Response.getTemplate(StatusCode code, String fileName, Map<String, Object> params)` OR `Response.getTemplate(String fileName, Map<String, Object> params)` (code is 200)
 Example: module template path is `project-dir/core-module/templates` and `fileName` is `/entities/main.jsp`. In this case the file `project-dir/core-module/templates/entities/main.jsp` is used as template.
 
-#### Permissions
-
-TODO
-* @secured
-* user factory
-* identity
-* authenticator vx authorizator
-
 #### Injections
 
 Sometimes you need some class used by TOTI like `Translator`, `Authenticator` or something else. For that TOTI provide feature called Injection.
@@ -362,7 +354,7 @@ Supported annotations:
 
 * `Translate` - set `Translator` class with actual selected language.
 * `Authenticate` - set `Authenticator` class
-* `Authorize` - set `AuthorizatorHelper` class
+* `Authorize` - set `Authorizator` class
 * `ClientIdentity` - set `Identity` class
 
 Example with `Translator`:
@@ -407,7 +399,7 @@ Nonce is sended in header and same nonce is used on page. With this browser (che
 
 TOTI tags allow you f. e. merge more files to one, iterate `Map` or `Iterable` and define new variable. [List of all TOIT tags](doc/tags.md). This tags look very similar to HTML tags, but can be used in any types of templates.
 
-Example of creating String variable `greetings`, set value to "Hello, World!" and print.
+Example of creating String variable `greetings`, set value to "Hello, World!" and print:
 
 ```
 <t:var type="String" name="greetings" />
@@ -451,13 +443,64 @@ This action has to return JSON response with this parameters:
 
 #### Grid configuration
 
+Create new `Grid` with URL and HTTP method for data loading:
+
+```
+Grid grid = new Grid("/api/grid", "get");
+```
+
+Optional: set allowed page sizes:
+
+```
+grid.setPagesSizes(Arrays.asList(10, 20, 50, 100));
+```
+
+Optional: set default page size:
+
+```
+grid.setDefaultPageSize(20);
+```
+
+Optional: set count of page index buttons:
+
+```
+grid.getPagesButtonCount(5);
+```
+
+// TODO
+
 ### Forms
 
 ### Exceptions
 
 ## How to do
 
-### Login
+### Login in JS
+
+First of all, to all pages add this script:
+
+```
+totiAuth.onLoad();
+```
+
+**Only for asynchronious log in.**¨
+
+After success login, call this:
+
+```
+totiAuth.login(response, {
+	logout: {
+		url: "url-for-log-out",
+		method: "log-out-http-method"
+	},
+	refresh: {
+		url: "url-for-refresh",
+		method: "refresh-http-method"
+	}
+});
+// optionaly
+location.reload();
+```
 
 ### Change language
 
