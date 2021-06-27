@@ -1,0 +1,216 @@
+<html>
+<head>
+	<title>Profiler</title>
+	<script src="/toti/totiJs.js"></script>
+
+	<style type="text/css">
+		.hidden {
+			display: none;
+		}
+		ul {
+			list-style-type: none;
+		}
+		ul.main-list {
+		  padding: 0;
+		  margin: 0;
+		}
+		ul.sub-list {
+		  padding: 0;
+		  margin: 0;
+		}
+		.sub-list li {
+			padding: 0.25em;
+			padding-left: 1em;
+		}
+		#menu {
+			float: left;
+			width: 25%;
+		}
+		#content {
+			margin-left: 25%;
+		}
+		#tableInfoMenu li {
+			display: inline-block;
+			padding: 0.40em;
+		}
+	</style>
+</head>
+<body>
+	<div>
+		<h1>TOTI Profiler</h1>
+	</div>
+	<div id="menu"></div>
+	<div id="content"></div>
+
+	<script type="text/javascript">
+		totiLoad.async(
+			"/toti/profiler",
+			"get",
+			{}, 
+			{}, 
+			function(res) {
+				printResult(res);
+			}, 
+			function(xhr) {
+				console.log(xhr);
+			},
+			false
+		);
+		function printResult(res) {
+			var menu = document.createElement("ul");
+			menu.classList.add("main-list");
+			for (const[pageId, logs] of Object.entries(res)) {
+				var item = document.createElement("li");
+
+				var title = document.createElement("a");
+
+				title.setAttribute("href", "#" + pageId);
+				title.onclick = function(event) {
+					document.querySelectorAll(".sub-list").forEach(function(node) {
+						node.classList.add("hidden");
+					});
+					document.getElementById(pageId).classList.remove("hidden");
+					return true;
+				};
+				title.innerText = pageId;
+
+				var subMenu = document.createElement("ul");
+				subMenu.classList.add("sub-list");
+				subMenu.classList.add("hidden");
+				subMenu.setAttribute("id", pageId);
+				logs.forEach(function(log) {
+					var subItem = document.createElement("li");
+					var subItemLink = document.createElement("a");
+					subItemLink.setAttribute("href", "#");
+					subItemLink.innerText = log.method + ": " + log.url;
+					subItemLink.onclick = function() {
+						printContent(log);
+						return false;
+					};
+					subItem.appendChild(subItemLink);
+					subMenu.appendChild(subItem);
+				});
+
+				item.appendChild(title);
+				item.appendChild(subMenu);
+				menu.appendChild(item);
+			}
+			document.getElementById("menu").appendChild(menu);
+
+			if (window.location.hash.length > 0) {
+				var selected = menu.querySelector(window.location.hash);
+				if (selected !== null) {
+					selected.classList.remove("hidden");
+				}
+			}
+		}
+
+		function printContent(log) {
+			var content = document.getElementById("content");
+
+			var title = document.createElement("h1");
+			title.innerText = log.method + ": " + log.url;
+			var subTitle = document.createElement("h3");
+			subTitle.innerText = log.fullUrl;
+
+			var params = getTableInfoTable("params");
+			printParams(log.params, params);
+
+			var headers = getTableInfoTable("headers");
+			printParams(log.headers, headers);
+
+			var queries = getTableInfoTable("queries");
+			printQueries(log.queries, queries);
+
+			var basicInfo = getTableInfoTable("basic");
+			printBasicInfo(basicInfo, log.locale, log.IP, log.user, log.time)
+
+			content.innerHTML = "";
+			content.appendChild(title);
+			content.appendChild(subTitle);
+			content.appendChild(printSelectTable());
+			content.appendChild(basicInfo);
+			content.appendChild(queries);
+			content.appendChild(params);
+			content.appendChild(headers);
+		}
+
+		function getTableInfoTable(name) {
+			var table = document.createElement("table");
+			table.classList.add("hidden");
+			table.classList.add("tableInfo");
+			table.setAttribute("id", "tableInfo-" + name);
+			return table;
+		}
+
+		function printSelectTable() {
+			var ul = document.createElement("ul");
+			ul.setAttribute("id", "tableInfoMenu");
+			var onClick = function(id) {
+				return function() {
+					document.querySelectorAll(".tableInfo").forEach(function(node) {
+						node.classList.add("hidden");
+					});
+					document.getElementById("tableInfo-" +id).classList.remove("hidden");
+				};
+			};
+
+			ul.appendChild(getSimpleLi("Basic Info", onClick("basic")));
+			ul.appendChild(getSimpleLi("SQL Queries", onClick("queries")));
+			ul.appendChild(getSimpleLi("Request Parameters", onClick("params")));
+			ul.appendChild(getSimpleLi("Request headers", onClick("headers")));
+			return ul;
+		}
+
+		function printBasicInfo(table, locale, ip, user, time) {
+			table.appendChild(getTableRow("Language", locale));
+			table.appendChild(getTableRow("IP", ip));
+			table.appendChild(getTableRow("User", user));
+			table.appendChild(getTableRow("Request Time", time));
+		}
+
+		function printParams(params, element) {
+			element.appendChild(getTableRow("Name", "Value", true));
+			for (const[name, value] of Object.entries(params)) {
+				element.appendChild(getTableRow(name, value));
+			}
+		}
+
+		function printQueries(queries, element) {
+			element.appendChild(getTableRow("Query", "Parameters", true));
+			for (const[id, query] of Object.entries(queries)) {
+				if (query.isExecuted) {
+					paramText = "";
+					query.params.forEach(function(param, index) {
+						if (index > 0) {
+							paramText += ", ";
+						}
+						paramText += param; 
+					});
+					element.appendChild(getTableRow(query.sql, paramText));
+				}
+				
+			}
+		}
+		/*************/
+		function getSimpleLi(title, onClick) {
+			var li = document.createElement("li");
+			li.innerText = title;
+			li.onclick = onClick;
+			return li;
+		}
+
+		function getTableRow(title, value, isHeader = false) {
+			var tr = document.createElement("tr");
+			tr.appendChild(getTableCell(title, isHeader));
+			tr.appendChild(getTableCell(value, isHeader));
+			return tr;
+		}
+		function getTableCell(value, isHeader) {
+			var td = document.createElement(isHeader ? "th" : "td");
+			td.innerText = value;
+			return td
+		}
+	</script>
+</body>
+</html>

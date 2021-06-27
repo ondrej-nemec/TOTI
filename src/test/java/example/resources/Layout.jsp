@@ -10,6 +10,7 @@
 	<script src="/js/totiUtils.js" ></script>
 	<script src="/js/totiTranslations.js" ></script>
 	<script src="/js/totiStorage.js" ></script>
+	<script src="/js/totiProfiler.js" ></script>
 	<script src="/js/totiLang.js" ></script>
 	<script src="/js/totiLoad.js" ></script>
 	<script src="/js/totiAuth.js" ></script>

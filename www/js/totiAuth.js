@@ -1,4 +1,4 @@
-/* TOTI Auth version 0.0.2 */
+/* TOTI Auth version 0.0.3 */
 var totiAuth = {
 	variableName: "authentication",
 	getAuthHeader: function(access = true) {
@@ -39,7 +39,10 @@ var totiAuth = {
 				token.config.refresh.url,
 				token.config.refresh.method, 
 				{}, 
-				totiAuth.getAuthHeader(false), 
+				{
+					...totiAuth.getAuthHeader(false),
+					...totiProfiler.getProfilerHeader()
+				}, 
 				function(gettedToken) {
 					totiAuth.isRefreshActive = false;
 					gettedToken.config = token.config;
@@ -68,7 +71,10 @@ var totiAuth = {
 			token.config.logout.url,
 			token.config.logout.method, 
 			{}, 
-			totiAuth.getAuthHeader(), 
+			{
+				...totiAuth.getAuthHeader(),
+				...totiProfiler.getProfilerHeader()
+			}, 
 			function(res) {}, 
 			function(xhr, a, error) {
 				console.log(xhr, a, error);

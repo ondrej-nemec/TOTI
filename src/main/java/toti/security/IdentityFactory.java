@@ -7,6 +7,7 @@ import translator.Locale;
 import translator.Translator;
 
 import java.util.Properties;
+import java.util.Random;
 
 import common.structures.Tuple2;
 
@@ -16,6 +17,8 @@ public class IdentityFactory {
 	private final static String LOCALE_HEADER_NAME = "Accept-Language";
 	private final static String SESSION_COOKIE_NAME = "SessionID";
 	private final static String SESSION_HEADER_NAME = "Authorization";
+	private final static String PAGE_ID_HEADER_NAME = "PageId";
+	private final static String PAGE_ID_COOKIE_NAME = "PageId";
 	
 	private final String defLang;
 	private final Translator translator;
@@ -52,15 +55,33 @@ public class IdentityFactory {
 					+ "; Max-Age=" + 0
 				);
 		}
+		if (identity.getPageId() != null) {
+			headers.add(
+				"Set-Cookie: "
+				+ PAGE_ID_COOKIE_NAME + "=" + identity.getPageId()
+			);
+		}
 		//cache.save(identity.getId(), identity.getUser());
 		return headers;
 	}
 	
-	public Identity createIdentity(Properties headers, String IP) {
+	public Identity createIdentity(Properties headers, String IP, boolean useProfiler) {
 		Tuple2<String, Boolean> token = getToken(headers);
-		return new Identity(IP, getLocale(headers), headers, token._1(), token._2());
+		Identity identity = new Identity(IP, getLocale(headers), headers, token._1(), token._2());
+		if (useProfiler) {
+			identity.setPageId(getPageId(headers));
+		}
+		return identity;
 	}
 	
+	private String getPageId(Properties headers) {
+		String pageHeader = headers.getProperty(PAGE_ID_HEADER_NAME);
+		if (pageHeader == null) {
+			return ("Page_" + new Random().nextDouble()).replace(".", "");
+		}
+		return pageHeader;
+	}
+
 	private Tuple2<String, Boolean> getToken(Properties headers) {
 		String token = null;
 		boolean apiAllowed = false;

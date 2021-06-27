@@ -22,6 +22,12 @@ import toti.annotations.LoadUrls;
 import toti.annotations.MappedUrl;
 import toti.annotations.url.Domain;
 import toti.dbviewer.DbViewerRouter;
+import toti.annotations.url.Method;
+import toti.annotations.url.Param;
+import toti.annotations.url.ParamUrl;
+import toti.annotations.url.Params;
+import toti.annotations.url.Secured;
+import toti.profiler.Profiler;
 import toti.registr.Registr;
 import toti.response.Response;
 import toti.security.Authenticator;
@@ -57,6 +63,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	// private final String redirectUrlNoLoggedUser;
 	
 	private final DbViewerRouter dbViewer;
+	private final Profiler profiler;
 	
 	public ResponseFactory(
 			ResponseHeaders responseHeaders,
@@ -71,7 +78,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			String charset,
 			boolean dirResponseAllowed,
 			List<String> developIps,
-			Logger logger) throws Exception {
+			Logger logger, Profiler profiler) throws Exception {
 		this.resourcesDir = resourcesDir;
 		this.charset = charset;
 		this.translator = translator;
@@ -89,6 +96,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		this.dirResponseAllowed = dirResponseAllowed;
 		this.developIps = developIps;
 		this.dbViewer = new DbViewerRouter();
+		this.profiler = profiler;
 	}
 
 	@Override
@@ -106,7 +114,10 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		System.err.println("Params: " + params);
 		//*/
 		// Locale locale = language.getLocale(header);
-		Identity identity = identityFactory.createIdentity(header, ip);
+		Identity identity = identityFactory.createIdentity(header, ip, profiler != null);
+		/*if (identity.getPageId() != null) {
+			profiler.setPageId(identity.getPageId());
+		}*/
 		return getCatchedResponse(method, url, fullUrl, protocol, header, params, identity);
 	}
 	/*
@@ -131,7 +142,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Identity identity) {
 		authenticator.authenticate(identity);
 		try {
-			return getNormalizedResponse(method, url, params, identity);
+			return getNormalizedResponse(method, url, fullUrl, protocol, params, identity);
 			// return getAuthenticatedResponse(method, url, header, params, ip, locale);
 		/*} catch (AuthentizationException e) {
 			return onException(401, method, url, fullUrl, protocol, header, params, locale, ip, e);*/
@@ -205,26 +216,34 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private RestApiResponse getNormalizedResponse(
 			HttpMethod method,
 			String url,
+			String fullUrl,
+			String protocol,
 			RequestParameters params,
 			Identity identity) throws ServerException {
-		//System.err.println("Locale: " + locale);
-		return getRoutedResponse(method, url.endsWith("/") ? url.substring(0, url.length()-1) : url, params, identity);
+		return getRoutedResponse(
+				method, url.endsWith("/") ? url.substring(0, url.length()-1) : url,
+				fullUrl, protocol, params, identity
+		);
 	}
 	
 	private RestApiResponse getRoutedResponse(
 			HttpMethod method,
 			String url,
+			String fullUrl,
+			String protocol,
 			RequestParameters params,
 			Identity identity) throws ServerException {
 		if (router.getUrlMapping(url) == null) {
-			return getMappedResponse(method, url, params, identity);
+			return getMappedResponse(method, url, fullUrl, protocol, params, identity);
 		}
-		return getMappedResponse(method, router.getUrlMapping(url), params, identity);
+		return getMappedResponse(method, router.getUrlMapping(url), fullUrl, protocol, params, identity);
 	}
 	
 	private RestApiResponse getMappedResponse(
 			HttpMethod method,
 			String url,
+			String fullUrl,
+			String protocol,
 			RequestParameters params,
 			Identity identity) throws ServerException {
 		ResponseHeaders headers = responseHeaders.get();
@@ -252,6 +271,10 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				is = url.equals(mapped.getUrl()) && methodMatch;
 			}
 	    	if (is) {
+	    		if (profiler != null) {
+	    			profiler.setPageId(identity.getPageId());
+	    			profiler.logRequest(identity, method, url, fullUrl, protocol, params);
+	    		}
 	    		return getControllerResponse(headers, mapped, params, identity);
 	    	}
 		}
@@ -269,6 +292,10 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private Response getTotiResponse(HttpMethod method, String url, RequestParameters params, Identity identity, ResponseHeaders headers) {
 		if (url.substring(6).startsWith("db")) {
 			return dbViewer.getResponse(method, url.substring(8), params, identity, headers);
+
+		}
+		if (url.substring(6).equals("profiler")) {
+			return Response.getJson(profiler);
 		}
 		return Response.getTemplate(url.substring(5), new HashMap<>());
 	}

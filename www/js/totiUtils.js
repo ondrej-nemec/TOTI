@@ -1,4 +1,4 @@
-/* TOTI Utils version 0.1.3 */
+/* TOTI Utils version 0.1.4 */
 var totiUtils = {
 	/* TODO is used? */
 	parseUrlToObject: function (data) {
@@ -76,5 +76,19 @@ var totiUtils = {
 	},
 	clone: function(object) {
 		return JSON.parse(JSON.stringify(object));
+	},
+	getCookie: function(name) {
+	  name += "=";
+	  var ca = document.cookie.split(';');
+	  for(var i = 0; i < ca.length; i++) {
+	    var c = ca[i];
+	    while (c.charAt(0) == ' ') {
+	      c = c.substring(1);
+	    }
+	    if (c.indexOf(name) == 0) {
+	      return c.substring(name.length, c.length);
+	    }
+	  }
+	  return null;
 	}
 };

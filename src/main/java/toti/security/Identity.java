@@ -12,6 +12,8 @@ public class Identity {
 	private String token;
 	private final boolean isApiAllowed; // resolved with token
 
+	private String pageId;
+	
 	private String id;
 	private long expired;
 	private String content; // content saved in token
@@ -125,6 +127,14 @@ public class Identity {
 			}
 		}
 		return null;
+	}
+		
+	public String getPageId() {
+		return pageId;
+	}
+
+	public void setPageId(String pageId) {
+		this.pageId = pageId;
 	}
 	
 }

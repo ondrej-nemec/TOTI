@@ -12,6 +12,9 @@ import common.structures.ThrowingFunction;
 import socketCommunication.Server;
 import socketCommunication.ServerSecuredCredentials;
 import toti.logging.TotiLogger;
+import database.Database;
+import socketCommunication.http.server.RestApiServer;
+import toti.profiler.Profiler;
 import toti.security.Authenticator;
 import toti.security.Authorizator;
 import toti.security.IdentityFactory;
@@ -52,7 +55,12 @@ public class HttpServer {
     		boolean minimalize,
     		List<String> developIps,
     		String redirectNoLoggerdUser) throws Exception {
-
+	//*
+		Profiler profiler = new Profiler(); // TODO if allowed
+		Database.PROFILER = profiler;
+		RestApiServer.PROFILER = profiler;
+	//*/	
+		
 		Router router = new Router();
 		Map<String, TemplateFactory> controllers = new HashMap<>();
 		Map<String, TemplateFactory> templateFactories = new HashMap<>();
@@ -100,7 +108,8 @@ public class HttpServer {
 				charset,
 				dirResponseAllowed,
 				developIps,
-				logger
+				logger,
+				profiler
 		);
 				
 		this.server = Server.createWebServer(
