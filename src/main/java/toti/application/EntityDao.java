@@ -12,6 +12,7 @@ import database.Database;
 import database.support.DatabaseRow;
 import querybuilder.ColumnType;
 import querybuilder.InsertQueryBuilder;
+import querybuilder.QueryBuilder;
 import querybuilder.SelectQueryBuilder;
 import querybuilder.UpdateQueryBuilder;
 
@@ -35,9 +36,13 @@ public interface EntityDao<T extends Entity> {
 		return null;
 	}
 	
+	default SelectQueryBuilder _getAll(QueryBuilder builder) {
+		return builder.select("*").from(getTableName());
+	}
+	
 	default List<T> getAll() throws SQLException {
 		return getDatabase().applyBuilder((builder)->{
-			return builder.select("*").from(getTableName())
+			return _getAll(builder)
 			.fetchAll((row)->{
 				return createEntity(row);
 			});
@@ -51,7 +56,7 @@ public interface EntityDao<T extends Entity> {
 			Map<String, Object> sorting,
 			Collection<Object> forOwners) throws SQLException {
 		return getDatabase().applyBuilder((builder)->{
-			SelectQueryBuilder select = builder.select("*").from(getTableName());
+			SelectQueryBuilder select = _getAll(builder);
 			select.where("1=1");
 			if (getOwnerColumnName().isPresent()) {
 				if (!forOwners.isEmpty()) {
@@ -100,21 +105,20 @@ public interface EntityDao<T extends Entity> {
 		});
 	}
 	
+	default SelectQueryBuilder _get(QueryBuilder builder, int id) {
+		return builder.select("*").from(getTableName())
+				.where("id = :id").addParameter(":id", id);
+	}
+	
 	default T get(int id) throws SQLException {
 		return getDatabase().applyBuilder((builder)->{
-			return createEntity(
-				builder.select("*").from(getTableName())
-					.where("id = :id").addParameter(":id", id).fetchRow()
-				);
+			return createEntity(_get(builder, id).fetchRow());
 		});
 	}
 	
 	default T delete(int id) throws SQLException {
 		return getDatabase().applyBuilder((builder)->{
-			T item = createEntity(
-				builder.select("*").from(getTableName()).where("id = :id")
-					.addParameter(":id", id).fetchRow()
-			);
+			T item = get(id);
 			builder.delete(getTableName()).where("id = :id").addParameter(":id", id).execute();
 			return item;
 		});
@@ -141,10 +145,14 @@ public interface EntityDao<T extends Entity> {
 		});
 	}
 	
+	default SelectQueryBuilder _getHelp(QueryBuilder builder) {
+		return builder.select(getHelpKey() + "," + getHelpValue()).from(getTableName());
+	}
+	
 	default Map<Object, Object> getHelp(Collection<Object> forOwners) throws SQLException {
 		return getDatabase().applyBuilder((builder)->{
 			Map<Object, Object> items = new HashMap<>();
-			SelectQueryBuilder select = builder.select(getHelpKey() + "," + getHelpValue()).from(getTableName());
+			SelectQueryBuilder select = _getHelp(builder);
 			if (getOwnerColumnName().isPresent()) {
 				if (!forOwners.isEmpty()) {
 					select.where(getOwnerColumnName().get() + " in (:in)").addParameter(":in", forOwners);
