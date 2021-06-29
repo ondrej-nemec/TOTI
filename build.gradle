@@ -3,10 +3,11 @@ apply plugin: 'java-library'
 repositories {
 	mavenCentral()
 	maven { url 'https://jitpack.io' }
+   // flatDir { dirs 'libs' }
 }
 
 dependencies {
-	implementation 'com.github.ondrej-nemec:javainit:c94dd13da6'
+	implementation 'com.github.ondrej-nemec:javainit:8d9c951456'
 	
 	// compile files("${System.properties['java.home']}/../lib/tools.jar")
 	
@@ -28,6 +29,9 @@ dependencies {
 
 	// https://mvnrepository.com/artifact/mysql/mysql-connector-java
 	testCompile group: 'mysql', name: 'mysql-connector-java', version: '8.0.17'
+	
+	//testCompile fileTree(dir: "libs/derby", includes: ['*.jar'])
+	
 	// https://mvnrepository.com/artifact/junit/junit
 	testCompile group: 'junit', name: 'junit', version: '4.12'
 	// https://mvnrepository.com/artifact/org.mockito/mockito-core
