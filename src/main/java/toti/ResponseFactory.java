@@ -37,6 +37,7 @@ import toti.annotations.url.Param;
 import toti.annotations.url.ParamUrl;
 import toti.annotations.url.Params;
 import toti.annotations.url.Secured;
+import toti.dbviewer.DbViewerRouter;
 import toti.registr.Registr;
 import toti.response.Response;
 import toti.security.Authenticator;
@@ -71,7 +72,9 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private final Authorizator authorizator;
 	private final Authenticator authenticator;
 	private final IdentityFactory identityFactory;
-	// private final String redirectUrlNoLoggedUser;	
+	// private final String redirectUrlNoLoggedUser;
+	
+	private final DbViewerRouter dbViewer;
 	
 	public ResponseFactory(
 			ResponseHeaders responseHeaders,
@@ -102,6 +105,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		this.logger = logger;
 		this.dirResponseAllowed = dirResponseAllowed;
 		this.developIps = developIps;
+		this.dbViewer = new DbViewerRouter();
 	}
 
 	@Override
@@ -241,11 +245,10 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		ResponseHeaders headers = responseHeaders.get();
 		// toti exclusive
 		if (url.startsWith("/toti/")) {
-			return Response.getTemplate(url.substring(5), new HashMap<>())
-					.getResponse(
-						headers, totiTemplateFactory, translator.withLocale(identity.getLocale()),
-						authorizator, identity, charset
-					);
+			return getTotiResponse(method, url, params, identity, headers).getResponse(
+				headers, totiTemplateFactory, translator.withLocale(identity.getLocale()),
+				authorizator, identity, charset
+			);
 		}
 		// controllers
 		for (MappedUrl mapped : mapping) {
@@ -278,6 +281,13 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		return Response.getFile(resourcesDir + url).getResponse(headers, null, null, null, null, charset);
 	}
 	
+	private Response getTotiResponse(HttpMethod method, String url, RequestParameters params, Identity identity, ResponseHeaders headers) {
+		if (url.substring(6).startsWith("db")) {
+			return dbViewer.getResponse(method, url.substring(8), params, identity, headers);
+		}
+		return Response.getTemplate(url.substring(5), new HashMap<>());
+	}
+
 	private RestApiResponse getControllerResponse(
 			ResponseHeaders headers,
 			MappedUrl mapped, RequestParameters params, Identity identity) throws ServerException {
