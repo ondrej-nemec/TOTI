@@ -80,6 +80,10 @@ public class Identity {
 	public Properties getHeaders() {
 		return requestHeaders;
 	}
+
+	public String getCookieValue(String cookieName) {
+		return getCookieValue(requestHeaders, cookieName);
+	}
 	
 	public String getIP() {
 		return IP;
@@ -102,6 +106,20 @@ public class Identity {
 		return "Identity [IP=" + IP + ", locale=" + locale + ", token=" + token
 				+ ", isApiAllowed=" + isApiAllowed + ", id=" + id + ", expired=" + expired + ", content=" + content
 				+ ", user=" + user + ", requestHeaders=" + requestHeaders + "]";
+	}
+
+	// TODO test this method
+	public static String getCookieValue(Properties requestHeaders, String cookieName) {
+		if (requestHeaders.get("Cookie") != null) {
+			String[] cookiesArray = requestHeaders.get("Cookie").toString().split(";");
+			for (String cookies : cookiesArray) {
+				String[] cookie = cookies.split("=", 2);
+				if (cookie.length == 2 && cookie[0].trim().equals(cookieName)) {
+					return cookie[1].trim();
+				}
+			}
+		}
+		return null;
 	}
 	
 }

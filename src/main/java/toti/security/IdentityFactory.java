@@ -67,13 +67,13 @@ public class IdentityFactory {
 				apiAllowed = true;
 			}
 		} else {
-			token = getCookieValue(headers, SESSION_COOKIE_NAME);
+			token = Identity.getCookieValue(headers, SESSION_COOKIE_NAME);
 		}
 		return new Tuple2<>(token, apiAllowed);
 	}
 	
 	private Locale getLocale(Properties header) {
-		String cookieLang = getCookieValue(header, LOCALE_COOKIE_NAME);
+		String cookieLang = Identity.getCookieValue(header, LOCALE_COOKIE_NAME);
 		if (cookieLang != null) {
 			return resolveLocale(cookieLang);
 		}
@@ -89,7 +89,7 @@ public class IdentityFactory {
 	private Locale resolveLocale(String locale) {
 		return locale.contains("_") ? new Locale(locale) : Locale.forLanguageTag(locale);
 	}
-
+/*
 	// TODO test this method
 	protected String getCookieValue(Properties header, String cookieName) {
 		if (header.get("Cookie") != null) {
@@ -103,5 +103,5 @@ public class IdentityFactory {
 		}
 		return null;
 	}
-	
+	*/
 }
