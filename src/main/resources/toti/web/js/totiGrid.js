@@ -1,4 +1,4 @@
-/* TOTI Grid version 0.0.10 */
+/* TOTI Grid version 0.0.11 */
 class TotiGrid {
 
 	constructor(config) {
@@ -32,10 +32,12 @@ class TotiGrid {
 			footer.appendChild(space);
 			footer.appendChild(space);
 		}
-		footer.appendChild(this.createPages(uniqueName, this.config.pages.pagesButtonCount, 1));
-		footer.appendChild(space);
-		footer.appendChild(space);
-		footer.appendChild(this.createPagesSize(uniqueName, this.config.pages.pagesSizes, this.config.pages.defaultSize));
+		if (this.config.hasOwnProperty("pages")) {
+			footer.appendChild(this.createPages(uniqueName, this.config.pages.pagesButtonCount, 1));
+			footer.appendChild(space);
+			footer.appendChild(space);
+			footer.appendChild(this.createPagesSize(uniqueName, this.config.pages.pagesSizes, this.config.pages.defaultSize));
+		}
 		/***********/
 
 		var table = document.createElement("table");
@@ -292,7 +294,8 @@ class TotiGrid {
 				body.appendChild(document.createElement("tr").appendChild(td));
 				return;
 			}
-			object.pagesOnLoad(uniqueName, response.pageIndex, response.itemsCount / object.pagesSizeGet(uniqueName));
+			var pageSize = object.pagesSizeGet(uniqueName);
+			object.pagesOnLoad(uniqueName, response.pageIndex, pageSize === null ? null : response.itemsCount / pageSize);
 			response.data.forEach(function(row, rowIndex) {
 				var tableRow = document.createElement("tr");
 				tableRow.setAttribute("index", rowIndex);
@@ -482,6 +485,9 @@ class TotiGrid {
 	pagesOnLoad(uniqueName, actualPage, pagesCount) {
 		var object = this;
 		var pagesList = document.getElementById(uniqueName + "-pages-list");
+		if (pagesList === null) {
+			return;
+		}
 		pagesList.getAttribute("data-actualpage", actualPage);
 		pagesList.innerHTML = '';
 
@@ -536,11 +542,19 @@ class TotiGrid {
 	}
 	
 	pagesGet(uniqueName) {
-		return document.getElementById(uniqueName + "-pages-list").getAttribute("data-actualpage");
+		var element = document.getElementById(uniqueName + "-pages-list");
+		if (element === null) {
+			return null;
+		}
+		return element.getAttribute("data-actualpage");
 	}
 
 	pagesSizeGet(uniqueName) {
-		return document.getElementById(uniqueName + "-pageSize").value;
+		var element = document.getElementById(uniqueName + "-pageSize");
+		if (element === null) {
+			return null;
+		}
+		return element.value;
 	}
 	
 	sortingGet(uniqueName) {
