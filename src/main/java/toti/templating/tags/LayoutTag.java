@@ -34,6 +34,9 @@ public class LayoutTag implements Tag {
 			"if(layout!=null){throw new RuntimeException(\"There could be only one layout\");"
 			+ "} else {"
 		);
+		if (!params.containsKey("path")) {
+			throw new RuntimeException("Missing parameter 'path' in 'layout' tag.");
+		}
 		if (params.get("module") == null) {
 			code.append(String.format("layout=templateFactory.getTemplate(\"%s\");", params.get("path")));
 		} else {
