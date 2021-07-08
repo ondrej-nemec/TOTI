@@ -67,10 +67,12 @@ public class ExampleApiController {
 
 	@Action(value = "test", validator = ExampleValidator.TEST)
 	@Method({HttpMethod.GET, HttpMethod.POST})
-	public Response test(@Params RequestParameters params) {
+	public Response test(@Params RequestParameters params, @Params Example entity) {
+		System.err.println(params);
 		params.forEach((key, name)->{
 			System.err.println(key + ": " + name);
 		});
+		System.err.println(entity);
 		return Response.getJson(StatusCode.ACCEPTED, new HashMap<>());
 	}
 	
