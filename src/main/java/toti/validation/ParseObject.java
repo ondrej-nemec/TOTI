@@ -1,14 +1,12 @@
 package toti.validation;
 
 import common.structures.DictionaryValue;
-import json.JsonReader;
-import json.JsonStreamException;
 
 public class ParseObject {
 	
 	public static Object parse(Class<?> clazz, Object object) {
 		DictionaryValue value = new DictionaryValue(object);
-		value.addMapCallback((v)->{
+		/*value.addMapCallback((v)->{
 			try {
 				return new JsonReader().read(v);
 			} catch (JsonStreamException e) {
@@ -21,7 +19,7 @@ public class ParseObject {
 			} catch (JsonStreamException e) {
 				throw new RuntimeException(e);
 			}
-		});
+		});*/
 		return value.getValue(clazz);
 	}
 	

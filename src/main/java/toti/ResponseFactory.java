@@ -302,6 +302,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			try {
 				mapped.forEachParams((clazz, name)->{
 					classesList.add(clazz);
+					// TODO simplify
 					if (name == null) {
 						valuesList.add(ParseObject.parse(clazz, params));
 					} else if (clazz.isInstance(params.get(name))) {
