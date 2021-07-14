@@ -1,4 +1,4 @@
-/* TOTI Grid version 0.0.11 */
+/* TOTI Grid version 0.0.12 */
 class TotiGrid {
 
 	constructor(config) {
@@ -79,12 +79,15 @@ class TotiGrid {
 					event.preventDefault();
 					var sortType = parseInt(cell.getAttribute('data-sort')) + 1;
 					if (sortType === 3) {
-						cell.setAttribute('data-sort', 0);
-					} else {
-						cell.setAttribute('data-sort', sortType);
+						sortType = 0;
 					}
-					cell.querySelector(".sortType").style.display = "none";
-					cell.querySelector(".type" + sortType).style.display = "inline";
+					cell.setAttribute('data-sort', sortType);
+					cell.querySelectorAll(".sortType").forEach(function(element) {
+						element.style.display = "none";
+					});
+					cell.querySelectorAll(".type" + sortType).forEach(function(element) {
+						element.style.display = "inline";
+					});
 					object.load(uniqueName);
 				};
 
@@ -92,13 +95,13 @@ class TotiGrid {
 				imgUp.setAttribute("src", totiImages.arrowUp);
 				imgUp.setAttribute("alt", "");
 				imgUp.setAttribute("width", 15);
-				imgUp.setAttribute("class", "sortType type1 type3");
+				imgUp.setAttribute("class", "sortType type0 type1");
 
 				var imgDown = document.createElement("img");
 				imgDown.setAttribute("src", totiImages.arrowDown);
 				imgDown.setAttribute("alt", "");
 				imgDown.setAttribute("width", 15);
-				imgDown.setAttribute("class", "sortType type2 type3");
+				imgDown.setAttribute("class", "sortType type0 type2");
 
 				var div = document.createElement("div");
 				div.setAttribute("class", "toti-sorting-arrows");
@@ -354,7 +357,7 @@ class TotiGrid {
 							var buttonClone = totiUtils.clone(button);
 							buttonClone.id += "_" + rowIndex;
 
-							var buttonElement = totiControl.button(buttonClone);
+							var buttonElement = totiControl.button(buttonClone, button.ajax);
 							buttonElement.onclick = function(event) {
 								totiControl.getAction(settings)(event);
 								setTimeout(function(){

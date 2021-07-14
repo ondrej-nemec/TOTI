@@ -1,4 +1,4 @@
-/* TOTI Control version 0.0.11 */
+/* TOTI Control version 0.0.12 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -9,8 +9,15 @@ var totiControl = {
 		}
 		return label;
 	},
-	button: function(attributes) {
-		var button = document.createElement('button');
+	button: function(attributes, async = true) {
+		var button;
+		if (async) {
+			button = document.createElement('button');
+		} else {
+			button = document.createElement('a');
+			button.classList.add("toti-button");
+		}
+		
 		for ([key, name] of Object.entries(attributes)) {
 			if (key === "value") {
 				button.innerHTML = name;
@@ -23,9 +30,9 @@ var totiControl = {
 					};
 				}
 			} else if (key === "style") {
-				button.className += " toti-button-" + name;
+				button.classList.add("toti-button-" + name);
 			} else if (key === "class") {
-				button.className += " " + name;
+				button.classList.add(name);
 			} else {
 				button.setAttribute(key, name);
 			}
