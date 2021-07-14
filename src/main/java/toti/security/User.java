@@ -2,6 +2,7 @@ package toti.security;
 
 import java.util.Collection;
 
+import common.structures.DictionaryValue;
 import toti.security.permissions.Permissions;
 
 public class User {
@@ -25,6 +26,10 @@ public class User {
 	
 	public Object getId() {
 		return id;
+	}
+	
+	public DictionaryValue getUnique() {
+		return new DictionaryValue(id);
 	}
 	
 	public Collection<Object> getAllowedIds() {
