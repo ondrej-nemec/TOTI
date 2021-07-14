@@ -31,10 +31,8 @@ var totiControl = {
 				}
 			} else if (key === "style") {
 				button.classList.add("toti-button-" + name);
-			//	button.className += ;
 			} else if (key === "class") {
 				button.classList.add(name);
-				// button.className += " " + name;
 			} else {
 				button.setAttribute(key, name);
 			}
@@ -207,7 +205,7 @@ var totiControl = {
 					});
 					var onSuccess = function(loaded) {
 						totiUtils.forEach(loaded, function(value, opt) {
-	                		var option = { "value": value };
+							var option = { "value": value };
 	                		var use = true;
 	                  		if (typeof opt === "object") {
 	                       		option.title = opt.title;
