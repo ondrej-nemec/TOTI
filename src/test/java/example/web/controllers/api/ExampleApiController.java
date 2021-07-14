@@ -72,7 +72,8 @@ public class ExampleApiController {
 		params.forEach((key, name)->{
 			System.err.println(key + ": " + name);
 		});
-		System.err.println(entity);
+		System.err.println(params.getList("tags"));
+		// System.err.println(entity);
 		return Response.getJson(StatusCode.ACCEPTED, new HashMap<>());
 	}
 	

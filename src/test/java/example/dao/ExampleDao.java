@@ -36,7 +36,7 @@ public class ExampleDao implements EntityDao<Example> {
 	}
 
 	@Override
-	public String getHelpValue() {
+	public String getHelpDisplayValue() {
 		return "name";
 	}
 

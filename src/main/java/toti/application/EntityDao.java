@@ -28,14 +28,6 @@ public interface EntityDao<T extends Entity> {
 		return Optional.empty();
 	}
 	
-	default String getHelpKey() {
-		return null;
-	}
-	
-	default String getHelpValue() {
-		return null;
-	}
-	
 	default SelectQueryBuilder _getAll(QueryBuilder builder) {
 		return builder.select("*").from(getTableName());
 	}
@@ -145,8 +137,51 @@ public interface EntityDao<T extends Entity> {
 		});
 	}
 	
+	/****************/
+	
+	static final String HELP_KEY_NAME = "_help_key";
+	static final String HELP_DISPLAY_VALUE_NAME = "_help_display_value";
+	static final String HELP_DISABLED_NAME = "_help_disabled";
+	static final String HELP_GROUP_NAME = "_help_group";
+	default String getHelpKey() {
+		return null;
+	}
+	
+	default String getHelpDisplayValue() {
+		return null;
+	}
+	
+	default String getHelpDisabled() {
+		return null;
+	}
+	
+	default String getHelpOptgroup() {
+		return null;
+	}
+	
 	default SelectQueryBuilder _getHelp(QueryBuilder builder) {
-		return builder.select(getHelpKey() + "," + getHelpValue()).from(getTableName());
+		StringBuilder select = new StringBuilder();
+		select.append(getHelpKey());
+		select.append(" AS ");
+		select.append(HELP_KEY_NAME);
+		select.append(",");
+		
+		select.append(getHelpDisplayValue());
+		select.append(" AS ");
+		select.append(HELP_DISPLAY_VALUE_NAME);
+		if (getHelpDisabled() != null) {
+			select.append(", ");
+			select.append(getHelpDisabled());
+			select.append(" AS ");
+			select.append(HELP_DISABLED_NAME);
+		}
+		if (getHelpOptgroup() != null) {
+			select.append(", ");
+			select.append(getHelpOptgroup());
+			select.append(" AS ");
+			select.append(HELP_GROUP_NAME);
+		}
+		return builder.select(select.toString()).from(getTableName());
 	}
 	
 	default Map<Object, Object> getHelp(Collection<Object> forOwners) throws SQLException {
@@ -161,7 +196,15 @@ public interface EntityDao<T extends Entity> {
 				}
 			}
 			select.fetchAll().forEach((row)->{
-				items.put(row.getValue(getHelpKey()), row.getValue(getHelpValue()));
+				items.put(
+					row.getValue(HELP_KEY_NAME),
+					new Help(
+						row.getValue(HELP_KEY_NAME), 
+						row.getValue(HELP_DISPLAY_VALUE_NAME),
+						row.getString(HELP_GROUP_NAME),
+						row.getValue(HELP_DISABLED_NAME) == null ? false : row.getBoolean(HELP_DISABLED_NAME)
+					)
+				);
 			});
 			return items;
 		});
