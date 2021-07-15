@@ -1,7 +1,8 @@
 package toti.security;
 
-import java.util.Locale;
 import java.util.Properties;
+
+import translator.Locale;
 
 public class Identity {
 

@@ -10,6 +10,7 @@ import common.Logger;
 import common.structures.ThrowingFunction;
 import socketCommunication.ServerSecuredCredentials;
 import toti.security.User;
+import translator.LanguageSettings;
 import translator.Translator;
 
 public class HttpServerFactory {
@@ -28,7 +29,7 @@ public class HttpServerFactory {
 	private Optional<ServerSecuredCredentials> certs = Optional.empty();
 	private String tempPath = "temp";
 	private String charset = "UTF-8";
-	private String defLang = Locale.getDefault().toString();
+	private LanguageSettings settings = new LanguageSettings(Locale.getDefault().toString(), Arrays.asList());
 	private String resourcesPath = "www";
 	private boolean deleteTempJavaFiles = true;
 	private boolean dirResponseAllowed = true;
@@ -50,7 +51,7 @@ public class HttpServerFactory {
 				certs, tempPath, modules, userFactory, resourcesPath,
 				translator,
 				maxUploadFileSize, allowedUploadFileTypes,
-				charset, defLang, tokenCustomSalt, tokenExpirationTime,
+				charset, settings, tokenCustomSalt, tokenExpirationTime,
 				logger, deleteTempJavaFiles, dirResponseAllowed, minimalize, developIps, redirectNoLoggerdUser
 		);
 	}
@@ -120,8 +121,8 @@ public class HttpServerFactory {
 		return this;
 	}
 
-	public HttpServerFactory setDefLang(String defLang) {
-		this.defLang = defLang;
+	public HttpServerFactory setLanguageSettings(LanguageSettings settings) {
+		this.settings = settings;
 		return this;
 	}
 	

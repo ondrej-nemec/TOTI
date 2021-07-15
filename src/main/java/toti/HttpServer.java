@@ -16,7 +16,8 @@ import toti.security.Authorizator;
 import toti.security.IdentityFactory;
 import toti.security.User;
 import toti.templating.TemplateFactory;
-import translator.PropertiesTranslator;
+import translator.LanguageSettings;
+import translator.LocaleTranslator;
 import translator.Translator;
 import utils.security.Hash;
 
@@ -39,7 +40,7 @@ public class HttpServer {
     		int maxUploadFileSize,
     		Optional<List<String>> allowedUploadFileTypes,
     		String charset,
-    		String defLang,
+    		LanguageSettings settings,
     		String tokenCustomSalt,
     		long tokenExpiration,
     		Logger logger,
@@ -75,8 +76,9 @@ public class HttpServer {
 				logger
 		);
 		if (translator == null) {
-			String[] translators = new String[trans.size()];
-			translator = PropertiesTranslator.create(LoggerFactory.getLogger("translator"), trans.toArray(translators));
+			translator = new LocaleTranslator(settings, trans, LoggerFactory.getLogger("translator"));
+			// String[] translators = new String[trans.size()];
+			// translator = PropertiesTranslator.create(LoggerFactory.getLogger("translator"), trans.toArray(translators));
 		}
 	//	AuthenticationCache authenticationCache = new AuthenticationCache(tempPath, false); // TODO enable??
 		this.translator = translator;
@@ -87,7 +89,7 @@ public class HttpServer {
 				controllers,
 				totiTemplateFactory,
 				translator,
-				new IdentityFactory(defLang/*, authenticationCache*/),
+				new IdentityFactory(translator, translator.getLocale().getLang()/*defLang, authenticationCache*/),
 				new Authenticator(tokenExpiration, tokenCustomSalt, userFactory, /*authenticationCache,*/ new Hash("SHA-256"), logger),
 				new Authorizator(redirectNoLoggerdUser, logger),
 				charset,

@@ -1,12 +1,18 @@
 package toti;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
 import database.DatabaseConfig;
 import example.ExampleModule;
 import common.functions.Env;
+import common.functions.InputStreamLoader;
+import common.structures.DictionaryValue;
+import common.structures.MapDictionary;
+import core.text.Text;
+import core.text.basic.ReadText;
 import logging.LoggerFactory;
 import module.EntityModule;
 import toti.HttpServerFactory;
@@ -17,6 +23,8 @@ import toti.security.User;
 import toti.security.permissions.Permissions;
 import toti.security.permissions.Rule;
 import toti.security.permissions.Rules;
+import translator.LanguageSettings;
+import translator.Locale;
 
 public class BootstrapEndToEndTest {
 
@@ -68,6 +76,23 @@ public class BootstrapEndToEndTest {
 					)));
 					factory.setAllowedUploadFileTypes(Optional.empty());
 					factory.setMaxUploadFileSize(1000000);
+					
+					MapDictionary<String, Object> config = new DictionaryValue(Text.get().read((br)->{
+						return ReadText.get().asString(br);
+					}, InputStreamLoader.createInputStream(getClass(), "conf/lang.json"))).getDictionaryMap();
+					List<Locale> locales = new LinkedList<>();
+					config.getDictionaryMap("locales").forEach((locale, setting)->{
+						locales.add(new Locale(
+							locale.toString(), 
+							setting.getDictionaryMap().getBoolean("isLeftToRight"),
+							setting.getDictionaryMap().getList("substitutions")
+						));
+					});
+					factory.setLanguageSettings(new LanguageSettings(
+						config.getString("default"),
+						locales
+					));
+					
 				//	factory.setDevelopIpAdresses(Arrays.asList());
 					
 					// TODO little bit another way

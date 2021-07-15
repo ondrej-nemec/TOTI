@@ -1,7 +1,6 @@
 package toti.templating;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import common.Logger;
@@ -11,6 +10,7 @@ import logging.LoggerFactory;
 import toti.security.Authorizator;
 import toti.templating.Template;
 import toti.templating.TemplateFactory;
+import translator.Locale;
 import translator.Translator;
 
 public class TemplateFactoryEndToEndTest {
@@ -59,7 +59,7 @@ public class TemplateFactoryEndToEndTest {
 			}
 
 			@Override
-			public String translate(String key, Map<String, Object> variables, Locale locale) {
+			public String translate(String key, Map<String, Object> variables, String locale) {
 				return key;
 			}
 
@@ -71,6 +71,12 @@ public class TemplateFactoryEndToEndTest {
 
 			@Override
 			public Locale getLocale() {
+				return null;
+			}
+
+			@Override
+			public Locale getLocale(String locale) {
+				// TODO Auto-generated method stub
 				return null;
 			}
 		};

@@ -6,7 +6,12 @@ import java.util.Optional;
 
 import common.Logger;
 import common.functions.Env;
+import common.functions.InputStreamLoader;
+import common.structures.DictionaryValue;
+import common.structures.MapDictionary;
 import common.structures.ThrowingBiFunction;
+import core.text.Text;
+import core.text.basic.ReadText;
 import database.Database;
 import database.DatabaseConfig;
 import logging.LoggerFactory;
@@ -17,6 +22,8 @@ import toti.Module;
 import toti.ResponseHeaders;
 import toti.registr.Registr;
 import toti.security.User;
+import translator.LanguageSettings;
+import translator.Locale;
 import translator.Translator;
 
 public class Application {
@@ -167,8 +174,26 @@ public class Application {
 			if (env.getString("http.dir-allowed") != null) {
 				factory.setDirResponseAllowed(env.getBoolean("http.dir-allowed"));
 			}
-			if (env.getString("http.locale") != null) {
-				factory.setDefLang(env.getString("http.locale"));
+			if (env.getString("http.locale-settings") != null) {
+				MapDictionary<String, Object> config = new DictionaryValue(
+					Text.get().read((br)->{
+						return ReadText.get().asString(br);
+					}, 
+					InputStreamLoader.createInputStream(getClass(), env.getString("http.locale-settings"))
+				)).getDictionaryMap();
+				List<Locale> locales = new LinkedList<>();
+				config.getDictionaryMap("locales").forEach((locale, setting)->{
+					locales.add(new Locale(
+						locale.toString(), 
+						setting.getDictionaryMap().getBoolean("isLeftToRight"),
+						setting.getDictionaryMap().getList("substitutions")
+					));
+				});
+				factory.setLanguageSettings(new LanguageSettings(
+					config.getString("default"),
+					locales
+				));
+				//factory.setDefLang(env.getString("http.locale"));
 			}
 			if (env.getString("http.token-expired") != null) {
 				factory.setTokenExpirationTime(env.getLong("http.token-expired"));

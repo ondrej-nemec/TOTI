@@ -3,7 +3,9 @@ package toti.security;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
+import translator.Locale;
+import translator.Translator;
+
 import java.util.Properties;
 
 import common.structures.Tuple2;
@@ -16,9 +18,11 @@ public class IdentityFactory {
 	private final static String SESSION_HEADER_NAME = "Authorization";
 	
 	private final String defLang;
+	private final Translator translator;
 	//private final AuthenticationCache cache;
 	
-	public IdentityFactory(String defLang/*, AuthenticationCache cache*/) {
+	public IdentityFactory(Translator translator, String defLang/*, AuthenticationCache cache*/) {
+		this.translator = translator;
 		this.defLang = defLang;
 	//	this.cache = cache;
 	}
@@ -87,7 +91,7 @@ public class IdentityFactory {
 	}
 	
 	private Locale resolveLocale(String locale) {
-		return locale.contains("_") ? new Locale(locale) : Locale.forLanguageTag(locale);
+		return translator.getLocale(locale);
 	}
 /*
 	// TODO test this method
