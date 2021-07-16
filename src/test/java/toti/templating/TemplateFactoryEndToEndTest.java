@@ -6,7 +6,7 @@ import java.util.Map;
 import common.Logger;
 import core.text.Text;
 import core.text.basic.WriteText;
-import logging.LoggerFactory;
+import toti.TotiLogger;
 import toti.security.Authorizator;
 import toti.templating.Template;
 import toti.templating.TemplateFactory;
@@ -80,7 +80,7 @@ public class TemplateFactoryEndToEndTest {
 				return null;
 			}
 		};
-		Authorizator authorizator = new Authorizator("", LoggerFactory.getLogger("temlateTest"));
+		Authorizator authorizator = new Authorizator("", TotiLogger.getLogger("temlateTest"));
 		String html = template.create(factory, variables, translator, authorizator);
 		System.out.println(html);
 		Text.get().write((bw)->{

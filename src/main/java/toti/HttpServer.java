@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import common.Logger;
 import common.structures.ThrowingFunction;
-import logging.LoggerFactory;
 import socketCommunication.Server;
 import socketCommunication.ServerSecuredCredentials;
 import toti.security.Authenticator;
@@ -19,7 +18,7 @@ import toti.templating.TemplateFactory;
 import translator.LanguageSettings;
 import translator.LocaleTranslator;
 import translator.Translator;
-import utils.security.Hash;
+import common.functions.Hash;
 
 public class HttpServer {
 	
@@ -76,7 +75,7 @@ public class HttpServer {
 				logger
 		);
 		if (translator == null) {
-			translator = new LocaleTranslator(settings, trans, LoggerFactory.getLogger("translator"));
+			translator = new LocaleTranslator(settings, trans, TotiLogger.getLogger("translator"));
 			// String[] translators = new String[trans.size()];
 			// translator = PropertiesTranslator.create(LoggerFactory.getLogger("translator"), trans.toArray(translators));
 		}

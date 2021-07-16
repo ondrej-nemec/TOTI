@@ -7,8 +7,8 @@ import org.mockito.Mockito;
 
 import common.Logger;
 import common.structures.ThrowingFunction;
-import utils.security.Hash;
-import utils.security.HashException;
+import common.functions.Hash;
+import common.exceptions.HashException;
 
 public class AuthenticatorTest {
 

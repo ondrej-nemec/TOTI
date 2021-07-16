@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import common.Logger;
-import logging.LoggerFactory;
+import toti.TotiLogger;
 import toti.control.Form;
 import toti.templating.Template;
 import toti.templating.TemplateFactory;
@@ -13,7 +13,7 @@ public class ControlTagEndToEndTest {
 
 	public static void main(String[] args) {
 		try {
-			Logger logger = LoggerFactory.getLogger("log");
+			Logger logger = TotiLogger.getLogger("log");
 			TemplateFactory templateFactory = new TemplateFactory(
 				"temp", "toti/templating/tags", "", new HashMap<>(),
 				false, false, logger

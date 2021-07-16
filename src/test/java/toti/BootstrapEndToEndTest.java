@@ -13,7 +13,6 @@ import common.structures.DictionaryValue;
 import common.structures.MapDictionary;
 import core.text.Text;
 import core.text.basic.ReadText;
-import logging.LoggerFactory;
 import module.EntityModule;
 import toti.HttpServerFactory;
 import toti.application.Application;
@@ -57,7 +56,7 @@ public class BootstrapEndToEndTest {
 				
 				@Override
 				public HttpServerFactory createServerFactory(Env env, Registr registr, String redirect) throws Exception {
-					HttpServerFactory factory = new HttpServerFactory(LoggerFactory.getLogger("toti"));
+					HttpServerFactory factory = new HttpServerFactory(TotiLogger.getLogger("toti"));
 					factory.setRedirectNoLoggerdUser(redirect);
 					factory.setPort(81);
 					factory.setThreadPool(10);

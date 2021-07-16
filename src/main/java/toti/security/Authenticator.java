@@ -10,8 +10,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 import common.Logger;
 import common.structures.ThrowingFunction;
 import toti.authentication.AuthentizationException;
-import utils.security.Hash;
-import utils.security.HashException;
+import common.functions.Hash;
+import common.exceptions.HashException;
 
 public class Authenticator {
 

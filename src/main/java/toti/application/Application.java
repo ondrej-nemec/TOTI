@@ -14,12 +14,12 @@ import core.text.Text;
 import core.text.basic.ReadText;
 import database.Database;
 import database.DatabaseConfig;
-import logging.LoggerFactory;
 import socketCommunication.ServerSecuredCredentials;
 import toti.HttpServer;
 import toti.HttpServerFactory;
 import toti.Module;
 import toti.ResponseHeaders;
+import toti.TotiLogger;
 import toti.registr.Registr;
 import toti.security.User;
 import translator.LanguageSettings;
@@ -29,7 +29,6 @@ import translator.Translator;
 public class Application {
 	
 	public static String APP_CONFIG_FILE = "conf/app.properties";
-	public static String LOG_CONFIG_FILE = "conf/ji-logging.properties";
 	
 	public static final String USER_SECURITY_SERVICE = "user-security-service";
 	
@@ -50,9 +49,8 @@ public class Application {
 			ThrowingBiFunction<String, Registr, User, Exception> userFactory,
 			String redirectIfNoUser,
 			Logger logger) {
-		LoggerFactory.setConfigFile(LOG_CONFIG_FILE);
 		if (logger == null) {
-			logger = LoggerFactory.getLogger("toti");
+			logger = TotiLogger.getLogger("toti");
 		}
 		this.logger = logger;
 		logger.info("Initialization...");
@@ -75,7 +73,7 @@ public class Application {
 				database = null;
 				logger.warn("Database config is null, so database is null");
 			} else {
-				database = new Database(databaseConfig, LoggerFactory.getLogger("database"));
+				database = new Database(databaseConfig, TotiLogger.getLogger("database"));
 			}
 			/*** init classes ****/
 			Registr registr = Registr.get();
@@ -85,7 +83,7 @@ public class Application {
 					env,
 					registr,
 					database,
-					LoggerFactory.getLogger(module.getName())
+					TotiLogger.getLogger(module.getName())
 				));
 			}
 			this.server = createServerFactory(env, registr, redirectIfNoUser).get(modules, (content)->{

@@ -8,10 +8,10 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 import database.Database;
 import database.DatabaseConfig;
-import logging.LoggerFactory;
 import socketCommunication.http.HttpMethod;
 import socketCommunication.http.server.RequestParameters;
 import toti.ResponseHeaders;
+import toti.TotiLogger;
 import toti.response.Response;
 import toti.security.Identity;
 
@@ -55,7 +55,7 @@ public class DbViewerRouter {
 		if (viewer == null && params.size() == 0) {
 			return Response.getTemplate("/dbviewer/login.jsp", new HashMap<>());
 		} else if (viewer == null) { // TODO method == HttpMethod.POST
-			viewer = new DbViewer(new Database(createConfig(params), LoggerFactory.getLogger("dbViewer")));
+			viewer = new DbViewer(new Database(createConfig(params), TotiLogger.getLogger("dbViewer")));
 			viewers.put(authCookie, viewer);
 		}
 		return viewer.getResponse(method, path, params);

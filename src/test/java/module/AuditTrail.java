@@ -1,12 +1,13 @@
 package module;
+
 import java.util.Map;
 
 import common.Logger;
-import logging.LoggerFactory;
+import toti.TotiLogger;
 
 public class AuditTrail {
 
-	private final Logger logger = LoggerFactory.getLogger("audit-trail");
+	private final Logger logger = TotiLogger.getLogger("audit-trail");
 	
 	public void insert(Object userId, Map<String, Object> inserted) {
 		logger.info(String.format("User #%s insert. Values: %s", userId, inserted));
