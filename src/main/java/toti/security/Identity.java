@@ -116,7 +116,11 @@ public class Identity {
 			for (String cookies : cookiesArray) {
 				String[] cookie = cookies.split("=", 2);
 				if (cookie.length == 2 && cookie[0].trim().equals(cookieName)) {
-					return cookie[1].trim();
+					String value = cookie[1].trim();
+					if (value.equals("null")) {
+						return null;
+					}
+					return value;
 				}
 			}
 		}

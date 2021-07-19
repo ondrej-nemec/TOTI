@@ -30,7 +30,7 @@ public class IdentityFactory {
 	public List<String> getResponseHeaders(Identity identity) throws IOException {
 		List<String> headers = new LinkedList<>();
 		headers.add("Set-Cookie: "
-				+ LOCALE_COOKIE_NAME + "=" + identity.getLocale() // .toLanguageTag()
+				+ LOCALE_COOKIE_NAME + "=" + identity.getLocale().getLang() // .toLanguageTag()
 				+ "; Path=/"
 				+ "; SameSite=Strict");
 		if (!identity.isAnonymous()) {
