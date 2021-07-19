@@ -29,7 +29,7 @@ public class IncludeTag implements Tag {
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
-		if (!params.containsKey("block") && params.containsKey("file")) {
+		if (!params.containsKey("block") && !params.containsKey("file")) {
 			throw new RuntimeException("Tag 'include' has to contains parameter 'block' or 'file'");
 		}
 		if (params.get("block") != null) {
