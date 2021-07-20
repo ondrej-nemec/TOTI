@@ -1,10 +1,11 @@
 package toti;
 
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import common.Logger;
 import common.structures.ThrowingFunction;
@@ -52,7 +53,7 @@ public class HttpServer {
 		Router router = new Router();
 		Map<String, TemplateFactory> controllers = new HashMap<>();
 		Map<String, TemplateFactory> templateFactories = new HashMap<>();
-		List<String> trans = new LinkedList<>();
+		Set<String> trans = new HashSet<>();
 		for (Module module : modules) {
 			module.addRoutes(router);
 			TemplateFactory templateFactory = new TemplateFactory(

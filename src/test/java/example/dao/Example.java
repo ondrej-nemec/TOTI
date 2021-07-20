@@ -6,6 +6,7 @@ import java.util.Map;
 
 import common.annotations.MapperIgnored;
 import common.annotations.MapperParameter;
+import common.annotations.MapperType;
 import toti.application.Entity;
 
 public class Example implements Entity {
@@ -16,7 +17,7 @@ public class Example implements Entity {
 	
 	private int age;
 	
-	@MapperParameter("active")
+	@MapperParameter({@MapperType("active")})
 	private boolean isActive;
 	
 	private String email;
@@ -25,7 +26,7 @@ public class Example implements Entity {
 	
 	private int range;
 	
-	@MapperParameter("defvalue")
+	@MapperParameter({@MapperType("defvalue")})
 	private boolean defValue;
 	
 	private String sex;
@@ -34,10 +35,10 @@ public class Example implements Entity {
 	
 	private int select1;
 	
-	@MapperParameter("simple_date")
+	@MapperParameter({@MapperType("simple_date")})
 	private String simpleDate;
 	
-	@MapperParameter("dt_local")
+	@MapperParameter({@MapperType("dt_local")})
 	private String datetimeLocal;
 	
 	private String month;
