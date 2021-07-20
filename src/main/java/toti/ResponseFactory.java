@@ -20,6 +20,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import common.Logger;
 import common.exceptions.LogicException;
 import common.functions.FilesList;
+import common.structures.DictionaryValue;
 import socketCommunication.http.HttpMethod;
 import socketCommunication.http.StatusCode;
 import socketCommunication.http.server.RequestParameters;
@@ -48,7 +49,6 @@ import toti.security.exceptions.AccessDeniedException;
 import toti.security.exceptions.NotAllowedActionException;
 import toti.templating.DirectoryTemplate;
 import toti.templating.TemplateFactory;
-import toti.validation.ParseObject;
 import toti.validation.Validator;
 import translator.Translator;
 
@@ -302,15 +302,17 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			try {
 				mapped.forEachParams((clazz, name)->{
 					classesList.add(clazz);
-					// TODO simplify
+					// TODO simplify - to test
 					if (name == null) {
-						valuesList.add(ParseObject.parse(clazz, params));
+					//	valuesList.add(ParseObject.parse(clazz, params));
+						valuesList.add(new DictionaryValue(params).getValue(clazz));
 					} else if (clazz.isInstance(params.get(name))) {
 						valuesList.add(params.get(name));
 					} else {
-						Object v = ParseObject.parse(clazz, params.get(name));
+						/*Object v = ParseObject.parse(clazz, params.get(name));
 						valuesList.add(v);
-						params.put(name, v);
+						params.put(name, v);*/
+						params.put(name, params.getDictionaryValue(name).getValue(clazz));
 					}
 				});
 			} catch (Throwable e) {
