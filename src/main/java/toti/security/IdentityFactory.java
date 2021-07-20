@@ -91,7 +91,11 @@ public class IdentityFactory {
 	}
 	
 	private Locale resolveLocale(String locale) {
-		return translator.getLocale(locale);
+		Locale loc = translator.getLocale(locale);
+		if (loc == null) {
+			return translator.getLocale(defLang);
+		}
+		return loc;
 	}
 /*
 	// TODO test this method
