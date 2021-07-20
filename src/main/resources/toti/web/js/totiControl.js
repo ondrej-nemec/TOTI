@@ -1,4 +1,4 @@
-/* TOTI Control version 0.0.12 */
+/* TOTI Control version 0.0.13 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -32,7 +32,9 @@ var totiControl = {
 			} else if (key === "style") {
 				button.classList.add("toti-button-" + name);
 			} else if (key === "class") {
-				button.classList.add(name);
+				name.split(" ").forEach(function(clazz) {
+					button.classList.add(clazz);
+				});
 			} else {
 				button.setAttribute(key, name);
 			}
@@ -205,7 +207,7 @@ var totiControl = {
 					});
 					var onSuccess = function(loaded) {
 						totiUtils.forEach(loaded, function(value, opt) {
-	                		var option = { "value": value };
+							var option = { "value": value };
 	                		var use = true;
 	                  		if (typeof opt === "object") {
 	                       		option.title = opt.title;

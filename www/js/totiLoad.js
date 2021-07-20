@@ -1,4 +1,4 @@
-/* TOTI Load version 0.0.2 */
+/* TOTI Load version 0.0.3 */
 var totiLoad = {
 	async: function(url, method, data, headers, onSuccess, onFailure, async = true) {
 		var xhr = new XMLHttpRequest();
@@ -6,13 +6,22 @@ var totiLoad = {
 			url += "?" + new URLSearchParams(data).toString();
 		}
 		var params;
+		var header = null;
 		if (data instanceof FormData) {
-			params = data
+			params = data; /* header added automatically*/
 		} else {
 			params = new URLSearchParams(data).toString();
+			header = ""; /* TODO more types */
 		}
 		xhr.open(method, url, async);
-		for (const[name, value] of Object.entries(headers)) {
+		var head = {
+			...totiLoad.getHeaders(),
+			...headers
+		};
+		if (!head.hasOwnProperty("Content-Type") && header !== null) {
+			head["Content-Type"] = header;
+		}
+		for (const[name, value] of Object.entries(head)) {
 			xhr.setRequestHeader(name, value);
 		}
 		xhr.onload = function() {

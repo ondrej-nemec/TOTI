@@ -1,4 +1,4 @@
-/* TOTI Grid version 0.0.12 */
+/* TOTI Grid version 0.0.13 */
 class TotiGrid {
 
 	constructor(config) {
@@ -339,8 +339,9 @@ class TotiGrid {
 							if (button.hasOwnProperty("condition") && !showButton(row, button.condition, button.evaluate)) {
 								return;
 							}
+							var href = totiUtils.parametrizedString(button.href, row);
 							var settings = {
-								href: totiUtils.parametrizedString(button.href, row),
+								href: href,
 								method: button.method,
 								async: button.ajax,
 								params: button.requestParams,
@@ -356,6 +357,7 @@ class TotiGrid {
 
 							var buttonClone = totiUtils.clone(button);
 							buttonClone.id += "_" + rowIndex;
+							buttonClone.href = href;
 
 							var buttonElement = totiControl.button(buttonClone, button.ajax);
 							buttonElement.onclick = function(event) {
@@ -454,7 +456,9 @@ class TotiGrid {
 		}
 		document.getElementById(uniqueName + "-filtering").querySelectorAll("th").forEach(function(element) {
 			var name = element.getAttribute('data-name');
-			element.children.value = data[name];
+			if (element.children.length > 0 && data[name] !== undefined) {
+				element.children[0].value = data[name];
+			}
 		});
 	}
 
