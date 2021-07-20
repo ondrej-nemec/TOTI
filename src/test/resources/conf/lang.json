@@ -3,7 +3,7 @@
 	"locales": {
 		"cs": {
 			"isLeftToRight": true,
-			"substitutions": ["cs_CZ"]
+			"substitutions": ["cs_CZ", "cs-CZ"]
 		},
 		"en": {
 			"isLeftToRight": true,
