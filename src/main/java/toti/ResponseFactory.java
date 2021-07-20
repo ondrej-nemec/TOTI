@@ -117,9 +117,11 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Properties header,
 			RequestParameters params,
 			String ip) throws IOException {
-		/*System.err.println("URL: " + fullUrl);
+		/*
+		System.err.println("URL: " + fullUrl);
 		System.err.println("Header: " + header);
-		System.err.println("Params: " + params);*/
+		System.err.println("Params: " + params);
+		//*/
 		// Locale locale = language.getLocale(header);
 		Identity identity = identityFactory.createIdentity(header, ip);
 		return getCatchedResponse(method, url, fullUrl, protocol, header, params, identity);
@@ -309,10 +311,9 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 					} else if (clazz.isInstance(params.get(name))) {
 						valuesList.add(params.get(name));
 					} else {
-						/*Object v = ParseObject.parse(clazz, params.get(name));
+						Object v = params.getDictionaryValue(name).getValue(clazz);
 						valuesList.add(v);
-						params.put(name, v);*/
-						params.put(name, params.getDictionaryValue(name).getValue(clazz));
+						params.put(name, v);
 					}
 				});
 			} catch (Throwable e) {
