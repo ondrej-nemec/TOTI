@@ -7,7 +7,6 @@ var totiLang = {
 	},
 	getLang: function() {
 		var lang = totiStorage.getVariable(totiLang.variableName);
-		/* TODO problem in firefox - lang is only "cs"*/
 		if (lang === null) {
 			return navigator.language.toLowerCase();
 		}
