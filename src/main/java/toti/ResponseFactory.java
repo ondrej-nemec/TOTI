@@ -314,7 +314,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 					}
 				});
 			} catch (Throwable e) {
-				throw new RuntimeException(e);
+				throw new RuntimeException(mapped.getClassName() + ":" + mapped.getMethodName(), e);
 			}	
 			try {
 				authorize(mapped, params, identity, params);
