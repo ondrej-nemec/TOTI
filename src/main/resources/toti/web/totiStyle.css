@@ -1,14 +1,9 @@
-/* TOTI style version0.0.2 */
+/* TOTI style version0.0.3 */
 .toti-table {
     font-family: Arial, Helvetica, sans-serif;
     margin-bottom: 0.5em;
-	/*border-spacing: 0;
-    border-collapse: collapse;
-    border-color: #dfe2e5;*/
 }
 .toti-table td, .toti-table th {
-	/*border-bottom: 1px solid;
-	border-collapse: collapse;*/
 	padding: 0.5em;
 }
 .toti-table th a {
@@ -104,42 +99,44 @@
 .toti-actions select {
 	margin-right: 1em;
 }
+a.toti-button {
+	text-decoration: none;
+}
+a.toti-button:link {
+	text-decoration: none;
+}
+a.toti-button:hover {
+	text-decoration: none;
+}
 .toti-button-success {
 	border-radius: 4px;
 	border: 3px solid #c3e6cb;
 	background-color: #d4edda;
+	color: black;
 }
 .toti-button-info {
 	border-radius: 4px;
 	border: 3px solid #b8daff;
 	background-color: #cce5ff;
+	color: black;
 }
 .toti-button-warning {
 	border-radius: 4px;
 	border: 3px solid #ffeeba;
 	background-color: #fff3cd;
+	color: black;
 }
 .toti-button-danger {
 	border-radius: 4px;
 	border: 3px solid #f5c6cb;
 	background-color: #f8d7da;
+	color: black;
 }
 .toti-button-basic {
 	border-radius: 4px;
 	border: 3px solid #D3D3D3;
 	background-color: #F8F8FF;
-}
-a.toti-button {
-	text-decoration: none;
-	color: inherit;
-}
-a.toti-button:link {
-	text-decoration: none;
-	color: inherit;
-}
-a.toti-button:hover {
-	text-decoration: none;
-	color: inherit;
+	color: black;
 }
 ul.error-list {
 	border: 3px solid #f5c6cb;
@@ -148,6 +145,4 @@ ul.error-list {
 .toti-control table {
     max-width: 100vw;
 	max-height: 100vw;
-	/*max-width: 100%;
-	max-height: 100%;*/
 }
