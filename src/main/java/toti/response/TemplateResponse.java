@@ -40,7 +40,7 @@ public class TemplateResponse implements Response {
 			String charset) {
 		String nonce = RandomStringUtils.randomAlphanumeric(50);
 		params.put("nonce", nonce);
-		params.put("totiUser", identity.getUser());
+		params.put("totiIdentity", identity);
 		header.getHeaders().forEach((head)->{
 			head.replace("{nonce}", nonce);
 		});
