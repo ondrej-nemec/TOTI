@@ -1,4 +1,4 @@
-/* TOTI Translations version 0.1.1 */
+/* TOTI Translations version 0.2.1 */
 var totiTranslations = {
 	"pages": {
 		"title": "<t:trans message='common.grid.paging.pages'/>",
@@ -14,7 +14,8 @@ var totiTranslations = {
 	},
 	"gridMessages": {
 		"noItemsFound": "<t:trans message='common.grid.no-item-found' />",
-		"loadingError": "<t:trans message='common.grid.loading-error' />"
+		"loadingError": "<t:trans message='common.grid.loading-error' />",
+		"tableCaption": "<t:trans message='common.grid.table-caption' />"
 	},
 	"formMessages": {
 		"saveError":  "<t:trans message='common.form.saving-problem', />",

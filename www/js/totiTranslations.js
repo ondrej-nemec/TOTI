@@ -1,4 +1,4 @@
-/* TOTI Translations version 0.1.1 */
+/* TOTI Translations version 0.2.1 */
 var totiTranslations = {
 	"pages": {
 		"title": /* "<t:trans message='common.grid.paging.pages'/>", /*/ "Pages:", //*/
@@ -14,7 +14,8 @@ var totiTranslations = {
 	},
 	"gridMessages": {
 		"noItemsFound": /* "<t:trans message='common.grid.no-item-found' />", /*/ "No Item Found", //*/
-		"loadingError": /* "<t:trans message='common.grid.loading-error' />" /*/ "Problem with data loading" //*/
+		"loadingError": /* "<t:trans message='common.grid.loading-error' />", /*/ "Problem with data loading", //*/
+		"tableCaption": /* "<t:trans message='common.grid.table-caption' />" /*/ "Showed {onPage}/{total} on page {pageIndex}" //*/
 	},
 	"formMessages": {
 		"saveError": /* "<t:trans message='common.form.saving-problem' />", /*/ "Problem with form saving", //*/

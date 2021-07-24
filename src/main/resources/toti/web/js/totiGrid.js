@@ -1,4 +1,4 @@
-/* TOTI Grid version 0.0.13 */
+/* TOTI Grid version 0.0.14 */
 class TotiGrid {
 
 	constructor(config) {
@@ -42,6 +42,11 @@ class TotiGrid {
 
 		var table = document.createElement("table");
 		table.setAttribute("class", "toti-table");
+		
+		var caption = document.createElement("caption");
+		caption.setAttribute("id", uniqueName + "-table-caption");
+		caption.innerText = "";
+		table.appendChild(caption);
 
 		table.appendChild(head);
 		table.appendChild(body);
@@ -52,7 +57,6 @@ class TotiGrid {
 
 		document.createElement("tfooter");
 		table.appendChild(tFooter);
-		/* TODO caption s x from y*/
 
 		var grid = document.createElement("div");
 		grid.setAttribute("id", uniqueName + "-control");
@@ -299,6 +303,11 @@ class TotiGrid {
 			}
 			var pageSize = object.pagesSizeGet(uniqueName);
 			object.pagesOnLoad(uniqueName, response.pageIndex, pageSize === null ? null : response.itemsCount / pageSize);
+			document.getElementById(uniqueName + "-table-caption").innerText = 
+				totiTranslations.gridMessages.tableCaption
+				.replace("{total}", response.itemsCount)
+				.replace("{onPage}", response.data.length)
+				.replace("{pageIndex}", response.pageIndex);
 			response.data.forEach(function(row, rowIndex) {
 				var tableRow = document.createElement("tr");
 				tableRow.setAttribute("index", rowIndex);
@@ -486,7 +495,7 @@ class TotiGrid {
 	}
 
 	pagesSizeOnLoad(uniqueName, pageSize) {
-		document.createElement(uniqueName + "-pageSize").value = pageSize;
+		document.getElementById(uniqueName + "-pageSize").value = pageSize;
 	}
 
 	pagesOnLoad(uniqueName, actualPage, pagesCount) {
@@ -531,7 +540,8 @@ class TotiGrid {
 		if (lower < 1) {
 			lower = 1;
 		}
-		for (var i = lower; i < Math.min(lower + parseInt(pagesList.getAttribute("data-pagesbuttoncount")), pagesCount); i++) {
+		var append = pagesCount%actualPage === 0 ? 1 : 0;
+		for (var i = lower; i < Math.min(lower + parseInt(pagesList.getAttribute("data-pagesbuttoncount")), pagesCount) + append; i++) {
 			var clazz = "";
 			if (i === actualPage) {
 				clazz = " actualPage";

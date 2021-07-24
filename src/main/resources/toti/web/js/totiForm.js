@@ -1,4 +1,4 @@
-/* TOTI Form version 0.0.15 */
+/* TOTI Form version 0.0.16 */
 class TotiForm {
 
 	constructor(config) {
@@ -371,9 +371,10 @@ class TotiForm {
 	getSubmit(uniqueName, submit) {
 		return function(event) {
 			event.preventDefault();
-			Array.prototype.forEach.call(document.getElementsByClassName('error-list'), function(el) {
-			    el.remove();
-			});
+			var errorLists = document.getElementsByClassName('error-list');
+			while(errorLists[0]) {
+				errorLists[0].remove();
+			}
 
 			var form = document.getElementById(uniqueName);
 			if (!form.reportValidity()) {
