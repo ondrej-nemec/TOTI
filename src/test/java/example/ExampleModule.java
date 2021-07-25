@@ -23,11 +23,11 @@ public class ExampleModule implements Module {
 		AuditTrail auditTrail = new AuditTrail();
 		ExampleDao dao = new ExampleDao(registr.getService("database", Database.class));
 		
-		registr.addFactory(SignPageController.class, ()->new SignPageController());
-		registr.addFactory(SignApiController.class, ()->new SignApiController());
+		registr.addFactory(SignPageController.class, (trans, iden, author, authen)->new SignPageController());
+		registr.addFactory(SignApiController.class, (trans, iden, author, authen)->new SignApiController(iden, authen));
 		
-		registr.addFactory(ExamplePageController.class, ()->new ExamplePageController());
-		registr.addFactory(ExampleApiController.class, ()->new ExampleApiController(dao, logger, auditTrail));
+		registr.addFactory(ExamplePageController.class, (trans, iden, author, authen)->new ExamplePageController());
+		registr.addFactory(ExampleApiController.class, (trans, iden, author, authen)->new ExampleApiController(dao, logger, auditTrail));
 		return Arrays.asList();
 	}
 

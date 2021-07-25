@@ -5,8 +5,6 @@ import java.util.Map;
 
 import socketCommunication.http.HttpMethod;
 import socketCommunication.http.StatusCode;
-import toti.annotations.inject.Authenticate;
-import toti.annotations.inject.ClientIdentity;
 import toti.annotations.url.Action;
 import toti.annotations.url.Controller;
 import toti.annotations.url.Method;
@@ -20,20 +18,15 @@ import toti.security.Identity;
 @Controller("sign")
 public class SignApiController {
 
-	@ClientIdentity
 	private Identity identity;
 	
-	@Authenticate
 	private Authenticator authenticator;
 	
-	public void setIdentity(Identity identity) {
+	public SignApiController(Identity identity, Authenticator authenticator) {
 		this.identity = identity;
-	}
-	
-	public void setAuthenticator(Authenticator authenticator) {
 		this.authenticator = authenticator;
 	}
-	
+
 	@Method({HttpMethod.POST})
 	@Action("in")
 	public Response login(@Param("username") String username) {

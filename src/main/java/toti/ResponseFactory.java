@@ -319,8 +319,11 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			// check errors after authrization
 			return Response.getJson(StatusCode.BAD_REQUEST, errors).getResponse(headers, null, null, null, null, charset);
 		}
-		try {			
-			Object o = Registr.get().getFactory(mapped.getClassName()).get();
+		try {
+		//	Object o = Registr.get().getFactory(mapped.getClassName()).get();
+			Object o = Registr.get()
+					.getFactory(mapped.getClassName())
+					.apply(translator.withLocale(identity.getLocale()), identity, authorizator, authenticator);
 			// inject
 			Field[] fields = o.getClass().getDeclaredFields();
 			for (Field field : fields) {

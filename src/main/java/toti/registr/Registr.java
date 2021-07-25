@@ -13,7 +13,7 @@ public class Registr {
 		return registr;
 	}
 	
-	private final Map<String, ThrowingSupplier<Object, Throwable>> FACTORIES;
+	private final Map<String, ControllerFactory> FACTORIES;
 	private final Map<String, Object> SERVICES;
 	
 	private Registr() {
@@ -22,15 +22,23 @@ public class Registr {
 	}
 	
 	public void addFactory(String name, ThrowingSupplier<Object, Throwable> factory) {
-		FACTORIES.put(name, factory);
+		FACTORIES.put(name, (a, b, c, d)->factory.get());
 	}
 
 	public void addFactory(Class<?> clazz, ThrowingSupplier<Object, Throwable> factory) {
+		FACTORIES.put(clazz.getName(), (a, b, c, d)->factory.get());
+	}
+
+	public void addFactory(String name, ControllerFactory factory) {
+		FACTORIES.put(name, factory);
+	}
+
+	public void addFactory(Class<?> clazz, ControllerFactory factory) {
 		FACTORIES.put(clazz.getName(), factory);
 	}
 	
-	public ThrowingSupplier<Object, Throwable> getFactory(String className) throws Exception {
-		ThrowingSupplier<Object, Throwable> result = FACTORIES.get(className);
+	public ControllerFactory getFactory(String className) throws Exception {
+		ControllerFactory result = FACTORIES.get(className);
 		if (result == null) {
 			throw new RuntimeException("Missing factory " + className);
 		}
