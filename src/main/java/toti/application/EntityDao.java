@@ -42,7 +42,7 @@ public interface EntityDao<T extends Entity> {
 	}
 	
 	default GridDataSet<T> getAll(
-			int pageIndex,
+			int indexOfPage,
 			int pageSize, 
 			Map<String, Object> filters,
 			Map<String, Object> sorting,
@@ -90,6 +90,10 @@ public interface EntityDao<T extends Entity> {
 			//select.limit(pageSize, (pageIndex-1)*pageSize);
 			List<DatabaseRow> rows = select.fetchAll();
 			List<T> items = new LinkedList<>();
+			int pageIndex = indexOfPage;
+			if (pageIndex * pageSize > rows.size()) {
+				pageIndex = 1;
+			}
 			rows.subList((pageIndex-1)*pageSize, Math.min(pageIndex*pageSize, rows.size())).forEach((row)->{
 				items.add(createEntity(row));
 			});
