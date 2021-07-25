@@ -3,41 +3,28 @@ package toti;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import common.Logger;
-import common.exceptions.LogicException;
-import common.functions.FilesList;
 import common.structures.DictionaryValue;
 import socketCommunication.http.HttpMethod;
 import socketCommunication.http.StatusCode;
 import socketCommunication.http.server.RequestParameters;
 import socketCommunication.http.server.RestApiResponse;
 import socketCommunication.http.server.RestApiServerResponseFactory;
+import toti.annotations.LoadUrls;
 import toti.annotations.MappedUrl;
 import toti.annotations.inject.Authenticate;
 import toti.annotations.inject.Authorize;
 import toti.annotations.inject.ClientIdentity;
-import toti.annotations.url.Action;
-import toti.annotations.url.Controller;
 import toti.annotations.url.Domain;
-import toti.annotations.url.Method;
-import toti.annotations.url.Param;
-import toti.annotations.url.ParamUrl;
-import toti.annotations.url.Params;
-import toti.annotations.url.Secured;
 import toti.dbviewer.DbViewerRouter;
 import toti.registr.Registr;
 import toti.response.Response;
@@ -49,7 +36,6 @@ import toti.security.exceptions.AccessDeniedException;
 import toti.security.exceptions.NotAllowedActionException;
 import toti.templating.DirectoryTemplate;
 import toti.templating.TemplateFactory;
-import toti.validation.Validator;
 import translator.Translator;
 
 public class ResponseFactory implements RestApiServerResponseFactory {
@@ -93,7 +79,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		this.resourcesDir = resourcesDir;
 		this.charset = charset;
 		this.translator = translator;
-		this.mapping = loadUrlMap(modules);
+	//	this.mapping = loadUrlMap(modules);
+		this.mapping = LoadUrls.loadUrlMap(modules); // TODO get in constructor
 		this.responseHeaders = responseHeaders;
 		this.authorizator = authorizator;
 		this.identityFactory = identityFactory;
@@ -402,7 +389,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				}
 		});
 	}
-	
+/*	
 	private List<MappedUrl> loadUrlMap(Map<String, TemplateFactory> modules) throws Exception {
 		List<MappedUrl> mapping = new LinkedList<>();
 		for (String folder : modules.keySet()) {
@@ -476,5 +463,5 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	    	}
 	    }
 	}
-
+*/
 }
