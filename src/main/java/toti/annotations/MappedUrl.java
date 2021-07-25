@@ -1,5 +1,6 @@
 package toti.annotations;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -100,15 +101,6 @@ public class MappedUrl {
 	public void addParamName(String paramName) {
 		paramNames.add(paramName);
 	}
-	
-	@Override
-	public String toString() {
-		String method = "";
-		for (HttpMethod m : allowedMethods) {
-			method += m + " ";
-		}
-		return String.format("%s: %s(isApi=%s)", method, url, isApi);
-	}
 
 	public boolean isRegex() {
 		return isRegex;
@@ -132,6 +124,14 @@ public class MappedUrl {
 
 	public boolean isApi() {
 		return isApi;
+	}
+
+	@Override
+	public String toString() {
+		return "MappedUrl [url=" + url + ", allowedMethods=" + Arrays.toString(allowedMethods) + ", className="
+				+ className + ", methodName=" + methodName + ", params=" + params + ", paramNames=" + paramNames
+				+ ", folder=" + folder + ", isRegex=" + isRegex + ", domains=" + Arrays.toString(domains)
+				+ ", validator=" + validator + ", isApi=" + isApi + "]";
 	}
 	
 }
