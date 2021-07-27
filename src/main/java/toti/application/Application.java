@@ -19,7 +19,7 @@ import toti.HttpServer;
 import toti.HttpServerFactory;
 import toti.Module;
 import toti.ResponseHeaders;
-import toti.TotiLogger;
+import toti.logging.TotiLogger;
 import toti.registr.Registr;
 import toti.security.User;
 import translator.LanguageSettings;

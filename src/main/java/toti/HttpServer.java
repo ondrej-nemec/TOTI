@@ -11,6 +11,7 @@ import common.Logger;
 import common.structures.ThrowingFunction;
 import socketCommunication.Server;
 import socketCommunication.ServerSecuredCredentials;
+import toti.logging.TotiLogger;
 import toti.security.Authenticator;
 import toti.security.Authorizator;
 import toti.security.IdentityFactory;

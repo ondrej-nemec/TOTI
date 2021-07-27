@@ -1,7 +1,7 @@
 package example;
 
 import common.Logger;
-import toti.TotiLogger;
+import toti.logging.TotiLogger;
 
 public class AuditTrail {
 

@@ -16,6 +16,7 @@ import core.text.basic.ReadText;
 import module.EntityModule;
 import toti.HttpServerFactory;
 import toti.application.Application;
+import toti.logging.TotiLogger;
 import toti.registr.Registr;
 import toti.security.Action;
 import toti.security.User;

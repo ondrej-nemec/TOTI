@@ -11,7 +11,7 @@ import database.DatabaseConfig;
 import socketCommunication.http.HttpMethod;
 import socketCommunication.http.server.RequestParameters;
 import toti.ResponseHeaders;
-import toti.TotiLogger;
+import toti.logging.TotiLogger;
 import toti.response.Response;
 import toti.security.Identity;
 

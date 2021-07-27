@@ -1,10 +1,9 @@
-package toti;
+package toti.logging;
 
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import org.apache.log4j.spi.LoggerFactory;
 
 import common.functions.InputStreamLoader;
 
@@ -12,22 +11,18 @@ public class TotiLogger extends Logger implements common.Logger {
 
 	public static String CONF_FILE = "conf/log4j.properties";	
 	
-	private static LoggerFactory myFactory;
+	private static TotiLoggerFactory totiLoggerFactory;
 	
 	public static TotiLogger getLogger(String name) {
-		if (myFactory == null) {
+		if (totiLoggerFactory == null) {
 			try {
 				PropertyConfigurator.configure(InputStreamLoader.createInputStream(TotiLogger.class, CONF_FILE));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			myFactory = new LoggerFactory() {
-				@Override public Logger makeNewLoggerInstance(String name) {
-					return new TotiLogger(name);
-				}
-			};
+			totiLoggerFactory = new TotiLoggerFactory();
 		}
-		return (TotiLogger)Logger.getLogger(name, myFactory);
+		return (TotiLogger)Logger.getLogger(name, totiLoggerFactory);
 	}
 	
 	protected TotiLogger(String name) {

@@ -6,7 +6,7 @@ import java.util.Map;
 import common.Logger;
 import core.text.Text;
 import core.text.basic.WriteText;
-import toti.TotiLogger;
+import toti.logging.TotiLogger;
 import toti.security.Authorizator;
 import toti.templating.Template;
 import toti.templating.TemplateFactory;
