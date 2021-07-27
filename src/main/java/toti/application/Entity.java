@@ -8,12 +8,16 @@ import json.Jsonable;
 public interface Entity extends Jsonable {
 
 	default Map<String, Object> toMap() {
-		return Mapper.get().serialize(this, "database");
+		return serialize("database");
 	}
 	
 	@Override
 	default Object toJson() {
-		return Mapper.get().serialize(this, "json");
+		return serialize("json");
+	}
+	
+	default Map<String, Object> serialize(String key) {
+		return Mapper.get().serialize(this, key);
 	}
 	
 }
