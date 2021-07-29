@@ -1,10 +1,12 @@
 package toti.templating;
 
+import java.util.List;
 import java.util.Map;
 
 import common.structures.ListDictionary;
 import common.structures.MapDictionary;
 import toti.security.Authorizator;
+import toti.templating.parsing2.TagNode;
 import translator.Translator;
 
 public interface Template {
@@ -16,6 +18,15 @@ public interface Template {
 			Map<String, Object>variables, 
 			Translator translator, 
 			Authorizator authorizator) throws Exception;
+	
+	// TODO will no default
+	default String create(
+			TemplateFactory templateFactory, 
+			Map<String, Object>variables, 
+			Translator translator, 
+			Authorizator authorizator, List<TagNode> nodes) throws Exception {
+		return create(templateFactory, variables, translator, authorizator);
+	}
 	
 	static String escapeVariable(Object variable) {
 		if (variable == null) {
