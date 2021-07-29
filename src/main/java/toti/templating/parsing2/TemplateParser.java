@@ -187,7 +187,6 @@ public class TemplateParser {
 				cache = "";
 				variableState = VarState.VAR;
 				vars.add(new VariableParser(++level));
-				// node.add("\");"); // TODO will be here
 			} else if (actual == '}' && variableState == VarState.VAR && !isSingleQuoted && !isDoubleQuoted) {
 				VariableParser var = vars.removeLast();
 				if (vars.size() > 0) {
