@@ -50,7 +50,7 @@ public class TagParser {
 		mode = TagMode.PARAM_VALUE;
 	}
 	
-	public void parse(char actual, boolean isSingleQuoted, boolean isDoubleQuoted, char previous) throws IOException {
+	public void parse(char previous, char actual, boolean isSingleQuoted, boolean isDoubleQuoted) throws IOException {
 		if (mode == TagMode.TAG && actual == ' ') {
 			mode = TagMode.NAN;
 		} else if (mode == TagMode.TAG) {
