@@ -14,6 +14,7 @@ import core.text.Text;
 import toti.templating.Tag;
 import toti.templating.parsing2.enums.InLineState;
 import toti.templating.parsing2.enums.JavaState;
+import toti.templating.parsing2.enums.ParserType;
 import toti.templating.parsing2.enums.TagState;
 import toti.templating.parsing2.enums.VarState;
 
@@ -125,25 +126,32 @@ public class TemplateParser {
 		ParsingNode node = new ParsingNode();
 		node.add("write(\"");
 		
-		boolean isSingleQuoted = false;
-		boolean isDoubleQuoted = false;
+	//	boolean isSingleQuoted = false;
+	//	boolean isDoubleQuoted = false;
 		int level = 0;
 		
 		LinkedList<VariableParser> vars = new LinkedList<>();
 		InLine inlineCode = null;
 		TagParser tagParser = null;
 		
+		LinkedList<Parser> parsers = new LinkedList<>();
+		
 		while((actual = (char)br.read()) != (char)-1) {
 			if (javaState != JavaState.COMMENT
 					&& (tagState != TagState.NOTHING || variableState != VarState.NOTHING || inLine != InLineState.NOTHING)
 			) {
-				if (actual == '"' && previous != '\\' && !isSingleQuoted) {
+				if (actual == '"' && previous != '\\' && !parsers.getLast().isSingleQuoted()) {
+					parsers.getLast().setDoubleQuoted();
+				} else if (actual == '\'' && previous != '\\' && !parsers.getLast().isDoubleQuoted()) {
+					parsers.getLast().setSingleQuoted();
+				}
+				/*if (actual == '"' && previous != '\\' && !isSingleQuoted) {
 					isDoubleQuoted = !isDoubleQuoted;
 				} else if (actual == '\'' && previous != '\\' && !isDoubleQuoted) {
 					isSingleQuoted = !isSingleQuoted;
-				}
+				}*/
 			}
-			
+		/////// JAVA CODE
 			if (actual == '<' && javaState == JavaState.NOTHING && tagState == TagState.NOTHING) {
 				javaState = JavaState.CANDIDATE1;
 				tagState = TagState.CANDIDATE;
@@ -170,15 +178,17 @@ public class TemplateParser {
 			} else if (javaState == JavaState.CLOSE_COMMENT_CANDIDATE1 && actual == '-') {
 				cache += '-';
 				javaState = JavaState.CLOSE_COMMENT_CANDIDATE2;
-			} else if (actual == '%' && (javaState == JavaState.CODE || javaState == JavaState.CLOSE_COMMENT_CANDIDATE2) && !(isDoubleQuoted && isSingleQuoted)) {
+			} else if (actual == '%' && (javaState == JavaState.CODE || javaState == JavaState.CLOSE_COMMENT_CANDIDATE2)) {
 				cache += "%";
 				javaState = JavaState.CLOSE_CANDIDATE;
 			} else if (javaState == JavaState.CLOSE_CANDIDATE && actual == '>') {
+				parsers.removeLast();
 				javaState = JavaState.NOTHING;
 				cache = "";
 				node.add("write(\"");
 			} else if (javaState == JavaState.CODE) {
 				node.add(actual);
+				parsers.add(new Parser(ParserType.JAVA));
 			} else if (javaState == JavaState.COMMENT) {
 				// ignore
 			} else if (javaState == JavaState.CANDIDATE1 || javaState == JavaState.CANDIDATE_COMMENT) {
@@ -187,10 +197,11 @@ public class TemplateParser {
 			} else if (javaState == JavaState.CLOSE_COMMENT_CANDIDATE1 || javaState == JavaState.CLOSE_COMMENT_CANDIDATE2) {
 				cache += actual;
 				javaState = JavaState.COMMENT;
+				parsers.add(new Parser(ParserType.JAVA));
 			} else if (javaState == JavaState.CLOSE_CANDIDATE) {
 				cache += actual;
 				javaState = previous == '-' ? JavaState.COMMENT : JavaState.CODE;
-		///////////////
+		/////////////// VARIABLES
 			} else if (actual == '$' && variableState != VarState.CANDIDATE) {
 				node.add(cache);
 				cache = "$";
@@ -199,8 +210,10 @@ public class TemplateParser {
 				cache = "";
 				variableState = VarState.VAR;
 				vars.add(new VariableParser(++level));
-			} else if (actual == '}' && variableState == VarState.VAR && !isSingleQuoted && !isDoubleQuoted) {
+				parsers.add(new Parser(ParserType.VARIABLE));
+			} else if (actual == '}' && variableState == VarState.VAR && !parsers.getLast().isQuoted()) {
 				VariableParser var = vars.removeLast();
+				parsers.removeLast();
 				cache = "";
 				if (vars.size() > 0) {
 					vars.getLast().addVariable(var);
@@ -224,15 +237,15 @@ public class TemplateParser {
 					node.add("write(\"");
 				}
 			} else if (variableState == VarState.VAR) {
-				vars.getLast().accept(previous, actual, isSingleQuoted, isDoubleQuoted);
+				vars.getLast().accept(previous, actual, parsers.getLast().isSingleQuoted(), parsers.getLast().isDoubleQuoted());
 			} else if (variableState == VarState.CANDIDATE) {
 				variableState = VarState.NOTHING;
 				cache += actual;
-		///////////////
-			} else if (actual == '}' && inLine == InLineState.IN_LINE && !isSingleQuoted && !isDoubleQuoted) {
+		/////////////// IN LINE
+			} else if (actual == '}' && inLine == InLineState.IN_LINE && !parsers.getLast().isQuoted()) {
 				cache += actual;
 				inLine = InLineState.CLOSE_CANDIDATE;
-			} else if (inLine == InLineState.CLOSE_CANDIDATE && actual == '}' && !isSingleQuoted && !isDoubleQuoted) {
+			} else if (inLine == InLineState.CLOSE_CANDIDATE && actual == '}' && !parsers.getLast().isQuoted()) {
 				cache = "";
 				inLine = InLineState.NOTHING;
 				node.add("\");");
@@ -240,11 +253,13 @@ public class TemplateParser {
 				node.add("write(" + inlineCode.getContent().toString() + ");");
 				node.add("write(\"");
 				inlineCode = null;
-			} else if (actual == '{' && inLine == InLineState.NOTHING && !isSingleQuoted && !isDoubleQuoted) {
+				parsers.removeLast();
+			} else if (actual == '{' && inLine == InLineState.NOTHING) {
 				node.add(cache);
 				cache = "{";
 				inLine = InLineState.CANDIDATE;
-			} else if (inLine == InLineState.CANDIDATE && actual == '{' && !isSingleQuoted && !isDoubleQuoted) {
+			} else if (inLine == InLineState.CANDIDATE && actual == '{') {
+				parsers.add(new Parser(ParserType.INLINE));
 				cache = "";
 				inLine = InLineState.IN_LINE;
 				inlineCode = new InLine();
@@ -253,12 +268,13 @@ public class TemplateParser {
 			} else if (inLine == InLineState.CANDIDATE) {
 				inLine = InLineState.NOTHING;
 				cache += actual;
-		///////////////
+		/////////////// TAGS
 			} else if (tagState == TagState.CANDIDATE && previous == 't' && actual == ':') {
 				javaState = JavaState.NOTHING;
 				cache = "";
 				tagState = TagState.TAG;
 				tagParser = new TagParser(false);
+				parsers.add(new Parser(ParserType.TAG));
 			} else if (tagState == TagState.CANDIDATE && previous == '/' && actual == 't') {
 				javaState = JavaState.NOTHING;
 				cache += previous + actual;
@@ -267,7 +283,8 @@ public class TemplateParser {
 				cache = "";
 				tagState = TagState.TAG;
 				tagParser = new TagParser(true);
-			} else if (tagState == TagState.TAG && actual == '/' && !isDoubleQuoted && !isSingleQuoted) {
+				parsers.add(new Parser(ParserType.TAG));
+			} else if (tagState == TagState.TAG && actual == '/' && !parsers.getLast().isQuoted()) {
 				cache += actual;
 				tagState = TagState.INLINE_CLOSE_CANDIDATE;
 			} else if (tagState == TagState.INLINE_CLOSE_CANDIDATE && actual == '>') {
@@ -277,8 +294,9 @@ public class TemplateParser {
 				node.add(tagParser.getPre());
 				node.add(tags.get(tagParser.getName()).getNotPairCode(tagParser.getParams()));
 				tagParser = null;
+				parsers.removeLast();
 				node.add("write(\"");
-			} else if (tagState == TagState.TAG && actual == '>' && !isDoubleQuoted && !isSingleQuoted) {
+			} else if (tagState == TagState.TAG && actual == '>' && !parsers.getLast().isQuoted()) {
 				cache = "";
 				tagState = TagState.NOTHING;
 				node.add("\");");
@@ -290,7 +308,7 @@ public class TemplateParser {
 				}
 				node.add("write(\"");
 			} else if (tagState == TagState.TAG) {
-				tagParser.parse(actual, isSingleQuoted, isDoubleQuoted, previous);
+				tagParser.parse(previous, actual, parsers.getLast().isSingleQuoted(), parsers.getLast().isDoubleQuoted());
 			} else if (tagState == TagState.CANDIDATE || tagState == TagState.CLOSE_CANDIDATE) {
 				cache += actual;
 				tagState = TagState.NOTHING;
