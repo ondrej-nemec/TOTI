@@ -7,6 +7,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -175,7 +176,36 @@ public class TemplateParserEndToEndTest {
 	}
 	
 	private List<Tag> initTags(String namespace) {
-		return Arrays.asList();
+		return Arrays.asList(
+			new Tag() {
+				
+				@Override
+				public String getPairStartCode(Map<String, String> params) {
+					return "for (int j = 0; j < 5; j++) {"
+							+ initNode(params, new LinkedList<>())
+							+ "addVariable(\"j\", j);";
+				}
+				
+				@Override
+				public String getPairEndCode(Map<String, String> params) {
+					return finishPaired()
+							+ "}";
+				}
+				
+				@Override
+				public String getNotPairCode(Map<String, String> params) {
+					return ""
+					   + "write(\"Your message: \" +"
+					   + params.get("message")
+					   + ");";
+				}
+				
+				@Override
+				public String getName() {
+					return "tagName";
+				}
+			}
+		);
 	}
 
 	// TODO test it

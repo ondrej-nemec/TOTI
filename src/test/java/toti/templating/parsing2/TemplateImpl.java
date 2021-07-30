@@ -29,10 +29,27 @@ public class TemplateImpl implements Template {
 	
 	/***/
 	
-	private void initNode(Map<String, Object> variables) {Map<String, Object> params = new HashMap<>();Map<String, Consumer<Map<String, Object>>> blocks = new HashMap<>();if (nodes.size() > 0) {params.putAll(nodes.getLast().getVariables());blocks.putAll(nodes.getLast().getBlocks());}if (variables != null) {params.putAll(variables);}nodes.add(new TagNode(params, blocks));}
-	
-	private TagNode flushNode() {TagNode node = nodes.removeLast();if (nodes.size() > 0) {write(node.getBuilder().toString());}return node;}
-	
+	private void initNode(Map<String, Object> variables) {
+		Map<String, Object> params = new HashMap<>();
+		Map<String, Consumer<Map<String, Object>>> blocks = new HashMap<>();
+		if (nodes.size() > 0) {
+			params.putAll(nodes.getLast().getVariables());
+			blocks.putAll(nodes.getLast().getBlocks());
+		}
+		if (variables != null) {
+			params.putAll(variables);
+		}
+		nodes.add(new TagNode(params, blocks));
+	}
+
+	private TagNode flushNode() {
+		TagNode node = nodes.removeLast();
+		if (nodes.size() > 0) {
+			write(node.getBuilder().toString());
+		}
+		return node;
+	}
+
 	/********/
 	
 	private boolean is;
@@ -80,7 +97,8 @@ public class TemplateImpl implements Template {
 					flushNode();
 				});
 				write("\nFOR");
-				for (int a = 0; a < 10; a++) {
+				Object o1 = getVariable("limit");
+				for (int a = 0; a < Integer.class.cast(o1); a++) {
 					initNode(null);
 					addVariable("a", a);
 					write("\n");
