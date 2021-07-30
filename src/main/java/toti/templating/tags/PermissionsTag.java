@@ -25,10 +25,12 @@ public class PermissionsTag implements Tag {
 	public String getNotPairCode(Map<String, String> params) {
 		return String.format(
 			"if(authorizator.isAllowed("
-				+ "toti.security.User.class.cast(variables.get(\"totiUser\")),"
-				+ " \"%s\", "
-				+ "toti.security.Action.valueOf(\"%s\"))"
-			+ ")",
+               + "toti.security.Identity.class.cast("
+                  + "variables.get(\"totiIdentity\")"
+               + ").getUser(),"
+               + " \"%s\", "
+               + "toti.security.Action.valueOf(\"%s\"))"
+            + ")",
 			params.get("domain"),
 			params.get("action").toUpperCase()
 		);
