@@ -49,7 +49,7 @@ public class VariableParser {
 		} else if (actual == ')' && !isSingleQuoted && !isDoubleQuoted && mode == VarMode.PARAMS) {
 			mode = VarMode.METHOD_NAME;
 		} else {
-			cache += actual + "";
+			cache += actual;
 		}	
 	}
 	

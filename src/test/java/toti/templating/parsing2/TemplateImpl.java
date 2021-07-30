@@ -98,6 +98,10 @@ public class TemplateImpl implements Template {
 			write("MAIN\n");
 		//	System.err.println(this.nodes);
 		//	System.err.println(nodes);
+			
+			Object o = getVariable("length");
+			write(Integer.class.cast(o) > 12 ? "red" : "blue");
+			// {{ ${leng} > 12 ? "red" : "blue" }}
 			getBlock("title").accept(new HashMap<>());
 			write("\n");
 			getBlock("content").accept(new HashMap<>());

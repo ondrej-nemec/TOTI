@@ -12,6 +12,7 @@ import common.functions.InputStreamLoader;
 import common.structures.ThrowingConsumer;
 import core.text.Text;
 import toti.templating.Tag;
+import toti.templating.parsing2.enums.InLineState;
 import toti.templating.parsing2.enums.JavaState;
 import toti.templating.parsing2.enums.TagState;
 import toti.templating.parsing2.enums.VarState;
@@ -116,6 +117,7 @@ public class TemplateParser {
 		JavaState javaState = JavaState.NOTHING;
 		TagState tagState = TagState.NOTHING;
 		VarState variableState = VarState.NOTHING;
+		InLineState inLine = InLineState.NOTHING;
 		
 		char actual;
 		char previous = '\u0000';
@@ -128,9 +130,12 @@ public class TemplateParser {
 		int level = 0;
 		
 		LinkedList<VariableParser> vars = new LinkedList<>();
+		InLine inlineCode = null;
 		
 		while((actual = (char)br.read()) != (char)-1) {
-			if (javaState != JavaState.COMMENT && (tagState != TagState.NOTHING || variableState != VarState.NOTHING )) {
+			if (javaState != JavaState.COMMENT
+					&& (tagState != TagState.NOTHING || variableState != VarState.NOTHING || inLine != InLineState.NOTHING)
+			) {
 				if (actual == '"' && previous != '\\' && !isSingleQuoted) {
 					isDoubleQuoted = !isDoubleQuoted;
 				} else if (actual == '\'' && previous != '\\' && !isDoubleQuoted) {
@@ -192,9 +197,13 @@ public class TemplateParser {
 				if (vars.size() > 0) {
 					vars.getLast().addVariable(var);
 					variableState = VarState.VAR; // another var continue
+				} else if (inLine == InLineState.IN_LINE) {
+					variableState = VarState.NOTHING;
+					inlineCode.setPre(var.getDeclare());
+					inlineCode.addContent(var.getCalling());
 				} else if (tagState == TagState.TAG) {
-					// TODO tag + inline
-				} else {	
+					// TODO tag
+				} else {
 					variableState = VarState.NOTHING;		
 					node.add("\");");
 					node.add(var.getDeclare());
@@ -211,7 +220,28 @@ public class TemplateParser {
 				variableState = VarState.NOTHING;
 				cache += actual;
 		///////////////
-			// TODO inline
+			} else if (actual == '}' && inLine == InLineState.IN_LINE && !isSingleQuoted && !isDoubleQuoted) {
+				cache += actual;
+				inLine = InLineState.CLOSE_CANDIDATE;
+			} else if (inLine == InLineState.CLOSE_CANDIDATE && actual == '}' && !isSingleQuoted && !isDoubleQuoted) {
+				cache = "";
+				inLine = InLineState.NOTHING;
+				node.add("\");");
+				node.add(inlineCode.getPre() + "");
+				node.add("write(" + inlineCode.getContent().toString() + ");");
+				node.add("write(\"");
+				// node.add("write(Template.escapeVariable(" + var.getCalling() + "));");
+				// node.add("write(" + var.getCalling() + ");");
+				inlineCode = null;
+			} else if (actual == '{' && inLine == InLineState.NOTHING && !isSingleQuoted && !isDoubleQuoted) {
+				cache += actual;
+				inLine = InLineState.CANDIDATE;
+			} else if (inLine == InLineState.CANDIDATE && actual == '{' && !isSingleQuoted && !isDoubleQuoted) {
+				cache = "";
+				inLine = InLineState.IN_LINE;
+				inlineCode = new InLine();
+			} else if (inLine == InLineState.IN_LINE) {
+				inlineCode.addContent(actual);
 		///////////////
 			// TODO tags
 		///////////////

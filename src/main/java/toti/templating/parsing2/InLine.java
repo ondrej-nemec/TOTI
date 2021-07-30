@@ -1,0 +1,26 @@
+package toti.templating.parsing2;
+
+public class InLine {
+
+	private String pre;
+	private StringBuilder content = new StringBuilder();
+	
+	public InLine() {}
+
+	public String getPre() {
+		return pre;
+	}
+
+	public StringBuilder getContent() {
+		return content;
+	}
+
+	public void setPre(String pre) {
+		this.pre = pre;
+	}
+
+	public void addContent(Object data) {
+		content.append(data);
+	}
+	
+}
