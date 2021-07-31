@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.Map;
 
+import common.exceptions.LogicException;
 import common.functions.InputStreamLoader;
 import common.structures.ThrowingConsumer;
 import core.text.Text;
@@ -126,8 +127,6 @@ public class TemplateParser {
 		ParsingNode node = new ParsingNode();
 		node.add("write(\"");
 		
-	//	boolean isSingleQuoted = false;
-	//	boolean isDoubleQuoted = false;
 		int level = 0;
 		
 		LinkedList<VariableParser> vars = new LinkedList<>();
@@ -145,11 +144,6 @@ public class TemplateParser {
 				} else if (actual == '\'' && previous != '\\' && !parsers.getLast().isDoubleQuoted()) {
 					parsers.getLast().setSingleQuoted();
 				}
-				/*if (actual == '"' && previous != '\\' && !isSingleQuoted) {
-					isDoubleQuoted = !isDoubleQuoted;
-				} else if (actual == '\'' && previous != '\\' && !isDoubleQuoted) {
-					isSingleQuoted = !isSingleQuoted;
-				}*/
 			}
 		/////// JAVA CODE
 			if (actual == '<' && javaState == JavaState.NOTHING && tagState == TagState.NOTHING) {
@@ -165,6 +159,7 @@ public class TemplateParser {
 				node.add("\");");
 				node.add(actual);
 				javaState = JavaState.CODE;
+				addParser(parsers, new Parser(ParserType.JAVA));
 			} else if (javaState == JavaState.JAVA && actual == '-') {
 				javaState = JavaState.CANDIDATE_COMMENT;
 				cache += "-";
@@ -172,6 +167,7 @@ public class TemplateParser {
 				javaState = JavaState.COMMENT;
 				cache = "";
 				node.add("\");");
+				addParser(parsers, new Parser(ParserType.JAVA));
 			} else if (javaState == JavaState.COMMENT && actual == '-') {
 				cache += "-";
 				javaState = JavaState.CLOSE_COMMENT_CANDIDATE1;
@@ -188,7 +184,6 @@ public class TemplateParser {
 				node.add("write(\"");
 			} else if (javaState == JavaState.CODE) {
 				node.add(actual);
-				parsers.add(new Parser(ParserType.JAVA));
 			} else if (javaState == JavaState.COMMENT) {
 				// ignore
 			} else if (javaState == JavaState.CANDIDATE1 || javaState == JavaState.CANDIDATE_COMMENT) {
@@ -197,7 +192,6 @@ public class TemplateParser {
 			} else if (javaState == JavaState.CLOSE_COMMENT_CANDIDATE1 || javaState == JavaState.CLOSE_COMMENT_CANDIDATE2) {
 				cache += actual;
 				javaState = JavaState.COMMENT;
-				parsers.add(new Parser(ParserType.JAVA));
 			} else if (javaState == JavaState.CLOSE_CANDIDATE) {
 				cache += actual;
 				javaState = previous == '-' ? JavaState.COMMENT : JavaState.CODE;
@@ -210,7 +204,7 @@ public class TemplateParser {
 				cache = "";
 				variableState = VarState.VAR;
 				vars.add(new VariableParser(++level));
-				parsers.add(new Parser(ParserType.VARIABLE));
+				addParser(parsers, new Parser(ParserType.VARIABLE));
 			} else if (actual == '}' && variableState == VarState.VAR && !parsers.getLast().isQuoted()) {
 				VariableParser var = vars.removeLast();
 				parsers.removeLast();
@@ -259,7 +253,7 @@ public class TemplateParser {
 				cache = "{";
 				inLine = InLineState.CANDIDATE;
 			} else if (inLine == InLineState.CANDIDATE && actual == '{') {
-				parsers.add(new Parser(ParserType.INLINE));
+				addParser(parsers, new Parser(ParserType.INLINE));
 				cache = "";
 				inLine = InLineState.IN_LINE;
 				inlineCode = new InLine();
@@ -274,7 +268,7 @@ public class TemplateParser {
 				cache = "";
 				tagState = TagState.TAG;
 				tagParser = new TagParser(false);
-				parsers.add(new Parser(ParserType.TAG));
+				addParser(parsers, new Parser(ParserType.TAG));
 			} else if (tagState == TagState.CANDIDATE && previous == '/' && actual == 't') {
 				javaState = JavaState.NOTHING;
 				cache += previous + actual;
@@ -283,7 +277,7 @@ public class TemplateParser {
 				cache = "";
 				tagState = TagState.TAG;
 				tagParser = new TagParser(true);
-				parsers.add(new Parser(ParserType.TAG));
+				addParser(parsers, new Parser(ParserType.TAG));
 			} else if (tagState == TagState.TAG && actual == '/' && !parsers.getLast().isQuoted()) {
 				cache += actual;
 				tagState = TagState.INLINE_CLOSE_CANDIDATE;
@@ -306,6 +300,7 @@ public class TemplateParser {
 				} else {
 					node.add(tags.get(tagParser.getName()).getPairStartCode(tagParser.getParams()));
 				}
+				parsers.removeLast();
 				node.add("write(\"");
 			} else if (tagState == TagState.TAG) {
 				tagParser.parse(previous, actual, parsers.getLast().isSingleQuoted(), parsers.getLast().isDoubleQuoted());
@@ -338,5 +333,17 @@ public class TemplateParser {
 			previous = actual;
 		}
 		bw.accept(node.flush());
+	}
+	
+	private void addParser(LinkedList<Parser> parsers, Parser parser) {
+		if (parsers.size() == 0) {
+			parsers.add(parser);
+		} else if (parsers.size() > 0 && parser.getType() == ParserType.TAG) {
+			throw new LogicException("Tag cannot be inside tag, variable, in-line cond or code");
+		} else if (parsers.getLast().getType() == ParserType.VARIABLE && parser.getType() == ParserType.INLINE) {
+			throw new LogicException("Inline condition cannot be inside variable");
+		} else {
+			parsers.add(parser);
+		}
 	}
 }
