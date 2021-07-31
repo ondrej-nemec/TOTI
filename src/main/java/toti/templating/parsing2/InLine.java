@@ -15,8 +15,9 @@ public class InLine {
 		return content;
 	}
 
-	public void setPre(String pre) {
-		this.pre = pre;
+	public void addVariable(VariableParser var) {
+		this.pre = var.getDeclare();
+		addContent(var.getCalling());
 	}
 
 	public void addContent(Object data) {

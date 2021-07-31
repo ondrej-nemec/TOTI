@@ -1,6 +1,7 @@
 package toti.templating.parsing2;
 
 import toti.templating.parsing2.enums.ParserType;
+import toti.templating.parsing2.enums.VarState;
 
 public class Parser {
 
@@ -9,29 +10,27 @@ public class Parser {
 	private boolean isSingleQuoted = false;
 	private boolean isDoubleQuoted = false;
 	
-	private VariableParser varParser;
 	private TagParser tagParser;
+	private VariableParser varParser;
+	private InLine inline;
+	
+	public Parser(VariableParser varParser) {
+		this.varParser = varParser;
+		this.type = ParserType.VARIABLE;
+	}
+	
+	public Parser(TagParser tagParser) {
+		this.tagParser = tagParser;
+		this.type = ParserType.TAG;
+	}
+	
+	public Parser(InLine inline) {
+		this.inline = inline;
+		this.type = ParserType.INLINE;
+	}
 	
 	public Parser(ParserType type) {
 		this.type = type;
-	}
-	
-	public Parser(ParserType type, VariableParser varParser) {
-		this.type = type;
-		this.varParser = varParser;
-	}
-	
-	public Parser(ParserType type, TagParser tagParser) {
-		this.type = type;
-		this.tagParser = tagParser;
-	}
-
-	public VariableParser getVarParser() {
-		return varParser;
-	}
-
-	public TagParser getTagParser() {
-		return tagParser;
 	}
 
 	public ParserType getType() {
@@ -56,6 +55,38 @@ public class Parser {
 
 	public void setDoubleQuoted() {
 		this.isDoubleQuoted = !isDoubleQuoted;
+	}
+	
+	@Override
+	public String toString() {
+		return type.toString();
+	}
+	
+	public VarState addVariable(VariableParser var) {
+		switch (type) {
+			case VARIABLE:
+				varParser.addVariable(var);
+				return VarState.VAR; // another var continue
+			case TAG:
+				tagParser.addVariable(var);
+				return VarState.NOTHING;
+			case INLINE:
+				inline.addVariable(var);
+				return VarState.NOTHING;
+			default: return null;
+		}
+	}
+
+	public TagParser getTagParser() {
+		return tagParser;
+	}
+
+	public VariableParser getVarParser() {
+		return varParser;
+	}
+
+	public InLine getInline() {
+		return inline;
 	}
 	
 }
