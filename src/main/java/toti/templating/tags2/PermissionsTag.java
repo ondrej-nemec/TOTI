@@ -26,7 +26,7 @@ public class PermissionsTag implements Tag {
 		return String.format(
 			"if(authorizator.isAllowed("
                + "toti.security.Identity.class.cast("
-                  + "variables.get(\"totiIdentity\")"
+                  + "getVariable(\"totiIdentity\")"
                + ").getUser(),"
                + " \"%s\", "
                + "toti.security.Action.valueOf(\"%s\"))"

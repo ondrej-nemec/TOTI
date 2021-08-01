@@ -13,7 +13,7 @@ public class BreakTag implements Tag {
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
-		return "break;";
+		return "if(true){flushNode();flushNode();break;}";
 	}
 
 	@Override

@@ -66,9 +66,9 @@ public class TemplateParser {
 					+ "Translator translator,"
 					+ "Authorizator authorizator"
 				+ ")throws Exception{"
-				+ "return create(templateFactory, variables, translator, authorizator, new LinkedList<>()).getBuilder().toString();"
+				+ "return create(templateFactory, variables, translator, authorizator, new LinkedList<>());"
 				+ "}"
-				+ "public TagNode create("
+				+ "public String create("
 					+ "TemplateFactory templateFactory,"
 					+ "Map<String, Object>variables,"
 					+ "Translator translator,"
@@ -81,13 +81,11 @@ public class TemplateParser {
 		Text.get().write((bw)->{
 			bw.write(String.format(clazz1, namespace.replaceAll("/", "."), className, modificationTime));
 			bw.write("Template layout=null;this.nodes = nodes;initNode(variables);");
-		//	bw.write("write(\"");			
 			loadFile(fileName, bw, module);
-		//	bw.write("\");");
 			bw.write("if(layout!=null){"
 					+ "layout.create(templateFactory,variables,translator, authorizator, this.nodes);"
 					+ "}");
-			bw.write("return flushNode();");
+			bw.write("return flushNode().getBuilder().toString();");
 			bw.write(clazz2);
 		}, tempFile, false);
 		
@@ -141,7 +139,7 @@ public class TemplateParser {
 				}
 			}
 		/////// JAVA CODE
-			if (actual == '<' && javaState == JavaState.NOTHING && tagState == TagState.NOTHING) {
+			if (actual == '<' && javaState == JavaState.NOTHING && tagState == TagState.NOTHING && inLine == InLineState.NOTHING) {
 				javaState = JavaState.CANDIDATE1;
 				tagState = TagState.CANDIDATE;
 				

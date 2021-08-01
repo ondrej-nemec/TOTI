@@ -23,7 +23,7 @@ public class ElseTag implements Tag {
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
-		return "}else { ";
+		return "flushNode();}else{initNode(new HashMap<>());";
 	}
 
 }

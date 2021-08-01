@@ -1,6 +1,6 @@
 package toti.templating;
 
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 
 import common.structures.ListDictionary;
@@ -24,7 +24,7 @@ public interface Template {
 			TemplateFactory templateFactory, 
 			Map<String, Object>variables, 
 			Translator translator, 
-			Authorizator authorizator, List<TagNode> nodes) throws Exception {
+			Authorizator authorizator, LinkedList<TagNode> nodes) throws Exception {
 		return create(templateFactory, variables, translator, authorizator);
 	}
 	

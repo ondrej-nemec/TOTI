@@ -2,8 +2,9 @@ package toti.templating.parsing2;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Time;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -15,6 +16,9 @@ import core.text.basic.WriteText;
 import toti.logging.TotiLogger;
 import toti.templating.Template;
 import toti.templating.TemplateFactory;
+import translator.LanguageSettings;
+import translator.Locale;
+import translator.LocaleTranslator;
 
 public class TemplateMatch {
 	
@@ -24,11 +28,11 @@ public class TemplateMatch {
 		//  "" : "";
 		// "compareTemplate.jsp"
 		Future<?> oldOne = pool.scheduleWithFixedDelay(
-			getTask(true, "temp/old", "compareTemplate"),
+			getTask(true, "temp/old", "compareTemplate", "toti/templating/parsing"),
 			0, 4, TimeUnit.SECONDS
 		);
 		Future<?> newOne = pool.scheduleWithFixedDelay(
-			getTask(false, "temp/new", "compareTemplate"),
+			getTask(false, "temp/new", "compareTemplate", "toti/templating/parsing2"),
 			2, 4, TimeUnit.SECONDS
 		);
 		
@@ -43,7 +47,7 @@ public class TemplateMatch {
 		
 	}
 
-	private Runnable getTask(boolean useOldImp, String tempPath, String template) {
+	private Runnable getTask(boolean useOldImp, String tempPath, String template, String templatePath) {
 		String result = "temp/result-" + (useOldImp ? "old" : "new") + ".csv"; 
 		try {
 			Text.get().write((bw)->{
@@ -65,16 +69,17 @@ public class TemplateMatch {
 				);
 			}, result, true);
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		return ()->{
 			try {
 				System.err.println("RUN " + tempPath);
-				File f = new File(tempPath + "/cache/toti_templating_parsing2/" + template + ".class");
+				File f = new File(tempPath + "/cache/" + templatePath.replace(".", "_") + "/" + template + ".class");
 				f.delete();
+				File f2 = new File(tempPath + "/cache/" + templatePath.replace(".", "_") + "/layout.class");
+				f2.delete();
 				TemplateFactory test = new TemplateFactory(
-					tempPath, "toti/templating/parsing2", "", new HashMap<>(), false, false, TotiLogger.getLogger("parsing")
+					tempPath, templatePath, "", new HashMap<>(), false, false, TotiLogger.getLogger("parsing")
 				);
 				test.useOldImpl = useOldImp;
 				
@@ -86,9 +91,24 @@ public class TemplateMatch {
 				long tSecond = System.currentTimeMillis();
 				long mSecond = getConsumedMemory();
 				
-				String html = t.create(null, 
-						new MapInit<String, Object>().toMap(),
-						null, null);
+				String html = t.create(test, 
+						new MapInit<String, Object>()
+						.append("title", "Testing page")
+						.append("switch", "value")
+						.append("list", Arrays.asList("listItem#1", "listItem#2", "listItem#3"))
+						.append(
+							"map",
+							new MapInit<>()
+								.append("key#1", "value#1").append("key#2", "value#2").append("key#3", "value#3").toMap()
+						)
+						.toMap(),
+						new LocaleTranslator(
+							new LanguageSettings(Arrays.asList(new Locale("cs", true, Arrays.asList()))),
+							new HashSet<>(),
+							TotiLogger.getLogger("parsing")
+						),
+						null
+				);
 				
 				long tThird = System.currentTimeMillis();
 				long mThird = getConsumedMemory();

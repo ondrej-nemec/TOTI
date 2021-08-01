@@ -45,23 +45,8 @@ public class LayoutTag implements Tag {
 				params.get("path"), params.get("module")
 			));
 		}
-		code.append(
-			"layout.getClass().getDeclaredField(\"b\").set(layout,b);"
-			+ "layout.getClass().getDeclaredField(\"blocks\").set(layout,blocks);"
-			+ "}"	
-		);
+		code.append("}");
 		return code.toString();
-		/*
-		return String.format(
-				"if(layout!=null){throw new RuntimeException(\"There could be only one layout\");"
-				+ "} else {"
-				+ "layout=templateFactory.getTemplate(\"%s\");"
-				+ "layout.getClass().getDeclaredField(\"b\").set(layout,b);"
-				+ "layout.getClass().getDeclaredField(\"blocks\").set(layout,blocks);"
-				+ "}",
-				//actualFileDir + "/" +
-				 params.get("path")
-		);*/
 		
 	}
 

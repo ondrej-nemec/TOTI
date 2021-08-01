@@ -2,7 +2,7 @@ package toti.templating.parsing2;
 
 public class InLine {
 
-	private String pre;
+	private String pre = "";
 	private StringBuilder content = new StringBuilder();
 	
 	public InLine() {}

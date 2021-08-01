@@ -13,12 +13,12 @@ public class DoWhileTag implements Tag {
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
-		return "do{";
+		return "do{initNode(new HashMap<>());";
 	}
 
 	@Override
 	public String getPairEndCode(Map<String, String> params) {
-		return String.format("}while((boolean)(%s));", params.get("cond"));
+		return String.format("flushNode();}while((boolean)(%s));", params.get("cond"));
 	}
 
 	@Override

@@ -13,12 +13,18 @@ public class ForTag implements Tag {
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
-		return String.format("for(%s;%s;%s){", params.get("from"), params.get("to"), params.get("change"));
+		String declated = params.get("from").split(" ", 2)[1].split("=", 2)[0].trim();
+		return String.format(
+			"for(%s;%s;%s){initNode(new HashMap<>());"
+			+ "addVariable(\"%s\",%s);", 
+			params.get("from"), params.get("to"), params.get("change"),
+			declated, declated
+		);
 	}
 
 	@Override
 	public String getPairEndCode(Map<String, String> params) {
-		return "}";
+		return "flushNode();}";
 	}
 
 	@Override
