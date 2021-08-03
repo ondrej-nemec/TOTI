@@ -22,14 +22,14 @@ public class EntityModule implements Module {
 	public List<Task> initInstances(Env env, Registr registr, Database database, Logger logger) throws Exception {
 		EntityDao dao = new EntityDaoDatabase(database);
 			
-		registr.addFactory(EntityPageController.class, ()->{
-			return new EntityPageController();
+		registr.addFactory(EntityPageController.class, (trans, iden, athor, authen)->{
+			return new EntityPageController(trans);
 		});
-		registr.addFactory(EntityApiController.class, ()->{
-			return new EntityApiController(dao, logger, new AuditTrail());
+		registr.addFactory(EntityApiController.class, (trans, iden, athor, authen)->{
+			return new EntityApiController(dao, logger, new AuditTrail(), trans);
 		});
-		registr.addFactory(SignApiController.class, ()->{
-			return new SignApiController();
+		registr.addFactory(SignApiController.class, (trans, iden, athor, authen)->{
+			return new SignApiController(iden, authen);
 		});
 		return Arrays.asList();
 	}

@@ -8,15 +8,12 @@ import common.structures.MapInit;
 import common.structures.Tuple2;
 import socketCommunication.http.HttpMethod;
 import socketCommunication.http.server.RequestParameters;
-import toti.annotations.inject.ClientIdentity;
-import toti.annotations.inject.Translate;
 import toti.annotations.url.Action;
 import toti.annotations.url.Controller;
 import toti.annotations.url.Method;
 import toti.annotations.url.ParamUrl;
 import toti.annotations.url.Params;
 import toti.annotations.url.Secured;
-import toti.security.Identity;
 import toti.control.Form;
 import toti.control.Grid;
 import toti.control.columns.ActionsColumn;
@@ -46,18 +43,10 @@ public class EntityPageController {
 	
 	// private final static String SECURITY_DOMAIN = "entity";
 		
-	@Translate
 	private Translator translator;
 	
-	@ClientIdentity
-	private Identity identity;
-	
-	public void setTranslator(Translator translator) {
+	public EntityPageController(Translator translator) {
 		this.translator = translator;
-	}
-
-	public void setIdentity(Identity identity) {
-		this.identity = identity;
 	}
 	
 	@Action("form")

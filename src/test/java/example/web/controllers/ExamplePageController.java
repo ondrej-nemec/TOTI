@@ -6,7 +6,6 @@ import java.util.Map;
 
 import common.structures.MapInit;
 import socketCommunication.http.HttpMethod;
-import toti.annotations.inject.Translate;
 import toti.annotations.url.Action;
 import toti.annotations.url.Controller;
 import toti.annotations.url.Domain;
@@ -51,10 +50,9 @@ public class ExamplePageController {
 	private final static String SECURITY_DOMAIN = "example";
 	private final static String JSP_PAGE = "Example.jsp";
 
-	@Translate
 	private Translator translator;
-	
-	public void setTranslator(Translator translator) {
+		
+	public ExamplePageController(Translator translator) {
 		this.translator = translator;
 	}
 	

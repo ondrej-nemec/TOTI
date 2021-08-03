@@ -2,7 +2,6 @@ package toti;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,9 +20,6 @@ import socketCommunication.http.server.RestApiResponse;
 import socketCommunication.http.server.RestApiServerResponseFactory;
 import toti.annotations.LoadUrls;
 import toti.annotations.MappedUrl;
-import toti.annotations.inject.Authenticate;
-import toti.annotations.inject.Authorize;
-import toti.annotations.inject.ClientIdentity;
 import toti.annotations.url.Domain;
 import toti.dbviewer.DbViewerRouter;
 import toti.registr.Registr;
@@ -324,23 +320,6 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Object o = Registr.get()
 					.getFactory(mapped.getClassName())
 					.apply(translator.withLocale(identity.getLocale()), identity, authorizator, authenticator);
-			// TODO following code is deprecated
-			// inject
-			Field[] fields = o.getClass().getDeclaredFields();
-			for (Field field : fields) {
-				String method = "set" + (field.getName().charAt(0) + "").toUpperCase() + field.getName().substring(1);
-				if (field.isAnnotationPresent(toti.annotations.inject.Translate.class)) {
-					o.getClass().getMethod(method, Translator.class).invoke(o, translator.withLocale(identity.getLocale()));
-				} else if (field.isAnnotationPresent(Authenticate.class)) {
-					o.getClass().getMethod(method, Authenticator.class).invoke(o, authenticator);
-				} else if (field.isAnnotationPresent(Authorize.class)) {
-					o.getClass().getMethod(method, Authorizator.class).invoke(o, authorizator);
-				} else if (field.isAnnotationPresent(ClientIdentity.class)) {
-					o.getClass().getMethod(method, Identity.class).invoke(o, identity);
-				}
-			}
-			// END of deprecation
-			
 			TemplateFactory templateFactory = modules.get(mapped.getFolder());
 
 			Class<?>[] classes = new Class<?>[classesList.size()];

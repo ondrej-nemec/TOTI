@@ -26,8 +26,8 @@ public class ExampleModule implements Module {
 		registr.addFactory(SignPageController.class, (trans, iden, author, authen)->new SignPageController());
 		registr.addFactory(SignApiController.class, (trans, iden, author, authen)->new SignApiController(iden, authen));
 		
-		registr.addFactory(ExamplePageController.class, (trans, iden, author, authen)->new ExamplePageController());
-		registr.addFactory(ExampleApiController.class, (trans, iden, author, authen)->new ExampleApiController(dao, logger, auditTrail));
+		registr.addFactory(ExamplePageController.class, (trans, iden, author, authen)->new ExamplePageController(trans));
+		registr.addFactory(ExampleApiController.class, (trans, iden, author, authen)->new ExampleApiController(dao, logger, auditTrail, trans, iden));
 		return Arrays.asList();
 	}
 

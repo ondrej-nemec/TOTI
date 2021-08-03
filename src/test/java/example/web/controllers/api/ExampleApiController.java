@@ -16,8 +16,6 @@ import socketCommunication.http.HttpMethod;
 import socketCommunication.http.StatusCode;
 import socketCommunication.http.server.RequestParameters;
 import socketCommunication.http.server.UploadedFile;
-import toti.annotations.inject.ClientIdentity;
-import toti.annotations.inject.Translate;
 import toti.annotations.url.Action;
 import toti.annotations.url.Controller;
 import toti.annotations.url.Domain;
@@ -41,28 +39,20 @@ public class ExampleApiController {
 		ExampleValidator.init();
 	}
 	
-	@Translate
 	private Translator translator;
 	
-	@ClientIdentity
 	private Identity identity;
-	
-	public void setTranslator(Translator translator) {
-		this.translator = translator;
-	}
-	
-	public void setIdentity(Identity identity) {
-		this.identity = identity;
-	}
 	
 	private final ExampleDao dao;
 	private final Logger logger;
 	private final AuditTrail auditTrail;
 	
-	public ExampleApiController(ExampleDao dao, Logger logger, AuditTrail auditTrail) {
+	public ExampleApiController(ExampleDao dao, Logger logger, AuditTrail auditTrail, Translator translator, Identity identity) {
 		this.dao = dao;
 		this.logger = logger;
 		this.auditTrail = auditTrail;
+		this.identity = identity;
+		this.translator = translator;
 	}
 
 	@Action(value = "test", validator = ExampleValidator.TEST)

@@ -11,15 +11,12 @@ import module.AuditTrail;
 import socketCommunication.http.HttpMethod;
 import socketCommunication.http.StatusCode;
 import socketCommunication.http.server.RequestParameters;
-import toti.annotations.inject.ClientIdentity;
-import toti.annotations.inject.Translate;
 import toti.annotations.url.Action;
 import toti.annotations.url.Controller;
 import toti.annotations.url.Method;
 import toti.annotations.url.Param;
 import toti.annotations.url.ParamUrl;
 import toti.annotations.url.Params;
-import toti.security.Identity;
 import toti.response.Response;
 import translator.Translator;
 
@@ -33,28 +30,16 @@ public class EntityApiController {
 		EntityValidator.init();
 	}
 	
-	@Translate
 	private Translator translator;
-	
-	@ClientIdentity
-	private Identity identity;
-	
-	public void setTranslator(Translator translator) {
-		this.translator = translator;
-	}
-	
-	public void setIdentity(Identity identity) {
-		this.identity = identity;
-	}
 	
 	private final EntityDao dao;
 	private final Logger logger;
 	//private final AuditTrail auditTrail;
 	
-	public EntityApiController(EntityDao dao, Logger logger, AuditTrail auditTrail) {
+	public EntityApiController(EntityDao dao, Logger logger, AuditTrail auditTrail, Translator translator) {
 		this.dao = dao;
 		this.logger = logger;
-	//	this.auditTrail = auditTrail;
+		this.translator = translator;
 	}
 	
 	@Action(value = "unique", validator="uniq")
