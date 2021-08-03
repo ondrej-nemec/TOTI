@@ -38,6 +38,11 @@ public class Select implements Input, Filter {
 		this.required = required;
 		this.options = options;
 	}
+	
+	public Select setDepends(String depends) {
+        this.depends = depends;
+        return this;
+    }
 
 	public Select addParam(String name, String value) {
 		params.put(name, value);
