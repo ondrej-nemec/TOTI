@@ -143,7 +143,7 @@ public class Validator {
 					rule.getExpectedType(), 
 					(expectedType)->{
 						try {
-							Object newO = new DictionaryValue(0).getValue(expectedType);
+							Object newO = new DictionaryValue(o).getValue(expectedType);
 							if (rule.getChangeValueByType()) {
 								prop.put(ruleName, newO);
 							}
@@ -158,7 +158,7 @@ public class Validator {
 			);
 			checkRule(
 					rule.getAllowedValues(),
-					(allowedList)->!allowedList.contains(o),
+					(allowedList)->!allowedList.contains(prop.get(ruleName)),
 					errors,
 					propertyName,
 					rule.getOnAllowedValuesError().apply(translator)
@@ -181,7 +181,7 @@ public class Validator {
 					rule.getMaxValue(),
 					(maxValue)->{
 						try {
-							Long value = new DictionaryValue(0).getLong();
+							Long value = new DictionaryValue(o).getLong();
 							return value == null || maxValue.longValue() < value;
 						} catch (ClassCastException | NumberFormatException e) {
 							return true;
@@ -195,7 +195,7 @@ public class Validator {
 					rule.getMinValue(),
 					(minValue)->{
 						try {
-							Long value = new DictionaryValue(0).getLong();
+							Long value = new DictionaryValue(o).getLong();
 							return value == null || minValue.longValue() > value.longValue();
 						} catch (ClassCastException | NumberFormatException e) {
 							return true;
@@ -249,7 +249,7 @@ public class Validator {
 					rule.getMapSpecification(),
 					(validator)->{
 						RequestParameters fields = new RequestParameters();
-						fields.putAll(new DictionaryValue(0).getMap());
+						fields.putAll(new DictionaryValue(o).getMap());
 						errors.putAll(validator.validate(propertyName + "[%s]", fields, translator));
 						prop.put(ruleName, fields);
 						return false;
@@ -262,7 +262,7 @@ public class Validator {
 					rule.getListSpecification(), 
 					(validator)->{
 						try {
-							List<Object> list = new DictionaryValue(0).getList();
+							List<Object> list = new DictionaryValue(o).getList();
 							RequestParameters fields = new RequestParameters();
 							for (int i = 0; i < list.size(); i++) {
 								fields.put(i + "", list.get(i));
