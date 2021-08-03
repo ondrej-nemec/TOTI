@@ -1,4 +1,4 @@
-/* TOTI Form version 0.0.16 */
+/* TOTI Form version 0.0.17 */
 class TotiForm {
 
 	constructor(config) {
@@ -65,6 +65,7 @@ class TotiForm {
 	iterateFields(uniqueName, fields, form, container, defaultEditable, useTemplate, parent = null, listPosition = null) {
 		for (const[index, field] of Object.entries(fields)) {
 			var editable = field.hasOwnProperty("editable") ? field.editable : defaultEditable;
+			field.editable = editable;
 			if (parent !== null) {
 				field.id = (parent.id === null ? "" : parent.id + "-") + field.id;
 				if (!field.hasOwnProperty("name") || field.name === "") {

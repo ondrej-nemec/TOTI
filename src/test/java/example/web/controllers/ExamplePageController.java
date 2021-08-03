@@ -197,6 +197,32 @@ public class ExamplePageController {
 		form.addInput(TextArea.input("comment", false).setTitle("Comment").setRows(10).setCols(50));
 		
 		form.addInput(
+			Select.input("dependson", false, Arrays.asList(
+				Option.create("", "---"),
+				Option.create("first", "First Group"),
+				Option.create("second", "Second Groupt"),
+				Option.create("First Group", "Wrong First Group"),
+				Option.create("Second Group", "Wrong Second Group")
+			))
+			.setTitle("DependsOn")
+			.setExclude(true)
+		);
+		form.addInput(
+			Select.input("depending", false, Arrays.asList(
+				Option.create("", "---"),
+				Option.create("a1", "A1"),
+				Option.create("a2", "A2"),
+				Option.create("b1", "B1").setOptGroup("First Group"),
+				Option.create("b2", "B2").setOptGroup("First Group"),
+				Option.create("c3", "C3").setOptGroup("Second Group"),
+				Option.create("c4", "C4").setOptGroup("Second Group")
+			))
+			.setTitle("Depending")
+			.setDepends("dependson")
+			.setExclude(true)
+		);
+		
+		form.addInput(
 			InputList.input("map")
 			.addInput(Text.input("subText1", false).setTitle("Map Sub Text 1"))
 			.addInput(Text.input("subText2", false).setTitle("Map Sub Text 2"))

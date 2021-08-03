@@ -1,4 +1,4 @@
-/* TOTI Control version 0.0.13 */
+/* TOTI Control version 0.0.14 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -171,9 +171,11 @@ var totiControl = {
 			            parent.appendChild(option);
 			        } else {
 		            	option.type = "option";
-		                if (option.hasOwnProperty("optgroup")) {
+		            	if (option.hasOwnProperty("optgroup") && selectedOptGroup && selectedOptGroup !== option.optgroup) {
+		            		return;
+		            	} else if (option.hasOwnProperty("optgroup") && !(selectedOptGroup && selectedOptGroup === option.optgroup)) {
 		                  	var optGroup = parent.querySelector('[label="' + option.optgroup + '"]');
-			                if (optGroup === null) {
+		                  	if (optGroup === null) {
 			                    optGroup = document.createElement("optgroup");
 			                    optGroup.setAttribute("label", option.optgroup);
 			                    parent.appendChild(optGroup);
@@ -183,14 +185,6 @@ var totiControl = {
 			             	parent.appendChild(totiControl.input(option));
 			            }
 			            params.renderOptions[option.value]=option.title; /* for value renderer*/
-			            /*if (option.type === "optGroup") {
-			                var optGroup = document.createElement("optgroup");
-			                optGroup.setAttribute("label", option.title);
-			                option.options.forEach(function(item, index) {
-			                    addOption(item, optGroup);
-			                });
-			                parent.appendChild(optGroup);
-			            }*/
 		        	}
 	     		};
               	params.renderOptions = {};
