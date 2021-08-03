@@ -10,8 +10,8 @@ public class Option implements Input {
 	private boolean disabled;
 	private String group;
 	
-	public static Option create(String value, String title) {
-		return new Option(value, title);
+	public static Option create(Object value, String title) {
+		return new Option(value == null ? "" : value.toString(), title);
 	}
 	
 	private Option(String value, String title) {
