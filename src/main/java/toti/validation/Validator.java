@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import common.exceptions.LogicException;
+import common.structures.DictionaryValue;
 import socketCommunication.http.server.RequestParameters;
 import socketCommunication.http.server.UploadedFile;
 import toti.registr.Registr;
@@ -142,7 +143,7 @@ public class Validator {
 					rule.getExpectedType(), 
 					(expectedType)->{
 						try {
-							Object newO = ParseObject.parse(expectedType, o);
+							Object newO = new DictionaryValue(0).getValue(expectedType);
 							if (rule.getChangeValueByType()) {
 								prop.put(ruleName, newO);
 							}
@@ -180,7 +181,7 @@ public class Validator {
 					rule.getMaxValue(),
 					(maxValue)->{
 						try {
-							Long value = (Long)ParseObject.parse(Long.class, o);
+							Long value = new DictionaryValue(0).getLong();
 							return value == null || maxValue.longValue() < value;
 						} catch (ClassCastException | NumberFormatException e) {
 							return true;
@@ -194,7 +195,7 @@ public class Validator {
 					rule.getMinValue(),
 					(minValue)->{
 						try {
-							Long value = (Long)ParseObject.parse(Long.class, o);
+							Long value = new DictionaryValue(0).getLong();
 							return value == null || minValue.longValue() > value.longValue();
 						} catch (ClassCastException | NumberFormatException e) {
 							return true;
@@ -248,7 +249,7 @@ public class Validator {
 					rule.getMapSpecification(),
 					(validator)->{
 						RequestParameters fields = new RequestParameters();
-						fields.putAll(getMap(ParseObject.parse(Map.class, o)));
+						fields.putAll(new DictionaryValue(0).getMap());
 						errors.putAll(validator.validate(propertyName + "[%s]", fields, translator));
 						prop.put(ruleName, fields);
 						return false;
@@ -261,7 +262,7 @@ public class Validator {
 					rule.getListSpecification(), 
 					(validator)->{
 						try {
-							List<Object> list = getList(ParseObject.parse(List.class, o));
+							List<Object> list = new DictionaryValue(0).getList();
 							RequestParameters fields = new RequestParameters();
 							for (int i = 0; i < list.size(); i++) {
 								fields.put(i + "", list.get(i));
@@ -282,16 +283,6 @@ public class Validator {
 					rule.getOnExpectedTypeError().apply(translator)
 			);
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private List<Object> getList(Object o) {
-		return List.class.cast(o);
-	}
-
-	@SuppressWarnings("unchecked")
-	private Map<String, Object> getMap(Object o) {
-		return Map.class.cast(o);
 	}
 	
 	private <T> void checkRule(
