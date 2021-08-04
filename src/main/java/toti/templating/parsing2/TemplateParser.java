@@ -253,7 +253,7 @@ public class TemplateParser {
 				addParser(parsers, new Parser(new TagParser(false)));
 			} else if (tagState == TagState.CANDIDATE && previous == '/' && actual == 't') {
 				javaState = JavaState.NOTHING;
-				cache += previous + actual;
+				cache += actual;
 				tagState = TagState.CLOSE_CANDIDATE;
 			} else if (tagState == TagState.CLOSE_CANDIDATE && actual == ':') {
 				cache = "";
@@ -289,7 +289,11 @@ public class TemplateParser {
 				tagState = TagState.NOTHING;
 		///////////////
 			} else {				
-				node.add(cache);
+				node.add(
+					cache
+					.replace("\r", "")
+					.replace("\n", "\");write(\"" + (minimalize ? "" : "\\n"))
+				);
 				cache = "";
 				if (actual == '\r') {
 					// ignored
