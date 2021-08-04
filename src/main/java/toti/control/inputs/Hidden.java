@@ -9,6 +9,7 @@ public class Hidden implements Input {
 	private final String id;
 	private final String type;
 	private String value = null;
+	private Boolean exclude = null;
 	private final Map<String, String> params = new HashMap<>();
 	
 	public static Hidden input(String name) {
@@ -23,6 +24,11 @@ public class Hidden implements Input {
 
 	public Hidden addParam(String name, String value) {
 		params.put(name, value);
+		return this;
+	}
+	
+	public Hidden setExclude(boolean exclude) {
+		this.exclude = exclude;
 		return this;
 	}
 	
@@ -42,6 +48,9 @@ public class Hidden implements Input {
 		});
 		if (value != null) {
 			json.put("value", value);
+		}
+		if (exclude != null) {
+			json.put("exclude", exclude);
 		}
 		return json;
 	}
