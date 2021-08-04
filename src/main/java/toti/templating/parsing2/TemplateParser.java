@@ -130,7 +130,11 @@ public class TemplateParser {
 		
 		while((actual = (char)br.read()) != (char)-1) {
 			if (javaState != JavaState.COMMENT
-					&& (tagState != TagState.NOTHING || variableState != VarState.NOTHING || inLine != InLineState.NOTHING)
+				&& (
+					(tagState != TagState.NOTHING && tagState != TagState.CANDIDATE)
+					|| (variableState != VarState.NOTHING && variableState != VarState.CANDIDATE)
+					|| (inLine != InLineState.NOTHING && inLine != InLineState.CANDIDATE)
+				)
 			) {
 				if (actual == '"' && previous != '\\' && !parsers.getLast().isSingleQuoted()) {
 					parsers.getLast().setDoubleQuoted();
@@ -288,10 +292,12 @@ public class TemplateParser {
 				cache += actual;
 				tagState = TagState.NOTHING;
 		///////////////
-			} else {				
+			} else {
 				node.add(
 					cache
 					.replace("\r", "")
+					.replace("\\", "\\\\")
+					.replace("\"", "\\\"")
 					.replace("\n", "\");write(\"" + (minimalize ? "" : "\\n"))
 				);
 				cache = "";
