@@ -69,8 +69,7 @@ public class DbViewerRouter {
 			params.getString("database"), 
 			params.getString("name"),
 			params.getString("psw"), 
-			new LinkedList<>(), 
-			"Europe/London", 
+			new LinkedList<>(),
 			5
 		);
 	}

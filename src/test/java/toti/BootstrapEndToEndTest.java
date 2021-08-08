@@ -128,7 +128,6 @@ public class BootstrapEndToEndTest {
 						"postgres",
 						"1234",
 						migrations,
-						"Europe/Prague",
 						5
 					);
 				}

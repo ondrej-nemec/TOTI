@@ -235,7 +235,6 @@ public class Application {
 				env.getString("database.login"),
 				env.getString("database.password"),
 				migrations,
-				env.getString("database.timezone"),
 				env.getInteger("database.pool-size")
 		);
 	}
