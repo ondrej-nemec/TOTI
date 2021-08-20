@@ -1,4 +1,4 @@
-/* TOTI Form version 0.0.17 */
+/* TOTI Form version 0.0.18 */
 class TotiForm {
 
 	constructor(config) {
@@ -398,7 +398,7 @@ class TotiForm {
 				/******/
 				if (type === "datetime-local") {
 					value = input.value;
-					value = value.replace("T", " ");
+					/*value = value.replace("T", " ");*/
 					data.append(name, value);
 				} else if (type === "radio") {
 					if (input.checked) {
