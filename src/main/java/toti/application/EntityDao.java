@@ -10,11 +10,11 @@ import java.util.Optional;
 
 import database.Database;
 import database.support.DatabaseRow;
-import querybuilder.ColumnType;
-import querybuilder.InsertQueryBuilder;
 import querybuilder.QueryBuilder;
-import querybuilder.SelectQueryBuilder;
-import querybuilder.UpdateQueryBuilder;
+import querybuilder.builders.InsertBuilder;
+import querybuilder.builders.SelectBuilder;
+import querybuilder.builders.UpdateBuilder;
+import querybuilder.enums.ColumnType;
 
 public interface EntityDao<T extends Entity> {
 	
@@ -28,13 +28,13 @@ public interface EntityDao<T extends Entity> {
 		return Optional.empty();
 	}
 	
-	default SelectQueryBuilder _getAll(QueryBuilder builder) {
-		return builder.select("*").from(getTableName());
+	default SelectBuilder _getAll(String select, QueryBuilder builder) {
+		return builder.select(select).from(getTableName());
 	}
 	
 	default List<T> getAll() throws SQLException {
 		return getDatabase().applyBuilder((builder)->{
-			return _getAll(builder)
+			return _getAll("*", builder)
 			.fetchAll((row)->{
 				return createEntity(row);
 			});
@@ -48,7 +48,12 @@ public interface EntityDao<T extends Entity> {
 			Map<String, Object> sorting,
 			Collection<Object> forOwners) throws SQLException {
 		return getDatabase().applyBuilder((builder)->{
-			SelectQueryBuilder select = _getAll(builder);
+			SelectBuilder count = _getAll("count(*)", builder);
+			_applyFilters(builder, count, filters, forOwners);
+			
+			SelectBuilder select = _getAll("*", builder);
+			_applyFilters(builder, select, filters, forOwners);
+			/*
 			select.where("1=1");
 			if (getOwnerColumnName().isPresent()) {
 				if (!forOwners.isEmpty()) {
@@ -77,6 +82,7 @@ public interface EntityDao<T extends Entity> {
 				.addParameter(":" + filter + "LikeValue", value + "%")
 				.addParameter(":" + filter + "Value", value);
 			});
+			*/
 			StringBuilder orderBY = new StringBuilder();
 			sorting.forEach((sort, direction)->{
 				if (!orderBY.toString().isEmpty()) {
@@ -87,21 +93,57 @@ public interface EntityDao<T extends Entity> {
 			if (!sorting.isEmpty()) {
 				select.orderBy(orderBY.toString());
 			}
-			//select.limit(pageSize, (pageIndex-1)*pageSize);
-			List<DatabaseRow> rows = select.fetchAll();
-			List<T> items = new LinkedList<>();
+			
+			int countOfResults = count.fetchSingle().getInteger();
 			int pageIndex = indexOfPage;
-			if (pageIndex * pageSize > rows.size()) {
+			if (pageIndex * pageSize > countOfResults) {
 				pageIndex = 1;
 			}
-			rows.subList((pageIndex-1)*pageSize, Math.min(pageIndex*pageSize, rows.size())).forEach((row)->{
+			select.limit(Math.min(pageIndex*pageSize, countOfResults), (pageIndex-1)*pageSize);
+			List<T> items = new LinkedList<>();
+			select.fetchAll().forEach((row)->{
 				items.add(createEntity(row));
 			});
-			return new GridDataSet<>(items, rows.size(), pageIndex);
+			return new GridDataSet<>(items, countOfResults, pageIndex);
 		});
 	}
 	
-	default SelectQueryBuilder _get(QueryBuilder builder, int id) {
+	default void _applyFilters(
+			QueryBuilder builder,
+			SelectBuilder select,
+			Map<String, Object> filters,
+			Collection<Object> forOwners) {
+		select.where("1=1");
+		if (getOwnerColumnName().isPresent()) {
+			if (!forOwners.isEmpty()) {
+				select.andWhere(getOwnerColumnName().get() + " in (:in)")
+					.addParameter(":in", forOwners);
+			} else {
+				select.andWhere("1=2"); // no results
+			}
+		}
+		select.addParameter(":empty", "");
+		filters.forEach((filter, value)->{
+			String where = "";
+			if (value == null) {
+				where = filter + " is null";
+			} else if (value.toString().length() > 20) {
+				where = builder.getSqlFunctions().concat(":empty", filter)
+						+ " like :" + filter + "LikeValue"
+						+ " OR " + filter + " = :" + filter + "Value";
+			} else {
+				// this is fix for derby DB - integer cannot be concat or casted to varchar only on char
+				where = builder.getSqlFunctions().cast(filter, ColumnType.charType(20))
+						+ " like :" + filter + "LikeValue"
+						+ " OR " + filter + " = :" + filter + "Value";
+			}
+			select.andWhere(where)
+			.addParameter(":" + filter + "LikeValue", value + "%")
+			.addParameter(":" + filter + "Value", value);
+		});
+	}
+	
+	default SelectBuilder _get(QueryBuilder builder, int id) {
 		return builder.select("*").from(getTableName())
 				.where("id = :id").addParameter(":id", id);
 	}
@@ -122,7 +164,7 @@ public interface EntityDao<T extends Entity> {
 	
 	default int update(int id, T entity) throws SQLException {
 		return getDatabase().applyBuilder((builder)->{
-			UpdateQueryBuilder b = builder.update(getTableName());
+			UpdateBuilder b = builder.update(getTableName());
 			entity.toMap().forEach((name, value)->{
 				b.set(String.format("%s = :%s", name, name)).addParameter(":" + name, value);
 			});
@@ -133,7 +175,7 @@ public interface EntityDao<T extends Entity> {
 	
 	default int insert(T entity) throws SQLException {
 		return getDatabase().applyBuilder((builder)->{
-			InsertQueryBuilder b = builder.insert(getTableName());
+			InsertBuilder b = builder.insert(getTableName());
 			entity.toMap().forEach((name, value)->{
 				b.addValue(name, value);
 			});
@@ -163,7 +205,7 @@ public interface EntityDao<T extends Entity> {
 		return null;
 	}
 	
-	default SelectQueryBuilder _getHelp(QueryBuilder builder) {
+	default SelectBuilder _getHelp(QueryBuilder builder) {
 		StringBuilder select = new StringBuilder();
 		select.append(getHelpKey());
 		select.append(" AS ");
@@ -191,7 +233,7 @@ public interface EntityDao<T extends Entity> {
 	default Map<Object, Object> getHelp(Collection<Object> forOwners) throws SQLException {
 		return getDatabase().applyBuilder((builder)->{
 			Map<Object, Object> items = new HashMap<>();
-			SelectQueryBuilder select = _getHelp(builder);
+			SelectBuilder select = _getHelp(builder);
 			if (getOwnerColumnName().isPresent()) {
 				if (!forOwners.isEmpty()) {
 					select.where(getOwnerColumnName().get() + " in (:in)").addParameter(":in", forOwners);

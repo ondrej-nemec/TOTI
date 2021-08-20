@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import database.Database;
-import querybuilder.ColumnType;
-import querybuilder.InsertQueryBuilder;
-import querybuilder.SelectQueryBuilder;
-import querybuilder.UpdateQueryBuilder;
+import querybuilder.builders.InsertBuilder;
+import querybuilder.builders.SelectBuilder;
+import querybuilder.builders.UpdateBuilder;
+import querybuilder.enums.ColumnType;
 
 public class EntityDaoDatabase implements EntityDao {
 	
@@ -24,7 +24,7 @@ public class EntityDaoDatabase implements EntityDao {
 			Map<String, Object> sorting) throws Exception {
 		return database.applyBuilder((builder)->{
 			List<Map<String, Object>> items = new LinkedList<>();
-			SelectQueryBuilder select = builder.select("*").from(table);
+			SelectBuilder select = builder.select("*").from(table);
 			select.where("1=1");
 			/*filters.forEach((filter, value)->{
 				select.andWhere("concat('', " + filter + ") like :" + filter + "Value")
@@ -86,7 +86,7 @@ public class EntityDaoDatabase implements EntityDao {
 	@Override
 	public void update(int id, Map<String, Object> values) throws Exception {
 		database.applyBuilder((builder)->{
-			UpdateQueryBuilder b = builder.update(table);
+			UpdateBuilder b = builder.update(table);
 			values.forEach((name, value)->{
 				b.set(String.format("%s = :%s", name, name)).addParameter(":" + name, value);
 			});
@@ -99,7 +99,7 @@ public class EntityDaoDatabase implements EntityDao {
 	@Override
 	public int insert(Map<String, Object> values) throws Exception {
 		return database.applyBuilder((builder)->{
-			InsertQueryBuilder b = builder.insert(table);
+			InsertBuilder b = builder.insert(table);
 			values.forEach((name, value)->{
 				b.addValue(name, value);
 			});

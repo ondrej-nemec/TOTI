@@ -3,9 +3,9 @@ package module.resources;
 import java.sql.SQLException;
 
 import migration.Migration;
-import querybuilder.ColumnSetting;
-import querybuilder.ColumnType;
 import querybuilder.QueryBuilder;
+import querybuilder.enums.ColumnSetting;
+import querybuilder.enums.ColumnType;
 
 public class M1__module_data implements Migration {
 
