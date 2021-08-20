@@ -26,7 +26,7 @@ public class VariableSetTag implements Tag {
 		return String.format(
 			"%s=%s;addVariable(\"%s\", %s);", 
 			params.get("name"), params.get("value"), 
-			params.get("name"), params.get("value")
+			params.get("name"), params.get("name")
 		);
 	}
 
