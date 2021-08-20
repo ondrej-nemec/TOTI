@@ -1,4 +1,4 @@
-/* TOTI Grid version 0.0.15 */
+/* TOTI Grid version 0.0.16 */
 class TotiGrid {
 
 	constructor(config) {
@@ -510,7 +510,7 @@ class TotiGrid {
 		if (pagesList === null) {
 			return;
 		}
-		pagesList.getAttribute("data-actualpage", actualPage);
+		pagesList.setAttribute("data-actualpage", actualPage);
 		pagesList.innerHTML = '';
 
 		var onPageClick = function(newPage) {

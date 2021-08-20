@@ -1,4 +1,4 @@
-/* TOTI Grid version 0.0.15 */
+/* TOTI Grid version 0.0.16 */
 class TotiGrid {
 
 	constructor(config) {
@@ -364,10 +364,10 @@ class TotiGrid {
 								type: button.hasOwnProperty('style') ? button.style : 'basic'
 							};
                             if (button.hasOwnProperty("onSuccess")) {
-                                settings.onSuccess = button.onSuccess;
+                               settings.onSuccess = button.onSuccess;
                             }
                             if (button.hasOwnProperty("onError")) {
-                                settings.onError = button.onError;
+                               settings.onError = button.onError;
                             }
 
 							var buttonClone = totiUtils.clone(button);
@@ -510,7 +510,7 @@ class TotiGrid {
 		if (pagesList === null) {
 			return;
 		}
-		pagesList.getAttribute("data-actualpage", actualPage);
+		pagesList.setAttribute("data-actualpage", actualPage);
 		pagesList.innerHTML = '';
 
 		var onPageClick = function(newPage) {
