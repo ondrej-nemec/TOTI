@@ -43,7 +43,7 @@
 			<th>Locale</th>
 			<td>${identity.getLocale()}</td>
 		</tr>
-	<t:if cond="(Boolean)${identity.isPresent()}" >
+	<t:if cond="${identity.isPresent()}" >
 		<tr>
 			<th>Is API allowed</th>
 			<td>${identity.isApiAllowed()}</td>
