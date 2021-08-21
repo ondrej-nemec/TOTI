@@ -4,12 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import json.Jsonable;
 import socketCommunication.http.HttpMethod;
 import socketCommunication.http.server.RequestParameters;
 import socketCommunication.http.server.profiler.HttpServerProfilerEvent;
 import toti.security.Identity;
 
-public class ProfilerLog {
+public class ProfilerLog implements Jsonable{
 
 	private  long threadId;
 	
@@ -69,6 +70,12 @@ public class ProfilerLog {
 			log.setExecuted();
 		});
 	}
+
+	public void setBuilder(String id, String preparedSql, String replacedSql, Map<String, String> builderParams) {
+		logSql(id, (log)->{
+			log.setBuilder(preparedSql, replacedSql, builderParams);
+		});
+	}
 	
 	private void logSql(String id, Consumer<SqlLog> consumer) {
 		SqlLog log = sqlLogs.get(id);
@@ -78,48 +85,13 @@ public class ProfilerLog {
 		}
 		consumer.accept(log);
 	}
-/*
-	public Identity getIdentity() {
-		return identity;
-	}
 
-	public long getThreadId() {
-		return threadId;
-	}
-
-	public String getThreadName() {
-		return threadName;
-	}
-
-	public Map<String, SqlLog> getSqlLogs() {
-		return sqlLogs;
-	}
-
-	public HttpMethod getMethod() {
-		return method;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public String getFullUrl() {
-		return fullUrl;
-	}
-
-	public String getProtocol() {
-		return protocol;
-	}
-
-	public RequestParameters getParams() {
-		return params;
-	}
-	*/
 	private long getRequestTime() {
-		return serverEvents.get(HttpServerProfilerEvent.REQUEST_ACCEPT) - serverEvents.get(HttpServerProfilerEvent.RESPONSE_SENDED);
+		return serverEvents.get(HttpServerProfilerEvent.RESPONSE_SENDED) - serverEvents.get(HttpServerProfilerEvent.REQUEST_ACCEPT);
 	}
-	
-	public Map<String, Object> toMap() {
+
+	@Override
+	public Object toJson() {
 		Map<String, Object> json = new HashMap<>();
 		json.put("id", threadId);
 		json.put("name", threadName);
@@ -131,16 +103,15 @@ public class ProfilerLog {
 		json.put("time", getRequestTime());
 		json.put("times", serverEvents);
 		json.put("created", createdAt);
-		json.put("locale", identity.getLocale().toString());
+		json.put("locale", identity.getLocale());
 		json.put("user", identity.getUser() == null ? null : identity.getUser().getId());
-		json.put("headers", identity.getHeaders());
+		json.put("allowedIds", identity.getUser() == null ? null : identity.getUser().getAllowedIds());
+		// json.put("headers", identity.getHeaders());
 		json.put("IP", identity.getIP());
 		
 		Map<String, Object> queries = new HashMap<>();
+		queries.putAll(sqlLogs);
 		json.put("queries", queries);
-		sqlLogs.forEach((id, log)->{
-			queries.put(id, log);
-		});
 		return json;
 	}
 }

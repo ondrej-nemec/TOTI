@@ -2,6 +2,7 @@ package toti.profiler;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import common.annotations.MapperIgnored;
 
@@ -15,6 +16,10 @@ public class SqlLog {
 	private List<Object> params = new LinkedList<>();
 	
 	private boolean isExecuted;
+	
+	private String preparedSql;
+	private String replacedSql;
+	private Map<String, String> builderParams;
 	
 	public SqlLog(String id) {
 		this.id = id;
@@ -30,6 +35,18 @@ public class SqlLog {
 
 	public List<Object> getParams() {
 		return params;
+	}
+
+	public String getPreparedSql() {
+		return preparedSql;
+	}
+
+	public String getReplacedSql() {
+		return replacedSql;
+	}
+
+	public Map<String, String> getBuilderParams() {
+		return builderParams;
 	}
 
 	public boolean isExecuted() {
@@ -48,4 +65,10 @@ public class SqlLog {
 		this.isExecuted = true;
 	}
 
+	public void setBuilder(String preparedSql, String replacedSql, Map<String, String> builderParams) {
+		this.preparedSql = preparedSql;
+		this.replacedSql = replacedSql;
+		this.builderParams = builderParams;
+	}
+	
 }

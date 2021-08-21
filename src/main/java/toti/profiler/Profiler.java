@@ -61,6 +61,13 @@ public class Profiler implements HttpServerProfiler, SqlQueryProfiler, Jsonable 
 			log.addSqlParam(identifier, param);
 		});
 	}
+
+	@Override
+	public void builderQuery(String identifier, String query, String sql, Map<String, String> params) {
+		log((log)->{
+			log.setBuilder(identifier, query, sql, params);
+		});
+	}
 	
 	/***********/
 	
@@ -103,19 +110,19 @@ public class Profiler implements HttpServerProfiler, SqlQueryProfiler, Jsonable 
 
 	@Override
 	public Object toJson() {
-		Map<String, Object> json = new HashMap<>();
-		logByPage.forEach((pageId, logs)->{
-			json.put(pageId, getPageLogs(logs));
-		});
-		return json;
+		return logByPage;
 	}
-
+	
+	public List<ProfilerLog> getProfilerForPage(String id) {
+		return logByPage.get(id);
+	}
+/*
 	private List<Object> getPageLogs(List<ProfilerLog> logs) {
 		List<Object> json = new LinkedList<>();
 		logs.forEach((log)->{
-			json.add(log.toMap());
+			json.add(log);
 		});
 		return json;
 	}
-
+*/
 }

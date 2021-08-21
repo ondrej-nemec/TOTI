@@ -22,11 +22,6 @@ import toti.annotations.LoadUrls;
 import toti.annotations.MappedUrl;
 import toti.annotations.url.Domain;
 import toti.dbviewer.DbViewerRouter;
-import toti.annotations.url.Method;
-import toti.annotations.url.Param;
-import toti.annotations.url.ParamUrl;
-import toti.annotations.url.Params;
-import toti.annotations.url.Secured;
 import toti.profiler.Profiler;
 import toti.registr.Registr;
 import toti.response.Response;
@@ -294,7 +289,13 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			return dbViewer.getResponse(method, url.substring(8), params, identity, headers);
 
 		}
-		if (url.substring(6).equals("profiler")) {
+		/*if (url.substring(6).startsWith("")) {
+			// TODO profiler page
+		}*/
+		if (url.substring(6).startsWith("profiler")) {
+			if (url.substring(6).length() > 9) {
+				return Response.getJson(profiler.getProfilerForPage(url.substring(15)));
+			}
 			return Response.getJson(profiler);
 		}
 		return Response.getTemplate(url.substring(5), new HashMap<>());

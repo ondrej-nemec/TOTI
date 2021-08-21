@@ -4,15 +4,35 @@
 	<script src="/toti/totiJs.js"></script>
 
 	<style type="text/css">
+		body {
+			background-color: #cccccc;
+		}
+		h1 {
+			text-align: center;
+			color: white;
+			background-color: #3366ff;
+			padding: 0.5em;
+		}
 		.hidden {
 			display: none;
 		}
 		ul {
 			list-style-type: none;
+			font-size: 1.15em;
 		}
 		ul.main-list {
 		  padding: 0;
 		  margin: 0;
+		  padding-top: 0.5em;
+		  padding-left: 0.5em;
+		  background-color: #595959;
+		  color: #d9d9d9;
+		}
+		ul a, ul a:hover {
+		  color: #d9d9d9;
+		}
+		ul.main-list #title {
+		  font-weight: bold;
 		}
 		ul.sub-list {
 		  padding: 0;
@@ -28,19 +48,118 @@
 		}
 		#content {
 			margin-left: 25%;
+			padding-left: 1em;
 		}
-		#tableInfoMenu li {
+		/*#tableInfoMenu li {
 			display: inline-block;
 			padding: 0.40em;
-		}
+		}*/
 	</style>
 </head>
 <body>
 	<div>
 		<h1>TOTI Profiler</h1>
 	</div>
-	<div id="menu"></div>
+	<div id="menu">
+		<ul class="main-list">
+
+		</ul>
+	</div>
 	<div id="content"></div>
+
+	<template id="menu-item-template">
+		<li>
+			<span id="title"></span>
+			<ul class="sub-list"></ul>
+		</li>
+	</template>
+
+	<template id="sub-menu-item-template">
+		<li><a href="" id="link"></a></li>
+	</template>
+
+	<template id="content-template">
+		<div>
+			<h2 id="full-url"></h2>
+
+			<table>
+				<tr>
+					<th>Method</th>
+					<th>Created At</th>
+					<th>Source IP</th>
+				</tr>
+				<tr>
+					<td id="method"></td>
+					<td id="created-at"></td>
+					<td id="source-ip"></td>
+				</tr>
+			</table>
+
+			<h3>Parameters</h3>
+			<span id="parameter-string"></span>
+			<table id="parameters">
+				<tr>
+					<th>Name</th>
+					<th>Value</th>
+				</tr>
+			</table>
+
+			<h3>Database</h3>
+			<div id="queries"></div>
+
+			<h3>Translations</h3>
+			<table>
+				<tr>
+					<th>Language</th>
+					<th>Left to right</th>
+					<th>Substitutions</th>
+				</tr>
+				<tr>
+					<td id="lang"></td>
+					<td id="ltr"></td>
+					<td id="substitution"></td>
+				</tr>
+			</table>
+
+			<h3>User</h3>
+
+			<h3>Server</h3>
+			<div>Render time: <span id="render-time"></span></div>
+			<table id="times">
+				<tr>
+					<th>Event name</th>
+					<th>Time</th>
+				</tr>
+			</table>
+		</div>
+	</template>
+
+	<template id="query-template">
+		<div>
+			<h4 id="sql"></h4>
+			<div>Is executed: <span id="executed"></span></div>
+			<div>
+				<div>Query parameters</div>
+				<ol id="parameters"></ol>
+			</div>
+			<div>
+				<strong>Prepared: </strong>
+				<span id="prepared"></span>
+			</div>
+			<div>
+				<strong>Replaced: </strong>
+				<span id="replaced"></span>
+			</div>
+			<table id="parameters">
+				<legend></legend>
+				<caption>Builder parameters</caption>
+				<tr>
+					<th>Name</th>
+					<th>Value</th>
+				</tr>
+			</table>
+		</div>
+	</template>
 
 	<script type="text/javascript">
 		totiLoad.async(
@@ -49,34 +168,147 @@
 			{}, 
 			{}, 
 			function(res) {
-				printResult(res);
+				printResult(res, window.location.hash.substring(1));
 			}, 
 			function(xhr) {
 				console.log(xhr);
 			},
 			false
 		);
+
+
+		function printResult(res, hash) {
+			var menu = document.getElementById("menu");
+			var menuItemTemplate = document.getElementById("menu-item-template");
+			var subMenuItemTemplate = document.getElementById("sub-menu-item-template");
+			for (const[pageId, logs] of Object.entries(res)) {
+				var menuItem = menuItemTemplate.content.cloneNode(true).querySelector("li");
+				var title = menuItem.querySelector("#title");
+				title.innerText = pageId;
+
+				var subListElement = menuItem.querySelector("ul");
+				subListElement.setAttribute("id", pageId);
+				if (hash !== '' && hash !== pageId) {
+					subListElement.classList.add("hidden");
+				}
+				logs.forEach(function(log) {
+					var subMenuItem = subMenuItemTemplate.content.cloneNode(true).querySelector("li");
+					menuItem.querySelector(".sub-list").appendChild(subMenuItem);
+					var link = subMenuItem.querySelector("#link");
+					link.innerText = log.method + ": " + log.url;
+					link.onclick = function(e) {
+						e.preventDefault();
+						document.getElementById("content").innerHTML = '';
+						fillContent(document.getElementById("content"), log);
+						return false;
+					};
+				});
+
+				title.onclick = function(event) {
+					var element = document.getElementById(pageId);
+					if (element.classList.contains("hidden")) {
+						element.classList.remove("hidden");
+					} else {
+						element.classList.add("hidden");
+					}
+					return true;
+				};
+				menu.querySelector(".main-list").appendChild(menuItem);
+			}
+			console.log(res);
+		}
+
+		function fillContent(target, log) {
+			var div = document.getElementById('content-template').content.cloneNode(true).querySelector("div");
+			div.querySelector("#full-url").innerText = log.fullUrl;
+			/* basic info */
+			div.querySelector("#method").innerText = log.method;
+			div.querySelector("#created-at").innerText = new Date(log.created);
+			div.querySelector("#source-ip").innerText = log.IP;
+
+			/* queries */
+			var sqlElement = div.querySelector("#queries");
+			var queriesTemplate = document.getElementById("query-template");
+			for (const[identifier, query] of Object.entries(log.queries)) {
+				var element = queriesTemplate.content.cloneNode(true).querySelector("div");
+				element.querySelector("#sql").innerText = query.sql;
+				element.querySelector("#executed").innerText = query.isExecuted;
+				query.params.forEach(function(param) {
+					var li = document.createElement("li");
+					li.innerText = param;
+					element.querySelector("div#parameters").appendChild(li);
+				});
+				element.querySelector("#prepared").innerText = query.preparedSql;
+				element.querySelector("#replaced").innerText = query.replacedSql;
+
+				addParametersToTable(element.querySelector("table#parameters"), query.builderParams);
+				sqlElement.appendChild(element);
+			}
+
+			/* paramters */
+			// TODO plaintext
+			addParametersToTable(div.querySelector("#parameters"), log.params);
+
+			/* translations */
+			// TODO errors
+			div.querySelector("#lang").innerText = log.locale.lang;
+			div.querySelector("#ltr").innerText = log.locale.isLeftToRight;
+			div.querySelector("#substitution").innerText = JSON.stringify(log.locale.substitution);
+
+			div.querySelector("#render-time").innerText = log.time;
+			addParametersToTable(div.querySelector("#times"), log.times);
+
+			// TODO user
+
+			target.appendChild(div);
+		}
+
+		function addParametersToTable(table, parameters, renderFunc = null) {
+			var createTd = function(value) {
+				var td = document.createElement("td");
+				if (renderFunc !== null) {
+					td.innerHTML = renderFunc(value);
+				} else if (typeof value === 'object') {
+					td.innerHTML = "<i>"  + JSON.stringify(value) + "</i>";
+				} else {
+					td.innerText = value;
+				}
+				
+				return td;
+			};
+			for(const[name, value] of Object.entries(parameters)) {
+				var tr = document.createElement("tr");
+				tr.appendChild(createTd(name));
+				tr.appendChild(createTd(value));
+				table.appendChild(tr);
+			}
+		}
+/*
 		function printResult(res) {
 			var menu = document.createElement("ul");
 			menu.classList.add("main-list");
 			for (const[pageId, logs] of Object.entries(res)) {
+				console.log(logs);
+
 				var item = document.createElement("li");
 
-				var title = document.createElement("a");
+				var title = document.createElement("span");
 
-				title.setAttribute("href", "#" + pageId);
+			//	title.setAttribute("href", "#" + pageId);
 				title.onclick = function(event) {
-					document.querySelectorAll(".sub-list").forEach(function(node) {
-						node.classList.add("hidden");
-					});
-					document.getElementById(pageId).classList.remove("hidden");
+					var element = document.getElementById(pageId);
+					if (element.classList.contains("hidden")) {
+						element.classList.remove("hidden");
+					} else {
+						element.classList.add("hidden");
+					}
 					return true;
 				};
 				title.innerText = pageId;
 
 				var subMenu = document.createElement("ul");
 				subMenu.classList.add("sub-list");
-				subMenu.classList.add("hidden");
+			//	subMenu.classList.add("hidden");
 				subMenu.setAttribute("id", pageId);
 				logs.forEach(function(log) {
 					var subItem = document.createElement("li");
@@ -192,7 +424,7 @@
 				
 			}
 		}
-		/*************/
+		
 		function getSimpleLi(title, onClick) {
 			var li = document.createElement("li");
 			li.innerText = title;
@@ -211,6 +443,7 @@
 			td.innerText = value;
 			return td
 		}
+		*/
 	</script>
 </body>
 </html>
