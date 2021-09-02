@@ -78,6 +78,11 @@ public class Application {
 			/*** init classes ****/
 			Registr registr = Registr.get();
 			registr.addService("database", database);
+			this.server = createServerFactory(env, registr, redirectIfNoUser).get(modules, (content)->{
+				return userFactory.apply(content, registr);
+			});
+			// TODO fix - move to module
+			registr.addService(Translator.class.getName(), server.getTranslator());
 			for (Module module : modules) {
 				tasks.addAll(module.initInstances(
 					env,
@@ -86,11 +91,6 @@ public class Application {
 					TotiLogger.getLogger(module.getName())
 				));
 			}
-			this.server = createServerFactory(env, registr, redirectIfNoUser).get(modules, (content)->{
-				return userFactory.apply(content, registr);
-			});
-			// TODO fix - move to module
-			registr.addService(Translator.class.getName(), server.getTranslator());
 		} catch (Exception e) {
 			logger.error("Start failed", e);
 			System.exit(1);
