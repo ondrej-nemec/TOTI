@@ -59,6 +59,7 @@ public class HttpServer {
 		Profiler profiler = new Profiler(); // TODO if allowed
 		Database.PROFILER = profiler;
 		RestApiServer.PROFILER = profiler;
+		LocaleTranslator.PROFILER = profiler;
 	//*/	
 		
 		Router router = new Router();
