@@ -1,6 +1,8 @@
 package toti.profiler;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -16,11 +18,9 @@ public class ProfilerLog implements Jsonable{
 	
 	private final String threadName;
 	
-	private final Map<String, SqlLog> sqlLogs = new HashMap<>();
+	private long createdAt;
 	
-	private Map<HttpServerProfilerEvent, Long> serverEvents = new HashMap<>();
-	
-	private Identity identity;
+	/***************/
 	
 	private HttpMethod method;
 	
@@ -29,10 +29,20 @@ public class ProfilerLog implements Jsonable{
 	private String fullUrl;
 	
 	private String protocol;
+		
+	/***************/
+	
+	private Identity identity;
 	
 	private RequestParameters params;
 	
-	private long createdAt;
+	private final Map<String, SqlLog> sqlLogs = new HashMap<>();
+	
+	private Map<HttpServerProfilerEvent, Long> serverEvents = new HashMap<>();
+	
+	private List<String> missingLocales = new LinkedList<>();
+	
+	private List<TransLog> transLog = new LinkedList<>();
 	
 	public ProfilerLog(long threadId, String threadName) {
 		this.threadId = threadId;
@@ -85,33 +95,73 @@ public class ProfilerLog implements Jsonable{
 		}
 		consumer.accept(log);
 	}
-
-	private long getRequestTime() {
-		return serverEvents.get(HttpServerProfilerEvent.RESPONSE_SENDED) - serverEvents.get(HttpServerProfilerEvent.REQUEST_ACCEPT);
+	
+	public void missingParameter(String module, String key, Map<String, Object> variables, String locale) {
+		transLog.add(new TransLog(locale, module, key, variables));
 	}
 
+	public void missingLocale(String locale) {
+		missingLocales.add(locale);
+	}
+
+	private long getRequestTime() {
+		Long first= serverEvents.get(HttpServerProfilerEvent.RESPONSE_SENDED);
+		Long second = serverEvents.get(HttpServerProfilerEvent.REQUEST_ACCEPT);
+		if (first == null || second == null) {
+			return -1;
+		}
+		return first - second;
+	}
+
+	public long getThreadId() {
+		return threadId;
+	}
+	
 	@Override
 	public Object toJson() {
-		Map<String, Object> json = new HashMap<>();
-		json.put("id", threadId);
-		json.put("name", threadName);
-		json.put("method", method);
-		json.put("url", url);
-		json.put("fullUrl", fullUrl);
-		json.put("protocol", protocol);
-		json.put("params", params);
-		json.put("time", getRequestTime());
-		json.put("times", serverEvents);
-		json.put("created", createdAt);
-		json.put("locale", identity.getLocale());
-		json.put("user", identity.getUser() == null ? null : identity.getUser().getId());
-		json.put("allowedIds", identity.getUser() == null ? null : identity.getUser().getAllowedIds());
-		// json.put("headers", identity.getHeaders());
-		json.put("IP", identity.getIP());
+		Map<String, Object> requestInfo = new HashMap<>();
+		Map<String, Object> iden = new HashMap<>();
+		Map<String, Object> rendering = new HashMap<>();
+		if (!serverEvents.isEmpty()) {
+			requestInfo.put("method", method);
+			requestInfo.put("url", url);
+			requestInfo.put("fullUrl", fullUrl);
+			requestInfo.put("protocol", protocol);
+			requestInfo.put("IP", identity.getIP());
+			/********/
+			Map<String, Object> user = new HashMap<>();
+			if (identity.isPresent()) {
+				user.put("id", identity.getUser().getId());
+				user.put("allowedIds", identity.getUser().getAllowedIds());
+				// TODO maybe serialize user
+			}
+			iden.put("content", identity.getContent());
+			iden.put("isApiAllowed", identity.isApiAllowed());
+			if (identity.isPresent()) {
+				iden.put("user", user);
+			}
+			/********/
+			rendering.put("render", getRequestTime());
+			rendering.put("times", serverEvents);
+		}
+		
+		Map<String, Object> trans = new HashMap<>();
+		trans.put("locale", identity == null ? null : identity.getLocale());
+		trans.put("missingFiles", missingLocales);
+		trans.put("missingTranslations", transLog);
 		
 		Map<String, Object> queries = new HashMap<>();
 		queries.putAll(sqlLogs);
+		
+		Map<String, Object> json = new HashMap<>();
+		json.put("identity", iden);
+		json.put("params", params);
+		json.put("trans", trans);
+		json.put("requestInfo", requestInfo);
 		json.put("queries", queries);
+		json.put("created", createdAt);
+		json.put("name", threadName);
+		
 		return json;
 	}
 }

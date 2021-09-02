@@ -7,7 +7,9 @@ import java.util.Map;
 import java.util.Random;
 import java.util.function.Consumer;
 
+import common.structures.MapInit;
 import database.support.SqlQueryProfiler;
+import translator.TransProfiler;
 import json.Jsonable;
 import socketCommunication.http.HttpMethod;
 import socketCommunication.http.server.RequestParameters;
@@ -15,9 +17,11 @@ import socketCommunication.http.server.profiler.HttpServerProfiler;
 import socketCommunication.http.server.profiler.HttpServerProfilerEvent;
 import toti.security.Identity;
 
-public class Profiler implements HttpServerProfiler, SqlQueryProfiler, Jsonable {
+public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProfiler,  Jsonable {
 
 	private final Map<Object, ProfilerLog> logByThread = new HashMap<>();
+	// private final List<Object> notPageIds = new LinkedList<>();
+	private final Map<Object, ProfilerLog> notPageLog = new HashMap<>();
 	private final Map<String, List<ProfilerLog>> logByPage = new HashMap<>();
 	
 	/****************/
@@ -77,6 +81,22 @@ public class Profiler implements HttpServerProfiler, SqlQueryProfiler, Jsonable 
 		});
 	}
 	
+	/***********/
+
+	@Override
+	public void missingParameter(String module, String key, Map<String, Object> variables, String locale) {
+		log((log)->{
+			log.missingParameter(module, key, variables, locale);
+		});
+	}
+
+	@Override
+	public void missingLocale(String locale) {
+		log((log)->{
+			log.missingLocale(locale);
+		});
+	}
+	
 	/**************/
 
 	private void log(Consumer<ProfilerLog> consumer) {
@@ -84,7 +104,10 @@ public class Profiler implements HttpServerProfiler, SqlQueryProfiler, Jsonable 
 		if (log != null) {
 			consumer.accept(log);
 		} else {
-			// TODO not request
+			long threadId = Thread.currentThread().getId();
+			log = new ProfilerLog(threadId, Thread.currentThread().getName());
+			logByThread.put(threadId, log);
+			notPageLog.put(threadId, log);
 		}
 	}
 	
@@ -93,6 +116,7 @@ public class Profiler implements HttpServerProfiler, SqlQueryProfiler, Jsonable 
 	@Override
 	public void log(HttpServerProfilerEvent event) {
 		long threadId = Thread.currentThread().getId();
+		notPageLog.remove(threadId);
 		ProfilerLog log = logByThread.get(threadId);
 		if (log != null && event == HttpServerProfilerEvent.REQUEST_ACCEPT) {
 			logByThread.put(
@@ -110,11 +134,32 @@ public class Profiler implements HttpServerProfiler, SqlQueryProfiler, Jsonable 
 
 	@Override
 	public Object toJson() {
-		return logByPage;
+		return new MapInit<String, Object>()
+		.append("logByPage", logByPage)
+		.append("noPageLog", notPageLog)
+		.toMap();
 	}
 	
 	public List<ProfilerLog> getProfilerForPage(String id) {
 		return logByPage.get(id);
+	}
+	
+	public void clearProfilerForPage(String id) {
+		List<ProfilerLog> logs = logByPage.remove(id);
+		logs.forEach((log)->{
+			logByThread.remove(log.getThreadId());
+		});
+	}
+	
+	public void clearProfilerWithoutPage(long id) {
+		notPageLog.remove(id);
+		logByThread.remove(id);
+	}
+	
+	public void clear() {
+		notPageLog.clear();
+		logByThread.clear();
+		logByPage.clear();
 	}
 /*
 	private List<Object> getPageLogs(List<ProfilerLog> logs) {
