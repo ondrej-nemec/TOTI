@@ -103,12 +103,22 @@ public class VariableParser {
 				classes[i] = params.get(i).getClass().getCanonicalName()+ ".class";
 			}
 			String method = actualObject.trim();
-			init.append(String.format(
-					"Object %s=%s.getClass().getMethod(\"%s\",%s).invoke(%s,%s);",
-					actuName, lastName, method,
-					Implode.implode(",", classes), lastName,
-					Implode.implode(",", params.toArray())
-			));
+			init.append(String.format("Object %s=null;", actuName));
+            init.append("try{");
+            init.append(String.format(
+                     "%s=%s.getClass().getMethod(\"%s\",%s).invoke(%s,%s);",
+                     actuName, lastName, method,
+                     Implode.implode(",", classes), lastName,
+                     Implode.implode(",", params.toArray())
+            ));
+            init.append("}catch(NoSuchMethodException e){");
+            init.append(String.format(
+                     "%s=%s.getClass().getMethod(\"%s\",%s).invoke(%s,%s);",
+                     actuName, lastName, method,
+                     Implode.implode((o)->"Object.class",",", classes), lastName,
+                     Implode.implode(",", params.toArray())
+            ));
+            init.append("}");
 		} else {
 			return false;
 		}
@@ -126,7 +136,8 @@ public class VariableParser {
 			return object.charAt(1);
 		}
 		if (object.length() >= 2 && object.charAt(0) == '"' && object.charAt(object.length()-1) == '"') {
-			return object.substring(1, object.length() -2);
+			//return object.substring(1, object.length() -2);
+			return object;
 		}
 		if (object.matches("^([0-9]+)$")) {
 			return Integer.parseInt(object);

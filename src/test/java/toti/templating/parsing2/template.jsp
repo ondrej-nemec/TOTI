@@ -10,6 +10,8 @@
 	<p>${age.class}</p>
 	<p>${age|Integer}</p>
 	<p>{{${age|Integer} > 516 }}</p>
+	<p>${map.get("key1")}</p>
+	<p>${map.get("key2")}</p>
 	
 
 	<p><t:tagName message='"Text of message"' noescape text = "text"another="aa"/></p>	<p>

@@ -20,13 +20,14 @@ public class VariableParser {
 	private LinkedList<String> classes = new LinkedList<>();
 	
 	private String cache = "";
+	private String auxCache = "";
 	private int level = 0;
 	private String clazz = null;
 	
 	public void accept(char previous, char actual, boolean isSingleQuoted, boolean isDoubleQuoted) {
 		if (actual == '|' && !isSingleQuoted && !isDoubleQuoted) {
 			finish(cache);
-			if (mode != VarMode.APPENDIX) {
+			if (mode == VarMode.APPENDIX) {
 				finishAppendix(cache);
 			}
 			cache = "";
@@ -37,6 +38,8 @@ public class VariableParser {
 			cache = "";
 		} else if (actual == '(' && !isSingleQuoted && !isDoubleQuoted && mode != VarMode.PARAMS) {
 			mode = VarMode.PARAMS;
+			auxCache = cache;
+			cache = "";
 		} else if (actual == ',' && !isSingleQuoted && !isDoubleQuoted && mode != VarMode.PARAMS) {
 			throw new RuntimeException("Syntax error: ','");
 		} else if (actual == ')' && !isSingleQuoted && !isDoubleQuoted && mode != VarMode.PARAMS) {
@@ -47,10 +50,17 @@ public class VariableParser {
 			classes.add(var.getClass().getCanonicalName()+ ".class");
 			cache = "";
 		} else if (actual == ')' && !isSingleQuoted && !isDoubleQuoted && mode == VarMode.PARAMS) {
+			if (!cache.isEmpty()) {
+				Object var = finishObjectParam(cache);
+				params.add(var);
+				classes.add(var.getClass().getCanonicalName()+ ".class");
+			}
+			cache = auxCache;
+			auxCache = "";
 			mode = VarMode.METHOD_NAME;
 		} else {
 			cache += actual;
-		}	
+		}
 	}
 	
 	private void finishAppendix(String cache) {
@@ -69,6 +79,7 @@ public class VariableParser {
 		String current = "o" + position + "_" + level;
 		String last = "o" + position + "_" + (level-1);
 		cache = cache.trim();
+		
 		if (level == 0) {
 			declare.append(String.format(
 				"Object o%s_%s=getVariable(\"%s\");",
@@ -82,10 +93,25 @@ public class VariableParser {
 				last
 			));
 		} else if (mode == VarMode.METHOD_NAME && params.size() > 0) {
+			/*
 			declare.append(String.format(
-				"Object %s=%s.getClass().getMethod(\"%s\", %s).invoke(%s, %s);",
+				"Object %s=%s.getClass().getMethod(\"%s\",%s).invoke(%s,%s);",
 				current, last, cache, Implode.implode(",", classes), last, Implode.implode(",", params)
 			));
+			/*/
+			declare.append(String.format("Object %s=null;", current));
+            declare.append("try{");
+            declare.append(String.format(
+                "%s=%s.getClass().getMethod(\"%s\",%s).invoke(%s,%s);",
+                current, last, cache, Implode.implode(",", classes), last, Implode.implode(",", params)
+            ));
+            declare.append("}catch(NoSuchMethodException e){");
+            declare.append(String.format(
+                     "%s=%s.getClass().getMethod(\"%s\",%s).invoke(%s,%s);",
+                     current, last, cache, Implode.implode((o)->"Object.class", ",", classes), last, Implode.implode(",", params)
+                ));
+            declare.append("}");
+            //*/
 		} else if (mode == VarMode.METHOD_NAME) {
 			declare.append(String.format(
 				"Object %s=%s.getClass().getMethod(\"%s\").invoke(%s);",
@@ -108,7 +134,8 @@ public class VariableParser {
 			return object.charAt(1);
 		}
 		if (object.length() >= 2 && object.charAt(0) == '"' && object.charAt(object.length()-1) == '"') {
-			return object.substring(1, object.length() -2);
+			// return object.substring(1, object.length() -2);
+			return object;
 		}
 		if (object.matches("^([0-9]+)$")) {
 			return Integer.parseInt(object);

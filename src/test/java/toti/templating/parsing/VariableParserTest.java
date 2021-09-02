@@ -56,7 +56,21 @@ public class VariableParserTest {
 					+ "Object o0_2=o0_1.getClass().getMethod(\"getClass\").invoke(o0_1);"
 					+ "Object o0_3=o0_2.getClass().getMethod(\"equals\",java.lang.Integer.class).invoke(o0_2,1);",
 					"o0_3"
-				},/*
+				},
+			new Object[] {
+                    "var.class.equals(\"1\")}",
+                    "Object o0_1=variables.get(\"var\");"
+                    + "Object o0_2=o0_1.getClass().getMethod(\"getClass\").invoke(o0_1);"
+                    + "Object o0_3=o0_2.getClass().getMethod(\"equals\",java.lang.String.class).invoke(o0_2,\"1\");",
+                    "o0_3"
+               },
+           new Object[] {
+                    "var.class.equals(\"Hello World!\")}",
+                    "Object o0_1=variables.get(\"var\");"
+                    + "Object o0_2=o0_1.getClass().getMethod(\"getClass\").invoke(o0_1);"
+                    + "Object o0_3=o0_2.getClass().getMethod(\"equals\",java.lang.String.class).invoke(o0_2,\"Hello World!\");",
+                    "o0_3"
+               },/*
 			new Object[] {
 					"var.equals(${var2})",
 					"Object o0_1=variables.get(\"var\");"

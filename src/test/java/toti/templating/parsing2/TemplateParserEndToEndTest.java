@@ -253,7 +253,11 @@ public class TemplateParserEndToEndTest {
 			Text.get().write((bw)->{
 				try {
 					WriteText.get().write(bw, t.create(null, 
-						new MapInit<String, Object>().append("title", "Hello World!").append("age", 42).toMap(),
+						new MapInit<String, Object>()
+						.append("title", "Hello World!")
+						.append("age", 42)
+						.append("map", new MapInit<>("key1", "some value").toMap())
+						.toMap(),
 						null, null));
 				} catch (Exception e) {
 					e.printStackTrace();

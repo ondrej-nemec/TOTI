@@ -472,6 +472,7 @@ class TotiForm {
 						} else if (submit.getAttribute("onFailure") != null) {
 							window[submit.getAttribute("onFailure")](xhr, submit, form);
 						} else {
+							/* TODO xhr.response - objekt or message*/
 							totiDisplay.flash('error', totiTranslations.formMessages.saveError);
 						}
 					}
