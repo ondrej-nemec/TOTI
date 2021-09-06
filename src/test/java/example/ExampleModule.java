@@ -14,6 +14,7 @@ import toti.Module;
 import toti.Router;
 import toti.application.Task;
 import toti.registr.Registr;
+import translator.Translator;
 import common.functions.Env;
 
 public class ExampleModule implements Module {
@@ -28,7 +29,9 @@ public class ExampleModule implements Module {
 		
 		registr.addFactory(ExamplePageController.class, (trans, iden, author, authen)->new ExamplePageController(trans));
 		registr.addFactory(ExampleApiController.class, (trans, iden, author, authen)->new ExampleApiController(dao, logger, auditTrail, trans, iden));
-		return Arrays.asList();
+		return Arrays.asList(
+			new ExampleTask(dao, registr.getService(Translator.class))
+		);
 	}
 
 	@Override

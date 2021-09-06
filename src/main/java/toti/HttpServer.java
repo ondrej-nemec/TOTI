@@ -30,6 +30,7 @@ public class HttpServer {
 	public static boolean USE_OLD_IMPL = true;
 	
 	private final Server server;
+	private final ResponseFactory response;
 	private final Translator translator;
 	
 	public <T extends Module> HttpServer(
@@ -55,8 +56,8 @@ public class HttpServer {
     		boolean minimalize,
     		List<String> developIps,
     		String redirectNoLoggerdUser) throws Exception {
-	//*
-		Profiler profiler = new Profiler(); // TODO if allowed
+		Profiler profiler = new Profiler();
+	//* // TODO if allowed
 		Database.PROFILER = profiler;
 		RestApiServer.PROFILER = profiler;
 		LocaleTranslator.PROFILER = profiler;
@@ -96,7 +97,7 @@ public class HttpServer {
 		}
 	//	AuthenticationCache authenticationCache = new AuthenticationCache(tempPath, false); // TODO enable??
 		this.translator = translator;
-		ResponseFactory response = new ResponseFactory(
+		this.response = new ResponseFactory(
 				headers,
 				resourcesPath,
 				router,
@@ -130,7 +131,8 @@ public class HttpServer {
 		return translator;
 	}
 	
-	public void start() {
+	public void start() throws Exception {
+		response.map();
 		server.start();
 	}
 	

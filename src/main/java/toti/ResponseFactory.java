@@ -44,7 +44,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private final Logger logger;
 	private final List<String> developIps;
 	
-	private final List<MappedUrl> mapping;	
+	private /* final */ List<MappedUrl> mapping;	
 	private final String resourcesDir;
 	private final Router router;
 	
@@ -77,13 +77,10 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		this.resourcesDir = resourcesDir;
 		this.charset = charset;
 		this.translator = translator;
-	//	this.mapping = loadUrlMap(modules);
-		this.mapping = LoadUrls.loadUrlMap(modules); // TODO get in constructor
 		this.responseHeaders = responseHeaders;
 		this.authorizator = authorizator;
 		this.identityFactory = identityFactory;
 		this.authenticator = authenticator;
-		// this.redirectUrlNoLoggedUser = ""; // TODO security.getRedirectUrlNoLoggedUser();
 		this.router = router;
 		this.modules = modules;
 		this.totiTemplateFactory = totiTemplateFactory;
@@ -94,6 +91,10 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		this.profiler = profiler;
 	}
 
+	public void map() throws Exception {
+		this.mapping = LoadUrls.loadUrlMap(modules); // TODO get in constructor
+	}
+	
 	@Override
 	public RestApiResponse accept(
 			HttpMethod method,
@@ -293,10 +294,25 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			// TODO profiler page
 		}*/
 		if (url.substring(6).startsWith("profiler")) {
-			if (url.substring(6).length() > 9) {
-				return Response.getJson(profiler.getProfilerForPage(url.substring(15)));
+			switch (method) {
+				case GET: return null; // TODO jsp page
+				case DELETE:
+					if (params.containsKey("id") && params.is("id", Long.class)) {
+						profiler.clearProfilerWithoutPage(params.getLong("id"));
+					} else if (params.containsKey("id")) {
+						profiler.clearProfilerForPage(params.getString("id"));
+					} else {
+						profiler.clear();
+					}
+					return Response.getText("OK");
+				case PATCH:break;
+				case POST:
+					if (params.containsKey("id")) {
+						return Response.getJson(profiler.getProfilerForPage(params.getString("id")));
+					}
+					return Response.getJson(profiler);
+				case PUT:break;
 			}
-			return Response.getJson(profiler);
 		}
 		return Response.getTemplate(url.substring(5), new HashMap<>());
 	}

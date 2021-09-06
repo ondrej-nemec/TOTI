@@ -62,7 +62,7 @@ public class ExamplePageController {
 		Map<String, Object> params = new HashMap<>();
 		Grid grid = new Grid("/example-module/api/example/all", "get");
 		// HERE
-		grid.addColumn(new ValueColumn("id"));
+		grid.addColumn(new ValueColumn("id").setTitle(translator.translate("grid.id", new MapInit<String, Object>("a", "aa").toMap())));
 		grid.addColumn(new ValueColumn("name").setTitle("Name").setFilter(Text.filter()).setUseSorting(true));
 		grid.addColumn(
 			new ValueColumn("age").setTitle("Age").setFilter(Number.filter()).setUseSorting(true)

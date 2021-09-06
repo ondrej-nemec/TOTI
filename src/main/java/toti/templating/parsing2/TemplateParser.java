@@ -42,7 +42,7 @@ public class TemplateParser {
 				+ "import toti.templating.parsing2.TagNode;"
 				+ "import java.util.Map;"
 				+ "import java.util.HashMap;"
-				+ "import java.util.function.Consumer;"
+				+ "import common.structures.ThrowingConsumer;"
 				+ "import java.util.LinkedList;"
 				+ "import translator.Translator;"
 				+ "import toti.security.Authorizator;"
@@ -53,10 +53,10 @@ public class TemplateParser {
 				+ "private void write(Object data) {nodes.getLast().getBuilder().append(data);}"
 				+ "private void addVariable(String name, Object value) {nodes.getLast().getVariables().put(name, value);}"
 				+ "private Object getVariable(String name) {return nodes.getLast().getVariables().get(name);}"
-				+ "private Consumer<Map<String, Object>> getBlock(String name) {return nodes.getLast().getBlocks().get(name);}"
-				+ "private void addBlock(String name, Consumer<Map<String, Object>> value) {nodes.getLast().getBlocks().put(name, value);}"
-				
-				+ "private void initNode(Map<String, Object> variables) {Map<String, Object> params = new HashMap<>();Map<String, Consumer<Map<String, Object>>> blocks = new HashMap<>();if (nodes.size() > 0) {params.putAll(nodes.getLast().getVariables());blocks.putAll(nodes.getLast().getBlocks());}if (variables != null) {params.putAll(variables);}nodes.add(new TagNode(params, blocks));}"
+				+ "private ThrowingConsumer<Map<String, Object>, Exception> getBlock(String name) {return nodes.getLast().getBlocks().get(name);}"
+                + "private void addBlock(String name, ThrowingConsumer<Map<String, Object>, Exception> value) {nodes.getLast().getBlocks().put(name, value);}"
+
+                + "private void initNode(Map<String, Object> variables) {Map<String, Object> params = new HashMap<>();Map<String, ThrowingConsumer<Map<String, Object>, Exception>> blocks = new HashMap<>();if (nodes.size() > 0) {params.putAll(nodes.getLast().getVariables());blocks.putAll(nodes.getLast().getBlocks());}if (variables != null) {params.putAll(variables);}nodes.add(new TagNode(params, blocks));}"
 				+ "private TagNode flushNode() {TagNode node = nodes.removeLast();if (nodes.size() > 0) {write(node.getBuilder().toString());}return node;}"
 								
 				+ "public long getLastModification(){return %sL;}"

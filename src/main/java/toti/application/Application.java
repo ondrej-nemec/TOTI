@@ -86,6 +86,7 @@ public class Application {
 			for (Module module : modules) {
 				tasks.addAll(module.initInstances(
 					env,
+					server.getTranslator(),
 					registr,
 					database,
 					TotiLogger.getLogger(module.getName())

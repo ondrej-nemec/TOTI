@@ -35,7 +35,7 @@ public class IncludeTag implements Tag {
 		if (params.get("block") != null) {
 			StringBuilder code = new StringBuilder("{");
 			code.append(String.format(
-				"java.util.function.Consumer<Map<String, Object>> %s = getBlock(\"%s\");",
+				"ThrowingConsumer<Map<String, Object>,Exception> %s = getBlock(\"%s\");",
 				params.get("block"), params.get("block")
 			));
 			code.append(String.format("if (%s == null && %s) {", params.get("block"), params.get("optional") == null ? "true" : "false"));

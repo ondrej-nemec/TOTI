@@ -1,15 +1,16 @@
 package toti.templating.parsing2;
 
 import java.util.Map;
-import java.util.function.Consumer;
+
+import common.structures.ThrowingConsumer;
 
 public class TagNode {
 
 	protected final StringBuilder builder;
 	protected final Map<String, Object> variables;
-	protected final Map<String, Consumer<Map<String, Object>>> blocks;
+	protected final Map<String, ThrowingConsumer<Map<String, Object>, Exception>> blocks;
 	
-	public TagNode( Map<String, Object> variables, Map<String, Consumer<Map<String, Object>>> blocks) {
+	public TagNode( Map<String, Object> variables, Map<String, ThrowingConsumer<Map<String, Object>, Exception>> blocks) {
 		this.builder = new StringBuilder();
 		this.variables = variables;
 		this.blocks = blocks;
@@ -23,7 +24,7 @@ public class TagNode {
 		return variables;
 	}
 	
-	public Map<String, Consumer<Map<String, Object>>> getBlocks() {
+	public Map<String,ThrowingConsumer<Map<String, Object>, Exception>> getBlocks() {
 		return blocks;
 	}
 
