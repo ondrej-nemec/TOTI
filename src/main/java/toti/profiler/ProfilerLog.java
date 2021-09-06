@@ -154,13 +154,15 @@ public class ProfilerLog implements Jsonable{
 		queries.putAll(sqlLogs);
 		
 		Map<String, Object> json = new HashMap<>();
-		json.put("identity", iden);
-		json.put("params", params);
 		json.put("trans", trans);
-		json.put("requestInfo", requestInfo);
 		json.put("queries", queries);
 		json.put("created", createdAt);
 		json.put("name", threadName);
+		
+		json.put("requestInfo", requestInfo);
+		json.put("params", params);
+		json.put("rendering", rendering);
+		json.put("identity", iden);
 		
 		return json;
 	}

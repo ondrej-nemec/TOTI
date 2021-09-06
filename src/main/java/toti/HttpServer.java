@@ -55,13 +55,14 @@ public class HttpServer {
     		boolean dirResponseAllowed,
     		boolean minimalize,
     		List<String> developIps,
-    		String redirectNoLoggerdUser) throws Exception {
+    		String redirectNoLoggerdUser,
+    		boolean useProfiler) throws Exception {
 		Profiler profiler = new Profiler();
-	//* // TODO if allowed
-		Database.PROFILER = profiler;
-		RestApiServer.PROFILER = profiler;
-		LocaleTranslator.PROFILER = profiler;
-	//*/	
+		if (useProfiler) {
+			Database.PROFILER = profiler;
+			RestApiServer.PROFILER = profiler;
+			LocaleTranslator.PROFILER = profiler;
+		}
 		
 		Router router = new Router();
 		Map<String, TemplateFactory> controllers = new HashMap<>();

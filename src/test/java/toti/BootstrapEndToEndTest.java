@@ -77,6 +77,7 @@ public class BootstrapEndToEndTest {
 					)));
 					factory.setAllowedUploadFileTypes(Optional.empty());
 					factory.setMaxUploadFileSize(1000000);
+					factory.setUseProfiler(true);
 					
 					MapDictionary<String, Object> config = new DictionaryValue(Text.get().read((br)->{
 						return ReadText.get().asString(br);

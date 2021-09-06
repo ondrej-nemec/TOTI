@@ -293,7 +293,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		/*if (url.substring(6).startsWith("")) {
 			// TODO profiler page
 		}*/
-		if (url.substring(6).startsWith("profiler")) {
+		if (url.substring(6).startsWith("profiler") && developIps.contains(identity.getIP())) {
 			switch (method) {
 				case GET: return null; // TODO jsp page
 				case DELETE:

@@ -40,6 +40,7 @@ public class HttpServerFactory {
 	private long tokenExpirationTime = 1000 * 60 * 10;
 	private String tokenCustomSalt = "";
 	private String redirectNoLoggerdUser = null;
+	private boolean useProfiler = false;
 	
 	public HttpServerFactory(Logger logger) {
 		this.logger = logger;
@@ -52,7 +53,8 @@ public class HttpServerFactory {
 				translator,
 				maxUploadFileSize, allowedUploadFileTypes,
 				charset, settings, tokenCustomSalt, tokenExpirationTime,
-				logger, deleteTempJavaFiles, dirResponseAllowed, minimalize, developIps, redirectNoLoggerdUser
+				logger, deleteTempJavaFiles, dirResponseAllowed, minimalize,
+				developIps, redirectNoLoggerdUser, useProfiler
 		);
 	}
 
@@ -158,6 +160,11 @@ public class HttpServerFactory {
 
 	public HttpServerFactory setRedirectNoLoggerdUser(String redirectNoLoggerdUser) {
 		this.redirectNoLoggerdUser = redirectNoLoggerdUser;
+		return this;
+	}
+	
+	public HttpServerFactory setUseProfiler(boolean useProfiler) {
+		this.useProfiler = useProfiler;
 		return this;
 	}
 	

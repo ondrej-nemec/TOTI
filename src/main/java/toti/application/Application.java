@@ -217,6 +217,9 @@ public class Application {
 			if (env.getString("http.allowed-file-types") != null) {
 				factory.setAllowedUploadFileTypes(Optional.of(env.getList("http.allowed-file-types", "|")));
 			}
+			if (env.getString("http.use-profiler") != null) {
+				factory.setUseProfiler(env.getBoolean("http.use-profiler"));
+			}
 			/*
 			private Translator translator;
 			*/
