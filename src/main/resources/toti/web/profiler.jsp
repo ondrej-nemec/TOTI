@@ -71,10 +71,6 @@
 		dt {
 			font-weight: bold;
 		}
-		/*#tableInfoMenu li {
-			display: inline-block;
-			padding: 0.40em;
-		}*/
 	</style>
 </head>
 <body>
@@ -89,7 +85,7 @@
 	</div>
 	<div>
 		<div>
-			<label><input type="checkbox" id="chb-page-request" checked>Log page requests</label>
+			<label><input type="checkbox" id="chb-page-request" {{ ${enable|Boolean} ? "checked" : ""}} >Log page requests</label>
 		</div>
 		<div id="content"></div>
 	</div>

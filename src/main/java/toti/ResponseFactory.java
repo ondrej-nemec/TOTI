@@ -291,28 +291,12 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private Response getTotiResponse(HttpMethod method, String url, RequestParameters params, Identity identity, ResponseHeaders headers) {
 		if (url.substring(6).startsWith("db")) {
 			return dbViewer.getResponse(method, url.substring(8), params, identity, headers);
-
 		}
-		if (url.substring(6).startsWith("profiler") && developIps.contains(identity.getIP())) {
-			switch (method) {
-				case GET: return null; // TODO jsp page
-				case DELETE:
-					if (params.containsKey("id") && params.is("id", Long.class)) {
-						profiler.clearProfilerWithoutPage(params.getLong("id"));
-					} else if (params.containsKey("id")) {
-						profiler.clearProfilerForPage(params.getString("id"));
-					} else {
-						profiler.clear();
-					}
-					return Response.getText("OK");
-				case PATCH:break;
-				case POST:
-					if (params.containsKey("id")) {
-						return Response.getJson(profiler.getProfilerForPage(params.getString("id")));
-					}
-					return Response.getJson(profiler);
-				case PUT:break;
+		if (url.substring(6).startsWith("profiler")) {
+			if (developIps.contains(identity.getIP())) {
+				return profiler.getResponse(method, params);
 			}
+			return Response.getText(StatusCode.FORBIDDEN, "");
 		}
 		return Response.getTemplate(url.substring(5), new HashMap<>());
 	}

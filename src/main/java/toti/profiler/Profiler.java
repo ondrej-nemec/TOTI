@@ -12,9 +12,11 @@ import database.support.SqlQueryProfiler;
 import translator.TransProfiler;
 import json.Jsonable;
 import socketCommunication.http.HttpMethod;
+import socketCommunication.http.StatusCode;
 import socketCommunication.http.server.RequestParameters;
 import socketCommunication.http.server.profiler.HttpServerProfiler;
 import socketCommunication.http.server.profiler.HttpServerProfilerEvent;
+import toti.response.Response;
 import toti.security.Identity;
 
 public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProfiler,  Jsonable {
@@ -24,9 +26,14 @@ public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProf
 	private final Map<Object, ProfilerLog> notPageLog = new HashMap<>();
 	private final Map<String, List<ProfilerLog>> logByPage = new HashMap<>();
 	
+	private boolean enable = true;
+	
 	/****************/
 	
 	public void setPageId(String id) {
+		if (!enable) {
+			return;
+		}
 		List<ProfilerLog> logs = logByPage.get(id);
 		if (logs == null) {
 			logs = new LinkedList<>();
@@ -100,6 +107,9 @@ public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProf
 	/**************/
 
 	private void log(Consumer<ProfilerLog> consumer) {
+		if (!enable) {
+			return;
+		}
 		ProfilerLog log = logByThread.get(Thread.currentThread().getId());
 		if (log != null) {
 			consumer.accept(log);
@@ -115,6 +125,9 @@ public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProf
 	
 	@Override
 	public void log(HttpServerProfilerEvent event) {
+		if (!enable) {
+			return;
+		}
 		long threadId = Thread.currentThread().getId();
 		notPageLog.remove(threadId);
 		ProfilerLog log = logByThread.get(threadId);
@@ -161,13 +174,43 @@ public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProf
 		logByThread.clear();
 		logByPage.clear();
 	}
-/*
-	private List<Object> getPageLogs(List<ProfilerLog> logs) {
-		List<Object> json = new LinkedList<>();
-		logs.forEach((log)->{
-			json.add(log);
-		});
-		return json;
+	
+	public void changeEnable() {
+		this.enable = !enable;
 	}
-*/
+
+	public boolean isEnable() {
+		return enable;
+	}
+	
+	public Response getResponse(HttpMethod method, RequestParameters params) {
+		switch (method) {
+			case GET: 
+				return Response.getTemplate(
+					"/profiler.jsp",
+					new MapInit<String, Object>("enable", enable).toMap()
+				);
+			case DELETE:
+				if (params.containsKey("id") && params.is("id", Long.class)) {
+					clearProfilerWithoutPage(params.getLong("id"));
+				} else if (params.containsKey("id")) {
+					clearProfilerForPage(params.getString("id"));
+				} else {
+					clear();
+				}
+				return Response.getText("OK");
+			case PUT:
+				changeEnable();
+				return Response.getText("OK");
+			case POST:
+				if (params.containsKey("id")) {
+					return Response.getJson(getProfilerForPage(params.getString("id")));
+				}
+				return Response.getJson(toJson());
+			case PATCH:
+			default:
+				return Response.getText(StatusCode.NOT_FOUND, "");
+		}
+	}
+	
 }
