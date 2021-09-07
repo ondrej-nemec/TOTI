@@ -2,6 +2,9 @@ package toti;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -271,7 +274,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	    			profiler.setPageId(identity.getPageId());
 	    			profiler.logRequest(identity, method, url, fullUrl, protocol, params);
 	    		}
-	    		return getControllerResponse(headers, mapped, params, identity);
+	    		return getControllerResponse(headers, fullUrl, mapped, params, identity);
 	    	}
 		}
 		// files
@@ -290,9 +293,6 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			return dbViewer.getResponse(method, url.substring(8), params, identity, headers);
 
 		}
-		/*if (url.substring(6).startsWith("")) {
-			// TODO profiler page
-		}*/
 		if (url.substring(6).startsWith("profiler") && developIps.contains(identity.getIP())) {
 			switch (method) {
 				case GET: return null; // TODO jsp page
@@ -318,8 +318,9 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	}
 
 	private RestApiResponse getControllerResponse(
-			ResponseHeaders headers,
-			MappedUrl mapped, RequestParameters params, Identity identity) throws ServerException {
+			ResponseHeaders headers, String fullUrl,
+			MappedUrl mapped, RequestParameters params,
+			Identity identity) throws ServerException {
 		Map<String,  Object> errors = new HashMap<>();
 		if (mapped.getValidator().isPresent()) {
 			errors.putAll(mapped.getValidator().get().validate(params, translator.withLocale(identity.getLocale())));
@@ -350,15 +351,17 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				if (mapped.isApi() || authorizator.getRedirectUrlNoLoggedUser() == null) {
 					throw e;
 				}
-				return Response.getRedirect(authorizator.getRedirectUrlNoLoggedUser())
-						.getResponse(headers, null, null, null, null, charset);
+				/*return Response.getRedirect(authorizator.getRedirectUrlNoLoggedUser())
+						.getResponse(headers, null, null, null, null, charset);*/
+				return Response.getRedirect(
+					authorizator.getRedirectUrlNoLoggedUser() + "?backlink=" + getBackLink(fullUrl)
+	            ).getResponse(headers, null, null, null, null, charset);
 			}
 		} else {
 			// check errors after authrization
 			return Response.getJson(StatusCode.BAD_REQUEST, errors).getResponse(headers, null, null, null, null, charset);
 		}
 		try {
-		//	Object o = Registr.get().getFactory(mapped.getClassName()).get();
 			Object o = Registr.get()
 					.getFactory(mapped.getClassName())
 					.apply(translator.withLocale(identity.getLocale()), identity, authorizator, authenticator);
@@ -384,6 +387,13 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		}
 	}
 
+    private String getBackLink(String fullUrl) {
+        try {
+             return URLEncoder.encode(fullUrl, StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+             return fullUrl;
+        }
+    }
 	private void authorize(MappedUrl mapped, RequestParameters params, Identity identity, RequestParameters prop) throws ServerException {
 		if (mapped.isSecured()) {
 			if (identity.isAnonymous()) {
