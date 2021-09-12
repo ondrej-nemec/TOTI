@@ -26,7 +26,8 @@ public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProf
 	private final Map<Object, ProfilerLog> notPageLog = new HashMap<>();
 	private final Map<String, List<ProfilerLog>> logByPage = new HashMap<>();
 	
-	private boolean enable = true;
+	private boolean use = false;
+	private boolean enable = false;
 	
 	/****************/
 	
@@ -152,11 +153,7 @@ public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProf
 		.append("noPageLog", notPageLog)
 		.toMap();
 	}
-	
-	public List<ProfilerLog> getProfilerForPage(String id) {
-		return logByPage.get(id);
-	}
-	
+
 	public void clearProfilerForPage(String id) {
 		List<ProfilerLog> logs = logByPage.remove(id);
 		logs.forEach((log)->{
@@ -174,15 +171,7 @@ public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProf
 		logByThread.clear();
 		logByPage.clear();
 	}
-	
-	public void changeEnable() {
-		this.enable = !enable;
-	}
 
-	public boolean isEnable() {
-		return enable;
-	}
-	
 	public Response getResponse(HttpMethod method, RequestParameters params) {
 		switch (method) {
 			case GET: 
@@ -200,17 +189,26 @@ public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProf
 				}
 				return Response.getText("OK");
 			case PUT:
-				changeEnable();
+				this.enable = !enable;
 				return Response.getText("OK");
 			case POST:
 				if (params.containsKey("id")) {
-					return Response.getJson(getProfilerForPage(params.getString("id")));
+					return Response.getJson(logByPage.get(params.getString("id")));
 				}
 				return Response.getJson(toJson());
 			case PATCH:
 			default:
 				return Response.getText(StatusCode.NOT_FOUND, "");
 		}
+	}
+
+	public boolean isUse() {
+		return use;
+	}
+
+	public void setUse(boolean use) {
+		this.use = use;
+		this.enable = use;
 	}
 	
 }

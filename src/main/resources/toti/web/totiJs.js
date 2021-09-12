@@ -1,4 +1,4 @@
-/* TOTI script version 0.1.1 */
+/* TOTI script version 0.1.2 */
 <t:include file="js/totiSettings.js" />
 <t:include file="js/totiImages.js" />
 <t:include file="js/totiTranslations.js" />
@@ -9,5 +9,6 @@
 <t:include file="js/totiAuth.js" />
 <t:include file="js/totiDisplay.js" />
 <t:include file="js/totiControl.js" />
+<t:include file="js/totiProfiler.js" />
 <t:include file="js/totiForm.js" />
 <t:include file="js/totiGrid.js" />

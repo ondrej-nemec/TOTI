@@ -1,4 +1,5 @@
-/* TOTI Settings version 0.0.1 */
+/* TOTI Settings version 0.0.2 */
 var totiSettings = {
-	flashTimeout: 0
+	flashTimeout: 0,
+	showProfiler: true
 };

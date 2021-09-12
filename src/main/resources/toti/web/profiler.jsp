@@ -1,7 +1,9 @@
+<!-- TOTI Profiler version 0.0.1 -->
 <html>
 <head>
 	<title>Profiler</title>
 	<script src="/toti/totiJs.js"></script>
+	<script>totiSettings.showProfiler = false;</script>
 
 	<style type="text/css">
 		body {
@@ -203,8 +205,8 @@
 
 	 <template id="rendering-template">
 			<div>
-				<h2>Rendering</h2>
-				<h3>Render time: <span id="data-rendering-render"></span></h3>
+				<h2>Server processing time</h2>
+				<h3>Total processing time: <span id="data-rendering-render"></span></h3>
 
 				<table id="data-rendering-times">
 					<tr>

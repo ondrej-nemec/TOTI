@@ -64,7 +64,8 @@ var totiLoad = {
 	getHeaders: function() {
 		return {
 			...totiAuth.getAuthHeader(),
-			...totiLang.getLangHeader()
+			...totiLang.getLangHeader(),
+			...totiProfiler.getProfilerHeader()
 		};
 	}
 };

@@ -58,6 +58,7 @@ public class HttpServer {
     		String redirectNoLoggerdUser,
     		boolean useProfiler) throws Exception {
 		Profiler profiler = new Profiler();
+		profiler.setUse(useProfiler);
 		if (useProfiler) {
 			Database.PROFILER = profiler;
 			RestApiServer.PROFILER = profiler;

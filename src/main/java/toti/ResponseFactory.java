@@ -113,7 +113,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		System.err.println("Params: " + params);
 		//*/
 		// Locale locale = language.getLocale(header);
-		Identity identity = identityFactory.createIdentity(header, ip, profiler != null);
+		Identity identity = identityFactory.createIdentity(header, ip, profiler.isUse());
 		/*if (identity.getPageId() != null) {
 			profiler.setPageId(identity.getPageId());
 		}*/
@@ -152,7 +152,6 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		} catch (Exception e) {
 			return onException(500, method, url, fullUrl, protocol, header, params, identity, e);
 		}
-		
 	}
 	
 	private RestApiResponse onException(int responseCode, 
@@ -175,14 +174,14 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("code", code);
 		return Response.getTemplate(code, "/errors/error.jsp", variables)
-				.getResponse(
-					responseHeaders.get(), 
-					totiTemplateFactory, 
-					translator.withLocale(identity.getLocale()), 
-					authorizator,
-					identity,
-					charset
-				);
+			.getResponse(
+				responseHeaders.get(), 
+				totiTemplateFactory, 
+				translator.withLocale(identity.getLocale()), 
+				authorizator,
+				identity,
+				charset
+			);
 	}
 	
 	private RestApiResponse printException(StatusCode code, 
@@ -293,7 +292,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			return dbViewer.getResponse(method, url.substring(8), params, identity, headers);
 		}
 		if (url.substring(6).startsWith("profiler")) {
-			if (developIps.contains(identity.getIP())) {
+			if (profiler.isUse() && developIps.contains(identity.getIP())) {
 				return profiler.getResponse(method, params);
 			}
 			return Response.getText(StatusCode.FORBIDDEN, "");
@@ -358,7 +357,6 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			
 	    	Response response = (Response)o.getClass()
 	    				.getMethod(mapped.getMethodName(), classes).invoke(o, values);
-	    	
 	    	headers.addHeaders(identityFactory.getResponseHeaders(identity)); // FIX for cookies
 	    	
 			return response.getResponse(
