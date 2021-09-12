@@ -76,9 +76,9 @@ public class IdentityFactory {
 	
 	private String getPageId(Properties headers) {
 		String pageHeader = headers.getProperty(PAGE_ID_HEADER_NAME);
-		if (pageHeader == null) {
+		/*if (pageHeader == null) {
 			pageHeader = Identity.getCookieValue(headers, PAGE_ID_COOKIE_NAME);
-		}
+		}*/
 		if (pageHeader == null) {
 			return ("Page_" + new Random().nextDouble()).replace(".", "");
 		}
