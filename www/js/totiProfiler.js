@@ -88,6 +88,10 @@ var totiProfiler = {
 		closeButton.appendChild(totiProfiler.getImage("toti-profiler-close", totiImages.cross, function() {
 			document.getElementById("toti-profiler").remove();
 			document.getElementById("toti-profiler-bottom").remove();
+			var detail = document.getElementById("toti-profiler-detail");
+			if (detail !== null) {
+				detail.remove();
+			}
 			if (interval != null) {
 				clearInterval(interval);
 			}
@@ -106,21 +110,10 @@ var totiProfiler = {
 
 		var showButton = document.createElement("div");
 		var hideButton = document.createElement("div");
+		hideButton.setAttribute("id", "toti-profiler-hide-button");
 		hideButton.style.display = "none";
 		showButton.appendChild(totiProfiler.getImage("toti-profiler-show", totiImages.arrowUp, function() {
-			var detail = document.createElement("div");
-			detail.setAttribute("id", "toti-profiler-detail");
-			document.body.appendChild(detail);
-
-			detail.style.display = "block";
-			detail.style.position = "fixed";
-			detail.style.bottom = "32px";
-			detail.style.right = "0px";
-			detail.style.overflow = "auto";
-			detail.style["max-height"] = "50%";
-			detail.style.left = showButton.getBoundingClientRect().left + "px";
-
-			detail.appendChild(totiProfiler.getDetailPanel(totiProfiler.data));
+			totiProfiler.showDetail(showButton.getBoundingClientRect().left);
 
 			showButton.setAttribute("style", "display: none");
 			hideButton.setAttribute("style", "");
@@ -145,6 +138,21 @@ var totiProfiler = {
 		container.appendChild(showHide);
 		container.appendChild(document.createElement("td"));
 	},
+	showDetail: function(left) {
+		var detail = document.createElement("div");
+		detail.setAttribute("id", "toti-profiler-detail");
+		document.body.appendChild(detail);
+
+		detail.style.display = "block";
+		detail.style.position = "fixed";
+		detail.style.bottom = "32px";
+		detail.style.right = "0px";
+		detail.style.overflow = "auto";
+		detail.style["max-height"] = "50%";
+		detail.style.left = left + "px";
+
+		detail.appendChild(totiProfiler.getDetailPanel(totiProfiler.data));
+	},
 	print: function() {
 		var interval = null;
 		var pageId = totiUtils.getCookie("PageId");
@@ -161,7 +169,11 @@ var totiProfiler = {
 						return;
 					}
 					totiProfiler.data = res;
-					/* TODO remove detail panel, if exists */
+					var detail = document.getElementById("toti-profiler-detail");
+					if (detail !== null) {
+						detail.remove();
+						totiProfiler.showDetail(document.getElementById("toti-profiler-hide-button").getBoundingClientRect().left);
+					}
 					var requestCount = profiler.querySelector("#toti-profiler-requests-count");
 					if (requestCount.innerText.length === 0) {
 						for (const[a, row] of Object.entries(totiProfiler.getDataRow(res[0]).children)) {
@@ -180,7 +192,7 @@ var totiProfiler = {
 		};
 
 		showData();
-		interval = setInterval(showData, 30000);
+		interval = setInterval(showData, 5000);
     	return profiler;
 	}
 }
