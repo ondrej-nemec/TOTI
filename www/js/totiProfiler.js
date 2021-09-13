@@ -1,8 +1,9 @@
 /* TOTI Profiler version 0.0.1 */
 var totiProfiler = {
+	pageId: null,
 	data: [],
-	getProfilerHeader: function(access = true) {
-		var pageId = totiUtils.getCookie("PageId");
+	getProfilerHeader: function() {
+		var pageId = totiProfiler.pageId;
 		if (pageId === null) {
 			return {};
 		}
@@ -155,7 +156,7 @@ var totiProfiler = {
 	},
 	print: function() {
 		var interval = null;
-		var pageId = totiUtils.getCookie("PageId");
+		var pageId = totiProfiler.pageId;
 
 		var profiler = document.createElement("table");
 		profiler.setAttribute("id", "toti-profiler");
@@ -192,7 +193,7 @@ var totiProfiler = {
 		};
 
 		showData();
-		interval = setInterval(showData, 5000);
+		interval = setInterval(showData, 10000);
     	return profiler;
 	}
 }
@@ -207,3 +208,4 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	    document.body.appendChild(totiProfiler.print());
 	}
 });
+totiProfiler.pageId = totiUtils.getCookie("PageId");

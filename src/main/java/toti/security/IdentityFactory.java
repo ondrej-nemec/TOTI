@@ -59,6 +59,7 @@ public class IdentityFactory {
 			headers.add(
 				"Set-Cookie: "
 				+ PAGE_ID_COOKIE_NAME + "=" + identity.getPageId()
+				+ "; SameSite=Strict"
 			);
 		}
 		//cache.save(identity.getId(), identity.getUser());
