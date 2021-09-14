@@ -10,7 +10,7 @@
 	</style>
 	<div>
 		<div id="logout">
-			<form action="/toti/db">
+			<form action="/toti/db" method="post">
 				<input type="submit" value="Logout" name="logout"/>
 			</form>
 		</div>

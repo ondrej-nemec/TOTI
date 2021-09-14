@@ -288,9 +288,11 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	}
 	
 	private Response getTotiResponse(HttpMethod method, String url, RequestParameters params, Identity identity, ResponseHeaders headers) {
+		/*
 		if (url.substring(6).startsWith("db")) {
 			return dbViewer.getResponse(method, url.substring(8), params, identity, headers);
 		}
+		*/
 		if (url.substring(6).startsWith("profiler")) {
 			if (profiler.isUse() && developIps.contains(identity.getIP())) {
 				return profiler.getResponse(method, params);

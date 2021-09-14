@@ -28,12 +28,54 @@ public class DbViewerRouter {
 			Identity identity, 
 			ResponseHeaders responseHeaders) {
 		String authCookie = identity.getCookieValue(COOKIE_NAME);
+		/*
+		if ("".equals(path)) {
+			
+		}
+		System.err.println(params);
+		System.err.println("path '" + path + "'"); // pouzit
+		System.err.println(method);
+		System.err.println(authCookie);
+		*/
+		switch (method) {
+			case POST:
+				if (authCookie == null && params.size() > 0) { // login
+					authCookie = RandomStringUtils.randomAlphanumeric(50);
+					responseHeaders.addHeader(
+						"Set-Cookie: "
+						+ COOKIE_NAME + "=" + authCookie
+						+ "; HttpOnly"
+						+ "; Path=/toti/db"
+						+ "; SameSite=Strict"
+						+ "; Max-Age=" + 900
+					);
+					viewers.put(authCookie, new DbViewer(new Database(createConfig(params), TotiLogger.getLogger("dbViewer"))));
+					return Response.getRedirect("/toti/db");
+				} else if (params.containsKey("logout")) {
+					// logout
+					return logOut(authCookie, responseHeaders);
+				}
+			case PATCH:
+			case GET:
+			case DELETE:
+			case PUT:
+			default:
+				if (authCookie == null) { // get login page
+					return Response.getTemplate("/dbviewer/login.jsp", new HashMap<>());
+				}
+				DbViewer viewer = viewers.get(authCookie);
+				if (viewer == null) { // get login page
+					return logOut(authCookie, responseHeaders);
+				}
+				return viewer.getResponse(method, path, params);
+		}
+		/*
 		if (authCookie == null) {
 			responseHeaders.addHeader(
 				"Set-Cookie: "
 				+ COOKIE_NAME + "=" + RandomStringUtils.randomAlphanumeric(50)
 				+ "; HttpOnly"
-				+ "; Path=/"
+				+ "; Path=/toti/db"
 				+ "; SameSite=Strict"
 				+ "; Max-Age=" + 900
 			);
@@ -45,7 +87,7 @@ public class DbViewerRouter {
 				"Set-Cookie: "
 				+ COOKIE_NAME + "=" + authCookie
 				+ "; HttpOnly"
-				+ "; Path=/"
+				+ "; Path=/toti/db"
 				+ "; SameSite=Strict"
 				+ "; Max-Age=" + 0
 			);
@@ -59,6 +101,22 @@ public class DbViewerRouter {
 			viewers.put(authCookie, viewer);
 		}
 		return viewer.getResponse(method, path, params);
+		*/
+	}
+	
+	private Response logOut(String authCookie, ResponseHeaders responseHeaders) {
+		if (authCookie != null) {
+			viewers.remove(authCookie);
+			responseHeaders.addHeader(
+				"Set-Cookie: "
+				+ COOKIE_NAME + "=" + authCookie
+				+ "; HttpOnly"
+				+ "; Path=/toti/db"
+				+ "; SameSite=Strict"
+				+ "; Max-Age=" + 0
+			);
+		}
+		return Response.getRedirect("/toti/db");
 	}
 	
 	private DatabaseConfig createConfig(RequestParameters params) {

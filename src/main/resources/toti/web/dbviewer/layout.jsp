@@ -3,21 +3,8 @@
 	<title>DB Viewer</title>
 
 	<link rel="stylesheet" href="/toti/totiStyle.css" />
-	<!-- 
 	<script src="/toti/totiJs.js"></script>
-	 -->
-	<script src="../js/totiSettings.js"></script>
-	<script src="../js/totiImages.js" ></script>
-	<script src="../js/totiUtils.js" ></script>
-	<script src="../js/totiTranslations.js" ></script>
-	<script src="../js/totiStorage.js" ></script>
-	<script src="../js/totiLang.js" ></script>
-	<script src="../js/totiLoad.js" ></script>
-	<script src="../js/totiAuth.js" ></script>
-	<script src="../js/totiDisplay.js" ></script>
-	<script src="../js/totiControl.js" ></script>
-	<script src="../js/totiForm.js" ></script>
-	<script src="../js/totiGrid.js" ></script>
+	<script>totiSettings.showProfiler = false;</script>
 
 	<style type="text/css">
 		.center {
@@ -27,9 +14,13 @@
 			text-align: left;
 		}
 		h1 {
-			background-color: #66CCFF;
+			text-align: center;
+			color: white;
+			background-color: #3366ff;
 			padding: 0.5em;
-			margin: 0.25em;
+		}
+		body {
+			background-color: #cccccc;
 		}
 	</style>
 
