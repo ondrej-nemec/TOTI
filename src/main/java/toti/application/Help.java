@@ -7,6 +7,10 @@ public class Help {
 	private final String optgroup;
 	private final boolean disabled;
 	
+	public Help(Object value, Object title) {
+		this(value, title, null, false);
+	}
+	
 	public Help(Object value, Object title, String optgroup, boolean disabled) {
 		this.value = value;
 		this.title = title;

@@ -2,7 +2,6 @@ package toti.application;
 
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -230,9 +229,9 @@ public interface EntityDao<T extends Entity> {
 		return builder.select(select.toString()).from(getTableName());
 	}
 	
-	default Map<Object, Object> getHelp(Collection<Object> forOwners) throws SQLException {
+	default List<Help> getHelp(Collection<Object> forOwners) throws SQLException {
 		return getDatabase().applyBuilder((builder)->{
-			Map<Object, Object> items = new HashMap<>();
+			List<Help>items = new LinkedList<>();
 			SelectBuilder select = _getHelp(builder);
 			if (getOwnerColumnName().isPresent()) {
 				if (!forOwners.isEmpty()) {
@@ -242,8 +241,7 @@ public interface EntityDao<T extends Entity> {
 				}
 			}
 			select.fetchAll().forEach((row)->{
-				items.put(
-					row.getValue(HELP_KEY_NAME),
+				items.add(
 					new Help(
 						row.getValue(HELP_KEY_NAME), 
 						row.getValue(HELP_DISPLAY_VALUE_NAME),

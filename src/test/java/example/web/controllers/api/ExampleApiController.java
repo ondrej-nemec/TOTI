@@ -24,7 +24,7 @@ import toti.annotations.url.Param;
 import toti.annotations.url.ParamUrl;
 import toti.annotations.url.Params;
 import toti.annotations.url.Secured;
-import toti.control.inputs.Option;
+import toti.application.Help;
 import toti.response.Response;
 import toti.security.Identity;
 import translator.Translator;
@@ -71,9 +71,10 @@ public class ExampleApiController {
 	@Method({HttpMethod.GET})
 	public Response getInArray(@Param("view") Boolean viewOnly) {
 		try {
-			Map<Object, Object> values = dao.getHelp(identity.getUser().getAllowedIds());
+			List<Help> values = dao.getHelp(identity.getUser().getAllowedIds());
 			for (int i = 0; i < 10; i++) {
-				values.put("#" + i, Option.create("#" + i, "Option #" + i).setOptGroup("Opt Group #" + i%3));
+			//	values.put("#" + i, Option.create("#" + i, "Option #" + i).setOptGroup("Opt Group #" + i%3));
+				values.add(new Help("#" + i, "Option #" + i, "Opt Group #" + i%3, false));
 			}
 			return Response.getJson(values);
 		} catch (Exception e) {

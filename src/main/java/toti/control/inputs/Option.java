@@ -36,7 +36,7 @@ public class Option implements Input {
 		set.put("value", value);
 		set.put("title", title);
 		if (disabled) {
-			set.put("disabled", "true");
+			set.put("disabled", true);
 		}
 		if (group != null) {
 			set.put("optgroup", group);
