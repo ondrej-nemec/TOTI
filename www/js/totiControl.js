@@ -1,4 +1,4 @@
-/* TOTI Control version 0.0.15 */
+/* TOTI Control version 0.0.16 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -324,19 +324,26 @@ var totiControl = {
 
 		    var datetime = document.createElement("fieldset");
 		    for ([key, name] of Object.entries(attributes)) {
-		        datetime.setAttribute(key, name);
+		    	if (key !== "value") {
+					datetime.setAttribute(key, name);
+		    	}
 		    }
 
 		    datetime.appendChild(date);
 		    datetime.appendChild(time);
 
 		    var setValue = function(value) {
-		        var values = value.split("T");
-		        if (values.length !== 2) {
-		             return;
-		        }
-		        date.value = values[0];
-		        time.value = values[1];
+		    	if (value) {
+			        var values = value.split("T");
+			        if (values.length === 2) {
+				        date.value = values[0];
+				        time.value = values[1];
+			        } else if (values.length === 1 && value.length === 10) {
+				        date.value = value;
+			        } else if (values.length === 1 && value.length >=5) {
+				        time.value = value;
+			        }
+		    	}
 		    };
 
 		    if (attributes.hasOwnProperty("value")) {
@@ -345,11 +352,12 @@ var totiControl = {
 
 		    var formWaiting = function() {
 		        if (datetime.form === null) {
-		              setTimeout(formWaiting, 50);
-		       } else {
-		             datetime.form.onreset = function() {
-		                 datetime.value = '';
-		             };
+		            setTimeout(formWaiting, 50);
+		        } else {
+		    		setValue(datetime.value);
+		            datetime.form.onreset = function() {
+		                datetime.value = '';
+		            };
 		        }
 		    };
 
