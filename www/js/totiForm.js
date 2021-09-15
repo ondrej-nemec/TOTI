@@ -1,4 +1,4 @@
-/* TOTI Form version 0.0.18 */
+/* TOTI Form version 0.0.19 */
 class TotiForm {
 
 	constructor(config) {
@@ -391,15 +391,17 @@ class TotiForm {
                 if (input.getAttribute("exclude") !== null && input.getAttribute("exclude") === "true") {
                     return;
                 }
-                if (type === "submit" || type === "button" || type === "reset" || type === "image" || input.type === "fieldset") {
+				if (input.type === "fieldset" && input.getAttribute("origintype") !== "datetime-local") {
+					/* ignored*/
+					return;
+				}
+                if (type === "submit" || type === "button" || type === "reset" || type === "image") {
 					/* ignored*/
 					return;
                 }
 				/******/
 				if (type === "datetime-local") {
-					value = input.value;
-					/*value = value.replace("T", " ");*/
-					data.append(name, value);
+					data.append(name, input.value);
 				} else if (type === "radio") {
 					if (input.checked) {
 						data.append(name, input.value);
@@ -596,11 +598,11 @@ class TotiForm {
                 } else {
                     element.value = value;
                 }
+                if (element.getAttribute("origintype") === "datetime-local" && element.type === "fieldset") {
+                	element.onbind();
+                }
                 if (typeof element.onchange === "function") {
                 	element.onchange();
-                }
-                if (element.getAttribute("origintype") === "datetime-local" && element.type === "fieldset") {
-                    element.onbind();
                 }
             }
 		}
