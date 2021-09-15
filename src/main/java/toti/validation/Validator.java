@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import common.exceptions.LogicException;
 import common.structures.DictionaryValue;
+import common.structures.MapInit;
 import socketCommunication.http.server.RequestParameters;
 import socketCommunication.http.server.UploadedFile;
 import toti.registr.Registr;
@@ -42,7 +43,10 @@ public class Validator {
 	}
 	
 	public Validator(boolean strictList) {
-		this(strictList, (trans, params)->"Not expected parameters: " + params);
+		this(strictList, (trans, params)->trans.translate(
+			"common.validation.not-expected-parameters",
+			new MapInit<String, Object>().append("parameters", params).toMap()
+		)); // "Not expected parameters: " + params
 	}
 	
 	public Validator(boolean strictList, BiFunction<Translator, List<String>, String> onStrictListError) {
@@ -50,7 +54,10 @@ public class Validator {
 	}
 	
 	public Validator(ItemRules defaultRule) {
-		this(false, Optional.of(defaultRule), (trans, params)->"Parameters not match default rule: " + params);
+		this(false, Optional.of(defaultRule), (trans, params)->trans.translate(
+			"common.validation.parameters-not-match-default-rule",
+			new MapInit<String, Object>().append("parameters", params).toMap()
+		)); // "Parameters not match default rule: " + params
 	}
 	
 	public Validator(ItemRules defaultRule, BiFunction<Translator, List<String>, String> onStrictListError) {

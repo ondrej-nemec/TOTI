@@ -6,6 +6,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import common.exceptions.LogicException;
+import common.structures.MapInit;
 import translator.Translator;
 
 public class ItemRules {
@@ -15,7 +16,10 @@ public class ItemRules {
 	}
 	
 	public static ItemRules forName(String name, boolean required) {
-		return new ItemRules(name, required, (t, param)->"This item is required: " + param);
+		return new ItemRules(name, required, (t, param)->t.translate(
+			"common.validation.item-required", 
+			new MapInit<String, Object>().append("parameter", param).toMap()
+		)); // "This item is required: " + param
 	}
 
 	public static ItemRules forName(String name, boolean required, BiFunction<Translator, String, String> onRequiredError) {
@@ -63,7 +67,10 @@ public class ItemRules {
 	}
 	
 	public ItemRules setAllowedValues(Collection<Object> values) {
-		return setAllowedValues(values, (t)->"Value must be one of: " + values);
+		return setAllowedValues(values, (t)->t.translate(
+			"common.validation.value-must-be-one-of", 
+			new MapInit<String, Object>().append("values", values).toMap()
+		)); // "Value must be one of: " + values
 	}
 	
 	public ItemRules setAllowedValues(Collection<Object> values, Function<Translator, String> onAllowedValuesError) {
@@ -76,7 +83,10 @@ public class ItemRules {
 	}
 	
 	public ItemRules setMaxValue(Number maxValue) {
-		return setMaxValue(maxValue, (t)->"Value must be less or equals " + maxValue);
+		return setMaxValue(maxValue, (t)->t.translate(
+			"common.validation.value-must-be-less-or-equals", 
+			new MapInit<String, Object>().append("maxValue", maxValue).toMap()
+		)); // "Value must be less or equals " + maxValue
 	}
 	
 	public ItemRules setMaxValue(Number maxValue, Function<Translator, String> onMaxValueError) {
@@ -90,7 +100,10 @@ public class ItemRules {
 	}
 
 	public ItemRules setFileMaxSize(Integer fileMaxSize) {
-		return setFileMaxSize(fileMaxSize, (t)->"File size can be max " + fileMaxSize + "b");
+		return setFileMaxSize(fileMaxSize, (t)->t.translate(
+			"common.validation.file-size-can-be-max", 
+			new MapInit<String, Object>().append("fileMaxSize", fileMaxSize).toMap()
+		)); // "File size can be max " + fileMaxSize + "b"
 	}
 
 	public ItemRules setFileMaxSize(Integer fileMaxSize, Function<Translator, String> onFileMaxSizeError) {
@@ -103,7 +116,10 @@ public class ItemRules {
 	}
 
 	public ItemRules setFileMinSize(Integer fileMinSize) {
-		return setFileMinSize(fileMinSize, (t)->"File size must be at least " + fileMinSize + "b");
+		return setFileMinSize(fileMinSize, (t)->t.translate(
+			"common.validation.file-size-must-be-at-least", 
+			new MapInit<String, Object>().append("fileMinSize", fileMinSize).toMap()
+		)); // "File size must be at least " + fileMinSize + "b"
 	}
 
 	public ItemRules setFileMinSize(Integer fileMinSize, Function<Translator, String> onFileMinSizeError) {
@@ -116,7 +132,10 @@ public class ItemRules {
 	}
 
 	public ItemRules setAllowedFileTypes(Collection<Object> allowedFileTypes) {
-		return setAllowedFileTypes(allowedFileTypes, (t)->"File type is not allowed. Allowed: " + allowedFileTypes);
+		return setAllowedFileTypes(allowedFileTypes, (t)->t.translate(
+			"common.validation.file-type-is-not-allowed", 
+			new MapInit<String, Object>().append("allowedFileTypes", allowedFileTypes).toMap()
+		)); // "File type is not allowed. Allowed: " + allowedFileTypes
 	}
 
 	public ItemRules setAllowedFileTypes(Collection<Object> allowedFileTypes, Function<Translator, String> onAllowedFileTypesError) {
@@ -129,7 +148,10 @@ public class ItemRules {
 	}
 	
 	public ItemRules setMinValue(Number minValue) {
-		return setMinValue(minValue, (t)->"Value must be equals or higher " + minValue);
+		return setMinValue(minValue, (t)->t.translate(
+			"common.validation.vlaue-must-be-equals-or-higher", 
+			new MapInit<String, Object>().append("minValue", minValue).toMap()
+		)); // "Value must be equals or higher " + minValue
 	}
 	
 	public ItemRules setMinValue(Number minValue, Function<Translator, String> onMinValueError) {
@@ -143,7 +165,10 @@ public class ItemRules {
 	}
 	
 	public ItemRules setMinLength(int minLength) {
-		return setMinLength(minLength, (t)->"Text length must be at least " + minLength);
+		return setMinLength(minLength, (t)->t.translate(
+			"common.validation.text-length-must-be-at-least", 
+			new MapInit<String, Object>().append("minLength", minLength).toMap()
+		)); // "Text length must be at least " + minLength
 	}
 	
 	public ItemRules setMinLength(int minLength, Function<Translator, String> onMinLengthError) {
@@ -157,7 +182,10 @@ public class ItemRules {
 	}
 	
 	public ItemRules setMaxLength(int maxLength) {
-		return setMaxLength(maxLength, (t)->"Text length must be maximal " + maxLength);
+		return setMaxLength(maxLength, (t)->t.translate(
+			"common.validation.text-length-must-be-max", 
+			new MapInit<String, Object>().append("maxLength", maxLength).toMap()
+		)); // "Text length must be maximal " + maxLength
 	}
 	
 	public ItemRules setMaxLength(int maxLength, Function<Translator, String> onMaxLengthError) {
@@ -171,7 +199,10 @@ public class ItemRules {
 	}
 	
 	public ItemRules setRegex(String regex) {
-		return setRegex(regex, (t)->"Text must looks like " + regex.replace("\\", "\\\\"));
+		return setRegex(regex, (t)->t.translate(
+			"common.validation.text-not-match-pattern", 
+			new MapInit<String, Object>().append("regex", regex.replace("\\", "\\\\")).toMap()
+		)); // "Text must looks like " + regex.replace("\\", "\\\\")
 	}
 	
 	public ItemRules setRegex(String regex, Function<Translator, String> onRegexError) {
@@ -185,7 +216,7 @@ public class ItemRules {
 	}
 	
 	public ItemRules setType(Class<?> clazz) {
-		return setType(clazz, (t)->"Value must be " + clazz);
+		return setType(clazz, true);
 	}
 	
 	public ItemRules setType(Class<?> clazz, Function<Translator, String> onExpectedTypeError) {
@@ -193,7 +224,10 @@ public class ItemRules {
 	}
 	
 	public ItemRules setType(Class<?> clazz, boolean changeValueByType) {
-		return setType(clazz, changeValueByType, (t)->"Value must be " + clazz);
+		return setType(clazz, changeValueByType, (t)->t.translate(
+			"common.validation.value-type-must-be", 
+			new MapInit<String, Object>().append("class", clazz).toMap()
+		)); // "Value must be " + clazz
 	}
 	
 	public ItemRules setType(Class<?> clazz, boolean changeValueByType, Function<Translator, String> onExpectedTypeError) {
