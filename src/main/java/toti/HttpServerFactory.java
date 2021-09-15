@@ -34,7 +34,7 @@ public class HttpServerFactory {
 	private boolean deleteTempJavaFiles = true;
 	private boolean dirResponseAllowed = true;
 	private boolean minimalize = true;
-	private List<String> developIps = Arrays.asList("127.0.0.1", "/0:0:0:0:0:0:0:1");
+	private List<String> developIps = Arrays.asList("/127.0.0.1", "/0:0:0:0:0:0:0:1");
 	private int maxUploadFileSize = 0;
 	private Optional<List<String>> allowedUploadFileTypes = Optional.of(new LinkedList<>());
 	private long tokenExpirationTime = 1000 * 60 * 10;
