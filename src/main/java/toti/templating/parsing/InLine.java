@@ -1,4 +1,4 @@
-package toti.templating.parsing2;
+package toti.templating.parsing;
 
 public class InLine {
 

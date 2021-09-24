@@ -18,15 +18,22 @@ public class ForEachTag implements Tag {
 			String[] valueP = parseItem(params.get("value"));
 			return String.format(
 				"for(%s %s:Template.toMap(%s,%s.class,%s.class).keySet()){"
-				+ "%s %s=Template.toMap(%s,%s.class,%s.class).get(%s);",
+				+ "%s %s=Template.toMap(%s,%s.class,%s.class).get(%s);"
+				+ "initNode(new HashMap<>());"
+				+ "addVariable(\"%s\", %s);"
+				+ "addVariable(\"%s\", %s);",
 				keyP[0], keyP[1], params.get("map"), keyP[0], valueP[0],
-				valueP[0], valueP[1], params.get("map"), keyP[0], valueP[0], keyP[1]
+				valueP[0], valueP[1], params.get("map"), keyP[0], valueP[0], keyP[1], 
+				keyP[1], keyP[1], valueP[1], valueP[1]
 			);
 		}
 		String[] item = parseItem(params.get("item"));
 		return String.format(
-				"for(%s %s:Template.toIterable(%s,%s.class)){",
-				item[0], item[1], params.get("collection"), item[0]
+				"for(%s %s:Template.toIterable(%s,%s.class)){"
+				+ "initNode(new HashMap<>());"
+				+ "addVariable(\"%s\", %s);",
+				item[0], item[1], params.get("collection"), item[0],
+				item[1], item[1]
 		);
 	}
 	
@@ -40,7 +47,7 @@ public class ForEachTag implements Tag {
 
 	@Override
 	public String getPairEndCode(Map<String, String> params) {
-		return "}";
+		return "flushNode();}";
 	}
 
 	@Override

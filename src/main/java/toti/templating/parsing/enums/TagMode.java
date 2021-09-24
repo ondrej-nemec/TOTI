@@ -1,4 +1,4 @@
-package toti.templating.parsing2.enums;
+package toti.templating.parsing.enums;
 
 public enum TagMode {
 

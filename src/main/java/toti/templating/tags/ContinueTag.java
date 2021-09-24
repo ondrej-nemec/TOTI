@@ -13,7 +13,7 @@ public class ContinueTag implements Tag {
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
-		return "if(true){continue;}";
+		return "if(true){flushNode();flushNode();continue;}";
 	}
 
 	@Override

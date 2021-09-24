@@ -6,7 +6,7 @@ import java.util.Map;
 import common.structures.ListDictionary;
 import common.structures.MapDictionary;
 import toti.security.Authorizator;
-import toti.templating.parsing2.TagNode;
+import toti.templating.parsing.TagNode;
 import translator.Translator;
 
 public interface Template {

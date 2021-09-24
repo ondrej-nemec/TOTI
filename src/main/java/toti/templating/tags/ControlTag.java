@@ -16,8 +16,8 @@ public class ControlTag implements Tag {
 		if (params.get("jsObject") != null) {
 			return String.format("{"
 					+ "if(variables.get(\"%s\") == null) {throw new RuntimeException(\"Missing control varialble: '%s'\");}"
-					+ "toti.control.Control control=(toti.control.Control)(variables.get(\"%s\"));"
-					+ "b.append(\"new Toti\"+control.getType()+\"(\"+control.toString()+\")\");"
+					+ "toti.control.Control control=(toti.control.Control)(getVariable(\"%s\"));"
+					+ "write(\"new Toti\"+control.getType()+\"(\"+control.toString()+\")\");"
 					+ "}",
 					params.get("name"),
 					params.get("name"),
@@ -27,15 +27,15 @@ public class ControlTag implements Tag {
 		return String.format(
 				"{"
 				+ "if(variables.get(\"%s\") == null) {throw new RuntimeException(\"Missing control varialble: '%s'\");}"
-				+ "toti.control.Control control=(toti.control.Control)(variables.get(\"%s\"));"
-				+ "b.append(\""
+				+ "toti.control.Control control=(toti.control.Control)(getVariable(\"%s\"));"
+				+ "write(\""
 				+ "<script>"
 				+ "new Toti\"+control.getType()+\"(\"+control.toString()+\")"
 				+ ".init('%s', 'toti-\" + control.getType() + \"-%s', );"
 				+ "</script>"
 				+ "\");"
 				+ "}"
-				+ "b.append(\"<div id='%s' class='toti-control'>\");",
+				+ "write(\"<div id='%s' class='toti-control'>\");",
 				params.get("name"),
 				params.get("name"),
 				params.get("name"),
@@ -50,7 +50,7 @@ public class ControlTag implements Tag {
 		if (params.get("jsObject") != null) {
 			return "";
 		}
-		return "b.append(\"</div>\");";
+		return "write(\"</div>\");";
 	}
 
 	@Override

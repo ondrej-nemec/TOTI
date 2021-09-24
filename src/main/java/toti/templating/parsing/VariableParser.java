@@ -1,128 +1,126 @@
 package toti.templating.parsing;
 
-import java.io.IOException;
 import java.util.LinkedList;
 
 import common.functions.Implode;
-import toti.templating.enums.VarParseState;
+import toti.templating.parsing.enums.VarMode;
 
 public class VariableParser {
+
+	private int position;
+	private VarMode mode = VarMode.VAR_NAME;
+	private final StringBuilder declare = new StringBuilder();
+	private boolean escape = true;
 	
-	private final StringBuilder result = new StringBuilder();
-	private final StringBuilder init = new StringBuilder();
-	
-	private final int level;
-	
-	public VariableParser(int level) {
-		this.level = level;
+	public VariableParser(int position) {
+		this.position = position;
 	}
 	
-	public String getInit() {
-		return init.toString();
-	}
-	
-	public String getResult() {
-		return result.toString();
-	}
-	
-	public void addVariable(VariableParser var) {
-		init.append(var.getInit());
-		params.add(var.getResult());
-	}
-	
-	private boolean isSingleQuoted = false;
-	private boolean isDoubleQuoted = false;
-	
-	private VarParseState state = VarParseState.VAR_NAME;
-	private String actualObject = "";
 	private LinkedList<Object> params = new LinkedList<>();
-	private int objectCount = 1;
+	private LinkedList<String> classes = new LinkedList<>();
 	
-	public boolean parse(char actual, char previous) throws IOException {
-		if (actual == '"' && previous != '\\' && !isSingleQuoted) {
-			isDoubleQuoted = !isDoubleQuoted;
-		} else if (actual == '\'' && previous != '\\' && !isDoubleQuoted) {
-			isSingleQuoted = !isSingleQuoted;
+	private String cache = "";
+	private String auxCache = "";
+	private int level = 0;
+	private String clazz = null;
+	
+	public void accept(char previous, char actual, boolean isSingleQuoted, boolean isDoubleQuoted) {
+		if (actual == '|' && !isSingleQuoted && !isDoubleQuoted) {
+			finish(cache);
+			if (mode == VarMode.APPENDIX) {
+				finishAppendix(cache);
+			}
+			cache = "";
+			mode = VarMode.APPENDIX;
+		} else if (actual == '.' && !isSingleQuoted && !isDoubleQuoted && mode != VarMode.PARAMS) {
+			finish(cache);
+			mode = VarMode.VAR_NAME;
+			cache = "";
+		} else if (actual == '(' && !isSingleQuoted && !isDoubleQuoted && mode != VarMode.PARAMS) {
+			mode = VarMode.PARAMS;
+			auxCache = cache;
+			cache = "";
+		} else if (actual == ',' && !isSingleQuoted && !isDoubleQuoted && mode != VarMode.PARAMS) {
+			throw new RuntimeException("Syntax error: ','");
+		} else if (actual == ')' && !isSingleQuoted && !isDoubleQuoted && mode != VarMode.PARAMS) {
+			throw new RuntimeException("Syntax error: ')'");
+		} else if (actual == ',' && !isSingleQuoted && !isDoubleQuoted && mode == VarMode.PARAMS) {
+			Object var = finishObjectParam(cache);
+			params.add(var);
+			classes.add(var.getClass().getCanonicalName()+ ".class");
+			cache = "";
+		} else if (actual == ')' && !isSingleQuoted && !isDoubleQuoted && mode == VarMode.PARAMS) {
+			if (!cache.isEmpty()) {
+				Object var = finishObjectParam(cache);
+				params.add(var);
+				classes.add(var.getClass().getCanonicalName()+ ".class");
+			}
+			cache = auxCache;
+			auxCache = "";
+			mode = VarMode.METHOD_NAME;
+		} else {
+			cache += actual;
 		}
-		
-			// Object o0_1=variables.get(\"var\");
-			// o0_1.getClass().getMethod(\"equals\").invoke(o0_1, 1)
-			// Object res = o.getClass().getMethod("equals", Object.class).invoke(o, params);
-		if (actual == '}' && !(isSingleQuoted || isDoubleQuoted)) {
-			finishMethod(actual);
-			result.append("o" + level + "_" + objectCount);
-			return false;
-		} else if (actual == '.' && !isSingleQuoted && !isDoubleQuoted) {
-			if (finishMethod(actual)) {
-				params = new LinkedList<>();
-				actualObject = "";
-				objectCount++;
-				state = VarParseState.METHOD_NAME;				
-			}
-		} else if (actual == '(' && !isSingleQuoted && !isDoubleQuoted) {
-			state = VarParseState.PARAMS;
-		} else if (actual == ')' && !isSingleQuoted && !isDoubleQuoted) {
-			if (params.size() > 0) {
-				Object last = params.removeLast();
-				params.add(finishObjectParam(last.toString()));
-			}
-			state = VarParseState.PARAMS_FINISHED;
-		} else if (state == VarParseState.VAR_NAME || state == VarParseState.METHOD_NAME) {
-			actualObject += actual;
-		} else if (state == VarParseState.PARAMS && actual == ',' && !isSingleQuoted && !isDoubleQuoted) {
-			Object last = params.removeLast();
-			params.add(finishObjectParam(last.toString()));
-			params.add("");
-		} else if (state == VarParseState.PARAMS) {
-			if (params.size() == 0) {
-				params.add("");				
-			}
-			Object last = params.removeLast();
-			params.add(last.toString() + actual);
-		}
-		return true;
 	}
 	
-	private boolean finishMethod(char actual) {
-		String actuName = "o" + level + "_" + objectCount;
-		String lastName = "o" + level + "_" + (objectCount-1);
-		if (state == VarParseState.VAR_NAME) {
-			init.append(String.format("Object %s=variables.get(\"%s\");", actuName, actualObject.trim()));
-		} else if (state == VarParseState.METHOD_NAME || (state == VarParseState.PARAMS_FINISHED && params.size() == 0)) {
-			String method = actualObject.trim();
-			if (state == VarParseState.METHOD_NAME) {
-				method = "get" + method.substring(0, 1).toUpperCase() + method.substring(1);
-			}
-			init.append(String.format(
-					"Object %s=%s.getClass().getMethod(\"%s\").invoke(%s);",
-					actuName, lastName, method, lastName
-			));
-		} else if (state == VarParseState.PARAMS_FINISHED) {
-			String[] classes = new String[params.size()];
-			for(int i = 0; i < params.size(); i++) {
-				classes[i] = params.get(i).getClass().getCanonicalName()+ ".class";
-			}
-			String method = actualObject.trim();
-			init.append(String.format("Object %s=null;", actuName));
-            init.append("try{");
-            init.append(String.format(
-                     "%s=%s.getClass().getMethod(\"%s\",%s).invoke(%s,%s);",
-                     actuName, lastName, method,
-                     Implode.implode(",", classes), lastName,
-                     Implode.implode(",", params.toArray())
-            ));
-            init.append("}catch(NoSuchMethodException e){");
-            init.append(String.format(
-                     "%s=%s.getClass().getMethod(\"%s\",%s).invoke(%s,%s);",
-                     actuName, lastName, method,
-                     Implode.implode((o)->"Object.class",",", classes), lastName,
-                     Implode.implode(",", params.toArray())
-            ));
-            init.append("}");
+	private void finishAppendix(String cache) {
+		if (cache.equalsIgnoreCase("noescape")) {
+			escape = false;
 		} else {
-			return false;
+			clazz = cache;
 		}
-		return true;
+	}
+	
+	private void finish(String cache) {
+		if (mode == VarMode.APPENDIX) {
+			finishAppendix(cache);
+			return;
+		}
+		String current = "o" + position + "_" + level;
+		String last = "o" + position + "_" + (level-1);
+		cache = cache.trim();
+		
+		if (level == 0) {
+			declare.append(String.format(
+				"Object o%s_%s=getVariable(\"%s\");",
+				position, level, cache
+			));
+		} else if (mode == VarMode.VAR_NAME) {
+			declare.append(String.format(
+				"Object %s=%s.getClass().getMethod(\"get%s\").invoke(%s);",
+				current, last, 
+				cache.substring(0,1).toUpperCase() + cache.substring(1),
+				last
+			));
+		} else if (mode == VarMode.METHOD_NAME && params.size() > 0) {
+			/*
+			declare.append(String.format(
+				"Object %s=%s.getClass().getMethod(\"%s\",%s).invoke(%s,%s);",
+				current, last, cache, Implode.implode(",", classes), last, Implode.implode(",", params)
+			));
+			/*/
+			declare.append(String.format("Object %s=null;", current));
+            declare.append("try{");
+            declare.append(String.format(
+                "%s=%s.getClass().getMethod(\"%s\",%s).invoke(%s,%s);",
+                current, last, cache, Implode.implode(",", classes), last, Implode.implode(",", params)
+            ));
+            declare.append("}catch(NoSuchMethodException e){");
+            declare.append(String.format(
+                     "%s=%s.getClass().getMethod(\"%s\",%s).invoke(%s,%s);",
+                     current, last, cache, Implode.implode((o)->"Object.class", ",", classes), last, Implode.implode(",", params)
+                ));
+            declare.append("}");
+            //*/
+		} else if (mode == VarMode.METHOD_NAME) {
+			declare.append(String.format(
+				"Object %s=%s.getClass().getMethod(\"%s\").invoke(%s);",
+				current, last, cache, last
+			));
+		} else {
+			throw new RuntimeException("Syntax error: Missing ')'");
+		}
+		level++;
 	}
 	
 	private Object finishObjectParam(String object) {
@@ -136,7 +134,7 @@ public class VariableParser {
 			return object.charAt(1);
 		}
 		if (object.length() >= 2 && object.charAt(0) == '"' && object.charAt(object.length()-1) == '"') {
-			//return object.substring(1, object.length() -2);
+			// return object.substring(1, object.length() -2);
 			return object;
 		}
 		if (object.matches("^([0-9]+)$")) {
@@ -148,8 +146,33 @@ public class VariableParser {
 		return (Object)object; // is variable
 	}
 	
-	public String toString() {
-		return init.toString() + result.toString();
+	public boolean escape() {
+		return escape;
 	}
-
+	
+	public String getDeclare() {
+		if (!cache.isEmpty()) {
+			finish(cache);
+		}
+		return declare.toString();
+	}
+	
+	public String getCalling() {
+		if (clazz != null) {
+			//return String.format("%s.class.cast(o%s_%s)", clazz, position, level-1);
+			return String.format("new common.structures.DictionaryValue(o%s_%s).getValue(%s.class)", position, level-1, clazz);
+		}
+		return String.format("o%s_%s", position, level-1);
+	}
+	
+	public void addVariable(VariableParser var) {
+		declare.append(var.getDeclare());
+		classes.add(var.clazz == null ? var.getCalling() + ".getClass()" : var.clazz + ".class");
+		params.add(var.getCalling());
+	}
+	
+	@Override
+	public String toString() {
+		return "Variable " + position + " [" + declare + " " + getCalling() + "]";
+	}
 }

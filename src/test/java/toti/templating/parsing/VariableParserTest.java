@@ -1,11 +1,12 @@
 package toti.templating.parsing;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static org.junit.Assert.assertEquals;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -14,70 +15,127 @@ import toti.templating.parsing.VariableParser;
 @RunWith(JUnitParamsRunner.class)
 public class VariableParserTest {
 
-	//TODO test throws
-	
+	// TODO add throwing cases
 	
 	@Test
-	@Parameters(method = "dataParseTextWorks")
-	public void testParseTextWorks(String template, String expectedInit, String expectedResult) throws IOException {		
-		VariableParser parser = new VariableParser(0);
+	public void testParseAddVariableWorks() throws IOException {
+		VariableParser first = parseText("title.equals(", 0);
+		VariableParser second = parseText("age", 1);
+		parseText(first, ")");
+		first.addVariable(second);
+		
+		assertEquals(
+			"Object o0_0=getVariable(\"title\");"
+			+ "Object o1_0=getVariable(\"age\");"
+			+ "Object o0_1=null;"
+			+ "try{"
+			+ "o0_1=o0_0.getClass().getMethod(\"equals\",o1_0.getClass()).invoke(o0_0,o1_0);"
+			+ "}catch(NoSuchMethodException e){"
+			+ "o0_1=o0_0.getClass().getMethod(\"equals\",Object.class).invoke(o0_0,o1_0);"
+			+ "}", 
+			first.getDeclare()
+		);
+		assertEquals("o0_1", first.getCalling());
+		assertTrue(first.escape());
+	}
+
+	private VariableParser parseText(String text, int position) {
+		return parseText(new VariableParser(position), text);
+	}
+	
+	private VariableParser parseText(VariableParser parser, String text) {
 		char previous = '\u0000';
-		for (char c : template.toCharArray()) {
-			parser.parse(c, previous);
+		boolean isDoubleQuoted = false;
+		boolean isSingleQuoted = false;
+		for (char c : text.toCharArray()) {
+			if (c == '"' && previous != '\\' && !isSingleQuoted) {
+				isDoubleQuoted = !isDoubleQuoted;
+			} else if (c == '\'' && previous != '\\' && !isDoubleQuoted) {
+				isSingleQuoted = !isSingleQuoted;
+			}
+			parser.accept(previous, c, isSingleQuoted, isDoubleQuoted);
 			previous = c;
 		}
-		assertEquals(expectedInit, parser.getInit());
-		assertEquals(expectedResult, parser.getResult());
+		return parser;
+	}
+
+	@Test
+	@Parameters(method = "dataParseTextWorks")
+	public void testParseTextWorks(String template, String expectedDeclare, String expectedCalling, boolean escape) throws IOException {
+		VariableParser parser = parseText(template, 0);
+		assertEquals(expectedDeclare, parser.getDeclare());
+		assertEquals(expectedCalling, parser.getCalling());
+		assertEquals(escape, parser.escape());
 	}
 	
 	public Object[] dataParseTextWorks() {
 		return new Object[] {
 			new Object[] {
-					"var}",
-					"Object o0_1=variables.get(\"var\");",
-					"o0_1"
+				"title",
+				"Object o0_0=getVariable(\"title\");",
+				"o0_0", true
+			},
+			new Object[] {
+					"title.length()",
+					"Object o0_0=getVariable(\"title\");"
+					+ "Object o0_1=o0_0.getClass().getMethod(\"length\").invoke(o0_0);",
+					"o0_1", true
 				},
 			new Object[] {
-					"var.equals(1)}",
-					"Object o0_1=variables.get(\"var\");"
-					+ "Object o0_2=o0_1.getClass().getMethod(\"equals\",java.lang.Integer.class).invoke(o0_1,1);",
-					"o0_2"
+					"title.equals(1)",
+					"Object o0_0=getVariable(\"title\");"
+					+ "Object o0_1=null;"
+					+ "try{"
+					+ "o0_1=o0_0.getClass().getMethod(\"equals\",java.lang.Integer.class).invoke(o0_0,1);"
+					+ "}catch(NoSuchMethodException e){"
+					+ "o0_1=o0_0.getClass().getMethod(\"equals\",Object.class).invoke(o0_0,1);"
+					+ "}",
+					"o0_1", true
 				},
 			new Object[] {
-					"var.getClass().equals(1)}",
-					"Object o0_1=variables.get(\"var\");"
-					+ "Object o0_2=o0_1.getClass().getMethod(\"getClass\").invoke(o0_1);"
-					+ "Object o0_3=o0_2.getClass().getMethod(\"equals\",java.lang.Integer.class).invoke(o0_2,1);",
-					"o0_3"
+					"title.class",
+					"Object o0_0=getVariable(\"title\");"
+					+ "Object o0_1=o0_0.getClass().getMethod(\"getClass\").invoke(o0_0);",
+					"o0_1", true
 				},
 			new Object[] {
-					"var.class.equals(1)}",
-					"Object o0_1=variables.get(\"var\");"
-					+ "Object o0_2=o0_1.getClass().getMethod(\"getClass\").invoke(o0_1);"
-					+ "Object o0_3=o0_2.getClass().getMethod(\"equals\",java.lang.Integer.class).invoke(o0_2,1);",
-					"o0_3"
+					"age|Integer",
+					"Object o0_0=getVariable(\"age\");",
+					"new common.structures.DictionaryValue(o0_0).getValue(Integer.class)",
+					true
 				},
 			new Object[] {
-                    "var.class.equals(\"1\")}",
-                    "Object o0_1=variables.get(\"var\");"
-                    + "Object o0_2=o0_1.getClass().getMethod(\"getClass\").invoke(o0_1);"
-                    + "Object o0_3=o0_2.getClass().getMethod(\"equals\",java.lang.String.class).invoke(o0_2,\"1\");",
-                    "o0_3"
-               },
-           new Object[] {
-                    "var.class.equals(\"Hello World!\")}",
-                    "Object o0_1=variables.get(\"var\");"
-                    + "Object o0_2=o0_1.getClass().getMethod(\"getClass\").invoke(o0_1);"
-                    + "Object o0_3=o0_2.getClass().getMethod(\"equals\",java.lang.String.class).invoke(o0_2,\"Hello World!\");",
-                    "o0_3"
-               },/*
+					"title|noescape",
+					"Object o0_0=getVariable(\"title\");",
+					"o0_0", false
+				},
 			new Object[] {
-					"var.equals(${var2})",
-					"Object o0_1=variables.get(\"var\");"
-					+ "Object o0_1=variables.get(\"var2\");"
-					+ "Object o0_2=o0_1.getClass().getMethod(\"equals\").invoke(o0_1, 1);",
-					"b.append(Template.escapeVariable(o0_2));"
-				},*/
+					"title|String|noescape",
+					"Object o0_0=getVariable(\"title\");",
+					"new common.structures.DictionaryValue(o0_0).getValue(String.class)", false
+				},
+			new Object[] {
+					"map.get(\"value\")",
+					"Object o0_0=getVariable(\"map\");"
+					+ "Object o0_1=null;"
+					+ "try{"
+					+ "o0_1=o0_0.getClass().getMethod(\"get\",java.lang.String.class).invoke(o0_0,\"value\");"
+					+ "}catch(NoSuchMethodException e){"
+					+ "o0_1=o0_0.getClass().getMethod(\"get\",Object.class).invoke(o0_0,\"value\");"
+					+ "}",
+					"o0_1", true
+				},
+			new Object[] {
+					"map.get(12)",
+					"Object o0_0=getVariable(\"map\");"
+					+ "Object o0_1=null;"
+					+ "try{"
+					+ "o0_1=o0_0.getClass().getMethod(\"get\",java.lang.Integer.class).invoke(o0_0,12);"
+					+ "}catch(NoSuchMethodException e){"
+					+ "o0_1=o0_0.getClass().getMethod(\"get\",Object.class).invoke(o0_0,12);"
+					+ "}",
+					"o0_1", true
+				}
 		};
 	}
 	

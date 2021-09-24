@@ -1,4 +1,4 @@
-package toti.templating.parsing2;
+package toti.templating.parsing;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -9,6 +9,7 @@ import common.structures.ThrowingConsumer;
 import toti.security.Authorizator;
 import toti.templating.Template;
 import toti.templating.TemplateFactory;
+import toti.templating.parsing.TagNode;
 import translator.Translator;
 
 public class TemplateImpl implements Template {

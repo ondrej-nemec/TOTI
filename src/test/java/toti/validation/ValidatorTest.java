@@ -127,7 +127,7 @@ public class ValidatorTest {
 				true
 			},
 			new Object[] {
-					Arrays.asList(ItemRules.forName("item1", true).setAllowedValues(Arrays.asList("value1", "value2"))),
+					Arrays.asList(ItemRules.forName("item1", true).setAllowedValues(Arrays.asList("value3", "value2"))),
 					new RequestParameters().put("item1", "value1"),
 					false
 				},
@@ -169,7 +169,7 @@ public class ValidatorTest {
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setType(Integer.class)),
 					new RequestParameters().put("item1", 12.4),
-					false
+					true // dictionary value parse it
 				},
 			new Object[] {
 					Arrays.asList(ItemRules.forName("item1", true).setType(Double.class)),

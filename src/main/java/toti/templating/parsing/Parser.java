@@ -1,7 +1,7 @@
-package toti.templating.parsing2;
+package toti.templating.parsing;
 
-import toti.templating.parsing2.enums.ParserType;
-import toti.templating.parsing2.enums.VarState;
+import toti.templating.parsing.enums.ParserType;
+import toti.templating.parsing.enums.VarState;
 
 public class Parser {
 

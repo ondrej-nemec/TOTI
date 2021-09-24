@@ -22,39 +22,8 @@ import common.functions.FileExtension;
 import common.structures.ThrowingFunction;
 import common.structures.Tuple2;
 import toti.templating.parsing.TemplateParser;
-import toti.templating.tags.BlockTag;
-import toti.templating.tags.BreakTag;
-import toti.templating.tags.CaseTag;
-import toti.templating.tags.CatchTag;
-import toti.templating.tags.ConsoleOutputTag;
-import toti.templating.tags.ContinueTag;
-import toti.templating.tags.ControlTag;
-import toti.templating.tags.DefaultTag;
-import toti.templating.tags.DoWhileTag;
-import toti.templating.tags.ElseIfTag;
-import toti.templating.tags.ElseTag;
-import toti.templating.tags.FinallyTag;
-import toti.templating.tags.ForEachTag;
-import toti.templating.tags.ForTag;
-import toti.templating.tags.FormError;
-import toti.templating.tags.FormInput;
-import toti.templating.tags.FormLabel;
-import toti.templating.tags.IfTag;
-import toti.templating.tags.IncludeTag;
-import toti.templating.tags.LayoutTag;
-import toti.templating.tags.PermissionsTag;
-import toti.templating.tags.SwitchTag;
-import toti.templating.tags.TranslateParamTag;
-import toti.templating.tags.TranslateTag;
-import toti.templating.tags.TryTag;
-import toti.templating.tags.VariableDefineTag;
-import toti.templating.tags.VariablePrintTag;
-import toti.templating.tags.VariableSetTag;
-import toti.templating.tags.WhileTag;
 
 public class TemplateFactory {
-	
-	public boolean useOldImpl = true;
 	
 	private static final List<Supplier<Tag>> CUSTOM_TAG_PROVIDERS = new LinkedList<>();
 
@@ -180,22 +149,11 @@ public class TemplateFactory {
 		File dir = new File(tempPath + "/" + namespace);
 		dir.mkdirs();
 		
-		String javaTempFile;
-		if (useOldImpl) {
-			logger.warn("Template is compiled with old parser");
-			System.err.println("Template is compiled with old parser. " + tempPath);
-			List<Tag> tags = initTags(namespace);
-			tags.addAll(CUSTOM_TAG_PROVIDERS.stream().map(s->s.get()).collect(Collectors.toList()));
-			TemplateParser parser = new TemplateParser(tags.stream()
-				      .collect(Collectors.toMap(Tag::getName, tag -> tag)), minimalize);
-			javaTempFile = parser.createTempCache(namespace, className, templateFile, tempPath, module, modificationTime);
-		} else {
-			List<Tag> tags = initTagsNew(namespace);
-			tags.addAll(CUSTOM_TAG_PROVIDERS.stream().map(s->s.get()).collect(Collectors.toList()));
-			toti.templating.parsing2.TemplateParser parser = new toti.templating.parsing2.TemplateParser(tags.stream()
-				      .collect(Collectors.toMap(Tag::getName, tag -> tag)), minimalize);
-			javaTempFile = parser.createTempCache(namespace, className, templateFile, tempPath, module, modificationTime);
-		}
+		List<Tag> tags = initTags(namespace);
+		tags.addAll(CUSTOM_TAG_PROVIDERS.stream().map(s->s.get()).collect(Collectors.toList()));
+		toti.templating.parsing.TemplateParser parser = new TemplateParser(tags.stream()
+			      .collect(Collectors.toMap(Tag::getName, tag -> tag)), minimalize);
+		String javaTempFile = parser.createTempCache(namespace, className, templateFile, tempPath, module, modificationTime);
 		File file = new File(javaTempFile);
 		
 		
@@ -242,69 +200,35 @@ public class TemplateFactory {
 
 	private List<Tag> initTags(String actualFileDir) {
 		List<Tag> tags = new ArrayList<>();
-		tags.add(new BreakTag());
-		tags.add(new CaseTag());
-		tags.add(new CatchTag());
-		tags.add(new ConsoleOutputTag());
-		tags.add(new ContinueTag());
-		tags.add(new DefaultTag());
-		tags.add(new DoWhileTag());
-		tags.add(new ElseIfTag());
-		tags.add(new ElseTag());
-		tags.add(new FinallyTag());
-		tags.add(new ForEachTag());
-		tags.add(new ForTag());
-		tags.add(new IfTag());
-		tags.add(new SwitchTag());
-		tags.add(new TranslateParamTag());
-		tags.add(new TranslateTag());
-		tags.add(new TryTag());
-		tags.add(new VariableDefineTag());
-		tags.add(new VariablePrintTag());
-		tags.add(new VariableSetTag());
-		tags.add(new WhileTag());
-		tags.add(new LayoutTag(/*actualFileDir*/));
-		tags.add(new BlockTag());
-		tags.add(new IncludeTag(/*actualFileDir*/));
-		tags.add(new ControlTag());
-		tags.add(new FormError());
-		tags.add(new FormInput());
-		tags.add(new FormLabel());
-		tags.add(new PermissionsTag());
-		return tags;
-	}
-
-	private List<Tag> initTagsNew(String actualFileDir) {
-		List<Tag> tags = new ArrayList<>();
-		tags.add(new toti.templating.tags2.BreakTag());
-		tags.add(new toti.templating.tags2.CaseTag());
-		tags.add(new toti.templating.tags2.CatchTag());
-		tags.add(new toti.templating.tags2.ConsoleOutputTag());
-		tags.add(new toti.templating.tags2.ContinueTag());
-		tags.add(new toti.templating.tags2.DefaultTag());
-		tags.add(new toti.templating.tags2.DoWhileTag());
-		tags.add(new toti.templating.tags2.ElseIfTag());
-		tags.add(new toti.templating.tags2.ElseTag());
-		tags.add(new toti.templating.tags2.FinallyTag());
-		tags.add(new toti.templating.tags2.ForEachTag());
-		tags.add(new toti.templating.tags2.ForTag());
-		tags.add(new toti.templating.tags2.IfTag());
-		tags.add(new toti.templating.tags2.SwitchTag());
-		tags.add(new toti.templating.tags2.TranslateParamTag());
-		tags.add(new toti.templating.tags2.TranslateTag());
-		tags.add(new toti.templating.tags2.TryTag());
-		tags.add(new toti.templating.tags2.VariableDefineTag());
-		tags.add(new toti.templating.tags2.VariablePrintTag());
-		tags.add(new toti.templating.tags2.VariableSetTag());
-		tags.add(new toti.templating.tags2.WhileTag());
-		tags.add(new toti.templating.tags2.LayoutTag(/*actualFileDir*/));
-		tags.add(new toti.templating.tags2.BlockTag());
-		tags.add(new toti.templating.tags2.IncludeTag(/*actualFileDir*/));
-		tags.add(new toti.templating.tags2.ControlTag());
-		tags.add(new toti.templating.tags2.FormError());
-		tags.add(new toti.templating.tags2.FormInput());
-		tags.add(new toti.templating.tags2.FormLabel());
-		tags.add(new toti.templating.tags2.PermissionsTag());
+		tags.add(new toti.templating.tags.BreakTag());
+		tags.add(new toti.templating.tags.CaseTag());
+		tags.add(new toti.templating.tags.CatchTag());
+		tags.add(new toti.templating.tags.ConsoleOutputTag());
+		tags.add(new toti.templating.tags.ContinueTag());
+		tags.add(new toti.templating.tags.DefaultTag());
+		tags.add(new toti.templating.tags.DoWhileTag());
+		tags.add(new toti.templating.tags.ElseIfTag());
+		tags.add(new toti.templating.tags.ElseTag());
+		tags.add(new toti.templating.tags.FinallyTag());
+		tags.add(new toti.templating.tags.ForEachTag());
+		tags.add(new toti.templating.tags.ForTag());
+		tags.add(new toti.templating.tags.IfTag());
+		tags.add(new toti.templating.tags.SwitchTag());
+		tags.add(new toti.templating.tags.TranslateParamTag());
+		tags.add(new toti.templating.tags.TranslateTag());
+		tags.add(new toti.templating.tags.TryTag());
+		tags.add(new toti.templating.tags.VariableDefineTag());
+		tags.add(new toti.templating.tags.VariablePrintTag());
+		tags.add(new toti.templating.tags.VariableSetTag());
+		tags.add(new toti.templating.tags.WhileTag());
+		tags.add(new toti.templating.tags.LayoutTag(/*actualFileDir*/));
+		tags.add(new toti.templating.tags.BlockTag());
+		tags.add(new toti.templating.tags.IncludeTag(/*actualFileDir*/));
+		tags.add(new toti.templating.tags.ControlTag());
+		tags.add(new toti.templating.tags.FormError());
+		tags.add(new toti.templating.tags.FormInput());
+		tags.add(new toti.templating.tags.FormLabel());
+		tags.add(new toti.templating.tags.PermissionsTag());
 		return tags;
 	}
 	

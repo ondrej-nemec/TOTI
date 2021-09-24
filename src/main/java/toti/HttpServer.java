@@ -28,8 +28,6 @@ import common.functions.Hash;
 
 public class HttpServer {
 	
-	public static boolean USE_OLD_IMPL = true;
-	
 	private final Server server;
 	private final ResponseFactory response;
 	private final Translator translator;
@@ -83,7 +81,6 @@ public class HttpServer {
 					deleteDir, minimalize,
 					logger
 			);
-			templateFactory.useOldImpl = USE_OLD_IMPL;
 		//	modulesToMap.put(module.getControllersPath(), module.getName());
 		//	controllers.put(module.getControllersPath(), templateFactory);
 			templateFactories.put(module.getName(), templateFactory);
@@ -96,7 +93,6 @@ public class HttpServer {
 				deleteDir, minimalize,
 				logger
 		);
-		totiTemplateFactory.useOldImpl = USE_OLD_IMPL;
 		if (translator == null) {
 			translator = new LocaleTranslator(settings, trans, TotiLogger.getLogger("translator"));
 			// String[] translators = new String[trans.size()];

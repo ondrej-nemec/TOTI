@@ -1,4 +1,4 @@
-package toti.templating.parsing2;
+package toti.templating.parsing;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +28,7 @@ import toti.logging.TotiLogger;
 import toti.templating.Tag;
 import toti.templating.Template;
 import toti.templating.TemplateFactory;
-import toti.templating.parsing2.TemplateParser;
+import toti.templating.parsing.TemplateParser;
 
 public class TemplateParserEndToEndTest {
 

@@ -34,7 +34,6 @@ public class BootstrapEndToEndTest {
 				new EntityModule(),
 				new ExampleModule()
 			);
-			HttpServer.USE_OLD_IMPL = false;
 			Application.APP_CONFIG_FILE = null;
 			Application a = new Application(modules, (content, registr)->{
 				return new User("User: " + content, new Permissions() {

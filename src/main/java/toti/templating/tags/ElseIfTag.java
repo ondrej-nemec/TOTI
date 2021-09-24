@@ -23,7 +23,7 @@ public class ElseIfTag implements Tag {
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
-		return String.format("}else if((boolean)(%s)){", params.get("cond"));
+		return String.format("flushNode();}else if((boolean)(%s)){initNode(new HashMap<>());", params.get("cond"));
 	}
 
 }

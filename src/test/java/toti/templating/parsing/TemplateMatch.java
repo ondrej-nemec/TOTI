@@ -1,4 +1,4 @@
-package toti.templating.parsing2;
+package toti.templating.parsing;
 
 import java.io.File;
 import java.io.IOException;
@@ -81,7 +81,7 @@ public class TemplateMatch {
 				TemplateFactory test = new TemplateFactory(
 					tempPath, templatePath, "", new HashMap<>(), false, false, TotiLogger.getLogger("parsing")
 				);
-				test.useOldImpl = useOldImp;
+			//	test.useOldImpl = useOldImp;
 				
 				long tFirst = System.currentTimeMillis();
 				long mFirst = getConsumedMemory();

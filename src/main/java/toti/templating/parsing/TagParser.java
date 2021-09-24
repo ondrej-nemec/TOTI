@@ -4,112 +4,82 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import toti.templating.Tag;
+import common.exceptions.LogicException;
+import toti.templating.parsing.enums.TagMode;
 
 public class TagParser {
-	
-	private final StringBuilder builder = new StringBuilder();
-	
-	private final Map<String, Tag> tags;
-	
-	private final boolean isClosingTag;
-	
-	public TagParser(Map<String, Tag> tags, boolean isClosingTag) {
-		this.tags = tags;
-		this.isClosingTag = isClosingTag;
-	}
-	
-	public String getString() {
-		return builder.toString();
-	}
 
+	private final boolean isClose;
+	
 	private String preTag = "";
 	private String tagName = "";
-	private boolean isTagName = true;
-	
 	private String paramName = "";
-	private String paramNameCache = "";
-	private boolean isParamName = false;
-	
 	private String paramValue = "";
-	private boolean isParamValue = false;
+	
+	private TagMode mode = TagMode.TAG;
+	
 	private Map<String, String> params = new HashMap<>();
 	
-	public void addVariable(VariableParser parser) {
-		preTag = parser.getInit();
-		// TODO check allready can be started param mode
-		paramValue += parser.getResult();
-		isParamValue = true;
-		/*if (isTagName) {
-			// throw or add as param name
-		} else if (isParamName) {
-			// throw - not allowed
-		//	paramName += parser.getResult();
-		} else if (isParamValue) {
-		} else {
-			// throw - not allowed
-			// no mode
-		//	isParamName = true;
-		//	paramName += parser.getResult();
-		}*/
+	public TagParser(boolean isClose) {
+		this.isClose = isClose;
 	}
 	
-	public boolean parse(char actual, boolean isSingleQuoted, boolean isDoubleQuoted, char previous) throws IOException {
-		// tag end
-		if (actual == '/' && !isDoubleQuoted && !isSingleQuoted) {
-			// ignored
-		} else if (actual == '>' && !isDoubleQuoted && !isSingleQuoted) {
-			if (isParamValue) {
-				params.put(paramNameCache, paramValue);
-			} else if (isParamName) {
-				params.put(paramName, "");
-			}
-			builder.append("\");");
-			builder.append(preTag);
-			if (tags.get(tagName) != null) {
-				if (previous == '/') {
-					builder.append(tags.get(tagName).getNotPairCode(params));
-				} else if (isClosingTag) {
-					builder.append(tags.get(tagName).getPairEndCode(params));
-				} else {
-					builder.append(tags.get(tagName).getPairStartCode(params));
-				}
-			} // TODO maybe else log
-			builder.append("b.append(\"");
-			return false;
-		// tag name		
-		} else if (isTagName && actual != ' ') {
-			tagName += actual;
-		} else if (isTagName && actual == ' ') {
-			isTagName = false;
-		// param name
-		} else if (!isParamName && actual != ' ' && actual != '=' && !isDoubleQuoted && !isSingleQuoted) {
-			if (!paramValue.isEmpty()) {
-				params.put(paramNameCache, paramValue);
-				paramValue = "";
-			}
-			paramName += actual;
-			isParamName = true;
-		} else if (isParamName && (actual == ' ' || actual == '=')) {
-			isParamName = false;
-			params.put(paramName, "");
-			paramNameCache = paramName;
-			paramName = "";
-		} else if (isParamName) {
-			paramName += actual;
-		// param value
-		} else if (!isParamValue && !isParamName && (isDoubleQuoted || isSingleQuoted)) {
-			isParamValue = true;
-			paramValue += actual;
-		} else if (isParamValue && !isDoubleQuoted && !isSingleQuoted) {
-			isParamValue = false;
-			params.put(paramNameCache, paramValue);
-			paramNameCache = "";
-			paramValue = "";
-		} else if (isParamValue && (isDoubleQuoted || isSingleQuoted)) {
-			paramValue += actual;
-		}
-		return true;
+	public String getPre() {
+		return preTag;
+	}
+	
+	public boolean isClose() {
+		return isClose;
 	}
 
+	public String getName() {
+		return tagName;
+	}
+
+	public Map<String, String> getParams() {
+		if (!paramName.isEmpty()) {
+			params.put(paramName, paramValue);
+		}
+		return params;
+	}
+
+	public void addVariable(VariableParser var) {
+		preTag = var.getDeclare();
+		// TODO check allready can be started param mode
+		paramValue += var.getCalling();
+		mode = TagMode.PARAM_VALUE;
+	}
+	
+	public void parse(char previous, char actual, boolean isSingleQuoted, boolean isDoubleQuoted) throws IOException {
+		if (mode == TagMode.TAG && actual == ' ') {
+			mode = TagMode.NAN;
+		} else if (mode == TagMode.TAG) {
+			tagName += actual;
+		} else if (mode == TagMode.NAN && actual != ' ' && actual != '=' && !isDoubleQuoted && !isSingleQuoted) {
+			if (!paramName.isEmpty()) {
+				params.put(paramName, paramValue);
+				paramName = "";
+				paramValue = "";
+			}
+			mode = TagMode.PARAM_NAME;
+			paramName += actual;
+		} else if (mode == TagMode.NAN && actual != ' ' && (isDoubleQuoted || isSingleQuoted)) {
+			if (paramName.isEmpty()) {
+				throw new LogicException("Attribute without name"); // TODO another place
+			}
+			mode = TagMode.PARAM_VALUE;
+		} else if (mode == TagMode.PARAM_NAME && (actual == ' ' || actual == '=')) {
+			mode = TagMode.NAN;
+		} else if (mode == TagMode.PARAM_VALUE && !isDoubleQuoted && !isSingleQuoted) {
+			mode = TagMode.NAN;
+			params.put(paramName, paramValue);
+			paramName = "";
+			paramValue = "";
+		} else if (mode == TagMode.PARAM_NAME) {
+			paramName += actual;
+		} else if (mode == TagMode.PARAM_VALUE) {
+			paramValue += actual;
+		}
+	}
+	
 }

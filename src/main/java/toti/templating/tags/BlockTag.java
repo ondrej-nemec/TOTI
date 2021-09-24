@@ -13,12 +13,13 @@ public class BlockTag implements Tag {
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
-		return String.format("main=b;b=new StringBuilder();blocks.put(\"%s\",b);", params.get("name"));
+		String name = params.get("name");
+		return String.format("addBlock(\"%s\", (%sParams)->{initNode(%sParams);", name, name, name);
 	}
 
 	@Override
 	public String getPairEndCode(Map<String, String> params) {
-		return "b=main;";
+		return "flushNode();});";
 	}
 
 	@Override
