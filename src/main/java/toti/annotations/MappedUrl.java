@@ -7,26 +7,23 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 
 import common.structures.Tuple2;
-import socketCommunication.http.HttpMethod;
+import json.Jsonable;
 import toti.annotations.url.Domain;
 import toti.validation.Validator;
 
-public class MappedUrl {
+public class MappedUrl implements Jsonable{
 
-	private String url;
-	
-	private final HttpMethod[] allowedMethods;
+	private final String moduleName;
+	private final String controllerUrl;
+	private final String methodUrl;
+	private final String pathUrl;
 
 	private final String className;
-	
 	private final String methodName;
-	
 	private final List<Tuple2<Class<?>, String>> params;
 	
 	private final List<String> paramNames;
-	
-	private final String folder;
-	
+		
 	private boolean isRegex = false;
 	
 	private final Domain[] domains;
@@ -36,13 +33,18 @@ public class MappedUrl {
 	private final boolean isApi;
 
 	public MappedUrl(
-			String url, HttpMethod[] allowedMethods,
+			String moduleName,
+			String controllerUrl,
+			String methodUrl,
+			String pathUrl,
 			String className, String methodName,
-			String folder, Domain[] domains, boolean isApi,
+			Domain[] domains, boolean isApi,
 			Optional<Validator> validator) {
-		this.url = url;
-		this.folder = folder;
-		this.allowedMethods = allowedMethods;
+		this.moduleName = moduleName;
+		this.controllerUrl = controllerUrl;
+		this.methodUrl = methodUrl;
+		this.pathUrl = pathUrl;
+		
 		this.className = className;
 		this.methodName = methodName;
 		this.params = new LinkedList<>();
@@ -50,22 +52,6 @@ public class MappedUrl {
 		this.domains = domains;
 		this.isApi = isApi;
 		this.validator = validator;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-	
-	public String getFolder() {
-		return folder;
-	}
-
-	public void appendUrl(String append) {
-		url += "/" + append;
-	}
-
-	public HttpMethod[] getAllowedMethods() {
-		return allowedMethods;
 	}
 
 	public String getClassName() {
@@ -85,7 +71,7 @@ public class MappedUrl {
 			consumer.accept(tuple._1(), tuple._2());
 		});
 	}
-
+/*
 	public List<Tuple2<Class<?>, String>> getParams() {
 		return params;
 	}
@@ -93,7 +79,7 @@ public class MappedUrl {
 	public List<String> getParamNames() {
 		return paramNames;
 	}
-	
+	*/
 	public String getParamName(int index) {
 		return paramNames.get(index);
 	}
@@ -125,13 +111,32 @@ public class MappedUrl {
 	public boolean isApi() {
 		return isApi;
 	}
+	
+	public String getModuleName() {
+		return moduleName;
+	}
+
+	public String createParametrizedLink() {
+		UrlParam[] regexParam = new UrlParam[paramNames.size()];
+		for (int i = 0; i < regexParam.length; i++) {
+			regexParam[i] = new UrlParam(true);
+		}
+		return Link.get().create(
+			moduleName, pathUrl, controllerUrl, methodUrl, regexParam
+		);
+	}
 
 	@Override
 	public String toString() {
-		return "MappedUrl [url=" + url + ", allowedMethods=" + Arrays.toString(allowedMethods) + ", className="
-				+ className + ", methodName=" + methodName + ", params=" + params + ", paramNames=" + paramNames
-				+ ", folder=" + folder + ", isRegex=" + isRegex + ", domains=" + Arrays.toString(domains)
-				+ ", validator=" + validator + ", isApi=" + isApi + "]";
+		return "{moduleName=" + moduleName + ", controllerUrl=" + controllerUrl + ", methodUrl=" + methodUrl
+				+ ", pathUrl=" + pathUrl + ", allowedMethods="
+				+ ", className=" + className + ", methodName=" + methodName
+				+ ", params=" + params + ", paramNames=" + paramNames + ", isRegex=" + isRegex + ", domains="
+				+ Arrays.toString(domains) + ", validator=" + validator + ", isApi=" + isApi + "}";
+	}
+	@Override
+	public Object toJson() {
+		return toString();
 	}
 	
 }

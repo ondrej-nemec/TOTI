@@ -3,7 +3,10 @@ package toti.registr;
 import java.util.HashMap;
 import java.util.Map;
 
+import common.functions.StackTrace;
 import common.structures.ThrowingSupplier;
+import common.structures.Tuple2;
+import toti.Module;
 
 public class Registr {
 	
@@ -13,7 +16,7 @@ public class Registr {
 		return registr;
 	}
 	
-	private final Map<String, ControllerFactory> FACTORIES;
+	private final Map<String, Tuple2<ControllerFactory, String>> FACTORIES;
 	private final Map<String, Object> SERVICES;
 	
 	private Registr() {
@@ -22,27 +25,37 @@ public class Registr {
 	}
 	
 	public void addFactory(String name, ThrowingSupplier<Object, Throwable> factory) {
-		FACTORIES.put(name, (a, b, c, d)->factory.get());
+		// FACTORIES.put(name, (a, b, c, d)->factory.get());
+		addFactory(name, (a, b, c, d)->factory.get());
 	}
 
 	public void addFactory(Class<?> clazz, ThrowingSupplier<Object, Throwable> factory) {
-		FACTORIES.put(clazz.getName(), (a, b, c, d)->factory.get());
+		// FACTORIES.put(clazz.getName(), (a, b, c, d)->factory.get());
+		addFactory(clazz.getName(), (a, b, c, d)->factory.get());
 	}
 
 	public void addFactory(String name, ControllerFactory factory) {
-		FACTORIES.put(name, factory);
+		String clazzName = StackTrace.classParent(
+			ste->Module.class.isAssignableFrom(Class.forName(ste.getClassName()))
+		);
+		FACTORIES.put(name, new Tuple2<>(factory, clazzName));
 	}
 
 	public void addFactory(Class<?> clazz, ControllerFactory factory) {
-		FACTORIES.put(clazz.getName(), factory);
+		addFactory(clazz.getName(), factory);
+	//	FACTORIES.put(clazz.getName(), factory);
 	}
 	
-	public ControllerFactory getFactory(String className) throws Exception {
-		ControllerFactory result = FACTORIES.get(className);
+	public Tuple2<ControllerFactory, String> _getFactory(String className) throws Exception {
+		Tuple2<ControllerFactory, String> result = FACTORIES.get(className);
 		if (result == null) {
 			throw new RuntimeException("Missing factory " + className);
 		}
 		return result;
+	}
+	
+	public ControllerFactory getFactory(String className) throws Exception {
+		return _getFactory(className)._1();
 	}
 
     public void addService(Object object) {

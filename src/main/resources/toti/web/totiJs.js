@@ -9,6 +9,8 @@
 <t:include file="js/totiAuth.js" />
 <t:include file="js/totiDisplay.js" />
 <t:include file="js/totiControl.js" />
-<t:include file="js/totiProfiler.js" />
+<t:if cond="${useProfiler}" >
+	<t:include file="js/totiProfiler.js" />
+</t:if>
 <t:include file="js/totiForm.js" />
 <t:include file="js/totiGrid.js" />

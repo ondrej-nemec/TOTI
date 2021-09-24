@@ -5,7 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import common.structures.MapInit;
+import example.web.controllers.api.ExampleApiController;
 import socketCommunication.http.HttpMethod;
+import toti.annotations.Link;
+import toti.annotations.UrlParam;
 import toti.annotations.url.Action;
 import toti.annotations.url.Controller;
 import toti.annotations.url.Domain;
@@ -60,7 +63,8 @@ public class ExamplePageController {
 	@Secured(isApi = false, value={@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.READ)})
 	public Response grid() {
 		Map<String, Object> params = new HashMap<>();
-		Grid grid = new Grid("/example-module/api/example/all", "get");
+	//	Grid grid = new Grid("/example-module/api/example/all", "get");
+		Grid grid = new Grid(Link.get().create(ExampleApiController.class, "getAll"), "get");
 		// HERE
 		grid.addColumn(new ValueColumn("id").setTitle(translator.translate("grid.id", new MapInit<String, Object>("a", "aa").toMap())));
 		grid.addColumn(new ValueColumn("name").setTitle("Name").setFilter(Text.filter()).setUseSorting(true));
@@ -77,7 +81,8 @@ public class ExamplePageController {
 		grid.addColumn(
 			new ValueColumn("parent").setTitle("Parent").setFilter(Select.filter( Arrays.asList(
 					Option.create("", "---")
-			)).setLoadData("/example-module/api/example/help", "get")).setUseSorting(true)
+			)).setLoadData(Link.get().create(ExampleApiController.class, "getInArray"), "get")).setUseSorting(true)
+			// )).setLoadData("/example-module/api/example/help", "get")).setUseSorting(true)
 		);
 		
 		grid.addColumn(
@@ -101,7 +106,8 @@ public class ExamplePageController {
 		
 		// COMMON
 		grid.addColumn(new ButtonsColumn("Actions")
-			.addButton(Button.create("/example-module/example/edit/{id}", "edit").setTitle("Edit").setType(ButtonType.WARNING))
+			.addButton(Button.create(Link.get().create("detail", new UrlParam("{id}")), "edit").setTitle("Edit").setType(ButtonType.WARNING))
+			//.addButton(Button.create("/example-module/example/edit/{id}", "edit").setTitle("Edit").setType(ButtonType.WARNING))
 			.addButton(Button.create("/example-module/example/detail/{id}", "detail").setTitle("Detail").setType(ButtonType.INFO))
 			
 			.addButton(Button.create("/example-module/example/edit/{id}?template=2", "edit").setTitle("Edit").setType(ButtonType.WARNING))

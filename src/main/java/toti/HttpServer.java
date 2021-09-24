@@ -2,6 +2,7 @@ package toti;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -32,6 +33,7 @@ public class HttpServer {
 	private final Server server;
 	private final ResponseFactory response;
 	private final Translator translator;
+	private final List<Module> modules;
 	
 	public <T extends Module> HttpServer(
 			int port,
@@ -66,10 +68,12 @@ public class HttpServer {
 		}
 		
 		Router router = new Router();
-		Map<String, TemplateFactory> controllers = new HashMap<>();
+	//	Map<String, TemplateFactory> controllers = new HashMap<>();
 		Map<String, TemplateFactory> templateFactories = new HashMap<>();
 		Set<String> trans = new HashSet<>();
+		this.modules = new LinkedList<>();
 		for (Module module : modules) {
+			this.modules.add(module);
 			module.addRoutes(router);
 			TemplateFactory templateFactory = new TemplateFactory(
 					tempPath,
@@ -80,7 +84,8 @@ public class HttpServer {
 					logger
 			);
 			templateFactory.useOldImpl = USE_OLD_IMPL;
-			controllers.put(module.getControllersPath(), templateFactory);
+		//	modulesToMap.put(module.getControllersPath(), module.getName());
+		//	controllers.put(module.getControllersPath(), templateFactory);
 			templateFactories.put(module.getName(), templateFactory);
 			if (module.getTranslationPath() != null) {
 				trans.add(module.getTranslationPath());
@@ -103,7 +108,8 @@ public class HttpServer {
 				headers,
 				resourcesPath,
 				router,
-				controllers,
+				// controllers,
+				templateFactories,
 				totiTemplateFactory,
 				translator,
 				new IdentityFactory(translator, translator.getLocale().getLang()/*defLang, authenticationCache*/),
@@ -134,7 +140,7 @@ public class HttpServer {
 	}
 	
 	public void start() throws Exception {
-		response.map();
+		response.map(modules);
 		server.start();
 	}
 	

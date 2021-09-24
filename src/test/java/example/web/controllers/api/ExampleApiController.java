@@ -108,7 +108,7 @@ public class ExampleApiController {
 		try {
 			Example item = dao.get(id);
 			Map<String, String> map = new HashMap<>();
-			map.put("subText1", "<script>alert('XSS!');</script>");
+			//map.put("subText1", "<script>alert('XSS!');</script>");
 			//  element.querySelector("[value='" + value + "']");
 		//	map.put("subText2", "\\\"]'); alert('Successfull XSS'); // ");
 		//	map.put("sex", "\\\"]'); alert('Successfull XSS1'); // ");

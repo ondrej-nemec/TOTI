@@ -6,7 +6,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +15,8 @@ import java.util.regex.Pattern;
 
 import common.Logger;
 import common.structures.DictionaryValue;
+import common.structures.MapDictionary;
+import common.structures.MapInit;
 import socketCommunication.http.HttpMethod;
 import socketCommunication.http.StatusCode;
 import socketCommunication.http.server.RequestParameters;
@@ -23,6 +24,7 @@ import socketCommunication.http.server.RestApiResponse;
 import socketCommunication.http.server.RestApiServerResponseFactory;
 import toti.annotations.LoadUrls;
 import toti.annotations.MappedUrl;
+import toti.annotations.UrlPart;
 import toti.annotations.url.Domain;
 import toti.dbviewer.DbViewerRouter;
 import toti.profiler.Profiler;
@@ -47,7 +49,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private final Logger logger;
 	private final List<String> developIps;
 	
-	private /* final */ List<MappedUrl> mapping;	
+	private /* final */ MapDictionary<UrlPart, Object> mapping;	
 	private final String resourcesDir;
 	private final Router router;
 	
@@ -94,7 +96,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		this.profiler = profiler;
 	}
 
-	public void map() throws Exception {
+	public void map(List<Module> modules) throws Exception {
 		this.mapping = LoadUrls.loadUrlMap(modules); // TODO get in constructor
 	}
 	
@@ -231,6 +233,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			String protocol,
 			RequestParameters params,
 			Identity identity) throws ServerException {
+		// remove from here after toti
 		if (router.getUrlMapping(url) == null) {
 			return getMappedResponse(method, url, fullUrl, protocol, params, identity);
 		}
@@ -253,28 +256,41 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			);
 		}
 		// controllers
-		for (MappedUrl mapped : mapping) {
-			boolean is = false;
-			boolean methodMatch = Arrays.asList(mapped.getAllowedMethods()).contains(method);
+		String[] urls = url.substring(1).split("/");
+		DictionaryValue last = new DictionaryValue(mapping);
+		for (int i = 0; i < urls.length; i++) {
+			if (!last.isPresent()) {
+				break;
+			} else if (last.is(MapDictionary.class)) {
+				DictionaryValue aux = last.getDictionaryMap().getDictionaryValue(new UrlPart(urls[i], false));
+				if (!aux.isPresent()) {
+					aux = last.getDictionaryMap().getDictionaryValue(new UrlPart(toti.annotations.UrlParam.PARAM_REGEX, true));
+				}
+				last = aux;
+			} else {
+				last = new DictionaryValue(null);
+				break;
+			}
+		}
+		if (last.isPresent()) {
+			last = last.getDictionaryMap().getDictionaryValue(new UrlPart(method));
+		}
+		if (last.isPresent() && last.is(MappedUrl.class)) {
+			MappedUrl mapped = last.getValue(MappedUrl.class);
 			if (mapped.isRegex()) {
-				Pattern p = Pattern.compile(String.format("(%s)", mapped.getUrl()));
+				Pattern p = Pattern.compile(String.format("(%s)", mapped.createParametrizedLink()));
 		    	Matcher m = p.matcher(url);
-		    	if (m.find() && methodMatch) {
+		    	if (m.find()) {
 		    		for (int i = 2; i <= m.groupCount(); i++) { // group 0 is origin text, 1 match url
 		    			params.put(mapped.getParamName(i - 2), m.group(i));
 		    		}
-		    		is = true;
 		    	}
-			} else {
-				is = url.equals(mapped.getUrl()) && methodMatch;
 			}
-	    	if (is) {
-	    		if (profiler != null) {
-	    			profiler.setPageId(identity.getPageId());
-	    			profiler.logRequest(identity, method, url, fullUrl, protocol, params);
-	    		}
-	    		return getControllerResponse(headers, fullUrl, mapped, params, identity);
-	    	}
+			if (profiler != null) {
+		   		profiler.setPageId(identity.getPageId());
+		   		profiler.logRequest(identity, method, url, fullUrl, protocol, params);
+		   	}
+		   	return getControllerResponse(headers, fullUrl, mapped, params, identity);
 		}
 		// files
 		File file = new File(resourcesDir + url);
@@ -299,7 +315,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			}
 			return Response.getText(StatusCode.FORBIDDEN, "");
 		}
-		return Response.getTemplate(url.substring(5), new HashMap<>());
+		return Response.getTemplate(url.substring(5), new MapInit<String, Object>().append("useProfiler", profiler.isUse()).toMap());
 	}
 
 	private RestApiResponse getControllerResponse(
@@ -350,7 +366,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Object o = Registr.get()
 					.getFactory(mapped.getClassName())
 					.apply(translator.withLocale(identity.getLocale()), identity, authorizator, authenticator);
-			TemplateFactory templateFactory = modules.get(mapped.getFolder());
+		//	TemplateFactory templateFactory = modules.get(mapped.getFolder());
+			TemplateFactory templateFactory = modules.get(mapped.getModuleName());
 
 			Class<?>[] classes = new Class<?>[classesList.size()];
 			classesList.toArray(classes);

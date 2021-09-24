@@ -3,14 +3,16 @@ package toti.annotations;
 import java.lang.reflect.Parameter;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.ArrayUtils;
 
 import common.exceptions.LogicException;
 import common.functions.FilesList;
+import common.structures.DictionaryValue;
+import common.structures.MapDictionary;
 import socketCommunication.http.HttpMethod;
+import toti.Module;
 import toti.annotations.url.Action;
 import toti.annotations.url.Controller;
 import toti.annotations.url.Domain;
@@ -20,26 +22,25 @@ import toti.annotations.url.ParamUrl;
 import toti.annotations.url.Params;
 import toti.annotations.url.Secured;
 import toti.registr.Registr;
-import toti.templating.TemplateFactory;
 import toti.validation.Validator;
 
 public class LoadUrls {
 
-	public static List<MappedUrl> loadUrlMap(Map<String, TemplateFactory> modules) throws Exception {
-		List<MappedUrl> mapping = new LinkedList<>();
-		for (String folder : modules.keySet()) {
-			map(FilesList.get(folder, true).getFiles(), folder, mapping, modules.get(folder).getModuleName());
+	public static MapDictionary<UrlPart, Object> loadUrlMap(List<Module> modules) throws Exception {
+		MapDictionary<UrlPart, Object> mapped = MapDictionary.hashMap();
+		for (Module module : modules) {
+			map(mapped, FilesList.get(module.getControllersPath(), true).getFiles(), module);
 		}
-	    return mapping;
+	    return mapped;
 	}
 	
-	private static void map(List<String> files, String folder, List<MappedUrl> mapping, String moduleName) throws Exception {
+	private static void map(MapDictionary<UrlPart, Object> mapped, List<String> files, Module module) throws Exception {
+		String moduleName = module.getName();
+		String folder = module.getControllersPath();
 		for (String file : files) {
 	    	int index = file.lastIndexOf("/");
-			String prefix = (moduleName.length() > 0 ? "/" + moduleName : "")
-					+ (index > 0 ? "/" + file.replace(file.substring(index), "") : "");
-	    	String classPath = (folder + "/" + file).replaceAll("/", ".");
-		    Class<?> clazz =  Class.forName(classPath.replace(".class", ""));
+	    	String path = (index > 0 ? "/" + file.replace(file.substring(index), "") : "");
+	    	Class<?> clazz =  Class.forName( (folder + "/" + file).replaceAll("/", ".").replace(".class", "") );
 			if ( ! (clazz.isInterface() || clazz.isAnonymousClass() || clazz.isPrimitive()) 
 		    		&& clazz.isAnnotationPresent(Controller.class)) {
 				Domain[] classDomains = null;
@@ -56,8 +57,8 @@ public class LoadUrls {
 		    					: Optional.of(Registr.get().getService(m.getAnnotation(Action.class).validator(), Validator.class));
 		    			String controllerUrl = clazz.getAnnotation(Controller.class).value();
 		    			String methodUrl = m.getAnnotation(Action.class).value();
-		    			String url = prefix + (controllerUrl.isEmpty() ? "" : "/" + controllerUrl)
-								+ (methodUrl.isEmpty() ? "" : "/" + methodUrl);
+		    		/*	String url = prefix + (controllerUrl.isEmpty() ? "" : "/" + controllerUrl)
+								+ (methodUrl.isEmpty() ? "" : "/" + methodUrl);*/
 		    			String className = clazz.getName();
 		    			String methodName = m.getName();
 		    			
@@ -69,17 +70,20 @@ public class LoadUrls {
 		    			}
 		    			
 		    			MappedUrl mappedUrl = new MappedUrl(
-		    					url, methods, className, methodName, folder,
+		    					moduleName, controllerUrl, methodUrl, path,
+		    					className, methodName,
 		    					ArrayUtils.addAll(classDomains, methodDomains), isApi,
 		    					validator
 		    			);
+		    			List<toti.annotations.UrlParam> linkParams = new LinkedList<>();
 		    			for (Parameter p : m.getParameters()) {
 		    				if (p.isAnnotationPresent(ParamUrl.class)) {
-		    					mappedUrl.appendUrl("([a-zA-Z0-9_]*)");
 		    					String name = p.getAnnotation(ParamUrl.class).value();
 		    					mappedUrl.addParam(p.getType(), name);
 		    					mappedUrl.addParamName(name);
 		    					mappedUrl.setRegex(true);
+		    					
+		    					linkParams.add(new toti.annotations.UrlParam(true));
 		    				} else if (p.isAnnotationPresent(Param.class)) {
 		    					mappedUrl.addParam(p.getType(), p.getAnnotation(Param.class).value());
 		    				} else if (p.isAnnotationPresent(Params.class)) {
@@ -92,7 +96,25 @@ public class LoadUrls {
 		    					);
 		    				}
 		    			}
-		    			mapping.add(mappedUrl);
+		    			toti.annotations.UrlParam[] array = new toti.annotations.UrlParam[linkParams.size()];
+		    			linkParams.toArray(array);
+		    			
+		    			String url = Link.get().create(moduleName, path, controllerUrl, methodUrl, array);
+		    			String[] urls = url.substring(1).split("/");
+		    			
+		    			MapDictionary<UrlPart, Object> last = mapped;
+		    			for (int i = 0; i < urls.length; i++) {
+		    				boolean isRegex = urls[i].equals(toti.annotations.UrlParam.PARAM_REGEX); // TODO another regex check
+		    				Object o = last.get(new UrlPart(urls[i], isRegex));
+		    				if (o == null) {
+		    					o = MapDictionary.hashMap();
+		    					last.put(new UrlPart(urls[i], isRegex), o);
+		    				}
+		    				last = new DictionaryValue(o).getDictionaryMap();
+		    			}
+		    			for (HttpMethod httpMethod : methods) {
+		    				last.put(new UrlPart(httpMethod), mappedUrl);
+		    			}
 		    		}
 		    	}
 	    	}
