@@ -39,7 +39,7 @@ public class TemplateParser {
 		String preClass = namespace.length() == 0 ? "%s" : "package %s;";
 		String clazz1 = preClass
 				+ "import toti.templating.Template;"
-				+ "import toti.templating.parsing2.TagNode;"
+				+ "import toti.templating.parsing.TagNode;"
 				+ "import java.util.Map;"
 				+ "import java.util.HashMap;"
 				+ "import common.structures.ThrowingConsumer;"
