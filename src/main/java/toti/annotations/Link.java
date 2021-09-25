@@ -2,14 +2,18 @@ package toti.annotations;
 
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.function.Function;
 
 import common.exceptions.LogicException;
 import common.functions.StackTrace;
 import common.structures.DictionaryValue;
+import common.structures.ObjectBuilder;
 import toti.Module;
+import toti.annotations.mock.MockCreator;
 import toti.annotations.url.Action;
 import toti.annotations.url.Controller;
 import toti.registr.Registr;
+import toti.response.Response;
 
 public class Link {
 	
@@ -60,6 +64,16 @@ public class Link {
 	public String create(Class<?> module, Class<?> controller, String method, UrlParam ...params) {
 		try {
 			return create(getModule(module), controller, getMethod(controller, method, params), params);
+		} catch (RuntimeException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public <T, M extends Module> String create(Class<M> module, Class<T> controller, Function<T, Response> method, UrlParam ...params) {
+		try {
+			return create(getModule(module), controller, getMethod(controller, method), params);
 		} catch (RuntimeException e) {
 			throw e;
 		} catch (Exception e) {
@@ -173,6 +187,13 @@ public class Link {
 	
 	private Module getModule(Class<?> clazz) throws Exception {
 		return Module.class.cast(clazz.newInstance());
+	}
+	
+	private <T> Method getMethod(Class<T> controller, Function<T, Response> method) {
+		ObjectBuilder<Method> builder = new ObjectBuilder<>();
+		T result = new MockCreator().createMock(controller, builder);
+    	method.apply(result);
+    	return builder.get();
 	}
 	
 	private Method getMethod(Class<?> clazz, String method, UrlParam ...params) throws Exception {

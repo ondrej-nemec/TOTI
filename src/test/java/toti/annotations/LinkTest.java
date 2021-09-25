@@ -12,6 +12,15 @@ import junitparams.Parameters;
 
 @RunWith(JUnitParamsRunner.class)
 public class LinkTest {
+	
+	@Test
+	public void testCreateLinkWithMethod() {
+		assertEquals(
+			"/core/users/insert",
+			// new Link("/[module]/[controller]/[method]").create(TestingModule.class, TestingController.class, (c)->c.doInsert())
+			new Link("/[module]/[controller]/[method]").create(TestingModule.class, TestingController.class, TestingController::doInsert)
+		);
+	}
 
 	@Test
 	@Parameters(method="dataCreateLink")
