@@ -1,4 +1,4 @@
-package toti.annotations;
+package toti.url;
 
 import socketCommunication.http.HttpMethod;
 

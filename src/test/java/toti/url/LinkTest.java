@@ -1,4 +1,4 @@
-package toti.annotations;
+package toti.url;
 
 import static org.junit.Assert.assertEquals;
 

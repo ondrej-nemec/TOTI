@@ -1,4 +1,4 @@
-package toti.annotations;
+package toti.url;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -8,7 +8,7 @@ import java.util.function.BiConsumer;
 
 import common.structures.Tuple2;
 import json.Jsonable;
-import toti.annotations.url.Domain;
+import toti.annotations.Domain;
 import toti.validation.Validator;
 
 public class MappedUrl implements Jsonable{

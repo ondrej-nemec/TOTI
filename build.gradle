@@ -14,6 +14,9 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
 	compile group: 'at.favre.lib', name: 'bcrypt', version: '0.9.0'
+    compile group:'org.objenesis',name:'objenesis',version:'2.4'
+    compile group:'net.bytebuddy',name:'byte-buddy',version:'1.4.26'
+    compile group:'net.bytebuddy',name:'byte-buddy-agent',version:'1.4.26'
 	
 	// https://mvnrepository.com/artifact/log4j/log4j
 	compile group: 'log4j', name: 'log4j', version: '1.2.17'

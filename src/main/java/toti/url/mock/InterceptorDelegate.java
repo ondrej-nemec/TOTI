@@ -1,4 +1,4 @@
-package toti.annotations.mock;
+package toti.url.mock;
 
 import java.lang.reflect.Method;
 

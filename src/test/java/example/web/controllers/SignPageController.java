@@ -3,8 +3,8 @@ package example.web.controllers;
 import java.util.HashMap;
 import java.util.Map;
 
-import toti.annotations.url.Action;
-import toti.annotations.url.Controller;
+import toti.annotations.Action;
+import toti.annotations.Controller;
 import toti.response.Response;
 
 @Controller("sign")

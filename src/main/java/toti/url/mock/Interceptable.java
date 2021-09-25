@@ -1,4 +1,4 @@
-package toti.annotations.mock;
+package toti.url.mock;
 
 public interface Interceptable {
 	

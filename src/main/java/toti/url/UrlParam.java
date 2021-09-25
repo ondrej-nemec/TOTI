@@ -1,4 +1,4 @@
-package toti.annotations;
+package toti.url;
 
 public class UrlParam {
 	

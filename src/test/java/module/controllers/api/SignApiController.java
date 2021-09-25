@@ -5,12 +5,12 @@ import java.util.Map;
 
 import socketCommunication.http.HttpMethod;
 import socketCommunication.http.StatusCode;
-import toti.annotations.url.Action;
-import toti.annotations.url.Controller;
-import toti.annotations.url.Method;
-import toti.annotations.url.Param;
-import toti.annotations.url.Secured;
 import toti.security.Authenticator;
+import toti.annotations.Action;
+import toti.annotations.Controller;
+import toti.annotations.Method;
+import toti.annotations.Param;
+import toti.annotations.Secured;
 import toti.authentication.AuthentizationException;
 import toti.security.Identity;
 import toti.response.Response;

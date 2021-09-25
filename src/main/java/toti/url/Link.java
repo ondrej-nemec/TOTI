@@ -1,4 +1,4 @@
-package toti.annotations;
+package toti.url;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -9,9 +9,9 @@ import common.functions.StackTrace;
 import common.structures.DictionaryValue;
 import common.structures.ObjectBuilder;
 import toti.Module;
-import toti.annotations.mock.MockCreator;
-import toti.annotations.url.Action;
-import toti.annotations.url.Controller;
+import toti.annotations.Action;
+import toti.annotations.Controller;
+import toti.url.mock.MockCreator;
 import toti.registr.Registr;
 import toti.response.Response;
 

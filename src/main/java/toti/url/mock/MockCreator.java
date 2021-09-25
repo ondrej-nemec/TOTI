@@ -1,4 +1,4 @@
-package toti.annotations.mock;
+package toti.url.mock;
 
 import static java.lang.reflect.Modifier.PRIVATE;
 import static net.bytebuddy.matcher.ElementMatchers.any;

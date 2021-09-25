@@ -22,10 +22,7 @@ import socketCommunication.http.StatusCode;
 import socketCommunication.http.server.RequestParameters;
 import socketCommunication.http.server.RestApiResponse;
 import socketCommunication.http.server.RestApiServerResponseFactory;
-import toti.annotations.LoadUrls;
-import toti.annotations.MappedUrl;
-import toti.annotations.UrlPart;
-import toti.annotations.url.Domain;
+import toti.annotations.Domain;
 import toti.dbviewer.DbViewerRouter;
 import toti.profiler.Profiler;
 import toti.registr.Registr;
@@ -38,6 +35,9 @@ import toti.security.exceptions.AccessDeniedException;
 import toti.security.exceptions.NotAllowedActionException;
 import toti.templating.DirectoryTemplate;
 import toti.templating.TemplateFactory;
+import toti.url.LoadUrls;
+import toti.url.MappedUrl;
+import toti.url.UrlPart;
 import translator.Translator;
 
 public class ResponseFactory implements RestApiServerResponseFactory {
@@ -264,7 +264,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			} else if (last.is(MapDictionary.class)) {
 				DictionaryValue aux = last.getDictionaryMap().getDictionaryValue(new UrlPart(urls[i], false));
 				if (!aux.isPresent()) {
-					aux = last.getDictionaryMap().getDictionaryValue(new UrlPart(toti.annotations.UrlParam.PARAM_REGEX, true));
+					aux = last.getDictionaryMap().getDictionaryValue(new UrlPart(toti.url.UrlParam.PARAM_REGEX, true));
 				}
 				last = aux;
 			} else {

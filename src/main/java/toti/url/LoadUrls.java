@@ -1,4 +1,4 @@
-package toti.annotations;
+package toti.url;
 
 import java.lang.reflect.Parameter;
 import java.util.LinkedList;
@@ -13,14 +13,14 @@ import common.structures.DictionaryValue;
 import common.structures.MapDictionary;
 import socketCommunication.http.HttpMethod;
 import toti.Module;
-import toti.annotations.url.Action;
-import toti.annotations.url.Controller;
-import toti.annotations.url.Domain;
-import toti.annotations.url.Method;
-import toti.annotations.url.Param;
-import toti.annotations.url.ParamUrl;
-import toti.annotations.url.Params;
-import toti.annotations.url.Secured;
+import toti.annotations.Action;
+import toti.annotations.Controller;
+import toti.annotations.Domain;
+import toti.annotations.Method;
+import toti.annotations.Param;
+import toti.annotations.ParamUrl;
+import toti.annotations.Params;
+import toti.annotations.Secured;
 import toti.registr.Registr;
 import toti.validation.Validator;
 
@@ -75,7 +75,7 @@ public class LoadUrls {
 		    					ArrayUtils.addAll(classDomains, methodDomains), isApi,
 		    					validator
 		    			);
-		    			List<toti.annotations.UrlParam> linkParams = new LinkedList<>();
+		    			List<UrlParam> linkParams = new LinkedList<>();
 		    			for (Parameter p : m.getParameters()) {
 		    				if (p.isAnnotationPresent(ParamUrl.class)) {
 		    					String name = p.getAnnotation(ParamUrl.class).value();
@@ -83,7 +83,7 @@ public class LoadUrls {
 		    					mappedUrl.addParamName(name);
 		    					mappedUrl.setRegex(true);
 		    					
-		    					linkParams.add(new toti.annotations.UrlParam(true));
+		    					linkParams.add(new UrlParam(true));
 		    				} else if (p.isAnnotationPresent(Param.class)) {
 		    					mappedUrl.addParam(p.getType(), p.getAnnotation(Param.class).value());
 		    				} else if (p.isAnnotationPresent(Params.class)) {
@@ -96,7 +96,7 @@ public class LoadUrls {
 		    					);
 		    				}
 		    			}
-		    			toti.annotations.UrlParam[] array = new toti.annotations.UrlParam[linkParams.size()];
+		    			UrlParam[] array = new UrlParam[linkParams.size()];
 		    			linkParams.toArray(array);
 		    			
 		    			String url = Link.get().create(moduleName, path, controllerUrl, methodUrl, array);
@@ -104,7 +104,7 @@ public class LoadUrls {
 		    			
 		    			MapDictionary<UrlPart, Object> last = mapped;
 		    			for (int i = 0; i < urls.length; i++) {
-		    				boolean isRegex = urls[i].equals(toti.annotations.UrlParam.PARAM_REGEX); // TODO another regex check
+		    				boolean isRegex = urls[i].equals(UrlParam.PARAM_REGEX); // TODO another regex check
 		    				Object o = last.get(new UrlPart(urls[i], isRegex));
 		    				if (o == null) {
 		    					o = MapDictionary.hashMap();

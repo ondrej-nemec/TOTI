@@ -1,4 +1,4 @@
-package toti.annotations.url;
+package toti.annotations;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 

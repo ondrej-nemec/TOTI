@@ -1,9 +1,9 @@
-package toti.annotations;
+package toti.url;
 
 import static org.junit.Assert.fail;
 
-import toti.annotations.url.Action;
-import toti.annotations.url.Controller;
+import toti.annotations.Action;
+import toti.annotations.Controller;
 import toti.response.Response;
 
 @Controller("users")

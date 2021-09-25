@@ -11,12 +11,12 @@ import module.AuditTrail;
 import socketCommunication.http.HttpMethod;
 import socketCommunication.http.StatusCode;
 import socketCommunication.http.server.RequestParameters;
-import toti.annotations.url.Action;
-import toti.annotations.url.Controller;
-import toti.annotations.url.Method;
-import toti.annotations.url.Param;
-import toti.annotations.url.ParamUrl;
-import toti.annotations.url.Params;
+import toti.annotations.Action;
+import toti.annotations.Controller;
+import toti.annotations.Method;
+import toti.annotations.Param;
+import toti.annotations.ParamUrl;
+import toti.annotations.Params;
 import toti.response.Response;
 import translator.Translator;
 

@@ -1,4 +1,4 @@
-package toti.annotations.url;
+package toti.annotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

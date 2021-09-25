@@ -1,9 +1,11 @@
-package toti.annotations.url;
+package toti.annotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Params {
+public @interface ParamUrl {
 
+	String value();
+	
 }
