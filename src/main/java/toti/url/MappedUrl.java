@@ -1,5 +1,6 @@
 package toti.url;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -117,12 +118,11 @@ public class MappedUrl implements Jsonable{
 	}
 
 	public String createParametrizedLink() {
-		UrlParam[] regexParam = new UrlParam[paramNames.size()];
-		for (int i = 0; i < regexParam.length; i++) {
-			regexParam[i] = new UrlParam(true);
-		}
+		List<UrlParam> regexParams = new ArrayList<>();
+		paramNames.forEach(n->regexParams.add(new UrlParam(true)));
+		
 		return Link.get().create(
-			moduleName, pathUrl, controllerUrl, methodUrl, regexParam
+			moduleName, pathUrl, controllerUrl, methodUrl, regexParams
 		);
 	}
 

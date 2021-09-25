@@ -14,7 +14,7 @@ public class UrlParam {
 		this(null, value, false);
 	}
 
-	public UrlParam(boolean isRegex) {
+	protected UrlParam(boolean isRegex) {
 		this(null, PARAM_REGEX, isRegex);
 	}
 	

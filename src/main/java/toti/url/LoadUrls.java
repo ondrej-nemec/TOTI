@@ -95,11 +95,8 @@ public class LoadUrls {
 		    						+ " or " + ParamUrl.class
 		    					);
 		    				}
-		    			}
-		    			UrlParam[] array = new UrlParam[linkParams.size()];
-		    			linkParams.toArray(array);
-		    			
-		    			String url = Link.get().create(moduleName, path, controllerUrl, methodUrl, array);
+		    			}		    			
+		    			String url = Link.get().create(moduleName, path, controllerUrl, methodUrl, linkParams);
 		    			String[] urls = url.substring(1).split("/");
 		    			
 		    			MapDictionary<UrlPart, Object> last = mapped;

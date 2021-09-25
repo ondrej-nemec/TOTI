@@ -1,6 +1,8 @@
 package toti.url;
 
 import java.lang.reflect.Method;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -8,6 +10,8 @@ import common.exceptions.LogicException;
 import common.functions.StackTrace;
 import common.structures.DictionaryValue;
 import common.structures.ObjectBuilder;
+import common.structures.ThrowingFunction;
+import common.structures.ThrowingSupplier;
 import toti.Module;
 import toti.annotations.Action;
 import toti.annotations.Controller;
@@ -36,59 +40,98 @@ public class Link {
 	
 	private final String pattern;
 	
+	private ThrowingFunction<Class<?>, Module, Exception> getModule = (controllerClass)->{
+		String moduleClass = Registr.get()._getFactory(controllerClass.getName())._2();
+		return Module.class.cast(Class.forName(moduleClass).newInstance());
+	};
+	private ThrowingSupplier<Class<?>, Exception> getController = ()->Class.forName(StackTrace.classParent(
+		ste->Class.forName(ste.getClassName()).isAnnotationPresent(Controller.class)
+	));
+	private ThrowingFunction<Class<?>, Method, Exception> getMethod = null; // TODO set actual method
+	private List<UrlParam> params = new LinkedList<>();
+	
 	protected Link(String pattern) {
 		this.pattern = pattern;
 	}
 	
-	public String create(String method, UrlParam ...params) {
-		try {
-			Class<?> controllerClass = getControllerClass();
-			return create(getModule(controllerClass.getName()), controllerClass, getMethod(controllerClass, method, params), params);
-		} catch (RuntimeException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+	/*** module ***/
+	
+	public Link setModule(Module module) {
+		getModule = (c)->module;
+		return this;
 	}
 	
-	public String create(Class<?> controller, String method, UrlParam ...params) {
-		try {
-			return create(getModule(controller.getName()), controller, getMethod(controller, method, params), params);
-		} catch (RuntimeException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+	public <M extends Module> Link setModule(Class<M> moduleClass) {
+		getModule = (c)->Module.class.cast(moduleClass.newInstance());
+		return this;
 	}
 	
-	public String create(Class<?> module, Class<?> controller, String method, UrlParam ...params) {
-		try {
-			return create(getModule(module), controller, getMethod(controller, method, params), params);
-		} catch (RuntimeException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+	/*** controller ***/
+	
+	public Link setController(Class<?> controllerClass) {
+		if (!controllerClass.isAnnotationPresent(Controller.class)) {
+			throw new LogicException("Class " + controllerClass + " is not TOTI controller");
 		}
+		getController = ()->controllerClass;
+		return this;
 	}
 	
-	public <T, M extends Module> String create(Class<M> module, Class<T> controller, Function<T, Response> method, UrlParam ...params) {
-		try {
-			return create(getModule(module), controller, getMethod(controller, method), params);
-		} catch (RuntimeException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+	/*** method ***/
+	
+	public Link setMethod(String methodName) {
+		getMethod = (clazz)->{
+			try {
+				Class<?> []classes = new Class[params.size()];
+				for (int i = 0; i < params.size(); i++) {
+					classes[i] = params.get(i).getClass(); // TODO can be null !!
+				}
+				Method method = clazz.getMethod(methodName, classes);
+				if (!method.isAnnotationPresent(Action.class)) {
+					throw new LogicException("Method " + method + " is not TOTI action");
+				}
+				return method;
+			} catch (NoSuchMethodException e) {
+				for (Method m : clazz.getMethods()) {
+					if (m.isAnnotationPresent(Action.class) && m.getName().equals(methodName)) {
+						return m;
+					}
+				}
+				throw e;
+			}
+		};
+		return this;
 	}
 	
-	public String create(Module module, Class<?> controller, Method method, UrlParam ...params) {
-		if (!controller.isAnnotationPresent(Controller.class)) {
-			throw new LogicException("Class " + controller + " is not TOTI controller");
-		}
-		if (!method.isAnnotationPresent(Action.class)) {
-			throw new LogicException("Method " + method + " is not TOTI action");
+	/*** universal ***/
+	
+	public Link addGetParam(String name, Object value) {
+		params.add(new UrlParam(name, value));
+		return this;
+	}
+	
+	public Link addUrlParam(Object value) {
+		params.add(new UrlParam(value));
+		return this;
+	}
+	
+	/******/
+	
+	private String getPath(Module module, Class<?> controller) {
+		return controller.getName()
+				.replace(".", "/")
+				.replace(module.getControllersPath(), "")
+				.replace(controller.getSimpleName(), "");
+	}
+	
+	
+	public String create() {
+		if (getMethod == null) {
+			throw new LogicException("Target method is missing");
 		}
 		try {
+			Class<?> controller = getController.get();
+			Module module = getModule.apply(controller);
+			Method method = getMethod.apply(controller);
 			return create(
 				module.getName(),
 				getPath(module, controller),
@@ -100,12 +143,35 @@ public class Link {
 			throw new RuntimeException("Cannot create link", e);
 		}
 	}
+	
+	public <T> String create(Class<T> controller, Function<T, Response> method) {
+		if (!controller.isAnnotationPresent(Controller.class)) {
+			throw new LogicException("Class " + controller + " is not TOTI controller");
+		}
+		try {
+			Module module = getModule.apply(controller);
+			
+			ObjectBuilder<Method> builder = new ObjectBuilder<>();
+			T result = new MockCreator().createMock(controller, builder);
+	    	method.apply(result);
+	    	Method m = builder.get();
+			return create(
+				module.getName(),
+				getPath(module, controller),
+				controller.getAnnotation(Controller.class).value(), 
+				m.getAnnotation(Action.class).value(),
+				params
+			);
+		} catch (Exception e) {
+			throw new RuntimeException("Cannot create link", e);
+		}
+	}
 
-	protected String create(String module, String path, String controller, String method, UrlParam ...params) {
+	protected String create(String module, String path, String controller, String method, List<UrlParam> params) {
 		return create(pattern, module, path, controller, method, params);
 	}
 	
-	private String create(String pattern, String module, String path, String controller, String method, UrlParam ...params) {
+	private String create(String pattern, String module, String path, String controller, String method, List<UrlParam> params) {
 		// TODO lang
 		pattern = parseUrl(pattern, MODULE, module);
 		pattern = parseUrl(pattern, PATH, path);
@@ -165,53 +231,6 @@ public class Link {
 			url = url.substring(0, url.length() - 1);
 		}
 		return url;
-	}
-	
-	private Class<?> getControllerClass() throws ClassNotFoundException {
-		return Class.forName(StackTrace.classParent(
-			ste->Class.forName(ste.getClassName()).isAnnotationPresent(Controller.class)
-		));
-	}
-	
-	private String getPath(Module module, Class<?> controller) {
-		return controller.getName()
-		.replace(".", "/")
-		.replace(module.getControllersPath(), "")
-		.replace(controller.getSimpleName(), "");
-	}
-
-	private Module getModule(String controllerClass) throws Exception {
-		String moduleClass = Registr.get()._getFactory(controllerClass)._2();
-		return getModule(Class.forName(moduleClass));
-	}
-	
-	private Module getModule(Class<?> clazz) throws Exception {
-		return Module.class.cast(clazz.newInstance());
-	}
-	
-	private <T> Method getMethod(Class<T> controller, Function<T, Response> method) {
-		ObjectBuilder<Method> builder = new ObjectBuilder<>();
-		T result = new MockCreator().createMock(controller, builder);
-    	method.apply(result);
-    	return builder.get();
-	}
-	
-	private Method getMethod(Class<?> clazz, String method, UrlParam ...params) throws Exception {
-		try {
-			Class<?> []classes = new Class[params.length];
-			for (int i = 0; i < params.length; i++) {
-				classes[i] = params[i].getClass(); // TODO can be null !!
-			}
-			return clazz.getMethod(method, classes);
-		} catch (NoSuchMethodException e) {
-			for (Method m : clazz.getMethods()) {
-				if (m.isAnnotationPresent(Action.class) && m.getName().equals(method)) {
-					return m;
-				}
-			}
-			throw e;
-		}
-		
 	}
 	
 }

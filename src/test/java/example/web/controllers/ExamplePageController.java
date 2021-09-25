@@ -44,7 +44,6 @@ import toti.control.inputs.Time;
 import toti.control.inputs.Week;
 import toti.response.Response;
 import toti.url.Link;
-import toti.url.UrlParam;
 import translator.Translator;
 
 @Controller("example")
@@ -64,7 +63,7 @@ public class ExamplePageController {
 	public Response grid() {
 		Map<String, Object> params = new HashMap<>();
 	//	Grid grid = new Grid("/example-module/api/example/all", "get");
-		Grid grid = new Grid(Link.get().create(ExampleApiController.class, "getAll"), "get");
+		Grid grid = new Grid(Link.get().create(ExampleApiController.class, c->c.getAll(null, null, null, null, null)), "get");
 		// HERE
 		grid.addColumn(new ValueColumn("id").setTitle(translator.translate("grid.id", new MapInit<String, Object>("a", "aa").toMap())));
 		grid.addColumn(new ValueColumn("name").setTitle("Name").setFilter(Text.filter()).setUseSorting(true));
@@ -81,7 +80,7 @@ public class ExamplePageController {
 		grid.addColumn(
 			new ValueColumn("parent").setTitle("Parent").setFilter(Select.filter( Arrays.asList(
 					Option.create("", "---")
-			)).setLoadData(Link.get().create(ExampleApiController.class, "getInArray"), "get")).setUseSorting(true)
+			)).setLoadData(Link.get().create(ExampleApiController.class, c->c.getInArray(null)), "get")).setUseSorting(true)
 			// )).setLoadData("/example-module/api/example/help", "get")).setUseSorting(true)
 		);
 		
@@ -106,7 +105,7 @@ public class ExamplePageController {
 		
 		// COMMON
 		grid.addColumn(new ButtonsColumn("Actions")
-			.addButton(Button.create(Link.get().create("detail", new UrlParam("{id}")), "edit").setTitle("Edit").setType(ButtonType.WARNING))
+			.addButton(Button.create(Link.get().addUrlParam("{id}").create(ExamplePageController.class, c->c.detail(null, null)), "edit").setTitle("Edit").setType(ButtonType.WARNING))
 			//.addButton(Button.create("/example-module/example/edit/{id}", "edit").setTitle("Edit").setType(ButtonType.WARNING))
 			.addButton(Button.create("/example-module/example/detail/{id}", "detail").setTitle("Detail").setType(ButtonType.INFO))
 			
