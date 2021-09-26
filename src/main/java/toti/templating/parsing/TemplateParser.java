@@ -60,14 +60,14 @@ public class TemplateParser {
 				+ "private TagNode flushNode() {TagNode node = nodes.removeLast();if (nodes.size() > 0) {write(node.getBuilder().toString());}return node;}"
 								
 				+ "public long getLastModification(){return %sL;}"
-				+ "public String create("
+				/*+ "public String create("
 					+ "TemplateFactory templateFactory,"
 					+ "Map<String, Object>variables,"
 					+ "Translator translator,"
 					+ "Authorizator authorizator"
 				+ ")throws Exception{"
 				+ "return create(templateFactory, variables, translator, authorizator, new LinkedList<>());"
-				+ "}"
+				+ "}"*/
 				+ "public String create("
 					+ "TemplateFactory templateFactory,"
 					+ "Map<String, Object>variables,"

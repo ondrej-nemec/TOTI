@@ -1,8 +1,10 @@
 package toti.templating;
 
+import java.util.LinkedList;
 import java.util.Map;
 
 import toti.security.Authorizator;
+import toti.templating.parsing.TagNode;
 import translator.Translator;
 
 public class ExceptionTemplate implements Template {
@@ -19,7 +21,7 @@ public class ExceptionTemplate implements Template {
 	}
 
 	@Override
-	public String create(TemplateFactory templateFactory, Map<String, Object> variables, Translator translator, Authorizator authorizator)
+	public String create(TemplateFactory templateFactory, Map<String, Object> variables, Translator translator, Authorizator authorizator, LinkedList<TagNode> nodes)
 			throws Exception {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Exception occured:<br>");

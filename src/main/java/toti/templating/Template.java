@@ -13,20 +13,19 @@ public interface Template {
 
 	long getLastModification();
 	
-	String create(
-			TemplateFactory templateFactory, 
-			Map<String, Object>variables, 
-			Translator translator, 
-			Authorizator authorizator) throws Exception;
-	
-	// TODO will no default
 	default String create(
 			TemplateFactory templateFactory, 
 			Map<String, Object>variables, 
 			Translator translator, 
-			Authorizator authorizator, LinkedList<TagNode> nodes) throws Exception {
-		return create(templateFactory, variables, translator, authorizator);
+			Authorizator authorizator) throws Exception {
+		return create(templateFactory, variables, translator, authorizator, new LinkedList<>());
 	}
+	
+	String create(
+			TemplateFactory templateFactory, 
+			Map<String, Object>variables, 
+			Translator translator, 
+			Authorizator authorizator, LinkedList<TagNode> nodes) throws Exception;
 	
 	static String escapeVariable(Object variable) {
 		if (variable == null) {
