@@ -47,6 +47,7 @@ public class TemplateParser {
 				+ "import translator.Translator;"
 				+ "import toti.security.Authorizator;"
 				+ "import toti.templating.TemplateFactory;"
+				+ "import toti.url.MappedUrl;"
 				+ "public class %s implements Template{"
 					+ "private LinkedList<TagNode> nodes = new LinkedList<>();"
 				
@@ -60,20 +61,13 @@ public class TemplateParser {
 				+ "private TagNode flushNode() {TagNode node = nodes.removeLast();if (nodes.size() > 0) {write(node.getBuilder().toString());}return node;}"
 								
 				+ "public long getLastModification(){return %sL;}"
-				/*+ "public String create("
-					+ "TemplateFactory templateFactory,"
-					+ "Map<String, Object>variables,"
-					+ "Translator translator,"
-					+ "Authorizator authorizator"
-				+ ")throws Exception{"
-				+ "return create(templateFactory, variables, translator, authorizator, new LinkedList<>());"
-				+ "}"*/
-				+ "public String create("
+				+ "public String _create("
 					+ "TemplateFactory templateFactory,"
 					+ "Map<String, Object>variables,"
 					+ "Translator translator,"
 					+ "Authorizator authorizator,"
-					+ "LinkedList<TagNode> nodes"
+					+ "LinkedList<TagNode> nodes,"
+					+ "MappedUrl current"
 			+ ")throws Exception{";
 		String clazz2 = "}}";
 		String tempFile = tempPath + "/" + namespace + "/" + className + ".java";
@@ -83,7 +77,7 @@ public class TemplateParser {
 			bw.write("Template layout=null;this.nodes = nodes;initNode(variables);");
 			loadFile(fileName, bw, module);
 			bw.write("if(layout!=null){"
-					+ "layout.create(templateFactory,variables,translator, authorizator, this.nodes);"
+					+ "layout._create(templateFactory,variables,translator, authorizator, this.nodes,current);"
 					+ "}");
 			bw.write("return flushNode().getBuilder().toString();");
 			bw.write(clazz2);

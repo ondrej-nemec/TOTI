@@ -168,7 +168,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		logger.error(String.format("Exception occured %s URL: %s", responseCode, fullUrl), t);
 		StatusCode code = StatusCode.forCode(responseCode);
 		if (developIps.contains(identity.getIP())) {
-			return printException(code, method, url, fullUrl, protocol, header, params, identity, t);
+			return printException(code, method, url, fullUrl, protocol, header, params, identity, null, t);
 		}
 		// TODO own exception catcher
 		/*return Response.getFile(StatusCode.forCode(code), String.format("toti/errors/%s.html", code))
@@ -181,7 +181,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				totiTemplateFactory, 
 				translator.withLocale(identity.getLocale()), 
 				authorizator,
-				identity,
+				identity, null,
 				charset
 			);
 	}
@@ -193,7 +193,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			String protocol,
 			Properties header,
 			RequestParameters params,
-			Identity identity,
+			Identity identity, MappedUrl mappedUrl,
 			Throwable t) {
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("code", code);
@@ -209,7 +209,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				.getResponse(
 					responseHeaders.get(), totiTemplateFactory, 
 					translator.withLocale(identity.getLocale()),
-					authorizator, identity, charset
+					authorizator, identity, mappedUrl, charset
 				);
 	}
 	
@@ -252,7 +252,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		if (url.startsWith("/toti/")) {
 			return getTotiResponse(method, url, params, identity, headers).getResponse(
 				headers, totiTemplateFactory, translator.withLocale(identity.getLocale()),
-				authorizator, identity, charset
+				authorizator, identity, null, charset
 			);
 		}
 		// controllers
@@ -300,7 +300,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		if (file.isDirectory()) {
 			return getDirResponse(headers, file.listFiles(), url);
 		}
-		return Response.getFile(resourcesDir + url).getResponse(headers, null, null, null, null, charset);
+		return Response.getFile(resourcesDir + url).getResponse(headers, null, null, null, null, null, charset);
 	}
 	
 	private Response getTotiResponse(HttpMethod method, String url, RequestParameters params, Identity identity, ResponseHeaders headers) {
@@ -356,11 +356,11 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 						.getResponse(headers, null, null, null, null, charset);*/
 				return Response.getRedirect(
 					authorizator.getRedirectUrlNoLoggedUser() + "?backlink=" + getBackLink(fullUrl)
-	            ).getResponse(headers, null, null, null, null, charset);
+	            ).getResponse(headers, null, null, null, null, null, charset);
 			}
 		} else {
 			// check errors after authrization
-			return Response.getJson(StatusCode.BAD_REQUEST, errors).getResponse(headers, null, null, null, null, charset);
+			return Response.getJson(StatusCode.BAD_REQUEST, errors).getResponse(headers, null, null, null, null, null, charset);
 		}
 		try {
 			Object o = Registr.get()
@@ -381,7 +381,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			return response.getResponse(
 				headers, templateFactory, 
 				translator.withLocale(identity.getLocale()), 
-				authorizator, identity, charset
+				authorizator, identity, mapped, charset
 			);
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
@@ -420,7 +420,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			headers.getHeaders(),
 			(bw)->{
 				try {
-					bw.write(new DirectoryTemplate(files, path).create(null, null, null, null));
+					bw.write(new DirectoryTemplate(files, path).create(null, null, null, null, null));
 				} catch (Exception e) {
 					throw new RuntimeException(e);
 				}

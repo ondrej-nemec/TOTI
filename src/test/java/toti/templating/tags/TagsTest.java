@@ -20,7 +20,7 @@ public class TagsTest {
 			Template template = templateFactory.getTemplate("tags.jsp");
 			Map<String, Object> params = new HashMap<>();
 			params.put("ifTest", true);
-			System.out.println(template.create(templateFactory, params, null, null));
+			System.out.println(template.create(templateFactory, params, null, null, null));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -9,6 +9,7 @@ import toti.ResponseHeaders;
 import toti.security.Authorizator;
 import toti.security.Identity;
 import toti.templating.TemplateFactory;
+import toti.url.MappedUrl;
 import translator.Translator;
 
 public interface Response {
@@ -19,6 +20,7 @@ public interface Response {
 			Translator translator,
 			Authorizator authorizator,
 			Identity identity,
+			MappedUrl current,
 			String charset
 	);
 	

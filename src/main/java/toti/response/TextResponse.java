@@ -6,6 +6,7 @@ import toti.ResponseHeaders;
 import toti.security.Authorizator;
 import toti.security.Identity;
 import toti.templating.TemplateFactory;
+import toti.url.MappedUrl;
 import translator.Translator;
 
 public class TextResponse implements Response {
@@ -27,7 +28,7 @@ public class TextResponse implements Response {
 			TemplateFactory templateFactory, 
 			Translator translator, 
 			Authorizator authorizator,
-			Identity identity,
+			Identity identity, MappedUrl current,
 			String charset) {
 		return RestApiResponse.textResponse(code, header.getHeaders(), (bw)->{
 			bw.write(text);

@@ -61,7 +61,7 @@ public class IncludeTag implements Tag {
 					params.get("file"), params.get("module")
 			));
 		}
-		code.append("temp.create(templateFactory,variables,translator, authorizator, this.nodes);" + "}");
+		code.append("temp._create(templateFactory,variables,translator, authorizator, this.nodes,current);" + "}");
 		return code.toString();
 	}
 

@@ -11,6 +11,7 @@ import toti.security.Authorizator;
 import toti.security.Identity;
 import toti.templating.Template;
 import toti.templating.TemplateFactory;
+import toti.url.MappedUrl;
 import translator.Translator;
 
 public class TemplateResponse implements Response {
@@ -36,7 +37,8 @@ public class TemplateResponse implements Response {
 			TemplateFactory templateFactory, 
 			Translator translator,
 			Authorizator authorizator,
-			Identity identity,
+			Identity identity, 
+			MappedUrl current,
 			String charset) {
 		String nonce = RandomStringUtils.randomAlphanumeric(50);
 		params.put("nonce", nonce);
@@ -51,7 +53,7 @@ public class TemplateResponse implements Response {
 			(bw)->{
 				try {
 					Template template = templateFactory.getTemplate(fileName);
-					bw.write(template.create(templateFactory, params, translator, authorizator));
+					bw.write(template.create(templateFactory, params, translator, authorizator, current));
 				} catch (Exception e) {
 					throw new RuntimeException(e);
 				}

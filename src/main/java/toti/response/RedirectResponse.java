@@ -6,6 +6,7 @@ import toti.ResponseHeaders;
 import toti.security.Authorizator;
 import toti.security.Identity;
 import toti.templating.TemplateFactory;
+import toti.url.MappedUrl;
 import translator.Translator;
 
 public class RedirectResponse implements Response {
@@ -24,7 +25,7 @@ public class RedirectResponse implements Response {
 			TemplateFactory templateFactory, 
 			Translator translator, 
 			Authorizator authorizator,
-			Identity identity,
+			Identity identity, MappedUrl current,
 			String charset) {
 		header.addHeader("Location: " + url);
 		return RestApiResponse.textResponse(code, header.getHeaders(), (bw)->{});

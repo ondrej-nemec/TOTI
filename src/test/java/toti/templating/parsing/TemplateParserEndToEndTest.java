@@ -258,7 +258,7 @@ public class TemplateParserEndToEndTest {
 						.append("age", 42)
 						.append("map", new MapInit<>("key1", "some value").toMap())
 						.toMap(),
-						null, null));
+						null, null, null));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

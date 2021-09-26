@@ -10,6 +10,7 @@ import toti.security.Authorizator;
 import toti.templating.Template;
 import toti.templating.TemplateFactory;
 import toti.templating.parsing.TagNode;
+import toti.url.MappedUrl;
 import translator.Translator;
 
 public class TemplateImpl implements Template {
@@ -70,8 +71,8 @@ public class TemplateImpl implements Template {
 		return 0;
 	}
 	
-	public String create(TemplateFactory templateFactory, Map<String, Object> variables, Translator translator,
-			Authorizator authorizator, LinkedList<TagNode> nodes) throws Exception {
+	public String _create(TemplateFactory templateFactory, Map<String, Object> variables, Translator translator,
+			Authorizator authorizator, LinkedList<TagNode> nodes, MappedUrl current) throws Exception {
 		TemplateImpl layout = null; // TODO template
 		this.nodes = nodes;
 		initNode(variables);
@@ -129,21 +130,15 @@ public class TemplateImpl implements Template {
 		}
 		
 		if (layout != null) {
-			return layout.create(templateFactory, variables, translator, authorizator, this.nodes);
+			return layout._create(templateFactory, variables, translator, authorizator, this.nodes, current);
 		}
 		return flushNode().getBuilder().toString();
-	}
-
-	@Override
-	public String create(TemplateFactory templateFactory, Map<String, Object> variables, Translator translator,
-			Authorizator authorizator) throws Exception {
-		return create(templateFactory, variables, translator, authorizator, new LinkedList<>());
 	}
 
 	public static void main(String[] args) {
 		TemplateImpl template = new TemplateImpl();
 		try {
-			System.out.println(template.create(null, null, null, null));
+			System.out.println(template.create(null, null, null, null, null));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

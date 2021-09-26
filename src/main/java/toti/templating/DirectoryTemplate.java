@@ -6,6 +6,7 @@ import java.util.Map;
 
 import toti.security.Authorizator;
 import toti.templating.parsing.TagNode;
+import toti.url.MappedUrl;
 import translator.Translator;
 
 public class DirectoryTemplate implements Template {
@@ -25,7 +26,9 @@ public class DirectoryTemplate implements Template {
 	}
 
 	@Override
-	public String create(TemplateFactory templateFactory, Map<String, Object> variables, Translator translator, Authorizator authorizator, LinkedList<TagNode> nodes)
+	public String _create(
+			TemplateFactory templateFactory, Map<String, Object> variables, 
+			Translator translator, Authorizator authorizator, LinkedList<TagNode> nodes, MappedUrl current)
 			throws Exception {
 		StringBuilder builder = new StringBuilder();
 		

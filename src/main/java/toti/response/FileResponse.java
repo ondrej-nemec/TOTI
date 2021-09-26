@@ -8,6 +8,7 @@ import toti.ResponseHeaders;
 import toti.security.Authorizator;
 import toti.security.Identity;
 import toti.templating.TemplateFactory;
+import toti.url.MappedUrl;
 import translator.Translator;
 
 public class FileResponse implements Response {
@@ -29,7 +30,7 @@ public class FileResponse implements Response {
 			TemplateFactory templateFactory, 
 			Translator translator, 
 			Authorizator authorizator,
-			Identity identity,
+			Identity identity, MappedUrl current,
 			String charset) {
 		String head = getContentType(fileName, charset);
 		if (head != null) {

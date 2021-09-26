@@ -7,6 +7,7 @@ import common.structures.ListDictionary;
 import common.structures.MapDictionary;
 import toti.security.Authorizator;
 import toti.templating.parsing.TagNode;
+import toti.url.MappedUrl;
 import translator.Translator;
 
 public interface Template {
@@ -17,15 +18,15 @@ public interface Template {
 			TemplateFactory templateFactory, 
 			Map<String, Object>variables, 
 			Translator translator, 
-			Authorizator authorizator) throws Exception {
-		return create(templateFactory, variables, translator, authorizator, new LinkedList<>());
+			Authorizator authorizator, MappedUrl current) throws Exception {
+		return _create(templateFactory, variables, translator, authorizator, new LinkedList<>(), current);
 	}
 	
-	String create(
+	String _create(
 			TemplateFactory templateFactory, 
 			Map<String, Object>variables, 
 			Translator translator, 
-			Authorizator authorizator, LinkedList<TagNode> nodes) throws Exception;
+			Authorizator authorizator, LinkedList<TagNode> nodes, MappedUrl current) throws Exception;
 	
 	static String escapeVariable(Object variable) {
 		if (variable == null) {
