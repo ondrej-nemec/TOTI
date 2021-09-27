@@ -125,7 +125,7 @@ public class MappedUrl implements Jsonable{
 			moduleName, pathUrl, controllerUrl, methodUrl, regexParams
 		);
 	}
-
+	
 	@Override
 	public String toString() {
 		return "{moduleName=" + moduleName + ", controllerUrl=" + controllerUrl + ", methodUrl=" + methodUrl

@@ -32,7 +32,6 @@
 			location.reload();
 		};
 	</script>
-
-	<a href="/example-module/example/list">List</a>
+	<a href='<t:link controller="example.web.controllers.ExamplePageController" method="grid"/>'>List</a>
 
 </t:block>

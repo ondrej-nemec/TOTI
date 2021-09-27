@@ -22,6 +22,7 @@ import common.functions.FileExtension;
 import common.structures.ThrowingFunction;
 import common.structures.Tuple2;
 import toti.templating.parsing.TemplateParser;
+import toti.templating.tags.*;
 
 public class TemplateFactory {
 	
@@ -200,35 +201,37 @@ public class TemplateFactory {
 
 	private List<Tag> initTags(String actualFileDir) {
 		List<Tag> tags = new ArrayList<>();
-		tags.add(new toti.templating.tags.BreakTag());
-		tags.add(new toti.templating.tags.CaseTag());
-		tags.add(new toti.templating.tags.CatchTag());
-		tags.add(new toti.templating.tags.ConsoleOutputTag());
-		tags.add(new toti.templating.tags.ContinueTag());
-		tags.add(new toti.templating.tags.DefaultTag());
-		tags.add(new toti.templating.tags.DoWhileTag());
-		tags.add(new toti.templating.tags.ElseIfTag());
-		tags.add(new toti.templating.tags.ElseTag());
-		tags.add(new toti.templating.tags.FinallyTag());
-		tags.add(new toti.templating.tags.ForEachTag());
-		tags.add(new toti.templating.tags.ForTag());
-		tags.add(new toti.templating.tags.IfTag());
-		tags.add(new toti.templating.tags.SwitchTag());
-		tags.add(new toti.templating.tags.TranslateParamTag());
-		tags.add(new toti.templating.tags.TranslateTag());
-		tags.add(new toti.templating.tags.TryTag());
-		tags.add(new toti.templating.tags.VariableDefineTag());
-		tags.add(new toti.templating.tags.VariablePrintTag());
-		tags.add(new toti.templating.tags.VariableSetTag());
-		tags.add(new toti.templating.tags.WhileTag());
-		tags.add(new toti.templating.tags.LayoutTag(/*actualFileDir*/));
-		tags.add(new toti.templating.tags.BlockTag());
-		tags.add(new toti.templating.tags.IncludeTag(/*actualFileDir*/));
-		tags.add(new toti.templating.tags.ControlTag());
-		tags.add(new toti.templating.tags.FormError());
-		tags.add(new toti.templating.tags.FormInput());
-		tags.add(new toti.templating.tags.FormLabel());
-		tags.add(new toti.templating.tags.PermissionsTag());
+		tags.add(new BreakTag());
+		tags.add(new CaseTag());
+		tags.add(new CatchTag());
+		tags.add(new ConsoleOutputTag());
+		tags.add(new ContinueTag());
+		tags.add(new DefaultTag());
+		tags.add(new DoWhileTag());
+		tags.add(new ElseIfTag());
+		tags.add(new ElseTag());
+		tags.add(new FinallyTag());
+		tags.add(new ForEachTag());
+		tags.add(new ForTag());
+		tags.add(new IfTag());
+		tags.add(new SwitchTag());
+		tags.add(new TranslateParamTag());
+		tags.add(new TranslateTag());
+		tags.add(new TryTag());
+		tags.add(new VariableDefineTag());
+		tags.add(new VariablePrintTag());
+		tags.add(new VariableSetTag());
+		tags.add(new WhileTag());
+		tags.add(new LayoutTag(/*actualFileDir*/));
+		tags.add(new BlockTag());
+		tags.add(new IncludeTag(/*actualFileDir*/));
+		tags.add(new ControlTag());
+		tags.add(new FormError());
+		tags.add(new FormInput());
+		tags.add(new FormLabel());
+		tags.add(new PermissionsTag());
+		tags.add(new LinkTag());
+		tags.add(new IfCurrentTag());
 		return tags;
 	}
 	

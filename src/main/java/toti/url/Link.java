@@ -48,6 +48,8 @@ public class Link {
 		ste->Class.forName(ste.getClassName()).isAnnotationPresent(Controller.class)
 	));
 	private ThrowingFunction<Class<?>, Method, Exception> getMethod = null; // TODO set actual method
+	/** internal for is() method, not use in create */
+	private String methodName;
 	private List<UrlParam> params = new LinkedList<>();
 	
 	protected Link(String pattern) {
@@ -76,9 +78,18 @@ public class Link {
 		return this;
 	}
 	
+	public Link setController(String controllerClass) {
+		try {
+			return setController(Class.forName(controllerClass));
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Cannot create link - " + controllerClass + " not found", e);
+		}
+	}
+	
 	/*** method ***/
 	
 	public Link setMethod(String methodName) {
+		this.methodName = methodName;
 		getMethod = (clazz)->{
 			try {
 				Class<?> []classes = new Class[params.size()];
@@ -231,6 +242,31 @@ public class Link {
 			url = url.substring(0, url.length() - 1);
 		}
 		return url;
+	}
+	
+	/******************/
+	
+	public boolean is(MappedUrl url) {
+		try {
+			return getController.get().getName().equals(url.getClassName()) && this.methodName.equals(url.getMethodName());
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if ( ! (obj instanceof Link)) {
+			return false;
+		}
+		Link l = (Link)obj;
+		try {
+			Class<?> here= getController.get();
+			Class<?> there = l.getController.get();
+			return here.equals(there) && getMethod.apply(here).equals(l.getMethod.apply(there));
+		} catch (Exception e) {
+			return false;
+		}
 	}
 	
 }
