@@ -48,8 +48,6 @@ public class Link {
 		ste->Class.forName(ste.getClassName()).isAnnotationPresent(Controller.class)
 	));
 	private ThrowingFunction<Class<?>, Method, Exception> getMethod = null; // TODO set actual method
-	/** internal for is() method, not use in create */
-	private String methodName;
 	private List<UrlParam> params = new LinkedList<>();
 	
 	protected Link(String pattern) {
@@ -89,7 +87,6 @@ public class Link {
 	/*** method ***/
 	
 	public Link setMethod(String methodName) {
-		this.methodName = methodName;
 		getMethod = (clazz)->{
 			try {
 				Class<?> []classes = new Class[params.size()];
@@ -245,14 +242,6 @@ public class Link {
 	}
 	
 	/******************/
-	
-	public boolean is(MappedUrl url) {
-		try {
-			return getController.get().getName().equals(url.getClassName()) && this.methodName.equals(url.getMethodName());
-		} catch (Exception e) {
-			return false;
-		}
-	}
 	
 	@Override
 	public boolean equals(Object obj) {

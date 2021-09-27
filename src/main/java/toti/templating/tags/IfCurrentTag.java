@@ -2,7 +2,6 @@ package toti.templating.tags;
 
 import java.util.Map;
 
-import common.exceptions.LogicException;
 import toti.templating.Tag;
 
 public class IfCurrentTag implements Tag {
@@ -26,17 +25,22 @@ public class IfCurrentTag implements Tag {
 	public String getNotPairCode(Map<String, String> params) {
 		StringBuilder result = new StringBuilder();
 		result.append("if(");
-		result.append("toti.url.Link.get()");
+		result.append("true");
+		String module = params.get("module");
+		if (module != null) {
+			result.append("&&");
+			result.append("\"" + module + "\".equals(current.getModuleName())");
+		}
 		String controller = params.get("controller");
 		if (controller != null) {
-			result.append(".setController(\"" + controller + "\")"); // TODO can be unsafe if parametrized
+			result.append("&&");
+			result.append("\"" + controller + "\".equals(current.getClassName())");
 		}
 		String method = params.get("method");
-		if (method == null) {
-			throw new LogicException("LinkTag: 'method' parameter is required");
+		if (method != null) {
+			result.append("&&");
+			result.append("\"" + method + "\".equals(current.getMethodName())");
 		}
-		result.append(".setMethod(\"" + method + "\")"); // TODO can be unsafe if parametrized
-		result.append(".is(current)");
 		result.append(")");
 		return result.toString();
 	}
