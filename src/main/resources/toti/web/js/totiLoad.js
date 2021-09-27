@@ -1,4 +1,4 @@
-/* TOTI Load version 0.0.3 */
+/* TOTI Load version 0.0.4 */
 var totiLoad = {
 	async: function(url, method, data, headers, onSuccess, onFailure, async = true) {
 		var xhr = new XMLHttpRequest();
@@ -38,7 +38,14 @@ var totiLoad = {
 			}
 			/* TODO rs 300 ???*/
 		};
-		xhr.send(params);
+		xhr.onerror = function() {
+			onFailure(xhrd);
+		};
+		try {
+			xhr.send(params);
+		} catch (exception) {
+			onFailure(exception);
+		}
 	},
 	link: function(url, method, data, headers) {
 		window.location = url + "?ids=" + new URLSearchParams(data).toString();
