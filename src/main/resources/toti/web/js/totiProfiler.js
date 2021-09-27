@@ -1,6 +1,7 @@
-/* TOTI Profiler version 0.0.1 */
+/* TOTI Profiler version 0.0.2 */
 var totiProfiler = {
 	pageId: null,
+	interval: null,
 	data: [],
 	getProfilerHeader: function() {
 		var pageId = totiProfiler.pageId;
@@ -84,7 +85,7 @@ var totiProfiler = {
 		container.appendChild(table);
 		return container;
 	},
-	addHeader: function(container, pageId, interval) {
+	addHeader: function(container, pageId) {
 		var closeButton = document.createElement("td");
 		closeButton.appendChild(totiProfiler.getImage("toti-profiler-close", totiImages.cross, function() {
 			document.getElementById("toti-profiler").remove();
@@ -93,8 +94,8 @@ var totiProfiler = {
 			if (detail !== null) {
 				detail.remove();
 			}
-			if (interval != null) {
-				clearInterval(interval);
+			if (totiProfiler.interval != null) {
+				clearInterval(totiProfiler.interval);
 			}
 		}, 30));
 		closeButton.style.width = 30;
@@ -155,13 +156,12 @@ var totiProfiler = {
 		detail.appendChild(totiProfiler.getDetailPanel(totiProfiler.data));
 	},
 	print: function() {
-		var interval = null;
 		var pageId = totiProfiler.pageId;
 
 		var profiler = document.createElement("table");
 		profiler.setAttribute("id", "toti-profiler");
 		profiler.setAttribute("style", "height: 30px; width: 100%; position: fixed; bottom: 5px; background-color: #f5c6cb;");
-		totiProfiler.addHeader(profiler, pageId, interval);
+		totiProfiler.addHeader(profiler, pageId);
 
 		var showData = function() {
 			totiLoad.async("/toti/profiler", "post", { id: pageId }, {}, 
@@ -184,16 +184,17 @@ var totiProfiler = {
 					requestCount.innerText = res.length;
 				}, 
 				function(xhr) {
-					if (interval != null) {
-						clearInterval(interval);
+					if (totiProfiler.interval !== null) {
+						clearInterval(totiProfiler.interval);
 					}
+					console.error("Profiler refresh stopped");
 				},
 				false
 			);
 		};
 
 		showData();
-		interval = setInterval(showData, 30000);
+		totiProfiler.interval = setInterval(showData, 30000);
     	return profiler;
 	}
 }
