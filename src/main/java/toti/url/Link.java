@@ -29,7 +29,7 @@ public class Link {
 	public final static String PARAM = "[param]";
 	
 	public static String PATTERN = "/[module]</[path]>/[controller]/[method]</[param]></[param]>"; // TODO configurable, one place urls
-	
+
 	public static Link get() {
 		return new Link(PATTERN);
 	}
