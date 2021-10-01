@@ -256,7 +256,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			);
 		}
 		// controllers
-		String[] urls = url.substring(1).split("/");
+		String[] urls = url.length() == 0 ? new String[] {} : url.substring(1).split("/");
 		DictionaryValue last = new DictionaryValue(mapping);
 		for (int i = 0; i < urls.length; i++) {
 			if (!last.isPresent()) {
