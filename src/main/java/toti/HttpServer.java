@@ -66,7 +66,6 @@ public class HttpServer {
 		}
 		
 		Router router = new Router();
-	//	Map<String, TemplateFactory> controllers = new HashMap<>();
 		Map<String, TemplateFactory> templateFactories = new HashMap<>();
 		Set<String> trans = new HashSet<>();
 		this.modules = new LinkedList<>();
@@ -81,8 +80,6 @@ public class HttpServer {
 					deleteDir, minimalize,
 					logger
 			);
-		//	modulesToMap.put(module.getControllersPath(), module.getName());
-		//	controllers.put(module.getControllersPath(), templateFactory);
 			templateFactories.put(module.getName(), templateFactory);
 			if (module.getTranslationPath() != null) {
 				trans.add(module.getTranslationPath());
@@ -95,8 +92,6 @@ public class HttpServer {
 		);
 		if (translator == null) {
 			translator = new LocaleTranslator(settings, trans, TotiLogger.getLogger("translator"));
-			// String[] translators = new String[trans.size()];
-			// translator = PropertiesTranslator.create(LoggerFactory.getLogger("translator"), trans.toArray(translators));
 		}
 	//	AuthenticationCache authenticationCache = new AuthenticationCache(tempPath, false); // TODO enable??
 		this.translator = translator;
@@ -104,7 +99,6 @@ public class HttpServer {
 				headers,
 				resourcesPath,
 				router,
-				// controllers,
 				templateFactories,
 				totiTemplateFactory,
 				translator,
