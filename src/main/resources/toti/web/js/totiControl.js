@@ -1,4 +1,4 @@
-/* TOTI Control version 0.0.16 */
+/* TOTI Control version 0.0.17 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -361,22 +361,27 @@ var totiControl = {
 		        }
 		    };
 
+			/* for default value */
 		    formWaiting();
 	
+     		/* form bind */
 		    datetime.onbind = function() {
 		        setValue(datetime.value);
 		    };
 
+    		/* if sub date or sub time change */
 		    datetime.onchange = function(event) {
 		        if (attributes.strict) {
 		             if (date.value === '' || time.value === '') {
-		                event.preventDefault();
+		                /*event.preventDefault(); // not working in firefox */
+               			return false;
 		             } else {
 		                 datetime.value = date.value + "T" + time.value;
 		             }
 		        } else {
 		             if (date.value === '' && time.value === '') {
-		                 event.preventDefault();
+		                /*event.preventDefault(); // not working in firefox */
+               			return false;
 		             } else if (date.value === '') {
 		                 datetime.value = time.value;
 		             } else if (time.value === '') {
