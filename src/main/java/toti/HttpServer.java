@@ -55,7 +55,6 @@ public class HttpServer {
     		boolean dirResponseAllowed,
     		boolean minimalize,
     		List<String> developIps,
-    		String redirectNoLoggerdUser,
     		boolean useProfiler) throws Exception {
 		Profiler profiler = new Profiler();
 		profiler.setUse(useProfiler);
@@ -71,7 +70,7 @@ public class HttpServer {
 		this.modules = new LinkedList<>();
 		for (Module module : modules) {
 			this.modules.add(module);
-			module.addRoutes(router);
+		//	module.addRoutes(router);
 			TemplateFactory templateFactory = new TemplateFactory(
 					tempPath,
 					module.getTemplatesPath(),
@@ -104,7 +103,7 @@ public class HttpServer {
 				translator,
 				new IdentityFactory(translator, translator.getLocale().getLang()/*defLang, authenticationCache*/),
 				new Authenticator(tokenExpiration, tokenCustomSalt, userFactory, /*authenticationCache,*/ new Hash("SHA-256"), logger),
-				new Authorizator(redirectNoLoggerdUser, logger),
+				new Authorizator(logger),
 				charset,
 				dirResponseAllowed,
 				developIps,

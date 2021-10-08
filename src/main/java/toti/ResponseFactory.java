@@ -86,7 +86,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		this.authorizator = authorizator;
 		this.identityFactory = identityFactory;
 		this.authenticator = authenticator;
-		this.router = router;
+		this.router = router; // TODO not need send
 		this.modules = modules;
 		this.totiTemplateFactory = totiTemplateFactory;
 		this.logger = logger;
@@ -97,7 +97,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	}
 
 	public void map(List<Module> modules) throws Exception {
-		this.mapping = LoadUrls.loadUrlMap(modules); // TODO get in constructor
+		this.mapping = LoadUrls.loadUrlMap(modules, router); // TODO get in constructor
 	}
 	
 	@Override
@@ -349,13 +349,13 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			try {
 				authorize(mapped, params, identity, params);
 			} catch (ServerException e) {
-				if (mapped.isApi() || authorizator.getRedirectUrlNoLoggedUser() == null) {
+				if (mapped.isApi() || router.getRedirectOnNotLogedUser() == null || fullUrl.equals("/")) {
 					throw e;
 				}
 				/*return Response.getRedirect(authorizator.getRedirectUrlNoLoggedUser())
 						.getResponse(headers, null, null, null, null, charset);*/
 				return Response.getRedirect(
-					authorizator.getRedirectUrlNoLoggedUser() + "?backlink=" + getBackLink(fullUrl)
+					router.getRedirectOnNotLogedUser() + "?backlink=" + getBackLink(fullUrl)
 	            ).getResponse(headers, null, null, null, null, null, charset);
 			}
 		} else {

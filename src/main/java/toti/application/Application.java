@@ -39,15 +39,13 @@ public class Application {
 	
 	public <T extends Module> Application(
 			List<T> modules, 
-			ThrowingBiFunction<String, Registr, User, Exception> userFactory,
-			String redirectIfNoUser) {
-		this(modules, userFactory, redirectIfNoUser, null);
+			ThrowingBiFunction<String, Registr, User, Exception> userFactory) {
+		this(modules, userFactory, null);
 	}
 	
 	public <T extends Module> Application(
 			List<T> modules, 
 			ThrowingBiFunction<String, Registr, User, Exception> userFactory,
-			String redirectIfNoUser,
 			Logger logger) {
 		if (logger == null) {
 			logger = TotiLogger.getLogger("toti");
@@ -78,7 +76,7 @@ public class Application {
 			/*** init classes ****/
 			Registr registr = Registr.get();
 			registr.addService("database", database);
-			this.server = createServerFactory(env, registr, redirectIfNoUser).get(modules, (content)->{
+			this.server = createServerFactory(env, registr).get(modules, (content)->{
 				return userFactory.apply(content, registr);
 			});
 			// TODO fix - move to module
@@ -138,10 +136,9 @@ public class Application {
 	
 	/************/
 	
-	public HttpServerFactory createServerFactory(Env env, Registr registr, String redirect) throws Exception {
+	public HttpServerFactory createServerFactory(Env env, Registr registr) throws Exception {
 		HttpServerFactory factory = new HttpServerFactory(logger);
 		// factory.setLogger(logger);
-		factory.setRedirectNoLoggerdUser(redirect);
 		if (env != null) {
 			if (env.getString("http.port") != null) {
 				factory.setPort(env.getInteger("http.port"));

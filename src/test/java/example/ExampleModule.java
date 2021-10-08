@@ -14,6 +14,7 @@ import toti.Module;
 import toti.Router;
 import toti.application.Task;
 import toti.registr.Registr;
+import toti.url.Link;
 import translator.Translator;
 import common.functions.Env;
 
@@ -36,7 +37,10 @@ public class ExampleModule implements Module {
 
 	@Override
 	public void addRoutes(Router router) {
-		router.addUrl("", "/example-module/example/list");
+		// router.addUrl("", "/example-module/example/list");
+		//router.setLinkPattern("</[path]>/[controller]/[method]</[param]>");
+		router.addUrl("", Link.get().create(ExamplePageController.class, c->c.grid()));
+		router.setRedirectOnNotLogedUser(Link.get().create(SignPageController.class, c->c.grid()));
 	}
 
 	@Override

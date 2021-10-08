@@ -53,12 +53,11 @@ public class BootstrapEndToEndTest {
 						return new Rules(new Rule(Action.ADMIN, ()->Arrays.asList()), Arrays.asList());
 					}
 				});
-			}, "/example-module/sign/in") {
+			}) {
 				
 				@Override
-				public HttpServerFactory createServerFactory(Env env, Registr registr, String redirect) throws Exception {
+				public HttpServerFactory createServerFactory(Env env, Registr registr) throws Exception {
 					HttpServerFactory factory = new HttpServerFactory(TotiLogger.getLogger("toti"));
-					factory.setRedirectNoLoggerdUser(redirect);
 					factory.setPort(81);
 					factory.setThreadPool(10);
 					factory.setReadTimeout(60000);
@@ -81,6 +80,7 @@ public class BootstrapEndToEndTest {
 						return ReadText.get().asString(br);
 					}, InputStreamLoader.createInputStream(getClass(), "conf/lang.json"))).getDictionaryMap();
 					List<Locale> locales = new LinkedList<>();
+					System.err.println(config);
 					config.getDictionaryMap("locales").forEach((locale, setting)->{
 						locales.add(new Locale(
 							locale.toString(), 

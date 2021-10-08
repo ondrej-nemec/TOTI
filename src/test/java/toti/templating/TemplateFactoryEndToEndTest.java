@@ -80,7 +80,7 @@ public class TemplateFactoryEndToEndTest {
 				return null;
 			}
 		};
-		Authorizator authorizator = new Authorizator("", TotiLogger.getLogger("temlateTest"));
+		Authorizator authorizator = new Authorizator(TotiLogger.getLogger("temlateTest"));
 		String html = template.create(factory, variables, translator, authorizator, null);
 		System.out.println(html);
 		Text.get().write((bw)->{

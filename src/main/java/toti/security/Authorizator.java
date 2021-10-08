@@ -13,16 +13,10 @@ import toti.security.permissions.Rules;
 
 public class Authorizator {
 	
-	private final String redirect;
 	private final Logger logger;
 	
-	public Authorizator(String redirect, Logger logger) {
+	public Authorizator(Logger logger) {
 		this.logger = logger;
-		this.redirect = redirect;
-	}
-	
-	public String getRedirectUrlNoLoggedUser() {
-		return redirect;
 	}
 
 	public void authorize(User who, String where, Action what) {

@@ -39,7 +39,6 @@ public class HttpServerFactory {
 	private Optional<List<String>> allowedUploadFileTypes = Optional.of(new LinkedList<>());
 	private long tokenExpirationTime = 1000 * 60 * 10;
 	private String tokenCustomSalt = "";
-	private String redirectNoLoggerdUser = null;
 	private boolean useProfiler = false;
 	
 	public HttpServerFactory(Logger logger) {
@@ -54,7 +53,7 @@ public class HttpServerFactory {
 				maxUploadFileSize, allowedUploadFileTypes,
 				charset, settings, tokenCustomSalt, tokenExpirationTime,
 				logger, deleteTempJavaFiles, dirResponseAllowed, minimalize,
-				developIps, redirectNoLoggerdUser, useProfiler
+				developIps, useProfiler
 		);
 	}
 
@@ -155,11 +154,6 @@ public class HttpServerFactory {
 
 	public HttpServerFactory setDevelopIpAdresses(List<String> developIps) {
 		this.developIps = developIps;
-		return this;
-	}
-
-	public HttpServerFactory setRedirectNoLoggerdUser(String redirectNoLoggerdUser) {
-		this.redirectNoLoggerdUser = redirectNoLoggerdUser;
 		return this;
 	}
 	
