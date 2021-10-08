@@ -13,6 +13,7 @@ import common.structures.DictionaryValue;
 import common.structures.MapDictionary;
 import socketCommunication.http.HttpMethod;
 import toti.Module;
+import toti.Router;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Domain;
@@ -26,10 +27,11 @@ import toti.validation.Validator;
 
 public class LoadUrls {
 
-	public static MapDictionary<UrlPart, Object> loadUrlMap(List<Module> modules) throws Exception {
+	public static MapDictionary<UrlPart, Object> loadUrlMap(List<Module> modules, Router router) throws Exception {
 		MapDictionary<UrlPart, Object> mapped = MapDictionary.hashMap();
 		for (Module module : modules) {
 			map(mapped, FilesList.get(module.getControllersPath(), true).getFiles(), module);
+			module.addRoutes(router);
 		}
 	    return mapped;
 	}
