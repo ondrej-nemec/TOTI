@@ -12,6 +12,8 @@ import common.structures.ListInit;
 import common.structures.MapInit;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+import toti.url.Link;
+import toti.url.UrlParam;
 
 @RunWith(JUnitParamsRunner.class)
 public class LinkTest {

@@ -15,9 +15,9 @@ import common.structures.ThrowingSupplier;
 import toti.Module;
 import toti.annotations.Action;
 import toti.annotations.Controller;
-import toti.url.mock.MockCreator;
 import toti.registr.Registr;
 import toti.response.Response;
+import toti.url.mock.MockCreator;
 
 public class Link {
 	
@@ -27,17 +27,17 @@ public class Link {
 	public final static String METHOD = "[method]";
 	public final static String LANG = "[lang]";
 	public final static String PARAM = "[param]";
-	
-	public static String PATTERN = "/[module]</[path]>/[controller]/[method]</[param]></[param]>"; // TODO configurable, one place urls
 
+	private static Link link = null;
+	
 	public static Link get() {
-		return new Link(PATTERN);
+		return link;
 	}
 
-	public static Link get(String pattern) {
-		return new Link(pattern);
+	public static void init(String pattern) {
+		link = new Link(pattern);
 	}
-	
+
 	private final String pattern;
 	
 	private ThrowingFunction<Class<?>, Module, Exception> getModule = (controllerClass)->{
@@ -47,7 +47,7 @@ public class Link {
 	private ThrowingSupplier<Class<?>, Exception> getController = ()->Class.forName(StackTrace.classParent(
 		ste->Class.forName(ste.getClassName()).isAnnotationPresent(Controller.class)
 	));
-	private ThrowingFunction<Class<?>, Method, Exception> getMethod = null; // TODO set actual method
+	private ThrowingFunction<Class<?>, Method, Exception> getMethod = null; // TODO set actual method?
 	private List<UrlParam> params = new LinkedList<>();
 	
 	protected Link(String pattern) {

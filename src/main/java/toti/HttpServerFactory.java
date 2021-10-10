@@ -10,6 +10,7 @@ import common.Logger;
 import common.structures.ThrowingFunction;
 import socketCommunication.ServerSecuredCredentials;
 import toti.security.User;
+import toti.url.Link;
 import translator.LanguageSettings;
 import translator.Translator;
 
@@ -40,12 +41,14 @@ public class HttpServerFactory {
 	private long tokenExpirationTime = 1000 * 60 * 10;
 	private String tokenCustomSalt = "";
 	private boolean useProfiler = false;
+	private String urlPattern = "/[module]</[path]>/[controller]/[method]</[param]>";
 	
 	public HttpServerFactory(Logger logger) {
 		this.logger = logger;
 	}
 	
 	public <T extends Module> HttpServer get(List<T> modules, ThrowingFunction<String, User, Exception> userFactory) throws Exception {
+		Link.init(urlPattern);
 		return new HttpServer(
 				port, threadPool, readTimeout, headers,
 				certs, tempPath, modules, userFactory, resourcesPath,
@@ -159,6 +162,11 @@ public class HttpServerFactory {
 	
 	public HttpServerFactory setUseProfiler(boolean useProfiler) {
 		this.useProfiler = useProfiler;
+		return this;
+	}
+
+	public HttpServerFactory setUrlPattern(String urlPattern) {
+		this.urlPattern = urlPattern;
 		return this;
 	}
 	
