@@ -5,9 +5,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 
-import common.structures.Tuple2;
+import common.structures.Tuple3;
 import json.Jsonable;
 import toti.annotations.Domain;
 import toti.validation.Validator;
@@ -21,7 +20,7 @@ public class MappedUrl implements Jsonable{
 
 	private final String className;
 	private final String methodName;
-	private final List<Tuple2<Class<?>, String>> params;
+	private final List<Tuple3<Class<?>, String, Boolean>> params;
 	
 	private final List<String> paramNames;
 		
@@ -63,24 +62,16 @@ public class MappedUrl implements Jsonable{
 		return methodName;
 	}
 	
-	public void addParam(Class<?> clazz, String name) {
-		params.add(new Tuple2<>(clazz, name));
+	public void addParam(Class<?> clazz, String name, boolean isRequestParameter) {
+		params.add(new Tuple3<>(clazz, name, isRequestParameter));
 	}
 	
-	public void forEachParams(BiConsumer<Class<?>, String> consumer) {
+	public void forEachParams(ParamConsumer consumer) {
 		params.forEach((tuple)->{
-			consumer.accept(tuple._1(), tuple._2());
+			consumer.accept(tuple._1(), tuple._2(), tuple._3());
 		});
 	}
-/*
-	public List<Tuple2<Class<?>, String>> getParams() {
-		return params;
-	}
 
-	public List<String> getParamNames() {
-		return paramNames;
-	}
-	*/
 	public String getParamName(int index) {
 		return paramNames.get(index);
 	}

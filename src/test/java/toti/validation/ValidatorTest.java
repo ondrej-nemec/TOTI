@@ -34,7 +34,7 @@ public class ValidatorTest {
 		val.addRule(ItemRules.forName("some-value", true).setChangeValue((value)->{
 			return value + "_bbbb";
 		}));
-		val.validate(prop, Mockito.mock(Translator.class));
+		val.validate(prop, new RequestParameters(), Mockito.mock(Translator.class));
 		assertEquals("aaaa_bbbb", prop.get("some-value"));
 	}
 
@@ -45,7 +45,7 @@ public class ValidatorTest {
 		rules.forEach((rule)->{
 			val.addRule(rule);
 		});
-		assertEquals(expected, val.validate(prop, Mockito.mock(Translator.class)).isEmpty());
+		assertEquals(expected, val.validate(prop, new RequestParameters(), Mockito.mock(Translator.class)).isEmpty());
 	}
 	
 	public Object[] dataValidateAllowedMapWorks() throws JsonStreamException {
@@ -116,7 +116,7 @@ public class ValidatorTest {
 		rules.forEach((rule)->{
 			val.addRule(rule);
 		});
-		assertEquals(expected, val.validate(prop, Mockito.mock(Translator.class)).isEmpty());
+		assertEquals(expected, val.validate(prop, new RequestParameters(), Mockito.mock(Translator.class)).isEmpty());
 	}
 	
 	public Object[] dataValidateAllowedListWorks() {
@@ -141,7 +141,7 @@ public class ValidatorTest {
 		rules.forEach((rule)->{
 			val.addRule(rule);
 		});
-		assertEquals(expected, val.validate(prop, Mockito.mock(Translator.class)).isEmpty());
+		assertEquals(expected, val.validate(prop, new RequestParameters(), Mockito.mock(Translator.class)).isEmpty());
 	}
 	
 	public Object[] dataValidateTypeWorks() {
@@ -201,7 +201,7 @@ public class ValidatorTest {
 		rules.forEach((rule)->{
 			val.addRule(rule);
 		});
-		assertEquals(expected, val.validate(prop, Mockito.mock(Translator.class)).isEmpty());
+		assertEquals(expected, val.validate(prop, new RequestParameters(), Mockito.mock(Translator.class)).isEmpty());
 	}
 	
 	public Object[] dataValidateNumberWorks() {
@@ -241,7 +241,7 @@ public class ValidatorTest {
 		rules.forEach((rule)->{
 			val.addRule(rule);
 		});
-		assertEquals(expected, val.validate(prop, Mockito.mock(Translator.class)).isEmpty());
+		assertEquals(expected, val.validate(prop, new RequestParameters(), Mockito.mock(Translator.class)).isEmpty());
 	}
 	
 	public Object[] dataValidateTextWorks() {
@@ -276,7 +276,7 @@ public class ValidatorTest {
 		rules.forEach((rule)->{
 			val.addRule(rule);
 		});
-		assertEquals(expected, val.validate(prop, Mockito.mock(Translator.class)).isEmpty());
+		assertEquals(expected, val.validate(prop, new RequestParameters(), Mockito.mock(Translator.class)).isEmpty());
 	}
 	
 	public Object[] dataValidateWithStrickWorks() {

@@ -23,7 +23,6 @@ import socketCommunication.http.server.RequestParameters;
 import socketCommunication.http.server.RestApiResponse;
 import socketCommunication.http.server.RestApiServerResponseFactory;
 import toti.annotations.Domain;
-import toti.dbviewer.DbViewerRouter;
 import toti.profiler.Profiler;
 import toti.registr.Registr;
 import toti.response.Response;
@@ -44,7 +43,6 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	
 	private final ResponseHeaders responseHeaders;
 	private final String charset;
-	//private final Language language;
 	private final boolean dirResponseAllowed;
 	private final Logger logger;
 	private final List<String> developIps;
@@ -60,9 +58,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private final Authorizator authorizator;
 	private final Authenticator authenticator;
 	private final IdentityFactory identityFactory;
-	// private final String redirectUrlNoLoggedUser;
 	
-	private final DbViewerRouter dbViewer;
+//	private final DbViewerRouter dbViewer;
 	private final Profiler profiler;
 	
 	public ResponseFactory(
@@ -92,7 +89,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		this.logger = logger;
 		this.dirResponseAllowed = dirResponseAllowed;
 		this.developIps = developIps;
-		this.dbViewer = new DbViewerRouter();
+	//	this.dbViewer = new DbViewerRouter();
 		this.profiler = profiler;
 	}
 
@@ -323,16 +320,18 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			MappedUrl mapped, RequestParameters params,
 			Identity identity) throws ServerException {
 		Map<String,  Object> errors = new HashMap<>();
+		RequestParameters validatorParams = new RequestParameters();
 		if (mapped.getValidator().isPresent()) {
-			errors.putAll(mapped.getValidator().get().validate(params, translator.withLocale(identity.getLocale())));
+			errors.putAll(mapped.getValidator().get().validate(params, validatorParams, translator.withLocale(identity.getLocale())));
 		}
 		// params for method
 		List<Class<?>> classesList = new ArrayList<>();
 		List<Object> valuesList = new ArrayList<>();
 		if (errors.isEmpty()) {
 			try {
-				mapped.forEachParams((clazz, name)->{
+				mapped.forEachParams((clazz, name, isRequestParam)->{
 					classesList.add(clazz);
+					/*
 					if (name == null) {
 						valuesList.add(new DictionaryValue(params).getValue(clazz));
 					} else if (clazz.isInstance(params.get(name))) {
@@ -342,6 +341,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 						valuesList.add(v);
 						params.put(name, v);
 					}
+					*/
+					addValueToList((isRequestParam ? params : validatorParams), name, clazz, valuesList);
 				});
 			} catch (Throwable e) {
 				throw new RuntimeException(mapped.getClassName() + ":" + mapped.getMethodName(), e);
@@ -374,7 +375,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Object[] values = new Object[valuesList.size()];
 			valuesList.toArray(values);
 			
-	    	Response response = (Response)o.getClass()
+			Response response = (Response)o.getClass()
 	    				.getMethod(mapped.getMethodName(), classes).invoke(o, values);
 	    	headers.addHeaders(identityFactory.getResponseHeaders(identity)); // FIX for cookies
 	    	
@@ -388,6 +389,18 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		}
 	}
 
+	private void addValueToList(RequestParameters params, String name, Class<?> clazz, List<Object> valuesList) {
+		if (name == null) {
+			valuesList.add(new DictionaryValue(params).getValue(clazz));
+		} else if (clazz.isInstance(params.get(name))) {
+			valuesList.add(params.get(name));
+		} else {
+			Object v = params.getDictionaryValue(name).getValue(clazz);
+			valuesList.add(v);
+			params.put(name, v);
+		}
+	}
+	
     private String getBackLink(String fullUrl) {
         try {
              return URLEncoder.encode(fullUrl, StandardCharsets.UTF_8.toString());

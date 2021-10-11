@@ -28,7 +28,7 @@ public class Validator {
 	private final boolean strictList;
 	private final Optional<ItemRules> defaultRule;
 	private final BiFunction<Translator, List<String>, String> onStrictListError;
-	private Optional<BiFunction<RequestParameters, Translator, Set<String>>> globalFunc = Optional.empty();
+	private Optional<GlobalFunction> globalFunc = Optional.empty();
 	
 	public static Validator create(String uniqueName, boolean strictList, BiFunction<Translator, List<String>, String> onStrictListError) {
 		Validator val = new Validator(strictList, onStrictListError);
@@ -76,7 +76,12 @@ public class Validator {
 		return this;
 	}
 	
+	@Deprecated
 	public Validator setGlobalFunction(BiFunction<RequestParameters, Translator, Set<String>> globalFunction) {
+		return setGlobalFunction((r,v,t)->globalFunction.apply(r, t));
+	}
+	
+	public Validator setGlobalFunction(GlobalFunction globalFunction) {
 		if (this.globalFunc.isPresent()) {
 			throw new LogicException("Global function is already set");
 		}
@@ -84,16 +89,16 @@ public class Validator {
 		return this;
 	}
 	
-	public Map<String, Set<String>> validate(RequestParameters prop, Translator translator) {
-		return validate("%s", prop, translator);
+	public Map<String, Set<String>> validate(RequestParameters prop, RequestParameters validatorParams, Translator translator) {
+		return validate("%s", prop, validatorParams, translator);
 	}
 	
-	private Map<String, Set<String>> validate(String format, RequestParameters prop, Translator translator) {
+	private Map<String, Set<String>> validate(String format, RequestParameters prop, RequestParameters validatorParams, Translator translator) {
 		Map<String, Set<String>> errors = new HashMap<>();
 		List<String> names = new ArrayList<>();
 		rules.forEach((rule)->{
 			names.add(rule.getName());
-			swichRules(String.format(format, rule.getName()), rule.getName(), rule, errors, prop, translator);
+			swichRules(String.format(format, rule.getName()), rule.getName(), rule, errors, prop, validatorParams, translator);
 			Object newValue = rule.getChangeValue().apply(prop.get(rule.getName()));
 			if (newValue != null) {
 				prop.put(rule.getName(), newValue);
@@ -113,7 +118,7 @@ public class Validator {
 		if (!strictList && defaultRule.isPresent()) {
 			ItemRules rule = defaultRule.get();
 			notChecked.forEach((notCheckedName)->{
-				swichRules(String.format(format, notCheckedName), notCheckedName, rule, errors, prop, translator);
+				swichRules(String.format(format, notCheckedName), notCheckedName, rule, errors, prop, validatorParams, translator);
 				Object newValue = rule.getChangeValue().apply(prop.get(notCheckedName));
 				if (newValue != null) {
 					prop.put(notCheckedName, newValue);
@@ -121,7 +126,7 @@ public class Validator {
 			});
 		}
 		if (globalFunc.isPresent() && errors.isEmpty()) {
-			Set<String> globalErrors = globalFunc.get().apply(prop, translator);
+			Set<String> globalErrors = globalFunc.get().apply(prop, validatorParams, translator);
 			if (!globalErrors.isEmpty()) {
 				errors.put("form", globalErrors);
 			}
@@ -134,7 +139,8 @@ public class Validator {
 			String ruleName,
 			ItemRules rule,
 			Map<String, Set<String>> errors,
-			RequestParameters prop, 
+			RequestParameters prop,
+			RequestParameters validatorParams,
 			Translator translator) {
 		if (prop.get(ruleName) == null) {
 			checkRule(
@@ -257,8 +263,10 @@ public class Validator {
 					(validator)->{
 						RequestParameters fields = new RequestParameters();
 						fields.putAll(new DictionaryValue(o).getMap());
-						errors.putAll(validator.validate(propertyName + "[%s]", fields, translator));
+						RequestParameters global = new RequestParameters();
+						errors.putAll(validator.validate(propertyName + "[%s]", fields, global, translator));
 						prop.put(ruleName, fields);
+						validatorParams.put(ruleName, global);
 						return false;
 					},
 					errors,
@@ -274,11 +282,14 @@ public class Validator {
 							for (int i = 0; i < list.size(); i++) {
 								fields.put(i + "", list.get(i));
 							}
+							RequestParameters vParam = new RequestParameters();
 							errors.putAll(validator.validate(
 								(propertyName.contains(":") ? "" : "%s:") + propertyName + "[]",
 								fields,
+								vParam,
 								translator
 							));
+							validatorParams.put(ruleName, vParam);
 							prop.put(ruleName, new ArrayList<>(fields.values()));
 							return false;
 						} catch (ClassCastException | NumberFormatException e) {

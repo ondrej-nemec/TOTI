@@ -20,7 +20,9 @@ import toti.annotations.Domain;
 import toti.annotations.Method;
 import toti.annotations.Param;
 import toti.annotations.ParamUrl;
+import toti.annotations.ParamValidator;
 import toti.annotations.Params;
+import toti.annotations.ParamsValidator;
 import toti.annotations.Secured;
 import toti.registr.Registr;
 import toti.validation.Validator;
@@ -81,15 +83,19 @@ public class LoadUrls {
 		    			for (Parameter p : m.getParameters()) {
 		    				if (p.isAnnotationPresent(ParamUrl.class)) {
 		    					String name = p.getAnnotation(ParamUrl.class).value();
-		    					mappedUrl.addParam(p.getType(), name);
+		    					mappedUrl.addParam(p.getType(), name, true);
 		    					mappedUrl.addParamName(name);
 		    					mappedUrl.setRegex(true);
 		    					
 		    					linkParams.add(new UrlParam(true));
 		    				} else if (p.isAnnotationPresent(Param.class)) {
-		    					mappedUrl.addParam(p.getType(), p.getAnnotation(Param.class).value());
+		    					mappedUrl.addParam(p.getType(), p.getAnnotation(Param.class).value(), true);
 		    				} else if (p.isAnnotationPresent(Params.class)) {
-		    					mappedUrl.addParam(p.getType(), null);
+		    					mappedUrl.addParam(p.getType(), null, true);
+		    				} else if (p.isAnnotationPresent(ParamValidator.class)) {
+		    					mappedUrl.addParam(p.getType(), p.getAnnotation(ParamValidator.class).value(), false);
+		    				} else if (p.isAnnotationPresent(ParamsValidator.class)) {
+		    					mappedUrl.addParam(p.getType(), null, false);
 		    				} else {
 		    					throw new LogicException(
 		    						"Not anotated param " + p.getName()
