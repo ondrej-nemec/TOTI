@@ -138,8 +138,10 @@ public class Application {
 	
 	public HttpServerFactory createServerFactory(Env env, Registr registr) throws Exception {
 		HttpServerFactory factory = new HttpServerFactory(logger);
-		// factory.setLogger(logger);
 		if (env != null) {
+			if (env.getString("http.url-pattern") != null) {
+				factory.setUrlPattern(env.getString("http.url-pattern"));
+			}
 			if (env.getString("http.port") != null) {
 				factory.setPort(env.getInteger("http.port"));
 			}
