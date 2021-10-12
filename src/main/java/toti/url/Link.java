@@ -28,14 +28,14 @@ public class Link {
 	public final static String LANG = "[lang]";
 	public final static String PARAM = "[param]";
 
-	private static Link link = null;
+	private static String patternCache = null;
 	
 	public static Link get() {
-		return link;
+		return new Link(patternCache);
 	}
 
 	public static void init(String pattern) {
-		link = new Link(pattern);
+		patternCache = pattern;
 	}
 
 	private final String pattern;
