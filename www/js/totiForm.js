@@ -1,4 +1,4 @@
-/* TOTI Form version 0.0.20 */
+/* TOTI Form version 0.0.21 */
 class TotiForm {
 
 	constructor(config) {
@@ -400,7 +400,7 @@ class TotiForm {
 					return;
                 }
 				/******/
-				if (originType === "datetime-local") {
+				if (input.getAttribute("origintype") === "datetime-local") {
 					data.append(name, input.value);
 				} else if (type === "radio") {
 					if (input.checked) {

@@ -1,4 +1,4 @@
-/* TOTI Form version 0.0.20 */
+/* TOTI Form version 0.0.21 */
 class TotiForm {
 
 	constructor(config) {
@@ -400,7 +400,7 @@ class TotiForm {
 					return;
                 }
 				/******/
-				if (originType === "datetime-local") {
+				if (input.getAttribute("origintype") === "datetime-local") {
 					data.append(name, input.value);
 				} else if (type === "radio") {
 					if (input.checked) {
@@ -474,7 +474,7 @@ class TotiForm {
 						} else if (submit.getAttribute("onFailure") != null) {
 							window[submit.getAttribute("onFailure")](xhr, submit, form);
 						} else {
-							/* TODO xhr.response - objekt or message*/
+							/* TODO xhr.response - objekt or message and 403*/
 							totiDisplay.flash('error', totiTranslations.formMessages.saveError);
 						}
 					}
