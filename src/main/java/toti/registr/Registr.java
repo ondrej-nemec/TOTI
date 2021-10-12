@@ -79,4 +79,7 @@ public class Registr {
         return (T)result;
     }
 	
+    public boolean isServicePresent(String name) {
+    	return SERVICES.get(name) != null;
+    }
 }

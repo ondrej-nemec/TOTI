@@ -3,7 +3,6 @@ package toti.url;
 import java.lang.reflect.Parameter;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -11,6 +10,7 @@ import common.exceptions.LogicException;
 import common.functions.FilesList;
 import common.structures.DictionaryValue;
 import common.structures.MapDictionary;
+import common.structures.ThrowingFunction;
 import socketCommunication.http.HttpMethod;
 import toti.Module;
 import toti.Router;
@@ -56,9 +56,10 @@ public class LoadUrls {
 		    			HttpMethod[] methods = m.isAnnotationPresent(Method.class)
 		    							? m.getAnnotation(Method.class).value()
 		    							: HttpMethod.values();
-		    			Optional<Validator> validator = m.getAnnotation(Action.class).validator().isEmpty()
+		    			/*Optional<Validator> validator = m.getAnnotation(Action.class).validator().isEmpty()
 		    					? Optional.empty()
 		    					: Optional.of(Registr.get().getService(m.getAnnotation(Action.class).validator(), Validator.class));
+		    			*/
 		    			String controllerUrl = clazz.getAnnotation(Controller.class).value();
 		    			String methodUrl = m.getAnnotation(Action.class).value();
 		    		/*	String url = prefix + (controllerUrl.isEmpty() ? "" : "/" + controllerUrl)
@@ -77,7 +78,7 @@ public class LoadUrls {
 		    					moduleName, controllerUrl, methodUrl, path,
 		    					className, methodName,
 		    					ArrayUtils.addAll(classDomains, methodDomains), isApi,
-		    					validator
+		    					getValidator(m)
 		    			);
 		    			List<UrlParam> linkParams = new LinkedList<>();
 		    			for (Parameter p : m.getParameters()) {
@@ -124,6 +125,17 @@ public class LoadUrls {
 		    	}
 	    	}
 	    }
+	}
+			
+	private static ThrowingFunction<Object, Validator, Exception> getValidator(java.lang.reflect.Method m) throws Exception {
+		String validator = m.getAnnotation(Action.class).validator();
+		if (validator.isEmpty()) {
+			return null;
+		} else if (Registr.get().isServicePresent(validator)) {
+			return (o)->Registr.get().getService(validator, Validator.class);
+		} else {
+			return(o)->Validator.class.cast(o.getClass().getMethod(validator).invoke(o));
+		}
 	}
 	
 }

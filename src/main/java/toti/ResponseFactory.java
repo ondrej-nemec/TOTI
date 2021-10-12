@@ -319,55 +319,39 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			ResponseHeaders headers, String fullUrl,
 			MappedUrl mapped, RequestParameters params,
 			Identity identity) throws ServerException {
-		Map<String,  Object> errors = new HashMap<>();
-		RequestParameters validatorParams = new RequestParameters();
-		if (mapped.getValidator().isPresent()) {
-			errors.putAll(mapped.getValidator().get().validate(params, validatorParams, translator.withLocale(identity.getLocale())));
-		}
-		// params for method
-		List<Class<?>> classesList = new ArrayList<>();
-		List<Object> valuesList = new ArrayList<>();
-		if (errors.isEmpty()) {
-			try {
-				mapped.forEachParams((clazz, name, isRequestParam)->{
-					classesList.add(clazz);
-					/*
-					if (name == null) {
-						valuesList.add(new DictionaryValue(params).getValue(clazz));
-					} else if (clazz.isInstance(params.get(name))) {
-						valuesList.add(params.get(name));
-					} else {
-						Object v = params.getDictionaryValue(name).getValue(clazz);
-						valuesList.add(v);
-						params.put(name, v);
-					}
-					*/
-					addValueToList((isRequestParam ? params : validatorParams), name, clazz, valuesList);
-				});
-			} catch (Throwable e) {
-				throw new RuntimeException(mapped.getClassName() + ":" + mapped.getMethodName(), e);
-			}	
+		try {
+			Object o = Registr.get()
+					.getFactory(mapped.getClassName())
+					.apply(translator.withLocale(identity.getLocale()), identity, authorizator, authenticator);
+			/** validation */
+			Map<String,  Object> errors = new HashMap<>();
+			RequestParameters validatorParams = new RequestParameters();
+			if (mapped.isValidatorPresent()) {
+				errors.putAll(mapped.getValidator(o).validate(params, validatorParams, translator.withLocale(identity.getLocale())));
+			}
+			if (!errors.isEmpty()) {
+				// check errors after authrization
+				return Response.getJson(StatusCode.BAD_REQUEST, errors).getResponse(headers, null, null, null, null, null, charset);
+			}
+			/** preparing params*/
+			List<Class<?>> classesList = new ArrayList<>();
+			List<Object> valuesList = new ArrayList<>();
+			mapped.forEachParams((clazz, name, isRequestParam)->{
+				classesList.add(clazz);
+				addValueToList((isRequestParam ? params : validatorParams), name, clazz, valuesList);
+			});
+			/** authorize */
 			try {
 				authorize(mapped, params, identity, params);
 			} catch (ServerException e) {
 				if (mapped.isApi() || router.getRedirectOnNotLogedUser() == null || fullUrl.equals("/")) {
 					throw e;
 				}
-				/*return Response.getRedirect(authorizator.getRedirectUrlNoLoggedUser())
-						.getResponse(headers, null, null, null, null, charset);*/
 				return Response.getRedirect(
 					router.getRedirectOnNotLogedUser() + "?backlink=" + getBackLink(fullUrl)
-	            ).getResponse(headers, null, null, null, null, null, charset);
+			        ).getResponse(headers, null, null, null, null, null, charset);
 			}
-		} else {
-			// check errors after authrization
-			return Response.getJson(StatusCode.BAD_REQUEST, errors).getResponse(headers, null, null, null, null, null, charset);
-		}
-		try {
-			Object o = Registr.get()
-					.getFactory(mapped.getClassName())
-					.apply(translator.withLocale(identity.getLocale()), identity, authorizator, authenticator);
-		//	TemplateFactory templateFactory = modules.get(mapped.getFolder());
+			/** response */
 			TemplateFactory templateFactory = modules.get(mapped.getModuleName());
 
 			Class<?>[] classes = new Class<?>[classesList.size()];
@@ -384,8 +368,12 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				translator.withLocale(identity.getLocale()), 
 				authorizator, identity, mapped, charset
 			);
+		} catch (ServerException e){
+			throw e;
+		} catch (RuntimeException e) {
+			throw e;
 		} catch (Throwable e) {
-			throw new RuntimeException(e);
+			throw new RuntimeException(mapped.getClassName() + ":" + mapped.getMethodName(), e);
 		}
 	}
 

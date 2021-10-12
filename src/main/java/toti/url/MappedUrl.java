@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
+import common.structures.ThrowingFunction;
 import common.structures.Tuple3;
 import json.Jsonable;
 import toti.annotations.Domain;
@@ -28,7 +28,7 @@ public class MappedUrl implements Jsonable{
 	
 	private final Domain[] domains;
 	
-	private final Optional<Validator> validator;
+	private final ThrowingFunction<Object, Validator, Exception> validator;
 	
 	private final boolean isApi;
 
@@ -39,7 +39,7 @@ public class MappedUrl implements Jsonable{
 			String pathUrl,
 			String className, String methodName,
 			Domain[] domains, boolean isApi,
-			Optional<Validator> validator) {
+			ThrowingFunction<Object, Validator, Exception> validator) {
 		this.moduleName = moduleName;
 		this.controllerUrl = controllerUrl;
 		this.methodUrl = methodUrl;
@@ -95,9 +95,13 @@ public class MappedUrl implements Jsonable{
 	public Domain[] getSecured() {
 		return domains;
 	}
+	
+	public boolean isValidatorPresent() {
+		return validator != null;
+	}
 
-	public Optional<Validator> getValidator() {
-		return validator;
+	public Validator getValidator(Object o) throws Exception {
+		return validator.apply(o);
 	}
 
 	public boolean isApi() {

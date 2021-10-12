@@ -27,6 +27,8 @@ import toti.annotations.Secured;
 import toti.application.Help;
 import toti.response.Response;
 import toti.security.Identity;
+import toti.validation.ItemRules;
+import toti.validation.Validator;
 import translator.Translator;
 
 @Controller("example")
@@ -83,7 +85,27 @@ public class ExampleApiController {
 		}
 	}
 	
-	@Action(value = "all", validator = ExampleValidator.NAME_GRID)
+	public Validator getValidator() {
+		return new Validator(false)
+		.addRule(ItemRules.forName("file", false))
+		.addRule(ItemRules.forName("map", false).setMapSpecification(new Validator(false)
+			.addRule(ItemRules.forName("subText1", false).setType(String.class).setMaxLength(10))
+			.addRule(ItemRules.forName("subText2", false).setType(String.class).setMaxLength(10))
+		))
+		.addRule(ItemRules.forName("list", false).setListSpecification(
+			new Validator(ItemRules.defaultRule().setType(String.class).setMaxLength(10))
+		))
+		.addRule(ItemRules.forName("pairs", false).setMapSpecification(
+			new Validator(ItemRules.defaultRule().setMapSpecification(new Validator(false)
+				.addRule(ItemRules.forName("first-in-pair", true).setMaxLength(5))
+				.addRule(ItemRules.forName("second-in-pair", true).setMaxLength(5))
+			))
+		))
+		;
+	}
+	
+	//@Action(value = "all", validator = ExampleValidator.NAME_GRID)
+	@Action(value = "all", validator = "getValidator")
 	@Method({HttpMethod.GET})
 	@Secured({@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.READ)})
 	public Response getAll(
