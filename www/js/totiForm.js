@@ -1,4 +1,4 @@
-/* TOTI Form version 0.0.21 */
+/* TOTI Form version 0.0.22 */
 class TotiForm {
 
 	constructor(config) {
@@ -441,11 +441,12 @@ class TotiForm {
 					function(response) {
 						if (submit.getAttribute("onSuccess") != null) {
 							window[submit.getAttribute("onSuccess")](response, submit, form);
-						} else {
+						} else if (submit.getAttribute("redirect") === null) {
 							totiDisplay.flash('success', response.message);
+						} else {
+							totiDisplay.storedFlash('success', response.message);
 						}
 						if (submit.getAttribute("redirect") != null) {
-							totiDisplay.storedFlash('success', response.message);
 							window.location = submit.getAttribute("redirect").replace("{id}", response.id);
 						}
 					}, 
