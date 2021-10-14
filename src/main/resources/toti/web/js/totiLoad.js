@@ -1,4 +1,4 @@
-/* TOTI Load version 0.0.4 */
+/* TOTI Load version 0.0.5 */
 var totiLoad = {
 	async: function(url, method, data, headers, onSuccess, onFailure, async = true) {
 		var xhr = new XMLHttpRequest();
@@ -69,10 +69,11 @@ var totiLoad = {
 	},
 	/* TODO wll be here ?*/
 	getHeaders: function() {
+		var profiler = (typeof totiProfiler === 'undefined' ? {} : totiProfiler.getProfilerHeader());
 		return {
 			...totiAuth.getAuthHeader(),
 			...totiLang.getLangHeader(),
-			...totiProfiler.getProfilerHeader()
+			...profiler
 		};
 	}
 };

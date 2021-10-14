@@ -1,4 +1,4 @@
-/* TOTI Auth version 0.0.3 */
+/* TOTI Auth version 0.0.4 */
 var totiAuth = {
 	variableName: "authentication",
 	getAuthHeader: function(access = true) {
@@ -34,6 +34,7 @@ var totiAuth = {
 		if (period < 0) {
 			period = token.expires_in * 2 / 3;
 		}
+		var profiler = (typeof totiProfiler === 'undefined' ? {} : totiProfiler.getProfilerHeader());
 		setTimeout(function() {
 			totiLoad.async(
 				token.config.refresh.url,
@@ -41,7 +42,7 @@ var totiAuth = {
 				{}, 
 				{
 					...totiAuth.getAuthHeader(false),
-					...totiProfiler.getProfilerHeader()
+					...profiler
 				}, 
 				function(gettedToken) {
 					totiAuth.isRefreshActive = false;
