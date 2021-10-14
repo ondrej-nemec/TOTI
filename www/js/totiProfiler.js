@@ -1,4 +1,4 @@
-/* TOTI Profiler version 0.0.2 */
+/* TOTI Profiler version 0.0.3 */
 var totiProfiler = {
 	pageId: null,
 	interval: null,
@@ -160,7 +160,10 @@ var totiProfiler = {
 
 		var profiler = document.createElement("table");
 		profiler.setAttribute("id", "toti-profiler");
-		profiler.setAttribute("style", "height: 30px; width: 100%; position: fixed; bottom: 5px; background-color: #f5c6cb;");
+		profiler.setAttribute(
+			"style",
+			 "height: 30px; width: 100%; position: fixed; bottom: 5px; background-color: #f5c6cb; z-index: 1000;"
+		);
 		totiProfiler.addHeader(profiler, pageId);
 
 		var showData = function() {
@@ -194,7 +197,7 @@ var totiProfiler = {
 		};
 
 		showData();
-		totiProfiler.interval = setInterval(showData, 10000);
+		totiProfiler.interval = setInterval(showData, 30000);
     	return profiler;
 	}
 }
