@@ -18,7 +18,7 @@ import toti.templating.Template;
 import toti.templating.TemplateFactory;
 import translator.LanguageSettings;
 import translator.Locale;
-import translator.LocaleTranslator;
+import translator.Translator;
 
 public class TemplateMatch {
 	
@@ -102,7 +102,7 @@ public class TemplateMatch {
 								.append("key#1", "value#1").append("key#2", "value#2").append("key#3", "value#3").toMap()
 						)
 						.toMap(),
-						new LocaleTranslator(
+						Translator.create(
 							new LanguageSettings(Arrays.asList(new Locale("cs", true, Arrays.asList()))),
 							new HashSet<>(),
 							TotiLogger.getLogger("parsing")
