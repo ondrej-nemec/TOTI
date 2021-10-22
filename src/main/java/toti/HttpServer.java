@@ -22,7 +22,6 @@ import toti.security.IdentityFactory;
 import toti.security.User;
 import toti.templating.TemplateFactory;
 import translator.LanguageSettings;
-import translator.LocaleTranslator;
 import translator.Translator;
 import common.functions.Hash;
 
@@ -61,7 +60,7 @@ public class HttpServer {
 		if (useProfiler) {
 			Database.PROFILER = profiler;
 			RestApiServer.PROFILER = profiler;
-			LocaleTranslator.PROFILER = profiler;
+			LanguageSettings.PROFILER = profiler;
 		}
 		
 		Router router = new Router();
@@ -90,7 +89,7 @@ public class HttpServer {
 				logger
 		);
 		if (translator == null) {
-			translator = new LocaleTranslator(settings, trans, TotiLogger.getLogger("translator"));
+			translator = Translator.create(settings, trans, TotiLogger.getLogger("translator"));
 		}
 	//	AuthenticationCache authenticationCache = new AuthenticationCache(tempPath, false); // TODO enable??
 		this.translator = translator;
