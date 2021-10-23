@@ -52,36 +52,6 @@ public interface EntityDao<T extends Entity> {
 			
 			SelectBuilder select = _getAll("*", builder);
 			_applyFilters(builder, select, filters, forOwners);
-			/*
-			select.where("1=1");
-			if (getOwnerColumnName().isPresent()) {
-				if (!forOwners.isEmpty()) {
-					select.andWhere(getOwnerColumnName().get() + " in (:in)")
-						.addParameter(":in", forOwners);
-				} else {
-					select.andWhere("1=2"); // no results
-				}
-			}
-			select.addParameter(":empty", "");
-			filters.forEach((filter, value)->{
-				String where = "";
-				if (value == null) {
-					where = filter + " is null";
-				} else if (value.toString().length() > 20) {
-					where = builder.getSqlFunctions().concat(":empty", filter)
-							+ " like :" + filter + "LikeValue"
-							+ " OR " + filter + " = :" + filter + "Value";
-				} else {
-					// this is fix for derby DB - integer cannot be concat or casted to varchar only on char
-					where = builder.getSqlFunctions().cast(filter, ColumnType.charType(20))
-							+ " like :" + filter + "LikeValue"
-							+ " OR " + filter + " = :" + filter + "Value";
-				}
-				select.andWhere(where)
-				.addParameter(":" + filter + "LikeValue", value + "%")
-				.addParameter(":" + filter + "Value", value);
-			});
-			*/
 			StringBuilder orderBY = new StringBuilder();
 			sorting.forEach((sort, direction)->{
 				if (!orderBY.toString().isEmpty()) {
@@ -94,6 +64,9 @@ public interface EntityDao<T extends Entity> {
 			}
 			
 			int countOfResults = count.fetchSingle().getInteger();
+			if (countOfResults == 0) {
+				return new GridDataSet<>(new LinkedList<>(), countOfResults, 1);
+			}
 			int pageIndex = indexOfPage;
 			if (pageIndex * pageSize > countOfResults) {
 				pageIndex = 1;
