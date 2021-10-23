@@ -1,5 +1,10 @@
+<!-- TOTI Profiler version 0.0.2 -->
 <html>
 <head>
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    
 	<title>Profiler</title>
 	<script src="/toti/totiJs.js"></script>
 	<script>totiSettings.showProfiler = false;</script>
@@ -208,8 +213,8 @@
 
 	 <template id="rendering-template">
 			<div>
-				<h2>Server processing</h2>
-				<h3>Total proccess time: <span id="data-rendering-render"></span></h3>
+				<h2>Server processing time</h2>
+				<h3>Total processing time: <span id="data-rendering-render"></span></h3>
 
 				<table id="data-rendering-times">
 					<tr>
@@ -436,6 +441,7 @@
 		}
 
 		function addParametersToTable(table, parameters, renderFunc = null) {
+			parameters = parameters === null ? {} : parameters;
 			var createTd = function(value) {
 				var td = document.createElement("td");
 				if (renderFunc !== null) {
