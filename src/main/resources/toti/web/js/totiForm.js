@@ -1,4 +1,4 @@
-/* TOTI Form version 0.0.22 */
+/* TOTI Form version 0.0.23 */
 class TotiForm {
 
 	constructor(config) {
@@ -508,7 +508,7 @@ class TotiForm {
 				object.bind(formId, values, beforeBind, afterBind);
 			}, 
 			function(xhr) {
-				if (bind.hasOwnProperty('onFailure')) {
+				if (bind.hasOwnProperty('onFailure') && bind.onFailure !== null) {
 					window[bind.onFailure](xhr);
 				} else {
 					totiDisplay.flash('error', totiTranslations.formMessages.bindError);
