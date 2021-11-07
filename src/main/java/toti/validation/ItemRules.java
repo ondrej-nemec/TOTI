@@ -60,6 +60,8 @@ public class ItemRules {
 	private Optional<Validator> mapSpecification = Optional.empty();
 	private Optional<Validator> listSpecification = Optional.empty();
 	
+	private Optional<String> rename = Optional.empty();
+	
 	private ItemRules(String name, Boolean required, BiFunction<Translator, String, String> onRequiredError) {
 		this.name = name;
 		this.required = required;
@@ -255,10 +257,19 @@ public class ItemRules {
 		return this;
 	}
 	
+	public ItemRules rename(String rename) {
+		this.rename = Optional.of(rename);
+		return this;
+	}
+	
 	/*******************/
 
 	public String getName() {
 		return name;
+	}
+	
+	public Optional<String> getRename() {
+		return rename;
 	}
 
 	public Boolean getRequired() {
