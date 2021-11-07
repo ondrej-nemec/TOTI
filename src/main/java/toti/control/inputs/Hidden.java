@@ -8,7 +8,7 @@ public class Hidden implements Input {
 	private final String name;
 	private final String id;
 	private final String type;
-	private String value = null;
+	private Object value = null;
 	private Boolean exclude = null;
 	private final Map<String, String> params = new HashMap<>();
 	
@@ -32,7 +32,7 @@ public class Hidden implements Input {
 		return this;
 	}
 	
-	public Hidden setDefaultValue(String value) {
+	public Hidden setDefaultValue(Object value) {
 		this.value = value;
 		return this;
 	}
