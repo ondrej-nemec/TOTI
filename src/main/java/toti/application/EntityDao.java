@@ -134,33 +134,41 @@ public interface EntityDao<T extends Entity> {
 		});
 	}
 	
+	default int _update(QueryBuilder builder, int id, T entity) throws SQLException {
+		UpdateBuilder b = builder.update(getTableName());
+		entity.toMap().forEach((name, value)->{
+			b.set(String.format("%s = :%s", name, name)).addParameter(":" + name, value);
+		});
+		b.where("id = :id").addParameter(":id", id);
+		return b.execute();
+	}
+	
 	default int update(int id, T entity) throws SQLException {
 		return getDatabase().applyBuilder((builder)->{
-			UpdateBuilder b = builder.update(getTableName());
-			entity.toMap().forEach((name, value)->{
-				b.set(String.format("%s = :%s", name, name)).addParameter(":" + name, value);
-			});
-			b.where("id = :id").addParameter(":id", id);
-			return b.execute();
+			return _update(builder, id, entity);
 		});
+	}
+	
+	default int _insert(QueryBuilder builder, T entity) throws SQLException {
+		InsertBuilder b = builder.insert(getTableName());
+		entity.toMap().forEach((name, value)->{
+			b.addValue(name, value);
+		});
+		return Integer.parseInt(b.execute().toString());
 	}
 	
 	default int insert(T entity) throws SQLException {
 		return getDatabase().applyBuilder((builder)->{
-			InsertBuilder b = builder.insert(getTableName());
-			entity.toMap().forEach((name, value)->{
-				b.addValue(name, value);
-			});
-			return Integer.parseInt(b.execute().toString());
+			return _insert(builder, entity);
 		});
 	}
 	
 	/****************/
 	
-	static final String HELP_KEY_NAME = "_help_key";
-	static final String HELP_DISPLAY_VALUE_NAME = "_help_display_value";
-	static final String HELP_DISABLED_NAME = "_help_disabled";
-	static final String HELP_GROUP_NAME = "_help_group";
+	static final String HELP_KEY_NAME = "help_key";
+	static final String HELP_DISPLAY_VALUE_NAME = "help_display_value";
+	static final String HELP_DISABLED_NAME = "help_disabled";
+	static final String HELP_GROUP_NAME = "help_group";
 	default String getHelpKey() {
 		return null;
 	}
@@ -199,7 +207,7 @@ public interface EntityDao<T extends Entity> {
 			select.append(" AS ");
 			select.append(HELP_GROUP_NAME);
 		}
-		return builder.select(select.toString()).from(getTableName());
+		return builder.select(select.toString()).from(getTableName()).orderBy(getHelpDisplayValue());
 	}
 	
 	default List<Help> getHelp(Collection<Object> forOwners) throws SQLException {
