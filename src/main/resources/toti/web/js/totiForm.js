@@ -1,4 +1,4 @@
-/* TOTI Form version 0.0.23 */
+/* TOTI Form version 0.0.24 */
 class TotiForm {
 
 	constructor(config) {
@@ -92,6 +92,7 @@ class TotiForm {
 							var count = parseInt(addButton.getAttribute(dynamicCount));
 							object.dynamic[field.name](count, field.name)
 						};
+						addButton.style.cursor = "pointer";
 					} else {
 						addButton.style.display = "none";
 					}
@@ -129,6 +130,7 @@ class TotiForm {
 
 						field.template.appendChild(itemTemplate);
 						var removeButton = itemTemplate.querySelector("[name='remove']");
+						removeButton.style.cursor = "pointer";
 						if (removeButton !== null) {
 							if (editable) {
 								removeButton.onclick = function() {

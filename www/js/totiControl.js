@@ -1,4 +1,4 @@
-/* TOTI Control version 0.0.17 */
+/* TOTI Control version 0.0.18 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -165,7 +165,8 @@ var totiControl = {
 					select.setAttribute(key, value);
 				}
 			}
-			var addOptions = function(parentInput, selectedOptGroup) {
+			var addOptions = function(parentInput, selectedOptGroup, originValue) {
+				select.value = null;
 				var addOption = function(option, parent) {
 					if (option instanceof HTMLOptionElement) {
 			            parent.appendChild(option);
@@ -184,6 +185,9 @@ var totiControl = {
 			            } else {
 			             	parent.appendChild(totiControl.input(option));
 			            }
+		            	if (originValue !== null && option.value === originValue) {
+							select.value = originValue;
+						}
 			            params.renderOptions[option.value]=option.title; /* for value renderer*/
 		        	}
 	     		};
@@ -253,11 +257,14 @@ var totiControl = {
 			        select.innerHTML = "";
 		            params.options = totiUtils.clone(originOptions);
 		            if (depends.value === "") {
-		                addOptions(select, null);
+		                addOptions(select, null, select.value);
 		            } else {
-		                addOptions(select, depends.value);
+		                addOptions(select, depends.value, select.value);
 		            }
-		            select.value = null;
+		            if (typeof select.onchange === "function") {
+		            	select.onchange();
+		            }
+		          /*  select.value = null; */
 		        };
 	            var option = select.querySelector("option[value='" + params.value +"']");
 	            if (option !== null) {
@@ -269,18 +276,18 @@ var totiControl = {
 		        /* only for forms */
 		        setTimeout(function() {
 		             var depends = document.getElementById(params.form).querySelector("[name='" + params.depends + "']");
-		             addOptions(select, depends.value);
+		             addOptions(select, depends.value, select.value);
 		             optGroupRenderer(depends);
 		        }, 1);
 		    } else if (params.hasOwnProperty("depends") && !params.hasOwnProperty("form")) {
 		        /* for grid only */
-		        addOptions(select, null);
+		        addOptions(select, null, select.value);
 		        setTimeout(function() {
 		            var depends = select.parentElement.parentElement.querySelector("[data-name='" + params.depends + "'] select");
 		            optGroupRenderer(depends);
 		        }, 1);
 		    } else {
-		        addOptions(select, null);
+		        addOptions(select, null, select.value);
 		    }
 			
 			/* value */

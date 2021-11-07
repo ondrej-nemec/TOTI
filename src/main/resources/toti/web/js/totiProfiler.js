@@ -1,4 +1,4 @@
-/* TOTI Profiler version 0.0.3 */
+/* TOTI Profiler version 0.0.4 */
 var totiProfiler = {
 	pageId: null,
 	interval: null,
@@ -100,6 +100,7 @@ var totiProfiler = {
 		}, 30));
 		closeButton.style.width = 30;
 		closeButton.style["background-color"] = "red";
+		closeButton.width = "2em";
 		
 		var titleLink = document.createElement("a");
 		titleLink.setAttribute("href", "/toti/profiler#" + pageId);
@@ -162,7 +163,7 @@ var totiProfiler = {
 		profiler.setAttribute("id", "toti-profiler");
 		profiler.setAttribute(
 			"style",
-			 "height: 30px; width: 100%; position: fixed; bottom: 5px; background-color: #f5c6cb; z-index: 1000;"
+			 "height: 30px; width: 100%; position: fixed; bottom: 5px; background-color: #f5c6cb; z-index: 1000; margin: 0;"
 		);
 		totiProfiler.addHeader(profiler, pageId);
 
@@ -206,7 +207,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	if (totiSettings.showProfiler) {
 	    var div = document.createElement("div");
 	    div.setAttribute("id", "toti-profiler-bottom");
-	    div.style.height = totiProfiler.elementHeight;
+	    div.style.height = "30px";
 	   /* div.style["background-color"] = "red";  */
 	    document.body.appendChild(div);
 	    document.body.appendChild(totiProfiler.print());
