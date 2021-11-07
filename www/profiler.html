@@ -326,11 +326,16 @@
 
 		function getTranslationsLog(trans) {
 			var container = getTemplate(document.getElementById("translations-template"));
-			container.querySelector("#data-trans-locale").innerText = trans.locale.lang;
-			container.querySelector("#data-trans-ltr").innerText = trans.locale.isLeftToRight;
-			container.querySelector("#data-trans-substitutions").innerText = JSON.stringify(trans.locale.substitution);
-
+			if (trans.locale !== null) {
+				container.querySelector("#data-trans-locale").innerText = trans.locale.lang;
+				container.querySelector("#data-trans-ltr").innerText = trans.locale.isLeftToRight;
+				container.querySelector("#data-trans-substitutions").innerText = JSON.stringify(trans.locale.substitution);
+			}
+			
 			var table = container.querySelector("#data-trans-missingTranslations");
+			if (trans.missingTranslations.length === 0) {
+				table.remove();
+			}
 			trans.missingTranslations.forEach(function(missing) {
 				var createTd = function(value) {
 					var td = document.createElement("td");
