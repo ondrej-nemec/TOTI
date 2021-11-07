@@ -27,6 +27,40 @@ public class ValidatorTest {
 	// TODO test list specification
 	
 	@Test
+	public void testValidateRename() {
+		Validator val = new Validator(true);
+		val.addRule(ItemRules.forName("item_name", true).rename("item_new_name"));
+		RequestParameters prop = new RequestParameters();
+		prop.put("item_name", "some value");
+
+		val.validate(prop, new RequestParameters(), Mockito.mock(Translator.class));
+		
+		RequestParameters expected = new RequestParameters();
+		expected.put("item_new_name", "some value");
+		assertEquals(expected, prop);
+	}
+	
+	@Test
+	public void testValidateRenameSub() {
+		Validator val = new Validator(true);
+		val.addRule(ItemRules.forName("sub", true).setMapSpecification(
+			new Validator(true).addRule(ItemRules.forName("item_name", true).rename("item_new_name"))
+		));
+		RequestParameters prop = new RequestParameters();
+		prop.put("item_name", "some value");
+		RequestParameters actual = new RequestParameters();
+		actual.put("sub", prop);
+
+		val.validate(actual, new RequestParameters(), Mockito.mock(Translator.class));
+		
+		RequestParameters sub = new RequestParameters();
+		sub.put("item_new_name", "some value");
+		RequestParameters expected = new RequestParameters();
+		expected.put("sub", sub);
+		assertEquals(expected, actual);
+	}
+	
+	@Test
 	public void testValidateChangeValue() {
 		Validator val = new Validator(true);
 		RequestParameters prop = new RequestParameters();

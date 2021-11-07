@@ -97,12 +97,16 @@ public class Validator {
 		Map<String, Set<String>> errors = new HashMap<>();
 		List<String> names = new ArrayList<>();
 		rules.forEach((rule)->{
-			names.add(rule.getName());
 			swichRules(String.format(format, rule.getName()), rule.getName(), rule, errors, prop, validatorParams, translator);
 			Object newValue = rule.getChangeValue().apply(prop.get(rule.getName()));
+			String newName = rule.getRename().orElse(rule.getName());
 			if (newValue != null) {
-				prop.put(rule.getName(), newValue);
+				prop.remove(rule.getName());
+				prop.put(newName, newValue);
+			} else if (rule.getRename().isPresent() && prop.containsKey(rule.getName())) {
+				prop.put(newName, prop.remove(rule.getName()));
 			}
+			names.add(newName);
 		});
 		List<String> notChecked = new ArrayList<>(prop.keySet());
 		notChecked.removeAll(names);
