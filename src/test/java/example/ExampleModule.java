@@ -45,7 +45,7 @@ public class ExampleModule implements Module {
 
 	@Override
 	public String getTemplatesPath() {
-		return "example/resources";
+		return "jsp/example/resources";
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class ExampleModule implements Module {
 
 	@Override
 	public String getTranslationPath() {
-		return "example/resources";
+		return "jsp/example/resources";
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-<t:layout path="layout.jsp" />
+<t:layout path="Layout.jsp" />
 <t:block name="content">
 	<h1>${title}</h1>
 	

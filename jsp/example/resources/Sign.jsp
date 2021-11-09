@@ -1,4 +1,4 @@
-<t:layout path="layout.jsp" />
+<t:layout path="Layout.jsp" />
 <t:block name="content">
 	<input type="button" value="LogIn" id="in" /><br>
 	<input type="button" value="LogOut" id="out" /><br>
