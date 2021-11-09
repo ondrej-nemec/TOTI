@@ -23,15 +23,29 @@ public class VariableDefineTag implements Tag {
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
-		String define = String.format("%s %s", params.get("type"), params.get("name"));
+		String name = params.get("name");
+		String type = params.get("type") == null ? "Object" : params.get("type");
+		String value = params.get("value") == null ? "null" : String.format(getValue(type), params.get("value"));
+		
+		String define = String.format("%s %s", type, name);
 		if (params.get("final") != null) {
 			define = "final " + define;
 		}
-		if (params.get("value") != null) {
-			define += String.format("=%s", params.get("value"));
+		if (params.get("value") == null) {
+			define = String.format("addVariable(\"class_%s\", %s.class)", name, type) + define;
 		}
-		return define + ";"
-				+ String.format("addVariable(\"%s\", %s);", params.get("name"), params.get("name"));
+		return define + "=" + value + ";"
+				+ String.format("addVariable(\"%s\", %s);", name, value);
+	}
+	
+	private String getValue(String type) {
+		if (type.equals("String") || type.endsWith(".String")) {
+			return "\"%s\"";
+		}
+		if (type.equals("char") || type.equals("Character") || type.endsWith(".Character")) {
+			return "'%s'";
+		}
+		return "%s";
 	}
 
 }
