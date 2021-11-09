@@ -1,0 +1,117 @@
+<h1>Template tags</h1>
+
+comment, java code, inline-if, variables
+
+<p>TOTI tags allow generate HTML code inside templates. In some cases, tag can be inside tag, but tag can never ever inside JSP variable calling, java code or inline conditions. Tag inside JSP comment is not executed unlike in HTML comment.</p>
+
+<h2>Variables</h2>
+
+<h3>Define new variable</h3>
+
+<strong>Unpaired</strong>
+
+<p>Create new variable with given type, name and optionally value. Can be final, too. Value is available in JSP variables ('${...}').</p>
+
+<p class="code"><code>
+&lt;t:var type="" name="" value="" final /&gt; <br>
+<span class="comment">// example</span> <br>
+&lt;t:var type="String" name="variableName" value="some value" /&gt;
+</code></p>
+
+<h3>Set variable value</h3>
+
+<strong>Unpair</strong>
+
+<p>TODO</p>
+
+<p class="code"><code>
+
+</code></p>
+
+<h3>Print variable</h3>
+
+<strong>Unpair</strong>
+
+<p>Print variable on page. Variable is escaped unless you use <code>nonescape</code> parameter</p>
+
+<p class="code"><code>
+&lt;t:out name="" /&gt; <br>
+<span class="comment">// OR</span> <br>
+&lt;t:out name="" nonescape /&gt; <br>
+<br>
+<span class="comment">// example</span> <br>
+&lt;t:out name="variableName" /&gt;
+</code></p>
+
+<h3>Console print</h3>
+
+<strong>Unpair</strong>
+
+<p>Print variable or text into std out. Printing variable means to print variable defined by tag or JSP variables. Printing text is for prints static text.</p>
+
+<p class="code"><code>
+<span class="comment">// print variables</span> <br>
+&lt;t:console value="" /&gt; <br>
+<span class="comment">// example 1: print variable, notice 'variableName' was defined early</span> <br>
+&lt;t:console value="variableName" /&gt; <br>
+<span class="comment">// example 2: print JSP variable 'greatings'</span><br>
+&lt;t:console value="${greatings}" /&gt; <br>
+<br>
+<span class="comment">// print text</span> <br>
+&lt;t:console text="" /&gt; <br>
+<span class="comment">// example: print 'Hello world' to console</span> <br>
+&lt;t:console text="Hello world" /&gt; <br>
+</code></p>
+
+
+
+<h2>Condition</h2>
+switch
+case
+default
+if
+else-if
+else
+
+<h3></h3>
+
+<strong></strong>
+
+<p></p>
+
+<p class="code"><code>
+
+</code></p>
+
+<h2>Loops</h2>
+while
+do-while
+for-each
+for
+
+<h2>Break, continue</h2>
+continue
+break
+
+<h2>Try-catch-finally</h2>
+try
+catch
+finally
+
+<h2>Translate, permissions</h2>
+translate
+if-current
+permissions
+link
+
+<h2>Templating</h2>
+block
+include
+layout
+
+<h2>Control</h2>
+control
+form-error
+form-input
+form-label
+

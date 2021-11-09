@@ -1,0 +1,25 @@
+{
+		"title": "About",
+		"link": "about.html"
+	},
+	{
+		"title": "Licence",
+		"link": "https://raw.githubusercontent.com/ondrej-nemec/TOTI/master/LICENSE"
+	},
+	{
+		"title": "Documentation",
+		"sub": [
+			{
+				"title": "JSP tags",
+				"link": "doc-tags.html"
+			},
+			{
+				"title": "Filters and inputs",
+				"link": "doc-inputs.html"
+			},
+			{
+				"title": "Validator",
+				"link": "doc-validator.html"
+			}
+		]
+	}

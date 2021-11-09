@@ -1,39 +1,5 @@
 {
 	"name": "TOTI",
-	"doc": [
-		{
-			"title": "Test",
-			"file": "test.html",
-			"sub": [
-				{
-					"title": "TOP",
-					"link": ""
-				},
-				{
-					"title": "SubA 1",
-					"link": "sub1"
-				},
-				{
-					"title": "SubA 2",
-					"link": "sub2"
-				}
-			]
-		},
-		{
-			"title": "Test2",
-			"file": "test2.html",
-			"sub": [
-				{
-					"title": "SubB 1",
-					"link": "sub1"
-				},
-				{
-					"title": "SubB 2",
-					"link": "sub2"
-				}
-			]
-		}
-	],
-	"langs": ["cs", "en", "de"],
-	"versions": ["v1.0", "v1.1"]
+	"langs": ["en"],
+	"versions": ["v1.0"]
 }
