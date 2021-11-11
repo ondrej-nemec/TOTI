@@ -89,7 +89,7 @@ comment, java code, inline-if, variables
 
 <strong>Unpaired or paired</strong>
 
-<p>Java <i>case</i>. Have to be inside <code>switch</code> tag. The unpaired <code>case</code> block will be continue until first <code>break</code> or end of <code>switch</code> tag. The paired <code>case</code> automatically add <i>break</i> at the end. In both cases (unpaired / paired) if value in <code>cond</code> is string, write it: <code>cond='"--value--"'</code> or <code>cond="\"--value--\"</code>.</p>
+<p>Java <i>case</i>. Have to be inside <code>switch</code> tag. The unpaired <code>case</code> block works like <i>case</i> <b>without</b> <i>break</i>. The paired <code>case</code> works like <i>case</i> <b>with</b> <i>break</i>. In both cases (unpaired / paired) if value in <code>cond</code> is string, write it: <code>cond='"--value--"'</code> or <code>cond="\"--value--\"</code>.</p>
 
 <p class="code"><code>
 	<span class="comment">// unpaired</span> <br>
@@ -108,11 +108,211 @@ comment, java code, inline-if, variables
 	&lt;/t:case &gt;
 </code></p>
 
-case
-default
-if
-else-if
-else
+<h3>Default</h3>
+
+<strong>Unpaired or paired</strong>
+
+<p>Java <i>default</i>. Always inside <code>switch</code>. If unpaired, block will be finished by <code>/switch</code>.</p>
+
+<p class="code"><code>
+	<span class="comment">// unpaired</span> <br>
+	&lt;t:default /&gt;<br>	
+	<span class="comment">// paired</span> <br>
+	&lt;t:default &gt; <br>
+		<span class="tab comment">// your code</span> <br>
+	&lt;/t:default &gt;
+</code></p>
+
+<h3>If</h3>
+
+<strong>Paired or unpaired</strong>
+
+<p>Java <i>if</i>. If unpaired, works like Java <i>if</i> statement without <code>{}</code>. Text in <code>cond</code> parameter is standart Java code.</p>
+
+<p class="code"><code>
+	<span class="comment">// unpaired</span> <br>
+	&lt;t:if cond="" /&gt; <br>
+		<span class="tab comment">// your code</span> <br>
+	<span class="comment">// example</span> <br>
+	&lt;t:if cond='${message}.equals("text")' /&gt; <br>
+		<span class="tab comment">// your code</span> <br>
+
+	<span class="comment">// paired</span> <br>
+	&lt;t:if cond="" &gt; <br>
+		<span class="tab comment">// your code</span> <br>
+	&lt;/t:if &gt; <br>
+	<span class="comment">// example</span> <br>
+	&lt;t:if cond='${message}.equals("text")' &gt; <br>
+		<span class="tab comment">// your code</span> <br>
+	&lt;/t:if &gt; <br>
+</code></p>
+
+<h3>Else if</h3>
+
+<strong>Unpaired</strong>
+
+<p>Java <i>else-if</i>. Inside <code>if</code>. Text in <code>cond</code> parameter is standart Java code.</p>
+
+<p class="code"><code>
+	&lt;t:elseif cond="" /&gt; <br>
+		<span class="tab comment">// your code</span> <br>
+	<span class="comment">// example</span> <br>
+	&lt;t:elseif cond='${message}.equals("text")' /&gt; <br>
+		<span class="tab comment">// your code</span> <br>
+</code></p>
+
+<h3>Else</h3>
+
+<strong>Unpaired</strong>
+
+<p>Java <i>else</i>. Inside <code>if</code>, after <code>elseif</code>.</p>
+
+<p class="code"><code>
+	&lt;t:else /&gt; <br>
+		<span class="tab comment">// your code</span> <br>
+	<span class="comment">// example</span> <br>
+	&lt;t:else /&gt; <br>
+		<span class="tab comment">// your code</span> <br>
+</code></p>
+
+<h2>Loops</h2>
+
+<h3>While</h3>
+
+<strong>Paired</strong>
+
+<p>Java <i>while</i>. Text in <code>cond</code> parameter is standart Java code.</p>
+
+<p class="code"><code>
+	&lt;t:while cond="" &gt; <br>
+		<span class="tab comment">// your code</span> <br>
+	&lt;/t:while&gt; <br>
+	<span class="comment">// example</span> <br>
+	&lt;t:while cond="${i} &gt; 0" &gt; <br>
+		<span class="tab comment">// your code</span> <br>
+	&lt;/t:while&gt; <br>
+</code></p>
+
+<h3>Do while</h3>
+
+<strong>Paired</strong>
+
+<p>Java <i>do-while</i>. Text in <code>cond</code> parameter is standart Java code.</p>
+
+<p class="code"><code>
+	&lt;t:dowhile &gt; <br>
+		<span class="tab comment">// your code</span> <br>
+	&lt;/t:dowhile cond="" &gt; <br>
+
+	&lt;t:dowhile &gt; <br>
+		<span class="tab comment">// your code</span> <br>
+	&lt;/t:dowhile cond="${i} &gt; 0" &gt; <br>
+</code></p>
+
+<h3>For each</h3>
+
+<strong>Paired</strong>
+
+<p>Java <i>foreach</i>. Can be used for <code>Map</code> or <code>Iterable</code>. Variables defined in params (like <code>item, key, value</code>) are available as JSP variable.</p>
+
+<p class="code"><code>
+	&lt;t:foreach item="" collection="" &gt; <br>
+		<span class="tab comment">// your code</span> <br>
+	&lt;/t:foreach&gt; <br>
+	<span class="comment">// example</span> <br>
+	&lt;t:foreach item="String userName" collection="${userNames}" &gt; <br>
+		<span class="tab comment">// your code</span> <br>
+	&lt;/t:foreach&gt; <br>
+
+	&lt;t:foreach key="" value="" map="" &gt; <br>
+		<span class="tab comment">// your code</span> <br>
+	&lt;/t:foreach&gt; <br>
+	<span class="comment">// example</span> <br>
+	&lt;t:foreach key="String login" value="String userName" map="${users}" &gt; <br>
+		<span class="tab comment">// your code</span> <br>
+	&lt;/t:foreach&gt; <br>
+</code></p>
+
+<h3>For</h3>
+
+<strong>Paired</strong>
+
+<p>Java <i>for</i>. Variable defined in <code>from</code> is available as JSP variable, too.</p>
+
+<p class="code"><code>
+	&lt;t:for from="" to="" change="" &gt; <br>
+		<span class="tab comment">// your code</span> <br>
+	&lt;/t:for &gt; <br>
+	<span class="comment">// example</span> <br>
+	&lt;t:for from="int i = 0" to="i &lt; 10" change="i++" &gt; <br>
+		<span class="tab comment">// your code</span> <br>
+	&lt;/t:for &gt; <br>
+</code></p>
+
+<h3>Continue</h3>
+
+<strong>Unpaired</strong>
+
+<p>Java <i>continue</i>. Inside loops.</p>
+
+<p class="code"><code>
+	&lt;t:continue /&gt; <br>
+</code></p>
+
+<h3>Break</h3>
+
+<strong>Unpaired</strong>
+
+<p>Java <i>break</i>. Inside loops.</p>
+
+<p class="code"><code>
+	&lt;t:break /&gt; <br>
+</code></p>
+
+<h2>Try-catch-finally</h2>
+
+<h3>Try</h3>
+
+<strong>Paired</strong>
+
+<p>Java <i>try</i>. Requires <code>catch</code> or <code>finally</code> tag inside.</p>
+
+<p class="code"><code>
+	&lt;t:try &gt; <br>
+	<span class="tab comment">// your code</span> <br>
+	&lt;/t:try &gt; <br>
+</code></p>
+
+<h3>Catch</h3>
+
+<strong>Unpaired</strong>
+
+<p>Java <i>catch</i>. Inside <code>try</code>. Allows two parameters: <code>name</code> and <code>exception</code>. The second one is optional, if not defined, <code>Exception</code> is used. Exception is available in JSP variables</p>
+
+<p class="code"><code>
+	&lt;t:catch exception="" name="" /&gt; <br>
+	<span class="comment">// OR</span>
+	&lt;t:catch name="" /&gt; <br>
+	<span class="comment">// example</span>
+	&lt;t:catch exception="RuntimeException" name="e" /&gt; <br>
+	<span class="tab comment">// your code</span> <br>
+</code></p>
+
+<h3>Finally</h3>
+
+<strong>Unpaired</strong>
+
+<p>Java <i>finally</i>. Inside <code>try</code>, after <code>catch</code>.</p>
+
+<p class="code"><code>
+	&lt;t:finally /&gt; <br>
+</code></p>
+
+<h2>Translate, permissions</h2>
+translate
+if-current
+permissions
+link
 
 <!--
 <h3></h3>
@@ -125,27 +325,6 @@ else
 
 </code></p>
 -->
-
-<h2>Loops</h2>
-while
-do-while
-for-each
-for
-
-<h2>Break, continue</h2>
-continue
-break
-
-<h2>Try-catch-finally</h2>
-try
-catch
-finally
-
-<h2>Translate, permissions</h2>
-translate
-if-current
-permissions
-link
 
 <h2>Templating</h2>
 block
