@@ -13,19 +13,21 @@ comment, java code, inline-if, variables
 <p>Create new variable with given type, name and optionally value. Can be final, too. Value is available in JSP variables ('${...}').</p>
 
 <p class="code"><code>
-&lt;t:var type="" name="" value="" final /&gt; <br>
-<span class="comment">// example</span> <br>
-&lt;t:var type="String" name="variableName" value="some value" /&gt;
+	&lt;t:var type="" name="" value="" final /&gt; <br>
+	<span class="comment">// example</span> <br>
+	&lt;t:var type="String" name="variableName" value="some value" /&gt;
 </code></p>
 
 <h3>Set variable value</h3>
 
 <strong>Unpair</strong>
 
-<p>TODO</p>
+<p>Set value to variable.</p>
 
 <p class="code"><code>
-
+	&lt;t:set name="" value="" /&gt; <br>
+	<span class="comment">// example</span> <br>
+	&lt;t:set name="variableName" value="another value" /&gt;
 </code></p>
 
 <h3>Print variable</h3>
@@ -35,12 +37,12 @@ comment, java code, inline-if, variables
 <p>Print variable on page. Variable is escaped unless you use <code>nonescape</code> parameter</p>
 
 <p class="code"><code>
-&lt;t:out name="" /&gt; <br>
-<span class="comment">// OR</span> <br>
-&lt;t:out name="" nonescape /&gt; <br>
-<br>
-<span class="comment">// example</span> <br>
-&lt;t:out name="variableName" /&gt;
+	&lt;t:out name="" /&gt; <br>
+	<span class="comment">// OR</span> <br>
+	&lt;t:out name="" nonescape /&gt; <br>
+	<br>
+	<span class="comment">// example</span> <br>
+	&lt;t:out name="variableName" /&gt;
 </code></p>
 
 <h3>Console print</h3>
@@ -50,29 +52,69 @@ comment, java code, inline-if, variables
 <p>Print variable or text into std out. Printing variable means to print variable defined by tag or JSP variables. Printing text is for prints static text.</p>
 
 <p class="code"><code>
-<span class="comment">// print variables</span> <br>
-&lt;t:console value="" /&gt; <br>
-<span class="comment">// example 1: print variable, notice 'variableName' was defined early</span> <br>
-&lt;t:console value="variableName" /&gt; <br>
-<span class="comment">// example 2: print JSP variable 'greatings'</span><br>
-&lt;t:console value="${greatings}" /&gt; <br>
-<br>
-<span class="comment">// print text</span> <br>
-&lt;t:console text="" /&gt; <br>
-<span class="comment">// example: print 'Hello world' to console</span> <br>
-&lt;t:console text="Hello world" /&gt; <br>
+	<span class="comment">// print variables</span> <br>
+	&lt;t:console value="" /&gt; <br>
+	<span class="comment">// example 1: print variable, notice 'variableName' was defined early</span> <br>
+	&lt;t:console value="variableName" /&gt; <br>
+	<span class="comment">// example 2: print JSP variable 'greatings'</span><br>
+	&lt;t:console value="${greatings}" /&gt; <br>
+	<br>
+	<span class="comment">// print text</span> <br>
+	&lt;t:console text="" /&gt; <br>
+	<span class="comment">// example: print 'Hello world' to console</span> <br>
+	&lt;t:console text="Hello world" /&gt; <br>
 </code></p>
 
 
 
 <h2>Condition</h2>
-switch
+
+<h3>Switch</h3>
+
+<strong>Paired</strong>
+
+<p>Java <i>switch</i>. <code>object</code> has to be tag-defined variable or JSP variable.</p>
+
+<p class="code"><code>
+	&lt;t:switch object="" &gt;<br>
+	<span class="tab comment">// cases</span> <br>
+	&lt;/t:switch &gt;<br>	
+	<span class="comment">// example</span> <br>
+	&lt;t:switch object="${message}" &gt;<br>
+	<span class="tab comment">// cases</span> <br>
+	&lt;/t:switch &gt;<br>	
+</code></p>
+
+<h3>Case</h3>
+
+<strong>Unpaired or paired</strong>
+
+<p>Java <i>case</i>. Have to be inside <code>switch</code> tag. The unpaired <code>case</code> block will be continue until first <code>break</code> or end of <code>switch</code> tag. The paired <code>case</code> automatically add <i>break</i> at the end. In both cases (unpaired / paired) if value in <code>cond</code> is string, write it: <code>cond='"--value--"'</code> or <code>cond="\"--value--\"</code>.</p>
+
+<p class="code"><code>
+	<span class="comment">// unpaired</span> <br>
+	&lt;t:case cond="" /&gt;<br>	
+	<span class="comment">// example</span> <br>
+	&lt;t:case cond='"someText"' /&gt; <br>
+
+
+	<span class="comment">// paired</span> <br>
+	&lt;t:case cond="" &gt;<br>
+		<span class="tab comment">// code</span> <br>
+	&lt;/t:case &gt;<br>
+	<span class="comment">// example</span> <br>
+	&lt;t:case cond='"someText"' &gt;<br>
+		<span class="tab comment">// code</span> <br>
+	&lt;/t:case &gt;
+</code></p>
+
 case
 default
 if
 else-if
 else
 
+<!--
 <h3></h3>
 
 <strong></strong>
@@ -82,6 +124,7 @@ else
 <p class="code"><code>
 
 </code></p>
+-->
 
 <h2>Loops</h2>
 while
