@@ -77,11 +77,11 @@ comment, java code, inline-if, variables
 
 <p class="code"><code>
 	&lt;t:switch object="" &gt;<br>
-	<span class="tab comment">// cases</span> <br>
+	<span class="tab"></span><span class="comment">// cases</span> <br>
 	&lt;/t:switch &gt;<br>	
 	<span class="comment">// example</span> <br>
 	&lt;t:switch object="${message}" &gt;<br>
-	<span class="tab comment">// cases</span> <br>
+	<span class="tab"></span><span class="comment">// cases</span> <br>
 	&lt;/t:switch &gt;<br>	
 </code></p>
 
@@ -100,11 +100,11 @@ comment, java code, inline-if, variables
 
 	<span class="comment">// paired</span> <br>
 	&lt;t:case cond="" &gt;<br>
-		<span class="tab comment">// code</span> <br>
+		<span class="tab"></span><span class="comment">// code</span> <br>
 	&lt;/t:case &gt;<br>
 	<span class="comment">// example</span> <br>
 	&lt;t:case cond='"someText"' &gt;<br>
-		<span class="tab comment">// code</span> <br>
+		<span class="tab"></span><span class="comment">// code</span> <br>
 	&lt;/t:case &gt;
 </code></p>
 
@@ -119,7 +119,7 @@ comment, java code, inline-if, variables
 	&lt;t:default /&gt;<br>	
 	<span class="comment">// paired</span> <br>
 	&lt;t:default &gt; <br>
-		<span class="tab comment">// your code</span> <br>
+		<span class="tab"></span><span class="comment">// your code</span> <br>
 	&lt;/t:default &gt;
 </code></p>
 
@@ -132,18 +132,18 @@ comment, java code, inline-if, variables
 <p class="code"><code>
 	<span class="comment">// unpaired</span> <br>
 	&lt;t:if cond="" /&gt; <br>
-		<span class="tab comment">// your code</span> <br>
+		<span class="tab"></span><span class="comment">// your code</span> <br>
 	<span class="comment">// example</span> <br>
 	&lt;t:if cond='${message}.equals("text")' /&gt; <br>
-		<span class="tab comment">// your code</span> <br>
+		<span class="tab"></span><span class="comment">// your code</span> <br>
 
 	<span class="comment">// paired</span> <br>
 	&lt;t:if cond="" &gt; <br>
-		<span class="tab comment">// your code</span> <br>
+		<span class="tab"></span><span class="comment">// your code</span> <br>
 	&lt;/t:if &gt; <br>
 	<span class="comment">// example</span> <br>
 	&lt;t:if cond='${message}.equals("text")' &gt; <br>
-		<span class="tab comment">// your code</span> <br>
+		<span class="tab"></span><span class="comment">// your code</span> <br>
 	&lt;/t:if &gt; <br>
 </code></p>
 
@@ -155,10 +155,10 @@ comment, java code, inline-if, variables
 
 <p class="code"><code>
 	&lt;t:elseif cond="" /&gt; <br>
-		<span class="tab comment">// your code</span> <br>
+		<span class="tab"></span><span class="comment">// your code</span> <br>
 	<span class="comment">// example</span> <br>
 	&lt;t:elseif cond='${message}.equals("text")' /&gt; <br>
-		<span class="tab comment">// your code</span> <br>
+		<span class="tab"></span><span class="comment">// your code</span> <br>
 </code></p>
 
 <h3>Else</h3>
@@ -169,10 +169,10 @@ comment, java code, inline-if, variables
 
 <p class="code"><code>
 	&lt;t:else /&gt; <br>
-		<span class="tab comment">// your code</span> <br>
+		<span class="tab"></span><span class="comment">// your code</span> <br>
 	<span class="comment">// example</span> <br>
 	&lt;t:else /&gt; <br>
-		<span class="tab comment">// your code</span> <br>
+		<span class="tab"></span><span class="comment">// your code</span> <br>
 </code></p>
 
 <h2>Loops</h2>
@@ -185,11 +185,11 @@ comment, java code, inline-if, variables
 
 <p class="code"><code>
 	&lt;t:while cond="" &gt; <br>
-		<span class="tab comment">// your code</span> <br>
+		<span class="tab"></span><span class="comment">// your code</span> <br>
 	&lt;/t:while&gt; <br>
 	<span class="comment">// example</span> <br>
 	&lt;t:while cond="${i} &gt; 0" &gt; <br>
-		<span class="tab comment">// your code</span> <br>
+		<span class="tab"></span><span class="comment">// your code</span> <br>
 	&lt;/t:while&gt; <br>
 </code></p>
 
@@ -201,11 +201,11 @@ comment, java code, inline-if, variables
 
 <p class="code"><code>
 	&lt;t:dowhile &gt; <br>
-		<span class="tab comment">// your code</span> <br>
+		<span class="tab"></span><span class="comment">// your code</span> <br>
 	&lt;/t:dowhile cond="" &gt; <br>
 
 	&lt;t:dowhile &gt; <br>
-		<span class="tab comment">// your code</span> <br>
+		<span class="tab"></span><span class="comment">// your code</span> <br>
 	&lt;/t:dowhile cond="${i} &gt; 0" &gt; <br>
 </code></p>
 
@@ -217,19 +217,19 @@ comment, java code, inline-if, variables
 
 <p class="code"><code>
 	&lt;t:foreach item="" collection="" &gt; <br>
-		<span class="tab comment">// your code</span> <br>
+		<span class="tab"></span><span class="comment">// your code</span> <br>
 	&lt;/t:foreach&gt; <br>
 	<span class="comment">// example</span> <br>
 	&lt;t:foreach item="String userName" collection="${userNames}" &gt; <br>
-		<span class="tab comment">// your code</span> <br>
+		<span class="tab"></span><span class="comment">// your code</span> <br>
 	&lt;/t:foreach&gt; <br>
 
 	&lt;t:foreach key="" value="" map="" &gt; <br>
-		<span class="tab comment">// your code</span> <br>
+		<span class="tab"></span><span class="comment">// your code</span> <br>
 	&lt;/t:foreach&gt; <br>
 	<span class="comment">// example</span> <br>
 	&lt;t:foreach key="String login" value="String userName" map="${users}" &gt; <br>
-		<span class="tab comment">// your code</span> <br>
+		<span class="tab"></span><span class="comment">// your code</span> <br>
 	&lt;/t:foreach&gt; <br>
 </code></p>
 
@@ -241,11 +241,11 @@ comment, java code, inline-if, variables
 
 <p class="code"><code>
 	&lt;t:for from="" to="" change="" &gt; <br>
-		<span class="tab comment">// your code</span> <br>
+		<span class="tab"></span><span class="comment">// your code</span> <br>
 	&lt;/t:for &gt; <br>
 	<span class="comment">// example</span> <br>
 	&lt;t:for from="int i = 0" to="i &lt; 10" change="i++" &gt; <br>
-		<span class="tab comment">// your code</span> <br>
+		<span class="tab"></span><span class="comment">// your code</span> <br>
 	&lt;/t:for &gt; <br>
 </code></p>
 
@@ -279,7 +279,7 @@ comment, java code, inline-if, variables
 
 <p class="code"><code>
 	&lt;t:try &gt; <br>
-	<span class="tab comment">// your code</span> <br>
+	<span class="tab"></span><span class="comment">// your code</span> <br>
 	&lt;/t:try &gt; <br>
 </code></p>
 
@@ -295,7 +295,7 @@ comment, java code, inline-if, variables
 	&lt;t:catch name="" /&gt; <br>
 	<span class="comment">// example</span>
 	&lt;t:catch exception="RuntimeException" name="e" /&gt; <br>
-	<span class="tab comment">// your code</span> <br>
+	<span class="tab"></span><span class="comment">// your code</span> <br>
 </code></p>
 
 <h3>Finally</h3>
@@ -308,11 +308,200 @@ comment, java code, inline-if, variables
 	&lt;t:finally /&gt; <br>
 </code></p>
 
-<h2>Translate, permissions</h2>
-translate
-if-current
-permissions
-link
+<h2>Templating</h2>
+
+<h3>Block</h3>
+
+<strong>Paired</strong>
+
+<p>Define block for future use. The block <code>name</code> is required parameter.</p>
+
+<p class="code"><code>
+	&lt;t:block name="" &gt; <br>
+	<span class="tab"></span> <span class="comment">// your code</span> <br>
+	&lt;/t:block &gt; <br>
+	<span class="comment">// example</span> <br>
+	&lt;t:block name="content" &gt; <br>
+	<span class="tab"></span> <span class="comment">// your code</span> <br>
+	&lt;/t:block &gt; <br>
+</code></p>
+
+<h3>Include</h3>
+
+<strong>Unpaired</strong>
+
+<p>Print defined block or another template file. The block can be optional (print block only if defined). If you are including block, all other parameters are variables. The file path is absolute from template root (defined in <code>Module</code>). The module is module name from <code>Module</code>.</p>
+
+<p class="code"><code>
+	<span class="comment">// include block</span> <br>
+	&lt;t:include block="" /&gt; <br>
+	<span class="comment">// example 1</span> <br>
+	&lt;t:include block="content" /&gt; <br>
+	<span class="comment">// example 2 - print block if defined</span> <br>
+	&lt;t:include block="content" optional /&gt; <br>
+	<span class="comment">// example 3 - parameters =&gt; variables</span> <br>
+	&lt;t:include block="content" var1="value1"  var2="value2" /&gt; <br>
+<br>
+	<span class="comment">// include file</span> <br>
+	&lt;t:include file="" /&gt; <br>
+	<span class="comment">// include file from another module</span> <br>
+	&lt;t:include file="" module="" /&gt; <br>
+	<span class="comment">// example 1</span> <br>
+	&lt;t:include file="/entity/user.jsp" /&gt; <br>
+	<span class="comment">// example 2 - another module</span> <br>
+	&lt;t:include file="/entity/user.jsp" module="user" /&gt; <br>
+</code></p>
+
+<h3>Layout</h3>
+
+<strong>Unpaired</strong>
+
+<p>Define layout for template. The path is absolute from template root (defined in <code>Module</code>). The module is module name from <code>Module</code>.</p>
+
+<p class="code"><code>
+	<span class="comment">// layout from curent module</span> <br>
+	&lt;t:layout path="" /&gt; <br>
+	<span class="comment">// example</span> <br>
+	&lt;t:layout path="/layout.jsp" /&gt; <br>
+	<br>
+	<span class="comment">// layout from another module</span> <br>
+	&lt;t:layout path="" module="" /&gt; <br>
+	<span class="comment">// example</span> <br>
+	&lt;t:layout path="/layout.jsp" module="common" /&gt; <br>
+</code></p>
+
+<h2>Control</h2>
+
+<h3>Control</h3>
+
+<strong>Paired or unpaired</strong>
+
+<p>Print TOTI control - form and grid. Paired only for custom template for form. By default print control on page. For using in javascript add <code>jsObject</code> parameter. Parameter <code>name</code> is name of JSP variable.</p>
+
+<p class="code"><code>
+	&lt;t:control name="" /&gt; <br>
+	<span class="comment">// example</span> <br>
+	&lt;t:control name="userGrid" /&gt; <br>
+	<span class="comment">// example as JS</span> <br>
+	var grid = &lt;t:control name="userGrid" jsObject /&gt;; <br>
+</code></p>
+
+<h3>Form Input</h3>
+
+<strong>Unpaired</strong>
+
+<p>Only for custom template for form. Used for printing form input. <code>Name</code> is input name.</p>
+
+<p class="code"><code>
+	&lt;t:input name="" /&gt; <br>
+	<span class="comment">// example</span> <br>
+	&lt;t:input name="user-name" /&gt; <br>
+</code></p>
+
+<h3>Form Label</h3>
+
+<strong>Unpaired</strong>
+
+<p>Only for custom template for label. Used for printing form error. <code>Name</code> is input name.</p>
+
+<p class="code"><code>
+	&lt;t:label name="" /&gt; <br>
+	<span class="comment">// example</span> <br>
+	&lt;t:label name="user-name" /&gt; <br>
+</code></p>
+
+<h3>Form Error</h3>
+
+<strong>Unpaired</strong>
+
+<p>Only for custom template for form. Used for printing form error. <code>Name</code> is input name.</p>
+
+<p class="code"><code>
+	&lt;t:error name="" /&gt; <br>
+	<span class="comment">// example</span> <br>
+	&lt;t:error name="user-name" /&gt; <br>
+</code></p>
+
+
+<h2>Others</h2>
+
+<h3>Translate</h3>
+
+<strong>Unpaired</strong>
+
+<p>Translate text. For translation use default TOTI translator. You can translate simple text (<code>message</code> parameter) or JSP or tag-defined variable (<code>variable</code> parameter). Other parameters will be used as variables.</p>
+
+<p class="code"><code>
+	<span class="comment">// translate variable</span> <br>
+	&lt;t:trans variable="" /&gt; <br>
+	<span class="comment">// example </span> <br>
+	&lt;t:trans variable="${title}" /&gt; <br>
+	<br>
+	<span class="comment">// translate message</span> <br>
+	&lt;t:trans message="" /&gt; <br>
+	<span class="comment">// example </span> <br>
+	&lt;t:trans message="common.page.title" /&gt; <br>
+	<br>
+	<span class="comment">// using parameters</span> <br>
+	&lt;t:trans message="common.page.edit" item-name="${item.name}" /&gt;
+</code></p>
+
+<h3>Permissions</h3>
+
+<strong>Paired</strong>
+
+<p>Print text inside this tag if user is allowed for given domain and action. For more see TODO. You can use <code>else</code> inside this tag.</p>
+
+<p class="code"><code>
+	&lt;t:allowed domain="" action="" &gt; <br>
+	<span class="tab"></span><span class="comment">// your code</span> <br>
+	&lt;/t:allowed&gt; <br>
+	<span class="comment">// example</span>
+	&lt;t:allowed domain="users" action="READ" &gt; <br>
+	<span class="tab"></span><span class="comment">// your code</span> <br>
+	&lt;/t:allowed&gt; <br>
+	<span class="comment">// example with else</span>
+	&lt;t:allowed domain="users" action="READ" &gt; <br>
+	<span class="tab"></span><span class="comment">// your code</span> <br>
+	&lt;t:else/&gt; <br>
+	<span class="tab"></span><span class="comment">// your code</span> <br>
+	&lt;/t:allowed&gt; <br>
+</code></p>
+
+<h3>If current</h3>
+
+<strong>Paired</strong>
+
+<p>Print text inside this tag if given attributes (module OR controller OR method OR any combination) match URL. You can use <code>else</code> inside this tag. The module is string from <code>getName()</code> method from <code>Module</code>. The controller is full class path. The method is name of method.</p>
+
+<p class="code"><code>
+	&lt;t:ifcurrent module="" controller="" method="" &gt; <br>
+	<span class="tab"></span><span class="comment">// your code</span> <br>
+	&lt;/t:ifcurrent&gt; <br>
+	<span class="tab"></span><span class="comment">// example 1</span> <br>
+	&lt;t:ifcurrent module="main" controller="org.example.main.controllers.FirstController" method="index" &gt; <br>
+	<span class="tab"></span><span class="comment">// only if 'main' module AND 'org.example.main.controllers.FirstController' controller AND 'index' method</span> <br>
+	&lt;/t:ifcurrent&gt; <br>
+	<span class="tab"></span><span class="comment">// example 2</span> <br>
+	&lt;t:ifcurrent module="main" controller="org.example.main.controllers.FirstController" &gt; <br>
+	<span class="tab"></span><span class="comment">// only if 'main' module AND 'org.example.main.controllers.FirstController' controller. It doesn't matter the method.</span> <br>
+	&lt;/t:ifcurrent&gt; <br>
+</code></p>
+
+<h3>Link</h3>
+
+<strong>Unpaired</strong>
+
+<p>Create link. You need method name and controller. The controller is optional. If not filled, the current controller is used. The controller is full class path. The method is name of method.</p>
+
+<p class="code"><code>
+	&lt;t:link controller="" method="" /&gt; <br>
+	<span class="comment">// example 1</span> <br>
+	&lt;t:link controller="org.example.main.controllers.FirstController" method="index" /&gt; <br>
+	<span class="comment">// example 2</span> <br>
+	&lt;t:link method="index" /&gt; <br>
+</code></p>
+
 
 <!--
 <h3></h3>
@@ -325,15 +514,3 @@ link
 
 </code></p>
 -->
-
-<h2>Templating</h2>
-block
-include
-layout
-
-<h2>Control</h2>
-control
-form-error
-form-input
-form-label
-
