@@ -1,5 +1,7 @@
 {
 	"name": "TOTI",
 	"langs": ["en"],
-	"versions": ["v1.0"]
+	"versions": {
+		"v1.0": "v1.0.0"
+	}
 }
