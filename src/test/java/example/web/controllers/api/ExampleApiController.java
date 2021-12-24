@@ -6,16 +6,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import common.Logger;
-import common.structures.MapInit;
+import ji.common.Logger;
+import ji.common.structures.MapInit;
 import example.AuditTrail;
 import example.dao.Example;
 import example.dao.ExampleDao;
 import example.web.validator.ExampleValidator;
-import socketCommunication.http.HttpMethod;
-import socketCommunication.http.StatusCode;
-import socketCommunication.http.server.RequestParameters;
-import socketCommunication.http.server.UploadedFile;
+import ji.socketCommunication.http.HttpMethod;
+import ji.socketCommunication.http.StatusCode;
+import ji.socketCommunication.http.server.RequestParameters;
+import ji.socketCommunication.http.server.UploadedFile;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Domain;
@@ -29,7 +29,7 @@ import toti.response.Response;
 import toti.security.Identity;
 import toti.validation.ItemRules;
 import toti.validation.Validator;
-import translator.Translator;
+import ji.translator.Translator;
 
 @Controller("example")
 public class ExampleApiController {

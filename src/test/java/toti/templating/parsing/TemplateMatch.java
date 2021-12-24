@@ -10,15 +10,15 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import common.structures.MapInit;
-import core.text.Text;
-import core.text.basic.WriteText;
+import ji.common.structures.MapInit;
+import ji.files.text.Text;
+import ji.files.text.basic.WriteText;
 import toti.logging.TotiLogger;
 import toti.templating.Template;
 import toti.templating.TemplateFactory;
-import translator.LanguageSettings;
-import translator.Locale;
-import translator.Translator;
+import ji.translator.LanguageSettings;
+import ji.translator.Locale;
+import ji.translator.Translator;
 
 public class TemplateMatch {
 	

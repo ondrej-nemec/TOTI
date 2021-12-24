@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import common.exceptions.LogicException;
+import ji.common.exceptions.LogicException;
 import toti.templating.parsing.enums.TagMode;
 
 public class TagParser {

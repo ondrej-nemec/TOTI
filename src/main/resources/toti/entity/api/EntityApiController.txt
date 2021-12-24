@@ -3,9 +3,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import common.Logger;
-import socketCommunication.http.HttpMethod;
-import socketCommunication.http.StatusCode;
+import ji.common.Logger;
+import ji.socketCommunication.http.HttpMethod;
+import ji.socketCommunication.http.StatusCode;
 import toti.annotations.inject.ClientIdentity;
 import toti.annotations.inject.Translate;
 import toti.annotations.url.Action;
@@ -18,7 +18,7 @@ import toti.annotations.url.Params;
 import toti.annotations.url.Secured;
 import toti.authentication.Identity;
 import toti.response.Response;
-import translator.Translator;
+import ji.translator.Translator;
 
 @Controller("__Y__")
 public class __X__ApiController {

@@ -1,6 +1,6 @@
 package toti.url;
 
-import socketCommunication.http.HttpMethod;
+import ji.socketCommunication.http.HttpMethod;
 
 public class UrlPart {
 

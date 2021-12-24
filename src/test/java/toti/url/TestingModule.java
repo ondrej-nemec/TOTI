@@ -2,9 +2,9 @@ package toti.url;
 
 import java.util.List;
 
-import common.Logger;
-import common.functions.Env;
-import database.Database;
+import ji.common.Logger;
+import ji.common.functions.Env;
+import ji.database.Database;
 import toti.Module;
 import toti.application.Task;
 import toti.registr.Registr;

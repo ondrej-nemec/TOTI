@@ -4,17 +4,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import common.Logger;
-import common.functions.Env;
-import common.functions.InputStreamLoader;
-import common.structures.DictionaryValue;
-import common.structures.MapDictionary;
-import common.structures.ThrowingBiFunction;
-import core.text.Text;
-import core.text.basic.ReadText;
-import database.Database;
-import database.DatabaseConfig;
-import socketCommunication.ServerSecuredCredentials;
+import ji.common.Logger;
+import ji.common.functions.Env;
+import ji.common.functions.InputStreamLoader;
+import ji.common.structures.DictionaryValue;
+import ji.common.structures.MapDictionary;
+import ji.common.structures.ThrowingBiFunction;
+import ji.database.Database;
+import ji.database.DatabaseConfig;
+import ji.files.text.Text;
+import ji.files.text.basic.ReadText;
+import ji.socketCommunication.SslCredentials;
 import toti.HttpServer;
 import toti.HttpServerFactory;
 import toti.Module;
@@ -22,9 +22,9 @@ import toti.ResponseHeaders;
 import toti.logging.TotiLogger;
 import toti.registr.Registr;
 import toti.security.User;
-import translator.LanguageSettings;
-import translator.Locale;
-import translator.Translator;
+import ji.translator.LanguageSettings;
+import ji.translator.Locale;
+import ji.translator.Translator;
 
 public class Application {
 	
@@ -199,14 +199,24 @@ public class Application {
 			if (env.getString("http.token-salt") != null) {
 				factory.setTokenCustomSalt(env.getString("http.token-salt"));
 			}
+			
+			SslCredentials cred = new SslCredentials();
 			if (env.getString("http.key-store") != null && env.getString("http.key-store-password") != null) {
-				factory.setCerts(new ServerSecuredCredentials(
+				cred.setCertificateStore(
 					env.getString("http.key-store"),
-					env.getString("http.key-store-password"),
-					env.getString("http.trust-store") != null ? Optional.of(env.getString("http.trust-store")) : Optional.empty(),
-					env.getString("http.trust-store-password") != null ? Optional.of(env.getString("http.trust-store-password")) : Optional.empty()
-				));
+					env.getString("http.key-store-password")
+				);
 			}
+			if (env.getString("http.trust-store") != null && env.getString("http.trust-store-password") != null) {
+				cred.setTrustedClientsStore(
+					env.getString("http.trust-store"),
+					env.getString("http.trust-store-password")
+				);
+			} else {
+				cred.setTrustAll();
+			}	
+			factory.setCerts(cred);
+			
 			if (env.getString("http.ip") != null) {
 				factory.setDevelopIpAdresses(env.getList("http.ip", "\\|"));
 			}

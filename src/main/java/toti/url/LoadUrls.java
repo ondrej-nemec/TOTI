@@ -6,12 +6,12 @@ import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import common.exceptions.LogicException;
-import common.functions.FilesList;
-import common.structures.DictionaryValue;
-import common.structures.MapDictionary;
-import common.structures.ThrowingFunction;
-import socketCommunication.http.HttpMethod;
+import ji.common.exceptions.LogicException;
+import ji.common.functions.FilesList;
+import ji.common.structures.DictionaryValue;
+import ji.common.structures.MapDictionary;
+import ji.common.structures.ThrowingFunction;
+import ji.socketCommunication.http.HttpMethod;
 import toti.Module;
 import toti.Router;
 import toti.annotations.Action;

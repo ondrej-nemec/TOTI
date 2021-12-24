@@ -3,15 +3,15 @@ package toti.templating;
 import java.util.HashMap;
 import java.util.Map;
 
-import common.Logger;
-import core.text.Text;
-import core.text.basic.WriteText;
+import ji.common.Logger;
+import ji.files.text.Text;
+import ji.files.text.basic.WriteText;
 import toti.logging.TotiLogger;
 import toti.security.Authorizator;
 import toti.templating.Template;
 import toti.templating.TemplateFactory;
-import translator.Locale;
-import translator.Translator;
+import ji.translator.Locale;
+import ji.translator.Translator;
 
 public class TemplateFactoryEndToEndTest {
 

@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import json.Jsonable;
+import ji.json.Jsonable;
 import toti.control.columns.Column;
 import toti.control.columns.GroupAction;
 

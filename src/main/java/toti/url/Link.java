@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import common.exceptions.LogicException;
-import common.functions.StackTrace;
-import common.structures.DictionaryValue;
-import common.structures.ObjectBuilder;
-import common.structures.ThrowingFunction;
-import common.structures.ThrowingSupplier;
+import ji.common.exceptions.LogicException;
+import ji.common.functions.StackTrace;
+import ji.common.structures.DictionaryValue;
+import ji.common.structures.ObjectBuilder;
+import ji.common.structures.ThrowingFunction;
+import ji.common.structures.ThrowingSupplier;
 import toti.Module;
 import toti.annotations.Action;
 import toti.annotations.Controller;

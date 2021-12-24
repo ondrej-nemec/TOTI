@@ -1,7 +1,7 @@
 import java.util.HashMap;
 import java.util.Map;
 
-import socketCommunication.http.HttpMethod;
+import ji.socketCommunication.http.HttpMethod;
 import toti.annotations.inject.Translate;
 import toti.annotations.url.Action;
 import toti.annotations.url.Controller;
@@ -12,7 +12,7 @@ import toti.annotations.url.Secured;
 import toti.control.Form;
 import toti.control.Grid;
 import toti.response.Response;
-import translator.Translator;
+import ji.translator.Translator;
 
 @Controller("__Y__")
 public class __X__PageController {

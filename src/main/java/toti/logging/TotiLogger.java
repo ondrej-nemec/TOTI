@@ -5,9 +5,9 @@ import java.io.IOException;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
-import common.functions.InputStreamLoader;
+import ji.common.functions.InputStreamLoader;
 
-public class TotiLogger extends Logger implements common.Logger {
+public class TotiLogger extends Logger implements ji.common.Logger {
 
 	public static String CONF_FILE = "conf/log4j.properties";	
 	

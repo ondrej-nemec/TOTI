@@ -5,9 +5,9 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import common.structures.ThrowingFunction;
-import common.structures.Tuple3;
-import json.Jsonable;
+import ji.common.structures.ThrowingFunction;
+import ji.common.structures.Tuple3;
+import ji.json.Jsonable;
 import toti.annotations.Domain;
 import toti.validation.Validator;
 

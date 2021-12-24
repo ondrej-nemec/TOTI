@@ -2,7 +2,7 @@ package toti.control;
 
 import java.util.Map;
 
-import json.JsonWritter;
+import ji.json.JsonWritter;
 
 public interface Control {
 

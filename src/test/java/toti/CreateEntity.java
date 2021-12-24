@@ -3,10 +3,10 @@ package toti;
 import java.io.File;
 import java.io.IOException;
 
-import common.functions.FileExtension;
-import core.text.Text;
-import core.text.basic.ReadText;
-import core.text.basic.WriteText;
+import ji.common.functions.FileExtension;
+import ji.files.text.Text;
+import ji.files.text.basic.ReadText;
+import ji.files.text.basic.WriteText;
 
 public class CreateEntity {
 

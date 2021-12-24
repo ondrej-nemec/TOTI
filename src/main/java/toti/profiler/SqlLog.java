@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import common.annotations.MapperIgnored;
+import ji.common.annotations.MapperIgnored;
 
 public class SqlLog {
 

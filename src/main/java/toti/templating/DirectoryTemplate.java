@@ -7,7 +7,7 @@ import java.util.Map;
 import toti.security.Authorizator;
 import toti.templating.parsing.TagNode;
 import toti.url.MappedUrl;
-import translator.Translator;
+import ji.translator.Translator;
 
 public class DirectoryTemplate implements Template {
 	

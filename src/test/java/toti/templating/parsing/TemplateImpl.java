@@ -4,14 +4,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import common.structures.MapInit;
-import common.structures.ThrowingConsumer;
+import ji.common.structures.MapInit;
+import ji.common.structures.ThrowingConsumer;
 import toti.security.Authorizator;
 import toti.templating.Template;
 import toti.templating.TemplateFactory;
 import toti.templating.parsing.TagNode;
 import toti.url.MappedUrl;
-import translator.Translator;
+import ji.translator.Translator;
 
 public class TemplateImpl implements Template {
 	

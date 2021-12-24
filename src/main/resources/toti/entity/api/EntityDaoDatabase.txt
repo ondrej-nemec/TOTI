@@ -2,10 +2,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import database.Database;
-import querybuilder.InsertQueryBuilder;
-import querybuilder.SelectQueryBuilder;
-import querybuilder.UpdateQueryBuilder;
+import ji.database.Database;
+import ji.querybuilder.InsertQueryBuilder;
+import ji.querybuilder.SelectQueryBuilder;
+import ji.querybuilder.UpdateQueryBuilder;
 
 public class __X__DaoDatabase implements __X__Dao {
 	

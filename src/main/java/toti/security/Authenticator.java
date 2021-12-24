@@ -7,11 +7,11 @@ import java.util.Set;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
-import common.Logger;
-import common.structures.ThrowingFunction;
+import ji.common.Logger;
+import ji.common.structures.ThrowingFunction;
 import toti.authentication.AuthentizationException;
-import common.functions.Hash;
-import common.exceptions.HashException;
+import ji.common.functions.Hash;
+import ji.common.exceptions.HashException;
 
 public class Authenticator {
 

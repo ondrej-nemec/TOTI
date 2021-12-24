@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import database.Database;
-import database.support.DatabaseRow;
-import querybuilder.QueryBuilder;
-import querybuilder.builders.InsertBuilder;
-import querybuilder.builders.SelectBuilder;
-import querybuilder.builders.UpdateBuilder;
-import querybuilder.enums.ColumnType;
+import ji.database.Database;
+import ji.database.support.DatabaseRow;
+import ji.querybuilder.QueryBuilder;
+import ji.querybuilder.builders.InsertBuilder;
+import ji.querybuilder.builders.SelectBuilder;
+import ji.querybuilder.builders.UpdateBuilder;
+import ji.querybuilder.enums.ColumnType;
 
 public interface EntityDao<T extends Entity> {
 	

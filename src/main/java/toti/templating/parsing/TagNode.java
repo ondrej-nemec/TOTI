@@ -2,7 +2,7 @@ package toti.templating.parsing;
 
 import java.util.Map;
 
-import common.structures.ThrowingConsumer;
+import ji.common.structures.ThrowingConsumer;
 
 public class TagNode {
 

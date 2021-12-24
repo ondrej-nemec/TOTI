@@ -3,13 +3,13 @@ package toti.security;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import translator.Locale;
-import translator.Translator;
+import ji.translator.Locale;
+import ji.translator.Translator;
 
 import java.util.Properties;
 import java.util.Random;
 
-import common.structures.Tuple2;
+import ji.common.structures.Tuple2;
 
 public class IdentityFactory {
 

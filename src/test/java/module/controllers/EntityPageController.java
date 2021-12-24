@@ -4,10 +4,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import common.structures.MapInit;
-import common.structures.Tuple2;
-import socketCommunication.http.HttpMethod;
-import socketCommunication.http.server.RequestParameters;
+import ji.common.structures.MapInit;
+import ji.common.structures.Tuple2;
+import ji.socketCommunication.http.HttpMethod;
+import ji.socketCommunication.http.server.RequestParameters;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Method;
@@ -36,7 +36,7 @@ import toti.control.inputs.Submit;
 import toti.control.inputs.Text;
 import toti.control.inputs.TextArea;
 import toti.response.Response;
-import translator.Translator;
+import ji.translator.Translator;
 
 @Controller("entity")
 public class EntityPageController {

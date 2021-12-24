@@ -4,13 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import common.Logger;
-import common.structures.DictionaryValue;
-import common.structures.MapDictionary;
+import ji.common.Logger;
+import ji.common.structures.DictionaryValue;
+import ji.common.structures.MapDictionary;
 import module.AuditTrail;
-import socketCommunication.http.HttpMethod;
-import socketCommunication.http.StatusCode;
-import socketCommunication.http.server.RequestParameters;
+import ji.socketCommunication.http.HttpMethod;
+import ji.socketCommunication.http.StatusCode;
+import ji.socketCommunication.http.server.RequestParameters;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Method;
@@ -18,7 +18,7 @@ import toti.annotations.Param;
 import toti.annotations.ParamUrl;
 import toti.annotations.Params;
 import toti.response.Response;
-import translator.Translator;
+import ji.translator.Translator;
 
 @Controller("entity")
 public class EntityApiController {

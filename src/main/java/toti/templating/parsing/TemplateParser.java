@@ -8,10 +8,10 @@ import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.Map;
 
-import common.exceptions.LogicException;
-import common.functions.InputStreamLoader;
-import common.structures.ThrowingConsumer;
-import core.text.Text;
+import ji.common.exceptions.LogicException;
+import ji.common.functions.InputStreamLoader;
+import ji.common.structures.ThrowingConsumer;
+import ji.files.text.Text;
 import toti.templating.Tag;
 import toti.templating.parsing.enums.InLineState;
 import toti.templating.parsing.enums.JavaState;
@@ -42,9 +42,9 @@ public class TemplateParser {
 				+ "import toti.templating.parsing.TagNode;"
 				+ "import java.util.Map;"
 				+ "import java.util.HashMap;"
-				+ "import common.structures.ThrowingConsumer;"
+				+ "import ji.common.structures.ThrowingConsumer;"
 				+ "import java.util.LinkedList;"
-				+ "import translator.Translator;"
+				+ "import ji.translator.Translator;"
 				+ "import toti.security.Authorizator;"
 				+ "import toti.templating.TemplateFactory;"
 				+ "import toti.url.MappedUrl;"

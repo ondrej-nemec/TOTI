@@ -3,8 +3,8 @@ package module;
 import java.util.Arrays;
 import java.util.List;
 
-import common.Logger;
-import database.Database;
+import ji.common.Logger;
+import ji.database.Database;
 import module.controllers.EntityPageController;
 import module.controllers.api.EntityApiController;
 import module.controllers.api.EntityDao;
@@ -14,7 +14,7 @@ import toti.Module;
 import toti.Router;
 import toti.application.Task;
 import toti.registr.Registr;
-import common.functions.Env;
+import ji.common.functions.Env;
 
 public class EntityModule implements Module {
 

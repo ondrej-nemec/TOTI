@@ -2,10 +2,10 @@ package example.dao.migrations;
 
 import java.sql.SQLException;
 
-import migration.Migration;
-import querybuilder.QueryBuilder;
-import querybuilder.enums.ColumnSetting;
-import querybuilder.enums.ColumnType;
+import ji.migration.Migration;
+import ji.querybuilder.QueryBuilder;
+import ji.querybuilder.enums.ColumnSetting;
+import ji.querybuilder.enums.ColumnType;
 
 public class E1__example_table implements Migration {
 

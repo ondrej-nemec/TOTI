@@ -8,8 +8,8 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import common.structures.ListInit;
-import common.structures.MapInit;
+import ji.common.structures.ListInit;
+import ji.common.structures.MapInit;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import toti.url.Link;

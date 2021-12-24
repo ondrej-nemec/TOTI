@@ -5,9 +5,9 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import common.exceptions.LogicException;
-import common.structures.MapInit;
-import translator.Translator;
+import ji.common.exceptions.LogicException;
+import ji.common.structures.MapInit;
+import ji.translator.Translator;
 
 public class ItemRules {
 

@@ -5,9 +5,25 @@ repositories {
 	maven { url 'https://jitpack.io' }
    // flatDir { dirs 'libs' }
 }
+/*
+sourceSets {
+    main {
+        java {
+            srcDirs 'src/main/java'
+            
+            srcDirs '../javainit/ji-common/src/main/java'
+            srcDirs '../javainit/ji-communication/src/main/java'
+            srcDirs '../javainit/ji-database/src/main/java'
+            srcDirs '../javainit/ji-translate/src/main/java'
+            srcDirs '../javainit/ji-files/src/main/java'
+            srcDirs '../javainit/ji-testing/src/main/java'
+        }
+    }
+}
+//*/
 
 dependencies {
-	implementation 'com.github.ondrej-nemec.JI:JI:3dceb77b1c'
+	implementation 'com.github.ondrej-nemec.JI:JI:v7.0.0'
 	
 	// compile files("${System.properties['java.home']}/../lib/tools.jar")
 	

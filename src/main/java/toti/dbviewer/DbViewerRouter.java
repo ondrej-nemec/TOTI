@@ -6,10 +6,10 @@ import java.util.Map;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
-import database.Database;
-import database.DatabaseConfig;
-import socketCommunication.http.HttpMethod;
-import socketCommunication.http.server.RequestParameters;
+import ji.database.Database;
+import ji.database.DatabaseConfig;
+import ji.socketCommunication.http.HttpMethod;
+import ji.socketCommunication.http.server.RequestParameters;
 import toti.ResponseHeaders;
 import toti.logging.TotiLogger;
 import toti.response.Response;

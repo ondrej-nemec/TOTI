@@ -5,14 +5,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import database.DatabaseConfig;
+import ji.database.DatabaseConfig;
 import example.ExampleModule;
-import common.functions.Env;
-import common.functions.InputStreamLoader;
-import common.structures.DictionaryValue;
-import common.structures.MapDictionary;
-import core.text.Text;
-import core.text.basic.ReadText;
+import ji.common.functions.Env;
+import ji.common.functions.InputStreamLoader;
+import ji.common.structures.DictionaryValue;
+import ji.common.structures.MapDictionary;
+import ji.files.text.Text;
+import ji.files.text.basic.ReadText;
 import module.EntityModule;
 import toti.HttpServerFactory;
 import toti.application.Application;
@@ -23,8 +23,8 @@ import toti.security.User;
 import toti.security.permissions.Permissions;
 import toti.security.permissions.Rule;
 import toti.security.permissions.Rules;
-import translator.LanguageSettings;
-import translator.Locale;
+import ji.translator.LanguageSettings;
+import ji.translator.Locale;
 
 public class BootstrapEndToEndTest {
 

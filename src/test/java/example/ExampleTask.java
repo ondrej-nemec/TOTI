@@ -6,10 +6,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import common.structures.MapInit;
+import ji.common.structures.MapInit;
 import example.dao.ExampleDao;
 import toti.application.Task;
-import translator.Translator;
+import ji.translator.Translator;
 
 public class ExampleTask implements Task {
 	

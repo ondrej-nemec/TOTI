@@ -3,12 +3,12 @@ package toti.templating;
 import java.util.LinkedList;
 import java.util.Map;
 
-import common.structures.ListDictionary;
-import common.structures.MapDictionary;
+import ji.common.structures.ListDictionary;
+import ji.common.structures.MapDictionary;
 import toti.security.Authorizator;
 import toti.templating.parsing.TagNode;
 import toti.url.MappedUrl;
-import translator.Translator;
+import ji.translator.Translator;
 
 public interface Template {
 

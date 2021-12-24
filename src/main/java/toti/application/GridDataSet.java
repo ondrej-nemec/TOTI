@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import json.Jsonable;
+import ji.json.Jsonable;
 
 public class GridDataSet<T extends Entity> implements Jsonable {
 	

@@ -2,7 +2,7 @@ package toti.templating.parsing;
 
 import java.util.LinkedList;
 
-import common.functions.Implode;
+import ji.common.functions.Implode;
 import toti.templating.parsing.enums.VarMode;
 
 public class VariableParser {

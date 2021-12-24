@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import common.structures.MapInit;
+import ji.common.structures.MapInit;
 import example.web.controllers.api.ExampleApiController;
-import socketCommunication.http.HttpMethod;
+import ji.socketCommunication.http.HttpMethod;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Domain;
@@ -44,7 +44,7 @@ import toti.control.inputs.Time;
 import toti.control.inputs.Week;
 import toti.response.Response;
 import toti.url.Link;
-import translator.Translator;
+import ji.translator.Translator;
 
 @Controller("example")
 public class ExamplePageController {

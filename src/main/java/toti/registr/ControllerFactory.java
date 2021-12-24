@@ -3,7 +3,7 @@ package toti.registr;
 import toti.security.Authenticator;
 import toti.security.Authorizator;
 import toti.security.Identity;
-import translator.Translator;
+import ji.translator.Translator;
 
 public interface ControllerFactory {
 

@@ -8,22 +8,22 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import common.Logger;
-import common.structures.ThrowingFunction;
-import socketCommunication.Server;
-import socketCommunication.ServerSecuredCredentials;
+import ji.common.Logger;
+import ji.common.structures.ThrowingFunction;
+import ji.socketCommunication.Server;
+import ji.socketCommunication.SslCredentials;
 import toti.logging.TotiLogger;
-import database.Database;
-import socketCommunication.http.server.RestApiServer;
+import ji.database.Database;
+import ji.socketCommunication.http.server.RestApiServer;
 import toti.profiler.Profiler;
 import toti.security.Authenticator;
 import toti.security.Authorizator;
 import toti.security.IdentityFactory;
 import toti.security.User;
 import toti.templating.TemplateFactory;
-import translator.LanguageSettings;
-import translator.Translator;
-import common.functions.Hash;
+import ji.translator.LanguageSettings;
+import ji.translator.Translator;
+import ji.common.functions.Hash;
 
 public class HttpServer {
 	
@@ -37,7 +37,7 @@ public class HttpServer {
 			int threadPool,
     		long readTimeout,
     		ResponseHeaders headers, // TODO only list ??
-    		Optional<ServerSecuredCredentials> certs,
+    		Optional<SslCredentials> certs,
     		String tempPath,
     		List<T> modules,
     		ThrowingFunction<String, User, Exception> userFactory,

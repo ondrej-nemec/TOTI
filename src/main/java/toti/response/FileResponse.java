@@ -1,15 +1,15 @@
 package toti.response;
 
-import common.functions.InputStreamLoader;
-import core.text.Binary;
-import socketCommunication.http.StatusCode;
-import socketCommunication.http.server.RestApiResponse;
+import ji.common.functions.InputStreamLoader;
+import ji.files.text.Binary;
+import ji.socketCommunication.http.StatusCode;
+import ji.socketCommunication.http.server.RestApiResponse;
 import toti.ResponseHeaders;
 import toti.security.Authorizator;
 import toti.security.Identity;
 import toti.templating.TemplateFactory;
 import toti.url.MappedUrl;
-import translator.Translator;
+import ji.translator.Translator;
 
 public class FileResponse implements Response {
 

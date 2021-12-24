@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import common.Logger;
-import common.structures.ThrowingFunction;
-import socketCommunication.ServerSecuredCredentials;
+import ji.common.Logger;
+import ji.common.structures.ThrowingFunction;
+import ji.socketCommunication.SslCredentials;
 import toti.security.User;
 import toti.url.Link;
-import translator.LanguageSettings;
-import translator.Translator;
+import ji.translator.LanguageSettings;
+import ji.translator.Translator;
 
 public class HttpServerFactory {
 	
@@ -27,7 +27,7 @@ public class HttpServerFactory {
 	private int port = 80;
 	private int threadPool = 5;
 	private long readTimeout = 60000;
-	private Optional<ServerSecuredCredentials> certs = Optional.empty();
+	private Optional<SslCredentials> certs = Optional.empty();
 	private String tempPath = "temp";
 	private String charset = "UTF-8";
 	private LanguageSettings settings = new LanguageSettings(Locale.getDefault().toString(), Arrays.asList());
@@ -110,7 +110,7 @@ public class HttpServerFactory {
 		return this;
 	}
 
-	public HttpServerFactory setCerts(ServerSecuredCredentials certs) {
+	public HttpServerFactory setCerts(SslCredentials certs) {
 		this.certs = Optional.of(certs);
 		return this;
 	}

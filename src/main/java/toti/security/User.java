@@ -2,7 +2,7 @@ package toti.security;
 
 import java.util.Collection;
 
-import common.structures.DictionaryValue;
+import ji.common.structures.DictionaryValue;
 import toti.security.permissions.Permissions;
 
 public class User {

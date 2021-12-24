@@ -2,12 +2,12 @@ package toti;
 
 import java.util.List;
 
-import common.Logger;
-import common.functions.Env;
-import database.Database;
+import ji.common.Logger;
+import ji.common.functions.Env;
+import ji.database.Database;
 import toti.application.Task;
 import toti.registr.Registr;
-import translator.Translator;
+import ji.translator.Translator;
 
 public interface Module {
 	

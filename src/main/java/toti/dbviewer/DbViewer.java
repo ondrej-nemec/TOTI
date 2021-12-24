@@ -8,10 +8,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import database.Database;
-import database.support.DatabaseRow;
-import socketCommunication.http.HttpMethod;
-import socketCommunication.http.server.RequestParameters;
+import ji.database.Database;
+import ji.database.support.DatabaseRow;
+import ji.socketCommunication.http.HttpMethod;
+import ji.socketCommunication.http.server.RequestParameters;
 import toti.response.Response;
 
 public class DbViewer {

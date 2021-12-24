@@ -3,8 +3,8 @@ package example;
 import java.util.Arrays;
 import java.util.List;
 
-import common.Logger;
-import database.Database;
+import ji.common.Logger;
+import ji.database.Database;
 import example.dao.ExampleDao;
 import example.web.controllers.ExamplePageController;
 import example.web.controllers.SignPageController;
@@ -15,8 +15,8 @@ import toti.Router;
 import toti.application.Task;
 import toti.registr.Registr;
 import toti.url.Link;
-import translator.Translator;
-import common.functions.Env;
+import ji.translator.Translator;
+import ji.common.functions.Env;
 
 public class ExampleModule implements Module {
 

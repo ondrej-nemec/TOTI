@@ -2,7 +2,7 @@ package module;
 
 import java.util.Map;
 
-import common.Logger;
+import ji.common.Logger;
 import toti.logging.TotiLogger;
 
 public class AuditTrail {

@@ -7,15 +7,15 @@ import java.util.Map;
 import java.util.Random;
 import java.util.function.Consumer;
 
-import common.structures.MapInit;
-import database.support.SqlQueryProfiler;
-import translator.TransProfiler;
-import json.Jsonable;
-import socketCommunication.http.HttpMethod;
-import socketCommunication.http.StatusCode;
-import socketCommunication.http.server.RequestParameters;
-import socketCommunication.http.server.profiler.HttpServerProfiler;
-import socketCommunication.http.server.profiler.HttpServerProfilerEvent;
+import ji.common.structures.MapInit;
+import ji.database.support.SqlQueryProfiler;
+import ji.translator.TransProfiler;
+import ji.json.Jsonable;
+import ji.socketCommunication.http.HttpMethod;
+import ji.socketCommunication.http.StatusCode;
+import ji.socketCommunication.http.server.RequestParameters;
+import ji.socketCommunication.http.server.profiler.HttpServerProfiler;
+import ji.socketCommunication.http.server.profiler.HttpServerProfilerEvent;
 import toti.response.Response;
 import toti.security.Identity;
 

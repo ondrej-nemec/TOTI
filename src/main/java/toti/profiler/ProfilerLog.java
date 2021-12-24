@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import json.Jsonable;
-import socketCommunication.http.HttpMethod;
-import socketCommunication.http.server.RequestParameters;
-import socketCommunication.http.server.profiler.HttpServerProfilerEvent;
+import ji.json.Jsonable;
+import ji.socketCommunication.http.HttpMethod;
+import ji.socketCommunication.http.server.RequestParameters;
+import ji.socketCommunication.http.server.profiler.HttpServerProfilerEvent;
 import toti.security.Identity;
 
 public class ProfilerLog implements Jsonable{

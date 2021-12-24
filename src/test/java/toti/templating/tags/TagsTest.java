@@ -3,7 +3,7 @@ package toti.templating.tags;
 import java.util.HashMap;
 import java.util.Map;
 
-import common.Logger;
+import ji.common.Logger;
 import toti.logging.TotiLogger;
 import toti.templating.Template;
 import toti.templating.TemplateFactory;

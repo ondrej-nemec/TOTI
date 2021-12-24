@@ -5,10 +5,10 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import common.Logger;
-import common.structures.ThrowingFunction;
-import common.functions.Hash;
-import common.exceptions.HashException;
+import ji.common.Logger;
+import ji.common.structures.ThrowingFunction;
+import ji.common.functions.Hash;
+import ji.common.exceptions.HashException;
 
 public class AuthenticatorTest {
 

@@ -11,14 +11,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
-import json.JsonStreamException;
-import json.JsonWritter;
+import ji.json.JsonStreamException;
+import ji.json.JsonWritter;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
-import socketCommunication.http.server.RequestParameters;
+import ji.socketCommunication.http.server.RequestParameters;
 import toti.validation.ItemRules;
 import toti.validation.Validator;
-import translator.Translator;
+import ji.translator.Translator;
 
 @RunWith(JUnitParamsRunner.class)
 public class ValidatorTest {

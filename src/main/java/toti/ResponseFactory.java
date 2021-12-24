@@ -9,19 +9,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import common.Logger;
-import common.structures.DictionaryValue;
-import common.structures.MapDictionary;
-import common.structures.MapInit;
-import socketCommunication.http.HttpMethod;
-import socketCommunication.http.StatusCode;
-import socketCommunication.http.server.RequestParameters;
-import socketCommunication.http.server.RestApiResponse;
-import socketCommunication.http.server.RestApiServerResponseFactory;
+import ji.common.Logger;
+import ji.common.structures.DictionaryValue;
+import ji.common.structures.MapDictionary;
+import ji.common.structures.MapInit;
+import ji.socketCommunication.http.HttpMethod;
+import ji.socketCommunication.http.StatusCode;
+import ji.socketCommunication.http.server.RequestParameters;
+import ji.socketCommunication.http.server.RestApiResponse;
+import ji.socketCommunication.http.server.RestApiServerResponseFactory;
+import ji.socketCommunication.http.server.WebSocket;
 import toti.annotations.Domain;
 import toti.profiler.Profiler;
 import toti.registr.Registr;
@@ -37,7 +39,7 @@ import toti.templating.TemplateFactory;
 import toti.url.LoadUrls;
 import toti.url.MappedUrl;
 import toti.url.UrlPart;
-import translator.Translator;
+import ji.translator.Translator;
 
 public class ResponseFactory implements RestApiServerResponseFactory {
 	
@@ -105,7 +107,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			String protocol,
 			Properties header,
 			RequestParameters params,
-			String ip) throws IOException {
+			String ip,
+			Optional<WebSocket> websocket) throws IOException {
 		/*
 		System.err.println("URL: " + fullUrl);
 		System.err.println("Header: " + header);
@@ -151,6 +154,12 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		} catch (Exception e) {
 			return onException(500, method, url, fullUrl, protocol, header, params, identity, e);
 		}
+	}
+	
+	@Override
+	public void catchException(Exception e) throws IOException {
+		// TODO implement it
+		RestApiServerResponseFactory.super.catchException(e);
 	}
 	
 	private RestApiResponse onException(int responseCode, 
@@ -329,6 +338,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			if (mapped.isValidatorPresent()) {
 				errors.putAll(mapped.getValidator(o).validate(params, validatorParams, translator.withLocale(identity.getLocale())));
 			}
+			// TODO authorize and bad request response order
 			if (!errors.isEmpty()) {
 				// check errors after authrization
 				return Response.getJson(StatusCode.BAD_REQUEST, errors).getResponse(headers, null, null, null, null, null, charset);
@@ -344,11 +354,16 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			try {
 				authorize(mapped, params, identity, params);
 			} catch (ServerException e) {
-				if (mapped.isApi() || router.getRedirectOnNotLogedUser() == null || fullUrl.equals("/")) {
+				if (mapped.isApi() || router.getRedirectOnNotLogedUser() == null) {
 					throw e;
 				}
+				// TODO secure link
+				String backlink = "";
+				if (!fullUrl.equals("/")) {
+					backlink = "?backlink=" + getBackLink(fullUrl);
+				}
 				return Response.getRedirect(
-					router.getRedirectOnNotLogedUser() + "?backlink=" + getBackLink(fullUrl)
+					router.getRedirectOnNotLogedUser() + backlink
 			        ).getResponse(headers, null, null, null, null, null, charset);
 			}
 			/** response */

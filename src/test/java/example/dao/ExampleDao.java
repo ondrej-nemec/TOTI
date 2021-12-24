@@ -2,8 +2,8 @@ package example.dao;
 
 import java.util.Optional;
 
-import database.Database;
-import database.support.DatabaseRow;
+import ji.database.Database;
+import ji.database.support.DatabaseRow;
 import toti.application.EntityDao;
 
 public class ExampleDao implements EntityDao<Example> {

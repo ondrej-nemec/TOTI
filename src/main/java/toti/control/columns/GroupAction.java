@@ -3,7 +3,7 @@ package toti.control.columns;
 import java.util.HashMap;
 import java.util.Map;
 
-import json.Jsonable;
+import ji.json.Jsonable;
 import toti.control.Control;
 import toti.templating.Template;
 

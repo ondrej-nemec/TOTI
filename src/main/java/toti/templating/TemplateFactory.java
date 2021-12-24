@@ -16,11 +16,11 @@ import javax.tools.JavaCompiler;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
-import common.Logger;
-import common.exceptions.LogicException;
-import common.functions.FileExtension;
-import common.structures.ThrowingFunction;
-import common.structures.Tuple2;
+import ji.common.Logger;
+import ji.common.exceptions.LogicException;
+import ji.common.functions.FileExtension;
+import ji.common.structures.ThrowingFunction;
+import ji.common.structures.Tuple2;
 import toti.templating.parsing.TemplateParser;
 import toti.templating.tags.*;
 

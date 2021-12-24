@@ -3,9 +3,9 @@ package toti.registr;
 import java.util.HashMap;
 import java.util.Map;
 
-import common.functions.StackTrace;
-import common.structures.ThrowingSupplier;
-import common.structures.Tuple2;
+import ji.common.functions.StackTrace;
+import ji.common.structures.ThrowingSupplier;
+import ji.common.structures.Tuple2;
 import toti.Module;
 
 public class Registr {

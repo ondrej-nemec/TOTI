@@ -4,11 +4,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import database.Database;
-import querybuilder.builders.InsertBuilder;
-import querybuilder.builders.SelectBuilder;
-import querybuilder.builders.UpdateBuilder;
-import querybuilder.enums.ColumnType;
+import ji.database.Database;
+import ji.querybuilder.builders.InsertBuilder;
+import ji.querybuilder.builders.SelectBuilder;
+import ji.querybuilder.builders.UpdateBuilder;
+import ji.querybuilder.enums.ColumnType;
 
 public class EntityDaoDatabase implements EntityDao {
 	

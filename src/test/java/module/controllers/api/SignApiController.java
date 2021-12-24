@@ -3,8 +3,8 @@ package module.controllers.api;
 import java.util.HashMap;
 import java.util.Map;
 
-import socketCommunication.http.HttpMethod;
-import socketCommunication.http.StatusCode;
+import ji.socketCommunication.http.HttpMethod;
+import ji.socketCommunication.http.StatusCode;
 import toti.security.Authenticator;
 import toti.annotations.Action;
 import toti.annotations.Controller;

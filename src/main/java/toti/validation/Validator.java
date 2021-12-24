@@ -14,13 +14,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import common.exceptions.LogicException;
-import common.structures.DictionaryValue;
-import common.structures.MapInit;
-import socketCommunication.http.server.RequestParameters;
-import socketCommunication.http.server.UploadedFile;
+import ji.common.exceptions.LogicException;
+import ji.common.structures.DictionaryValue;
+import ji.common.structures.MapInit;
+import ji.socketCommunication.http.server.RequestParameters;
+import ji.socketCommunication.http.server.UploadedFile;
 import toti.registr.Registr;
-import translator.Translator;
+import ji.translator.Translator;
 
 public class Validator {
 	

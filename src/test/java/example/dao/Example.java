@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import common.annotations.MapperIgnored;
-import common.annotations.MapperParameter;
-import common.annotations.MapperType;
+import ji.common.annotations.MapperIgnored;
+import ji.common.annotations.MapperParameter;
+import ji.common.annotations.MapperType;
 import toti.application.Entity;
 
 public class Example implements Entity {

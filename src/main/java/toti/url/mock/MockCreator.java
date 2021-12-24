@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 
 import org.objenesis.ObjenesisStd;
 
-import common.structures.ObjectBuilder;
+import ji.common.structures.ObjectBuilder;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import net.bytebuddy.implementation.FieldAccessor;
