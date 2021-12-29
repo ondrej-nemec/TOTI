@@ -76,11 +76,12 @@ comment, java code, inline-if, variables
 
 <pre><code>
 &lt;t:switch object="" &gt;
-// cases
+	// cases
 &lt;/t:switch &gt;
+
 // example
 &lt;t:switch object="${message}" &gt;
-// cases
+	// cases
 &lt;/t:switch &gt;
 </code></pre>
 
@@ -115,6 +116,7 @@ comment, java code, inline-if, variables
 <pre><code>
 // unpaired
 &lt;t:default /&gt;
+
 // paired
 &lt;t:default &gt;
 	// your code
@@ -132,16 +134,19 @@ comment, java code, inline-if, variables
 &lt;t:if cond="" /&gt;
 	// your code
 // example
+
 &lt;t:if cond='${message}.equals("text")' /&gt;
 	// your code
+
 
 // paired
 &lt;t:if cond="" &gt;
 	// your code
 &lt;/t:if &gt;
+
 // example
 &lt;t:if cond='${message}.equals("text")' &gt;
-// your code
+	// your code
 &lt;/t:if &gt;
 </code></pre>
 
@@ -153,10 +158,10 @@ comment, java code, inline-if, variables
 
 <pre><code>
 &lt;t:elseif cond="" /&gt;
-// your code
+	// your code
 // example
 &lt;t:elseif cond='${message}.equals("text")' /&gt;
-// your code
+	// your code
 </code></pre>
 
 <h3>Else</h3>
@@ -167,10 +172,10 @@ comment, java code, inline-if, variables
 
 <pre><code>
 &lt;t:else /&gt;
-// your code
+	// your code
 // example
 &lt;t:else /&gt;
-// your code
+	// your code
 </code></pre>
 
 <h2>Loops</h2>
@@ -183,11 +188,12 @@ comment, java code, inline-if, variables
 
 <pre><code>
 &lt;t:while cond="" &gt;
-// your code
+	// your code
 &lt;/t:while&gt;
+
 // example
 &lt;t:while cond="${i} &gt; 0" &gt;
-// your code
+	// your code
 &lt;/t:while&gt;
 </code></pre>
 
@@ -214,20 +220,24 @@ comment, java code, inline-if, variables
 <p>Java <i>foreach</i>. Can be used for <code>Map</code> or <code>Iterable</code>. Variables defined in params (like <code>item, key, value</code>) are available as JSP variable.</p>
 
 <pre><code>
+// iterate collection
 &lt;t:foreach item="" collection="" &gt;
-// your code
-&lt;/t:foreach&gt;
-// example
-&lt;t:foreach item="String userName" collection="${userNames}" &gt;
-// your code
+	// your code
 &lt;/t:foreach&gt;
 
-&lt;t:foreach key="" value="" map="" &gt;
-// your code
+// example
+&lt;t:foreach item="String userName" collection="${userNames}" &gt;
+	// your code
 &lt;/t:foreach&gt;
+
+// iterate map
+&lt;t:foreach key="" value="" map="" &gt;
+	// your code
+&lt;/t:foreach&gt;
+
 // example
 &lt;t:foreach key="String login" value="String userName" map="${users}" &gt;
-// your code
+	// your code
 &lt;/t:foreach&gt;
 </code></pre>
 
@@ -239,11 +249,12 @@ comment, java code, inline-if, variables
 
 <pre><code>
 &lt;t:for from="" to="" change="" &gt; <br>
-// your code
+	// your code
 &lt;/t:for &gt; <br>
+
 // example
 &lt;t:for from="int i = 0" to="i &lt; 10" change="i++" &gt; <br>
-// your code
+	// your code
 &lt;/t:for &gt; <br>
 </code></pre>
 
@@ -277,7 +288,7 @@ comment, java code, inline-if, variables
 
 <pre><code>
 &lt;t:try &gt;
-// your code
+	// your code
 &lt;/t:try &gt;
 </code></pre>
 
@@ -291,9 +302,10 @@ comment, java code, inline-if, variables
 &lt;t:catch exception="" name="" /&gt;
 // OR
 &lt;t:catch name="" /&gt;
+
 // example
 &lt;t:catch exception="RuntimeException" name="e" /&gt;
-// your code
+	// your code
 </code></pre>
 
 <h3>Finally</h3>
@@ -316,11 +328,12 @@ comment, java code, inline-if, variables
 
 <pre><code>
 &lt;t:block name="" &gt;
-// your code
+	// your code
 &lt;/t:block &gt;
+
 // example
 &lt;t:block name="content" &gt;
-// your code
+	// your code
 &lt;/t:block &gt;
 </code></pre>
 
@@ -452,17 +465,20 @@ var grid = &lt;t:control name="userGrid" jsObject /&gt;;
 
 <pre><code>
 &lt;t:allowed domain="" action="" &gt;
-// your code
+	// your code
 &lt;/t:allowed&gt;
+
 // example
 &lt;t:allowed domain="users" action="READ" &gt;
-// your code
+	// your code
 &lt;/t:allowed&gt;
+
+
 // example with else
 &lt;t:allowed domain="users" action="READ" &gt;
-// your code
+	// your code
 &lt;t:else/&gt;
-// your code
+	// your code
 &lt;/t:allowed&gt;
 </code></pre>
 
@@ -474,15 +490,17 @@ var grid = &lt;t:control name="userGrid" jsObject /&gt;;
 
 <pre><code>
 &lt;t:ifcurrent module="" controller="" method="" &gt;
-// your code
+	// your code
 &lt;/t:ifcurrent&gt;
+
 // example 1
 &lt;t:ifcurrent module="main" controller="org.example.main.controllers.FirstController" method="index" &gt;
-// only if 'main' module AND 'org.example.main.controllers.FirstController' controller AND 'index' method
+	// only if 'main' module AND 'org.example.main.controllers.FirstController' controller AND 'index' method
 &lt;/t:ifcurrent&gt;
+
 // example 2
 &lt;t:ifcurrent module="main" controller="org.example.main.controllers.FirstController" &gt;
-// only if 'main' module AND 'org.example.main.controllers.FirstController' controller. It doesn't matter the method.
+	// only if 'main' module AND 'org.example.main.controllers.FirstController' controller. It doesn't matter the method.
 &lt;/t:ifcurrent&gt;
 </code></pre>
 
