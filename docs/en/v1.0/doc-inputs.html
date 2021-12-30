@@ -5,7 +5,7 @@
 </p>
 
 <p>
-	Inputs title can be set by <code>setTitle</code>.
+	Inputs title can be set by <code>setTitle</code> (except <i>Hidden</i>).
 </p>
 
 <p>
@@ -41,112 +41,101 @@
 
 <p>
 	<ul>
-		<li>Title <code>setTitle</code> (effect on input only): label of input</li>
 		<li>Size <code>setSize</code>: default text size</li>
-		<li>Maximal length</li>
-		<li>Minimal length</li>
-		<li>Default value</li>
-		<li>Placeholder</li>
-
-		<li>Required</li>
-		<li>Disabled</li>
-		<li>Exclude</li>
-		<li>Editable</li>
+		<li>Maximal length <code>setMaxLength</code>: maximal allowed text length</li>
+		<li>Minimal length <code>setMinLength</code>: minimal required text length</li>
 	</ul>
 </p>
 
 <h3>Textarea</h3>
 
 <p>
-	TODO
+	For large texts. Input only. HTML standard tag
 </p>
 
 <p>
-	<strong>Create filter:</strong> <code></code> <br>
-	<strong>Create input:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code>Textarea.input(String name, boolean required)</code> <br>
 </p>
 
 <strong>Optional parameters</strong>
 
 <p>
 	<ul>
-		<li></li>
+		<li>Maximal length <code>setMaxLength</code>: maximal allowed text length</li>
+		<li>Count of columns <code>setCols</code></li>
+		<li>Count of rows <code>setRows</code></li>
 	</ul>
 </p>
 
 <h3>Email</h3>
 
 <p>
-	TODO
+	Text input with check if contains '@'. Input only. HTML standard tag
 </p>
 
 <p>
-	<strong>Create filter:</strong> <code></code> <br>
-	<strong>Create input:</strong> <code></code> <br>
-</p>
-
-<strong>Optional parameters</strong>
-
-<p>
-	<ul>
-		<li></li>
-	</ul>
+	<strong>Create input:</strong> <code>Email.input(String name, boolean required)</code> <br>
 </p>
 
 <h3>Password</h3>
 
 <p>
-	TODO
+	Text input where all letters are hidden. Input only. HTML standard tag
 </p>
 
 <p>
-	<strong>Create filter:</strong> <code></code> <br>
-	<strong>Create input:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code>Password.input(String name, boolean required)</code> <br>
 </p>
 
 <strong>Optional parameters</strong>
 
 <p>
 	<ul>
-		<li></li>
+		<li>Size <code>setSize</code>: default text size</li>
+		<li>Maximal length <code>setMaxLength</code>: maximal allowed text length</li>
+		<li>Minimal length <code>setMinLength</code>: minimal required text length</li>
 	</ul>
 </p>
 
 <h3>Number</h3>
 
 <p>
-	TODO
+	Allow fill only numbers. HTML standard tag
 </p>
 
 <p>
-	<strong>Create filter:</strong> <code></code> <br>
-	<strong>Create input:</strong> <code></code> <br>
+	<strong>Create filter:</strong> <code>Number.filter()</code> <br>
+	<strong>Create input:</strong> <code>Number.input(String name, boolean required)</code> <br>
 </p>
 
 <strong>Optional parameters</strong>
 
 <p>
 	<ul>
-		<li></li>
+		<li>Step <code>setStep</code>: tehl legal number intervals</li>
+		<li>Minimal value <code>setMin</code>: the minimal required value</li>
+		<li>Maximal value <code>setMax</code>: the maximal allowed value</li>
 	</ul>
 </p>
 
 <h3>Range</h3>
 
 <p>
-	TODO
+	Allow fill only numbers. HTML standard tag
 </p>
 
 <p>
-	<strong>Create filter:</strong> <code></code> <br>
-	<strong>Create input:</strong> <code></code> <br>
+	<strong>Create filter:</strong> <code>Range.filter()</code> <br>
+	<strong>Create input:</strong> <code>Range.input(String name, boolean required)</code> <br>
 </p>
 
 <strong>Optional parameters</strong>
 
 <p>
 	<ul>
-		<li></li>
+		<li>Step <code>setStep</code>: tehl legal number intervals</li>
+		<li>Minimal value <code>setMin</code>: the minimal required value</li>
+		<li>Maximal value <code>setMax</code>: the maximal allowed value</li>
 	</ul>
 </p>
 
@@ -156,96 +145,73 @@
 <h3>Date</h3>
 
 <p>
-	TODO
+	Picker for date with localized messages. HTML standard tag
 </p>
 
 <p>
-	<strong>Create filter:</strong> <code></code> <br>
-	<strong>Create input:</strong> <code></code> <br>
-</p>
-
-<strong>Optional parameters</strong>
-
-<p>
-	<ul>
-		<li></li>
-	</ul>
+	<strong>Create filter:</strong> <code>Date.filter()</code> <br>
+	<strong>Create input:</strong> <code>Date.filter(String name, boolean required)</code> <br>
 </p>
 
 <h3>Time</h3>
 
 <p>
-	TODO
+	Picker for time with localized messages. HTML standard tag
 </p>
 
 <p>
-	<strong>Create filter:</strong> <code></code> <br>
-	<strong>Create input:</strong> <code></code> <br>
+	<strong>Create filter:</strong> <code>Time.filter()</code> <br>
+	<strong>Create input:</strong> <code>Time.filter(String name, boolean required)</code> <br>
 </p>
 
 <strong>Optional parameters</strong>
 
 <p>
 	<ul>
-		<li></li>
+		<li>Time deep <code>setStep</code>: "1" means use hours, minutes and hours, "60" means use hours and minutes, "3600" means use only hours</li>
 	</ul>
 </p>
 
 <h3>Datetime</h3>
 
 <p>
-	TODO
+	Picker for date and time with localized messages. Some browsers like Firefox not support <code>datetime-local</code> so for Firefox is used little TOTI modification.
 </p>
 
 <p>
-	<strong>Create filter:</strong> <code></code> <br>
-	<strong>Create input:</strong> <code></code> <br>
+	<strong>Create filter:</strong> <code>Datetime.filter()</code> <br>
+	<strong>Create input:</strong> <code>Datetime.input(String name, boolean required)</code> <br>
 </p>
 
 <strong>Optional parameters</strong>
 
 <p>
 	<ul>
-		<li></li>
+		<li>Time deep <code>setStep</code>: "1" means use hours, minutes and hours, "60" means use hours and minutes, "3600" means use only hours</li>
+		<li>Use full value <code>setStrict</code> (effect filter only): if false, it allows to use only date or only time</li>
 	</ul>
 </p>
 
 <h3>Month</h3>
 
 <p>
-	TODO
+	Picker for selecting month with localized messages. HTML standard tag. Not supported by some browsers like Firefox.
 </p>
 
 <p>
-	<strong>Create filter:</strong> <code></code> <br>
-	<strong>Create input:</strong> <code></code> <br>
-</p>
-
-<strong>Optional parameters</strong>
-
-<p>
-	<ul>
-		<li></li>
-	</ul>
+	<strong>Create filter:</strong> <code>Month.filter()</code> <br>
+	<strong>Create input:</strong> <code>Month.filter(String name, boolean required)</code> <br>
 </p>
 
 <h3>Week</h3>
 
 <p>
-	TODO
+	Picker for selecting week with localized messages. HTML standard tag
 </p>
 
 <p>
-	<strong>Create filter:</strong> <code></code> <br>
-	<strong>Create input:</strong> <code></code> <br>
-</p>
-
-<strong>Optional parameters</strong>
-
-<p>
-	<ul>
-		<li></li>
-	</ul>
+	<strong>Create filter:</strong> <code>Week.filter()</code> <br>
+	<strong>Create input:</strong> <code>Week.filter(String name, boolean required)</code> <br>
 </p>
 
 
@@ -254,58 +220,66 @@
 <h3>Submit</h3>
 
 <p>
-	TODO
+	Submit form. Input only. HTML standard tag
 </p>
 
 <p>
-	<strong>Create filter:</strong> <code></code> <br>
-	<strong>Create input:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code>Submit.create(String title, String name)</code> <br>
 </p>
 
 <strong>Optional parameters</strong>
 
 <p>
 	<ul>
-		<li></li>
+		<li>Submit asynchroniously <code>setAsync</code></li>
+	</ul>
+
+	<strong>Only for asynchronious</strong>
+	<ul>
+		<li>Redirect after success <code>setRedirect</code>: URL redirect to. If URL <code>{id}</code> is it replaced with input 'id' from form.</li>
+		<li>Do after success <code>setOnSuccess</code>: name of JS function. As parameters are used (in order) response, submit and form.</li>
+		<li>Do after failure <code>setOnFailure</code>: name of JS function. As parameters are used (in order) response, submit and form.</li>
+		<li>Confirmation before <code>setConfirmation</code>: text of confirmation. If no text set, no confirmation appear.</li>
 	</ul>
 </p>
 
 <h3>Button</h3>
 
 <p>
-	TODO
+	Navigate from form but not submit values. If used in grid, you can parametrize URL with '<i>{*name-of-parameter*}</i>'. F.e. '<i>/{name}/edit/{id}</i>' will be '<i>/cars/edit/2</i>'. HTML standard tag
 </p>
 
 <p>
-	<strong>Create filter:</strong> <code></code> <br>
-	<strong>Create input:</strong> <code></code> <br>
+	<strong>Create:</strong> <code>Button.create(String url, String name)</code> <br>
 </p>
 
 <strong>Optional parameters</strong>
 
 <p>
 	<ul>
-		<li></li>
+		<li>Title <code>setTitle</code>: text of button</li>
+		<li>Asynchronious request <code>setAsync</code>: if send request synchroniously (redirect) or not</li>
+		<li>Style <code>setType</code>: set type of button, just visual</li>
+	</ul>
+
+	<strong>Only for asynchronious</strong>
+	<ul>
+		<li>Request method <code>setMethod</code>: GET, POST,...</li>
+		<li>Do after success response <code>setOnSuccess</code>: name of JS function called after success response. Response is used as parameter</li>
+		<li>Do after failure response <code>setOnFailure</code>: name of JS function called after failure response. Response is used as parameter</li>
+		<li>Confirmation before <code>setConfirmation</code>: text of confirmation. If no text set, no confirmation appear. If used in grid, you can parametrize URL with '<i>{*name-of-parameter*}</i>'.</li>
+		<li>Request parameters <code>addRequestParam</code>: add new request parameter (can be called more times)</li>
 	</ul>
 </p>
 
 <h3>Reset</h3>
 
 <p>
-	TODO
+	Return form state to default values. Input only. HTML standard tag
 </p>
 
 <p>
-	<strong>Create filter:</strong> <code></code> <br>
-	<strong>Create input:</strong> <code></code> <br>
-</p>
-
-<strong>Optional parameters</strong>
-
-<p>
-	<ul>
-		<li></li>
-	</ul>
+	<strong>Create input:</strong> <code>Reset.create(String name)</code> <br>
 </p>
 
 
@@ -314,76 +288,77 @@
 <h3>Checkbox</h3>
 
 <p>
-	TODO
+	For Yes/No selection. Input only. HTML standard tag
 </p>
 
 <p>
-	<strong>Create filter:</strong> <code></code> <br>
-	<strong>Create input:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code>Checkbox.input(String name, boolea required)</code> <br>
 </p>
 
 <strong>Optional parameters</strong>
 
 <p>
 	<ul>
-		<li></li>
+		<li>Values render <code>setValuesRender(String checked, String notChecked)</code>: how will be displayed in not-editable form. Default <i>Yes</i> and <i>No</i></li>
 	</ul>
 </p>
 
 <h3>Radiolist</h3>
 
 <p>
-	TODO
+	Show list of radio. Input only. HTML standard tag
 </p>
 
 <p>
-	<strong>Create filter:</strong> <code></code> <br>
-	<strong>Create input:</strong> <code></code> <br>
-</p>
-
-<strong>Optional parameters</strong>
-
-<p>
-	<ul>
-		<li></li>
-	</ul>
+	<strong>Create input:</strong> <code>RadioList.input(String name, boolean required, Map&lt;String, String&gt; radios)</code>. Radios are value-title map<br>
 </p>
 
 <h3>Select</h3>
 
 <p>
-	TODO
+	Select from list of values. Options into select can be loaded from URL. For required data format see TODO EntityDao. HTML standard tag
 </p>
 
 <p>
-	<strong>Create filter:</strong> <code></code> <br>
-	<strong>Create input:</strong> <code></code> <br>
+	<strong>Create filter:</strong> <code>Select.filter(List&lt;Option&gt; options)</code> <br>
+	<strong>Create input:</strong> <code>Select.input(String name, boolean required, List&lt;Option&gt; options)</code> <br>
 </p>
 
 <strong>Optional parameters</strong>
 
 <p>
 	<ul>
-		<li></li>
+		<li>Load data from URL:</li>
+<pre><code class="language-java">
+select.setLoadData(String url, String method);
+// or with request parameters
+select.setLoadData(String url, String method, Map&lt;String, String&gt; params);
+</code></pre>
+
+		<li>If you load data from URL, you can specify which Option Group have to be showed in this select:</li>
+<pre><code class="language-java">
+select.setShowedOptionGroup(String optionGroup);
+</code></pre>
+
 	</ul>
 </p>
 
 <h3>Option</h3>
 
 <p>
-	TODO
+	Child element of select. HTML standard tag
 </p>
 
 <p>
-	<strong>Create filter:</strong> <code></code> <br>
-	<strong>Create input:</strong> <code></code> <br>
+	<strong>Create:</strong> <code>Option.create(String value, String title)</code> <br>
 </p>
 
 <strong>Optional parameters</strong>
 
 <p>
 	<ul>
-		<li></li>
+		<li>Option Group <code>setOptGroup</code>: name of Option Group this option belong</li>
+		<li>Disabled <code>setDisabled</code>: change disabled</li>
 	</ul>
 </p>
 
@@ -393,58 +368,33 @@
 <h3>Hidden</h3>
 
 <p>
-	TODO
+	Value is hidden. Input only. HTML standard tag
 </p>
 
 <p>
-	<strong>Create filter:</strong> <code></code> <br>
-	<strong>Create input:</strong> <code></code> <br>
-</p>
-
-<strong>Optional parameters</strong>
-
-<p>
-	<ul>
-		<li></li>
-	</ul>
+	<strong>Create input:</strong> <code>Hidden.input(String name)</code> <br>
 </p>
 
 <h3>Color</h3>
 
 <p>
-	TODO
+	Show color picker. Input only. HTML standard tag
 </p>
 
-<p>
-	<strong>Create filter:</strong> <code></code> <br>
-	<strong>Create input:</strong> <code></code> <br>
-</p>
-
-<strong>Optional parameters</strong>
+<p class="alert alert-danger"><strong>NOTE:</strong> this tag not support empty value</p>
 
 <p>
-	<ul>
-		<li></li>
-	</ul>
+	<strong>Create input:</strong> <code>Color.input(String name, boolean required)</code> <br>
 </p>
 
 <h3>File</h3>
 
 <p>
-	TODO
+	For uploading file. Input only. HTML standard tag
 </p>
 
 <p>
-	<strong>Create filter:</strong> <code></code> <br>
-	<strong>Create input:</strong> <code></code> <br>
-</p>
-
-<strong>Optional parameters</strong>
-
-<p>
-	<ul>
-		<li></li>
-	</ul>
+	<strong>Create input:</strong> <code>File.input(String name, boolean required)</code> <br>
 </p>
 
 
@@ -453,37 +403,46 @@
 <h3>InputList</h3>
 
 <p>
-	TODO
+	<code>InputList</code> is container for other inputs. These inputs are available on page with name <code>InputListName[nameOfList][inputName]</code> (in TOTI called Map) or <code>InputListName[][inputName]</code> (in TOTI called List). Input only
 </p>
 
 <p>
-	<strong>Create filter:</strong> <code></code> <br>
-	<strong>Create input:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code>InputList.input(String name)</code>. If you wish use list let name empty string (<strong>not null</strong>).<br>
+	Add input to list: <code>inputList.addInput(Input input)</code>
 </p>
 
-<strong>Optional parameters</strong>
-
-<p>
-	<ul>
-		<li></li>
-	</ul>
-</p>
+TODO example from class and  template, picture maybe
 
 <h3>DynamicList</h3>
 
 <p>
-	TODO
+	In <code>DynamicList</code> you define input. This input appears on page n-times depends on Add/Remove buttons and binding. The inputs are available on page with name <code>DynamicListName[index][inputName]</code>. If you wish bind values to <code>DynamicList</code>, in values is required List on DynamicListName key. Input only
 </p>
 
 <p>
-	<strong>Create filter:</strong> <code></code> <br>
-	<strong>Create input:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code>DynamicList.input(String name)</code> <br>
+	Add input to list: `dynamicList.addInput(Input input);`
 </p>
 
 <strong>Optional parameters</strong>
 
 <p>
 	<ul>
-		<li></li>
+		<li>Title <code>setTitle</code>: label of input</li>
+		<li>Use Add Button <code>useAddButton</code>: if user can add input</li>
+		<li>Use Remote Button <code>useRemoteButton</code>: if user can remove input</li>
 	</ul>
 </p>
+
+TODO example from class and  template, picture maybe, AND data
+```
+{
+	first: "some-value",
+	second: "another-value",
+	dynamic: [
+		"first",
+		123,
+		false
+	]
+}
+```
