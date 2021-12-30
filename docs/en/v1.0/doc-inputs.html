@@ -1,29 +1,489 @@
-Textual and numeric
-	Text
-	Textarea
-	Email
-	Password
-	Number
-	Range
-Determination of time
-	Date
-	Time
-	Datetime
-	Month
-	Week
-Action
-	Submit
-	Button
-	Reset
-Selection
-	Checkbox
-	Radiolist
-	Select
-	Option
-Special
-	Hidden
-	Color
-	File
-TOTI specific
-	InputList
-	DynamicList
+<h1>Form inputs and grid filters</h1>
+
+<p>
+	The filters and inputs (controls) have some predefined parameters. If you need some other, you can use <code>addParam</code> method (more times for one control).
+</p>
+
+<p>
+	Inputs title can be set by <code>setTitle</code>.
+</p>
+
+<p>
+	HTML5 forms ignore disabled inputs. On the other hand, TOTI inputs contains parameters: <i>disabled</i> (<code>setDisabled</code>), <i>exclude</i> (<code>setExclude</code>, default false) and <i>editable</i> (<code>setEditable</code>, default inherit from form).
+</p>
+
+<p>
+	How it works:
+
+	<ul>
+		<li><i>disabled == true</i>: if <i>exclude</i> not set, <i>exclude</i> become TRUE and input will be ignored</li>
+		<li><i>disabled == true</i> and <i>exclude == true</i>: input ignored</li>
+		<li><i>disabled == true</i> and <i>exclude == false</i>: input NOT ignored</li>
+		<li>form is editable and <i>editable == false</i>: input ignored, <i>exclude</i> and <i>disabled</i> ignored. Input NOT displayed as input but like simple text</li>
+		<li>form is not editable and <i>editable == true</i>: input displayed as input</li>
+	</ul>
+</p>
+
+<h2>Textual and numeric</h2>
+
+<h3>Text</h3>
+
+<p>
+	Simple text input. HMTL standard tag
+</p>
+
+<p>
+	<strong>Create filter:</strong> <code>Text.filter()</code> <br>
+	<strong>Create input:</strong> <code>Text.input(String name, boolean required)</code> <br>
+</p>
+
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li>Title <code>setTitle</code> (effect on input only): label of input</li>
+		<li>Size <code>setSize</code>: default text size</li>
+		<li>Maximal length</li>
+		<li>Minimal length</li>
+		<li>Default value</li>
+		<li>Placeholder</li>
+
+		<li>Required</li>
+		<li>Disabled</li>
+		<li>Exclude</li>
+		<li>Editable</li>
+	</ul>
+</p>
+
+<h3>Textarea</h3>
+
+<p>
+	TODO
+</p>
+
+<p>
+	<strong>Create filter:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code></code> <br>
+</p>
+
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li></li>
+	</ul>
+</p>
+
+<h3>Email</h3>
+
+<p>
+	TODO
+</p>
+
+<p>
+	<strong>Create filter:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code></code> <br>
+</p>
+
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li></li>
+	</ul>
+</p>
+
+<h3>Password</h3>
+
+<p>
+	TODO
+</p>
+
+<p>
+	<strong>Create filter:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code></code> <br>
+</p>
+
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li></li>
+	</ul>
+</p>
+
+<h3>Number</h3>
+
+<p>
+	TODO
+</p>
+
+<p>
+	<strong>Create filter:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code></code> <br>
+</p>
+
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li></li>
+	</ul>
+</p>
+
+<h3>Range</h3>
+
+<p>
+	TODO
+</p>
+
+<p>
+	<strong>Create filter:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code></code> <br>
+</p>
+
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li></li>
+	</ul>
+</p>
+
+
+<h2>Determination of time</h2>
+
+<h3>Date</h3>
+
+<p>
+	TODO
+</p>
+
+<p>
+	<strong>Create filter:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code></code> <br>
+</p>
+
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li></li>
+	</ul>
+</p>
+
+<h3>Time</h3>
+
+<p>
+	TODO
+</p>
+
+<p>
+	<strong>Create filter:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code></code> <br>
+</p>
+
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li></li>
+	</ul>
+</p>
+
+<h3>Datetime</h3>
+
+<p>
+	TODO
+</p>
+
+<p>
+	<strong>Create filter:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code></code> <br>
+</p>
+
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li></li>
+	</ul>
+</p>
+
+<h3>Month</h3>
+
+<p>
+	TODO
+</p>
+
+<p>
+	<strong>Create filter:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code></code> <br>
+</p>
+
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li></li>
+	</ul>
+</p>
+
+<h3>Week</h3>
+
+<p>
+	TODO
+</p>
+
+<p>
+	<strong>Create filter:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code></code> <br>
+</p>
+
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li></li>
+	</ul>
+</p>
+
+
+<h2>Action</h2>
+
+<h3>Submit</h3>
+
+<p>
+	TODO
+</p>
+
+<p>
+	<strong>Create filter:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code></code> <br>
+</p>
+
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li></li>
+	</ul>
+</p>
+
+<h3>Button</h3>
+
+<p>
+	TODO
+</p>
+
+<p>
+	<strong>Create filter:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code></code> <br>
+</p>
+
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li></li>
+	</ul>
+</p>
+
+<h3>Reset</h3>
+
+<p>
+	TODO
+</p>
+
+<p>
+	<strong>Create filter:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code></code> <br>
+</p>
+
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li></li>
+	</ul>
+</p>
+
+
+<h2>Selection</h2>
+
+<h3>Checkbox</h3>
+
+<p>
+	TODO
+</p>
+
+<p>
+	<strong>Create filter:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code></code> <br>
+</p>
+
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li></li>
+	</ul>
+</p>
+
+<h3>Radiolist</h3>
+
+<p>
+	TODO
+</p>
+
+<p>
+	<strong>Create filter:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code></code> <br>
+</p>
+
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li></li>
+	</ul>
+</p>
+
+<h3>Select</h3>
+
+<p>
+	TODO
+</p>
+
+<p>
+	<strong>Create filter:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code></code> <br>
+</p>
+
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li></li>
+	</ul>
+</p>
+
+<h3>Option</h3>
+
+<p>
+	TODO
+</p>
+
+<p>
+	<strong>Create filter:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code></code> <br>
+</p>
+
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li></li>
+	</ul>
+</p>
+
+
+<h2>Special</h2>
+
+<h3>Hidden</h3>
+
+<p>
+	TODO
+</p>
+
+<p>
+	<strong>Create filter:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code></code> <br>
+</p>
+
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li></li>
+	</ul>
+</p>
+
+<h3>Color</h3>
+
+<p>
+	TODO
+</p>
+
+<p>
+	<strong>Create filter:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code></code> <br>
+</p>
+
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li></li>
+	</ul>
+</p>
+
+<h3>File</h3>
+
+<p>
+	TODO
+</p>
+
+<p>
+	<strong>Create filter:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code></code> <br>
+</p>
+
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li></li>
+	</ul>
+</p>
+
+
+<h2>TOTI specific</h2>
+
+<h3>InputList</h3>
+
+<p>
+	TODO
+</p>
+
+<p>
+	<strong>Create filter:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code></code> <br>
+</p>
+
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li></li>
+	</ul>
+</p>
+
+<h3>DynamicList</h3>
+
+<p>
+	TODO
+</p>
+
+<p>
+	<strong>Create filter:</strong> <code></code> <br>
+	<strong>Create input:</strong> <code></code> <br>
+</p>
+
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li></li>
+	</ul>
+</p>
