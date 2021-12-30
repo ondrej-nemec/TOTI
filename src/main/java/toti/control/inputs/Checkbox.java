@@ -6,55 +6,16 @@ import java.util.Map;
 
 public class Checkbox implements Input {
 	
-	private final String name;
-	private final String id;
-	private final String type;
-	private String title;	
-	private final boolean required;
-	private boolean disabled = false;
-	private Boolean exclude = null;
-	private Boolean editable = null;
-	private String value = null;
-	private final Map<String, String> params = new HashMap<>();
 	private String checked = "Yes";
 	private String unchecked = "No";
+	private final Wrapper wrapper;
 	
 	public static Checkbox input(String name, boolean required) {
 		return new Checkbox(name, required);
 	}
 	
 	private Checkbox(String name, boolean required) {
-		this.name = name;
-		this.id = "id-" + name;
-		this.type = "checkbox";
-		this.required = required;
-	}
-	
-	public Checkbox setTitle(String title) {
-		this.title = title;
-		return this;
-	}
-
-	public Checkbox addParam(String name, String value) {
-		params.put(name, value);
-		return this;
-	}
-	
-	public Checkbox setDefaultValue(Object value) {
-		if (value != null) {
-			this.value = value.toString();
-		} else {
-			this.value = null;
-		}
-		return this;
-	}
-	
-	public Checkbox setDisabled(boolean disabled) {
-		this.disabled = disabled;
-		if (exclude == null) {
-			exclude = disabled;
-		}
-		return this;
+		this.wrapper = new Wrapper("checkbox", name, required);
 	}
 	
 	public Checkbox setValuesRender(String checked, String unchecked) {
@@ -63,49 +24,55 @@ public class Checkbox implements Input {
 		return this;
 	}
 	
+	/*************/
+
+	public Checkbox addParam(String name, String value) {
+		wrapper.addParam(name, value);
+		return this;
+	}
+	
+	public Checkbox setTitle(String title) {
+		wrapper.setTitle(title);
+		return this;
+	}
+	
+	public Checkbox setDefaultValue(Object value) {
+		wrapper.setDefaultValue(value);
+		return this;
+	}
+	
+	public Checkbox setDisabled(boolean disabled) {
+		wrapper.setDisabled(disabled);
+		return this;
+	}
+/*
+	public Checkbox setPlaceholder(String placeholder) {
+		wrapper.setPlaceholder(placeholder);
+		return this;
+	}
+*/
 	public Checkbox setExclude(boolean exclude) {
-		this.exclude = exclude;
+		wrapper.setExclude(exclude);
 		return this;
 	}
 	
 	public Checkbox setEditable(boolean editable) {
-		this.editable = editable;
+		wrapper.setEditable(editable);
 		return this;
 	}
 	
 	@Override
 	public Map<String, Object> getInputSettings() {
-		Map<String, Object> json = new HashMap<>();
-		json.put("name", name);
-		json.put("id", id);
-		json.put("type", type);
-		params.forEach((key, param)->{
-			json.put(key, param);
-		});
-		if (required) {
-			json.put("required", required);
-		}
-		if (disabled) {
-			json.put("disabled", disabled);
-		}
-		if (exclude != null) {
-			json.put("exclude", exclude);
-		}
-		if (editable != null) {
-			json.put("editable", editable);
-		}
-		if (title != null) {
-			json.put("title", title);
-		}
-		if (value != null) {
-			json.put("value", value);
-		}
+		Map<String, Object> json = wrapper.getInputSettings();
+		
 		Map<String, Object> yes = new HashMap<>();
 		yes.put("title", checked);
 		yes.put("value", true);
+		
 		Map<String, Object> no = new HashMap<>();
 		no.put("title", unchecked);
 		no.put("value", false);
+		
 		json.put("values", Arrays.asList(yes, no));
 		return json;
 	}

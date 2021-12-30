@@ -12,5 +12,19 @@ public interface Input extends Jsonable {
 	default Object toJson() {
 		return getInputSettings();
 	}
+	/*
+	I addParam(String name, String value);
 	
+	I setDefaultValue(Object value);
+	
+	I setPlaceholder(String placeholder);
+	
+	I setTitle(String title);
+	
+	I setDisabled(boolean disabled);
+	
+	I setExclude(boolean exclude);
+	
+	I setEditable(boolean editable);
+	*/
 }

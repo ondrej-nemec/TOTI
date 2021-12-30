@@ -1,83 +1,57 @@
 package toti.control.inputs;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class File implements Input {
 
-	private final String name;
-	private final String id;
-	private final String type;
-	private String title;	
-	private final boolean required;
-	private boolean disabled = false;
-	private Boolean exclude = null;
-	private Boolean editable = null;
-	private final Map<String, String> params = new HashMap<>();
+	private final Wrapper wrapper;
 
 	public static File input(String name, boolean required) {
 		return new File(name, required);
 	}
 	
 	private File(String name, boolean required) {
-		this.name = name;
-		this.id = "id-" + name;
-		this.type = "file";
-		this.required = required;
+		this.wrapper = new Wrapper("file", name, required);
 	}
 
 	public File addParam(String name, String value) {
-		params.put(name, value);
+		wrapper.addParam(name, value);
 		return this;
 	}
 	
 	public File setTitle(String title) {
-		this.title = title;
+		wrapper.setTitle(title);
+		return this;
+	}
+	
+	public File setDefaultValue(Object value) {
+		wrapper.setDefaultValue(value);
 		return this;
 	}
 	
 	public File setDisabled(boolean disabled) {
-		this.disabled = disabled;
-		if (exclude == null) {
-			exclude = disabled;
-		}
+		wrapper.setDisabled(disabled);
 		return this;
 	}
-	
+/*
+	public File setPlaceholder(String placeholder) {
+		wrapper.setPlaceholder(placeholder);
+		return this;
+	}
+*/
 	public File setExclude(boolean exclude) {
-		this.exclude = exclude;
+		wrapper.setExclude(exclude);
 		return this;
 	}
 	
 	public File setEditable(boolean editable) {
-		this.editable = editable;
+		wrapper.setEditable(editable);
 		return this;
 	}
 	
 	@Override
 	public Map<String, Object> getInputSettings() {
-		Map<String, Object> json = new HashMap<>();
-		json.put("name", name);
-		json.put("id", id);
-		json.put("type", type);
-		if (required) {
-			json.put("required", required);
-		}
-		if (disabled) {
-			json.put("disabled", disabled);
-		}
-		if (exclude != null) {
-			json.put("exclude", exclude);
-		}
-		if (editable != null) {
-			json.put("editable", editable);
-		}
-		if (title != null) {
-			json.put("title", title);
-		}
-		params.forEach((key, param)->{
-			json.put(key, param);
-		});
+		Map<String, Object> json = wrapper.getInputSettings();
 		return json;
 	}
 

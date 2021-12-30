@@ -1,22 +1,12 @@
 package toti.control.inputs;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import toti.control.columns.Filter;
 
 public class Date implements Input, Filter {
 	
-	private final String name;
-	private final String id;
-	private final String type;
-	private String title;	
-	private final boolean required;
-	private boolean disabled = false;
-	private Boolean exclude = null;
-	private Boolean editable = null;
-	private String value = null;
-	private final Map<String, String> params = new HashMap<>();
+	private final Wrapper wrapper;
 	
 	public static Date input(String name, boolean required) {
 		return new Date(name, required);
@@ -28,81 +18,60 @@ public class Date implements Input, Filter {
 	}
 	
 	private Date(String name, boolean required) {
-		this.name = name;
-		this.id = "id-" + name;
-		this.type = "date";
-		this.required = required;
-	}
-
-	public Date addParam(String name, String value) {
-		params.put(name, value);
-		return this;
-	}
-	
-	public Date setTitle(String title) {
-		this.title = title;
-		return this;
-	}
-	
-	public Date setDefaultValue(String value) {
-		this.value = value;
-		return this;
-	}
-	
-	public Date setDisabled(boolean disabled) {
-		this.disabled = disabled;
-		if (exclude == null) {
-			exclude = disabled;
-		}
-		return this;
-	}
-	
-	public Date setExclude(boolean exclude) {
-		this.exclude = exclude;
-		return this;
-	}
-	
-	public Date setEditable(boolean editable) {
-		this.editable = editable;
-		return this;
+		this.wrapper = new Wrapper("date", name, required);
 	}
 
 	@Override
 	public String getType() {
-		return type;
+		return wrapper.getType();
+	}
+	
+	/*************/
+
+	public Date addParam(String name, String value) {
+		wrapper.addParam(name, value);
+		return this;
+	}
+	
+	public Date setTitle(String title) {
+		wrapper.setTitle(title);
+		return this;
+	}
+	
+	public Date setDefaultValue(Object value) {
+		wrapper.setDefaultValue(value);
+		return this;
+	}
+	
+	public Date setDisabled(boolean disabled) {
+		wrapper.setDisabled(disabled);
+		return this;
+	}
+
+	public Date setPlaceholder(String placeholder) {
+		wrapper.setPlaceholder(placeholder);
+		return this;
+	}
+	
+	public Date setExclude(boolean exclude) {
+		wrapper.setExclude(exclude);
+		return this;
+	}
+	
+	public Date setEditable(boolean editable) {
+		wrapper.setEditable(editable);
+		return this;
 	}
 
 	@Override
 	public Map<String, Object> getFilterSettings() {
-		Map<String, Object> set = new HashMap<>();
-		set.putAll(params);
-		if (value != null) {
-			set.put("value", value);
-		}
+		Map<String, Object> set = wrapper.getFilterSettings();
 		return set;
 	}
 
 	@Override
 	public Map<String, Object> getInputSettings() {
-		Map<String, Object> json = getFilterSettings();
-		json.put("name", name);
-		json.put("id", id);
-		json.put("type", type);
-		if (required) {
-			json.put("required", required);
-		}
-		if (disabled) {
-			json.put("disabled", disabled);
-		}
-		if (exclude != null) {
-			json.put("exclude", exclude);
-		}
-		if (editable != null) {
-			json.put("editable", editable);
-		}
-		if (title != null) {
-			json.put("title", title);
-		}
+		Map<String, Object> json = wrapper.getInputSettings(getFilterSettings());
 		return json;
 	}
 

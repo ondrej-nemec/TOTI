@@ -1,101 +1,57 @@
 package toti.control.inputs;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class Email implements Input {
 	
-	private final String name;
-	private final String id;
-	private final String type;
-	private String title;	
-	private final boolean required;
-	private boolean disabled = false;
-	private Boolean exclude = null;
-	private Boolean editable = null;
-	private String value = null;
-	private String placeholder = null;
-	private final Map<String, String> params = new HashMap<>();
+	private final Wrapper wrapper;
 	
 	public static Email input(String name, boolean required) {
 		return new Email(name, required);
 	}
 	
 	private Email(String name, boolean required) {
-		this.name = name;
-		this.id = "id-" + name;
-		this.type = "email";
-		this.required = required;
+		this.wrapper = new Wrapper("email", name, required);
 	}
 
 	public Email addParam(String name, String value) {
-		params.put(name, value);
+		wrapper.addParam(name, value);
 		return this;
 	}
 	
 	public Email setTitle(String title) {
-		this.title = title;
+		wrapper.setTitle(title);
 		return this;
 	}
 	
-	public Email setDefaultValue(String value) {
-		this.value = value;
+	public Email setDefaultValue(Object value) {
+		wrapper.setDefaultValue(value);
 		return this;
 	}
 	
 	public Email setDisabled(boolean disabled) {
-		this.disabled = disabled;
-		if (exclude == null) {
-			exclude = disabled;
-		}
-		return this;
-	}
-	
-	public Email setExclude(boolean exclude) {
-		this.exclude = exclude;
-		return this;
-	}
-	
-	public Email setEditable(boolean editable) {
-		this.editable = editable;
+		wrapper.setDisabled(disabled);
 		return this;
 	}
 
 	public Email setPlaceholder(String placeholder) {
-		this.placeholder = placeholder;
+		wrapper.setPlaceholder(placeholder);
+		return this;
+	}
+	
+	public Email setExclude(boolean exclude) {
+		wrapper.setExclude(exclude);
+		return this;
+	}
+	
+	public Email setEditable(boolean editable) {
+		wrapper.setEditable(editable);
 		return this;
 	}
 	
 	@Override
 	public Map<String, Object> getInputSettings() {
-		Map<String, Object> json = new HashMap<>();
-		json.put("name", name);
-		json.put("id", id);
-		json.put("type", type);
-		if (required) {
-			json.put("required", required);
-		}
-		if (disabled) {
-			json.put("disabled", disabled);
-		}
-		if (exclude != null) {
-			json.put("exclude", exclude);
-		}
-		if (editable != null) {
-			json.put("editable", editable);
-		}
-		params.forEach((key, param)->{
-			json.put(key, param);
-		});
-		if (title != null) {
-			json.put("title", title);
-		}
-		if (value != null) {
-			json.put("value", value);
-		}
-		if (placeholder != null) {
-			json.put("placeholder", placeholder);
-		}
+		Map<String, Object> json = wrapper.getInputSettings();
 		return json;
 	}
 

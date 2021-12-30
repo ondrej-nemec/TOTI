@@ -66,9 +66,8 @@ public class Submit implements Input {
 		json.put("ajax", ajax);
 		json.put("id", name);
 		json.put("name", name);
-		params.forEach((key, param)->{
-			json.put(key, param);
-		});
+		
+		json.putAll(params);
 		if (redirect != null) {
 			json.put("redirect", redirect);
 		}
