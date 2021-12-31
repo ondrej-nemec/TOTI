@@ -1,0 +1,159 @@
+<h1>Server configuration</h1>
+
+<h2>URLs pattern</h2>
+
+<p>
+	How will be URLs look like.
+</p>
+
+<p>
+	<strong>Default value:</strong> <code>/[module]&lt;/[path]&gt;/[controller]/[method]&lt;/[param]&gt;</code> <br>
+	<strong>Properties file key:</strong> <code>http.url-pattern</code> <br>
+	<strong>Method:</strong> <code>setUrlPattern</code>
+</p>
+
+<h2>Application port</h2>
+
+<p>
+	Port on what will be TOTI listening.
+</p>
+
+<p>
+	<strong>Default value:</strong> <code>80</code> <br>
+	<strong>Properties file key:</strong> <code>http.port</code> <br>
+	<strong>Method:</strong> <code>setPort</code>
+</p>
+
+<h2>Thread pool</h2>
+
+<p>
+	Maximal connected clients at one time - count of threads.
+</p>
+
+<p>
+	<strong>Default value:</strong> <code>5</code> <br>
+	<strong>Properties file key:</strong> <code>http.thread-pool</code> <br>
+	<strong>Method:</strong> <code>setThreadPool</code>
+</p>
+
+<h2>Reading timeout</h2>
+
+<p>
+	Reading timeout in miliseconds, connection will be lost after given time without action.
+</p>
+
+<p>
+	<strong>Default value:</strong> <code>60000 ms (= 60s = 1 min)</code> <br>
+	<strong>Properties file key:</strong> <code>http.read-timeout</code> <br>
+	<strong>Method:</strong> <code>setReadTimeout</code>
+</p>
+
+<h2>Response headers</h2>
+
+<p>
+	Headers that will be send with all responses.
+</p>
+
+<p>
+	<strong>Default value:</strong> <code>Arrays.of(Access-Control-Allow-Origin: *)</code> <br>
+	<strong>Properties file key:</strong> <code>http.headers</code> (split with <i>|</i>)<br>
+	<strong>Method:</strong> <code>setHeaders</code>
+</p>
+
+<h2>Charset</h2>
+
+<p>
+	Charset used for all, including requests.
+</p>
+
+<p>
+	<strong>Default value:</strong> <code>UTF-8</code> <br>
+	<strong>Properties file key:</strong> <code>http.charset</code> <br>
+	<strong>Method:</strong> <code>setCharset</code>
+</p>
+
+<h2>Temporary directory</h2>
+
+<p>
+	Path to temporary directory (relative or absolute).
+</p>
+
+<p>
+	<strong>Default value:</strong> <code>temp</code> (in application root)<br>
+	<strong>Properties file key:</strong> <code>http.temp</code> <br>
+	<strong>Method:</strong> <code>setTempPath</code>
+</p>
+
+<h2>Resource path</h2>
+
+<p>
+	Path to directory, that will be visible in internet. Usualy contains css, js and html files, pictures, etc.
+</p>
+
+<p>
+	<strong>Default value:</strong> <code>www</code> (in application root)<br>
+	<strong>Properties file key:</strong> <code>http.resource-path</code> <br>
+	<strong>Method:</strong> <code>setResourcesPath</code>
+</p>
+
+<h2>Minimalize templates</h2>
+
+<p>
+	If true, TOTI remove most spaces, tab and new lines from generated files. Can cause JS error if template contains JavaScript with single line comment <code>//</code>. Has no efect on files in resource directory.
+</p>
+
+<p>
+	<strong>Default value:</strong> <code>true</code> <br>
+	<strong>Properties file key:</strong> <code>http.minimalize-templates</code> <br>
+	<strong>Method:</strong> <code>setMinimalize</code>
+</p>
+
+<!-- delete temp dirs -->
+
+<h2>Directory listing</h2>
+
+<p>
+	(Dis)allows directory listing. If request URL is directory - list files or throw 404.
+</p>
+
+<p>
+	<strong>Default value:</strong> <code>false</code> <br>
+	<strong>Properties file key:</strong> <code>http.dir-allowed</code> <br>
+	<strong>Method:</strong> <code>setDirResponseAllowed</code>
+</p>
+
+<h2></h2>
+
+<p>
+	TODO continue with language settings
+</p>
+
+<p>
+	<strong>Default value:</strong> <code></code> <br>
+	<strong>Properties file key:</strong> <code></code> <br>
+	<strong>Method:</strong> <code></code>
+</p>
+
+<h2></h2>
+
+<p>
+	TODO
+</p>
+
+<p>
+	<strong>Default value:</strong> <code></code> <br>
+	<strong>Properties file key:</strong> <code></code> <br>
+	<strong>Method:</strong> <code></code>
+</p>
+
+<h2></h2>
+
+<p>
+	TODO
+</p>
+
+<p>
+	<strong>Default value:</strong> <code></code> <br>
+	<strong>Properties file key:</strong> <code></code> <br>
+	<strong>Method:</strong> <code></code>
+</p>

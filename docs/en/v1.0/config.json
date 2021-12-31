@@ -29,6 +29,10 @@
 			{
 				"title": "Validator",
 				"link": "doc-validator.html"
+			},
+			{
+				"title": "Server configuration",
+				"link": "doc-server.html"
 			}
 		]
 	}
