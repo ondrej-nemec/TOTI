@@ -76,11 +76,6 @@ public class Validator {
 		return this;
 	}
 	
-	@Deprecated
-	public Validator setGlobalFunction(BiFunction<RequestParameters, Translator, Set<String>> globalFunction) {
-		return setGlobalFunction((r,v,t)->globalFunction.apply(r, t));
-	}
-	
 	public Validator setGlobalFunction(GlobalFunction globalFunction) {
 		if (this.globalFunc.isPresent()) {
 			throw new LogicException("Global function is already set");
@@ -182,14 +177,32 @@ public class Validator {
 			);
 			checkRule(
 					rule.getMaxLength(), 
-					(maxLength)->maxLength.intValue() < o.toString().length(),
+					(maxLength)->{
+						DictionaryValue dicVal = new DictionaryValue(o);
+						if (dicVal.is(Map.class)) {
+							return maxLength.intValue() < dicVal.getMap().size();
+						}
+						if (dicVal.is(List.class)) {
+							return maxLength.intValue() < dicVal.getList().size();
+						}
+						return maxLength.intValue() < o.toString().length();
+					},
 					errors,
 					propertyName,
 					rule.getOnMaxLengthError().apply(translator)
 			);
 			checkRule(
 					rule.getMinLength(),
-					(minLength)->minLength.intValue() > o.toString().length(),
+					(minLength)->{
+						DictionaryValue dicVal = new DictionaryValue(o);
+						if (dicVal.is(Map.class)) {
+							return minLength.intValue() > dicVal.getMap().size();
+						}
+						if (dicVal.is(List.class)) {
+							return minLength.intValue() > dicVal.getList().size();
+						}
+						return minLength.intValue() > o.toString().length();
+					},
 					errors,
 					propertyName,
 					rule.getOnMinLengthError().apply(translator)
