@@ -18,7 +18,6 @@ import ji.socketCommunication.SslCredentials;
 import toti.HttpServer;
 import toti.HttpServerFactory;
 import toti.Module;
-import toti.ResponseHeaders;
 import toti.logging.TotiLogger;
 import toti.registr.Registr;
 import toti.security.User;
@@ -152,7 +151,7 @@ public class Application {
 				factory.setReadTimeout(env.getInteger("http.read-timeout"));
 			}
 			if (env.getString("http.headers") != null) {
-				factory.setHeaders(new ResponseHeaders(env.getList("http.headers", "\\|")));
+				factory.setHeaders(env.getList("http.headers", "\\|"));
 			}
 			if (env.getString("http.charset") != null) {
 				factory.setCharset(env.getString("http.charset"));

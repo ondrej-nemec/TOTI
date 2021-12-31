@@ -33,7 +33,7 @@ public class HttpServerFactory {
 	private LanguageSettings settings = new LanguageSettings(Locale.getDefault().toString(), Arrays.asList());
 	private String resourcesPath = "www";
 	private boolean deleteTempJavaFiles = true;
-	private boolean dirResponseAllowed = true;
+	private boolean dirResponseAllowed = false;
 	private boolean minimalize = true;
 	private List<String> developIps = Arrays.asList("/127.0.0.1", "/0:0:0:0:0:0:0:1");
 	private int maxUploadFileSize = 0;
@@ -80,8 +80,8 @@ public class HttpServerFactory {
 		return this;
 	}
 
-	public HttpServerFactory setHeaders(ResponseHeaders headers) {
-		this.headers = headers;
+	public HttpServerFactory setHeaders(List<String> headers) {
+		this.headers = new ResponseHeaders(headers);
 		return this;
 	}
 
