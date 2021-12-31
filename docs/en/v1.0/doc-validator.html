@@ -1,0 +1,182 @@
+<h1>Validator rules</h1>
+
+<h2>Type</h2>
+
+<p>Specify parameter type.</p>
+
+<pre><code class="language-java">
+Class&lt;?&lt; requiredType = ...
+
+itemRules.setType(requiredType);
+// OR with specified message
+itemRules.setType(requiredType, (translator)->translator.translate("message"));
+</code></pre>
+
+<h2>List of allowed values</h2>
+
+<p>
+	Specify allowed values.
+</p>
+
+<pre><code class="language-java">
+Collection&lt;Object&gt; allowedValues = ...
+
+itemRules.setAllowedValues(allowedValues);
+// OR with specified message
+itemRules.setAllowedValues(allowedValues, (translator)->translator.translate("message"));
+</code></pre>
+
+<h2>Maximal value</h2>
+
+<p>Specify maximal value. Efects only number.</p>
+
+<pre><code class="language-java">
+Number maximalValue = ...
+
+itemRules.setMaxValue(maximalValue);
+// OR with specified message
+itemRules.setMaxValue(maximalValue, (translator)->translator.translate("message"));
+</code></pre>
+
+<h2>Minimal value</h2>
+
+<p>Specify minimal allowed value. Efects only numbers.</p>
+
+<pre><code class="language-java">
+Number minimalValue = ...
+
+itemRules.setMinValue(minimalValue);
+// OR with specified message
+itemRules.setMinValue(minimalValue, (translator)->translator.translate("message"));
+</code></pre>
+
+<h2>Minimal length</h2>
+
+<p>Specify minimal allowed length (size) of texts, <code>Map</code>s and <code>List</code>s.</p>
+
+<pre><code class="language-java">
+int minLength = ...
+
+itemRules.setMinLength(minLength);
+// OR with specified message
+itemRules.setMinLength(minLength, (translator)->translator.translate("message"));
+</code></pre>
+
+<h2>Maximal length</h2>
+
+<p>Specify maximal allowed length (size) of texts, <code>Map</code>s and <code>List</code>s.</p>
+
+<pre><code class="language-java">
+int maxLength = ...
+
+itemRules.setMaxLength(maxLength);
+// OR with specified message
+itemRules.setMaxLength(maxLength, (translator)->translator.translate("message"));
+</code></pre>
+
+<h2>Regex rule</h2>
+
+<p>Specify required format by given regex.</p>
+
+<pre><code class="language-java">
+String regex = ...
+
+itemRules.setRegex(regex);
+// OR with specified message
+itemRules.setRegex(regex, (translator)->translator.translate("message"));
+</code></pre>
+
+<h2>Maximal file size</h2>
+
+<p>Specify maximal allowed file size in bytes. Efects only on files. <strong>Cannot override maximal file size defined in server configuration.</strong></p>
+
+<pre><code class="language-java">
+Integer fileMaxSize = ...
+
+itemRules.setFileMaxSize(fileMaxSize);
+// OR with specified message
+itemRules.setFileMaxSize(fileMaxSize, (translator)->translator.translate("message"));
+</code></pre>
+
+<h2>Minimal file size</h2>
+
+<p>Specifimy minimal file size in bytes. Efects only on files.</p>
+
+<pre><code class="language-java">
+Integer fileMinSize = ...
+
+itemRules.setFileMinSize(fileMinSize);
+// OR with specified message
+itemRules.setFileMinSize(fileMinSize, (translator)->translator.translate("message"));
+</code></pre>
+
+<h2>Allowed file types</h2>
+
+<p>Spefify allowed file types. Efects only on files. <strong>Cannot override allowed file types defined in server configuration.</strong> Empty collection means no allowed types.</p>
+
+<pre><code class="language-java">
+Collection&lt;Object&gt; types = ...
+
+itemRules.setAllowedFileTypes(types);
+// OR with specified message
+itemRules.setAllowedFileTypes(types, (translator)->translator.translate("message"));
+</code></pre>
+
+<h2>Validate sub map</h2>
+
+<p>Specify validation rules for sub map.</p>
+
+<pre><code class="language-java">
+Validator subMapValidator = ...
+
+itemRules.setMapSpecification(subMapValidator);
+</code></pre>
+
+<h2>Valicate sub list</h2>
+
+<p>Specify validation rules for sub list.</p>
+
+<pre><code class="language-java">
+Validator subListValidator = ...
+
+itemRules.setListSpecification(subListValidator);
+</code></pre>
+
+<h2>Change value</h2>
+
+<p>After value is validated, change value.</p>
+
+<pre><code class="language-java">
+itemRules.setChangeValue((oldValue)-&gt;{
+	Object newValue = ...
+	return newValue;
+});
+</code></pre>
+
+<h2>Rename</h2>
+
+<p>Rename parameter after valudation.</p>
+
+<pre><code class="language-java">
+String newName = ...
+itemRules.rename(newName);
+</code></pre>
+
+
+<h2>Global function</h2>
+
+<p>
+	Global function allows change values, compate each other and make any other validations. The global function get <code>RequestParameters</code> with request parameters as first parameter. The second one is empty <code>RequestParameters</code>. The third parameter is <code>Translator</code>. <code>Set</code> of <code>String</code> is expected result. Each text is one error message. Empty <code>Set</code> means validation is OK.
+</p>
+
+<p>
+	This is used after all validations and only if all parameters are valid.
+</p>
+
+<pre><code class="language-java">
+validator.setGlobalFunction((requestParameters, validatorParameters, translator)-&gt;{
+	Set&lt;String&gt; errors = ...
+
+	return errors;
+});
+</code></pre>
