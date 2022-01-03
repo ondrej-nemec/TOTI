@@ -223,7 +223,13 @@ public class Application {
 				factory.setMaxUploadFileSize(env.getInteger("http.max-upload-size"));
 			}
 			if (env.getString("http.allowed-file-types") != null) {
-				factory.setAllowedUploadFileTypes(Optional.of(env.getList("http.allowed-file-types", "|")));
+				if (env.getString("http.allowed-file-types").isEmpty()) {
+					factory.setAllowedUploadFileTypes(Optional.empty());
+				} else {
+					factory.setAllowedUploadFileTypes(Optional.of(
+						env.getList("http.allowed-file-types", "|")
+					));
+				}
 			}
 			if (env.getString("http.use-profiler") != null) {
 				factory.setUseProfiler(env.getBoolean("http.use-profiler"));
