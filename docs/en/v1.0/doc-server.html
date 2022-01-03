@@ -1,6 +1,8 @@
 <h1>Server configuration</h1>
 
-<h2>URLs pattern</h2>
+<h2>Server</h2>
+
+<h3>URLs pattern</h3>
 
 <p>
 	How will be URLs look like.
@@ -12,7 +14,7 @@
 	<strong>Method:</strong> <code>setUrlPattern</code>
 </p>
 
-<h2>Application port</h2>
+<h3>Application port</h3>
 
 <p>
 	Port on what will be TOTI listening.
@@ -24,7 +26,7 @@
 	<strong>Method:</strong> <code>setPort</code>
 </p>
 
-<h2>Thread pool</h2>
+<h3>Thread pool</h3>
 
 <p>
 	Maximal connected clients at one time - count of threads.
@@ -36,7 +38,7 @@
 	<strong>Method:</strong> <code>setThreadPool</code>
 </p>
 
-<h2>Reading timeout</h2>
+<h3>Reading timeout</h3>
 
 <p>
 	Reading timeout in miliseconds, connection will be lost after given time without action.
@@ -48,7 +50,7 @@
 	<strong>Method:</strong> <code>setReadTimeout</code>
 </p>
 
-<h2>Response headers</h2>
+<h3>Response headers</h3>
 
 <p>
 	Headers that will be send with all responses.
@@ -60,7 +62,7 @@
 	<strong>Method:</strong> <code>setHeaders</code>
 </p>
 
-<h2>Charset</h2>
+<h3>Charset</h3>
 
 <p>
 	Charset used for all, including requests.
@@ -72,7 +74,7 @@
 	<strong>Method:</strong> <code>setCharset</code>
 </p>
 
-<h2>Temporary directory</h2>
+<h3>Temporary directory</h3>
 
 <p>
 	Path to temporary directory (relative or absolute).
@@ -84,7 +86,7 @@
 	<strong>Method:</strong> <code>setTempPath</code>
 </p>
 
-<h2>Resource path</h2>
+<h3>Resource path</h3>
 
 <p>
 	Path to directory, that will be visible in internet. Usualy contains css, js and html files, pictures, etc.
@@ -96,7 +98,7 @@
 	<strong>Method:</strong> <code>setResourcesPath</code>
 </p>
 
-<h2>Minimalize templates</h2>
+<h3>Minimalize templates</h3>
 
 <p>
 	If true, TOTI remove most spaces, tab and new lines from generated files. Can cause JS error if template contains JavaScript with single line comment <code>//</code>. Has no efect on files in resource directory.
@@ -110,7 +112,7 @@
 
 <!-- delete temp dirs -->
 
-<h2>Directory listing</h2>
+<h3>Directory listing</h3>
 
 <p>
 	(Dis)allows directory listing. If request URL is directory - list files or throw 404.
@@ -122,38 +124,221 @@
 	<strong>Method:</strong> <code>setDirResponseAllowed</code>
 </p>
 
-<h2></h2>
+<h3>Language settings</h3>
 
 <p>
-	TODO continue with language settings
+	Define path to JSON with language settings. See TODO
 </p>
 
 <p>
-	<strong>Default value:</strong> <code></code> <br>
-	<strong>Properties file key:</strong> <code></code> <br>
-	<strong>Method:</strong> <code></code>
+	<strong>Default value:</strong> <code>System default</code> <br>
+	<strong>Properties file key:</strong> <code>http.locale-settings</code> <br>
+	<strong>Method:</strong> <code>setLanguageSettings</code>
 </p>
 
-<h2></h2>
+<h3>Security token expiration</h3>
 
 <p>
-	TODO
-</p>
-
-<p>
-	<strong>Default value:</strong> <code></code> <br>
-	<strong>Properties file key:</strong> <code></code> <br>
-	<strong>Method:</strong> <code></code>
-</p>
-
-<h2></h2>
-
-<p>
-	TODO
+	How long (in miliseconds) will be security token active.
 </p>
 
 <p>
-	<strong>Default value:</strong> <code></code> <br>
-	<strong>Properties file key:</strong> <code></code> <br>
-	<strong>Method:</strong> <code></code>
+	<strong>Default value:</strong> <code>600000ms (= 600s = 10min)</code> <br>
+	<strong>Properties file key:</strong> <code>http.token-expired</code> <br>
+	<strong>Method:</strong> <code>setTokenExpirationTime</code>
 </p>
+
+<h3>Security token salt</h3>
+
+<p>
+	Custom salt added to security token.
+</p>
+
+<p>
+	<strong>Default value:</strong> <code>''</code> (empty string) <br>
+	<strong>Properties file key:</strong> <code>http.token-expired</code> <br>
+	<strong>Method:</strong> <code>setTokenExpirationTime</code>
+</p>
+
+<h3>Server certificate</h3>
+
+<p>
+	Define path to java keytool file and password for server certificate.
+</p>
+
+<p>
+	<strong>Default value:</strong> no certificate <br>
+	<strong>Properties file key:</strong> <code>http.key-store</code> and <code>http.key-store-password</code> <br>
+	<strong>Method:</strong> <code>setCertificateStore</code>
+</p>
+
+<h3>Trusted clients</h3>
+
+<p>
+	Define path to java keytool file and password for trusted clients.
+</p>
+
+<p>
+	<strong>Default value:</strong> trust all clients <br>
+	<strong>Properties file key:</strong> <code>http.trust-store</code> and <code>http.trust-store-password</code><br>
+	<strong>Method:</strong> <code>setTrustedClientsStore</code>
+</p>
+
+<h3>Develop IP addresses</h3>
+
+<p>
+	List of developer IP addresses. Splited by <code>|</code>.
+</p>
+
+<p>
+	<strong>Default value:</strong> <code>Arrays.asList("/127.0.0.1", "/0:0:0:0:0:0:0:1")</code> <br>
+	<strong>Properties file key:</strong> <code>http.ip</code> <br>
+	<strong>Method:</strong> <code>setDevelopIpAdresses</code>
+</p>
+
+<h3>Upload file size</h3>
+
+<p>
+	Maximal allowed upload file size.
+</p>
+
+<p>
+	<strong>Default value:</strong> <code>0</code> <br>
+	<strong>Properties file key:</strong> <code>http.max-upload-size</code> <br>
+	<strong>Method:</strong> <code>setMaxUploadFileSize</code>
+</p>
+
+<h3>Allowed file types</h3>
+
+<p>
+	List of allowed file types splited by <code>|</code>. Not explicited set means no types allowed. List (or property) means all types.
+</p>
+
+<p>
+	<strong>Default value:</strong> no types <br>
+	<strong>Properties file key:</strong> <code>http.allowed-file-types</code> <br>
+	<strong>Method:</strong> <code>setAllowedUploadFileTypes</code>
+</p>
+
+<h3>Profiler</h3>
+
+<p>
+	If use profiler. <strong>Can cause very big security problems if will be <code>true</code> on production.</strong>
+</p>
+
+<p>
+	<strong>Default value:</strong> <code>false</code> <br>
+	<strong>Properties file key:</strong> <code>http.use-profiler</code> <br>
+	<strong>Method:</strong> <code>setUseProfiler</code>
+</p>
+
+<!-- database -->
+
+<h3>Database</h3>
+
+<p>TOTI use JI Database (see <a href="/JI?file=database-about.html">here</a>). If <code>database.*</code> keys are not specified, <code>database</code> object is NULL.</p>
+
+<h3>Database type</h3>
+
+<p>
+	Define database type.
+</p>
+
+<p>
+	<strong>Default value:</strong> <i>---</i> <br>
+	<strong>Properties file key:</strong> <code>database.type</code>
+</p>
+
+<h3>DB path</h3>
+
+<p>
+	URL or fysical path to database.
+</p>
+
+<p>
+	<strong>Default value:</strong> <i>---</i>  <br>
+	<strong>Properties file key:</strong> <code>database.url</code>
+</p>
+
+<h3>External</h3>
+
+<p>
+	If db  server is in external control
+</p>
+
+<p>
+	<strong>Default value:</strong> <i>true</i>  <br>
+	<strong>Properties file key:</strong> <code>database.external</code>
+</p>
+
+<h3>Database name</h3>
+
+<p>
+	Name of database.
+</p>
+
+<p>
+	<strong>Default value:</strong> <i>---</i>  <br>
+	<strong>Properties file key:</strong> <code>database.schema-name</code>
+</p>
+
+<h3>Login</h3>
+
+<p>
+	Login to database.
+</p>
+
+<p>
+	<strong>Default value:</strong> <i>---</i>  <br>
+	<strong>Properties file key:</strong> <code>database.login</code>
+</p>
+
+<h3>Password</h3>
+
+<p>
+	Password to database.
+</p>
+
+<p>
+	<strong>Default value:</strong> <i>---</i>  <br>
+	<strong>Properties file key:</strong> <code>database.password</code>
+</p>
+
+<h3>Connection pool size</h3>
+
+<p>
+	Size of connection pool.
+</p>
+
+<p>
+	<strong>Default value:</strong> <i>---</i>  <br>
+	<strong>Properties file key:</strong> <code>database.pool-size</code>
+</p>
+
+<!-- language settings -->
+
+<h2>Language JSON</h2>
+
+<p>
+	Language JSON expects <code>locales</code> key. The value is JSON object: names are language identifier and values are each language settings (if language is readed from left to right or not and substitutions). The second key is <code>default</code>: define default language. If not specified, the first from <code>locales</code> is used.
+</p>
+
+<pre><code>
+{
+	"default": "en",
+	"locales": {
+		"en": {
+			"isLeftToRight": true,
+			"substitutions": ["en_GB", "en_US"]
+		},
+		"cs": {
+			"isLeftToRight": true,
+			"substitutions": ["cs_CZ", "cs-CZ"]
+		},
+		"es": {
+			"isLeftToRight": true,
+			"substitutions": ["es_ES", "es_MX"]
+		}
+	}
+}
+</code></pre>
