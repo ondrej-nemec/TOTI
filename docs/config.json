@@ -1,7 +1,16 @@
 {
 	"name": "TOTI",
-	"langs": ["en"],
+	"langs": {
+		"en": "English",
+		"cs": "Czech"
+	},
 	"versions": {
 		"v1.0": "v1.0.0"
+	},
+	"social": {
+		"author": "Ondřej Němec",
+		"from": 2021,
+		"icon": "https://raw.githubusercontent.com/ondrej-nemec/TOTI/master/logo.png",
+		"description": "TOTI"
 	}
 }
