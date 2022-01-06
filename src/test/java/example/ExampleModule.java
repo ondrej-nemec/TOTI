@@ -13,7 +13,7 @@ import example.web.controllers.api.SignApiController;
 import toti.Module;
 import toti.Router;
 import toti.application.Task;
-import toti.registr.Registr;
+import toti.registr.Register;
 import toti.url.Link;
 import ji.translator.Translator;
 import ji.common.functions.Env;
@@ -21,7 +21,7 @@ import ji.common.functions.Env;
 public class ExampleModule implements Module {
 
 	@Override
-	public List<Task> initInstances(Env env, Registr registr, Database database, Logger logger) throws Exception {
+	public List<Task> initInstances(Env env, Register registr, Database database, Logger logger) throws Exception {
 		AuditTrail auditTrail = new AuditTrail();
 		ExampleDao dao = new ExampleDao(registr.getService("database", Database.class));
 		

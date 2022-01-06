@@ -24,7 +24,7 @@ import toti.annotations.ParamValidator;
 import toti.annotations.Params;
 import toti.annotations.ParamsValidator;
 import toti.annotations.Secured;
-import toti.registr.Registr;
+import toti.registr.Register;
 import toti.validation.Validator;
 
 public class LoadUrls {
@@ -131,8 +131,8 @@ public class LoadUrls {
 		String validator = m.getAnnotation(Action.class).validator();
 		if (validator.isEmpty()) {
 			return null;
-		} else if (Registr.get().isServicePresent(validator)) {
-			return (o)->Registr.get().getService(validator, Validator.class);
+		} else if (Register.get().isServicePresent(validator)) {
+			return (o)->Register.get().getService(validator, Validator.class);
 		} else {
 			return(o)->Validator.class.cast(o.getClass().getMethod(validator).invoke(o));
 		}

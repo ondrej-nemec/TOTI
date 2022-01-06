@@ -19,7 +19,7 @@ import toti.HttpServer;
 import toti.HttpServerFactory;
 import toti.Module;
 import toti.logging.TotiLogger;
-import toti.registr.Registr;
+import toti.registr.Register;
 import toti.security.User;
 import ji.translator.LanguageSettings;
 import ji.translator.Locale;
@@ -38,13 +38,13 @@ public class Application {
 	
 	public <T extends Module> Application(
 			List<T> modules, 
-			ThrowingBiFunction<String, Registr, User, Exception> userFactory) {
+			ThrowingBiFunction<String, Register, User, Exception> userFactory) {
 		this(modules, userFactory, null);
 	}
 	
 	public <T extends Module> Application(
 			List<T> modules, 
-			ThrowingBiFunction<String, Registr, User, Exception> userFactory,
+			ThrowingBiFunction<String, Register, User, Exception> userFactory,
 			Logger logger) {
 		if (logger == null) {
 			logger = TotiLogger.getLogger("toti");
@@ -73,7 +73,7 @@ public class Application {
 				database = new Database(databaseConfig, TotiLogger.getLogger("database"));
 			}
 			/*** init classes ****/
-			Registr registr = Registr.get();
+			Register registr = Register.get();
 			// registr.addService("database", database);
 			this.server = createServerFactory(env, registr).get(modules, (content)->{
 				return userFactory.apply(content, registr);
@@ -135,7 +135,7 @@ public class Application {
 	
 	/************/
 	
-	public HttpServerFactory createServerFactory(Env env, Registr registr) throws Exception {
+	public HttpServerFactory createServerFactory(Env env, Register registr) throws Exception {
 		HttpServerFactory factory = new HttpServerFactory(logger);
 		if (env != null) {
 			if (env.getString("http.url-pattern") != null) {

@@ -19,7 +19,7 @@ import ji.common.structures.DictionaryValue;
 import ji.common.structures.MapInit;
 import ji.socketCommunication.http.server.RequestParameters;
 import ji.socketCommunication.http.server.UploadedFile;
-import toti.registr.Registr;
+import toti.registr.Register;
 import ji.translator.Translator;
 
 public class Validator {
@@ -32,13 +32,13 @@ public class Validator {
 	
 	public static Validator create(String uniqueName, boolean strictList, BiFunction<Translator, List<String>, String> onStrictListError) {
 		Validator val = new Validator(strictList, onStrictListError);
-		Registr.get().addService(uniqueName, val);
+		Register.get().addService(uniqueName, val);
 		return val;
 	}
 
 	public static Validator create(String uniqueName, boolean strictList) {
 		Validator val = new Validator(strictList);
-		Registr.get().addService(uniqueName, val);
+		Register.get().addService(uniqueName, val);
 		return val;
 	}
 	

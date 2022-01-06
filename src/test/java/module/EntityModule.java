@@ -13,13 +13,13 @@ import module.controllers.api.SignApiController;
 import toti.Module;
 import toti.Router;
 import toti.application.Task;
-import toti.registr.Registr;
+import toti.registr.Register;
 import ji.common.functions.Env;
 
 public class EntityModule implements Module {
 
 	@Override
-	public List<Task> initInstances(Env env, Registr registr, Database database, Logger logger) throws Exception {
+	public List<Task> initInstances(Env env, Register registr, Database database, Logger logger) throws Exception {
 		EntityDao dao = new EntityDaoDatabase(database);
 			
 		registr.addFactory(EntityPageController.class, (trans, iden, athor, authen)->{

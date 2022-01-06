@@ -26,7 +26,7 @@ import ji.socketCommunication.http.server.RestApiServerResponseFactory;
 import ji.socketCommunication.http.server.WebSocket;
 import toti.annotations.Domain;
 import toti.profiler.Profiler;
-import toti.registr.Registr;
+import toti.registr.Register;
 import toti.response.Response;
 import toti.security.Authenticator;
 import toti.security.Authorizator;
@@ -329,7 +329,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			MappedUrl mapped, RequestParameters params,
 			Identity identity) throws ServerException {
 		try {
-			Object o = Registr.get()
+			Object o = Register.get()
 					.getFactory(mapped.getClassName())
 					.apply(translator.withLocale(identity.getLocale()), identity, authorizator, authenticator);
 			/** validation */

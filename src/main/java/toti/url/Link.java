@@ -15,7 +15,7 @@ import ji.common.structures.ThrowingSupplier;
 import toti.Module;
 import toti.annotations.Action;
 import toti.annotations.Controller;
-import toti.registr.Registr;
+import toti.registr.Register;
 import toti.response.Response;
 import toti.url.mock.MockCreator;
 
@@ -41,7 +41,7 @@ public class Link {
 	private final String pattern;
 	
 	private ThrowingFunction<Class<?>, Module, Exception> getModule = (controllerClass)->{
-		String moduleClass = Registr.get()._getFactory(controllerClass.getName())._2();
+		String moduleClass = Register.get()._getFactory(controllerClass.getName())._2();
 		return Module.class.cast(Class.forName(moduleClass).newInstance());
 	};
 	private ThrowingSupplier<Class<?>, Exception> getController = ()->Class.forName(StackTrace.classParent(

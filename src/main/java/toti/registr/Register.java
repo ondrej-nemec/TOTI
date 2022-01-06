@@ -8,18 +8,18 @@ import ji.common.structures.ThrowingSupplier;
 import ji.common.structures.Tuple2;
 import toti.Module;
 
-public class Registr {
+public class Register {
 	
-	private final static Registr registr = new Registr();
+	private final static Register registr = new Register();
 	
-	public static Registr get() {
+	public static Register get() {
 		return registr;
 	}
 	
 	private final Map<String, Tuple2<ControllerFactory, String>> FACTORIES;
 	private final Map<String, Object> SERVICES;
 	
-	private Registr() {
+	private Register() {
 		this.FACTORIES = new HashMap<>();
 		this.SERVICES = new HashMap<>();
 	}
