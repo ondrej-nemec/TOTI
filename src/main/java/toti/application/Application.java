@@ -74,12 +74,12 @@ public class Application {
 			}
 			/*** init classes ****/
 			Registr registr = Registr.get();
-			registr.addService("database", database);
+			// registr.addService("database", database);
 			this.server = createServerFactory(env, registr).get(modules, (content)->{
 				return userFactory.apply(content, registr);
 			});
 			// TODO fix - move to module
-			registr.addService(Translator.class.getName(), server.getTranslator());
+			// registr.addService(Translator.class.getName(), server.getTranslator());
 			for (Module module : modules) {
 				tasks.addAll(module.initInstances(
 					env,
