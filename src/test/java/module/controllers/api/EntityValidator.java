@@ -18,7 +18,7 @@ public class EntityValidator {
 	}
 	
 	public static Validator sub() {
-		return Validator.create("uniq", true)
+		return new Validator(true)
 				.addRule(ItemRules.forName("textinput", true).setMaxLength(5))
 				.addRule(ItemRules.forName("list", true).setMapSpecification(new Validator(true)
 					.addRule(ItemRules.forName("subText", true).setAllowedValues(Arrays.asList("deff")))
@@ -32,7 +32,7 @@ public class EntityValidator {
 	}
 	
 	public static Validator test() {
-		return Validator.create("test", false)
+		return new Validator(false)
 				.addRule(ItemRules.forName("html-list", true).setListSpecification(new Validator(
 					ItemRules.defaultRule().setType(Integer.class)
 				)))
@@ -108,7 +108,7 @@ public class EntityValidator {
 	}
 	
 	public static Validator getGridValidator() {
-		return Validator.create(NAME_GRID, true)
+		return new Validator(true)
 			.addRule(ItemRules.forName("pageIndex", true))
 			.addRule(ItemRules.forName("pageSize", true))
 			.addRule(ItemRules.forName("filters", true).setMapSpecification(new Validator(true)
@@ -137,7 +137,7 @@ public class EntityValidator {
 	}
 	
 	public static Validator getFormValidator() {
-		return Validator.create(NAME_FORM, true) // TODO validator
+		return new Validator(true) // TODO validator
 				.addRule(ItemRules.forName("id", false).setType(Integer.class))
 				.addRule(ItemRules.forName("name", true).setType(String.class).setMaxLength(50))
 				.addRule(ItemRules.forName("secret", true).setType(String.class).setMaxLength(20))

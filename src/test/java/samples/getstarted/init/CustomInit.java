@@ -25,12 +25,11 @@ public class CustomInit {
 		List<Task> tasks = new LinkedList<>();
 		try {
 			HttpServer server = new HttpServerFactory(logger).get(modules);
-			Register register = Register.get();
 			for (Module module : modules) {
 				tasks.addAll(module.initInstances(
 					env,
 					server.getTranslator(),
-					register,
+					server.getRegister(),
 					database,
 					logger
 				));

@@ -10,13 +10,6 @@ import toti.Module;
 
 public class Register {
 	
-	private final static Register registr = new Register();
-	
-	@Deprecated
-	public static Register get() {
-		return registr;
-	}
-	
 	private final Map<String, Tuple2<ControllerFactory, String>> FACTORIES;
 	private final Map<String, Object> SERVICES;
 	

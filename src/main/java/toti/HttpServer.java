@@ -20,8 +20,8 @@ import toti.security.AuthenticationCache;
 import toti.security.Authenticator;
 import toti.security.Authorizator;
 import toti.security.IdentityFactory;
-import toti.security.User;
 import toti.templating.TemplateFactory;
+import toti.url.Link;
 import ji.translator.LanguageSettings;
 import ji.translator.Translator;
 import ji.common.functions.Hash;
@@ -39,6 +39,7 @@ public class HttpServer {
 			int threadPool,
     		long readTimeout,
     		ResponseHeaders headers, // TODO only list ??
+    		String urlPattern,
     		Optional<SslCredentials> certs,
     		String tempPath,
     		List<T> modules,
@@ -55,9 +56,10 @@ public class HttpServer {
     		boolean dirResponseAllowed,
     		boolean minimalize,
     		List<String> developIps,
-    		boolean useProfiler,
-    		Register register) throws Exception {
-		this.register = register;
+    		boolean useProfiler) throws Exception {
+		this.register = new Register();
+		Link.init(urlPattern, register); // TODO not static ??
+		
 		Profiler profiler = new Profiler();
 		profiler.setUse(useProfiler);
 		if (useProfiler) {

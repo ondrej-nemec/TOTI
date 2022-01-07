@@ -8,8 +8,6 @@ import java.util.Optional;
 
 import ji.common.Logger;
 import ji.socketCommunication.SslCredentials;
-import toti.registr.Register;
-import toti.url.Link;
 import ji.translator.LanguageSettings;
 import ji.translator.Translator;
 
@@ -47,16 +45,14 @@ public class HttpServerFactory {
 	}
 	
 	public <T extends Module> HttpServer get(List<T> modules) throws Exception {
-		Register register = Register.get(); // TODO new Register();
-		Link.init(urlPattern, register); // TODO not static ??
 		return new HttpServer(
-				port, threadPool, readTimeout, headers,
+				port, threadPool, readTimeout, headers, urlPattern,
 				certs, tempPath, modules, resourcesPath,
 				translator,
 				maxUploadFileSize, allowedUploadFileTypes,
 				charset, settings, tokenCustomSalt, tokenExpirationTime,
 				logger, deleteTempJavaFiles, dirResponseAllowed, minimalize,
-				developIps, useProfiler, register
+				developIps, useProfiler
 		);
 	}
 

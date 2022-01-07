@@ -18,7 +18,7 @@ public class ExampleValidator {
 	}
 
 	public static Validator getGridValidator() {
-		return Validator.create(NAME_GRID, true)
+		return new Validator(true)
 			.addRule(ItemRules.forName("pageIndex", true))
 			.addRule(ItemRules.forName("pageSize", true))
 			.addRule(ItemRules.forName("filters", true).setMapSpecification(new Validator(true)
@@ -46,7 +46,7 @@ public class ExampleValidator {
 	}
 	
 	public static Validator getFormValidator() {
-		return Validator.create(NAME_FORM, false) // TODO validator
+		return new Validator(false) // TODO validator
 				/*.addRule(ItemRules.forName("id", false).setType(Integer.class))
 				.addRule(ItemRules.forName("name", false).setType(String.class))
 				.addRule(ItemRules.forName("email", false).setType(String.class))
@@ -90,7 +90,7 @@ public class ExampleValidator {
 	}
 	
 	private static void getTestValidator() {
-		Validator.create(TEST, false)
+		new Validator(false)
 			.addRule(ItemRules.forName("list", false)
 				.setListSpecification(new Validator(ItemRules.defaultRule().setType(String.class)
 					.setAllowedValues(Arrays.asList("A1", "A2", "A3"))

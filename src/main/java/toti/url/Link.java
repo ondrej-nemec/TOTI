@@ -30,7 +30,7 @@ public class Link {
 
 	private static String patternCache = null;
 	private static Register register = null;
-	
+
 	public static Link get() {
 		return new Link(patternCache);
 	}
