@@ -15,6 +15,7 @@ import ji.files.text.Text;
 import ji.files.text.basic.ReadText;
 import ji.socketCommunication.SslCredentials;
 import toti.logging.TotiLogger;
+import toti.registr.Register;
 import ji.translator.LanguageSettings;
 import ji.translator.Locale;
 import ji.translator.Translator;
@@ -22,8 +23,6 @@ import ji.translator.Translator;
 public class Application {
 	
 	public static String APP_CONFIG_FILE = "conf/app.properties";
-	
-	public static final String USER_SECURITY_SERVICE = "user-security-service";
 	
 	private HttpServer server;
 	private Database database;
@@ -73,6 +72,10 @@ public class Application {
 	
 	public Translator getTranslator() {
 		return server.getTranslator();
+	}
+	
+	public Register getRegister() {
+		return server.getRegister();
 	}
 	
 	public void start() {
