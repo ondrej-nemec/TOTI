@@ -13,6 +13,7 @@ import toti.annotations.Param;
 import toti.annotations.Secured;
 import toti.authentication.AuthentizationException;
 import toti.security.Identity;
+import toti.security.User;
 import toti.response.Response;
 
 @Controller("sign")
@@ -31,7 +32,7 @@ public class SignApiController {
 	@Action("in")
 	public Response login(@Param("username") String username) {
 		try {
-			return generateToken(username);
+			return generateToken(authenticator.login(new User(username, null), identity));
 		} catch (Exception e) {
 			return Response.getJson(StatusCode.INTERNAL_SERVER_ERROR, new HashMap<>());
 		}
@@ -49,22 +50,20 @@ public class SignApiController {
 	@Action("refresh")
 	@Secured // own active token used
 	public Response refresh() {
-		return generateToken(identity.getContent());
-	}
-	
-	private Response generateToken(String username) {
 		try {
-			String bearer = authenticator.login(username, identity);
-			Map<String, Object> json = new HashMap<>();
-			json.put("access_token", bearer);
-			json.put("token_type", "bearer");
-			json.put("refresh_token", bearer);
-			json.put("expires_in", authenticator.getExpirationTime());
-			return Response.getJson(json);
+			return generateToken(authenticator.refresh(identity));
 		} catch (AuthentizationException e) {
-			e.printStackTrace();
 			return Response.getJson(StatusCode.INTERNAL_SERVER_ERROR, new HashMap<>());
 		}
+	}
+	
+	private Response generateToken(String bearer) {
+		Map<String, Object> json = new HashMap<>();
+		json.put("access_token", bearer);
+		json.put("token_type", "bearer");
+		json.put("refresh_token", bearer);
+		json.put("expires_in", authenticator.getExpirationTime());
+		return Response.getJson(json);
 	}
 
 }

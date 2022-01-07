@@ -9,7 +9,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import ji.common.Logger;
-import ji.common.structures.ThrowingFunction;
 import ji.socketCommunication.Server;
 import ji.socketCommunication.SslCredentials;
 import toti.logging.TotiLogger;
@@ -17,6 +16,7 @@ import ji.database.Database;
 import ji.socketCommunication.http.server.RestApiServer;
 import toti.profiler.Profiler;
 import toti.registr.Register;
+import toti.security.AuthenticationCache;
 import toti.security.Authenticator;
 import toti.security.Authorizator;
 import toti.security.IdentityFactory;
@@ -42,7 +42,6 @@ public class HttpServer {
     		Optional<SslCredentials> certs,
     		String tempPath,
     		List<T> modules,
-    		ThrowingFunction<String, User, Exception> userFactory,
     		String resourcesPath,
     		Translator translator,
     		int maxUploadFileSize,
@@ -95,7 +94,7 @@ public class HttpServer {
 		if (translator == null) {
 			translator = Translator.create(settings, trans, TotiLogger.getLogger("translator"));
 		}
-	//	AuthenticationCache authenticationCache = new AuthenticationCache(tempPath, false); // TODO enable??
+		AuthenticationCache authenticationCache = new AuthenticationCache(tempPath, false, logger); // TODO enable??
 		this.translator = translator;
 		this.response = new ResponseFactory(
 				headers,
@@ -105,7 +104,7 @@ public class HttpServer {
 				totiTemplateFactory,
 				translator,
 				new IdentityFactory(translator, translator.getLocale().getLang()/*defLang, authenticationCache*/),
-				new Authenticator(tokenExpiration, tokenCustomSalt, userFactory, /*authenticationCache,*/ new Hash("SHA-256"), logger),
+				new Authenticator(tokenExpiration, tokenCustomSalt, authenticationCache, new Hash("SHA-256"), logger),
 				new Authorizator(logger),
 				charset,
 				dirResponseAllowed,

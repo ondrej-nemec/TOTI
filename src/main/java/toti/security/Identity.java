@@ -9,15 +9,13 @@ public class Identity {
 	private final String IP;
 	private final Locale locale;
 	private final Properties requestHeaders;
-	private String token;
+	private String token; // full session string
 	private final boolean isApiAllowed; // resolved with token
 
 	private String pageId;
 	
-	private String id;
-	private long expired;
-	@Deprecated
-	private String content; // content saved in token
+	private String id; // id from token
+	private long expired; // range, how long will be active
 	private User user; // user loaded from cache
 	
 	protected Identity(String IP, Locale locale, Properties requestHeaders, String token, boolean isApiAllowed) {
@@ -28,18 +26,16 @@ public class Identity {
 		this.token = token;
 	}
 	
-	protected void setUser(String id, long expired, String content, User user) {
+	protected void setUser(String id, long expired, User user) {
 		this.id = id;
 		this.expired = expired;
-		this.content = content;
 		this.user = user;
 	}
 	
-	protected void loginUser(String token, String id, long expired, String content, User user) {
+	protected void loginUser(String token, String id, long expired, User user) {
 		this.token = token;
 		this.id = id;
 		this.expired = expired;
-		this.content = content;
 		this.user = user;
 	}
 	
@@ -55,7 +51,6 @@ public class Identity {
 		this.token = null;
 		this.id = null;
 		this.expired = -1;
-		this.content = null;
 		this.user = null;
 	}
 	
@@ -96,11 +91,7 @@ public class Identity {
 	public Locale getLocale() {
 		return locale;
 	}
-	
-	public String getContent() {
-		return content;
-	}
-	
+
 	public boolean isApiAllowed() {
 		return isApiAllowed;
 	}
@@ -108,7 +99,7 @@ public class Identity {
 	@Override
 	public String toString() {
 		return "Identity [IP=" + IP + ", locale=" + locale + ", token=" + token
-				+ ", isApiAllowed=" + isApiAllowed + ", id=" + id + ", expired=" + expired + ", content=" + content
+				+ ", isApiAllowed=" + isApiAllowed + ", id=" + id + ", expired=" + expired //+ ", content=" + content
 				+ ", user=" + user + ", requestHeaders=" + requestHeaders + "]";
 	}
 

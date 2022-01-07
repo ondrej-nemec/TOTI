@@ -9,7 +9,6 @@ import ji.common.functions.Env;
 import ji.common.functions.InputStreamLoader;
 import ji.common.structures.DictionaryValue;
 import ji.common.structures.MapDictionary;
-import ji.common.structures.ThrowingBiFunction;
 import ji.database.Database;
 import ji.database.DatabaseConfig;
 import ji.files.text.Text;
@@ -19,8 +18,6 @@ import toti.HttpServer;
 import toti.HttpServerFactory;
 import toti.Module;
 import toti.logging.TotiLogger;
-import toti.registr.Register;
-import toti.security.User;
 import ji.translator.LanguageSettings;
 import ji.translator.Locale;
 import ji.translator.Translator;
@@ -36,16 +33,11 @@ public class Application {
 	private final List<Task> tasks = new LinkedList<>();
 	private final Logger logger;
 	
-	public <T extends Module> Application(
-			List<T> modules, 
-			ThrowingBiFunction<String, Register, User, Exception> userFactory) {
-		this(modules, userFactory, null);
+	public <T extends Module> Application(List<T> modules) {
+		this(modules, null);
 	}
 	
-	public <T extends Module> Application(
-			List<T> modules, 
-			ThrowingBiFunction<String, Register, User, Exception> userFactory,
-			Logger logger) {
+	public <T extends Module> Application(List<T> modules, Logger logger) {
 		if (logger == null) {
 			logger = TotiLogger.getLogger("toti");
 		}
@@ -73,18 +65,16 @@ public class Application {
 				database = new Database(databaseConfig, TotiLogger.getLogger("database"));
 			}
 			/*** init classes ****/
-			Register registr = Register.get();
+			//Register registr = Register.get();
 			// registr.addService("database", database);
-			this.server = createServerFactory(env, registr).get(modules, (content)->{
-				return userFactory.apply(content, registr);
-			});
+			this.server = createServerFactory(env).get(modules);
 			// TODO fix - move to module
 			// registr.addService(Translator.class.getName(), server.getTranslator());
 			for (Module module : modules) {
 				tasks.addAll(module.initInstances(
 					env,
 					server.getTranslator(),
-					registr,
+					server.getRegister(),
 					database,
 					TotiLogger.getLogger(module.getName())
 				));
@@ -135,7 +125,7 @@ public class Application {
 	
 	/************/
 	
-	public HttpServerFactory createServerFactory(Env env, Register registr) throws Exception {
+	public HttpServerFactory createServerFactory(Env env) throws Exception {
 		HttpServerFactory factory = new HttpServerFactory(logger);
 		if (env != null) {
 			if (env.getString("http.url-pattern") != null) {
