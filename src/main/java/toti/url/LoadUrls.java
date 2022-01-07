@@ -29,16 +29,16 @@ import toti.validation.Validator;
 
 public class LoadUrls {
 
-	public static MapDictionary<UrlPart, Object> loadUrlMap(List<Module> modules, Router router) throws Exception {
+	public static MapDictionary<UrlPart, Object> loadUrlMap(List<Module> modules, Router router, Register register) throws Exception {
 		MapDictionary<UrlPart, Object> mapped = MapDictionary.hashMap();
 		for (Module module : modules) {
-			map(mapped, FilesList.get(module.getControllersPath(), true).getFiles(), module);
+			map(mapped, FilesList.get(module.getControllersPath(), true).getFiles(), module, register);
 			module.addRoutes(router);
 		}
 	    return mapped;
 	}
 	
-	private static void map(MapDictionary<UrlPart, Object> mapped, List<String> files, Module module) throws Exception {
+	private static void map(MapDictionary<UrlPart, Object> mapped, List<String> files, Module module, Register register) throws Exception {
 		String moduleName = module.getName();
 		String folder = module.getControllersPath();
 		for (String file : files) {
@@ -78,7 +78,7 @@ public class LoadUrls {
 		    					moduleName, controllerUrl, methodUrl, path,
 		    					className, methodName,
 		    					ArrayUtils.addAll(classDomains, methodDomains), isApi,
-		    					getValidator(m)
+		    					getValidator(m, register)
 		    			);
 		    			List<UrlParam> linkParams = new LinkedList<>();
 		    			for (Parameter p : m.getParameters()) {
@@ -127,12 +127,12 @@ public class LoadUrls {
 	    }
 	}
 			
-	private static ThrowingFunction<Object, Validator, Exception> getValidator(java.lang.reflect.Method m) throws Exception {
+	private static ThrowingFunction<Object, Validator, Exception> getValidator(java.lang.reflect.Method m, Register register) throws Exception {
 		String validator = m.getAnnotation(Action.class).validator();
 		if (validator.isEmpty()) {
 			return null;
-		} else if (Register.get().isServicePresent(validator)) {
-			return (o)->Register.get().getService(validator, Validator.class);
+		} else if (register.isServicePresent(validator)) {
+			return (o)->register.getService(validator, Validator.class);
 		} else {
 			return(o)->Validator.class.cast(o.getClass().getMethod(validator).invoke(o));
 		}

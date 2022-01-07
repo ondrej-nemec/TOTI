@@ -43,6 +43,7 @@ import ji.translator.Translator;
 
 public class ResponseFactory implements RestApiServerResponseFactory {
 	
+	private final Register register;
 	private final ResponseHeaders responseHeaders;
 	private final String charset;
 	private final boolean dirResponseAllowed;
@@ -77,7 +78,10 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			String charset,
 			boolean dirResponseAllowed,
 			List<String> developIps,
-			Logger logger, Profiler profiler) throws Exception {
+			Logger logger,
+			Profiler profiler,
+			Register register) throws Exception {
+		this.register = register;
 		this.resourcesDir = resourcesDir;
 		this.charset = charset;
 		this.translator = translator;
@@ -96,7 +100,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	}
 
 	public void map(List<Module> modules) throws Exception {
-		this.mapping = LoadUrls.loadUrlMap(modules, router); // TODO get in constructor
+		this.mapping = LoadUrls.loadUrlMap(modules, router, register); // TODO get in constructor
 	}
 	
 	@Override
@@ -329,7 +333,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			MappedUrl mapped, RequestParameters params,
 			Identity identity) throws ServerException {
 		try {
-			Object o = Register.get()
+			Object o = register
 					.getFactory(mapped.getClassName())
 					.apply(translator.withLocale(identity.getLocale()), identity, authorizator, authenticator);
 			/** validation */

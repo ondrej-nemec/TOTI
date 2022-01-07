@@ -16,6 +16,7 @@ import toti.logging.TotiLogger;
 import ji.database.Database;
 import ji.socketCommunication.http.server.RestApiServer;
 import toti.profiler.Profiler;
+import toti.registr.Register;
 import toti.security.Authenticator;
 import toti.security.Authorizator;
 import toti.security.IdentityFactory;
@@ -31,6 +32,7 @@ public class HttpServer {
 	private final ResponseFactory response;
 	private final Translator translator;
 	private final List<Module> modules;
+	private final Register register;
 	
 	public <T extends Module> HttpServer(
 			int port,
@@ -54,7 +56,9 @@ public class HttpServer {
     		boolean dirResponseAllowed,
     		boolean minimalize,
     		List<String> developIps,
-    		boolean useProfiler) throws Exception {
+    		boolean useProfiler,
+    		Register register) throws Exception {
+		this.register = register;
 		Profiler profiler = new Profiler();
 		profiler.setUse(useProfiler);
 		if (useProfiler) {
@@ -107,7 +111,8 @@ public class HttpServer {
 				dirResponseAllowed,
 				developIps,
 				logger,
-				profiler
+				profiler,
+				register
 		);
 				
 		this.server = Server.createWebServer(
@@ -121,6 +126,10 @@ public class HttpServer {
 				charset,
 				logger
 		);
+	}
+	
+	public Register getRegister() {
+		return register;
 	}
 	
 	public Translator getTranslator() {

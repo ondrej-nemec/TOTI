@@ -17,7 +17,6 @@ import module.EntityModule;
 import toti.HttpServerFactory;
 import toti.application.Application;
 import toti.logging.TotiLogger;
-import toti.registr.Register;
 import toti.security.Action;
 import toti.security.User;
 import toti.security.permissions.Permissions;
@@ -56,7 +55,7 @@ public class BootstrapEndToEndTest {
 			}) {
 				
 				@Override
-				public HttpServerFactory createServerFactory(Env env, Register registr) throws Exception {
+				public HttpServerFactory createServerFactory(Env env) throws Exception {
 					HttpServerFactory factory = new HttpServerFactory(TotiLogger.getLogger("toti"));
 					factory.setPort(81);
 					factory.setThreadPool(10);

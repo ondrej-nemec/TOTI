@@ -16,6 +16,7 @@ public class Identity {
 	
 	private String id;
 	private long expired;
+	@Deprecated
 	private String content; // content saved in token
 	private User user; // user loaded from cache
 	

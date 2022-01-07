@@ -9,6 +9,7 @@ import java.util.Optional;
 import ji.common.Logger;
 import ji.common.structures.ThrowingFunction;
 import ji.socketCommunication.SslCredentials;
+import toti.registr.Register;
 import toti.security.User;
 import toti.url.Link;
 import ji.translator.LanguageSettings;
@@ -48,7 +49,8 @@ public class HttpServerFactory {
 	}
 	
 	public <T extends Module> HttpServer get(List<T> modules, ThrowingFunction<String, User, Exception> userFactory) throws Exception {
-		Link.init(urlPattern);
+		Register register = Register.get(); // TODO new Register();
+		Link.init(urlPattern, register); // TODO not static ??
 		return new HttpServer(
 				port, threadPool, readTimeout, headers,
 				certs, tempPath, modules, userFactory, resourcesPath,
@@ -56,7 +58,7 @@ public class HttpServerFactory {
 				maxUploadFileSize, allowedUploadFileTypes,
 				charset, settings, tokenCustomSalt, tokenExpirationTime,
 				logger, deleteTempJavaFiles, dirResponseAllowed, minimalize,
-				developIps, useProfiler
+				developIps, useProfiler, register
 		);
 	}
 

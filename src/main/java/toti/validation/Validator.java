@@ -19,8 +19,8 @@ import ji.common.structures.DictionaryValue;
 import ji.common.structures.MapInit;
 import ji.socketCommunication.http.server.RequestParameters;
 import ji.socketCommunication.http.server.UploadedFile;
-import toti.registr.Register;
 import ji.translator.Translator;
+import toti.registr.Register;
 
 public class Validator {
 	
@@ -30,12 +30,14 @@ public class Validator {
 	private final BiFunction<Translator, List<String>, String> onStrictListError;
 	private Optional<GlobalFunction> globalFunc = Optional.empty();
 	
+	@Deprecated
 	public static Validator create(String uniqueName, boolean strictList, BiFunction<Translator, List<String>, String> onStrictListError) {
 		Validator val = new Validator(strictList, onStrictListError);
 		Register.get().addService(uniqueName, val);
 		return val;
 	}
 
+	@Deprecated
 	public static Validator create(String uniqueName, boolean strictList) {
 		Validator val = new Validator(strictList);
 		Register.get().addService(uniqueName, val);

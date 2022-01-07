@@ -29,19 +29,21 @@ public class Link {
 	public final static String PARAM = "[param]";
 
 	private static String patternCache = null;
+	private static Register register = null;
 	
 	public static Link get() {
 		return new Link(patternCache);
 	}
 
-	public static void init(String pattern) {
+	public static void init(String pattern, Register reg) {
 		patternCache = pattern;
+		register = reg;
 	}
 
 	private final String pattern;
 	
 	private ThrowingFunction<Class<?>, Module, Exception> getModule = (controllerClass)->{
-		String moduleClass = Register.get()._getFactory(controllerClass.getName())._2();
+		String moduleClass = register._getFactory(controllerClass.getName())._2();
 		return Module.class.cast(Class.forName(moduleClass).newInstance());
 	};
 	private ThrowingSupplier<Class<?>, Exception> getController = ()->Class.forName(StackTrace.classParent(
