@@ -15,13 +15,7 @@ public interface Module {
 	
 	String getControllersPath();
 
-	@Deprecated
-	List<Task> initInstances(Env env, Register registr, Database database, Logger logger) throws Exception;
-
-	default List<Task> initInstances(Env env, Translator translator, Register registr, Database database, Logger logger) throws Exception {
-		// TODO remove default
-		return initInstances(env, registr, database, logger);
-	}
+	List<Task> initInstances(Env env, Translator translator, Register registr, Database database, Logger logger) throws Exception;
 	
 	default void addRoutes(Router router) {}
 	

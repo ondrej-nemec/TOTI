@@ -1,4 +1,4 @@
-package toti.application;
+package toti;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -14,9 +14,6 @@ import ji.database.DatabaseConfig;
 import ji.files.text.Text;
 import ji.files.text.basic.ReadText;
 import ji.socketCommunication.SslCredentials;
-import toti.HttpServer;
-import toti.HttpServerFactory;
-import toti.Module;
 import toti.logging.TotiLogger;
 import ji.translator.LanguageSettings;
 import ji.translator.Locale;
@@ -30,7 +27,6 @@ public class Application {
 	
 	private HttpServer server;
 	private Database database;
-	private final List<Task> tasks = new LinkedList<>();
 	private final Logger logger;
 	
 	public <T extends Module> Application(List<T> modules) {
@@ -39,7 +35,7 @@ public class Application {
 	
 	public <T extends Module> Application(List<T> modules, Logger logger) {
 		if (logger == null) {
-			logger = TotiLogger.getLogger("toti");
+			logger = TotiLogger.getLogger("totiServer");
 		}
 		this.logger = logger;
 		logger.info("Initialization...");
@@ -64,21 +60,8 @@ public class Application {
 			} else {
 				database = new Database(databaseConfig, TotiLogger.getLogger("database"));
 			}
-			/*** init classes ****/
-			//Register registr = Register.get();
-			// registr.addService("database", database);
-			this.server = createServerFactory(env).get(modules);
-			// TODO fix - move to module
-			// registr.addService(Translator.class.getName(), server.getTranslator());
-			for (Module module : modules) {
-				tasks.addAll(module.initInstances(
-					env,
-					server.getTranslator(),
-					server.getRegister(),
-					database,
-					TotiLogger.getLogger(module.getName())
-				));
-			}
+			/*** init class ****/
+			this.server = createServerFactory(env).get(modules, env, database);
 		} catch (Exception e) {
 			logger.error("Start failed", e);
 			System.exit(1);
@@ -98,9 +81,6 @@ public class Application {
 			if (database != null) {
 				database.createDbAndMigrate();
 			}
-			for (Task task : tasks) {
-				task.start();
-			}
 			server.start();
 		} catch (Exception e) {
 			logger.error("Start failed", e);
@@ -112,9 +92,6 @@ public class Application {
 	public void stop() {
 		logger.info("Stopping...");
 		try {
-			for (Task task : tasks) {
-				task.stop();
-			}
 			server.stop();
 		} catch (Exception e) {
 			logger.error("Stoped with failure", e);
@@ -126,7 +103,7 @@ public class Application {
 	/************/
 	
 	public HttpServerFactory createServerFactory(Env env) throws Exception {
-		HttpServerFactory factory = new HttpServerFactory(logger);
+		HttpServerFactory factory = new HttpServerFactory();
 		if (env != null) {
 			if (env.getString("http.url-pattern") != null) {
 				factory.setUrlPattern(env.getString("http.url-pattern"));

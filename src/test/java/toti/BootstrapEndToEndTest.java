@@ -15,8 +15,6 @@ import ji.files.text.Text;
 import ji.files.text.basic.ReadText;
 import module.EntityModule;
 import toti.HttpServerFactory;
-import toti.application.Application;
-import toti.logging.TotiLogger;
 import ji.translator.LanguageSettings;
 import ji.translator.Locale;
 
@@ -33,7 +31,7 @@ public class BootstrapEndToEndTest {
 				
 				@Override
 				public HttpServerFactory createServerFactory(Env env) throws Exception {
-					HttpServerFactory factory = new HttpServerFactory(TotiLogger.getLogger("toti"));
+					HttpServerFactory factory = new HttpServerFactory();
 					factory.setPort(81);
 					factory.setThreadPool(10);
 					factory.setReadTimeout(60000);

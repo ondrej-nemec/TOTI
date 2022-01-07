@@ -5,6 +5,7 @@ import java.util.List;
 import ji.common.Logger;
 import ji.common.functions.Env;
 import ji.database.Database;
+import ji.translator.Translator;
 import toti.Module;
 import toti.application.Task;
 import toti.registr.Register;
@@ -22,7 +23,7 @@ public class TestingModule implements Module {
 	}
 
 	@Override
-	public List<Task> initInstances(Env env, Register registr, Database database, Logger logger) throws Exception {
+	public List<Task> initInstances(Env env, Translator translator, Register registr, Database database, Logger logger) throws Exception {
 		registr.addFactory(TestingController.class, (a, b, c, d)->new TestingController());
 		return null;
 	}

@@ -1,15 +1,37 @@
 package toti;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import ji.common.Logger;
+import ji.common.functions.Env;
+import ji.common.functions.Hash;
+import ji.common.structures.MapDictionary;
+import ji.database.Database;
+import ji.socketCommunication.Server;
 import ji.socketCommunication.SslCredentials;
+import ji.socketCommunication.http.server.RestApiServer;
 import ji.translator.LanguageSettings;
 import ji.translator.Translator;
+import toti.application.Task;
+import toti.logging.TotiLogger;
+import toti.profiler.Profiler;
+import toti.registr.Register;
+import toti.security.AuthenticationCache;
+import toti.security.Authenticator;
+import toti.security.Authorizator;
+import toti.security.IdentityFactory;
+import toti.templating.TemplateFactory;
+import toti.url.Link;
+import toti.url.LoadUrls;
+import toti.url.UrlPart;
 
 public class HttpServerFactory {
 	
@@ -19,7 +41,6 @@ public class HttpServerFactory {
 	));
 	
 	private Translator translator;
-	private final Logger logger;
 	
 	private int port = 80;
 	private int threadPool = 5;
@@ -40,22 +61,97 @@ public class HttpServerFactory {
 	private boolean useProfiler = false;
 	private String urlPattern = "/[module]</[path]>/[controller]/[method]</[param]>";
 	
-	public HttpServerFactory(Logger logger) {
-		this.logger = logger;
-	}
+	public HttpServerFactory() {}
 	
-	public <T extends Module> HttpServer get(List<T> modules) throws Exception {
-		return new HttpServer(
-				port, threadPool, readTimeout, headers, urlPattern,
-				certs, tempPath, modules, resourcesPath,
+	public <T extends Module> HttpServer get(List<T> modules, Env env, Database database) throws Exception {
+		// maybe more - separated - loggers??
+		Logger logger = TotiLogger.getLogger("totiServer");
+		
+		Register register = new Register();
+		Link.init(urlPattern, register); // TODO not static ??
+		Router router = new Router();
+		
+		Map<String, TemplateFactory> templateFactories = new HashMap<>();
+		Set<String> trans = new HashSet<>();
+		List<Task> tasks = new LinkedList<>();
+		if (translator == null) {
+			this.translator = Translator.create(settings, trans, TotiLogger.getLogger("translator"));
+		}
+		MapDictionary<UrlPart, Object> mapping = MapDictionary.hashMap();
+		for (Module module : modules) {
+			TemplateFactory templateFactory = new TemplateFactory(
+					tempPath,
+					module.getTemplatesPath(),
+					module.getName(), 
+					templateFactories, 
+					deleteTempJavaFiles,
+					minimalize,
+					logger
+			);
+			templateFactories.put(module.getName(), templateFactory);
+			if (module.getTranslationPath() != null) {
+				trans.add(module.getTranslationPath());
+			}
+			tasks.addAll(
+				module.initInstances(env, translator, register, database, TotiLogger.getLogger(module.getName()))
+			);
+			LoadUrls.loadUrlMap(mapping, module, router, register);
+			module.addRoutes(router);
+		};
+		ResponseFactory response = new ResponseFactory(
+				headers,
+				resourcesPath,
+				router,
+				templateFactories,
+				new TemplateFactory(
+					tempPath, "toti/web", "", templateFactories,
+					deleteTempJavaFiles, minimalize,
+					logger
+				),
 				translator,
-				maxUploadFileSize, allowedUploadFileTypes,
-				charset, settings, tokenCustomSalt, tokenExpirationTime,
-				logger, deleteTempJavaFiles, dirResponseAllowed, minimalize,
-				developIps, useProfiler
+				new IdentityFactory(translator, translator.getLocale().getLang()),
+				new Authenticator(
+					tokenExpirationTime, tokenCustomSalt, 
+					new AuthenticationCache(tempPath, false, logger),
+					new Hash("SHA-256"),
+					logger
+				),
+				new Authorizator(logger),
+				charset,
+				dirResponseAllowed,
+				developIps,
+				logger,
+				this.initProfiler(),
+				register,
+				mapping
 		);
+		Server server = Server.createWebServer(
+				port,
+				threadPool,
+				readTimeout,
+				response,
+				certs,
+				maxUploadFileSize,
+				allowedUploadFileTypes,
+				charset,
+				logger
+		);
+		return new HttpServer(server, tasks, translator, register);
 	}
 
+	private Profiler initProfiler() {
+		Profiler profiler = new Profiler();
+		profiler.setUse(useProfiler);
+		if (useProfiler) {
+			Database.PROFILER = profiler;
+			RestApiServer.PROFILER = profiler;
+			LanguageSettings.PROFILER = profiler;
+		}
+		return profiler;
+	}
+
+	/****************************/
+	
 	public HttpServerFactory setDirResponseAllowed(boolean dirResponseAllowed) {
 		this.dirResponseAllowed = dirResponseAllowed;
 		return this;

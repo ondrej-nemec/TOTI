@@ -5,6 +5,7 @@ import java.util.List;
 
 import ji.common.Logger;
 import ji.database.Database;
+import ji.translator.Translator;
 import module.controllers.EntityPageController;
 import module.controllers.api.EntityApiController;
 import module.controllers.api.EntityDao;
@@ -19,7 +20,7 @@ import ji.common.functions.Env;
 public class EntityModule implements Module {
 
 	@Override
-	public List<Task> initInstances(Env env, Register registr, Database database, Logger logger) throws Exception {
+	public List<Task> initInstances(Env env, Translator translator, Register registr, Database database, Logger logger) throws Exception {
 		EntityDao dao = new EntityDaoDatabase(database);
 			
 		registr.addFactory(EntityPageController.class, (trans, iden, athor, authen)->{

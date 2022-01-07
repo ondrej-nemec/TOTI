@@ -28,7 +28,7 @@ import toti.registr.Register;
 import toti.validation.Validator;
 
 public class LoadUrls {
-
+/*
 	public static MapDictionary<UrlPart, Object> loadUrlMap(List<Module> modules, Router router, Register register) throws Exception {
 		MapDictionary<UrlPart, Object> mapped = MapDictionary.hashMap();
 		for (Module module : modules) {
@@ -36,6 +36,11 @@ public class LoadUrls {
 			module.addRoutes(router);
 		}
 	    return mapped;
+	}
+*/
+	
+	public static void loadUrlMap(MapDictionary<UrlPart, Object> mapped, Module module, Router router, Register register) throws Exception {
+		map(mapped, FilesList.get(module.getControllersPath(), true).getFiles(), module, register);
 	}
 	
 	private static void map(MapDictionary<UrlPart, Object> mapped, List<String> files, Module module, Register register) throws Exception {

@@ -36,7 +36,6 @@ import toti.security.exceptions.AccessDeniedException;
 import toti.security.exceptions.NotAllowedActionException;
 import toti.templating.DirectoryTemplate;
 import toti.templating.TemplateFactory;
-import toti.url.LoadUrls;
 import toti.url.MappedUrl;
 import toti.url.UrlPart;
 import ji.translator.Translator;
@@ -50,7 +49,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private final Logger logger;
 	private final List<String> developIps;
 	
-	private /* final */ MapDictionary<UrlPart, Object> mapping;	
+	private final MapDictionary<UrlPart, Object> mapping;	
 	private final String resourcesDir;
 	private final Router router;
 	
@@ -80,7 +79,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			List<String> developIps,
 			Logger logger,
 			Profiler profiler,
-			Register register) throws Exception {
+			Register register,
+			MapDictionary<UrlPart, Object> mapping) throws Exception {
 		this.register = register;
 		this.resourcesDir = resourcesDir;
 		this.charset = charset;
@@ -97,10 +97,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		this.developIps = developIps;
 	//	this.dbViewer = new DbViewerRouter();
 		this.profiler = profiler;
-	}
-
-	public void map(List<Module> modules) throws Exception {
-		this.mapping = LoadUrls.loadUrlMap(modules, router, register); // TODO get in constructor
+		this.mapping = mapping;
 	}
 	
 	@Override
