@@ -2,6 +2,14 @@
 <head>
 </head>
 <body>
-  <iframe src="https://ondrej-nemec.github.io/doc/index.html" width="100%" height="100%" style="border: none"></iframe>
+  <iframe src="" width="100%" height="100%" style="border: none" id="frame"></iframe>
+  <script type="text/javascript">
+  	var frame = document.getElementById("frame");
+  	if (window.location.host === 'localhost') {
+  		frame.setAttribute("src", "http://localhost/linkedPages/personal-page/doc/index.html");
+  	} else {
+  		frame.setAttribute("src", "https://ondrej-nemec.github.io/doc/index.html");
+  	}
+  </script>
 </body>
 </html>
