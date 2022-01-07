@@ -9,7 +9,12 @@
 	},
 	{
 		"title": "Get Started",
-		"sub": []
+		"sub": [
+			{
+				"title": "Initialization",
+				"link": "gt-init.html"
+			}
+		]
 	},
 	{
 		"title": "Tutorial",

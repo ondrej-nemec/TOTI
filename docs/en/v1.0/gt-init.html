@@ -1,1 +1,100 @@
 <h1>Initialization</h1>
+
+<p class="introduction">
+	There are two ways how init TOTI in your app: quick init and custom init. <strong>Quick init</strong> makes lot of work for you. On the other hand, <strong>custom init</strong> is more flexible.
+</p>
+
+<h2>Quick init</h2>
+
+<p>
+	<strong>Quick init</strong> loads configuration from file, automatically create <code>Database</code> (<a href="https://ondrej-nemec.github.io/JI/?file=database-db.html">see here</a>) and <code>Env</code> (<a href="https://ondrej-nemec.github.io/JI/?file=common-functions.html">see here</a>) objects.
+</p>
+
+<p class="alert alert-info">
+	If configuration for <code>Database</code> is not specified, <code>Database</code> instance will be <strong>NULL</strong>.
+</p>
+
+<p>
+	For quick init, you need instance of <code>Application</code> class. Constructor requires list of <code>Module</code> (see in next chapter).
+</p>
+
+<pre><code class="language-java">
+Application application = new Application(Arrays.asList(
+	// modules
+));
+</code></pre>
+
+<p>
+	Configuration of <code>Application</code> is in <code>.properties</code> file. The file can be specified <code>Application.APP_CONFIG_FILE = ...</code>. It must be called before constructor. Default is <code>conf/app.properties</code>. Can be in or outside classpath. The list of configurations is <a href="?file=doc-server.html">here</a>.
+</p>
+
+<h3>Control</h3>
+
+<p>
+	<code>start</code> method does:
+	<ol>
+		<li>Create and migrate database (if database and migrations used). <a href="https://ondrej-nemec.github.io/JI/?file=database-migrations.html">See about migrations</a></li>
+		<li>Run all tasks from modules (see in next chapter)</li>
+		<li>Start HTTP server</li>
+	</ol>
+	If <code>start</code> fails, no exception is throwed but <code>System.exit</code> called.
+</p>
+
+<p>
+	<code>stop</code> method does:
+	<ol>
+		<li>Stop HTTP server</li>
+		<li>Stop all tasks from modules</li>
+	</ol>
+	If <code>stop</code> fails. no exception is throwed but <code>System.exit</code> called.
+</p>
+
+<p class="alert alert-warning">
+	<code>Application</code> not throws exceptions. All action including exceptions are logged.
+</p>
+
+TODO link to example
+
+<h2>Custom init</h2>
+
+<p>
+	For custom init, let start with <code>HttpServerFactory</code>. This class holds configuration for <code>HttpServer</code>. The list of configurations is <a href="?file=doc-server.html">here</a>.
+</p>
+
+<p>
+	For creating <code>HttpServe</code> there are required two classes: <code>Database</code> (<a href="https://ondrej-nemec.github.io/JI/?file=database-db.html">see here</a>) and <code>Env</code> (<a href="https://ondrej-nemec.github.io/JI/?file=common-functions.html">see here</a>). Both can be null.
+</p>
+
+
+<pre><code class="language-java">
+Database database = ...; // can be null
+Env env = ...; // can be null
+HttpServer server = new HttpServerFactory()
+	// calling settings
+	// ...
+	.get(modules, env, database);
+</code></pre>
+
+<p>
+	<code>start</code> method does:
+	<ol>
+		<li>Run all tasks from modules (see in next chapter)</li>
+		<li>Start HTTP server</li>
+	</ol>
+</p>
+
+<p>
+	<code>stop</code> method does:
+	<ol>
+		<li>Stop HTTP server</li>
+		<li>Stop all tasks from modules</li>
+	</ol>
+</p>
+
+TODO link to example
+
+<h2>Note</h2>
+
+<p>
+	Both <code>Application</code> and <code>HttpServer</code> contains methods <code>getTranslator</code> (<a href="https://ondrej-nemec.github.io/JI/?file=translate.html">see here</a>) and <code>getRegister</code> (see in next chapter).
+</p>
