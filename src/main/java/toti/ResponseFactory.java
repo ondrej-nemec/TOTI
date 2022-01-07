@@ -227,28 +227,13 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			String protocol,
 			RequestParameters params,
 			Identity identity) throws ServerException {
-		return getRoutedResponse(
+		return getTotiFilteredResponse(
 				method, url.endsWith("/") ? url.substring(0, url.length()-1) : url,
 				fullUrl, protocol, params, identity
 		);
 	}
 	
-	private RestApiResponse getRoutedResponse(
-			HttpMethod method,
-			String url,
-			String fullUrl,
-			String protocol,
-			RequestParameters params,
-			Identity identity) throws ServerException {
-		// remove from here after toti
-		if (router.getUrlMapping(url) == null) {
-			return getMappedResponse(method, url, fullUrl, protocol, params, identity);
-		}
-		return getMappedResponse(method, router.getUrlMapping(url), fullUrl, protocol, params, identity);
-	}
-	
-	private RestApiResponse getMappedResponse(
-			HttpMethod method,
+	private RestApiResponse getTotiFilteredResponse(HttpMethod method,
 			String url,
 			String fullUrl,
 			String protocol,
@@ -262,6 +247,32 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				authorizator, identity, null, charset
 			);
 		}
+		return getRoutedResponse(method, url, fullUrl, protocol, params, identity, headers);
+	}
+	
+	private RestApiResponse getRoutedResponse(
+			HttpMethod method,
+			String url,
+			String fullUrl,
+			String protocol,
+			RequestParameters params,
+			Identity identity,
+			ResponseHeaders headers) throws ServerException {
+		// remove from here after toti
+		if (router.getUrlMapping(url) == null) {
+			return getMappedResponse(method, url, fullUrl, protocol, params, identity, headers);
+		}
+		return getMappedResponse(method, router.getUrlMapping(url), fullUrl, protocol, params, identity, headers);
+	}
+	
+	private RestApiResponse getMappedResponse(
+			HttpMethod method,
+			String url,
+			String fullUrl,
+			String protocol,
+			RequestParameters params,
+			Identity identity,
+			ResponseHeaders headers) throws ServerException {
 		// controllers
 		String[] urls = url.length() == 0 ? new String[] {} : url.substring(1).split("/");
 		DictionaryValue last = new DictionaryValue(mapping);
@@ -322,7 +333,10 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			}
 			return Response.getText(StatusCode.FORBIDDEN, "");
 		}
-		return Response.getTemplate(url.substring(5), new MapInit<String, Object>().append("useProfiler", profiler.isUse()).toMap());
+		if (url.length() < 7 && developIps.contains(identity.getIP())) {// /toti OR /toti/
+			return Response.getTemplate("index.html", new HashMap<>());
+		}
+		return Response.getTemplate("/assets" + url.substring(5), new MapInit<String, Object>().append("useProfiler", profiler.isUse()).toMap());
 	}
 
 	private RestApiResponse getControllerResponse(
