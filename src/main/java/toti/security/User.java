@@ -1,22 +1,26 @@
 package toti.security;
 
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import ji.common.structures.DictionaryValue;
-import ji.common.structures.MapDictionary;
 import toti.security.permissions.Permissions;
 
-public class User {
+public class User implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	private final Object id;
 	private Collection<Object> allowedIds;
 	private final Permissions permissions;
-	private final MapDictionary<String, Object> customData;
+	private final Map<String, Object> customData;
 	
 	public User(Object id, Permissions permissions) {
 		this.permissions = permissions;
 		this.id = id;
-		this.customData = MapDictionary.hashMap();
+		this.customData = new HashMap<>();
 	}
 	
 	protected Permissions getPermissions() {
@@ -49,11 +53,11 @@ public class User {
 	}
 	
 	public DictionaryValue getProperty(String key) {
-		return customData.getDictionaryValue(key);
+		return new DictionaryValue(customData.get(key));
 	}
-	
-	public MapDictionary<String, Object> getContent() {
+
+	public Map<String, Object> getContent() {
 		return customData;
 	}
-	
+
 }

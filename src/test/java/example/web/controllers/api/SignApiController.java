@@ -1,6 +1,5 @@
 package example.web.controllers.api;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,9 +15,6 @@ import toti.response.Response;
 import toti.security.Authenticator;
 import toti.security.Identity;
 import toti.security.User;
-import toti.security.permissions.Permissions;
-import toti.security.permissions.Rule;
-import toti.security.permissions.Rules;
 
 @Controller("sign")
 public class SignApiController {
@@ -36,25 +32,10 @@ public class SignApiController {
 	@Action("in")
 	public Response login(@Param("username") String username) {
 		try {
-			String bearer = authenticator.login(new User("User: " + username, new Permissions() {
-				
-				@Override
-				public Rules getRulesForDomain(String domain) {
-					if (domain.equals("test1")) {
-						return new Rules(null, Arrays.asList(
-							new Rule(toti.security.Action.UPDATE, ()->Arrays.asList())
-						));
-					}
-					if (domain.equals("test2")) {
-						return new Rules(null, Arrays.asList(
-							new Rule(toti.security.Action.UPDATE, ()->Arrays.asList())
-						));
-					}
-					return new Rules(new Rule(toti.security.Action.ADMIN, ()->Arrays.asList()), Arrays.asList());
-				}
-			}), identity);
+			String bearer = authenticator.login(new User("User: " + username, new Perm()), identity);
 			return generateToken(bearer);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return Response.getJson(StatusCode.INTERNAL_SERVER_ERROR, new HashMap<>());
 		}
 	}

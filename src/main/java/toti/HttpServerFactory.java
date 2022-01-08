@@ -98,6 +98,7 @@ public class HttpServerFactory {
 			LoadUrls.loadUrlMap(mapping, module, router, register);
 			module.addRoutes(router);
 		};
+		AuthenticationCache sessionCache = new AuthenticationCache(tempPath, true, logger);
 		ResponseFactory response = new ResponseFactory(
 				headers,
 				resourcesPath,
@@ -112,7 +113,7 @@ public class HttpServerFactory {
 				new IdentityFactory(translator, translator.getLocale().getLang()),
 				new Authenticator(
 					tokenExpirationTime, tokenCustomSalt, 
-					new AuthenticationCache(tempPath, false, logger),
+					sessionCache,
 					new Hash("SHA-256"),
 					logger
 				),
@@ -136,7 +137,7 @@ public class HttpServerFactory {
 				charset,
 				logger
 		);
-		return new HttpServer(server, tasks, translator, register);
+		return new HttpServer(server, tasks, translator, register, sessionCache);
 	}
 
 	private Profiler initProfiler() {

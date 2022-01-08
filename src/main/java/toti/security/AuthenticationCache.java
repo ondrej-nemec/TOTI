@@ -16,7 +16,6 @@ import java.util.concurrent.TimeUnit;
 
 import ji.common.Logger;
 import ji.common.functions.FileExtension;
-import ji.common.functions.FilesList;
 
 public class AuthenticationCache {
 	
@@ -45,21 +44,21 @@ public class AuthenticationCache {
 	public void start() {
 		if (useCache) {
 			future = scheduledPool.scheduleWithFixedDelay(()->{
+				logger.debug("Session folder check start");
 				try {
-					FilesList.get(cachePath, false).getFiles().forEach((fileName)->{
-						FileExtension file = new FileExtension(fileName);
-						if (!EXT.equals(file.getExtension())) {
+					for (File file : new File(cachePath).listFiles()) {
+						FileExtension ext = new FileExtension(file.getName());
+						if (!EXT.equals(ext.getExtension())) {
 							return; // silently ignore
 						}
-						Long expired = activeTokens.get(file.getName());
+						Long expired = activeTokens.get(ext.getName());
 						if (expired == null) {
-							delete(file.getName());
+							delete(ext.getName());
+						} else if (expired < new Date().getTime()) {
+							delete(ext.getName());
 						}
-						if (expired < new Date().getTime()) {
-							delete(file.getName());
-						}
-					});
-					
+					}
+					logger.debug("Session folder check finish");
 				} catch (Exception e) {
 					logger.warn("Session folder check fail", e);
 				}
@@ -98,6 +97,7 @@ public class AuthenticationCache {
 				objectOutputStream.writeObject(user);
 				objectOutputStream.flush();
 			}
+			
 		}
 	}
 	
