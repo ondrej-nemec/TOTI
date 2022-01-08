@@ -47,17 +47,32 @@ public class TemplateResponse implements Response {
 			head.replace("{nonce}", nonce);
 		});
 		header.addHeader(getContentType(fileName, charset));
+		String response = createResponse(templateFactory, translator, authorizator, current);
 		return RestApiResponse.textResponse(
 			code,
 			header.getHeaders(),
 			(bw)->{
-				try {
+				bw.write(response);
+				/*try {
 					Template template = templateFactory.getTemplate(fileName);
 					bw.write(template.create(templateFactory, params, translator, authorizator, current));
 				} catch (Exception e) {
 					throw new RuntimeException(e);
-				}
+				}*/
 		});
+	}
+	
+	private String createResponse(
+			TemplateFactory templateFactory,
+			Translator translator,
+			Authorizator authorizator,
+			MappedUrl current) {
+		try {
+			Template template = templateFactory.getTemplate(fileName);
+			return template.create(templateFactory, params, translator, authorizator, current);
+		} catch (Exception e) {
+			throw new ResponseException(e);
+		}
 	}
 
 

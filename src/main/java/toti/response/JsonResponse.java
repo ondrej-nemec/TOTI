@@ -5,7 +5,6 @@ import java.util.Map;
 
 import ji.json.JsonStreamException;
 import ji.json.OutputJsonStream;
-import ji.json.providers.OutputWriterProvider;
 import ji.json.JsonWritter;
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.server.RestApiResponse;
@@ -38,18 +37,30 @@ public class JsonResponse implements Response {
 			Identity identity, MappedUrl current,
 			String charset) {
 		header.addHeader("Content-Type: application/json; charset=" + charset);
+		String response = createResponse();
 		return RestApiResponse.textResponse(
 			code,
 			header.getHeaders(),
 			(bw)->{
+				bw.write(response);
+				/*
 				try {
 					OutputJsonStream stream = new OutputJsonStream(new OutputWriterProvider(bw));
 					JsonWritter writter = new JsonWritter();
 					writter.write(stream, json);
 				} catch (JsonStreamException e) {
 					throw new RuntimeException(e);
-				}
+				}*/
 		});
+	}
+	
+	private String createResponse() {
+		try {
+			JsonWritter writter = new JsonWritter();
+			return writter.write(json);
+		} catch (Exception e) {
+			throw new ResponseException(e);
+		}
 	}
 	
 	private void write(OutputJsonStream stream, Map<String, Object> objects, String name) throws JsonStreamException {
