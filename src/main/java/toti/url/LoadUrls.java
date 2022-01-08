@@ -47,6 +47,9 @@ public class LoadUrls {
 		String moduleName = module.getName();
 		String folder = module.getControllersPath();
 		for (String file : files) {
+			if (!file.endsWith(".class")) {
+				continue;
+			}
 	    	int index = file.lastIndexOf("/");
 	    	String path = (index > 0 ? "/" + file.replace(file.substring(index), "") : "");
 	    	Class<?> clazz =  Class.forName( (folder + "/" + file).replaceAll("/", ".").replace(".class", "") );
