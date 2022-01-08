@@ -40,6 +40,8 @@ public class CustomInit {
 			}
 			*/
 			server.start();// start IS NOT BLOCKING
+			
+			// http://localhost:8080/toti
 
 			// sleep for 2min before automatic close
 			try { Thread.sleep(2 * 60 * 1000); } catch (InterruptedException e) { e.printStackTrace(); }
