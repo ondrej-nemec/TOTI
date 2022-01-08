@@ -12,6 +12,7 @@ import ji.socketCommunication.http.server.RequestParameters;
 import ji.socketCommunication.http.server.RestApiResponse;
 import ji.translator.Translator;
 import toti.response.Response;
+import toti.response.TemplateResponse;
 import toti.security.Identity;
 import toti.templating.TemplateFactory;
 import toti.url.MappedUrl;
@@ -76,27 +77,33 @@ public class ResponseFactoryExceptions {
 			Throwable t) {
 		logger.error(String.format("Exception occured %s URL: %s", status, fullUrl), t);
 		
-		if (developIps.contains(identity.getIP())) {
-			return getExceptionDetail(status, method, url, fullUrl, protocol, header, params, identity, mappedUrl, t);
+		String destination = header.getProperty("Sec-Fetch-Dest");
+		
+		if (destination != null && destination.equals("empty")) { // probably js request
+			if (developIps.contains(identity.getIP())) {
+				return Response.getText(status, t.getClass() + ": " + t.getMessage());
+			}
+			return Response.getText(status, status.getDescription());
 		}
 		
-		return getSyncException(status);
+		TemplateResponse response = getTemplate(status, method, url, fullUrl, protocol, header, params, identity, mappedUrl, t);
+		if (developIps.contains(identity.getIP())) {
+			return response;
+		}
+		return getSyncException(status, response);
 	}
 	
-	private Response getSyncException(StatusCode code) {
+	private Response getSyncException(StatusCode code, TemplateResponse response) {
 	//	return Response.getFile(code, String.format("toti/errors/%s.html", code));
-		// TODO save exception to html
+		// TODO save exception to html response.createResponse(templateFactory, translator, null, null);
 		// TODO custom pages
+		
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("code", code);
 		return Response.getTemplate(code, "/errors/error.jsp", variables);
 	}
-/*
-	private Response getAsyncException() {
-		return null;
-	}
-*/
-	private Response getExceptionDetail(
+	
+	private TemplateResponse getTemplate(
 			StatusCode code, 
 			HttpMethod method,
 			String url,
@@ -116,7 +123,8 @@ public class ResponseFactoryExceptions {
 		variables.put("headers", header);
 		variables.put("parameters", params);
 		variables.put("identity", identity);
+		variables.put("mappedUrl", mappedUrl);
 		variables.put("t", t);
-		return Response.getTemplate(code, "/errors/exception.jsp", variables);
+		return new TemplateResponse(code, "/errors/exception.jsp", variables);
 	}
 }

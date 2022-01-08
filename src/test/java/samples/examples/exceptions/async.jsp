@@ -61,7 +61,7 @@
 			var xhr = new XMLHttpRequest();
 			xhr.open("get", link.getAttribute("href"));
 			var onDone = function(xhr) {
-				console.log(xhr);
+				link.parentElement.parentElement.lastChild.innerText = xhr.currentTarget.status + " " + xhr.currentTarget.response;
 			};
 			xhr.onload = onDone;
 			xhr.onerror = onDone;

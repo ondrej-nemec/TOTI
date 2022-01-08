@@ -62,7 +62,7 @@ public class TemplateResponse implements Response {
 		});
 	}
 	
-	private String createResponse(
+	public String createResponse(
 			TemplateFactory templateFactory,
 			Translator translator,
 			Authorizator authorizator,
