@@ -56,12 +56,11 @@ public class ResponseFactoryExceptions {
 			Identity identity, 
 			MappedUrl mappedUrl, // can be null
 			Throwable t) {
-		// TODO some try-catch - have not to fail
 		return getException(responseCode, method, url, fullUrl, protocol, header, params, identity, mappedUrl, t)
-		.getResponse(
-			responseHeaders.get(), templateFactory, translator.withLocale(identity.getLocale()),
-			null /*authorizator*/, identity, mappedUrl, charset
-		);
+			.getResponse(
+				responseHeaders.get(), templateFactory, translator.withLocale(identity.getLocale()),
+				null /*authorizator*/, identity, mappedUrl, charset
+			);
 	}
 	
 	private Response getException(
@@ -87,15 +86,16 @@ public class ResponseFactoryExceptions {
 	private Response getSyncException(StatusCode code) {
 	//	return Response.getFile(code, String.format("toti/errors/%s.html", code));
 		// TODO save exception to html
+		// TODO custom pages
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("code", code);
 		return Response.getTemplate(code, "/errors/error.jsp", variables);
 	}
-	
+/*
 	private Response getAsyncException() {
 		return null;
 	}
-	
+*/
 	private Response getExceptionDetail(
 			StatusCode code, 
 			HttpMethod method,

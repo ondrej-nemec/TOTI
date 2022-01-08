@@ -66,7 +66,7 @@ public class ExceptionsExample implements Module {
 	/**
 	 * Exception throwed by TOTI after method is called
 	 * Caused by missing template
-	 * @throws RuntimeException
+	 * @throws FileNotFoundException
 	 * @return http://localhost:8080/examples/exceptions/notemplate
 	 */
 	@Action("notemplate")
@@ -88,7 +88,7 @@ public class ExceptionsExample implements Module {
 	/**
 	 * Exception throwed by TOTI after method is called during template parsing
 	 * Caused: wrong template syntax
-	 * @throws ???
+	 * @throws TemplateException Unknown syntax error
 	 * @return http://localhost:8080/examples/exceptions/syntax
 	 */
 	@Action("syntax")
