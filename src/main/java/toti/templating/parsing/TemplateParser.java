@@ -50,6 +50,7 @@ public class TemplateParser {
 				+ "import toti.url.MappedUrl;"
 				+ "import toti.templating.Template;"
 				+ "import toti.templating.parsing.TagNode;"
+				+ "import toti.templating.TemplateException;"
 				+ "public class %s implements Template{"
 					+ "private LinkedList<TagNode> nodes = new LinkedList<>();"
 				

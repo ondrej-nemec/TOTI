@@ -3,6 +3,7 @@ package toti.templating.tags;
 import java.util.Map;
 
 import toti.templating.Tag;
+import toti.templating.TemplateException;
 
 public class LayoutTag implements Tag {
 	/*
@@ -31,11 +32,11 @@ public class LayoutTag implements Tag {
 	public String getNotPairCode(Map<String, String> params) {
 		StringBuilder code = new StringBuilder();
 		code.append(
-			"if(layout!=null){throw new RuntimeException(\"There could be only one layout\");"
+			"if(layout!=null){throw new TemplateException(\"There could be only one layout\");"
 			+ "} else {"
 		);
 		if (!params.containsKey("path")) {
-			throw new RuntimeException("Missing parameter 'path' in 'layout' tag.");
+			throw new TemplateException("Missing parameter 'path' in 'layout' tag.");
 		}
 		if (params.get("module") == null) {
 			code.append(String.format("layout=templateFactory.getTemplate(\"%s\");", params.get("path")));

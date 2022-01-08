@@ -3,6 +3,7 @@ package toti.templating.tags;
 import java.util.Map;
 
 import toti.templating.Tag;
+import toti.templating.TemplateException;
 
 public class IncludeTag implements Tag {
 	/*
@@ -30,7 +31,7 @@ public class IncludeTag implements Tag {
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
 		if (!params.containsKey("block") && !params.containsKey("file")) {
-			throw new RuntimeException("Tag 'include' has to contains parameter 'block' or 'file'");
+			throw new TemplateException("Tag 'include' has to contains parameter 'block' or 'file'");
 		}
 		if (params.get("block") != null) {
 			StringBuilder code = new StringBuilder("{");
@@ -39,7 +40,7 @@ public class IncludeTag implements Tag {
 				params.get("block"), params.get("block")
 			));
 			code.append(String.format("if (%s == null && %s) {", params.get("block"), params.get("optional") == null ? "true" : "false"));
-			code.append(String.format("throw new RuntimeException(\"Missing block: %s\");", params.get("block")));
+			code.append(String.format("throw new TemplateException(\"Missing block: %s\");", params.get("block")));
 			code.append(String.format("} else if (%s != null) {", params.get("block")));
 			code.append(String.format("%s.accept(new MapInit<String, Object>()", params.get("block")));
 			params.forEach((name, value)->{

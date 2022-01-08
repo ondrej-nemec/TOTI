@@ -184,7 +184,7 @@ public class TemplateFactory {
 	// TODO test it
 	private Tuple2<String, String> getClassName(File file, String templatePath) throws IOException {
 		if (!file.getCanonicalPath().contains(file.getName())) {
-			throw new RuntimeException(
+			throw new TemplateException(
 				"File name is misspeled: " + file.getName()
 				+ ". Did you mean " + file.getCanonicalFile().getName() + " (" + file.getCanonicalPath() + ")?"
 			);

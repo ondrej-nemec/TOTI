@@ -3,6 +3,7 @@ package toti.templating.tags;
 import java.util.Map;
 
 import toti.templating.Tag;
+import toti.templating.TemplateException;
 
 public class ForEachTag implements Tag {
 
@@ -40,7 +41,7 @@ public class ForEachTag implements Tag {
 	private String[] parseItem(String item) {
 		String[] items = item.trim().split(" +");
 		if (items.length != 2) {
-			throw new RuntimeException("Incorrect item");
+			throw new TemplateException("Tag Incorrect item");
 		}
 		return items;
 	}

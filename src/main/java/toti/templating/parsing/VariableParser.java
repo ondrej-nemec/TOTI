@@ -3,6 +3,7 @@ package toti.templating.parsing;
 import java.util.LinkedList;
 
 import ji.common.functions.Implode;
+import toti.templating.TemplateException;
 import toti.templating.parsing.enums.VarMode;
 
 public class VariableParser {
@@ -41,9 +42,9 @@ public class VariableParser {
 			auxCache = cache;
 			cache = "";
 		} else if (actual == ',' && !isSingleQuoted && !isDoubleQuoted && mode != VarMode.PARAMS) {
-			throw new RuntimeException("Syntax error: ','");
+			throw new TemplateException("Variable Syntax error: unexpected ','");
 		} else if (actual == ')' && !isSingleQuoted && !isDoubleQuoted && mode != VarMode.PARAMS) {
-			throw new RuntimeException("Syntax error: ')'");
+			throw new TemplateException("Variable Syntax error: unexpected ')'");
 		} else if (actual == ',' && !isSingleQuoted && !isDoubleQuoted && mode == VarMode.PARAMS) {
 			Object var = finishObjectParam(cache);
 			params.add(var);
@@ -118,7 +119,7 @@ public class VariableParser {
 				current, last, cache, last
 			));
 		} else {
-			throw new RuntimeException("Syntax error: Missing ')'");
+			throw new TemplateException("Variable Syntax error: Missing ')'");
 		}
 		level++;
 	}
