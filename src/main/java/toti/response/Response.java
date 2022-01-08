@@ -23,6 +23,10 @@ public interface Response {
 			MappedUrl current,
 			String charset
 	);
+
+	default RestApiResponse getResponse(ResponseHeaders header, String charset) {
+		return getResponse(header, null, null, null, null, null, charset);
+	}
 	
 	@Deprecated
 	void addParam(String name, Object value);
