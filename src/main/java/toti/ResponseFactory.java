@@ -61,8 +61,9 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private final Authenticator authenticator;
 	private final IdentityFactory identityFactory;
 	
-//	private final DbViewerRouter dbViewer;
-	private final Profiler profiler;
+	private final Profiler profiler; // TODO maybe remove dependency - now required
+	
+	private final ResponseFactoryToti totiRes;
 	
 	public ResponseFactory(
 			ResponseHeaders responseHeaders,
@@ -98,6 +99,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	//	this.dbViewer = new DbViewerRouter();
 		this.profiler = profiler;
 		this.mapping = mapping;
+		
+		this.totiRes = new ResponseFactoryToti(profiler, developIps);
 	}
 	
 	@Override
@@ -241,8 +244,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Identity identity) throws ServerException {
 		ResponseHeaders headers = responseHeaders.get();
 		// toti exclusive
-		if (url.startsWith("/toti/")) {
-			return getTotiResponse(method, url, params, identity, headers).getResponse(
+		if (url.startsWith("/toti")) {
+			return totiRes.getTotiResponse(method, url.substring(5), params, identity, headers).getResponse(
 				headers, totiTemplateFactory, translator.withLocale(identity.getLocale()),
 				authorizator, identity, null, charset
 			);
@@ -319,24 +322,6 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			return getDirResponse(headers, file.listFiles(), url);
 		}
 		return Response.getFile(resourcesDir + url).getResponse(headers, null, null, null, null, null, charset);
-	}
-	
-	private Response getTotiResponse(HttpMethod method, String url, RequestParameters params, Identity identity, ResponseHeaders headers) {
-		/*
-		if (url.substring(6).startsWith("db")) {
-			return dbViewer.getResponse(method, url.substring(8), params, identity, headers);
-		}
-		*/
-		if (url.substring(6).startsWith("profiler")) {
-			if (profiler.isUse() && developIps.contains(identity.getIP())) {
-				return profiler.getResponse(method, params);
-			}
-			return Response.getText(StatusCode.FORBIDDEN, "");
-		}
-		if (url.length() < 7 && developIps.contains(identity.getIP())) {// /toti OR /toti/
-			return Response.getTemplate("index.html", new HashMap<>());
-		}
-		return Response.getTemplate("/assets" + url.substring(5), new MapInit<String, Object>().append("useProfiler", profiler.isUse()).toMap());
 	}
 
 	private RestApiResponse getControllerResponse(

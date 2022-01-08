@@ -1,7 +1,7 @@
 <html>
 <head>
 	<title></title>
-	<link rel="stylesheet" href="/toti.css" />
+	<link rel="stylesheet" href="/styleToti.css" />
 	<!-- 
 	<script src="/toti/totiJs.js"></script>
 	 -->

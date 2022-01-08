@@ -54,7 +54,6 @@ public class BootstrapEndToEndTest {
 						return ReadText.get().asString(br);
 					}, InputStreamLoader.createInputStream(getClass(), "conf/lang.json"))).getDictionaryMap();
 					List<Locale> locales = new LinkedList<>();
-					System.err.println(config);
 					config.getDictionaryMap("locales").forEach((locale, setting)->{
 						locales.add(new Locale(
 							locale.toString(), 
@@ -97,6 +96,9 @@ public class BootstrapEndToEndTest {
 				
 				@Override
 				public DatabaseConfig createDatabaseConfig(Env env, List<String> migrations) {
+					//*
+					return null;
+					/*/
 					return new DatabaseConfig(
 						"postgresql",
 						"//localhost:5432",
@@ -107,6 +109,7 @@ public class BootstrapEndToEndTest {
 						migrations,
 						5
 					);
+					//*/
 				}
 			};
 			a.start();
