@@ -49,14 +49,12 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private final String charset;
 	private final boolean dirResponseAllowed;
 	private final Logger logger;
-	//private final List<String> developIps;
 	
 	private final MapDictionary<UrlPart, Object> mapping;	
 	private final String resourcesDir;
 	private final Router router;
 	
 	private final Map<String, TemplateFactory> modules;
-	//private final TemplateFactory totiTemplateFactory;
 	private final Translator translator;
 	
 	private final Authorizator authorizator;
@@ -95,11 +93,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		this.authenticator = authenticator;
 		this.router = router; // TODO not need send
 		this.modules = modules;
-		//this.totiTemplateFactory = totiTemplateFactory;
 		this.logger = logger;
 		this.dirResponseAllowed = dirResponseAllowed;
-		//this.developIps = developIps;
-	//	this.dbViewer = new DbViewerRouter();
 		this.profiler = profiler;
 		this.mapping = mapping;
 		
