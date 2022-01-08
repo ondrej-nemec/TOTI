@@ -183,8 +183,10 @@ public class Application {
 				);
 			} else {
 				cred.setTrustAll();
-			}	
-			factory.setCerts(cred);
+			}
+			if (env.getString("http.trust-store") != null || env.getString("http.key-store") != null) {
+				factory.setCerts(cred);
+			}
 			
 			if (env.getString("http.ip") != null) {
 				factory.setDevelopIpAdresses(env.getList("http.ip", "\\|"));
