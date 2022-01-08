@@ -25,7 +25,7 @@ Application application = new Application(Arrays.asList(
 </code></pre>
 
 <p>
-	Configuration of <code>Application</code> is in <code>.properties</code> file. The file can be specified <code>Application.APP_CONFIG_FILE = ...</code>. It must be called before constructor. Default is <code>conf/app.properties</code>. Can be in or outside classpath. The list of configurations is <a href="?file=doc-server.html">here</a>.
+	Configuration of <code>Application</code> is in <code>.properties</code> file. The file can be specified <code>Application.APP_CONFIG_FILE = ...</code>. It must be called before constructor. Default is <code>conf/app.properties</code>. Can be in or outside classpath. The list of configurations is <a href="?file=doc-server.html">here</a>. If you wish not use configuration file and let everything default, set <code>Application.APP_CONFIG_FILE = null;</code>
 </p>
 
 <h3>Control</h3>
@@ -52,8 +52,6 @@ Application application = new Application(Arrays.asList(
 <p class="alert alert-warning">
 	<code>Application</code> not throws exceptions. All action including exceptions are logged.
 </p>
-
-TODO link to example
 
 <h2>Custom init</h2>
 
@@ -91,9 +89,17 @@ HttpServer server = new HttpServerFactory()
 	</ol>
 </p>
 
-TODO link to example
+<h2>Examples</h2>
 
-<h2>Note</h2>
+<p>
+	<a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/getstarted/init">Here</a> can you find working samples. Running application can be checked <a href="http://localhost:8080/toti">http://localhost:8080/toti</a>.
+</p>
+
+<p>
+	If you wish access some files from browser (typically css and js), place them in <code>www</code> folder in root of project.
+</p>
+
+<h5>Note</h5>
 
 <p>
 	Both <code>Application</code> and <code>HttpServer</code> contains methods <code>getTranslator</code> (<a href="https://ondrej-nemec.github.io/JI/?file=translate.html">see here</a>) and <code>getRegister</code> (see in next chapter).

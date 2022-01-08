@@ -1,7 +1,6 @@
 package samples.getstarted.init;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 import ji.common.functions.Env;
@@ -30,13 +29,20 @@ public class CustomInit {
 		try {
 			HttpServer server = new HttpServerFactory()
 					// calling settings...
+					.setPort(8080)
 					.get(modules, env, database);
 			
 			/* start */
+			// if you wish use migrations
+			/*
 			if (database != null) {
 				database.createDbAndMigrate();
 			}
+			*/
 			server.start();// start IS NOT BLOCKING
+
+			// sleep for 2min before automatic close
+			try { Thread.sleep(2 * 60 * 1000); } catch (InterruptedException e) { e.printStackTrace(); }
 			
 			/* stop */
 			server.stop();
