@@ -20,7 +20,7 @@ public interface Tag {
 	default String initNode(Map<String, String> params, List<String> excludes) {
 		StringBuilder init = new StringBuilder();
 		init.append("initNode(");
-		init.append("new common.structures.MapInit<String, Object>()");
+		init.append("new MapInit<String, Object>()");
 		params.forEach((name, value)->{
 			if (!excludes.contains(name)) {
 				init.append(String.format(".append(\"%s\", \"%s\")", name, value));

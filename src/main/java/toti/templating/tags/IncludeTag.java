@@ -41,7 +41,7 @@ public class IncludeTag implements Tag {
 			code.append(String.format("if (%s == null && %s) {", params.get("block"), params.get("optional") == null ? "true" : "false"));
 			code.append(String.format("throw new RuntimeException(\"Missing block: %s\");", params.get("block")));
 			code.append(String.format("} else if (%s != null) {", params.get("block")));
-			code.append(String.format("%s.accept(new common.structures.MapInit<String, Object>()", params.get("block")));
+			code.append(String.format("%s.accept(new MapInit<String, Object>()", params.get("block")));
 			params.forEach((name, value)->{
 				if (!name.equals("block") && !name.equals("optional")) {
 					code.append(String.format(".append(\"%s\", \"%s\")", name, value));

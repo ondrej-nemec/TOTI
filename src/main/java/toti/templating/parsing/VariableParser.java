@@ -160,7 +160,7 @@ public class VariableParser {
 	public String getCalling() {
 		if (clazz != null) {
 			//return String.format("%s.class.cast(o%s_%s)", clazz, position, level-1);
-			return String.format("new common.structures.DictionaryValue(o%s_%s).getValue(%s.class)", position, level-1, clazz);
+			return String.format("new DictionaryValue(o%s_%s).getValue(%s.class)", position, level-1, clazz);
 		}
 		return String.format("o%s_%s", position, level-1);
 	}

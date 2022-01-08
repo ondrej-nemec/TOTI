@@ -38,16 +38,18 @@ public class TemplateParser {
 			long modificationTime) throws IOException {
 		String preClass = namespace.length() == 0 ? "%s" : "package %s;";
 		String clazz1 = preClass
-				+ "import toti.templating.Template;"
-				+ "import toti.templating.parsing.TagNode;"
 				+ "import java.util.Map;"
 				+ "import java.util.HashMap;"
-				+ "import ji.common.structures.ThrowingConsumer;"
 				+ "import java.util.LinkedList;"
+				+ "import ji.common.structures.ThrowingConsumer;"
+				+ "import ji.common.structures.DictionaryValue;"
+				+ "import ji.common.structures.MapInit;"
 				+ "import ji.translator.Translator;"
 				+ "import toti.security.Authorizator;"
 				+ "import toti.templating.TemplateFactory;"
 				+ "import toti.url.MappedUrl;"
+				+ "import toti.templating.Template;"
+				+ "import toti.templating.parsing.TagNode;"
 				+ "public class %s implements Template{"
 					+ "private LinkedList<TagNode> nodes = new LinkedList<>();"
 				

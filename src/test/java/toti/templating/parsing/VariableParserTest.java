@@ -101,7 +101,7 @@ public class VariableParserTest {
 			new Object[] {
 					"age|Integer",
 					"Object o0_0=getVariable(\"age\");",
-					"new common.structures.DictionaryValue(o0_0).getValue(Integer.class)",
+					"new DictionaryValue(o0_0).getValue(Integer.class)",
 					true
 				},
 			new Object[] {
@@ -112,7 +112,7 @@ public class VariableParserTest {
 			new Object[] {
 					"title|String|noescape",
 					"Object o0_0=getVariable(\"title\");",
-					"new common.structures.DictionaryValue(o0_0).getValue(String.class)", false
+					"new DictionaryValue(o0_0).getValue(String.class)", false
 				},
 			new Object[] {
 					"map.get(\"value\")",
