@@ -146,7 +146,7 @@ public class TemplateFactory {
 		}
 	}
 	
-	private void compileNewCache(String templateFile, String namespace, String className, long modificationTime, String module) throws IOException {
+	private void compileNewCache(String templateFile, String namespace, String className, long modificationTime, String module) throws Exception {
 		File dir = new File(tempPath + "/" + namespace);
 		dir.mkdirs();
 		
@@ -168,7 +168,11 @@ public class TemplateFactory {
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
 		List<String> optionList = new ArrayList<String>();
 		optionList.addAll(Arrays.asList("-classpath", System.getProperty("java.class.path")));
-		compiler.getTask(null, null, null, optionList, null, fileManager.getJavaFileObjects(file)).call();
+		TemplateDiagnostic diagnostic = new TemplateDiagnostic();
+		compiler.getTask(diagnostic, null, diagnostic, optionList, null, fileManager.getJavaFileObjects(file)).call();
+		if (diagnostic.isError()) {
+			throw new TemplateException("Some unknow syntax error in " + templateFile);
+		}
 		
 		//*/
 		
