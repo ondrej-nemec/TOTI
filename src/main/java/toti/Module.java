@@ -15,7 +15,7 @@ public interface Module {
 	
 	String getControllersPath();
 
-	List<Task> initInstances(Env env, Translator translator, Register registr, Database database, Logger logger) throws Exception;
+	List<Task> initInstances(Env env, Translator translator, Register register, Database database, Logger logger) throws Exception;
 	
 	default void addRoutes(Router router) {}
 	
