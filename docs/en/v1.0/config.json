@@ -13,6 +13,10 @@
 			{
 				"title": "Initialization",
 				"link": "gt-init.html"
+			},
+			{
+				"title": "Modules, tasks, register",
+				"link": "gt-modules.html"
 			}
 		]
 	},

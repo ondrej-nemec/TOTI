@@ -1,0 +1,149 @@
+<h1>Modules</h1>
+
+<p>
+	Application can be splited to modules. One module is defined by <code>Module</code>. Modules can be in modular project (like gradle modules) or in one single-module project. 
+</p>
+
+<h2>Required methods</h2>
+
+<h3>getName</h3>
+
+<p>
+	Method specify name of module. This name is used in routing (see in next chapter) and templating (see in next chapter).
+</p>
+
+<h3>getControllerPath</h3>
+
+<p>
+	This is path to controllers folder (controlers explained in next chapter). Path is relative to project or module classpath root.
+</p>
+<strong>For example 1:</strong>
+<p>
+	 If you have single-module project and your main src folder is <code>src/main/java</code> and controller package is <code>org.example.app</code>, the conroller path is <code>org/example/app</code>. 
+</p>
+<strong>For example 2:</strong>
+<p>
+	 You have multi-module project. The module is <code>appName/module name</code>, module src folder is <code>src/main/java</code> and controller package is <code>org.example.app.module</code>, the conroller path is <code>org/example/app/module</code>.
+</p>
+
+<h3>initInstances</h3>
+
+<p>
+	This method prepare all classes of that module. All method input parameters are described below. Method returns list of <code>Task</code> (see below). The list can be empty, but not null.
+</p>
+
+<p>
+	Inside this method, controllers are registered to register (see bellow) and module tasks initialized. Usually, dao classes are created here and putted to controllers and tasks.
+</p>
+
+<h4>Env</h4>
+
+<p>
+	Instance of <a href="https://ondrej-nemec.github.io/JI/?file=common-functions.html">JI Env</a>. If you set <code>Application.APP_CONFIG_FILE</code> to <code>null</code> or in <code>HttpServerFactory::get</code> put <code>null</code>, this parameter will be <code>null</code>.
+</p>
+
+<h4>Database</h4>
+
+<p>
+	Instance of <a href="">JI Database</a>. If configuration file not contains keys for database or you manualy put <code>null</code> in <code>HttpServerFactory::get</code>, this parameter will be <code>null</code>.
+</p>
+
+<h2>Translator</h4>
+
+<p>
+	Configured <a href="https://ondrej-nemec.github.io/JI/?file=translate.html">JI Translator</a>.
+</p>
+
+<h4>Logger</h4>
+
+<p>
+	Instance of <a href="https://ondrej-nemec.github.io/JI/?file=common-exceptions.html">JI Logger</a>. Is not nessessary to use it.
+</p>
+
+<h2>Optional methods</h2>
+
+<h3>addRoutes</h3>
+
+<p>
+	Allows add some specific URL and URL configuration to <code>Router</code> (see in next chapter). <strong>The <code>Router</code> instance is same for all modules. One module can override configuration from another module.</strong>
+</p>
+
+<p>Default is no settings.</p>
+
+<h3>getPath</h3>
+
+<p>Specify physical path to module, relative to project root.</p>
+
+<p>Default value is same as name. If all modules are in one project/gradle module, this value is ignored.</p>
+
+<h3>getTranslationPath</h3>
+
+<p>
+	Path to folder with translation files for <code>Translator</code>. Files can be in classpath or in project dir tree. Path is relative to classpath root or project root.
+</p>
+
+<p>
+	Default value is <code>null</code> and means no translation folder.
+</p>
+
+<h3>getMigrationPath</h3>
+
+<p>
+	Path to folder with database migration files for <code>Database</code>. Files can be in classpath or in project dir tree. Path is relative to classpath root or project root.
+</p>
+
+<p>
+	Default value is <code>null</code> and means no migration folder.
+</p>
+
+<h3>getTemplatePath</h3>
+
+<p>
+	Path to folder with templates files for controllers (see in next chapter). Files can be in classpath or in project dir tree. Path is relative to classpath root or project root.
+</p>
+
+<p>
+	Default value is <code>null</code> and means no templates folder.
+</p>
+
+<h2>Task</h2>
+
+<p>
+	Task is instance of <code>Task</code>. When <code>Application</code> or <code>HttpServer</code> class starts, it starts all tasks. When that class stops, all tasks stop.
+	<strong>There are no thread managing for tasks.</strong> <code>start</code> and <code>stop</code> methods are blocking.
+</p>
+
+<h2>Register</h2>
+
+<p>
+	<code>Register</code> holds instances of some classes and factories for creating controllers. The instance of <code>Register</code> is one for all modules. If you use classes of one module only inside that module, you will use <code>Register</code> only for controllers factories (see in next chapter). If you wish use some class instance from one module in another, you can use <code>Register</code>.
+</p>
+
+<h3>Add instance to Register</h3>
+
+<p>
+	Add class to <code>Register</code> can be done with <code>addService</code>. The unique name and class instance are required. If name is not specifies, the classname of instance is used.
+</p>
+
+<pre><code class="language-java">
+register.addService("instanceIdentifier", myClassInstance);
+// OR
+register.addService(myClassInstance); // same as register.addService(myClassInstance.getClass().getName(), myClassInstance) OR register.addService(MyClass.class.getName(), myClassInstance)
+</code></pre>
+
+<h3>Get instance from Register</h3>
+
+<p>
+	To get some instance, call <code>getService</code>. The unique name and class type are required. If name is not specifies, the classname of instance is used.
+</p>
+
+<pre><code class="language-java">
+register.getService("instanceIdentifier", MyClass.class);
+// OR
+register.getService(MyClass.class); // same as register.getService(MyClass.class.getName(), MyClass.class)
+</code></pre>
+
+
+
+
+
