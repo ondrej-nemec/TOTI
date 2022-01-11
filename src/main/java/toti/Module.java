@@ -13,6 +13,10 @@ public interface Module {
 	
 	String getName();
 	
+	default String getPath() {
+		return getName();
+	}
+	
 	String getControllersPath();
 
 	List<Task> initInstances(Env env, Translator translator, Register register, Database database, Logger logger) throws Exception;

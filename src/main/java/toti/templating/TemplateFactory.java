@@ -35,16 +35,18 @@ public class TemplateFactory {
 	private final String templatePath;
 	private final Map<String, TemplateFactory> modules;
 	private final String module;
+	private final String modulePath;
 	private final Logger logger;
 	
-	public TemplateFactory(String tempPath, String templatePath, String module, Map<String, TemplateFactory> modules, Logger logger) {
-		this(tempPath, templatePath, module, modules, true, false, logger);
+	public TemplateFactory(String tempPath, String templatePath, String module, String modulePath, Map<String, TemplateFactory> modules, Logger logger) {
+		this(tempPath, templatePath, module, modulePath, modules, true, false, logger);
 	}
 	
 	public TemplateFactory(
 			String tempPath, 
 			String templatePath,
 			String module,
+			String modulePath,
 			Map<String, TemplateFactory> modules,
 			boolean deleteAuxJavaClass,
 			boolean minimalize,
@@ -57,6 +59,7 @@ public class TemplateFactory {
 		this.modules = modules;
 		this.minimalize = minimalize;
 		this.module = module;
+		this.modulePath = clear(modulePath);
 		this.logger = logger;
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		if (compiler == null) {
@@ -69,23 +72,35 @@ public class TemplateFactory {
 		this.compiler = compiler;
 	}
 	
-	public String getModuleName() {
+	private String clear(String modulePath) {
+		if (modulePath.startsWith("/")) {
+			modulePath = modulePath.substring(1);
+		}
+		if (modulePath.endsWith("/")) {
+			modulePath = modulePath.substring(0, modulePath.length() - 1);
+		}
+		return modulePath;
+	}
+
+/*
+	public String getModuleName1() {
 		return module;
 	}
-	
+*/
 	public Template getTemplate(String templateFile) throws Exception {
 		if (!templateFile.startsWith("/")) {
 			templateFile = "/" + templateFile;
 		}
 		return getTemplateWithAbsolutePath(templatePath + templateFile, (file)->{
 			return getClassName(file, templatePath);
-		}, module);
+		}, modulePath);
 	}
 
 	public Template getModuleTemplate(String templateFile, String module) throws Exception {
 		return modules.get(module).getTemplate(templateFile);
 	}
 
+	@Deprecated
 	public Template getFrameworkTemplate(String templateFile) throws Exception {
 		return getTemplateWithAbsolutePath(templateFile, (file)->{
 			return new Tuple2<>("toti", new FileExtension(file.getName()).getName());
@@ -97,7 +112,7 @@ public class TemplateFactory {
 			ThrowingFunction<File, Tuple2<String, String>, IOException> getClassNameAndNamespace,
 			String module) throws Exception {
 		if (templatePath == null) {
-			throw new LogicException("No template path set for this module: '" + module + "'");
+			throw new LogicException("No template path set for this module: '" + this.module + "' (" + module + ")");
 		}
 		long lastModifition = -1;
 		URL url = null;

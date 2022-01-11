@@ -14,7 +14,7 @@ public class TagsTest {
 		try {
 			Logger logger = TotiLogger.getLogger("log");
 			TemplateFactory templateFactory = new TemplateFactory(
-				"temp", "toti/templating/tags", "", new HashMap<>(),
+				"temp", "toti/templating/tags", "", "", new HashMap<>(),
 				false, false, logger
 			);
 			Template template = templateFactory.getTemplate("tags.jsp");

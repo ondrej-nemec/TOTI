@@ -82,7 +82,8 @@ public class HttpServerFactory {
 			TemplateFactory templateFactory = new TemplateFactory(
 					tempPath,
 					module.getTemplatesPath(),
-					module.getName(), 
+					module.getName(),
+					module.getPath(),
 					templateFactories, 
 					deleteTempJavaFiles,
 					minimalize,
@@ -105,7 +106,7 @@ public class HttpServerFactory {
 				router,
 				templateFactories,
 				new TemplateFactory(
-					tempPath, "toti/web", "", templateFactories,
+					tempPath, "toti/web", "", "", templateFactories,
 					deleteTempJavaFiles, minimalize,
 					logger
 				),

@@ -23,7 +23,7 @@ public class TemplateFactoryEndToEndTest {
 		variables.put("limit", 10);
 		
 		//*
-		TemplateFactory factory = new TemplateFactory("temp/cache", "toti/templating", "", new HashMap<>(), false, false, new Logger() {
+		TemplateFactory factory = new TemplateFactory("temp/cache", "toti/templating", "", "", new HashMap<>(), false, false, new Logger() {
 			
 			@Override public void warn(Object message, Throwable t) {}
 			

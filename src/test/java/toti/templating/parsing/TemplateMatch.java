@@ -79,7 +79,7 @@ public class TemplateMatch {
 				File f2 = new File(tempPath + "/cache/" + templatePath.replace(".", "_") + "/layout.class");
 				f2.delete();
 				TemplateFactory test = new TemplateFactory(
-					tempPath, templatePath, "", new HashMap<>(), false, false, TotiLogger.getLogger("parsing")
+					tempPath, templatePath, "", "", new HashMap<>(), false, false, TotiLogger.getLogger("parsing")
 				);
 			//	test.useOldImpl = useOldImp;
 				
