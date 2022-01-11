@@ -171,6 +171,7 @@ public class TemplateFactory {
 		TemplateDiagnostic diagnostic = new TemplateDiagnostic();
 		compiler.getTask(diagnostic, null, diagnostic, optionList, null, fileManager.getJavaFileObjects(file)).call();
 		if (diagnostic.isError()) {
+			System.err.println(diagnostic.getError());
 			throw new TemplateException("Some unknow syntax error in " + templateFile);
 		}
 		
