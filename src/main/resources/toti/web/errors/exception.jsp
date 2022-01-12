@@ -50,7 +50,7 @@
 		</tr>
 		<tr>
 			<th>Content</th>
-			<td>${identity.getContent()}</td>
+			<td>${identity.getUser().getContent()}</td>
 		</tr>
 		<tr>
 			<th>User: Id</th>
