@@ -2,6 +2,7 @@ package toti;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import ji.common.exceptions.NotImplementedYet;
 import ji.common.structures.MapInit;
@@ -9,6 +10,7 @@ import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.server.RequestParameters;
 import ji.socketCommunication.http.server.RestApiResponse;
+import ji.socketCommunication.http.server.WebSocket;
 import ji.translator.Translator;
 import toti.profiler.Profiler;
 import toti.response.Response;
@@ -35,7 +37,9 @@ public class ResponseFactoryToti {
 		this.charset = charset;
 	}
 
-	public RestApiResponse getTotiResponse(HttpMethod method, String url, RequestParameters params, Identity identity, ResponseHeaders headers) {
+	public RestApiResponse getTotiResponse(
+			HttpMethod method, String url, RequestParameters params,
+			Identity identity, ResponseHeaders headers, Optional<WebSocket> websocket) {
 		return getResponse(method, url, params, identity, headers)
 			.getResponse(
 				headers, templateFactory, translator.withLocale(identity.getLocale()),

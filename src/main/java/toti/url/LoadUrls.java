@@ -12,6 +12,7 @@ import ji.common.structures.DictionaryValue;
 import ji.common.structures.MapDictionary;
 import ji.common.structures.ThrowingFunction;
 import ji.socketCommunication.http.HttpMethod;
+import ji.socketCommunication.http.server.WebSocket;
 import toti.Module;
 import toti.Router;
 import toti.annotations.Action;
@@ -105,11 +106,17 @@ public class LoadUrls {
 		    					mappedUrl.addParam(p.getType(), p.getAnnotation(ParamValidator.class).value(), false);
 		    				} else if (p.isAnnotationPresent(ParamsValidator.class)) {
 		    					mappedUrl.addParam(p.getType(), null, false);
+		    				} else if (WebSocket.class.equals(p.getType())) {
+		    					mappedUrl.addParam(p.getType(), null, false);
 		    				} else {
 		    					throw new LogicException(
 		    						"Not anotated param " + p.getName()
-		    						+ ", required anotation: " + Param.class
-		    						+ " or " + ParamUrl.class
+		    						+ " (" + p.getType() + ")"
+		    						+ ". Required one of anotations: " + Param.class
+		    						+ ", " + ParamUrl.class
+		    						+ ", " + ParamValidator.class
+		    						+ ", " + ParamsValidator.class
+		    						+ ". Or the class has to be " + WebSocket.class
 		    					);
 		    				}
 		    			}		    			

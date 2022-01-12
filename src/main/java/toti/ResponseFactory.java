@@ -111,14 +111,14 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Properties header,
 			RequestParameters params,
 			String ip,
-			Optional<WebSocket> websocket) throws IOException {
+			Optional<WebSocket> websocket) throws IOException { // TODO websocket
 		/*
 		System.err.println("URL: " + fullUrl);
 		System.err.println("Header: " + header);
 		System.err.println("Params: " + params);
 		//*/
 		Identity identity = identityFactory.createIdentity(header, ip, profiler.isUse());
-		return getCatchedResponse(method, url, fullUrl, protocol, header, params, identity);
+		return getCatchedResponse(method, url, fullUrl, protocol, header, params, identity, websocket);
 	}
 
 	private RestApiResponse getCatchedResponse(
@@ -128,10 +128,11 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			String protocol,
 			Properties header,
 			RequestParameters params,
-			Identity identity) {
+			Identity identity,
+			Optional<WebSocket> websocket) {
 		authenticator.authenticate(identity);
 		try {
-			return getNormalizedResponse(method, url, fullUrl, protocol, params, identity);
+			return getNormalizedResponse(method, url, fullUrl, protocol, params, identity, websocket);
 		/*} catch (AuthentizationException e) {
 			return onException(401, method, url, fullUrl, protocol, header, params, locale, ip, e);
 		} catch (NotAllowedActionException | AccessDeniedException e) {
@@ -160,10 +161,11 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			String fullUrl,
 			String protocol,
 			RequestParameters params,
-			Identity identity) throws ServerException {
+			Identity identity, 
+			Optional<WebSocket> websocket) throws ServerException {
 		return getTotiFilteredResponse(
 				method, url.endsWith("/") ? url.substring(0, url.length()-1) : url,
-				fullUrl, protocol, params, identity
+				fullUrl, protocol, params, identity, websocket
 		);
 	}
 	
@@ -173,13 +175,14 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			String fullUrl,
 			String protocol,
 			RequestParameters params,
-			Identity identity) throws ServerException {
+			Identity identity, 
+			Optional<WebSocket> websocket) throws ServerException {
 		ResponseHeaders headers = responseHeaders.get();
 		// toti exclusive
 		if (url.startsWith("/toti")) {
-			return totiRes.getTotiResponse(method, url.substring(5), params, identity, headers);
+			return totiRes.getTotiResponse(method, url.substring(5), params, identity, headers, websocket);
 		}
-		return getRoutedResponse(method, url, fullUrl, protocol, params, identity, headers);
+		return getRoutedResponse(method, url, fullUrl, protocol, params, identity, headers, websocket);
 	}
 	
 	private RestApiResponse getRoutedResponse(
@@ -189,11 +192,12 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			String protocol,
 			RequestParameters params,
 			Identity identity,
-			ResponseHeaders headers) throws ServerException {
+			ResponseHeaders headers,
+			Optional<WebSocket> websocket) throws ServerException {
 		if (router.getUrlMapping(url) == null) {
-			return getMappedResponse(method, url, fullUrl, protocol, params, identity, headers);
+			return getMappedResponse(method, url, fullUrl, protocol, params, identity, headers, websocket);
 		}
-		return getMappedResponse(method, router.getUrlMapping(url), fullUrl, protocol, params, identity, headers);
+		return getMappedResponse(method, router.getUrlMapping(url), fullUrl, protocol, params, identity, headers, websocket);
 	}
 	
 	private RestApiResponse getMappedResponse(
@@ -203,7 +207,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			String protocol,
 			RequestParameters params,
 			Identity identity,
-			ResponseHeaders headers) throws ServerException {
+			ResponseHeaders headers,
+			Optional<WebSocket> websocket) throws ServerException {
 		// controllers
 		String[] urls = url.length() == 0 ? new String[] {} : url.substring(1).split("/");
 		DictionaryValue last = new DictionaryValue(mapping);
@@ -239,7 +244,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		   		profiler.setPageId(identity.getPageId());
 		   		profiler.logRequest(identity, method, url, fullUrl, protocol, params);
 		   	}
-		   	return getControllerResponse(headers, fullUrl, mapped, params, identity);
+		   	return getControllerResponse(headers, fullUrl, mapped, params, identity, websocket);
 		}
 		// files
 		File file = new File(resourcesDir + url);
@@ -255,7 +260,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private RestApiResponse getControllerResponse(
 			ResponseHeaders headers, String fullUrl,
 			MappedUrl mapped, RequestParameters params,
-			Identity identity) throws ServerException {
+			Identity identity, Optional<WebSocket> websocket) throws ServerException {
 		try {
 			Object o = register
 					.getFactory(mapped.getClassName())
@@ -276,7 +281,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			List<Object> valuesList = new ArrayList<>();
 			mapped.forEachParams((clazz, name, isRequestParam)->{
 				classesList.add(clazz);
-				addValueToList((isRequestParam ? params : validatorParams), name, clazz, valuesList);
+				addValueToList((isRequestParam ? params : validatorParams), name, clazz, valuesList, websocket);
 			});
 			/** authorize */
 			try {
@@ -306,7 +311,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Response response = (Response)o.getClass()
 	    				.getMethod(mapped.getMethodName(), classes)
 	    				.invoke(o, values);
-	    	headers.addHeaders(identityFactory.getResponseHeaders(identity)); // FIX for cookies
+	    	headers.addHeaders(identityFactory.getResponseHeaders(identity)); // for cookies and custom headers
 	    	
 			return response.getResponse(
 				headers, templateFactory, 
@@ -328,8 +333,10 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		}
 	}
 
-	private void addValueToList(RequestParameters params, String name, Class<?> clazz, List<Object> valuesList) {
-		if (name == null) {
+	private void addValueToList(RequestParameters params, String name, Class<?> clazz, List<Object> valuesList, Optional<WebSocket> websocket) {
+		if (clazz.isInstance(WebSocket.class) && name == null) {
+			valuesList.add(websocket.orElse(null));
+		} else if (name == null) {
 			valuesList.add(new DictionaryValue(params).getValue(clazz));
 		} else if (clazz.isInstance(params.get(name))) {
 			valuesList.add(params.get(name));
