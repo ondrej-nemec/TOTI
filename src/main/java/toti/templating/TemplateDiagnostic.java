@@ -14,13 +14,14 @@ public class TemplateDiagnostic extends Writer implements DiagnosticListener<Jav
 
 	@Override
 	public void write(char[] cbuf, int off, int len) throws IOException {
-		builder.append(cbuf);
+		//builder.append(cbuf);
 		//isOk = false;
 	}
 
 	@Override
 	public void report(Diagnostic<? extends JavaFileObject> diagnostic) {
 		// TODO
+		builder.append(diagnostic);
 	}
 
 	@Override
