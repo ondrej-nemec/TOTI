@@ -32,6 +32,11 @@ public class TaskExample implements Task {
 	
 	public Consumer<String> onMessage() {
 		return (message)->{
+			if ("end".equals(message)) {
+				websocket.close();
+				websocket = null;
+				return;
+			}
 			lastMesage = message;
 			try {
 				websocket.send("Thank you");

@@ -127,6 +127,7 @@ public class ResponsesExample implements Module {
 	@Action("websocket")
 	public Response getWebsocket(WebSocket websocket) {
 		if (websocket != null) {
+			task.setWebsocket(websocket);
 			// TODO factory method 
 			return new WebsocketResponse(websocket, task.onMessage(), task.onError());
 		}

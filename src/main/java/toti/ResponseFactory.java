@@ -111,7 +111,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Properties header,
 			RequestParameters params,
 			String ip,
-			Optional<WebSocket> websocket) throws IOException { // TODO websocket
+			Optional<WebSocket> websocket) throws IOException {
 		/*
 		System.err.println("URL: " + fullUrl);
 		System.err.println("Header: " + header);
@@ -334,7 +334,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	}
 
 	private void addValueToList(RequestParameters params, String name, Class<?> clazz, List<Object> valuesList, Optional<WebSocket> websocket) {
-		if (clazz.isInstance(WebSocket.class) && name == null) {
+		if (WebSocket.class.equals(clazz) && name == null) {
 			valuesList.add(websocket.orElse(null));
 		} else if (name == null) {
 			valuesList.add(new DictionaryValue(params).getValue(clazz));
