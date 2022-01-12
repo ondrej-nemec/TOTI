@@ -33,11 +33,11 @@ public interface Response {
 	
 	/***********/
 	
-	static Response getFile(String fileName) {
+	static FileResponse getFile(String fileName) {
 		return new FileResponse(StatusCode.OK, fileName);
 	}
 
-	static Response getFile(StatusCode code, String fileName) {
+	static FileResponse getFile(StatusCode code, String fileName) {
 		return new FileResponse(code, fileName);
 	}
 	
@@ -74,13 +74,19 @@ public interface Response {
 	}
 	
 	default String getContentType(String fileName, String charset) {
+		if (fileName == null) {
+			return null;
+		}
 		String ext = new FileExtension(fileName).getExtension();
 		// https://stackoverflow.com/a/48704300
 		switch (ext) {
+		// TODO more https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
 			case "jsp":
 			case "html": return "Content-Type: text/html; charset=" + charset;
 			case "css": return "Content-Type: text/css; charset=" + charset;
+			case "csv": return "Content-Type: text/csv; charset=" + charset;
 			case "js": return "Content-Type: text/javascript; charset=" + charset;
+			case "txt": return "Content-Type: text/plain; charset=" + charset;
 			case "json": return "Content-Type: application/json; charset=" + charset;
 			case "ico": return "Content-Type: image/ico";
 			case "jpeg":
@@ -88,8 +94,16 @@ public interface Response {
 			case "png": return "Content-Type: image/png";
 			case "giff": return "Content-Type: image/giff";
 			case "gif": return "Content-Type: image/gif";
-			case "txt": return "Content-Type: text/plain; charset=" + charset;
-			default: return null;
+			
+			// TODO add more https://wiki.documentfoundation.org/Faq/General/036
+			case "odt": return "Content-Type: application/vnd.oasis.opendocument.text";
+			case "ods": return "Content-Type: application/vnd.oasis.opendocument.spreadsheet";
+			case "ots": return "Content-Type: application/vnd.oasis.opendocument.spreadsheet-template";
+			
+			// TODO add microsoft https://filext.com/faq/office_mime_types.html
+			
+			default: return "Content-Type: application/x-binary"; // application/octet-stream
+			//default: return null;
 		}
 	}
 }
