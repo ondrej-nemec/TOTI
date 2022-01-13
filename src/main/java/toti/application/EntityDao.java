@@ -64,19 +64,14 @@ public interface EntityDao<T extends Entity> {
 			}
 			
 			int countOfResults = count.fetchSingle().getInteger();
-			if (countOfResults == 0) {
-				return new GridDataSet<>(new LinkedList<>(), countOfResults, 1);
-			}
-			int pageIndex = indexOfPage;
-			if (pageIndex * pageSize > countOfResults) {
-				pageIndex = 1;
-			}
-			select.limit(Math.min(pageIndex*pageSize, countOfResults), (pageIndex-1)*pageSize);
+			GridRange range = GridRange.create(countOfResults, indexOfPage, pageSize);
+			
+			select.limit(range.getLimit(), range.getOffset());
 			List<T> items = new LinkedList<>();
 			select.fetchAll().forEach((row)->{
 				items.add(createEntity(row));
 			});
-			return new GridDataSet<>(items, countOfResults, pageIndex);
+			return new GridDataSet<>(items, countOfResults, range.getPageIndex());
 		});
 	}
 	

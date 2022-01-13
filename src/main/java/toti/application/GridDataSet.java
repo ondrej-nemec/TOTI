@@ -11,6 +11,16 @@ public class GridDataSet<T extends Entity> implements Jsonable {
 	private final List<T> items;
 	private final int totalCount;
 	private final int pageIndex;
+	
+	public static <T extends Entity> GridDataSet<T> create(List<T> items, int pageIndex, int pageSize) {
+		GridRange range = GridRange.create(items.size(), pageIndex, pageSize);
+		List<T> dataset = items.subList(range.getOffset(), range.getLimit() + range.getLimit() + 1);
+		return new GridDataSet<>(
+			dataset, 
+			items.size(),
+			range.getPageIndex()
+		);
+	}
 
 	public GridDataSet(List<T> items, int totalCount, int pageIndex) {
 		this.items = items;
