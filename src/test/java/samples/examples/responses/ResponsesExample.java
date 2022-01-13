@@ -2,7 +2,6 @@ package samples.examples.responses;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,9 +20,7 @@ import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.application.Task;
 import toti.registr.Register;
-import toti.response.FileResponse;
 import toti.response.Response;
-import toti.response.WebsocketResponse;
 
 /**
  * This example shows various responses and their usage
@@ -40,6 +37,11 @@ public class ResponsesExample implements Module {
 	}
 	
 	public ResponsesExample() {};
+	
+	@Action("index")
+	public Response getIndex() {
+		return Response.getFile("samples/examples/responses/index.html");
+	}
 
 	/**
 	 * Returns given file, file can be from any path from disk
@@ -51,9 +53,10 @@ public class ResponsesExample implements Module {
 	public Response getFile() {
 	//	String fileName = "samples/plainTextFile.txt"; // Plain text file. Browser probably display instead of downloading.
 		String fileName = "samples/binaryFile.odt"; // Binary file. Browser starts downloading
-		return Response.getFile(
+		return Response.getFileDownload(
+			fileName,
 			"fileToDownload_" + new Date().getTime() + "." + new FileExtension(fileName).getExtension()
-		).setFromFile(fileName);
+		);
 		// return Response.getFile(StatusCode.OK, fileName);
 	}
 
@@ -63,9 +66,11 @@ public class ResponsesExample implements Module {
 	 */
 	@Action("generate")
 	public Response getGenerated() {
-		return new FileResponse(StatusCode.OK, "generatedFileToDownload_" + new Date().getTime() + ".odt")
-				.addContent("Generated").addContent("\n")
-				.addContent("File content :-D");
+		return Response.getFileDownload(StatusCode.OK, "generatedFileToDownload_" + new Date().getTime() + ".odt", (bout)->{
+			bout.write("Generated".getBytes());
+			bout.write("\n".getBytes());
+			bout.write("File content :-D".getBytes());
+		});
 	}
 
 	/**
@@ -74,11 +79,10 @@ public class ResponsesExample implements Module {
 	 */
 	@Action("json")
 	public Response getJson() {
-		Map<String, Object> json = 
-				new MapInit<String, Object>()
-				.append("first", "value")
-				.append("second", false)
-				.toMap();
+		Map<String, Object> json = new MapInit<String, Object>()
+			.append("first", "value")
+			.append("second", false)
+			.toMap();
 		
 		return Response.getJson(json);
 		// return Response.getJson(StatusCode.ACCEPTED, json);
@@ -100,11 +104,10 @@ public class ResponsesExample implements Module {
 	 */
 	@Action("template")
 	public Response getTemplate() {
-		Map<String, Object> params = 
-				new MapInit<String, Object>()
-				.append("title", "Page title")
-				.append("number", 42)
-				.toMap();
+		Map<String, Object> params = new MapInit<String, Object>()
+			.append("title", "Page title")
+			.append("number", 42)
+			.toMap();
 		String template = "/template.jsp";
 		return Response.getTemplate(template, params);
 		// return Response.getTemplate(StatusCode.OK, template, params);
@@ -128,8 +131,7 @@ public class ResponsesExample implements Module {
 	public Response getWebsocket(WebSocket websocket) {
 		if (websocket != null) {
 			task.setWebsocket(websocket);
-			// TODO factory method 
-			return new WebsocketResponse(websocket, task.onMessage(), task.onError());
+			return Response.getWebsocket(websocket, task.onMessage(), task.onError());
 		}
 		return Response.getFile("samples/examples/responses/websockets.html");
 	}
@@ -140,8 +142,6 @@ public class ResponsesExample implements Module {
 		try {
 			HttpServer server = new HttpServerFactory()
 				.setPort(8080)
-				// .setDevelopIpAdresses(Arrays.asList()) // no develop ips
-				.setDeleteTempJavaFiles(false)
 				.get(modules, null, null);
 			
 			/* start */

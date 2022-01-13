@@ -26,9 +26,6 @@ public class JsonResponse implements Response {
 	}
 
 	@Override
-	public void addParam(String name, Object value) {}
-
-	@Override
 	public RestApiResponse getResponse(
 			ResponseHeaders header,
 			TemplateFactory templateFactory, 

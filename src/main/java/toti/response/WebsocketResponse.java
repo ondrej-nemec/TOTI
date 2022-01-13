@@ -30,7 +30,4 @@ public class WebsocketResponse implements Response {
 		return RestApiResponse.webSocketResponse(header.getHeaders(), websocket, onMessage, onError);
 	}
 
-	@Override
-	public void addParam(String name, Object value) {}
-
 }

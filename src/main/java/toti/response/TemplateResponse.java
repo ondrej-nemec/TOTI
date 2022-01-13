@@ -27,11 +27,6 @@ public class TemplateResponse implements Response {
 	}
 
 	@Override
-	public void addParam(String name, Object value) {
-		params.put(name, value);
-	}
-
-	@Override
 	public RestApiResponse getResponse(
 			ResponseHeaders header, 
 			TemplateFactory templateFactory, 

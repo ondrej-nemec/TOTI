@@ -18,9 +18,6 @@ public class TextResponse implements Response {
 		this.text = text;
 		this.code = code;
 	}
-
-	@Override
-	public void addParam(String name, Object value) {}
 	
 	@Override
 	public RestApiResponse getResponse(

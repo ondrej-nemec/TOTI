@@ -1,10 +1,15 @@
 package toti.response;
 
+import java.io.BufferedOutputStream;
+import java.io.IOException;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import ji.common.functions.FileExtension;
+import ji.common.structures.ThrowingConsumer;
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.server.RestApiResponse;
+import ji.socketCommunication.http.server.WebSocket;
 import toti.ResponseHeaders;
 import toti.security.Authorizator;
 import toti.security.Identity;
@@ -28,17 +33,30 @@ public interface Response {
 		return getResponse(header, null, null, null, null, null, charset);
 	}
 	
-	@Deprecated
-	void addParam(String name, Object value);
-	
 	/***********/
 	
-	static FileResponse getFile(String fileName) {
+	static Response getFile(String fileName) {
 		return new FileResponse(StatusCode.OK, fileName);
 	}
 
-	static FileResponse getFile(StatusCode code, String fileName) {
+	static Response getFile(StatusCode code, String fileName) {
 		return new FileResponse(code, fileName);
+	}
+	
+	static Response getFileDownload(String sourceFile, String fileName) {
+		return new FileResponse(StatusCode.OK, fileName, sourceFile);
+	}
+
+	static Response getFileDownload(StatusCode code, String sourceFile, String fileName) {
+		return new FileResponse(code, fileName, sourceFile);
+	}
+	
+	static Response getFileDownload(String fileName, ThrowingConsumer<BufferedOutputStream, IOException> binaryContent) {
+		return new FileResponse(StatusCode.OK, fileName, binaryContent);
+	}
+
+	static Response getFileDownload(StatusCode code, String fileName, ThrowingConsumer<BufferedOutputStream, IOException> binaryContent) {
+		return new FileResponse(code, fileName, binaryContent);
 	}
 	
 	static Response getJson(StatusCode code, Object json) {
@@ -71,6 +89,10 @@ public interface Response {
 	
 	static Response getRedirect(String url) {
 		return new RedirectResponse(StatusCode.TEMPORARY_REDIRECT, url);
+	}
+	
+	static Response getWebsocket(WebSocket websocket, Consumer<String> onMessage, Consumer<IOException> onError) {
+		return new WebsocketResponse(websocket, onMessage, onError);
 	}
 	
 	default String getContentType(String fileName, String charset) {
