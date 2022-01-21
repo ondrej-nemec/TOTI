@@ -17,6 +17,14 @@
 			{
 				"title": "Modules, tasks, register",
 				"link": "gt-modules.html"
+			},
+			{
+				"title": "Controllers",
+				"link": "gt-controllers.html"
+			},
+			{
+				"title": "Validators",
+				"link": "gt-validation.html"
 			}
 		]
 	},

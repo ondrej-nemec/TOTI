@@ -1,0 +1,132 @@
+<h1>Controllers</h1>
+
+<p>
+	Controllers accept client request and return response. Class became controller by adding an <code>Controller</code> annotation. The annotation requires string parameter - URL. This string is used in routing (see in next chapter). Can be empty but not null.
+</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-java">
+@Controller("my-controller")
+public class MyController {
+	...
+}
+</code></pre>
+
+<h2>Registration</h2>
+
+<p>Each controller must be registered in <code>Register</code>. For this use <code>addFactory</code> method inside <code>initInstances</code>. The new instance of controller will be created everytime the controller is required.</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-java">
+public List&lt;Task&gt; initInstances(Env env, Translator translator, Register register, Database database, Logger logger)
+	// ...
+	register.addFactory(MyController.class, ()->new MyController());
+	// ...
+}
+</code></pre>
+
+<strong>With constructor parameters</strong>
+
+<pre><code class="language-java">
+public List&lt;Task&gt; initInstances(Env env, Translator translator, Register register, Database database, Logger logger)
+	// ...
+	MyClassDao myClassDao = new MyClassDao(database);
+	register.addFactory(MyController.class, ()->new MyController(myClassDao));
+	// ...
+}
+</code></pre>
+
+<h3>Injection</h3>
+
+<p>
+	<code>addFactory</code> method allow injects following classes: <code>Translator</code> (with set user prefefenced language), <code>Identity</code>, <code>Authorizator</code> and <code>Authenticator</code> (last three: see in next chapter).
+</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-java">
+public List&lt;Task&gt; initInstances(Env env, Translator translator, Register register, Database database, Logger logger)
+	// ...
+	MyClassDao myClassDao = new MyClassDao(database);
+	register.addFactory(MyController.class, (translator, identity, authorizator, authenticator)->new MyController(myClassDao, translaor, identity));
+	// ...
+}
+</code></pre>
+
+<h2>Actions</h2>
+
+<p>
+	Action is public java method annotated with <code>Action</code> annotation. This method must returns <code>Response</code>. <code>Action</code> requires string paramter used in roution (see next chapter). Can be empty, but never null.
+</p>
+
+<p>
+	Optionally can action contains <code>Method</code> annotation. This annotation requires array of <code>HttpMethod</code>. Specify which request type/method(GET, POST,...) this action serve. No annotation means all methods.
+</p>
+
+<p>
+	One controller can contains more actions. Remember, <code>Action</code> with <code>HttpMethod</code> must be unique for controller.
+</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-java">
+@Action("actionUrl")
+@Method({HttpMethod.GET, HttpMethod.POST}) // optional
+public Response myAction() {
+	// ...
+	return ...;
+}
+</code></pre>
+
+<h3>Parameters</h3>
+
+<p>
+	Action can receive parameters. Parameter can be GET params (fe. <code>?myParam=value&amp;second=val2</code>), in URL (fe. <code>/myModule/myController/myAction/12</code>, for more see in next chapter) or in request body (POST forms, files, ....).
+</p>
+
+<p>
+	All parameters in action definition have to be anntotated (except <code>WebSocket</code> class). Available annotations:
+
+	<ul>
+		<li><code>Param</code>: specify one request parameter. Requires string name.</li>
+		<li><code>Params</code>: all request parameters as <code>RequestParameters</code> class or instance of <code>Entity</code></li>
+		<li><code>ParamUrl</code>: specify one request parameter included in URL. Requires string name.</li>
+		<li><code>ParamValidator</code>: specify one validator parameter (see next chapter). Requires string name.</li>
+		<li><code>ParamsValidator</code>: all validator parameters (see next chapter) as <code>RequestParameters</code> class or instance of <code>Entity</code></li>
+	</ul>
+</p>
+
+<p class="alert alert-info">
+	<code>RequestParameters</code> can be automatically parsed to instance of <code>Entity</code> interface. The <code>Mapper</code> (see <a href="https://ondrej-nemec.github.io/JI/?file=common-functions.html">JI Common</a>) is used.
+</p>
+
+<p>
+	Allowed paramter types:
+	<ul>
+		<li>Primitives and corresponding objects: boolean, int, float, Integer, String, Double, ....</li>
+		<li><code>RequestParameters</code>: holds more parameters. See <a href="https://ondrej-nemec.github.io/JI/?file=communication-server.html">JI Communication</a></li>
+		<li>Instance of <code>Entity</code></li>
+		<li><code>List</code></li>
+		<li><code>Map</code></li>
+		<li><code>UploadedFile</code>: allow upload file. See <a href="https://ondrej-nemec.github.io/JI/?file=communication-server.html">JI Communication</a></li>
+	</ul>
+</p>
+
+<p class="alert alert-info">
+	You can have list in map, but map in list is not working.
+</p>
+
+<strong>Example</strong>
+
+<P>Expect URL: <code>/myModule/myController/myAction/12?first=value1&amp;second=false</code></P>
+
+<pre><code class="language-java">
+@Action("myAction")
+public Response myAction(@Param("first") String first, @Param("second") Boolean second) {
+	// ...
+}
+</code></pre>
+
+<p>Full working example is <a href="">here</a>. TODO</p>
