@@ -83,11 +83,11 @@ public Response myAction() {
 <h2>Request parameters</h2>
 
 <p>
-	Action can receive parameters. Parameter can be GET params (fe. <code>?myParam=value&amp;second=val2</code>), in URL (fe. <code>/myModule/myController/myAction/12</code>, for more see in next chapter) or in request body (POST forms, files, ....).
+	Action can receive parameters. Parameter can be GET params (fe. <code>?myParam=value&amp;second=val2</code>), in URL (fe. <code>/myModule/myController/myAction/12</code>) or in request body (POST forms, files, ....). <strong>Request parameters validation is in next chapter.</strong>
 </p>
 
 <p>
-	All parameters in action definition have to be anntotated (except <code>WebSocket</code> class). Available annotations:
+	All parameters in action definition have to be anotated (except <code>WebSocket</code> class). Available annotations:
 
 	<ul>
 		<li><code>Param</code>: specify one request parameter. Requires string name.</li>
