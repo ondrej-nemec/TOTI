@@ -129,6 +129,7 @@ public class ResponsesExample implements Module {
 	 */
 	@Action("websocket")
 	public Response getWebsocket(WebSocket websocket) {
+		 // websocket can be null - means this request is not valid websocket request
 		if (websocket != null) {
 			task.setWebsocket(websocket);
 			return Response.getWebsocket(websocket, task.onMessage(), task.onError());

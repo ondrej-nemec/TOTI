@@ -58,7 +58,7 @@ public List&lt;Task&gt; initInstances(Env env, Translator translator, Register r
 <h2>Actions</h2>
 
 <p>
-	Action is public java method annotated with <code>Action</code> annotation. This method must returns <code>Response</code>. <code>Action</code> requires string paramter used in roution (see next chapter). Can be empty, but never null.
+	Action is public java method annotated with <code>Action</code> annotation. This method must returns <code>Response</code>. <code>Action</code> requires string paramter used in routing (see next chapter). Can be empty, but never null.
 </p>
 
 <p>
@@ -80,7 +80,7 @@ public Response myAction() {
 }
 </code></pre>
 
-<h3>Parameters</h3>
+<h2>Request parameters</h2>
 
 <p>
 	Action can receive parameters. Parameter can be GET params (fe. <code>?myParam=value&amp;second=val2</code>), in URL (fe. <code>/myModule/myController/myAction/12</code>, for more see in next chapter) or in request body (POST forms, files, ....).
@@ -129,4 +129,87 @@ public Response myAction(@Param("first") String first, @Param("second") Boolean 
 }
 </code></pre>
 
-<p>Full working example is <a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/requests">here</a>.</p>
+<p class="alert alert-success">Requests full working example is <a target=_blank href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/requests">here</a>.</p>
+
+<h2>Responses</h2>
+
+<p>
+	<code>Response</code> is created by using factory methods on it. Most factory method allow optionally specify response code.
+</p>
+
+<p class="alert alert-success">Responses full working example is <a target=_blank href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/responses">here</a>.</p>
+
+<h3>File</h3>
+
+<p>
+	Returns file as response content. <code>Content-Type</code> header is added automatically. Default status code is 200 OK.
+</p>
+
+<h4>File from disk</h4>
+
+<p>
+	<code>Response.getFileDownload(pathToFile, downloadedFileName)</code> and <code>Response.getFileDownload(statusCode, pathToFile, downloadedFileName)</code> return file from anywhere on disk. <code>downloadedFileName</code> specify downloaded file name.
+</p>
+
+<h4>Generated file</h4>
+
+<p>
+	<code>Response.getFileDownload(downloadedFileName, (bufferedOutputStream)->{/* ... */})</code> and <code>Response.getFileDownload(statusCode, downloadedFileName, (bufferedOutputStream)->{/* ... */})</code> allow create file content dynamically at runtime. <code>downloadedFileName</code> specify downloaded file name.
+</p>
+
+<h4>Simply file</h4>
+
+<p>
+	<code>Response.getFile(pathToFile)</code> and <code>Response.getFile(statusCode, pathToFile)</code> are for very simple file response. <code>pathToFile</code> specify path to file anywhere on disk. Downloaded file name will be last URL parameter. Useful for HTML/CSS/JS resources.
+</p>
+
+<h3>JSON</h3>
+
+<p>
+	<code>Response.getJson(json)</code> and <code>Response.getJson(statusCode, json)</code> send given object as JSON. JI Common <code>Mapper</code> is used for stringify. Default status code is 202 ACCEPTED.
+</p>
+
+<h3>Text</h3>
+
+<p>
+	<code>Response.getText(text)</code> and <code>Response.getText(statusCode, text)</code> return given text as response. Default status code is 200 OK.
+</p>
+
+<h3>Redirect</h3>
+
+<p>
+	Redirect is done by <code>Response.getRedirect(url)</code> or <code>Response.getRedirect(statusCode, url)</code>. Default status code is 307 TEMPORARY REDIRECT.
+</p>
+
+<h3>Template</h3>
+
+<p>
+	TOTI provide templating system (explained in next chapter). <code>Response.getTemplate(file, params)</code> and <code>Response.getTemplate(statusCode, file, params)</code> parse template and return. <code>file</code> is path to template file. Path is absolute from module template path specified in module. <code>params</code> is <code>Map</code> of paramters passed to template. Default status code is 200 OK.
+</p>
+
+<h3>Websocket</h3>
+
+<p>
+	For using websocket response, call <code>Response.getWebsocket(websocket, onMessage, onError)</code>. First parameter is <code>WebSocket</code> received as action parameter, the second is message listener (called if message recived) and third is error listener (called if error occur).
+</p>
+
+<strong>Websocket example</strong>
+
+<pre><code>
+@Action("websocket")
+public Response getWebsocket(WebSocket websocket) {
+	 // websocket can be null - means this request is not valid websocket request
+	if (websocket != null) {
+		return Response.getWebsocket(websocket, (message)->{
+			// ...
+		}, (exception)->{
+			// ...
+		});
+	}
+	return Response.getText(StatusCode.BAD_REQUEST, "");
+}
+</code></pre>
+
+<p class="alert alert-warning">
+	If you want to be active and not just wait on client message, pass on websocket to another thread.
+</p>
