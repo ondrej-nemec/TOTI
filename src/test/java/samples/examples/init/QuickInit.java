@@ -1,4 +1,4 @@
-package samples.getstarted.init;
+package samples.examples.init;
 
 import java.util.Arrays;
 
@@ -7,7 +7,7 @@ import toti.Application;
 public class QuickInit {
 	
 	public static void main(String[] args) {
-		Application.APP_CONFIG_FILE = "samples/getstarted/init/quickInit.properties";
+		Application.APP_CONFIG_FILE = "samples/examples/init/quickInit.properties";
 		Application application = new Application(Arrays.asList(
 			// modules
 		));

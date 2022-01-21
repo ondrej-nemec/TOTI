@@ -1,4 +1,4 @@
-package samples.getstarted.init;
+package samples.examples.init;
 
 import java.util.Arrays;
 import java.util.List;
