@@ -174,10 +174,10 @@ public class ResponsesExample implements Module {
 	}
 
 	@Override
-	public List<Task> initInstances(Env env, Translator translator, Register registr, Database database, Logger logger)
+	public List<Task> initInstances(Env env, Translator translator, Register register, Database database, Logger logger)
 			throws Exception {
 		TaskExample task = new TaskExample(logger);
-		registr.addFactory(ResponsesExample.class, ()->new ResponsesExample(task));
+		register.addFactory(ResponsesExample.class, ()->new ResponsesExample(task));
 		return Arrays.asList(task);
 	}
 }
