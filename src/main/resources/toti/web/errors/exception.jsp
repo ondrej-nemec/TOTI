@@ -45,7 +45,7 @@
 					</table>
 				</div>
 			</div>
-			
+			<t:if cond='${mappedUrl} != null'>
 			<div class="section">
 				<div>
 					<h3>Mapping</h3>
@@ -70,6 +70,7 @@
 					${mappedUrl}
 				</div>
 			</div>
+			</t:if>
 			
 			<div class="section">
 				<div>
