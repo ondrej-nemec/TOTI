@@ -151,7 +151,7 @@ public class ItemRules {
 	
 	public ItemRules setMinValue(Number minValue) {
 		return setMinValue(minValue, (t)->t.translate(
-			"common.validation.vlaue-must-be-equals-or-higher", 
+			"common.validation.value-must-be-equals-or-higher", 
 			new MapInit<String, Object>().append("minValue", minValue).toMap()
 		)); // "Value must be equals or higher " + minValue
 	}
@@ -168,7 +168,7 @@ public class ItemRules {
 	
 	public ItemRules setMinLength(int minLength) {
 		return setMinLength(minLength, (t)->t.translate(
-			"common.validation.text-length-must-be-at-least", 
+			"common.validation.length-must-be-at-least", 
 			new MapInit<String, Object>().append("minLength", minLength).toMap()
 		)); // "Text length must be at least " + minLength
 	}
@@ -185,7 +185,7 @@ public class ItemRules {
 	
 	public ItemRules setMaxLength(int maxLength) {
 		return setMaxLength(maxLength, (t)->t.translate(
-			"common.validation.text-length-must-be-max", 
+			"common.validation.length-must-be-max", 
 			new MapInit<String, Object>().append("maxLength", maxLength).toMap()
 		)); // "Text length must be maximal " + maxLength
 	}

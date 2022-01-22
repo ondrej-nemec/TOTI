@@ -2,15 +2,24 @@
 
 <h2>Type</h2>
 
-<p>Specify parameter type.</p>
+<p>Specify parameter type. If value can be casted on given type, automatically cast (fe. <code>"123"</code> with type <code>Integer</code> will be casted to <code>123</code>). Automatic cast can be switched off.</p>
 
 <pre><code class="language-java">
-Class&lt;?&lt; requiredType = ...
+Class&lt;?&gt; requiredType = ...
 
 itemRules.setType(requiredType);
 // OR with specified message
 itemRules.setType(requiredType, (translator)->translator.translate("message"));
+// OR with switch for automatic cast
+boolean changeValueType = ...;
+itemRules.setType(requiredType, changeValueType, (translator)->translator.translate("message"));
 </code></pre>
+
+<strong>Default translations</strong>
+<div>
+	<code>common.validation.value-type-must-be</code> 
+	Parameters: <code>class</code>
+</div>
 
 <h2>List of allowed values</h2>
 
@@ -26,6 +35,12 @@ itemRules.setAllowedValues(allowedValues);
 itemRules.setAllowedValues(allowedValues, (translator)->translator.translate("message"));
 </code></pre>
 
+<strong>Default translations</strong>
+<div>
+	<code>common.validation.value-must-be-one-of</code> 
+	Parameters: <code>values</code>
+</div>
+
 <h2>Maximal value</h2>
 
 <p>Specify maximal value. Efects only number.</p>
@@ -37,6 +52,12 @@ itemRules.setMaxValue(maximalValue);
 // OR with specified message
 itemRules.setMaxValue(maximalValue, (translator)->translator.translate("message"));
 </code></pre>
+
+<strong>Default translations</strong>
+<div>
+	<code>common.validation.value-must-be-less-or-equals</code> 
+	Parameters: <code>maxValue</code>
+</div>
 
 <h2>Minimal value</h2>
 
@@ -50,6 +71,12 @@ itemRules.setMinValue(minimalValue);
 itemRules.setMinValue(minimalValue, (translator)->translator.translate("message"));
 </code></pre>
 
+<strong>Default translations</strong>
+<div>
+	<code>common.validation.value-must-be-equals-or-higher</code> 
+	Parameters: <code>minValue</code>
+</div>
+
 <h2>Minimal length</h2>
 
 <p>Specify minimal allowed length (size) of texts, <code>Map</code>s and <code>List</code>s.</p>
@@ -61,6 +88,12 @@ itemRules.setMinLength(minLength);
 // OR with specified message
 itemRules.setMinLength(minLength, (translator)->translator.translate("message"));
 </code></pre>
+
+<strong>Default translations</strong>
+<div>
+	<code>common.validation.length-must-be-at-least</code> 
+	Parameters: <code>minLength</code> 
+</div>
 
 <h2>Maximal length</h2>
 
@@ -74,6 +107,12 @@ itemRules.setMaxLength(maxLength);
 itemRules.setMaxLength(maxLength, (translator)->translator.translate("message"));
 </code></pre>
 
+<strong>Default translations</strong>
+<div>
+	<code>common.validation.length-must-be-max</code> 
+	Parameters: <code>maxLength</code> 
+</div>
+
 <h2>Regex rule</h2>
 
 <p>Specify required format by given regex.</p>
@@ -85,6 +124,12 @@ itemRules.setRegex(regex);
 // OR with specified message
 itemRules.setRegex(regex, (translator)->translator.translate("message"));
 </code></pre>
+
+<strong>Default translations</strong>
+<div>
+	<code>common.validation.text-not-match-pattern</code> 
+	Parameters: <code>regex</code> 
+</div>
 
 <h2>Maximal file size</h2>
 
@@ -98,6 +143,12 @@ itemRules.setFileMaxSize(fileMaxSize);
 itemRules.setFileMaxSize(fileMaxSize, (translator)->translator.translate("message"));
 </code></pre>
 
+<strong>Default translations</strong>
+<div>
+	<code>common.validation.file-size-can-be-max</code> 
+	Parameters: <code>fileMaxSize</code> 
+</div>
+
 <h2>Minimal file size</h2>
 
 <p>Specifimy minimal file size in bytes. Efects only on files.</p>
@@ -110,6 +161,12 @@ itemRules.setFileMinSize(fileMinSize);
 itemRules.setFileMinSize(fileMinSize, (translator)->translator.translate("message"));
 </code></pre>
 
+<strong>Default translations</strong>
+<div>
+	<code>common.validation.file-size-must-be-at-least</code> 
+	Parameters: <code>fileMinSize</code> 
+</div>
+
 <h2>Allowed file types</h2>
 
 <p>Spefify allowed file types. Efects only on files. <strong>Cannot override allowed file types defined in server configuration.</strong> Empty collection means no allowed types.</p>
@@ -121,6 +178,12 @@ itemRules.setAllowedFileTypes(types);
 // OR with specified message
 itemRules.setAllowedFileTypes(types, (translator)->translator.translate("message"));
 </code></pre>
+
+<strong>Default translations</strong>
+<div>
+	<code>common.validation.file-type-is-not-allowed</code> 
+	Parameters: <code>allowedFileTypes</code> 
+</div>
 
 <h2>Validate sub map</h2>
 

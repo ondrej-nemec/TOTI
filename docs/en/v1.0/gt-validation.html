@@ -1,0 +1,34 @@
+<h1>Request validation</h1>
+
+<p>
+	All request parameters is most appropriate validate.
+</p>
+
+<h2>Basic validation</h2>
+
+<p>
+	If action requires spefic paramters and not requires <code>RequestParameters</code>, the parameters are validated in very simply way. See example below. The action needs two parameters - username and age. First one can be any valid <code>String</code>: null, empty, very long etc. The second can be only integer. If value of age parameter cannot be casted to int, the 500 is returned.
+</p>
+
+<pre><code>
+@Action("noValidator")
+public Response noValidator(@Param("username") String username, @Param("age") int age) {
+	// ...
+}
+</code></pre>
+
+<p class="alert alert-info">
+	The <code>Entity</code> works same as specified parameters.
+</p>
+
+<p class="alert alert-danger">
+	Basic validation not works for <code>RequestParameters</code>.
+</p>
+
+<h2>Validator</h2>
+
+- add to action
+
+- strict
+- item rules
+- validator params

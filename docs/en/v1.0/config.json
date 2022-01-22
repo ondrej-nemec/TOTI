@@ -23,7 +23,7 @@
 				"link": "gt-controllers.html"
 			},
 			{
-				"title": "Validators",
+				"title": "Request validation",
 				"link": "gt-validation.html"
 			}
 		]
