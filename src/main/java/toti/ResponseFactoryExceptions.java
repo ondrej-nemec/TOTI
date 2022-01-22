@@ -1,11 +1,15 @@
 package toti;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
 
 import ji.common.Logger;
+import ji.files.text.Text;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.server.RequestParameters;
@@ -78,15 +82,16 @@ public class ResponseFactoryExceptions {
 		logger.error(String.format("Exception occured %s URL: %s", status, fullUrl), t);
 		
 		String destination = header.getProperty("Sec-Fetch-Dest");
-		
+				
+		TemplateResponse response = getTemplate(status, method, url, fullUrl, protocol, header, params, identity, mappedUrl, t);
 		if (destination != null && destination.equals("empty")) { // probably js request
+			saveToFile(response);
 			if (developIps.contains(identity.getIP())) {
 				return Response.getText(status, t.getClass() + ": " + t.getMessage());
 			}
 			return Response.getText(status, status.getDescription());
 		}
 		
-		TemplateResponse response = getTemplate(status, method, url, fullUrl, protocol, header, params, identity, mappedUrl, t);
 		if (developIps.contains(identity.getIP())) {
 			return response;
 		}
@@ -95,12 +100,31 @@ public class ResponseFactoryExceptions {
 	
 	private Response getSyncException(StatusCode code, TemplateResponse response) {
 	//	return Response.getFile(code, String.format("toti/errors/%s.html", code));
-		// TODO save exception to html response.createResponse(templateFactory, translator, null, null);
 		// TODO custom pages
-		
+		saveToFile(response);
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("code", code);
 		return Response.getTemplate(code, "/errors/error.jsp", variables);
+	}
+	
+	private String saveToFile(TemplateResponse response) {
+		try {
+			String fileName = 
+					"logs/exception-" // TODO correct path
+					+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")) 
+					+ "__"
+					+ new Random().nextInt()
+					+ ".html";
+			Text.get().write((bw)->{
+				bw.write(
+					response.createResponse(templateFactory, translator, null, null)
+				);
+			}, fileName,  charset, false);
+			return fileName;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "-- file not saved -- (" + e.getMessage() + ")";
+		}
 	}
 	
 	private TemplateResponse getTemplate(
