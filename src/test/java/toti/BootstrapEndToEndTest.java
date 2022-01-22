@@ -96,7 +96,7 @@ public class BootstrapEndToEndTest {
 				
 				@Override
 				public DatabaseConfig createDatabaseConfig(Env env, List<String> migrations) {
-					//*
+					/*
 					return null;
 					/*/
 					return new DatabaseConfig(
