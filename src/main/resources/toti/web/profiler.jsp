@@ -1,4 +1,4 @@
-<!-- TOTI Profiler version 0.0.2 -->
+<!-- TOTI Profiler version 0.0.3 -->
 <html>
 <head>
     <meta charset="utf-8">
@@ -18,6 +18,9 @@
 			background-color: #3366ff;
 			padding: 0.5em;
 		}
+		h2, h3 {
+			display: inline-block;
+		}
 		.hidden {
 			display: none;
 		}
@@ -35,9 +38,11 @@
 		}
 		ul a, ul a:hover {
 		  color: #d9d9d9;
+		  word-wrap: break-word;
 		}
 		ul.main-list #title {
 		  font-weight: bold;
+		  word-wrap: break-word;
 		}
 		ul.sub-list {
 		  padding: 0;
@@ -99,6 +104,9 @@
 		<div id="content"></div>
 	</div>
 
+
+	<!-- menu templates -->
+
 	<template id="menu-item-template">
 		<li>
 			<span id="title"></span> <button class="clear">Clear</button>
@@ -110,76 +118,134 @@
 		<li><a href="" id="link"></a></li>
 	</template>
 
+	<!-- content templates -->
+
 	<template id="log-info-template">
-		<div>
-			<h2 id="data-name"></h2>
-			<h3 id="data-createdAt"></h3>
+		<div class="section">
+			<div>
+				<span><img width="25px" class="block-icon" id="info" src=""></span>
+				<h2>Info</h2>
+				<img src="" class="block-show" width="20px">
+				<img src="" class="block-hide" width="20px">
+			</div>
+			<div class="block">
+				<table>
+					<tr>
+						<th>Identifier</th>
+						<td id="data-name"></td>
+					</tr>
+					<tr>
+						<th>Created at</th>
+						<td id="data-createdAt"></td>
+					</tr>
+				</table>
+			</div>
 		</div>
 	</template>
 
 	<template id="translations-template">
-		<div>
-			<h2>Localization: <span id="data-trans-locale"></span></h2>
-			<p>
-				<strong>Left To Right:</strong>&nbsp;<span id="data-trans-ltr"></span> <br>
-				<strong>Substitutions:</strong>&nbsp;<span id="data-trans-substitutions"></span>
-			</p>
-			<table id="data-trans-missingTranslations">
-			  	<tr>
-			  		<th>Locale</th>
-			  		<th>Module</th>
-					<th>Key</th>
-					<th>Parameters</th>
-				</tr>
-				<!-- TODO add parameters -->
-			</table>
-			<ul id="data-trans-missingFiles"></ul>
+		<div class="section">
+			<div>
+				<span><img width="25px" class="block-icon" id="lang" src=""></span>
+				<h2>Localization: <span id="data-trans-locale"></span></h2>
+				<img src="" class="block-show" width="20px">
+				<img src="" class="block-hide" width="20px">
+			</div>
+			<div class="block">
+				<p>
+					<strong>Left To Right:</strong>&nbsp;<span id="data-trans-ltr"></span> <br>
+					<strong>Substitutions:</strong>&nbsp;<span id="data-trans-substitutions"></span>
+				</p>
+				<table id="data-trans-missingTranslations">
+				  	<tr>
+				  		<th>Locale</th>
+				  		<th>Module</th>
+						<th>Key</th>
+						<th>Parameters</th>
+					</tr>
+				</table>
+				<ul id="data-trans-missingFiles"></ul>
+			</div>
 		</div>
 	</template>
 
+	<template id="sql-template">
+		<div class="section">
+			<div>
+				<span><img width="25px" class="block-icon" id="database" src=""></span>
+				<h2>SQL Queries:</h2>
+				<img src="" class="block-show" width="20px">
+				<img src="" class="block-hide" width="20px">
+			</div>
+			<div class="block"></div>
+		</div>
+	</template>
+
+
 	<template id="sql-log-template">
-		<div>
-			<h4>SQL</h4>
-			<dl>
-			  <dt>Prepared SQL</dt>
-			  <dd id="data-sql-prepared">---</dd>
-			  <dt>Replaced SQL</dt>
-			  <dd id="data-sql-builded">---</dd>
-			  <dt>Builder Parameters</dt>
-			  <dd>
-			  	<table id="data-sql-builderParams">
-			  		<tr>
-			  			<th>Name</th>
-			  			<th>Value</th>
-			  		</tr>
-			  	</table>
-			  </dd>
-			  
-			  <dt>Query</dt>
-			  <dd id="data-sql-sql">---</dd>
-			  <dt>Parameters</dt>
-			  <dd>
-			  	  <ol id="data-sql-params"></ol>
-			  </dd>
-			  <dt>Is Executed</dt>
-			  <dd id="data-sql-executed"></dd>
-			</dl>
+		<div class="section">
+			<div>
+				<h3>SQL</h3>
+				<img src="" class="block-show" width="20px">
+				<img src="" class="block-hide" width="20px">
+			</div>
+			<div class="block">
+				<dl>
+				  <dt>Prepared SQL</dt>
+				  <dd id="data-sql-prepared">---</dd>
+				  <dt>Replaced SQL</dt>
+				  <dd id="data-sql-builded">---</dd>
+				  <dt>Builder Parameters</dt>
+				  <dd>
+				  	<table id="data-sql-builderParams">
+				  		<tr>
+				  			<th>Name</th>
+				  			<th>Value</th>
+				  		</tr>
+				  	</table>
+				  </dd>
+				  
+				  <dt>Query</dt>
+				  <dd id="data-sql-sql">---</dd>
+				  <dt>Parameters</dt>
+				  <dd>
+				  	  <ol id="data-sql-params"></ol>
+				  </dd>
+				  <dt>Is Executed</dt>
+				  <dd id="data-sql-executed"></dd>
+				</dl>
+			</div>
 		</div>
 	</template>
 
 	<template id="request-template">
-		<div>
-			<h2>
-				<span id="data-request-method"></span>: 
-				<span id="data-request-fullUrl"></span>
-			</h2>
-			<p><strong>IP:</strong>&nbsp;&nbsp;<span id="data-request-ip">/span></p>
+		<div class="section">
+			<div>
+				<h2>
+					<span id="data-request-method"></span>: 
+					<span id="data-request-url"></span>
+				</h2>
+				<img src="" class="block-show" width="20px">
+				<img src="" class="block-hide" width="20px">
+			</div>
+			<div class="block">
+				<div><strong>Full URL:</strong>&nbsp;&nbsp;<span id="data-request-fullUrl"></span></div>
+				<div><strong>IP:</strong>&nbsp;&nbsp;<span id="data-request-ip"></span></div>
+				<div><strong>Protocol:</strong>&nbsp;&nbsp;<span id="data-request-protocol"></span></div>
+				
+			</div>
 		</div>
 	</template>
 
 	<template id="request-parameters-template">
+		<div class="section">
 			<div>
+				<span><img width="25px" class="block-icon" id="parameters" src=""></span>
 				<h2>Parameters</h2>
+				<img src="" class="block-show" width="20px">
+				<img src="" class="block-hide" width="20px">
+			</div>
+			<div class="block">
 				<table id="data-params">
 					<tr>
 						<th>Name</th>
@@ -187,45 +253,58 @@
 					</tr>
 				</table>
 			</div>
+		</div>
 	</template>
 
 	<template id="identity-template">
-			<div>
-				<h2>Identity</h2>
-				<dl>
-				  <dt>Is API allowed</dt>
-				  <dd id="data-identity-apiAllowed"></dd>
-				  <dt>Content</dt>
-				  <dd id="data-identity-content"></dd>
-				  <dt>User</dt>
-				  <dd>
-				  	 <dl>
-						  <dt>ID</dt>
-						  <dd id="data-identity-user-id">---</dd>
-						  <dt>Allowed IDs</dt>
-						  <dd id="data-identity-user-ids">---</dd>
-				  	 </dl>
-				  </dd>
-				</dl>
+			<div class="section">
+				<div>
+					<span><img width="25px" class="block-icon" id="user" src=""></span>
+					<h2>Identity</h2>
+					<img src="" class="block-show" width="20px">
+					<img src="" class="block-hide" width="20px">
+				</div>
+				<div class="block">
+					<dl>
+					  <dt>Is API allowed</dt>
+					  <dd id="data-identity-apiAllowed"></dd>
+					  <dt>Content</dt>
+					  <dd id="data-identity-content"></dd>
+					  <dt>User</dt>
+					  <dd>
+					  	 <dl>
+							  <dt>ID</dt>
+							  <dd id="data-identity-user-id">---</dd>
+							  <dt>Allowed IDs</dt>
+							  <dd id="data-identity-user-ids">---</dd>
+					  	 </dl>
+					  </dd>
+					</dl>
+				</div>
 			</div>
 	 </template>
 
 	 <template id="rendering-template">
-			<div>
-				<h2>Server processing time</h2>
-				<h3>Total processing time: <span id="data-rendering-render"></span></h3>
-
-				<table id="data-rendering-times">
-					<tr>
-						<th>Name</th>
-						<th>Time</th>
-					</tr>
-				</table>
+			<div class="section">
+				<div>
+					<span><img width="25px" class="block-icon" id="time" src=""></span>
+					<h2>Server processing time</h2>
+					<img src="" class="block-show" width="20px">
+					<img src="" class="block-hide" width="20px">
+				</div>
+				<div class="block">
+					<h3>Total processing time: <span id="data-rendering-render"></span></h3>
+					<table id="data-rendering-times">
+						<tr>
+							<th>Name</th>
+							<th>Time</th>
+						</tr>
+					</table>
+				</div>
 			</div>
 	</template>
 
 	<script type="text/javascript">
-
 		function loadProfilerData(method, params, onSuccess) {
 			totiLoad.async(
 				"/toti/profiler", method, params, {}, 
@@ -319,6 +398,8 @@
 			var container = getTemplate(document.getElementById("request-template"));
 			container.querySelector("#data-request-method").innerText = request.method;
 			container.querySelector("#data-request-fullUrl").innerText = request.fullUrl;
+			container.querySelector("#data-request-url").innerText = request.url;
+			container.querySelector("#data-request-protocol").innerText = request.protocol;
 			container.querySelector("#data-request-ip").innerText = request.IP;
 			return container;
 		}
@@ -359,12 +440,9 @@
 		}
 
 		function getSqlLog(queries) {
+			var parent = getTemplate(document.getElementById("sql-template"));
 			var template = document.getElementById("sql-log-template");
-			var div = document.createElement("div");
-			var headline = document.createElement("h3");
-			headline.innerText = "SQL Queries";
-			div.appendChild(headline);
-
+			var block = parent.querySelector(".block");
 			for (const[logId, log] of Object.entries(queries)) {
 				var container = getTemplate(template);
 				container.querySelector("#data-sql-prepared").innerText = log.preparedSql;
@@ -383,9 +461,9 @@
 				container.querySelector("#data-sql-sql").innerText = log.sql;
 				container.querySelector("#data-sql-executed").innerText = log.isExecuted;
 
-				div.appendChild(container);
+				block.appendChild(container);
 			}
-			return div;
+			return parent;
 		}
 
 		function getLogInfo(info) {
@@ -442,8 +520,39 @@
 			}
 
 			target.appendChild(div);
+			addImages();
+			addListeners();
+		}
+		/***********************/
+
+		function addImages() {
+			document.querySelectorAll(".block-icon").forEach(function(img) {
+				img.setAttribute("src", totiImages[img.getAttribute("id")]);
+			});
 		}
 
+		function addListeners() {
+			document.querySelectorAll(".section").forEach(function(section) {
+				var block = section.querySelector(".block");
+				var hide = section.querySelector(".block-hide");
+				var show = section.querySelector(".block-show");
+
+				show.setAttribute("src", totiImages.arrowDown);
+				hide.setAttribute("src", totiImages.arrowUp);
+				show.style.display = "none";
+				hide.onclick = function() {
+					show.style.display = "inline-block";
+					block.style.display = "none";
+					hide.style.display = "none";
+				};
+				show.onclick = function() {
+					show.style.display = "none";
+					block.style.display = "block";
+					hide.style.display = "inline-block";
+				};
+			});
+		}
+		/*************************/
 		function addParametersToTable(table, parameters, renderFunc = null) {
 			parameters = parameters === null ? {} : parameters;
 			var createTd = function(value) {
