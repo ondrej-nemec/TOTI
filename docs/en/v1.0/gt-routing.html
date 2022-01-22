@@ -1,0 +1,27 @@
+<h1>Routing</h1>
+
+
+TODO redirect if not logget + backlink
+
+#### Routing
+
+Part of final URI is specified in `Controller` and `Action` annotations. If value is empty string, is ignored. Complete URI is looks like: `/<module-name>[/<path>]/<controller-anotation>/<action-annotation>[/<url-parameter>]`.
+
+`module-name` - name of your module you specify in `Module`. If empty, is ignored.
+
+`path` - the controller path specified in `Module` is base path for controllers for given module. Every sub packages are the path.
+
+Example:
+
+The controller path is `com.example.web.controllers`. This package contains `FirstController` class and sub package `api` with `SecondController` class. The module name is `example`. So, URL for `FirstController` will be `/example/first/...` and for second `/example/api/second/...`.
+
+##### Changing one route to another
+
+With `Router` class you can change one URI to another. Just:
+
+```
+router.addUrl("", "/home");
+```
+
+**NOTE:** `Router` is one instance for all modules, so one module can override configuration from another.
+**NOTE:** This is not redirect. Just instead of content one URL use another.

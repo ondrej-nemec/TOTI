@@ -25,6 +25,18 @@
 			{
 				"title": "Request validation",
 				"link": "gt-validation.html"
+			},
+			{
+				"title": "Routing",
+				"link": "gt-routing.html"
+			},
+			{
+				"title": "Security",
+				"link": "gt-security.html"
+			},
+			{
+				"title": "Templates",
+				"link": "gt-templates.html"
 			}
 		]
 	},
