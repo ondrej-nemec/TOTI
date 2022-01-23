@@ -7,7 +7,7 @@ public class Router {
 
 	private Map<String, String> map = new HashMap<>();
 	
-	private String redirectOnNotLogedUser = null;
+	private String redirectOnNotLoggedInUser = null;
 	
 	public void addUrl(String origin, String destination) {
 		map.put(origin, destination);
@@ -22,12 +22,12 @@ public class Router {
 		return "Router:" + map.toString();
 	}
 
-	public String getRedirectOnNotLogedUser() {
-		return redirectOnNotLogedUser;
+	public String getRedirectOnNotLoggedInUser() {
+		return redirectOnNotLoggedInUser;
 	}
 
-	public void setRedirectOnNotLogedUser(String redirectOnNotLogedUser) {
-		this.redirectOnNotLogedUser = redirectOnNotLogedUser;
+	public void setRedirectOnNotLoggedInUser(String redirectOnNotLoggedInUser) {
+		this.redirectOnNotLoggedInUser = redirectOnNotLoggedInUser;
 	}
 	
 }

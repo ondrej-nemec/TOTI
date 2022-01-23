@@ -287,7 +287,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			try {
 				authorize(mapped, params, identity, params);
 			} catch (ServerException e) {
-				if (mapped.isApi() || router.getRedirectOnNotLogedUser() == null) {
+				if (mapped.isApi() || router.getRedirectOnNotLoggedInUser() == null) {
 					throw e;
 				}
 				logger.debug(fullUrl + " Redirect to login page: " + e.getMessage());
@@ -297,7 +297,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 					backlink = "?backlink=" + getBackLink(fullUrl);
 				}
 				return Response.getRedirect(
-					router.getRedirectOnNotLogedUser() + backlink
+					router.getRedirectOnNotLoggedInUser() + backlink
 			     ).getResponse(headers, charset);
 			}
 			/** response */

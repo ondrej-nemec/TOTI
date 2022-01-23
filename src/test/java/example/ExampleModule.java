@@ -40,7 +40,7 @@ public class ExampleModule implements Module {
 		// router.addUrl("", "/example-module/example/list");
 		//router.setLinkPattern("</[path]>/[controller]/[method]</[param]>");
 		router.addUrl("", Link.get().create(ExamplePageController.class, c->c.grid()));
-		router.setRedirectOnNotLogedUser(Link.get().create(SignPageController.class, c->c.grid()));
+		router.setRedirectOnNotLoggedInUser(Link.get().create(SignPageController.class, c->c.grid()));
 	}
 
 	@Override
