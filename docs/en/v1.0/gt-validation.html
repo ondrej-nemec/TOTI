@@ -81,7 +81,7 @@ new Validator(true)
 	<code>Validator</code> contains method <code>setGlobalFunction</code>. This method allows works with parameters after validation but before calling action. Can be use fe. for comparing parameters.
 </p>
 
-<p><code class="language-java">
+<pre><code class="language-java">
 new Validator(false)
 	// ...
 	.setGlobalFunction((requestParameters, validatorParameters, translator)->{
@@ -89,7 +89,7 @@ new Validator(false)
 		// ...
 		return errors;
 	});
-</code></p>
+</code></pre>
 
 <p>
 	The method <code>setGlobalFunction</code> always returns <code>Set</code>. Result cannot be null. If is empty, that means no errors.
