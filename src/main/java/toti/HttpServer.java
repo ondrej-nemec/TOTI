@@ -5,7 +5,7 @@ import java.util.List;
 
 import ji.socketCommunication.Server;
 import toti.application.Task;
-import toti.registr.Register;
+import toti.register.Register;
 import toti.security.AuthenticationCache;
 import ji.translator.Translator;
 

@@ -18,7 +18,7 @@ import toti.annotations.Controller;
 import toti.annotations.Method;
 import toti.annotations.Secured;
 import toti.application.Task;
-import toti.registr.Register;
+import toti.register.Register;
 import toti.response.Response;
 
 /**

@@ -1,4 +1,4 @@
-package toti.registr;
+package toti.register;
 
 import toti.security.Authenticator;
 import toti.security.Authorizator;

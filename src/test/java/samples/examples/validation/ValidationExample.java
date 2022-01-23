@@ -19,7 +19,7 @@ import toti.annotations.ParamValidator;
 import toti.annotations.Params;
 import toti.annotations.ParamsValidator;
 import toti.application.Task;
-import toti.registr.Register;
+import toti.register.Register;
 import toti.response.Response;
 import toti.validation.ItemRules;
 import toti.validation.Validator;

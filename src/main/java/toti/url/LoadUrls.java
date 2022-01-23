@@ -25,7 +25,7 @@ import toti.annotations.ParamValidator;
 import toti.annotations.Params;
 import toti.annotations.ParamsValidator;
 import toti.annotations.Secured;
-import toti.registr.Register;
+import toti.register.Register;
 import toti.validation.Validator;
 
 public class LoadUrls {

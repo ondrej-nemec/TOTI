@@ -23,7 +23,7 @@ import ji.translator.Translator;
 import toti.application.Task;
 import toti.logging.TotiLogger;
 import toti.profiler.Profiler;
-import toti.registr.Register;
+import toti.register.Register;
 import toti.security.AuthenticationCache;
 import toti.security.Authenticator;
 import toti.security.Authorizator;

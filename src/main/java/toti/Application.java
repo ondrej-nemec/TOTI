@@ -15,7 +15,7 @@ import ji.files.text.Text;
 import ji.files.text.basic.ReadText;
 import ji.socketCommunication.SslCredentials;
 import toti.logging.TotiLogger;
-import toti.registr.Register;
+import toti.register.Register;
 import ji.translator.LanguageSettings;
 import ji.translator.Locale;
 import ji.translator.Translator;

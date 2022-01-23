@@ -26,7 +26,7 @@ import ji.socketCommunication.http.server.RestApiServerResponseFactory;
 import ji.socketCommunication.http.server.WebSocket;
 import toti.annotations.Domain;
 import toti.profiler.Profiler;
-import toti.registr.Register;
+import toti.register.Register;
 import toti.response.Response;
 import toti.response.ResponseException;
 import toti.security.Authenticator;

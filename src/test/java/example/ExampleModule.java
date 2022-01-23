@@ -13,7 +13,7 @@ import example.web.controllers.api.SignApiController;
 import toti.Module;
 import toti.Router;
 import toti.application.Task;
-import toti.registr.Register;
+import toti.register.Register;
 import toti.url.Link;
 import ji.translator.Translator;
 import ji.common.functions.Env;

@@ -24,7 +24,7 @@ import toti.annotations.Param;
 import toti.annotations.ParamUrl;
 import toti.annotations.Params;
 import toti.application.Task;
-import toti.registr.Register;
+import toti.register.Register;
 import toti.response.Response;
 
 /**

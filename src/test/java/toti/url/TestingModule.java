@@ -8,7 +8,7 @@ import ji.database.Database;
 import ji.translator.Translator;
 import toti.Module;
 import toti.application.Task;
-import toti.registr.Register;
+import toti.register.Register;
 
 public class TestingModule implements Module {
 	

@@ -6,7 +6,7 @@ import ji.common.Logger;
 import ji.common.functions.Env;
 import ji.database.Database;
 import toti.application.Task;
-import toti.registr.Register;
+import toti.register.Register;
 import ji.translator.Translator;
 
 public interface Module {

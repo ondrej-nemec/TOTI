@@ -15,7 +15,7 @@ import ji.common.structures.ThrowingSupplier;
 import toti.Module;
 import toti.annotations.Action;
 import toti.annotations.Controller;
-import toti.registr.Register;
+import toti.register.Register;
 import toti.response.Response;
 import toti.url.mock.MockCreator;
 

@@ -14,7 +14,7 @@ import module.controllers.api.SignApiController;
 import toti.Module;
 import toti.Router;
 import toti.application.Task;
-import toti.registr.Register;
+import toti.register.Register;
 import ji.common.functions.Env;
 
 public class EntityModule implements Module {

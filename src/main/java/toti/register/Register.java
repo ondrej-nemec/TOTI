@@ -1,4 +1,4 @@
-package toti.registr;
+package toti.register;
 
 import java.util.HashMap;
 import java.util.Map;
