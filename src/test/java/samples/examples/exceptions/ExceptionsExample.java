@@ -107,7 +107,6 @@ public class ExceptionsExample implements Module {
 	}
 	
 	
-
 	public static void main(String[] args) {
 		List<Module> modules = Arrays.asList(new ExceptionsExample());
 		try {
