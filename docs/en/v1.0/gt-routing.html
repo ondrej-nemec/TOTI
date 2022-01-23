@@ -1,27 +1,83 @@
 <h1>Routing</h1>
 
+<h2>URI pattern</h2>
 
-TODO redirect if not logget + backlink
+<p>
+	TOTI use following information for routing:
+	<ul>
+		<li><code>Module::getName</code> method (<code>[module]</code>)</li>
+		<li><code>Controller</code> annotation value (<code>[controller]</code>)</li>
+		<li><code>Action</code> annotation value (<code>[method]</code>)</li>
+		<li>Path: difference between <code>Module::getControllerPath</code> and controller package. Example below, (<code>[path]</code>)</li>
+		<li><code>ParamUrl</code> annotation value (<code>[param]</code>)</li>
+	</ul>
+</p>
 
-#### Routing
+<strong>Path example</strong>
 
-Part of final URI is specified in `Controller` and `Action` annotations. If value is empty string, is ignored. Complete URI is looks like: `/<module-name>[/<path>]/<controller-anotation>/<action-annotation>[/<url-parameter>]`.
+<p>
+	Expect your controller path is <code>org/example/app/controllers</code>. <br>
+	Path for <code>org.example.app.controllers.HomeController</code> is <code>""</code> (empty string) <br>
+	Path for <code>org.example.app.controllers.api.ApiController</code> is <code>api</code> <br>
+	Path for <code>org.example.app.controllers.top.secret.OnlyFoMyEyesController</code> is <code>top/secret</code>
+</p>
 
-`module-name` - name of your module you specify in `Module`. If empty, is ignored.
+<p>
+	Final URI is builded from pattern. The pattern is in <a href="?file=doc-server.html">server configuration</a>. Default value is <code>/[module]&lt;/[path]&gt;/[controller]/[method]&lt;/[param]&gt;</code>.
+</p>
 
-`path` - the controller path specified in `Module` is base path for controllers for given module. Every sub packages are the path.
+<p>
+	<code>&lt;/[...]&gt;</code> means variable is optional (can be empty string). <br>
+	Is not nessessary to have all variables in pattern: <code>/[controller]/[method]&lt;/[param]&gt;</code>. <code>&lt;/[...]&gt;</code> <br>
+	One action can has more <code>ParamUrl</code>. If you wish use it, expand pattern with more <code>&lt;/[param]&gt;</code>: <code>/[module]&lt;/[path]&gt;/[controller]/[method]&lt;/[param]&gt;&lt;/[param]&gt;</code>
+</p>
 
-Example:
+<h2>Router</h2>
 
-The controller path is `com.example.web.controllers`. This package contains `FirstController` class and sub package `api` with `SecondController` class. The module name is `example`. So, URL for `FirstController` will be `/example/first/...` and for second `/example/api/second/...`.
+<p>
+	In <code>Module::addRoutes</code> can be set some special routing.
+</p>
 
-##### Changing one route to another
+<p class="alert alert-warning">
+	Rememeber, there is only one insteance of <code>Router</code> for all modules. It means one module can override settings made in another module.
+</p>
 
-With `Router` class you can change one URI to another. Just:
+<h3>Redirect if user is not logged in</h3>
 
-```
-router.addUrl("", "/home");
-```
+<p>
+	If user try access on secured page, but is not logged in, the 401 UNAUTHORIZED is throwed. This can be overrided with <code>Router::setRedirectOnNotLoggedInUser</code>. If you set not null string, TOTI redirect on given URL and origin URL put to <code>backlink</code> URL parameter.
+</p>
 
-**NOTE:** `Router` is one instance for all modules, so one module can override configuration from another.
-**NOTE:** This is not redirect. Just instead of content one URL use another.
+<strong>Example</strong>
+
+<p>
+	You set redirect on <code>/sign/in</code>. User try access on <code>/example/secured</code>. Is not logged in, so user is redirected to <code>/sign/in?backlink=/example/secured</code>.
+</p>
+
+<h3>Change URI</h3>
+
+<p>
+	<code>Router</code> allows change one URI to another. Usage: <code>router.addUrl(substitutionUri, originUri)</code>.
+</p>
+
+<strong>Example</strong>
+
+<p>
+	You have URI: <code>/users/log/in</code>. But you wish show login form on URI <code>/login</code>: <br>
+
+	<code>router.addUrl("/login", "/users/log/in");</code> <br>
+	From now, when somebody access <code>/login</code>, he get content of <code>/users/log/in</code>. The <code>/users/log/in</code> is still valid, working URI.
+</p>
+
+<p>
+	Very common usage of this feature is for "home page" - set URI if origin URI is empty <code>router.addUrl("", "/core/home")</code>.
+</p>
+
+<p class="alert alert-waring">
+	This is not redirect.
+</p>
+
+<h2>URI link generation</h2>
+
+TODO
++ examples
