@@ -1,9 +1,39 @@
 <h1>Security</h1>
 
-- identity
-- authenticator
-- authorizator
+<p>
+	TOTI allows secure action method.
+</p>
 
-- login, logout
+<h2>Identity</h2>
 
-@secured
+<p>
+	<code>Identity</code> class holds information about request. If is user log in, <code>Identity</code> contains user (instance of <code>User</code> interface). <strong>For REST Api:</strong> language preferences is readed from <code>Accept-Language</code> request header. User bearer token is readed from <code>Authorization</code>.
+</p>
+
+<p>
+	<strong>Usefull methods:</strong>
+	<ul>
+		<li><code>getIP(): String</code> - IP address</li>
+		<li><code>getLocale(): Locale</code> - prefered language (JI Translate)</li>
+		<li><code>getHeaders(): Properties</code> - request methods</li>
+		<li><code>addResponseHeader(String header)</code> - add response header</li>
+		<li><code>getCookieValue(String cookieName): String</code> - return value from Cookie header. Can returns null.</li>
+		<li><code>isAnonymous(): boolean</code> and <code>isPresent(): boolean</code> - if identity not contains/contains user.</li>
+		<li><code>getUser(): User</code> - returns user. Can be null.</li>
+		<li><code>getUser(Class<U> clazz): U</code> - returns user as instance of given class. <code>U</code> must be implementation of <code>User</code></li>
+	</ul>
+</p>
+
+<h2>User</h2>
+
+<h2>Log in</h2>
+
+- login
+- logout
+- refresh
+
+<h2>Secured actions</h2>
+
+domain, isApi, action, owner...
+
+<h2>Authorizator</h2>
