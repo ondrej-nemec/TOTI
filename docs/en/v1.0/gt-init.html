@@ -7,7 +7,7 @@
 <h2>Quick init</h2>
 
 <p>
-	<strong>Quick init</strong> loads configuration from file, automatically create <code>Database</code> (<a href="https://ondrej-nemec.github.io/JI/?file=database-db.html">see here</a>) and <code>Env</code> (<a href="https://ondrej-nemec.github.io/JI/?file=common-functions.html">see here</a>) objects.
+	<strong>Quick init</strong> loads configuration from file, automatically create <code>Database</code> (see <a href="https://ondrej-nemec.github.io/JI/?file=database-db.html">JI Database</a>) and <code>Env</code> (see <a href="https://ondrej-nemec.github.io/JI/?file=common-functions.html">JI Common</a>) objects.
 </p>
 
 <p class="alert alert-info">
@@ -25,7 +25,7 @@ Application application = new Application(Arrays.asList(
 </code></pre>
 
 <p>
-	Configuration of <code>Application</code> is in <code>.properties</code> file. The file can be specified <code>Application.APP_CONFIG_FILE = ...</code>. It must be called before constructor. Default is <code>conf/app.properties</code>. Can be in or outside classpath. The list of configurations is <a href="?file=doc-server.html">here</a>. If you wish not use configuration file and let everything default, set <code>Application.APP_CONFIG_FILE = null;</code>
+	Configuration of <code>Application</code> is in <code>.properties</code> file. The file can be specified <code>Application.APP_CONFIG_FILE = ...</code>. It must be called before constructor. Default is <code>conf/app.properties</code>. Can be in or outside classpath. The list of configurations is <a href="?file=doc-server.html">Server configuration</a>. If you wish not use configuration file and let everything default, set <code>Application.APP_CONFIG_FILE = null;</code>
 </p>
 
 <h3>Control</h3>
@@ -56,11 +56,11 @@ Application application = new Application(Arrays.asList(
 <h2>Custom init</h2>
 
 <p>
-	For custom init, let start with <code>HttpServerFactory</code>. This class holds configuration for <code>HttpServer</code>. The list of configurations is <a href="?file=doc-server.html">here</a>.
+	For custom init, let start with <code>HttpServerFactory</code>. This class holds configuration for <code>HttpServer</code>. The list of configurations is <a href="?file=doc-server.html">Server Configuration</a>.
 </p>
 
 <p>
-	For creating <code>HttpServe</code> there are required two classes: <code>Database</code> (<a href="https://ondrej-nemec.github.io/JI/?file=database-db.html">see here</a>) and <code>Env</code> (<a href="https://ondrej-nemec.github.io/JI/?file=common-functions.html">see here</a>). Both can be null.
+	For creating <code>HttpServe</code> there are required two classes: <code>Database</code> (see <a href="https://ondrej-nemec.github.io/JI/?file=database-db.html">JI Database</a>) and <code>Env</code> (see <a href="https://ondrej-nemec.github.io/JI/?file=common-functions.html">JI Common</a>). Both can be null.
 </p>
 
 
@@ -92,7 +92,7 @@ HttpServer server = new HttpServerFactory()
 <h2>Examples</h2>
 
 <p class="alert alert-success">
-	<a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/init">Here</a> can you find working samples. Running application can be checked <a href="http://localhost:8080/toti">http://localhost:8080/toti</a>.
+	<a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/init" target=_blank>Here</a> can you find working samples. Running application can be checked <a href="http://localhost:8080/toti">http://localhost:8080/toti</a>.
 </p>
 
 <p>
@@ -102,5 +102,5 @@ HttpServer server = new HttpServerFactory()
 <h5>Note</h5>
 
 <p>
-	Both <code>Application</code> and <code>HttpServer</code> contains methods <code>getTranslator</code> (<a href="https://ondrej-nemec.github.io/JI/?file=translate.html">see here</a>) and <code>getRegister</code> (see in next chapter).
+	Both <code>Application</code> and <code>HttpServer</code> contains methods <code>getTranslator</code> (<a href="https://ondrej-nemec.github.io/JI/?file=translate.html">JI Translator</a>) and <code>getRegister</code> (see in next chapter).
 </p>
