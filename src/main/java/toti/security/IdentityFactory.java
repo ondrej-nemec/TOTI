@@ -62,6 +62,7 @@ public class IdentityFactory {
 				+ "; SameSite=Strict"
 			);
 		}
+		headers.addAll(identity.getResponseHeaders());
 		//cache.save(identity.getId(), identity.getUser());
 		return headers;
 	}

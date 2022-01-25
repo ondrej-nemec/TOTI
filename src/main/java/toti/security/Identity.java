@@ -1,5 +1,7 @@
 package toti.security;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 
 import ji.translator.Locale;
@@ -17,6 +19,8 @@ public class Identity {
 	private String id; // id from token
 	private long expired; // range, how long will be active
 	private User user; // user loaded from cache
+	
+	private final List<String> responseHeaders = new LinkedList<>();
 	
 	protected Identity(String IP, Locale locale, Properties requestHeaders, String token, boolean isApiAllowed) {
 		this.IP = IP;
@@ -58,6 +62,10 @@ public class Identity {
 		return id;
 	}
 	
+	protected List<String> getResponseHeaders() {
+		return responseHeaders;
+	}
+	
 	/*************/
 	
 	public boolean isAnonymous() {
@@ -95,6 +103,10 @@ public class Identity {
 	public boolean isApiAllowed() {
 		return isApiAllowed;
 	}
+	
+	public void addResponseHeader(String header) {
+		responseHeaders.add(header);
+	}
 
 	@Override
 	public String toString() {
@@ -126,7 +138,9 @@ public class Identity {
 	}
 
 	public void setPageId(String pageId) {
-		this.pageId = pageId;
+		if (this.pageId == null) {
+			this.pageId = pageId;
+		}
 	}
 	
 }
