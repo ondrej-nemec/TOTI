@@ -118,7 +118,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		System.err.println("Params: " + params);
 		//*/
 		Identity identity = identityFactory.createIdentity(header, ip, profiler.isUse());
-		return getCatchedResponse(method, url, fullUrl, protocol, header, params, identity, websocket);
+		return getCatchedResponse(method, url, fullUrl, protocol, params, identity, websocket);
 	}
 
 	private RestApiResponse getCatchedResponse(
@@ -126,7 +126,6 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			String url,
 			String fullUrl,
 			String protocol,
-			Properties header,
 			RequestParameters params,
 			Identity identity,
 			Optional<WebSocket> websocket) {
@@ -140,11 +139,11 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		} catch (ServerException e) {
 			return expRes.getExceptionResponse(
 				e.getStatusCode(), method, url, fullUrl, protocol, 
-				header, params, identity, e.getUrl(), e.getCause() == null ? e : e.getCause()
+				params, identity, e.getUrl(), e.getCause() == null ? e : e.getCause()
 			);
 		} catch (Throwable t) {
 			return expRes.getExceptionResponse(
-				StatusCode.INTERNAL_SERVER_ERROR, method, url, fullUrl, protocol, header, params, identity, null, t
+				StatusCode.INTERNAL_SERVER_ERROR, method, url, fullUrl, protocol, params, identity, null, t
 			);
 		}
 	}

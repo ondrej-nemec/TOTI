@@ -107,6 +107,12 @@ public class Identity {
 	public void addResponseHeader(String header) {
 		responseHeaders.add(header);
 	}
+	
+	// just probably
+	public boolean isAsyncRequest() {
+		String destination = requestHeaders.getProperty("Sec-Fetch-Dest");
+		return destination != null && destination.equals("empty");
+	}
 
 	@Override
 	public String toString() {

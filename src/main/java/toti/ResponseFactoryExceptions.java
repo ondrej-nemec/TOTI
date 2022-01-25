@@ -5,7 +5,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Random;
 
 import ji.common.Logger;
@@ -56,12 +55,11 @@ public class ResponseFactoryExceptions {
 			String url,
 			String fullUrl,
 			String protocol,
-			Properties header,
 			RequestParameters params,
 			Identity identity, 
 			MappedUrl mappedUrl, // can be null
 			Throwable t) {
-		return getException(responseCode, method, url, fullUrl, protocol, header, params, identity, mappedUrl, t)
+		return getException(responseCode, method, url, fullUrl, protocol, params, identity, mappedUrl, t)
 			.getResponse(
 				responseHeaders.get(), templateFactory, translator.withLocale(identity.getLocale()),
 				null /*authorizator*/, identity, mappedUrl, charset
@@ -74,17 +72,14 @@ public class ResponseFactoryExceptions {
 			String url,
 			String fullUrl,
 			String protocol,
-			Properties header,
 			RequestParameters params,
 			Identity identity, 
 			MappedUrl mappedUrl,
 			Throwable t) {
 		logger.error(String.format("Exception occured %s URL: %s", status, fullUrl), t);
-		
-		String destination = header.getProperty("Sec-Fetch-Dest");
 				
-		TemplateResponse response = getTemplate(status, method, url, fullUrl, protocol, header, params, identity, mappedUrl, t);
-		if (destination != null && destination.equals("empty")) { // probably js request
+		TemplateResponse response = getTemplate(status, method, url, fullUrl, protocol, params, identity, mappedUrl, t);
+		if (identity.isAsyncRequest()) { // probably js request
 			saveToFile(response);
 			if (developIps.contains(identity.getIP())) {
 				return Response.getText(status, t.getClass() + ": " + t.getMessage());
@@ -133,7 +128,6 @@ public class ResponseFactoryExceptions {
 			String url,
 			String fullUrl,
 			String protocol,
-			Properties header,
 			RequestParameters params,
 			Identity identity,
 			MappedUrl mappedUrl,
@@ -144,7 +138,7 @@ public class ResponseFactoryExceptions {
 		variables.put("fullUrl", fullUrl);
 		variables.put("method", method);
 		variables.put("protocol", protocol);
-		variables.put("headers", header);
+		variables.put("headers", identity.getHeaders());
 		variables.put("parameters", params);
 		variables.put("identity", identity);
 		variables.put("mappedUrl", mappedUrl);
