@@ -3,7 +3,6 @@ package samples.examples.security;
 import java.util.Arrays;
 import java.util.List;
 
-import example.web.controllers.api.SignApiController;
 import ji.common.Logger;
 import ji.common.functions.Env;
 import ji.database.Database;
@@ -25,19 +24,19 @@ public class SecurityExample implements Module {
 	public List<Task> initInstances(Env env, Translator translator, Register register, Database database, Logger logger)
 			throws Exception {
 		register.addFactory(
-			SignApiController.class, 
+			SignController.class, 
 			(trans, identity, authorizator, authenticator)->new SignController(identity, authenticator, logger)
 		);
 		register.addFactory(
 			PagesController.class, 
 			(trans, identity, authorizator, authenticator)->new PagesController(identity)
 		);
-		return null;
+		return Arrays.asList();
 	}
 
 	@Override
 	public String getName() {
-		return "example";
+		return "examples";
 	}
 	
 	@Override
