@@ -1,4 +1,4 @@
-/* TOTI Control version 0.0.18 */
+/* TOTI Control version 0.0.19 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -244,7 +244,7 @@ var totiControl = {
 						}, false);
 					}
 				}
-			}
+			};
 			var originOptions = totiUtils.clone(params.options);
 
 		    var optGroupRenderer = function(depends) {
@@ -270,7 +270,7 @@ var totiControl = {
 	            if (option !== null) {
 	            	select.value = option.value;
 	            }
-		    }
+		    };
 
 		    if (params.hasOwnProperty("depends") && params.editable && params.hasOwnProperty("form")) {
 		        /* only for forms */
@@ -320,7 +320,7 @@ var totiControl = {
 		    var date = totiControl.inputs._createInput("date", dateAttr);
 
 		    var timeAttr = {};
-		    timeAttr.id = attributes.id + "-time"
+		    timeAttr.id = attributes.id + "-time";
 		    if (attributes.hasOwnProperty("step")) {
 		        timeAttr.step = attributes.step;
 		    }

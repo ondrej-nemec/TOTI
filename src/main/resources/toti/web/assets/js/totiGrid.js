@@ -1,4 +1,4 @@
-/* TOTI Grid version 0.0.17 */
+/* TOTI Grid version 0.0.18 */
 class TotiGrid {
 
 	constructor(config) {
@@ -492,7 +492,7 @@ class TotiGrid {
 				} else if (val == "DESC") {
 					sortType = 2;
 				}
-				var a = sort.querySelector("a")
+				var a = sort.querySelector("a");
 				a.setAttribute("data-sort", sortType);
 				a.querySelector(".sortType").style.display = "none";
 				a.querySelector(".type" + sortType).style.display = "inline";
