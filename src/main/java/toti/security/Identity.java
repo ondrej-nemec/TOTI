@@ -47,6 +47,10 @@ public class Identity {
 		return expired;
 	}
 	
+	/**
+	 * Token from auth header/cookie
+	 * @return full token with hash, random,...
+	 */
 	protected String getToken() {
 		return token;
 	}
