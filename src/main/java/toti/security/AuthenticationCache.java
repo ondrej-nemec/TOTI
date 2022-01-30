@@ -101,6 +101,10 @@ public class AuthenticationCache {
 		}
 	}
 	
+	public Long getExpirationTime(String id) {
+		return activeTokens.get(id);
+	}
+	
 	public User get(String id) throws IOException, ClassNotFoundException {
 		if (!activeTokens.containsKey(id)) {
 			return null;

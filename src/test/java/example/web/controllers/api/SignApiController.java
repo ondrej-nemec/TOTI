@@ -27,7 +27,7 @@ public class SignApiController {
 		this.identity = identity;
 		this.authenticator = authenticator;
 	}
-
+/*
 	@Method({HttpMethod.POST})
 	@Action("in")
 	public Response login(@Param("username") String username) {
@@ -39,7 +39,7 @@ public class SignApiController {
 			return Response.getJson(StatusCode.INTERNAL_SERVER_ERROR, new HashMap<>());
 		}
 	}
-
+*/
 	@Method({HttpMethod.POST})
 	@Action("out")
 	@Secured
@@ -47,7 +47,7 @@ public class SignApiController {
 		authenticator.logout(identity);
 		return Response.getJson(new HashMap<>());
 	}
-	
+/*
 	@Method({HttpMethod.POST})
 	@Action("refresh")
 	@Secured // own active token used
@@ -59,7 +59,7 @@ public class SignApiController {
 			return Response.getJson(StatusCode.INTERNAL_SERVER_ERROR, new HashMap<>());
 		}
 	}
-	
+*/
 	private Response generateToken(String bearer) {
 		Map<String, Object> json = new HashMap<>();
 		json.put("access_token", bearer);

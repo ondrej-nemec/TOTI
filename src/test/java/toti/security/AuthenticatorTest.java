@@ -19,9 +19,7 @@ public class AuthenticatorTest {
 		Authenticator auth = new Authenticator(123, "salt", Mockito.mock(AuthenticationCache.class), hash, Mockito.mock(Logger.class));
 		assertEquals("hashr@ndomid2000", auth.createToken(
 				"r@ndom", 
-				"id", 
-				1000, 
-				2000
+				"id"
 		));
 	}
 	

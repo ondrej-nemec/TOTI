@@ -9,6 +9,7 @@ import ji.common.structures.ThrowingFunction;
 import toti.authentication.AuthentizationException;
 import ji.common.functions.Hash;
 import ji.common.exceptions.HashException;
+import ji.common.exceptions.LogicException;
 
 public class Authenticator {
 
@@ -31,21 +32,26 @@ public class Authenticator {
 		this.cache = cache;
 	}
 	
-	public String login(User user, Identity identity) throws AuthentizationException {
-		return getToken(user, identity);
+	public SecurityToken login(User user, Identity identity) throws AuthentizationException {
+		if (identity.isPresent()) {
+			throw new LogicException("Somebody is allready logged in. " + identity.getUser());
+		}
+		try {
+			long now = new Date().getTime();
+			String id = RandomStringUtils.randomAlphanumeric(30);
+			String random = RandomStringUtils.randomAlphanumeric(50);
+			long expired = now + expirationTime;
+			String token = createToken(random, id);
+			cache.save(id, expired, user);
+			identity.loginUser(token, id, expirationTime, user);
+			return new SecurityToken(token, expired);
+		} catch (Exception e) {
+			throw new AuthentizationException(e);
+		}
 	}
-	
+/*
 	public String refresh(Identity identity) throws AuthentizationException {
 		return getToken(identity.getUser(), identity);
-	}
-	
-	public void logout(Identity identity) {
-		try {
-			cache.delete(identity.getId());
-			identity.clear();
-		} catch (Exception e) {
-			logger.warn("Problem with log out", e);
-		}
 	}
 	
 	private String getToken(User user, Identity identity) throws AuthentizationException {
@@ -66,6 +72,15 @@ public class Authenticator {
 			throw new AuthentizationException(e);
 		}
 	}
+*/
+	public void logout(Identity identity) {
+		try {
+			cache.delete(identity.getId());
+			identity.clear();
+		} catch (Exception e) {
+			logger.warn("Problem with log out", e);
+		}
+	}
 	
 	public void authenticate(Identity identity) {
 		try {
@@ -73,11 +88,6 @@ public class Authenticator {
 		} catch (Exception e) {
 			logger.debug("Problem with authentication", e);
 		}
-	}
-
-	protected String createToken(String random, String id, long now, long expired) throws HashException {
-		String hash = hasher.toHash(createHashMessage(random, id, expired));
-		return String.format("%s%s%s%s", hash, random, id, expired);
 	}
 
 	protected void authenticate(Identity identity, long now) throws Exception {
@@ -88,27 +98,38 @@ public class Authenticator {
 		String hash = token.substring(0, 44);
 		String random = token.substring(44, 94);
 		String id = token.substring(94, 124);
-		long expired = Long.parseLong(token.substring(124, 137)); // length == 13, OK until Sat Nov 20 18:46:39 CET 2286
-		if (!hasher.compare(createHashMessage(random, id, expired/*, content*/), hash)) {
+		//long expired = Long.parseLong(token.substring(124, 137)); // length == 13, OK until Sat Nov 20 18:46:39 CET 2286
+		if (!hasher.compare(createHashMessage(random, id/*, expired, content*/), hash)) {
 			throw new RuntimeException("Token corrupted");
+		}
+		
+		Long expired = cache.getExpirationTime(id);
+		if (expired == null) {
+			throw new RuntimeException("Unknown token");
 		}
 		if (expired < now) {
 			cache.delete(id);
 			throw new RuntimeException("Token is expired");
 		}
 		User user = cache.get(id);
-		// simply request will not refresh token
-		if (user != null) {
-			identity.setUser(id, expirationTime, user);
-		} else {
+		if (user == null) {
 			logger.warn("Session id " + id + " is not in active tokens.");
 			identity.clear();
+		} else {
+			cache.refresh(id, now + expirationTime);
+			identity.setUser(id, expirationTime, user);
 		}
 	}
 
-	// token: hash(43), random(50), id(30), expired(13)
-	private String createHashMessage(String random, String id, long expired) {
-		return String.format("%s%s%s%s", random, id, expired, tokenSalt);
+	// TODO add content - will contains a) data for service from registr, b) serialized, crypted user
+	protected String createToken(String random, String id) throws HashException {
+		String hash = hasher.toHash(createHashMessage(random, id));
+		return String.format("%s%s%s", hash, random, id);
+	}
+
+	// token: hash(43), random(50), id(30)
+	private String createHashMessage(String random, String id) {
+		return String.format("%s%s%s", random, id, tokenSalt);
 	}
 
 	public long getExpirationTime() {
