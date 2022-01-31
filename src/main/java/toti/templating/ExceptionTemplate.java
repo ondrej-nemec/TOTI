@@ -8,6 +8,7 @@ import toti.templating.parsing.TagNode;
 import toti.url.MappedUrl;
 import ji.translator.Translator;
 
+@Deprecated
 public class ExceptionTemplate implements Template {
 	
 	private final Throwable t;
