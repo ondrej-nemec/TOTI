@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import toti.control.Control;
+import toti.url.Link;
 
 public class Button implements Input {
 	
@@ -22,10 +23,17 @@ public class Button implements Input {
 	private boolean evaluate = false;
 
 	public static Button create(String url, String name) {
-		return new Button(url, name);
+		return new Button(url, name, false);
+	}
+
+	public static Button create(String url, String name, boolean allowOutOfAppLink) {
+		return new Button(url, name, allowOutOfAppLink);
 	}
 	
-	private Button(String url, String name) {
+	private Button(String url, String name, boolean outOfAppLink) {
+		if (!outOfAppLink && !Link.isRelative(url)) {
+			throw new RuntimeException("Open redirection is not allowed");
+		}
 		this.url = url;
 		this.name = name;
 	}

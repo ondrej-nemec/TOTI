@@ -114,13 +114,23 @@ public class ResponsesExample implements Module {
 	}
 
 	/**
-	 * Redirect to given URL. TODO secure
+	 * Redirect to given relative URL.
 	 * @return http://localhost:8080/examples/responses/redirect
 	 */
 	@Action("redirect")
 	public Response getRedirect() {
 		return Response.getRedirect("/examples/responses/text");
 		// return Response.getRedirect(StatusCode.TEMPORARY_REDIRECT, "/examples/responses/text");
+	}
+
+	/**
+	 * Redirect to given URL. <strong>Open redirection vulnerability</strong>
+	 * @return http://localhost:8080/examples/responses/open-redirect
+	 */
+	@Action("open-redirect")
+	public Response getOpenRedirect() {
+		return Response.getRedirect("https://github.com/", true);
+		// return Response.getRedirect(StatusCode.TEMPORARY_REDIRECT, "https://github.com/", true;
 	}
 
 	/**

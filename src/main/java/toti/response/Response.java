@@ -84,11 +84,19 @@ public interface Response {
 	}
 	
 	static Response getRedirect(StatusCode code, String url) {
-		return new RedirectResponse(code, url);
+		return new RedirectResponse(code, url, false);
 	}
 	
 	static Response getRedirect(String url) {
-		return new RedirectResponse(StatusCode.TEMPORARY_REDIRECT, url);
+		return new RedirectResponse(StatusCode.TEMPORARY_REDIRECT, url, false);
+	}
+	
+	static Response getRedirect(StatusCode code, String url, boolean allowOutOfAppRedirect) {
+		return new RedirectResponse(code, url, allowOutOfAppRedirect);
+	}
+	
+	static Response getRedirect(String url, boolean allowOutOfAppRedirect) {
+		return new RedirectResponse(StatusCode.TEMPORARY_REDIRECT, url, allowOutOfAppRedirect);
 	}
 	
 	static Response getWebsocket(WebSocket websocket, Consumer<String> onMessage, Consumer<IOException> onError) {

@@ -34,6 +34,12 @@ public class Link {
 	public static Link get() {
 		return new Link(patternCache);
 	}
+	
+	// Allow anything starting with "/", except paths starting
+	// "//" and "/\".
+	public static boolean isRelative(String url) {
+	  return url.matches("/[^/\\\\]?.*");
+	}
 
 	public static void init(String pattern, Register reg) {
 		patternCache = pattern;
@@ -259,5 +265,4 @@ public class Link {
 			return false;
 		}
 	}
-	
 }

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import toti.control.Control;
+import toti.url.Link;
 
 public class Submit implements Input {
 	
@@ -29,6 +30,14 @@ public class Submit implements Input {
 
 	// after success async request, redirect
 	public Submit setRedirect(String redirect) {
+		return this.setRedirect(redirect, false);
+	}
+
+	// after success async request, redirect
+	public Submit setRedirect(String redirect, boolean allowOutOfAppRedirect) {
+		if (!allowOutOfAppRedirect && !Link.isRelative(redirect)) {
+			throw new RuntimeException("Open redirection is not allowed");
+		}
 		this.redirect = redirect;
 		return this;
 	}

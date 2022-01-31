@@ -136,4 +136,19 @@ public class LinkTest {
 		};
 	}
 	
+	@Test
+	@Parameters(method="dataIsRelativeCheckURL")
+	public void testIsRelativeCheckURL(String url, boolean expected) {
+		assertEquals(expected, Link.isRelative(url));
+	}
+	
+	public Object[] dataIsRelativeCheckURL() {
+		return new Object[] {
+			new Object[] { true, "/some/url" },
+			new Object[] { false, "https://example.com" },
+			new Object[] { false, "example.com" },
+			new Object[] { false, "//example.com" },
+			new Object[] { false, "https:/\\example.com" }
+		};
+	}
 }
