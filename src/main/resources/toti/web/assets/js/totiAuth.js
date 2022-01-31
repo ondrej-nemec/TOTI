@@ -1,7 +1,7 @@
 /* TOTI Auth version 1.0.0 */
 var totiAuth = {
-	variableToken: "authentication",
-	variableConfig: "authentication",
+	variableToken: "authenticationToken",
+	variableConfig: "authenticationConfig",
 	getAuthHeader: function() {
 		var token = totiStorage.getVariable(totiAuth.variableToken);
 		if (token === null) {
@@ -15,19 +15,21 @@ var totiAuth = {
 	getToken: function() {
 		return totiStorage.getVariable(totiAuth.variableToken);
 	},
-	logout: function(url, method) {
+	logout: function(url = null, method = "post") {
+		if (url !== null) {
+			totiLoad.async(
+				url,
+				method, 
+				{}, 
+				totiLoad.getHeaders(), 
+				function(res) {}, 
+				function(xhr, a, error) {
+					console.log(xhr, a, error);
+				}
+			);
+		}
 		totiStorage.removeVariable(totiAuth.variableConfig);
 		totiStorage.removeVariable(totiAuth.variableToken);
-		totiLoad.async(
-			url,
-			method, 
-			{}, 
-			totiLoad.getHeaders(), 
-			function(res) {}, 
-			function(xhr, a, error) {
-				console.log(xhr, a, error);
-			}
-		);
 	},
 	login: function(token, config = null) {
 		totiStorage.saveVariable(totiAuth.variableToken, token);
@@ -43,6 +45,7 @@ var totiAuth = {
 			return false;
 		}
 		var config = totiStorage.getVariable(totiAuth.variableConfig);
+		var token = totiStorage.getVariable(totiAuth.variableToken);
 		if (!config) {
 			console.log("No saved config");
 			return false;
