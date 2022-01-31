@@ -178,7 +178,7 @@ public Response myAction(@Param("first") String first, @Param("second") Boolean 
 <h3>Redirect</h3>
 
 <p>
-	Redirect is done by <code>Response.getRedirect(url)</code> or <code>Response.getRedirect(statusCode, url)</code>. Default status code is 307 TEMPORARY REDIRECT.
+	Redirect is done by <code>Response.getRedirect(url)</code> or <code>Response.getRedirect(statusCode, url)</code>. Default status code is 307 TEMPORARY REDIRECT. By default, TOTI allows redirect only on relative path (prevent open redirecion attack). If you wish redirect to another site, put <code>true</code> as last parameter.
 </p>
 
 <h3>Template</h3>
