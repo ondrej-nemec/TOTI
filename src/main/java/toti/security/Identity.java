@@ -43,7 +43,7 @@ public class Identity {
 		this.user = user;
 	}
 	
-	protected long getExpirationTime() {
+	public long getExpirationTime() {
 		return expired;
 	}
 	
@@ -51,7 +51,7 @@ public class Identity {
 	 * Token from auth header/cookie
 	 * @return full token with hash, random,...
 	 */
-	protected String getToken() {
+	public String getToken() {
 		return token;
 	}
 	

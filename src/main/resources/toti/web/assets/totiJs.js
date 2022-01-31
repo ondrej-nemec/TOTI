@@ -14,3 +14,14 @@
 </t:if>
 <t:include file="assets/js/totiForm.js" />
 <t:include file="assets/js/totiGrid.js" />
+	
+
+<t:if cond="${totiIdentity.isPresent()}" >
+	totiAuth.login({
+		"token": "${totiIdentity.getToken()}",
+		"expired_in": Date.now() + ${totiIdentity.getExpirationTime()}
+	});
+<t:else>
+	<%-- token is in JS but not on server - server restarted OR sync logout --%>
+	totiAuth.logout();
+</t:if>
