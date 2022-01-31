@@ -23,7 +23,11 @@
 		}
 		function asyncLoginOnSuccess(response, submit, form) {
 			/* very important line: */
-			totiAuth.login(response);
+			totiAuth.login(response /*, {
+				// ping secured page for keep token alive
+				"url": '<t:link module="examples" controller="samples.examples.sign.SignExample" method="index" />',
+				'method': "get"
+			}*/);
 			alert("Successfully logged, now, you will be maybe redirect");
 		}
 	</script>

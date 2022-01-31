@@ -113,6 +113,7 @@ public class SignExample implements Module {
 	 */
 	@Action("async-logout")
 	@Method(HttpMethod.POST)
+	@Secured
 	public Response asyncLogout() {
 		authenticator.logout(identity);
 		return Response.getText(""); // 202 response
@@ -145,7 +146,10 @@ public class SignExample implements Module {
 				new User(username + ":" + password, new SignExamplePermissions()), 
 				identity
 			);
-			return Response.getRedirect(backlink);
+			if (backlink != null) {
+				return Response.getRedirect(backlink);
+			}
+			return Response.getRedirect(Link.get().create(SignExample.class, c->c.index2()));
 		} catch (AuthentizationException e) {
 			e.printStackTrace();
 			return getSyncPageResponse(backlink, "Sync login failed");
@@ -168,6 +172,17 @@ public class SignExample implements Module {
 		return Response.getTemplate("totiForm.jsp", params);
 	}
 	
+	/**
+	 * Sync logout
+	 * @return http://localhost:8080/examples/sign/sync-logout
+	 */
+	@Action("sync-logout")
+	@Secured(isApi=false)
+	public Response syncLogout() {
+		authenticator.logout(identity);
+		return Response.getRedirect(Link.get().create(SignExample.class, c->c.syncLoginPage(null)));
+	}
+	
 	/*********************/
 	
 	/**
@@ -178,6 +193,16 @@ public class SignExample implements Module {
 	@Secured(isApi=false)
 	public Response index() {
 		return Response.getTemplate("/index.jsp", new HashMap<>());
+	}
+	
+	/**
+	 * Second secured method for login verify
+	 * @return http://localhost:8080/examples/sign/index2
+	 */
+	@Action("index2")
+	@Secured(isApi=false)
+	public Response index2() {
+		return Response.getTemplate("/index2.jsp", new HashMap<>());
 	}
 	
 	/***************/
