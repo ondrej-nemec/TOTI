@@ -11,7 +11,7 @@ public class Button implements Input {
 	private final String url;
 	private String confirmation = null;
 	private String title = null;
-	private boolean ajax = false;
+	private boolean async = false;
 	private String method = "get";
 	private Map<String, String> requestParams = new HashMap<>();
 	private final Map<String, String> params = new HashMap<>();
@@ -56,7 +56,7 @@ public class Button implements Input {
 	}
 
 	public Button setAsync(boolean async) {
-		this.ajax = async;
+		this.async = async;
 		return this;
 	}
 	
@@ -89,7 +89,7 @@ public class Button implements Input {
 	public Map<String, Object> getInputSettings() {
 		Map<String, Object> json = new HashMap<>();
 		json.put("href", url);
-		json.put("ajax", ajax);
+		json.put("async", async);
 		json.put("type", "button");
 		json.put("name", name);
 		json.put("id", name);

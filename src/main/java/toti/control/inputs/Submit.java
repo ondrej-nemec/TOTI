@@ -12,7 +12,7 @@ public class Submit implements Input {
 	private final String title;
 	private String redirect;
 	private String confirmation;
-	private boolean ajax = true;
+	private boolean async = true;
 	private String onFailure = null;
 	private String onSuccess = null;
 	private final Map<String, String> params = new HashMap<>();
@@ -27,14 +27,14 @@ public class Submit implements Input {
 		this.name = name;
 	}
 
-	// after success ajax request, redirect
+	// after success async request, redirect
 	public Submit setRedirect(String redirect) {
 		this.redirect = redirect;
 		return this;
 	}
 
 	public Submit setAsync(boolean async) {
-		this.ajax = async;
+		this.async = async;
 		return this;
 	}
 
@@ -63,7 +63,7 @@ public class Submit implements Input {
 		Map<String, Object> json = new HashMap<>();
 		json.put("type", type);
 		json.put("value", title);
-		json.put("ajax", ajax);
+		json.put("async", async);
 		json.put("id", name);
 		json.put("name", name);
 		

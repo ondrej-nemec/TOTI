@@ -327,14 +327,13 @@ class TotiForm {
 			}
 			var type = field.type;
 			input = totiControl.input(field);
-
 			if (type === 'submit' || type === 'image') {
 				input.onclick = this.getSubmit(uniqueName, input);
 			} else if (type === 'button') {
 				var onClick = totiControl.getAction({
 					href: field.href,
 					method: field.method,
-					async: field.ajax,
+					async: field.async,
 					params: field.requestParams,
 					submitConfirmation: function() {
 						if (field.hasOwnProperty('confirmation')) {
@@ -429,7 +428,8 @@ class TotiForm {
 				event.preventDefault();
 				return false;
 			}
-			if (submit.getAttribute("ajax")) {
+			/* TODO sync send not working - required preventDefault - exclude,disabled,... */
+			if (submit.getAttribute("async")) {
 				event.preventDefault();
 				var header = totiLoad.getHeaders();
 				if (form.getAttribute("enctype") !== null) {

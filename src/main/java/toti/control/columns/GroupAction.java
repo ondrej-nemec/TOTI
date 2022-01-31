@@ -11,7 +11,7 @@ public class GroupAction implements Jsonable {
 	
 	private final String title;
 	private final String link;
-	private boolean ajax = true;
+	private boolean async = true;
 	private String method = "get";
 	private String confirmation;
 	private String onFailure;
@@ -27,8 +27,8 @@ public class GroupAction implements Jsonable {
 		return this;
 	}
 
-	public GroupAction setAjax(boolean ajax) {
-		this.ajax = ajax;
+	public GroupAction setAsync(boolean async) {
+		this.async = async;
 		return this;
 	}
 
@@ -50,7 +50,7 @@ public class GroupAction implements Jsonable {
 	@Override
 	public Object toJson() {
 		Map<String, Object> json = new HashMap<>();
-		json.put("ajax", ajax);
+		json.put("async", async);
 		json.put("title", Template.escapeVariable(title));
 		json.put("link", link);
 		json.put("method", method);

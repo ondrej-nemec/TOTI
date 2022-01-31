@@ -334,7 +334,7 @@ class TotiForm {
 				var onClick = totiControl.getAction({
 					href: field.href,
 					method: field.method,
-					async: field.ajax,
+					async: field.async,
 					params: field.requestParams,
 					submitConfirmation: function() {
 						if (field.hasOwnProperty('confirmation')) {
@@ -429,7 +429,7 @@ class TotiForm {
 				event.preventDefault();
 				return false;
 			}
-			if (submit.getAttribute("ajax")) {
+			if (submit.getAttribute("async")) {
 				event.preventDefault();
 				var header = totiLoad.getHeaders();
 				if (form.getAttribute("enctype") !== null) {

@@ -179,7 +179,7 @@ class TotiGrid {
 	createActions(uniqueName, actions) {
 		var options = [];
 		options.push({
-			"ajax": true,
+			"async": true,
 			"method": null,
 			"title": totiTranslations.actions.select,
 			"value": ""
@@ -204,7 +204,7 @@ class TotiGrid {
 			}
 			var url = option.value;
 			var method = option.getAttribute("method");
-			var ajax = option.getAttribute("ajax");
+			var async = option.getAttribute("async");
 			var submitConfirmation = option.getAttribute("submitConfirmation");
 			
 			var ids = [];
@@ -216,7 +216,7 @@ class TotiGrid {
 				return false;
 			}
 			var params = {"ids": ids};
-			if (ajax === 'true') {
+			if (async === 'true') {
 				if (submitConfirmation !== null
 					&& submitConfirmation !== undefined
 					&& !totiDisplay.confirm(submitConfirmation)) {
@@ -352,7 +352,7 @@ class TotiGrid {
 							var settings = {
 								href: href,
 								method: button.method,
-								async: button.ajax,
+								async: button.async,
 								params: button.requestParams,
 								submitConfirmation: function() {
 									if (button.hasOwnProperty('confirmation')) {
@@ -374,7 +374,7 @@ class TotiGrid {
 							buttonClone.id += "_" + rowIndex;
 							buttonClone.href = href;
 
-							var buttonElement = totiControl.button(buttonClone, button.ajax);
+							var buttonElement = totiControl.button(buttonClone, button.async);
 							buttonElement.onclick = function(event) {
 								totiControl.getAction(settings)(event);
 								setTimeout(function(){
