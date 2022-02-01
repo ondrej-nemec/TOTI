@@ -11,7 +11,6 @@ public class TagParser {
 
 	private final boolean isClose;
 	
-	private String preTag = "";
 	private String tagName = "";
 	private String paramName = "";
 	private String paramValue = "";
@@ -23,11 +22,7 @@ public class TagParser {
 	public TagParser(boolean isClose) {
 		this.isClose = isClose;
 	}
-	
-	public String getPre() {
-		return preTag;
-	}
-	
+
 	public boolean isClose() {
 		return isClose;
 	}
@@ -44,7 +39,6 @@ public class TagParser {
 	}
 
 	public void addVariable(VariableParser var) {
-		preTag = var.getDeclare();
 		// TODO check allready can be started param mode
 		paramValue += var.getCalling();
 		mode = TagMode.PARAM_VALUE;

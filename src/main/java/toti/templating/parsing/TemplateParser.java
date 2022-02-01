@@ -5,19 +5,29 @@ import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
 import ji.common.exceptions.LogicException;
 import ji.common.functions.InputStreamLoader;
+import ji.common.structures.DictionaryValue;
+import ji.common.structures.MapInit;
 import ji.common.structures.ThrowingConsumer;
+import ji.common.structures.ThrowingSupplier;
 import ji.files.text.Text;
+import ji.translator.Translator;
+import toti.security.Authorizator;
 import toti.templating.Tag;
+import toti.templating.Template;
+import toti.templating.TemplateException;
+import toti.templating.TemplateFactory;
 import toti.templating.parsing.enums.InLineState;
 import toti.templating.parsing.enums.JavaState;
 import toti.templating.parsing.enums.ParserType;
 import toti.templating.parsing.enums.TagState;
 import toti.templating.parsing.enums.VarState;
+import toti.url.MappedUrl;
 
 public class TemplateParser {
 	
@@ -38,25 +48,27 @@ public class TemplateParser {
 			long modificationTime) throws IOException {
 		String preClass = namespace.length() == 0 ? "%s" : "package %s;";
 		String clazz1 = preClass
-				+ "import java.util.Map;"
-				+ "import java.util.HashMap;"
-				+ "import java.util.LinkedList;"
-				+ "import ji.common.structures.ThrowingConsumer;"
-				+ "import ji.common.structures.DictionaryValue;"
-				+ "import ji.common.structures.MapInit;"
-				+ "import ji.translator.Translator;"
-				+ "import toti.security.Authorizator;"
-				+ "import toti.templating.TemplateFactory;"
-				+ "import toti.url.MappedUrl;"
-				+ "import toti.templating.Template;"
-				+ "import toti.templating.parsing.TagNode;"
-				+ "import toti.templating.TemplateException;"
+				+ String.format("import %s;", Map.class.getCanonicalName())
+				+ String.format("import %s;", HashMap.class.getCanonicalName())
+				+ String.format("import %s;", LinkedList.class.getCanonicalName())
+				+ String.format("import %s;", ThrowingConsumer.class.getCanonicalName())
+				+ String.format("import %s;", ThrowingSupplier.class.getCanonicalName())
+				+ String.format("import %s;", DictionaryValue.class.getCanonicalName())
+				+ String.format("import %s;", MapInit.class.getCanonicalName())
+				+ String.format("import %s;", Translator.class.getCanonicalName())
+				+ String.format("import %s;", Authorizator.class.getCanonicalName())
+				+ String.format("import %s;", TemplateFactory.class.getCanonicalName())
+				+ String.format("import %s;", MappedUrl.class.getCanonicalName())
+				+ String.format("import %s;", Template.class.getCanonicalName())
+				+ String.format("import %s;", TagNode.class.getCanonicalName())
+				+ String.format("import %s;", TemplateException.class.getCanonicalName())
 				+ "public class %s implements Template{"
 					+ "private LinkedList<TagNode> nodes = new LinkedList<>();"
 				
 				+ "private void write(Object data) {nodes.getLast().getBuilder().append(data);}"
 				+ "private void addVariable(String name, Object value) {nodes.getLast().getVariables().put(name, value);}"
 				+ "private Object getVariable(String name) {return nodes.getLast().getVariables().get(name);}"
+				+ "private Object getVariable(ThrowingSupplier<Object, Exception> supplier) throws Exception {return supplier.get();}"
 				+ "private ThrowingConsumer<Map<String, Object>, Exception> getBlock(String name) {return nodes.getLast().getBlocks().get(name);}"
                 + "private void addBlock(String name, ThrowingConsumer<Map<String, Object>, Exception> value) {nodes.getLast().getBlocks().put(name, value);}"
 
@@ -208,7 +220,7 @@ public class TemplateParser {
 				} else {
 					variableState = VarState.NOTHING;		
 					node.add("\");");
-					node.add(var.getDeclare());
+					//node.add(var.getDeclare());
 					if (var.escape()) {
 						node.add("write(Template.escapeVariable(" + var.getCalling() + "));");
 					} else {
@@ -230,7 +242,7 @@ public class TemplateParser {
 				inLine = InLineState.NOTHING;
 				node.add("\");");
 				InLine inlineCode = parsers.removeLast().getInline();
-				node.add(inlineCode.getPre() + "");
+			//	node.add(inlineCode.getPre() + "");
 				node.add("write(" + inlineCode.getContent().toString() + ");");
 				node.add("write(\"");
 			} else if (actual == '{' && inLine == InLineState.NOTHING) {
@@ -268,7 +280,7 @@ public class TemplateParser {
 				tagState = TagState.NOTHING;
 				node.add("\");");
 				TagParser tagParser =parsers.removeLast().getTagParser();
-				node.add(tagParser.getPre());
+			//	node.add(tagParser.getPre());
 				node.add(tags.get(tagParser.getName()).getNotPairCode(tagParser.getParams()));
 				node.add("write(\"");
 			} else if (tagState == TagState.TAG && actual == '>' && !parsers.getLast().isQuoted()) {
@@ -276,7 +288,7 @@ public class TemplateParser {
 				tagState = TagState.NOTHING;
 				node.add("\");");
 				TagParser tagParser =parsers.removeLast().getTagParser();
-				node.add(tagParser.getPre());
+			//	node.add(tagParser.getPre());
 				if (tagParser.isClose()) {
 					node.add(tags.get(tagParser.getName()).getPairEndCode(tagParser.getParams()));
 				} else {

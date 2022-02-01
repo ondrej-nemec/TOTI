@@ -94,12 +94,6 @@ public class VariableParser {
 				last
 			));
 		} else if (mode == VarMode.METHOD_NAME && params.size() > 0) {
-			/*
-			declare.append(String.format(
-				"Object %s=%s.getClass().getMethod(\"%s\",%s).invoke(%s,%s);",
-				current, last, cache, Implode.implode(",", classes), last, Implode.implode(",", params)
-			));
-			/*/
 			declare.append(String.format("Object %s=null;", current));
             declare.append("try{");
             declare.append(String.format(
@@ -112,7 +106,6 @@ public class VariableParser {
                      current, last, cache, Implode.implode((o)->"Object.class", ",", classes), last, Implode.implode(",", params)
                 ));
             declare.append("}");
-            //*/
 		} else if (mode == VarMode.METHOD_NAME) {
 			declare.append(String.format(
 				"Object %s=%s.getClass().getMethod(\"%s\").invoke(%s);",
@@ -122,6 +115,13 @@ public class VariableParser {
 			throw new TemplateException("Variable Syntax error: Missing ')'");
 		}
 		level++;
+	}
+	
+	private void finishCache() {
+		if (!cache.isEmpty()) {
+			finish(cache);
+			cache = "";
+		}
 	}
 	
 	private Object finishObjectParam(String object) {
@@ -151,29 +151,28 @@ public class VariableParser {
 		return escape;
 	}
 	
-	public String getDeclare() {
-		if (!cache.isEmpty()) {
-			finish(cache);
-		}
-		return declare.toString();
-	}
-	
-	public String getCalling() {
-		if (clazz != null) {
-			//return String.format("%s.class.cast(o%s_%s)", clazz, position, level-1);
-			return String.format("new DictionaryValue(o%s_%s).getValue(%s.class)", position, level-1, clazz);
-		}
+	protected String getVariableName() {
+		finishCache();
 		return String.format("o%s_%s", position, level-1);
 	}
 	
+	public String getCalling() {
+		finishCache();
+		String calling = String.format("getVariable(()->{%sreturn o%s_%s;})", declare.toString(), position, level-1);
+		if (clazz != null) {
+			return String.format("new DictionaryValue(%s).getValue(%s.class)", calling, clazz);
+		}
+		return calling;
+	}
+	
 	public void addVariable(VariableParser var) {
-		declare.append(var.getDeclare());
-		classes.add(var.clazz == null ? var.getCalling() + ".getClass()" : var.clazz + ".class");
-		params.add(var.getCalling());
+		declare.append(String.format("Object %s_aux=%s;", var.getVariableName(), var.getCalling()));
+		classes.add(var.clazz == null ? String.format("%s_aux.getClass()", var.getVariableName()) : var.clazz + ".class");
+		params.add(String.format("%s_aux", var.getVariableName()));
 	}
 	
 	@Override
 	public String toString() {
-		return "Variable " + position + " [" + declare + " " + getCalling() + "]";
+		return "Variable " + declare + " [" + getCalling() + "]";
 	}
 }

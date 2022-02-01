@@ -219,7 +219,12 @@ public class TemplateFactory {
 		return new Tuple2<>(namespace, new FileExtension(file.getName()).getName());
 	}
 
-	private List<Tag> initTags(String actualFileDir) {
+	/**
+	 * Protected for test purpose only
+	 * @param actualFileDir
+	 * @return
+	 */
+	protected List<Tag> initTags(String actualFileDir) {
 		List<Tag> tags = new ArrayList<>();
 		tags.add(new BreakTag());
 		tags.add(new CaseTag());

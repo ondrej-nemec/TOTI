@@ -25,17 +25,26 @@ public class VariableParserTest {
 		first.addVariable(second);
 		
 		assertEquals(
-			"Object o0_0=getVariable(\"title\");"
-			+ "Object o1_0=getVariable(\"age\");"
+			"o0_1",
+			first.getVariableName()
+		);
+		assertEquals(
+			"getVariable(()->{"
+			+ "Object o0_0=getVariable(\"title\");"
+			+ "Object o1_0_aux=getVariable(()->{"
+				+ "Object o1_0=getVariable(\"age\");"
+				+ "return o1_0;"
+			+ "});"
 			+ "Object o0_1=null;"
 			+ "try{"
-			+ "o0_1=o0_0.getClass().getMethod(\"equals\",o1_0.getClass()).invoke(o0_0,o1_0);"
+			+ "o0_1=o0_0.getClass().getMethod(\"equals\",o1_0_aux.getClass()).invoke(o0_0,o1_0_aux);"
 			+ "}catch(NoSuchMethodException e){"
-			+ "o0_1=o0_0.getClass().getMethod(\"equals\",Object.class).invoke(o0_0,o1_0);"
-			+ "}", 
-			first.getDeclare()
+			+ "o0_1=o0_0.getClass().getMethod(\"equals\",Object.class).invoke(o0_0,o1_0_aux);"
+			+ "}"
+			+ "return o0_1;"
+			+ "})", 
+			first.getCalling()
 		);
-		assertEquals("o0_1", first.getCalling());
 		assertTrue(first.escape());
 	}
 
@@ -63,7 +72,7 @@ public class VariableParserTest {
 	@Parameters(method = "dataParseTextWorks")
 	public void testParseTextWorks(String template, String expectedDeclare, String expectedCalling, boolean escape) throws IOException {
 		VariableParser parser = parseText(template, 0);
-		assertEquals(expectedDeclare, parser.getDeclare());
+		assertEquals(expectedDeclare, parser.getVariableName());
 		assertEquals(expectedCalling, parser.getCalling());
 		assertEquals(escape, parser.escape());
 	}
@@ -72,69 +81,104 @@ public class VariableParserTest {
 		return new Object[] {
 			new Object[] {
 				"title",
-				"Object o0_0=getVariable(\"title\");",
-				"o0_0", true
+				"o0_0",
+				"getVariable(()->{"
+				+ "Object o0_0=getVariable(\"title\");"
+				+ "return o0_0;"
+				+ "})",
+				true
 			},
 			new Object[] {
 					"title.length()",
-					"Object o0_0=getVariable(\"title\");"
-					+ "Object o0_1=o0_0.getClass().getMethod(\"length\").invoke(o0_0);",
-					"o0_1", true
+					"o0_1",
+					"getVariable(()->{"
+						+ "Object o0_0=getVariable(\"title\");"
+						+ "Object o0_1=o0_0.getClass().getMethod(\"length\").invoke(o0_0);"
+						+ "return o0_1;"
+					+ "})",
+					true
 				},
 			new Object[] {
 					"title.equals(1)",
-					"Object o0_0=getVariable(\"title\");"
+					"o0_1",
+					"getVariable(()->{"
+					+ "Object o0_0=getVariable(\"title\");"
 					+ "Object o0_1=null;"
 					+ "try{"
 					+ "o0_1=o0_0.getClass().getMethod(\"equals\",java.lang.Integer.class).invoke(o0_0,1);"
 					+ "}catch(NoSuchMethodException e){"
 					+ "o0_1=o0_0.getClass().getMethod(\"equals\",Object.class).invoke(o0_0,1);"
-					+ "}",
-					"o0_1", true
+					+ "}"
+					+ "return o0_1;"
+					+ "})",
+					true
 				},
 			new Object[] {
 					"title.class",
-					"Object o0_0=getVariable(\"title\");"
-					+ "Object o0_1=o0_0.getClass().getMethod(\"getClass\").invoke(o0_0);",
-					"o0_1", true
+					"o0_1",
+					"getVariable(()->{"
+					+ "Object o0_0=getVariable(\"title\");"
+					+ "Object o0_1=o0_0.getClass().getMethod(\"getClass\").invoke(o0_0);"
+					+ "return o0_1;"
+					+ "})",
+					true
 				},
 			new Object[] {
 					"age|Integer",
-					"Object o0_0=getVariable(\"age\");",
-					"new DictionaryValue(o0_0).getValue(Integer.class)",
+					"o0_0",
+					"new DictionaryValue(getVariable(()->{"
+					+ "Object o0_0=getVariable(\"age\");"
+					+ "return o0_0;"
+					+ "})).getValue(Integer.class)",
 					true
 				},
 			new Object[] {
 					"title|noescape",
-					"Object o0_0=getVariable(\"title\");",
-					"o0_0", false
+					"o0_0",
+					"getVariable(()->{"
+					+ "Object o0_0=getVariable(\"title\");"
+					+ "return o0_0;"
+					+ "})",
+					false
 				},
 			new Object[] {
 					"title|String|noescape",
-					"Object o0_0=getVariable(\"title\");",
-					"new DictionaryValue(o0_0).getValue(String.class)", false
+					"o0_0",
+					"new DictionaryValue(getVariable(()->{"
+					+ "Object o0_0=getVariable(\"title\");"
+					+ "return o0_0;"
+					+ "})).getValue(String.class)",
+					false
 				},
 			new Object[] {
 					"map.get(\"value\")",
-					"Object o0_0=getVariable(\"map\");"
+					"o0_1",
+					"getVariable(()->{"
+					+ "Object o0_0=getVariable(\"map\");"
 					+ "Object o0_1=null;"
 					+ "try{"
 					+ "o0_1=o0_0.getClass().getMethod(\"get\",java.lang.String.class).invoke(o0_0,\"value\");"
 					+ "}catch(NoSuchMethodException e){"
 					+ "o0_1=o0_0.getClass().getMethod(\"get\",Object.class).invoke(o0_0,\"value\");"
-					+ "}",
-					"o0_1", true
+					+ "}"
+					+ "return o0_1;"
+					+ "})",
+					true
 				},
 			new Object[] {
 					"map.get(12)",
-					"Object o0_0=getVariable(\"map\");"
+					"o0_1",
+					"getVariable(()->{"
+					+ "Object o0_0=getVariable(\"map\");"
 					+ "Object o0_1=null;"
 					+ "try{"
 					+ "o0_1=o0_0.getClass().getMethod(\"get\",java.lang.Integer.class).invoke(o0_0,12);"
 					+ "}catch(NoSuchMethodException e){"
 					+ "o0_1=o0_0.getClass().getMethod(\"get\",Object.class).invoke(o0_0,12);"
-					+ "}",
-					"o0_1", true
+					+ "}"
+					+ "return o0_1;"
+					+ "})",
+					true
 				}
 		};
 	}
