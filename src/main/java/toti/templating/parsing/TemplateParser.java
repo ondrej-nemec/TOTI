@@ -242,7 +242,6 @@ public class TemplateParser {
 				inLine = InLineState.NOTHING;
 				node.add("\");");
 				InLine inlineCode = parsers.removeLast().getInline();
-			//	node.add(inlineCode.getPre() + "");
 				node.add("write(" + inlineCode.getContent().toString() + ");");
 				node.add("write(\"");
 			} else if (actual == '{' && inLine == InLineState.NOTHING) {
@@ -280,7 +279,6 @@ public class TemplateParser {
 				tagState = TagState.NOTHING;
 				node.add("\");");
 				TagParser tagParser =parsers.removeLast().getTagParser();
-			//	node.add(tagParser.getPre());
 				node.add(tags.get(tagParser.getName()).getNotPairCode(tagParser.getParams()));
 				node.add("write(\"");
 			} else if (tagState == TagState.TAG && actual == '>' && !parsers.getLast().isQuoted()) {
@@ -288,7 +286,6 @@ public class TemplateParser {
 				tagState = TagState.NOTHING;
 				node.add("\");");
 				TagParser tagParser =parsers.removeLast().getTagParser();
-			//	node.add(tagParser.getPre());
 				if (tagParser.isClose()) {
 					node.add(tags.get(tagParser.getName()).getPairEndCode(tagParser.getParams()));
 				} else {
