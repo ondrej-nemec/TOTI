@@ -41,7 +41,7 @@ public class SignController {
 	/**
 	 * Login user. Here, user is loaded by username. Database or LDAP authentication can be used
 	 * @return http://localhost:8080/examples/sign/in
-	 */
+	 
 	@Method({HttpMethod.POST})
 	@Action("in")
 	public Response login(@Param("username") String username) {
@@ -54,7 +54,7 @@ public class SignController {
 			return Response.getJson(StatusCode.INTERNAL_SERVER_ERROR, new HashMap<>());
 		}
 	}
-
+*/
 	/**
 	 * Log out user
 	 * @return http://localhost:8080/examples/sign/out
@@ -72,7 +72,7 @@ public class SignController {
 	 * Refresh user token. The token is active only for short time.
 	 * Simple request on any page does not increase token timeout.
 	 * @return http://localhost:8080/examples/sign/refresh
-	 */
+	 
 	@Method({HttpMethod.POST})
 	@Action("refresh")
 	@Secured
@@ -85,7 +85,7 @@ public class SignController {
 			return Response.getJson(StatusCode.INTERNAL_SERVER_ERROR, new HashMap<>());
 		}
 	}
-	
+	*/
 	/**
 	 * login and refresh response for TOTI JS
 	 * If TOTI JS is not used, response can be another - fe. simple bearer

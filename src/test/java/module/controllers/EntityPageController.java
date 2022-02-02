@@ -154,12 +154,12 @@ public class EntityPageController {
 		// TODO grid
 		Grid grid = new Grid("/entity/api/entity/all", "get");
 		grid.addColumn(new ActionsColumn("actions")).addAction(
-			new GroupAction("Sync", "/entity/entity/action1").setAjax(false).setMethod("post")
+			new GroupAction("Sync", "/entity/entity/action1").setAsync(false).setMethod("post")
 		).addAction(
 			new GroupAction("Async with confirmation", "/entity/entity/action2")
-				.setAjax(true).setConfirmation("Really?").setMethod("post")
+				.setAsync(true).setConfirmation("Really?").setMethod("post")
 		).addAction(
-			new GroupAction("Custom failure and succcess", "/entity/entity/action3").setAjax(true).setMethod("post")
+			new GroupAction("Custom failure and succcess", "/entity/entity/action3").setAsync(true).setMethod("post")
 			    .setOnFailure("actionFailure").setOnSuccess("actionSuccess")
 		);
 		grid.addColumn(new ValueColumn("id").setTitle(translator.translate("module.id")));
