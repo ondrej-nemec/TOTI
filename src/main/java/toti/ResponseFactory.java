@@ -50,7 +50,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private final boolean dirResponseAllowed;
 	private final Logger logger;
 	
-	private final MapDictionary<UrlPart, Object> mapping;	
+	private final MapDictionary<UrlPart, Object> mapping;
 	private final String resourcesDir;
 	private final Router router;
 	
