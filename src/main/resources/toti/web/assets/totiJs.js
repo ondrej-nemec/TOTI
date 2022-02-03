@@ -18,7 +18,7 @@
 
 <t:if cond="${totiIdentity.isPresent()}" >
 	totiAuth.login({
-		"token": "${totiIdentity.getToken()}",
+		"access_token": "${totiIdentity.getToken()}",
 		"expired_in": Date.now() + ${totiIdentity.getExpirationTime()}
 	});
 <t:else>
