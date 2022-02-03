@@ -4,7 +4,6 @@ import java.util.Map;
 
 import toti.templating.Tag;
 import toti.templating.parsing.enums.ParserType;
-import toti.templating.parsing.enums.TagType;
 
 public class ParserWrapper {
 	

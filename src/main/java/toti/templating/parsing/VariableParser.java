@@ -4,7 +4,6 @@ import java.util.LinkedList;
 
 import ji.common.functions.Implode;
 import toti.templating.TemplateException;
-import toti.templating.parsing.enums.VarMode;
 
 /**
  * Activated if previous == '$' and actual == '{'
@@ -12,7 +11,14 @@ import toti.templating.parsing.enums.VarMode;
  *
  */
 public class VariableParser implements Parser {
-
+	
+	enum VarState {
+		NOTHING, CANDIDATE, VAR
+	}
+	enum VarMode {
+		VAR_NAME, PARAMS, METHOD_NAME, APPENDIX
+	}
+	
 	private int position;
 	private VarMode mode = VarMode.VAR_NAME;
 	private final StringBuilder declare = new StringBuilder();
