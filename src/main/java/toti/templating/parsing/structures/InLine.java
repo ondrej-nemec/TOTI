@@ -1,4 +1,6 @@
-package toti.templating.parsing;
+package toti.templating.parsing.structures;
+
+import toti.templating.parsing.VariableParser;
 
 public class InLine {
 

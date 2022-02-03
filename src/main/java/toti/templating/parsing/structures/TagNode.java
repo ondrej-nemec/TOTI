@@ -1,4 +1,4 @@
-package toti.templating.parsing;
+package toti.templating.parsing.structures;
 
 import java.util.Map;
 

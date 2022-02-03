@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import toti.security.Authorizator;
-import toti.templating.parsing.TagNode;
+import toti.templating.parsing.structures.TagNode;
 import toti.url.MappedUrl;
 import ji.translator.Translator;
 

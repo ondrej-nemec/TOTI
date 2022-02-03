@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import ji.common.exceptions.LogicException;
 import ji.common.functions.InputStreamLoader;
 import ji.common.structures.DictionaryValue;
 import ji.common.structures.MapInit;
@@ -22,14 +21,13 @@ import toti.templating.Tag;
 import toti.templating.Template;
 import toti.templating.TemplateException;
 import toti.templating.TemplateFactory;
-import toti.templating.parsing.enums.InLineState;
-import toti.templating.parsing.enums.JavaState;
 import toti.templating.parsing.enums.ParserType;
-import toti.templating.parsing.enums.TagState;
-import toti.templating.parsing.enums.VarState;
+import toti.templating.parsing.structures.TagNode;
 import toti.url.MappedUrl;
 
 public class TemplateParser {
+	
+	private final static char DEF = '\u0000';
 	
 	private final Map<String, Tag> tags;
 	private final boolean minimalize;
@@ -113,7 +111,7 @@ public class TemplateParser {
 			}
 		}
 		Text.get().read((br)->{
-			loadFile(br, (text)->{
+			parse(br, (text)->{
 				bw.write(text);
 			});			
 			// TODO read s void
@@ -122,214 +120,153 @@ public class TemplateParser {
 		is.close();
 	}
 	
-	protected void loadFile(BufferedReader br, ThrowingConsumer<String, IOException> bw) throws IOException {
-		JavaState javaState = JavaState.NOTHING;
-		TagState tagState = TagState.NOTHING;
-		VarState variableState = VarState.NOTHING;
-		InLineState inLine = InLineState.NOTHING;
+	/*
+	 * k kodu nic nesmi byt
+	 * v poznamce nic nesmi byt
+	 * 
+	 * v promene muze byt jina prenna
+	 * 
+	 * v inline muze byt promenna - ne komentar - funguguje / * * / a //
+	 * v tagu muze byt komentar, kod, promena, inline
+	 * 
+	 */
+	
+	protected void parse(BufferedReader br, ThrowingConsumer<String, IOException> bw) throws IOException {
 		
+		int level = 0;
+		LinkedList<ParserWrapper> parsers = new LinkedList<>();
+		StringBuilder node = new StringBuilder();
+
 		char actual;
-		char previous = '\u0000';
-		String cache = "";
-		ParsingNode node = new ParsingNode();
-		node.add("write(\"");
+		char previous = DEF;
+		char cache = DEF;
 		
-		int level = 0;		
-		LinkedList<Parser> parsers = new LinkedList<>();
-		
+		node.append("write(\"");
 		while((actual = (char)br.read()) != (char)-1) {
-			if (javaState != JavaState.COMMENT
-				&& (
-					(tagState != TagState.NOTHING && tagState != TagState.CANDIDATE)
-					|| (variableState != VarState.NOTHING && variableState != VarState.CANDIDATE)
-					|| (inLine != InLineState.NOTHING && inLine != InLineState.CANDIDATE)
-				)
-			) {
-				if (actual == '"' && previous != '\\' && !parsers.getLast().isSingleQuoted()) {
-					parsers.getLast().setDoubleQuoted();
-				} else if (actual == '\'' && previous != '\\' && !parsers.getLast().isDoubleQuoted()) {
-					parsers.getLast().setSingleQuoted();
+			ParserWrapper last = parsers.size() > 0 ? parsers.getLast() : null;
+			if (last != null) {
+				if (actual == '"' && previous != '\\' && !last.isSingleQuoted()) {
+					last.setDoubleQuoted();
+				} else if (actual == '\'' && previous != '\\' && !last.isDoubleQuoted()) {
+					last.setSingleQuoted();
 				}
-			}
-		/////// JAVA CODE
-			if (actual == '<' && javaState == JavaState.NOTHING && tagState == TagState.NOTHING && inLine == InLineState.NOTHING) {
-				javaState = JavaState.CANDIDATE1;
-				tagState = TagState.CANDIDATE;
 				
-				node.add(cache);
-				cache = "<";
-			} else if (javaState == JavaState.CANDIDATE1 && actual == '%') {
-				javaState = JavaState.JAVA;
-				tagState = TagState.NOTHING;
-			} else if (javaState == JavaState.JAVA && actual != '-') {
-				node.add("\");");
-				node.add(actual);
-				javaState = JavaState.CODE;
-				addParser(parsers, new Parser(ParserType.JAVA));
-			} else if (javaState == JavaState.JAVA && actual == '-') {
-				javaState = JavaState.CANDIDATE_COMMENT;
-				cache += "-";
-			} else if (javaState == JavaState.CANDIDATE_COMMENT && actual == '-') {
-				javaState = JavaState.COMMENT;
-				cache = "";
-				node.add("\");");
-				addParser(parsers, new Parser(ParserType.JAVA));
-			} else if (javaState == JavaState.COMMENT && actual == '-') {
-				cache += "-";
-				javaState = JavaState.CLOSE_COMMENT_CANDIDATE1;
-			} else if (javaState == JavaState.CLOSE_COMMENT_CANDIDATE1 && actual == '-') {
-				cache += '-';
-				javaState = JavaState.CLOSE_COMMENT_CANDIDATE2;
-			} else if (actual == '%' && (javaState == JavaState.CODE || javaState == JavaState.CLOSE_COMMENT_CANDIDATE2)) {
-				cache += "%";
-				javaState = JavaState.CLOSE_CANDIDATE;
-			} else if (javaState == JavaState.CLOSE_CANDIDATE && actual == '>') {
-				parsers.removeLast();
-				javaState = JavaState.NOTHING;
-				cache = "";
-				node.add("write(\"");
-			} else if (javaState == JavaState.CODE) {
-				node.add(actual);
-			} else if (javaState == JavaState.COMMENT) {
-				// ignore
-			} else if (javaState == JavaState.CANDIDATE1 || javaState == JavaState.CANDIDATE_COMMENT) {
-				cache += actual;
-				javaState = JavaState.NOTHING;				
-			} else if (javaState == JavaState.CLOSE_COMMENT_CANDIDATE1 || javaState == JavaState.CLOSE_COMMENT_CANDIDATE2) {
-				cache += actual;
-				javaState = JavaState.COMMENT;
-			} else if (javaState == JavaState.CLOSE_CANDIDATE) {
-				cache += actual;
-				javaState = previous == '-' ? JavaState.COMMENT : JavaState.CODE;
-		/////////////// VARIABLES
-			} else if (actual == '$' && variableState != VarState.CANDIDATE) {
-				node.add(cache);
-				cache = "$";
-				variableState = VarState.CANDIDATE;
-			} else if (variableState == VarState.CANDIDATE && actual == '{') {
-				cache = "";
-				variableState = VarState.VAR;
-				addParser(parsers, new Parser(new VariableParser(++level)));
-			} else if (actual == '}' && variableState == VarState.VAR && !parsers.getLast().isQuoted()) {
-				cache = "";
-				Parser parser = parsers.removeLast();
-				VariableParser var = parser.getVarParser();
-				VarState state;
-				if (parsers.size() > 0 && (state = parsers.getLast().addVariable(var)) != null) {
-					variableState = state;
-				} else {
-					variableState = VarState.NOTHING;		
-					node.add("\");");
-					//node.add(var.getDeclare());
-					if (var.escape()) {
-						node.add("write(Template.escapeVariable(" + var.getCalling() + "));");
-					} else {
-						node.add("write(" + var.getCalling() + ");");
-					}
-					node.add("write(\"");
-				}
-			} else if (variableState == VarState.VAR) {
-				parsers.getLast().getVarParser().accept(previous, actual, parsers.getLast().isSingleQuoted(), parsers.getLast().isDoubleQuoted());
-			} else if (variableState == VarState.CANDIDATE) {
-				variableState = VarState.NOTHING;
-				cache += actual;
-		/////////////// IN LINE
-			} else if (actual == '}' && inLine == InLineState.IN_LINE && !parsers.getLast().isQuoted()) {
-				cache += actual;
-				inLine = InLineState.CLOSE_CANDIDATE;
-			} else if (inLine == InLineState.CLOSE_CANDIDATE && actual == '}' && !parsers.getLast().isQuoted()) {
-				cache = "";
-				inLine = InLineState.NOTHING;
-				node.add("\");");
-				InLine inlineCode = parsers.removeLast().getInline();
-				node.add("write(" + inlineCode.getContent().toString() + ");");
-				node.add("write(\"");
-			} else if (actual == '{' && inLine == InLineState.NOTHING) {
-				node.add(cache);
-				cache = "{";
-				inLine = InLineState.CANDIDATE;
-			} else if (inLine == InLineState.CANDIDATE && actual == '{') {
-				addParser(parsers, new Parser(new InLine()));
-				cache = "";
-				inLine = InLineState.IN_LINE;
-			} else if (inLine == InLineState.IN_LINE) {
-				parsers.getLast().getInline().addContent(actual);
-			} else if (inLine == InLineState.CANDIDATE) {
-				inLine = InLineState.NOTHING;
-				cache += actual;
-		/////////////// TAGS
-			} else if (tagState == TagState.CANDIDATE && previous == 't' && actual == ':') {
-				javaState = JavaState.NOTHING;
-				cache = "";
-				tagState = TagState.TAG;
-				addParser(parsers, new Parser(new TagParser(false)));
-			} else if (tagState == TagState.CANDIDATE && previous == '/' && actual == 't') {
-				javaState = JavaState.NOTHING;
-				cache += actual;
-				tagState = TagState.CLOSE_CANDIDATE;
-			} else if (tagState == TagState.CLOSE_CANDIDATE && actual == ':') {
-				cache = "";
-				tagState = TagState.TAG;
-				addParser(parsers, new Parser(new TagParser(true)));
-			} else if (tagState == TagState.TAG && actual == '/' && !parsers.getLast().isQuoted()) {
-				cache += actual;
-				tagState = TagState.INLINE_CLOSE_CANDIDATE;
-			} else if (tagState == TagState.INLINE_CLOSE_CANDIDATE && actual == '>') {
-				cache = "";
-				tagState = TagState.NOTHING;
-				node.add("\");");
-				TagParser tagParser =parsers.removeLast().getTagParser();
-				node.add(tags.get(tagParser.getName()).getNotPairCode(tagParser.getParams()));
-				node.add("write(\"");
-			} else if (tagState == TagState.TAG && actual == '>' && !parsers.getLast().isQuoted()) {
-				cache = "";
-				tagState = TagState.NOTHING;
-				node.add("\");");
-				TagParser tagParser =parsers.removeLast().getTagParser();
-				if (tagParser.isClose()) {
-					node.add(tags.get(tagParser.getName()).getPairEndCode(tagParser.getParams()));
-				} else {
-					node.add(tags.get(tagParser.getName()).getPairStartCode(tagParser.getParams()));
-				}
-				node.add("write(\"");
-			} else if (tagState == TagState.TAG) {
-				parsers.getLast().getTagParser().parse(previous, actual, parsers.getLast().isSingleQuoted(), parsers.getLast().isDoubleQuoted());
-			} else if (tagState == TagState.CANDIDATE || tagState == TagState.CLOSE_CANDIDATE) {
-				cache += actual;
-				tagState = TagState.NOTHING;
-		///////////////
-			} else {
-				node.add(
-					cache
-					.replace("\r", "")
-					.replace("\\", "\\\\")
-					.replace("\"", "\\\"")
-					.replace("\n", "\");write(\"" + (minimalize ? "" : "\\n"))
-				);
-				cache = "";
-				if (actual == '\r') {
-					// ignored
-				} else if (actual == '\n') {
-					node.add(
-						"\");write(\"" + (minimalize ? "" : "\\n")
-					);
-				} else {
-					if (minimalize && (actual == '\t' || (actual == ' ' && previous == ' ') )) {
-						// ignore
-					} else {
-						if (actual == '\"' || actual == '\\') {
-							node.add("\\");
-						}
-						node.add(actual + "");
-					}
-				}
 			}
-			
+			// java, comment, tag
+			if ((last == null || last.allowChildren()) && actual == '<') {
+				// do nothing
+			} else if ((last == null || last.allowChildren()) && previous == '<' && actual == '%') {
+				parsers.add(new ParserWrapper(new JavaParser()));
+			} else if ((last == null || last.allowChildren()) && previous == '<') {
+				parsers.add(new ParserWrapper(new TagParser(actual)));
+			// variable
+			} else if ((last == null || last.allowVariable()) && actual == '$') {
+				//candidate
+				cache = previous;
+			} else if ((last == null || last.allowVariable()) && previous == '$' && actual == '{') {
+				parsers.add(new ParserWrapper(new VariableParser(level++)));
+			} else if ((last == null || last.allowVariable()) && previous == '$' && actual != '{') {
+				if (last == null) {
+					writeText(node, cache, previous);
+					writeText(node, previous, actual);
+				} else {
+					writeParser(node, parsers, last, cache, previous);
+					writeParser(node, parsers, last, previous, actual);
+				}
+				cache = DEF;
+			// inline
+			} else if ((last == null || last.allowChildren()) && previous != '{' && actual == '{') {
+				//candidate
+				cache = previous;
+			} else if ((last == null || last.allowChildren()) && previous == '{' && actual == '{') {
+				parsers.add(new ParserWrapper(new InLineParser()));
+			} else if ((last == null || last.allowChildren()) && previous == '{' && actual != '{') {
+				if (last == null) {
+					writeText(node, cache, previous);
+					writeText(node, previous, actual);
+				} else {
+					writeParser(node, parsers, last, cache, previous);
+					writeParser(node, parsers, last, previous, actual);
+				}
+				cache = DEF;
+			// write
+			} else if (last != null) {
+				writeParser(node, parsers, last, previous, actual);
+			} else {
+				writeText(node, previous, actual);
+			}
 			previous = actual;
 		}
-		bw.accept(node.flush());
+		node.append("\");");
+		bw.accept(node.toString());
 	}
 	
+	// TODO if called twice in one row - can be problem
+	private void writeParser(
+			StringBuilder node, LinkedList<ParserWrapper> parsers, 
+			ParserWrapper last, char previous, char actual) {
+		if (last.accept(previous, actual)) {
+			parsers.removeLast();
+			if (parsers.size() > 0) {
+				if (last.getType() == ParserType.VARIABLE) {
+					parsers.getLast().addVariable(last);
+				} else {
+					parsers.getLast().addParser(last);
+				}
+			} else {
+				node.append("\");");
+				node.append(last.getContent(tags));
+				node.append("write(\"");
+			}
+		}
+	}
+	
+	private void writeText(StringBuilder node, char previous, char actual) {
+		if (actual == '\r') {
+			// ignored
+		} else if (actual == '\n') {
+			node.append(
+				(minimalize ? "" : "\\n") + "\");write(\""
+			);
+		} else {
+			if (minimalize && (actual == '\t' || (actual == ' ' && previous == ' ') )) {
+				// ignore
+			} else {
+				if (actual == '\"' || actual == '\\') {
+					node.append("\\");
+				}
+				node.append(actual + "");
+			}
+		}
+		/*
+			node.append(
+				cache
+				.replace("\r", "")
+				.replace("\\", "\\\\")
+				.replace("\"", "\\\"")
+				.replace("\n", "\");write(\"" + (minimalize ? "" : "\\n"))
+			);
+			cache = "";
+			if (actual == '\r') {
+				// ignored
+			} else if (actual == '\n') {
+				node.append(
+					"\");write(\"" + (minimalize ? "" : "\\n")
+				);
+			} else {
+				if (minimalize && (actual == '\t' || (actual == ' ' && previous == ' ') )) {
+					// ignore
+				} else {
+					if (actual == '\"' || actual == '\\') {
+						node.append("\\");
+					}
+					node.append(actual + "");
+				}
+			}
+		*/
+	}
+	
+/*
 	private void addParser(LinkedList<Parser> parsers, Parser parser) {
 		if (parsers.size() == 0) {
 			parsers.add(parser);
@@ -341,4 +278,6 @@ public class TemplateParser {
 			parsers.add(parser);
 		}
 	}
+*/
+
 }

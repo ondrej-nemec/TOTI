@@ -6,7 +6,12 @@ import ji.common.functions.Implode;
 import toti.templating.TemplateException;
 import toti.templating.parsing.enums.VarMode;
 
-public class VariableParser {
+/**
+ * Activated if previous == '$' and actual == '{'
+ * @author Ondřej Němec
+ *
+ */
+public class VariableParser implements Parser {
 
 	private int position;
 	private VarMode mode = VarMode.VAR_NAME;
@@ -25,8 +30,13 @@ public class VariableParser {
 	private int level = 0;
 	private String clazz = null;
 	
-	public void accept(char previous, char actual, boolean isSingleQuoted, boolean isDoubleQuoted) {
-		if (actual == '|' && !isSingleQuoted && !isDoubleQuoted) {
+	@Override
+	public boolean accept(char previous, char actual, boolean isSingleQuoted, boolean isDoubleQuoted) {
+		if (actual == '}' && !isSingleQuoted && !isDoubleQuoted) {
+			finish(cache);
+			cache = "";
+			return true;
+		} else if (actual == '|' && !isSingleQuoted && !isDoubleQuoted) {
 			finish(cache);
 			if (mode == VarMode.APPENDIX) {
 				finishAppendix(cache);
@@ -62,6 +72,7 @@ public class VariableParser {
 		} else {
 			cache += actual;
 		}
+		return false;
 	}
 	
 	private void finishAppendix(String cache) {
@@ -117,13 +128,6 @@ public class VariableParser {
 		level++;
 	}
 	
-	private void finishCache() {
-		if (!cache.isEmpty()) {
-			finish(cache);
-			cache = "";
-		}
-	}
-	
 	private Object finishObjectParam(String object) {
 		if (object.toLowerCase().equals("null")) {
 			return null;
@@ -152,27 +156,26 @@ public class VariableParser {
 	}
 	
 	protected String getVariableName() {
-		finishCache();
 		return String.format("o%s_%s", position, level-1);
 	}
 	
 	public String getCalling() {
-		finishCache();
 		String calling = String.format("getVariable(()->{%sreturn o%s_%s;})", declare.toString(), position, level-1);
 		if (clazz != null) {
 			return String.format("new DictionaryValue(%s).getValue(%s.class)", calling, clazz);
 		}
 		return calling;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "Variable " + declare + " [" + getCalling() + "]";
+	}
+
+	@Override
 	public void addVariable(VariableParser var) {
 		declare.append(String.format("Object %s_aux=%s;", var.getVariableName(), var.getCalling()));
 		classes.add(var.clazz == null ? String.format("%s_aux.getClass()", var.getVariableName()) : var.clazz + ".class");
 		params.add(String.format("%s_aux", var.getVariableName()));
-	}
-	
-	@Override
-	public String toString() {
-		return "Variable " + declare + " [" + getCalling() + "]";
 	}
 }

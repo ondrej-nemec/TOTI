@@ -15,19 +15,13 @@ import toti.templating.parsing.VariableParser;
 @RunWith(JUnitParamsRunner.class)
 public class VariableParserTest {
 
-	// TODO add throwing cases
-	
 	@Test
 	public void testParseAddVariableWorks() throws IOException {
 		VariableParser first = parseText("title.equals(", 0);
-		VariableParser second = parseText("age", 1);
-		parseText(first, ")");
+		VariableParser second = parseText("age}", 1);
 		first.addVariable(second);
+		ParsingSimulator.simulate(first, ")}");
 		
-		assertEquals(
-			"o0_1",
-			first.getVariableName()
-		);
 		assertEquals(
 			"getVariable(()->{"
 			+ "Object o0_0=getVariable(\"title\");"
@@ -49,38 +43,36 @@ public class VariableParserTest {
 	}
 
 	private VariableParser parseText(String text, int position) {
-		return parseText(new VariableParser(position), text);
-	}
-	
-	private VariableParser parseText(VariableParser parser, String text) {
-		char previous = '\u0000';
-		boolean isDoubleQuoted = false;
-		boolean isSingleQuoted = false;
-		for (char c : text.toCharArray()) {
-			if (c == '"' && previous != '\\' && !isSingleQuoted) {
-				isDoubleQuoted = !isDoubleQuoted;
-			} else if (c == '\'' && previous != '\\' && !isDoubleQuoted) {
-				isSingleQuoted = !isSingleQuoted;
-			}
-			parser.accept(previous, c, isSingleQuoted, isDoubleQuoted);
-			previous = c;
-		}
+		VariableParser parser = new VariableParser(position);
+		ParsingSimulator.simulate(parser, text);
 		return parser;
 	}
 
 	@Test
 	@Parameters(method = "dataParseTextWorks")
-	public void testParseTextWorks(String template, String expectedDeclare, String expectedCalling, boolean escape) throws IOException {
-		VariableParser parser = parseText(template, 0);
-		assertEquals(expectedDeclare, parser.getVariableName());
+	public void testParseTextWorks(String template, boolean finished, String variableName, String expectedCalling, boolean escape) throws IOException {
+		VariableParser parser = new VariableParser(0);
+		assertEquals(finished, ParsingSimulator.simulate(parser, template));
+		assertEquals(variableName, parser.getVariableName());
 		assertEquals(expectedCalling, parser.getCalling());
 		assertEquals(escape, parser.escape());
 	}
 	
 	public Object[] dataParseTextWorks() {
 		return new Object[] {
-			new Object[] {
+		/*	new Object[] {
 				"title",
+				false,
+				"o0_0",
+				"getVariable(()->{"
+				+ "Object o0_0=getVariable(\"title\");"
+				+ "return o0_0;"
+				+ "})",
+				true
+			},*/
+			new Object[] {
+				"title}",
+				true,
 				"o0_0",
 				"getVariable(()->{"
 				+ "Object o0_0=getVariable(\"title\");"
@@ -89,7 +81,8 @@ public class VariableParserTest {
 				true
 			},
 			new Object[] {
-					"title.length()",
+					"title.length()}",
+					true,
 					"o0_1",
 					"getVariable(()->{"
 						+ "Object o0_0=getVariable(\"title\");"
@@ -99,7 +92,8 @@ public class VariableParserTest {
 					true
 				},
 			new Object[] {
-					"title.equals(1)",
+					"title.equals(1)}",
+					true,
 					"o0_1",
 					"getVariable(()->{"
 					+ "Object o0_0=getVariable(\"title\");"
@@ -114,7 +108,8 @@ public class VariableParserTest {
 					true
 				},
 			new Object[] {
-					"title.class",
+					"title.class}",
+					true,
 					"o0_1",
 					"getVariable(()->{"
 					+ "Object o0_0=getVariable(\"title\");"
@@ -124,7 +119,8 @@ public class VariableParserTest {
 					true
 				},
 			new Object[] {
-					"age|Integer",
+					"age|Integer}",
+					true,
 					"o0_0",
 					"new DictionaryValue(getVariable(()->{"
 					+ "Object o0_0=getVariable(\"age\");"
@@ -133,7 +129,8 @@ public class VariableParserTest {
 					true
 				},
 			new Object[] {
-					"title|noescape",
+					"title|noescape}",
+					true,
 					"o0_0",
 					"getVariable(()->{"
 					+ "Object o0_0=getVariable(\"title\");"
@@ -142,7 +139,8 @@ public class VariableParserTest {
 					false
 				},
 			new Object[] {
-					"title|String|noescape",
+					"title|String|noescape}",
+					true,
 					"o0_0",
 					"new DictionaryValue(getVariable(()->{"
 					+ "Object o0_0=getVariable(\"title\");"
@@ -151,7 +149,18 @@ public class VariableParserTest {
 					false
 				},
 			new Object[] {
-					"map.get(\"value\")",
+					"title|noescape|String}",
+					true,
+					"o0_0",
+					"new DictionaryValue(getVariable(()->{"
+					+ "Object o0_0=getVariable(\"title\");"
+					+ "return o0_0;"
+					+ "})).getValue(String.class)",
+					false
+				},
+			new Object[] {
+					"map.get(\"value\")}",
+					true,
 					"o0_1",
 					"getVariable(()->{"
 					+ "Object o0_0=getVariable(\"map\");"
@@ -166,7 +175,8 @@ public class VariableParserTest {
 					true
 				},
 			new Object[] {
-					"map.get(12)",
+					"map.get(12)}",
+					true,
 					"o0_1",
 					"getVariable(()->{"
 					+ "Object o0_0=getVariable(\"map\");"
@@ -175,6 +185,22 @@ public class VariableParserTest {
 					+ "o0_1=o0_0.getClass().getMethod(\"get\",java.lang.Integer.class).invoke(o0_0,12);"
 					+ "}catch(NoSuchMethodException e){"
 					+ "o0_1=o0_0.getClass().getMethod(\"get\",Object.class).invoke(o0_0,12);"
+					+ "}"
+					+ "return o0_1;"
+					+ "})",
+					true
+				},
+			new Object[] {
+					"map.get(\"}\")}",
+					true,
+					"o0_1",
+					"getVariable(()->{"
+					+ "Object o0_0=getVariable(\"map\");"
+					+ "Object o0_1=null;"
+					+ "try{"
+					+ "o0_1=o0_0.getClass().getMethod(\"get\",java.lang.String.class).invoke(o0_0,\"}\");"
+					+ "}catch(NoSuchMethodException e){"
+					+ "o0_1=o0_0.getClass().getMethod(\"get\",Object.class).invoke(o0_0,\"}\");"
 					+ "}"
 					+ "return o0_1;"
 					+ "})",

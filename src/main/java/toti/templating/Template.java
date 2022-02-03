@@ -6,7 +6,7 @@ import java.util.Map;
 import ji.common.structures.ListDictionary;
 import ji.common.structures.MapDictionary;
 import toti.security.Authorizator;
-import toti.templating.parsing.TagNode;
+import toti.templating.parsing.structures.TagNode;
 import toti.url.MappedUrl;
 import ji.translator.Translator;
 

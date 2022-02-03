@@ -1,19 +1,19 @@
-package toti.templating.parsing;
+package toti.templating.parsing.structures;
 
 public class ParsingNode {
 	
 	private StringBuilder builder = new StringBuilder();
 	
-	private ParsingNode parent;
+	//private ParsingNode parent;
 	
 	public ParsingNode() {
-		this.parent = null;
+	//	this.parent = null;
 	}
-	
+/*
 	public ParsingNode(ParsingNode parent) {
 		this.parent = parent;
 	}
-	
+*/
 	public void add(String text) {
 		builder.append(text);
 	}
@@ -22,6 +22,7 @@ public class ParsingNode {
 		builder.append(text);
 	}
 	
+/*
 	public ParsingNode createChild() {
 		return new ParsingNode(this);
 	}
@@ -30,9 +31,9 @@ public class ParsingNode {
 		parent.add(flush());
 		return parent;
 	}
-	
+*/
 	public String flush() {
-		builder.append("\");");
+	//	builder.append("\");");
 		return builder.toString();
 	}
 }
