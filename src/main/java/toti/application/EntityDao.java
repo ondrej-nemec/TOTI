@@ -40,6 +40,17 @@ public interface EntityDao<T extends Entity> {
 		});
 	}
 	
+	default GridDataSet<T> getAll(GridOptions options, Collection<Object> forOwners) throws SQLException {
+        return getAll(
+             options.getPageIndex(),
+             options.getPageSize(),
+             options.getFilters(),
+             options.getSorting(),
+             forOwners
+        );
+    }
+
+    @Deprecated
 	default GridDataSet<T> getAll(
 			int indexOfPage,
 			int pageSize, 
