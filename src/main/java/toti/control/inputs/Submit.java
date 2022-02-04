@@ -35,6 +35,9 @@ public class Submit implements Input {
 
 	// after success async request, redirect
 	public Submit setRedirect(String redirect, boolean allowOutOfAppRedirect) {
+		if (redirect == null) {
+			return this;
+		}
 		if (!allowOutOfAppRedirect && !Link.isRelative(redirect)) {
 			throw new RuntimeException("Open redirection is not allowed");
 		}
