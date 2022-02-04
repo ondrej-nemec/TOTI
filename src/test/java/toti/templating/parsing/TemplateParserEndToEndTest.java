@@ -1,10 +1,8 @@
 package toti.templating.parsing;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import ji.common.Logger;
@@ -12,12 +10,10 @@ import ji.common.structures.MapInit;
 import ji.files.text.Text;
 import ji.files.text.basic.WriteText;
 import toti.logging.TotiLogger;
+import toti.templating.Parameter;
 import toti.templating.Tag;
 import toti.templating.Template;
 import toti.templating.TemplateFactory;
-import toti.templating.tags.ElseIfTag;
-import toti.templating.tags.ElseTag;
-import toti.templating.tags.IfTag;
 
 public class TemplateParserEndToEndTest extends TemplateFactory {
 	
@@ -26,11 +22,9 @@ public class TemplateParserEndToEndTest extends TemplateFactory {
 		super(tempPath, templatePath, module, modulePath, modules, deleteAuxJavaClass, minimalize, logger);
 	}
 
-
-	@Override
-	protected List<Tag> initTags(String namespace) {
-		return Arrays.asList(
-			new Tag() {
+	public static void main(String[] args) {
+		try {
+			TemplateFactory.addTag(new Tag() {
 				
 				@Override
 				public String getPairStartCode(Map<String, String> params) {
@@ -50,6 +44,8 @@ public class TemplateParserEndToEndTest extends TemplateFactory {
 					return ""
 					   + "write(\"Your message: \" +"
 					   + params.get("message")
+					   + " + "
+					   + params.get("parameterName")
 					   + ");";
 				}
 				
@@ -57,14 +53,19 @@ public class TemplateParserEndToEndTest extends TemplateFactory {
 				public String getName() {
 					return "tagName";
 				}
-			},
-			new IfTag(), new ElseTag(), new ElseIfTag()
-		);
-	}
-	
-	
-	public static void main(String[] args) {
-		try {
+			});
+			TemplateFactory.addParameter(new Parameter() {
+				
+				@Override
+				public String getName() {
+					return "parameterName";
+				}
+				
+				@Override
+				public String getCode(String value) {
+					return "\"Value: " + value.length() + "\"";
+				}
+			});
 			/*
 			new TemplateParser(new HashMap<>(), false).createTempCache(
 				"toti/templating/parsing2", // namespace

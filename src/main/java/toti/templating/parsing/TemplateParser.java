@@ -17,6 +17,7 @@ import ji.common.structures.ThrowingSupplier;
 import ji.files.text.Text;
 import ji.translator.Translator;
 import toti.security.Authorizator;
+import toti.templating.Parameter;
 import toti.templating.Tag;
 import toti.templating.Template;
 import toti.templating.TemplateException;
@@ -30,10 +31,15 @@ public class TemplateParser {
 	private final static char DEF = '\u0000';
 	
 	private final Map<String, Tag> tags;
+	private final Map<String, Parameter> parameters;
 	private final boolean minimalize;
 	
-	public TemplateParser(Map<String, Tag> tags, boolean minimalize) {
+	public TemplateParser(
+			Map<String, Tag> tags,
+			Map<String, Parameter> parameters,
+			boolean minimalize) {
 		this.tags = tags;
+		this.parameters = parameters;
 		this.minimalize = minimalize;
 	}
 	
@@ -215,7 +221,7 @@ public class TemplateParser {
 				}
 			} else {
 				node.append("\");");
-				node.append(last.getContent(tags));
+				node.append(last.getContent(tags, parameters));
 				node.append("write(\"");
 			}
 		}

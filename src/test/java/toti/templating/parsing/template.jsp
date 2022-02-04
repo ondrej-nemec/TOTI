@@ -31,7 +31,7 @@
 		</t:tagName>
 	</p>
 	
-	<p t:paramTagName="value">
+	<p t:parameterName="some text of parameter">
 	</p>
 
 <%
@@ -44,6 +44,7 @@ for (int i = 0; i < 10; i++) {
 
 <p><t:tagName message='${title}' /></p>
 <p><t:tagName message='{{10>1 ? "true": "false"}}' /></p>
+<p><t:tagName message='"Message!"' t:parameterName="another text of parameter" /></p>
 	
 </body>
 </html>

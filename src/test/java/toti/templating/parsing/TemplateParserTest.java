@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import ji.common.structures.ThrowingConsumer;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+import toti.templating.Parameter;
 import toti.templating.Tag;
 
 import static org.junit.Assert.assertEquals;
@@ -25,7 +26,7 @@ public class TemplateParserTest {
 	@Test
 	@Parameters(method="dataParseWorks")
 	public void testParseWorks(boolean minimalize, String text, String expected) throws IOException {
-		TemplateParser parser = new TemplateParser(getTestingTags(), minimalize);
+		TemplateParser parser = new TemplateParser(getTestingTags(), getTestingParameters(), minimalize);
 		BufferedReader br = getReader(text);
 		ThrowingConsumer<String, IOException> bw = (actual)->{
 			assertEquals(expected, actual);
@@ -212,7 +213,37 @@ public class TemplateParserTest {
 					+ "write(\"<div class='\" + ( 9 > 4 ? 'D' : 'L' ) + \"' />\");"
 					+ "write(\" text\");"
 				},
+			// tag with parameter
+			new Object[] {
+					true,
+					"text <div t:paramA=\"value\">",
+					"write(\"text \");"
+					+ "write(\"<div paramA=\\\"\"+"
+					+ "-- parameter - value --"
+					+ "+\"\\\">\");"
+					+ "write(\"\");"
+				},
+			new Object[] {
+					true,
+					"something <t:tagA t:paramA=\"clazz\"/> text",
+					"write(\"something \");"
+					+ "--tagA-unpair-- {paramA=-- parameter - clazz --}"
+					+ "write(\" text\");"
+				},
 		};
+	}
+	
+	private Map<String, Parameter> getTestingParameters() {
+		Map<String, Parameter> parameters = new HashMap<>();
+		parameters.put("paramA", new Parameter() {
+			@Override public String getName() {
+				return "paramA";
+			}
+			@Override public String getCode(String value) {
+				return String.format("-- parameter - %s --", value);
+			}
+		});
+		return parameters;
 	}
 
 	private Map<String, Tag> getTestingTags() {

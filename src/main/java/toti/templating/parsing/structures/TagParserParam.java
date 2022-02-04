@@ -12,10 +12,22 @@ public class TagParserParam {
 	}
 	
 	public TagParserParam(String name, String value, char quote) {
-		this.name = name;
+		if (name.startsWith("t:")) {
+			this.name = name.substring(2);
+			this.isTag = true;
+		} else {
+			this.name = name;
+			this.isTag = false;
+		}
 		this.value = value;
 		this.quote = quote;
-		this.isTag = false;
+	}
+	
+	public TagParserParam(String name, String value, char quote, boolean isTag) {
+		this.name = name;
+		this.isTag = isTag;
+		this.value = value;
+		this.quote = quote;
 	}
 
 	public String getName() {

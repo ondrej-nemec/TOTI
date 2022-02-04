@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import ji.common.exceptions.LogicException;
+import toti.templating.Parameter;
 import toti.templating.Tag;
 import toti.templating.parsing.enums.TagType;
 import toti.templating.parsing.structures.TagParserParam;
@@ -139,7 +140,7 @@ public class TagParser implements Parser {
 		return params;
 	}
 
-	public String getAsString() {
+	public String getAsString(Map<String, Parameter> parameters) {
 		StringBuilder paramString = new StringBuilder();
 		params.forEach((param)->{
 			paramString.append(" ");
@@ -148,7 +149,17 @@ public class TagParser implements Parser {
 				paramString.append("=");
 				String quote = (param.getQuote() == '"' ? "\\" : "") + param.getQuote();
 				paramString.append(quote);
-				paramString.append(param.getValue());
+				if (param.isTag()) {
+					paramString.append("\"+");
+	        		Parameter p = parameters.get(param.getName());
+	        		if (p == null) {
+	        			throw new LogicException("Unknown TOTI parameter " + param.getName());
+	        		}
+					paramString.append(p.getCode(param.getValue()));
+					paramString.append("+\"");
+				} else {
+					paramString.append(param.getValue());
+				}
 				paramString.append(quote);
 			}
 		});
@@ -161,13 +172,25 @@ public class TagParser implements Parser {
 		);
 	}
 	
-	public String getAsString(Map<String, Tag> tags) {
+	public String getAsString(Map<String, Tag> tags, Map<String, Parameter> parameters) {
 		Tag tag = tags.get(tagName);
 		if (tag == null) {
 			throw new LogicException("Unknown TOTI tag " + tagName);
 		}
 		Map<String, String> params = this.params.stream()
-		        .collect(Collectors.toMap(TagParserParam::getName, e ->e.isValue() ? e.getValue() : ""));
+		        .collect(Collectors.toMap(TagParserParam::getName, e->{
+		        	if (e.isTag()) {
+		        		Parameter p = parameters.get(e.getName());
+		        		if (p == null) {
+		        			throw new LogicException("Unknown TOTI parameter " + e.getName());
+		        		}
+		        		return p.getCode(e.getValue());
+		        	}
+		        	if (e.isValue()) {
+		        		return e.getValue();
+		        	}
+		        	return "";
+		        }));
 		switch (type) {
 			case END: return tag.getPairEndCode(params);
 			case START: return tag.getPairStartCode(params);

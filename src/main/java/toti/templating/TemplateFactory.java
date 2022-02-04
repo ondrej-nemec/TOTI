@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.tools.JavaCompiler;
@@ -26,7 +25,8 @@ import toti.templating.tags.*;
 
 public class TemplateFactory {
 	
-	private static final List<Supplier<Tag>> CUSTOM_TAG_PROVIDERS = new LinkedList<>();
+	private static final List<Tag> CUSTOM_TAG_PROVIDERS = new LinkedList<>();
+	private static final List<Parameter> CUSTOM_PARAMETERS_PROVIDERS = new LinkedList<>();
 
 	private final String tempPath;
 	private final boolean deleteAuxJavaClass;
@@ -165,10 +165,16 @@ public class TemplateFactory {
 		File dir = new File(tempPath + "/" + namespace);
 		dir.mkdirs();
 		
-		List<Tag> tags = initTags(namespace);
-		tags.addAll(CUSTOM_TAG_PROVIDERS.stream().map(s->s.get()).collect(Collectors.toList()));
-		toti.templating.parsing.TemplateParser parser = new TemplateParser(tags.stream()
-			      .collect(Collectors.toMap(Tag::getName, tag -> tag)), minimalize);
+		List<Tag> tags = initTags();
+		tags.addAll(CUSTOM_TAG_PROVIDERS);
+		List<Parameter> parameters = initParameters();
+		parameters.addAll(CUSTOM_PARAMETERS_PROVIDERS);
+		
+		toti.templating.parsing.TemplateParser parser = new TemplateParser(
+			tags.stream().collect(Collectors.toMap(Tag::getName, tag -> tag)),
+			parameters.stream().collect(Collectors.toMap(Parameter::getName, par->par)),
+			minimalize
+		);
 		String javaTempFile = parser.createTempCache(namespace, className, templateFile, tempPath, module, modificationTime);
 		File file = new File(javaTempFile);
 		
@@ -196,7 +202,7 @@ public class TemplateFactory {
 			file.delete();
 		}
 	}
-	
+
 	// TODO test it
 	private Tuple2<String, String> getClassName(File file, String templatePath) throws IOException {
 		if (!file.getCanonicalPath().contains(file.getName())) {
@@ -224,7 +230,7 @@ public class TemplateFactory {
 	 * @param actualFileDir
 	 * @return
 	 */
-	protected List<Tag> initTags(String actualFileDir) {
+	protected List<Tag> initTags() {
 		List<Tag> tags = new ArrayList<>();
 		tags.add(new BreakTag());
 		tags.add(new CaseTag());
@@ -260,8 +266,17 @@ public class TemplateFactory {
 		return tags;
 	}
 	
-	public static void addTag(Supplier<Tag> tag) {
+	protected List<Parameter> initParameters() {
+		List<Parameter> parameters = new ArrayList<>();
+		return parameters;
+	}
+	
+	public static void addTag(Tag tag) {
 		CUSTOM_TAG_PROVIDERS.add(tag);
+	}
+	
+	public static void addParameter(Parameter parameter) {
+		CUSTOM_PARAMETERS_PROVIDERS.add(parameter);
 	}
 		
 }

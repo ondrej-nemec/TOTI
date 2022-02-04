@@ -29,12 +29,12 @@ public class TagParserTest {
 		ParsingSimulator.simulate(var, "title}");
 		parser.addVariable(var);
 		ParsingSimulator.simulate(parser, "-'>");
-		
+		/*
 		assertEquals(
 			"",
 			parser.getAsString()
 		);
-		
+		*/
 		/*
 		"getVariable(()->{"
 				+ "Object o0_0=getVariable(\"title\");"
@@ -213,6 +213,16 @@ public class TagParserTest {
 						new TagParserParam("value", "", '\'')
 					)
 			},
+			new Object[] {
+					"div t:param=\"myClass\">",
+					true,
+					"div",
+					true,
+					TagType.START,
+					Arrays.asList(
+						new TagParserParam("param", "myClass", '"', true)
+					)
+				},
 		};
 	}
 	
