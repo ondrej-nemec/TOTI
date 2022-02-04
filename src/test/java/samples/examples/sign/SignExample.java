@@ -35,7 +35,7 @@ import toti.security.User;
 import toti.url.Link;
 
 /**
- * Example of possible ways of login
+ * Example demonstrate authentication in TOTI
  * @author Ondřej Němec
  *
  */

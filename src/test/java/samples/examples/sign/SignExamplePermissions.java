@@ -1,6 +1,5 @@
 package samples.examples.sign;
 
-import java.io.Serializable;
 import java.util.Arrays;
 
 import toti.security.permissions.Permissions;
@@ -11,7 +10,7 @@ import toti.security.permissions.Rules;
  * @author Ondřej Němec
  *
  */
-public class SignExamplePermissions implements Permissions, Serializable {
+public class SignExamplePermissions implements Permissions {
 
 	private static final long serialVersionUID = 1L;
 
