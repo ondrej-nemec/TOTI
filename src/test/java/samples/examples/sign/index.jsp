@@ -7,8 +7,8 @@
 
 	<h1>Just check if user is logged</h1>
 	
-	<button id="asyncLogout">Logout async</button> <br>
-	<a href='<t:link module="examples" controller="samples.examples.sign.SignExample" method="syncLogout" />'><button>Logout sync</button></a>
+	<button id="asyncLogout" t:href='samples.examples.sign.SignExample:asyncLogout'>Logout async</button> <br>
+	<a t:href="samples.examples.sign.SignExample:syncLogout"><button>Logout sync</button></a>
 
 	<p>Identity variable: ${totiIdentity.isPresent()}</p>
 	
@@ -18,8 +18,9 @@
 
 	<script>
 		document.getElementById("loginCheck").innerText = totiAuth.getToken !== null;
-		document.getElementById("asyncLogout").onclick = function() {
-			totiAuth.logout('<t:link module="examples" controller="samples.examples.sign.SignExample" method="asyncLogout" />', "post");
+		var asyncLogoutButton = document.getElementById("asyncLogout");
+		asyncLogoutButton.onclick = function() {
+			totiAuth.logout(asyncLogoutButton.getAttribute('href'), "post");
 			location.reload();
 		};
 	</script>

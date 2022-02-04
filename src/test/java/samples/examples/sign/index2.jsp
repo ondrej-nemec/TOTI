@@ -7,7 +7,7 @@
 
 	<h1>Default redirect for sync login if no other option</h1>
 	
-	<a href='<t:link module="examples" controller="samples.examples.sign.SignExample" method="index" />'>Index</a>
+	<a t:href="samples.examples.sign.SignExample:index">Index</a>
 
 </body>
 </html>
