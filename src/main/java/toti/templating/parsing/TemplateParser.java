@@ -160,9 +160,19 @@ public class TemplateParser {
 			}
 			// java, comment, tag
 			if ((last == null || last.allowChildren()) && actual == '<') {
-				// do nothing
+				//candidate
+				cache = previous;
 			} else if ((last == null || last.allowChildren()) && previous == '<' && actual == '%') {
 				parsers.add(new ParserWrapper(new JavaParser()));
+			} else if ((last == null || last.allowChildren()) && previous == '<' && !Character.isLetter(actual) && actual != '/') {
+				if (last == null) {
+					writeText(node, cache, previous);
+					writeText(node, previous, actual);
+				} else {
+					writeParser(node, parsers, last, cache, previous);
+					writeParser(node, parsers, last, previous, actual);
+				}
+				cache = DEF;
 			} else if ((last == null || last.allowChildren()) && previous == '<') {
 				parsers.add(new ParserWrapper(new TagParser(actual)));
 			// variable

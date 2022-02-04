@@ -44,20 +44,20 @@ public class TagParser implements Parser {
 	@Override
 	public boolean accept(char previous, char actual, boolean isSingleQuoted, boolean isDoubleQuoted) {
 		if ((mode == TagMode.TAG || mode == TagMode.NAN || mode == TagMode.PARAM_NAME) && (isSingleQuoted || isDoubleQuoted)) {
-			throw new LogicException("Tag syntax error: quotes");
+			throw new LogicException("Tag syntax error: quotes.");
 		}
 		if (actual == '/' && !isSingleQuoted && !isDoubleQuoted) {
 			isCandidate = true;
 		} else if (previous == '/' && isCandidate && actual == '>') {
 			if (type == TagType.END) {
-				throw new LogicException("Close tag not ends with />");
+				throw new LogicException("Close tag not ends with '/>'.");
 			}
 			type = TagType.SINGLE;
 			finishParameter('\u0000');
 			finishTagName();
 			return true;
 		} else if (previous == '/' && isCandidate && actual != '>') {
-			throw new LogicException("Unknow '/'");
+			throw new LogicException("Unknow '/'.");
 		} else if (actual == '>' && !isSingleQuoted && !isDoubleQuoted) {
 			if (type == null) {
 				type = TagType.START;
@@ -202,25 +202,26 @@ public class TagParser implements Parser {
 	@Override
 	public void addVariable(VariableParser parser) {
 		if (paramValue != null) {
-			paramValue += parser.getCalling();
+			paramValue += getCodeFormat(parser.getCalling(), false);
 		} else {
-			paramName += parser.getCalling();
+			paramName += getCodeFormat(parser.getCalling(), false);
 		}
 	}
 	
 	public void addInline(InLineParser parser) {
 		if (paramValue != null) {
-			paramValue += String.format(getCodeFormat(),  parser.getCalling());
+			paramValue += getCodeFormat(parser.getCalling(), true);
 		} else {
-			paramName += String.format(getCodeFormat(),  parser.getCalling());
+			paramName += getCodeFormat(parser.getCalling(), true);
 		}
 	}
 	
-	private String getCodeFormat() {
+	private String getCodeFormat(String calling, boolean isCode) {
+		String base = isCode ? "(%s)" : "%s";
 		if (isHtmlTag) {
-			return "\" + (%s) + \"";
+			return String.format("\" + " + base + " + \"", calling);
 		}
-		return "(%s)";
+		return String.format(base, calling);
 	}
 	
 }

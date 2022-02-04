@@ -44,6 +44,11 @@ public class TemplateParserTest {
 			},
 			new Object[] {
 					true,
+					"some < text",
+					"write(\"some < text\");"
+				},
+			new Object[] {
+					true,
 					"some  text",
 					"write(\"some text\");"
 				},
@@ -197,6 +202,28 @@ public class TemplateParserTest {
 						+ "})"
 						+ "}"
 					+ "write(\" text\");"
+				},
+			new Object[] {
+					true,
+					"something <t:tagA class=\"${clazz}\"/> text",
+					"write(\"something \");"
+					+ "--tagA-unpair-- {class="
+						+"getVariable(()->{"
+						+ "Object o0_0=getVariable(\"clazz\");"
+						+ "return o0_0;"
+						+ "})"
+						+ "}"
+					+ "write(\" text\");"
+				},
+			new Object[] {
+					true,
+					"something <div class=\"${clazz}\"/> text",
+					"write(\"something \");write(\"<div class=\\\"\" + "
+						+"getVariable(()->{"
+						+ "Object o0_0=getVariable(\"clazz\");"
+						+ "return o0_0;"
+						+ "})"
+					+ " + \"\\\" />\");write(\" text\");"
 				},
 			// inline in tag
 			new Object[] {

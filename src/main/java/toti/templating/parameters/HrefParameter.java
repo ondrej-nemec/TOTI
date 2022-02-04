@@ -13,14 +13,16 @@ public class HrefParameter implements Parameter {
 	@Override
 	public String getCode(String value) {
 		String[] values = value.split(":");
-		Link link = Link.get();
+		StringBuilder code = new StringBuilder();
+		code.append(String.format("%s.get()", Link.class.getCanonicalName()));
 		if (values.length == 1) {
-			link.setMethod(values[0]);
+			code.append(String.format(".setMethod(\"%s\")", values[0]));
 		} else if (values.length == 2) {
-			link.setController(values[0]);
-			link.setMethod(values[1]);
+			code.append(String.format(".setController(\"%s\")", values[0]));
+			code.append(String.format(".setMethod(\"%s\")", values[1]));
 		}
-		return link.create();
+		code.append(".create()");
+		return code.toString();
 	}
 
 }
