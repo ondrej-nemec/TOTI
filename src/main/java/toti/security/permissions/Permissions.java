@@ -1,6 +1,8 @@
 package toti.security.permissions;
 
-public interface Permissions {
+import java.io.Serializable;
+
+public interface Permissions extends Serializable {
 
 	Rules getRulesForDomain(String domain);
 	
