@@ -105,10 +105,12 @@ public class Authenticator {
 		
 		Long expired = cache.getExpirationTime(id);
 		if (expired == null) {
+			identity.clear();
 			throw new RuntimeException("Unknown token");
 		}
 		if (expired < now) {
 			cache.delete(id);
+			identity.clear();
 			throw new RuntimeException("Token is expired");
 		}
 		User user = cache.get(id);
