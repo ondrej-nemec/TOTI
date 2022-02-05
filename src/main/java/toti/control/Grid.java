@@ -57,9 +57,9 @@ public class Grid implements Control {
 		actions.add(action);
 		return this;
 	}
-	
+
 	@Override
-	public String toString() {
+	public Map<String, Object> toJson() {
 		Map<String, Object> json = new HashMap<>();
 		json.put("dataLoadUrl", loadDataUrl);
 		json.put("dataLoadMethod", loadDataMethod);
@@ -76,7 +76,12 @@ public class Grid implements Control {
 		pages.put("pagesButtonCount", pagesButtonCount);
 		
 		json.put("actions", actions);
-		return toJson(json);
+		return json;
+	}
+	
+	@Override
+	public String toString() {
+		return toJs();
 	}
 
 	@Override

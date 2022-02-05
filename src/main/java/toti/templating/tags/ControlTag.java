@@ -13,24 +13,24 @@ public class ControlTag implements Tag {
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
-		if (params.get("jsObject") != null) {
+		/*if (params.get("jsObject") != null) {
 			return String.format("{"
 					+ "if(variables.get(\"%s\") == null) {throw new TemplateException(\"Tag Missing control varialble: '%s'\");}"
 					+ "toti.control.Control control=(toti.control.Control)(getVariable(\"%s\"));"
-					+ "write(\"new Toti\"+control.getType()+\"(\"+control.toString()+\")\");"
+					+ "write(control.toString());"
 					+ "}",
 					params.get("name"),
 					params.get("name"),
 					params.get("name")
 			);
-		}
+		}*/
 		return String.format(
 				"{"
 				+ "if(variables.get(\"%s\") == null) {throw new TemplateException(\"Tag Missing control varialble: '%s'\");}"
 				+ "toti.control.Control control=(toti.control.Control)(getVariable(\"%s\"));"
 				+ "write(\""
 				+ "<script>"
-				+ "new Toti\"+control.getType()+\"(\"+control.toString()+\")"
+				+ "\"+control.toString()+\""
 				+ ".init('%s', 'toti-\" + control.getType() + \"-%s', );"
 				+ "</script>"
 				+ "\");"

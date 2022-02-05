@@ -69,9 +69,9 @@ public class Form implements Control {
 		this.beforeBind = beforeBind;
 		return this;
 	}
-	
+
 	@Override
-	public String toString() {
+	public Map<String, Object> toJson() {
 		Map<String, Object> json = new HashMap<>();
 		json.put("action", formAction);
 		json.put("method", formMethod);
@@ -93,7 +93,12 @@ public class Form implements Control {
 				bind.put("afterBind", afterBind);
 			}
 		}
-		return toJson(json);
+		return json;
+	}
+	
+	@Override
+	public String toString() {
+		return toJs();
 	}
 
 	@Override

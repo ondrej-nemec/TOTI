@@ -3,14 +3,21 @@ package toti.control;
 import java.util.Map;
 
 import ji.json.JsonWritter;
+import ji.json.Jsonable;
 
-public interface Control {
+public interface Control extends Jsonable {
 
 	String getType();
 	
-	default String toJson(Map<String, Object> json) {
+	Map<String, Object> toJson();
+	
+	default String toJs() {
 		JsonWritter writer = new JsonWritter();
-		return writer.write(json);
+		return String.format(
+			"new Toti%s(%s)",
+			getType(),
+			writer.write(toJson())
+		);
 	}
 	
 	static String escapeJs(String text) {
