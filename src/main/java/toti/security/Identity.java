@@ -84,22 +84,44 @@ public class Identity {
 		return user;
 	}
 	
+	/**
+	 * Returns user as defined class. This class must extends of User
+	 * @param clazz
+	 * @return
+	 */
 	public <U extends User> U getUser(Class<U> clazz) {
 		return clazz.cast(user);
 	}
 	
+	/**
+	 * Request headers
+	 * @return
+	 */
 	public Properties getHeaders() {
 		return requestHeaders;
 	}
 
+	/**
+	 * Returns cookie value by name
+	 * @param cookieName
+	 * @return cookie value or null
+	 */
 	public String getCookieValue(String cookieName) {
 		return getCookieValue(requestHeaders, cookieName);
 	}
 	
+	/**
+	 * Returns user IP
+	 * @return
+	 */
 	public String getIP() {
 		return IP;
 	}
 	
+	/**
+	 * Provide user preferenced language
+	 * @return Locale
+	 */
 	public Locale getLocale() {
 		return locale;
 	}
@@ -108,11 +130,19 @@ public class Identity {
 		return isApiAllowed;
 	}
 	
+	/**
+	 * Add header to response
+	 * @param header
+	 */
 	public void addResponseHeader(String header) {
 		responseHeaders.add(header);
 	}
 	
-	// just probably
+	/**
+	 * Determite if request is brower link or not
+	 * <strong>Resutl is not 100% sure.</strong>
+	 * @return true if request is asychronious
+	 */
 	public boolean isAsyncRequest() {
 		String destination = requestHeaders.getProperty("Sec-Fetch-Dest");
 		return destination != null && destination.equals("empty");

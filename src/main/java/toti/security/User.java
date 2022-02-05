@@ -31,14 +31,26 @@ public class User implements Serializable {
 		this.allowedIds = allowedIds;
 	}
 	
+	/**
+	 * Returns user ID in origin type
+	 * @return ID
+	 */
 	public Object getId() {
 		return id;
 	}
 	
+	/**
+	 * Returns user ID as DictionaryValue
+	 * @return ID
+	 */
 	public DictionaryValue getUnique() {
 		return new DictionaryValue(id);
 	}
 	
+	/**
+	 * Returns list of allowed IDs / owners for current domain
+	 * @return list of IDs
+	 */
 	public Collection<Object> getAllowedIds() {
 		return allowedIds;
 	}
@@ -48,14 +60,28 @@ public class User implements Serializable {
 		return String.format("User[%s]: %s", id, allowedIds);
 	}
 	
+	/**
+	 * Add some value to storage
+	 * @param key
+	 * @param value
+	 */
 	public void setProperty(String key, Object value) {
 		customData.put(key, value);
 	}
 	
+	/**
+	 * Get some value from storage
+	 * @param key
+	 * @return value as DictionaryValue
+	 */
 	public DictionaryValue getProperty(String key) {
 		return new DictionaryValue(customData.get(key));
 	}
 
+	/**
+	 * Get storage
+	 * @return
+	 */
 	public Map<String, Object> getContent() {
 		return customData;
 	}

@@ -16,23 +16,73 @@
 		<li><code>getIP(): String</code> - IP address</li>
 		<li><code>getLocale(): Locale</code> - prefered language (JI Translate)</li>
 		<li><code>getHeaders(): Properties</code> - request methods</li>
-		<li><code>addResponseHeader(String header)</code> - add response header</li>
+		<li><code>addResponseHeader(String header)</code> - add response header, can be called moretimes</li>
 		<li><code>getCookieValue(String cookieName): String</code> - return value from Cookie header. Can returns null.</li>
 		<li><code>isAnonymous(): boolean</code> and <code>isPresent(): boolean</code> - if identity not contains/contains user.</li>
 		<li><code>getUser(): User</code> - returns user. Can be null.</li>
-		<li><code>getUser(Class<U> clazz): U</code> - returns user as instance of given class. <code>U</code> must be implementation of <code>User</code></li>
+		<li><code>getUser(Class&lt;U&gt; clazz): U</code> - returns user as instance of given class. <code>U</code> must be implementation of <code>User</code></li>
 	</ul>
+</p>
+
+<h2>Log in</h2>
+
+<p class="alert alert-success">
+	Full working sign in/out example is <a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/sign">here</a>.
+</p>
+
+<p>
+	 For login/logout you need <code>Authenticator</code> and <code>Identity</code>. Use <code>Authenticator::login(user, identity)</code> to login user (instance of <code>User</code>). Call <code>Authenticator::logout(identity)</code> to logout user.
+</p>
+
+<p>
+	The <code>login</code> method returns <code>SecurityToken</code>. This token is JSON in format:
+	<pre><code>
+{
+	"access_token": token,
+	"expires_in": expiresIn
+}
+	</code></pre>.
+	If you are using asyc form submiting or API, just return this token as JSON response.
+</p>
+
+<p class="alert alert-info">
+	If method is same as is set in <code>Router::setRedirectOnNotLoggedInUser</code>, then your method can obtain parameter <code>backlink</code>. In case of no-logged-user-redirection the origin URL will be in <code>backlink</code>.
+</p>
+
+<h3>Log in/out in JS</h3>
+
+<p>
+	If you are using HTML pages with <code>totiJs.js</code>, you must login/logout user in JS, too.
+</p>
+
+<p>
+	After successfully login call <code>totiAuth.login(token)</code> where <code>token</code> is full security object with token and expiration time. TOTI can automatically "ping" some URL for keeping token alive. For using it, put this:
+	<pre><code>
+{
+	"url": url,
+	"method": method
+}
+	</code></pre>
+	as second <code>totiAuth.login</code> parameter. The <code>url</code> is URL for ping and <code>method</code> is HTTP request method.
+</p>
+
+<p>
+	For JS logout, TOTI contains <code>totiAuth.logout</code>. Without paramters, this method logout user only in browser. For system logout on server side, add logout URL as first parameter and HTTP method as second (second parameter is optional, default is <code>post</code>).
 </p>
 
 <h2>User</h2>
 
-<h2>Log in</h2>
+<p>
+	<code>User</code> holds information about logged user. 
+</p>
 
-- login
-- logout
-- refresh
+// TODO id, permissions, custom data
 
 <h2>Secured actions</h2>
+
+<p class="alert alert-success">
+	Full working authenticate example is <a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/security">here</a>.
+</p>
 
 domain, isApi, action, owner...
 
