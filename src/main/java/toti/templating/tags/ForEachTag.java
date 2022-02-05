@@ -39,9 +39,13 @@ public class ForEachTag implements Tag {
 	}
 	
 	private String[] parseItem(String item) {
-		String[] items = item.trim().split(" +");
-		if (items.length != 2) {
-			throw new TemplateException("Tag Incorrect item");
+		item = item.trim();
+		String[] items = item.split(" +");
+		if (items.length > 2) {
+			throw new TemplateException("Foreach tag: incorrect syntax (" + item + ")");
+		}
+		if (items.length == 1) {
+			return new String[] {"Object", item};
 		}
 		return items;
 	}
