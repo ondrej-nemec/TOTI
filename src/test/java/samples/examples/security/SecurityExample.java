@@ -3,6 +3,7 @@ package samples.examples.security;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ji.common.Logger;
 import ji.common.functions.Env;
@@ -27,6 +28,7 @@ import toti.security.Authenticator;
 import toti.security.Authorizator;
 import toti.security.Identity;
 import toti.security.User;
+import toti.url.Link;
 
 /**
  * Example demonstrate authorization in TOTI
@@ -61,7 +63,21 @@ public class SecurityExample implements Module {
 	 */
 	@Action("index")
 	public Response index() {
-		return Response.getTemplate("index.jsp", new HashMap<>());
+		Map<String, String> links = new HashMap<>();
+		
+		links.put("Not secured", Link.get().create(SecurityExample.class, c->c.notSecured()));
+		links.put("Secured", Link.get().create(SecurityExample.class, c->c.secured()));
+		links.put("Super secured", Link.get().create(SecurityExample.class, c->c.superSecured()));
+		links.put("Domain READ", Link.get().create(SecurityExample.class, c->c.domaiRead()));
+		links.put("Domain DELETE", Link.get().create(SecurityExample.class, c->c.domainDelete()));
+		links.put("Multiple domains", Link.get().create(SecurityExample.class, c->c.domainMultiple()));
+		links.put("Owner", Link.get().create(SecurityExample.class, c->c.owner()));
+		links.put("Owner IDs", Link.get().create(SecurityExample.class, c->c.ownerIds()));
+		links.put("In method calling", Link.get().create(SecurityExample.class, c->c.inMethod()));
+		
+		Map<String, Object> params = new HashMap<>();
+		params.put("links", links);
+		return Response.getTemplate("index.jsp", params);
 	}
 	
 	/**
@@ -77,7 +93,7 @@ public class SecurityExample implements Module {
 	 * Secured, require loged user. Can authenticate with header and cookie
 	 * @return http://localhost:8080/examples/security/secured
 	 */
-	@Action("Secured")
+	@Action("secured")
 	@Secured(isApi = false)
 	public Response secured() {
 		return Response.getText("Secured");
@@ -99,7 +115,7 @@ public class SecurityExample implements Module {
 	 */
 	@Action("domain-read")
 	@Secured({@Domain(name=DOMAIN_1, action=toti.security.Action.READ)})
-	public Response domainead() {
+	public Response domaiRead() {
 		return Response.getText("Domain READ");
 	}
 	
@@ -136,7 +152,7 @@ public class SecurityExample implements Module {
 	@Action("owner-ids")
 	@Secured({@Domain(name=DOMAIN_1, action=toti.security.Action.ALLOWED)})
 	public Response ownerIds() {
-		return Response.getText("Owner IDs " + identity.getUser().getAllowedIds()); // TODO
+		return Response.getText("Owner IDs " + identity.getUser().getAllowedIds());
 	}
 	
 	/**
@@ -144,7 +160,7 @@ public class SecurityExample implements Module {
 	 * @return http://localhost:8080/examples/security/owner
 	 */
 	@Action("owner")
-	@Secured({@Domain(name=DOMAIN_1, action=toti.security.Action.ALLOWED, owner="owner-name")}) // TODO
+	@Secured({@Domain(name=DOMAIN_1, action=toti.security.Action.ALLOWED, owner="id")})
 	public Response owner() {
 		return Response.getText("Owner");
 	}
@@ -156,12 +172,12 @@ public class SecurityExample implements Module {
 	@Action("list")
 	@Secured
 	public Response inMethod() {
-		String response = "";
+		String response = "User is allowed for:";
 		if (authorizator.isAllowed(identity.getUser(), DOMAIN_1, toti.security.Action.READ)) {
-			response += "Allowed: " + DOMAIN_1 + " - READ";
+			response += DOMAIN_1 + " = READ";
 		}
 		if (authorizator.isAllowed(identity.getUser(), DOMAIN_2, toti.security.Action.READ)) {
-			response += "Allowed: " + DOMAIN_2 + " - READ";
+			response += DOMAIN_2 + " = READ";
 		}
 		return Response.getText(response);
 	}
