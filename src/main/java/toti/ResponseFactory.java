@@ -290,7 +290,6 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 					throw e;
 				}
 				logger.debug(fullUrl + " Redirect to login page: " + e.getMessage());
-				// TODO secure link
 				String backlink = "";
 				if (!fullUrl.equals("/")) {
 					backlink = "?backlink=" + getBackLink(fullUrl);
