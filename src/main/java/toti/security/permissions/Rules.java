@@ -8,6 +8,10 @@ public class Rules {
 	
 	private final List<Rule> actions;
 
+	public Rules(List<Rule> actions) {
+		this(null, actions);
+	}
+	
 	public Rules(Rule privilegedAction, List<Rule> actions) {
 		this.privilegedAction = privilegedAction;
 		this.actions = actions;
