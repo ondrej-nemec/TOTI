@@ -21,10 +21,10 @@ public class InLineParserTest {
 		inline.addVariable(var);
 		ParsingSimulator.simulate(inline, "}}");
 		assertEquals(
-			"10 < getVariable(()->{"
+			"10 < Template.escapeVariable(getVariable(()->{"
 			+ "Object o0_0=getVariable(\"number\");"
 			+ "return o0_0;"
-			+ "})",
+			+ "}))",
 			inline.getCalling()
 		);
 	}

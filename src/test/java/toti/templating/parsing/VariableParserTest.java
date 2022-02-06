@@ -23,7 +23,7 @@ public class VariableParserTest {
 		ParsingSimulator.simulate(first, ")}");
 		
 		assertEquals(
-			"getVariable(()->{"
+			"Template.escapeVariable(getVariable(()->{"
 			+ "Object o0_0=getVariable(\"title\");"
 			+ "Object o1_0_aux=getVariable(()->{"
 				+ "Object o1_0=getVariable(\"age\");"
@@ -36,7 +36,7 @@ public class VariableParserTest {
 			+ "o0_1=o0_0.getClass().getMethod(\"equals\",Object.class).invoke(o0_0,o1_0_aux);"
 			+ "}"
 			+ "return o0_1;"
-			+ "})", 
+			+ "}))", 
 			first.getCalling()
 		);
 		assertTrue(first.escape());
@@ -74,28 +74,28 @@ public class VariableParserTest {
 				"title}",
 				true,
 				"o0_0",
-				"getVariable(()->{"
+				"Template.escapeVariable(getVariable(()->{"
 				+ "Object o0_0=getVariable(\"title\");"
 				+ "return o0_0;"
-				+ "})",
+				+ "}))",
 				true
 			},
 			new Object[] {
 					"title.length()}",
 					true,
 					"o0_1",
-					"getVariable(()->{"
+					"Template.escapeVariable(getVariable(()->{"
 						+ "Object o0_0=getVariable(\"title\");"
 						+ "Object o0_1=o0_0.getClass().getMethod(\"length\").invoke(o0_0);"
 						+ "return o0_1;"
-					+ "})",
+					+ "}))",
 					true
 				},
 			new Object[] {
 					"title.equals(1)}",
 					true,
 					"o0_1",
-					"getVariable(()->{"
+					"Template.escapeVariable(getVariable(()->{"
 					+ "Object o0_0=getVariable(\"title\");"
 					+ "Object o0_1=null;"
 					+ "try{"
@@ -104,28 +104,28 @@ public class VariableParserTest {
 					+ "o0_1=o0_0.getClass().getMethod(\"equals\",Object.class).invoke(o0_0,1);"
 					+ "}"
 					+ "return o0_1;"
-					+ "})",
+					+ "}))",
 					true
 				},
 			new Object[] {
 					"title.class}",
 					true,
 					"o0_1",
-					"getVariable(()->{"
+					"Template.escapeVariable(getVariable(()->{"
 					+ "Object o0_0=getVariable(\"title\");"
 					+ "Object o0_1=o0_0.getClass().getMethod(\"getClass\").invoke(o0_0);"
 					+ "return o0_1;"
-					+ "})",
+					+ "}))",
 					true
 				},
 			new Object[] {
 					"age|Integer}",
 					true,
 					"o0_0",
-					"new DictionaryValue(getVariable(()->{"
+					"new DictionaryValue(Template.escapeVariable(getVariable(()->{"
 					+ "Object o0_0=getVariable(\"age\");"
 					+ "return o0_0;"
-					+ "})).getValue(Integer.class)",
+					+ "}))).getValue(Integer.class)",
 					true
 				},
 			new Object[] {
@@ -162,18 +162,18 @@ public class VariableParserTest {
 					"map.get()}",
 					true,
 					"o0_1",
-					"getVariable(()->{"
+					"Template.escapeVariable(getVariable(()->{"
 					+ "Object o0_0=getVariable(\"map\");"
 					+ "Object o0_1=o0_0.getClass().getMethod(\"get\").invoke(o0_0);"
 					+ "return o0_1;"
-					+ "})",
+					+ "}))",
 					true
 				},
 			new Object[] {
 					"map.get(\"value\")}",
 					true,
 					"o0_1",
-					"getVariable(()->{"
+					"Template.escapeVariable(getVariable(()->{"
 					+ "Object o0_0=getVariable(\"map\");"
 					+ "Object o0_1=null;"
 					+ "try{"
@@ -182,14 +182,14 @@ public class VariableParserTest {
 					+ "o0_1=o0_0.getClass().getMethod(\"get\",Object.class).invoke(o0_0,\"value\");"
 					+ "}"
 					+ "return o0_1;"
-					+ "})",
+					+ "}))",
 					true
 				},
 			new Object[] {
 					"map.get(12)}",
 					true,
 					"o0_1",
-					"getVariable(()->{"
+					"Template.escapeVariable(getVariable(()->{"
 					+ "Object o0_0=getVariable(\"map\");"
 					+ "Object o0_1=null;"
 					+ "try{"
@@ -198,14 +198,14 @@ public class VariableParserTest {
 					+ "o0_1=o0_0.getClass().getMethod(\"get\",Object.class).invoke(o0_0,12);"
 					+ "}"
 					+ "return o0_1;"
-					+ "})",
+					+ "}))",
 					true
 				},
 			new Object[] {
 					"map.get(\"}\")}",
 					true,
 					"o0_1",
-					"getVariable(()->{"
+					"Template.escapeVariable(getVariable(()->{"
 					+ "Object o0_0=getVariable(\"map\");"
 					+ "Object o0_1=null;"
 					+ "try{"
@@ -214,14 +214,14 @@ public class VariableParserTest {
 					+ "o0_1=o0_0.getClass().getMethod(\"get\",Object.class).invoke(o0_0,\"}\");"
 					+ "}"
 					+ "return o0_1;"
-					+ "})",
+					+ "}))",
 					true
 				},
 			new Object[] {
 					"map.get(\"}\").getBoolean()}",
 					true,
 					"o0_2",
-					"getVariable(()->{"
+					"Template.escapeVariable(getVariable(()->{"
 					+ "Object o0_0=getVariable(\"map\");"
 					+ "Object o0_1=null;"
 					+ "try{"
@@ -231,7 +231,7 @@ public class VariableParserTest {
 					+ "}"
 					+ "Object o0_2=o0_1.getClass().getMethod(\"getBoolean\").invoke(o0_1);"
 					+ "return o0_2;"
-					+ "})",
+					+ "}))",
 					true
 				}
 		};

@@ -108,9 +108,6 @@ public class ParserWrapper {
 				return tag.getAsString(tags, parameters);
 			case VARIABLE:
 				VariableParser variable = VariableParser.class.cast(parser);
-				if (variable.escape()) {
-					return String.format("write(Template.escapeVariable(%s));", variable.getCalling());
-				}
 				return String.format("write(%s);", variable.getCalling());
 			default: return "";
 		}

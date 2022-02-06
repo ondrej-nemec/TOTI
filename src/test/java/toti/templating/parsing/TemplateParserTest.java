@@ -175,10 +175,10 @@ public class TemplateParserTest {
 					"class='{{ ${color} > 8 ? \"red\" : \"blue\" }}'",
 					"write(\"class='\");"
 					+ "write( "
-						+"getVariable(()->{"
+						+"Template.escapeVariable(getVariable(()->{"
 						+ "Object o0_0=getVariable(\"color\");"
 						+ "return o0_0;"
-						+ "})"
+						+ "}))"
 					  + " > 8 ? \"red\" : \"blue\" );"
 					+ "write(\"'\");"
 				},
@@ -196,10 +196,10 @@ public class TemplateParserTest {
 					"something <t:tagA class='${clazz}'/> text",
 					"write(\"something \");"
 					+ "--tagA-unpair-- {class="
-						+"getVariable(()->{"
+						+"Template.escapeVariable(getVariable(()->{"
 						+ "Object o0_0=getVariable(\"clazz\");"
 						+ "return o0_0;"
-						+ "})"
+						+ "}))"
 						+ "}"
 					+ "write(\" text\");"
 				},
@@ -208,10 +208,10 @@ public class TemplateParserTest {
 					"something <t:tagA class=\"${clazz}\"/> text",
 					"write(\"something \");"
 					+ "--tagA-unpair-- {class="
-						+"getVariable(()->{"
+						+"Template.escapeVariable(getVariable(()->{"
 						+ "Object o0_0=getVariable(\"clazz\");"
 						+ "return o0_0;"
-						+ "})"
+						+ "}))"
 						+ "}"
 					+ "write(\" text\");"
 				},
@@ -219,10 +219,10 @@ public class TemplateParserTest {
 					true,
 					"something <div class=\"${clazz}\"/> text",
 					"write(\"something \");write(\"<div class=\\\"\" + "
-						+"getVariable(()->{"
+						+"Template.escapeVariable(getVariable(()->{"
 						+ "Object o0_0=getVariable(\"clazz\");"
 						+ "return o0_0;"
-						+ "})"
+						+ "}))"
 					+ " + \"\\\" />\");write(\" text\");"
 				},
 			// inline in tag

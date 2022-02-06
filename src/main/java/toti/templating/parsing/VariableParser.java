@@ -167,7 +167,14 @@ public class VariableParser implements Parser {
 	}
 	
 	public String getCalling() {
+		return getCalling(escape);
+	}
+	
+	private String getCalling(boolean escape) {
 		String calling = String.format("getVariable(()->{%sreturn o%s_%s;})", declare.toString(), position, level-1);
+		if (escape) {
+			calling = String.format("Template.escapeVariable(%s)", calling);
+		}
 		if (clazz != null) {
 			return String.format("new DictionaryValue(%s).getValue(%s.class)", calling, clazz);
 		}
@@ -181,7 +188,7 @@ public class VariableParser implements Parser {
 
 	@Override
 	public void addVariable(VariableParser var) {
-		declare.append(String.format("Object %s_aux=%s;", var.getVariableName(), var.getCalling()));
+		declare.append(String.format("Object %s_aux=%s;", var.getVariableName(), var.getCalling(false)));
 		classes.add(var.clazz == null ? String.format("%s_aux.getClass()", var.getVariableName()) : var.clazz + ".class");
 		params.add(String.format("%s_aux", var.getVariableName()));
 	}
