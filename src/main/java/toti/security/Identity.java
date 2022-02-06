@@ -70,6 +70,10 @@ public class Identity {
 		return responseHeaders;
 	}
 	
+	protected boolean hasUserChange() {
+		return user != null && user.hasChange();
+	}
+	
 	/*************/
 	
 	public boolean isAnonymous() {

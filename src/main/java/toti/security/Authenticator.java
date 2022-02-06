@@ -1,11 +1,11 @@
 package toti.security;
 
+import java.io.IOException;
 import java.util.Date;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
 import ji.common.Logger;
-import ji.common.structures.ThrowingFunction;
 import toti.authentication.AuthentizationException;
 import ji.common.functions.Hash;
 import ji.common.exceptions.HashException;
@@ -120,6 +120,12 @@ public class Authenticator {
 		} else {
 			cache.refresh(id, now + expirationTime);
 			identity.setUser(id, expirationTime, user);
+		}
+	}
+	
+	public void saveIdentity(Identity identity) throws IOException {
+		if (identity.hasUserChange()) {
+			cache.refresh(identity.getId(), identity.getUser());
 		}
 	}
 

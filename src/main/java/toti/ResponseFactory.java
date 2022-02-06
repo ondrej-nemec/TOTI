@@ -310,6 +310,11 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	    				.getMethod(mapped.getMethodName(), classes)
 	    				.invoke(o, values);
 	    	headers.addHeaders(identityFactory.getResponseHeaders(identity)); // for cookies and custom headers
+	    	try {
+	    		authenticator.saveIdentity(identity);
+	    	} catch (Exception e) {
+	    		logger.warn("Identity save fail", e);
+	    	}
 	    	
 			return response.getResponse(
 				headers, templateFactory, 

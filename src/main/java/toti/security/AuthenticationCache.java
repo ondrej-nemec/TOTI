@@ -89,16 +89,19 @@ public class AuthenticationCache {
 		activeTokens.put(id, expirated);
 	}
 	
-	public void save(String id, Long expirated, User user) throws IOException {
-		activeTokens.put(id, expirated);
+	public void refresh(String id, User user) throws IOException {
 		if (useCache) {
 			try (FileOutputStream fileOutputStream = new FileOutputStream(getFileName(id));
 					ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);) {
 				objectOutputStream.writeObject(user);
 				objectOutputStream.flush();
 			}
-			
 		}
+	}
+	
+	public void save(String id, Long expirated, User user) throws IOException {
+		refresh(id, expirated);
+		refresh(id, user);
 	}
 	
 	public Long getExpirationTime(String id) {

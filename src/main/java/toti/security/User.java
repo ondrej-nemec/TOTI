@@ -17,6 +17,8 @@ public class User implements Serializable {
 	private final Permissions permissions;
 	private final Map<String, Object> customData;
 	
+	private boolean hasChanged = false;
+	
 	public User(Object id, Permissions permissions) {
 		this.permissions = permissions;
 		this.id = id;
@@ -67,6 +69,7 @@ public class User implements Serializable {
 	 */
 	public void setProperty(String key, Object value) {
 		customData.put(key, value);
+		hasChanged = true;
 	}
 	
 	/**
@@ -86,4 +89,12 @@ public class User implements Serializable {
 		return customData;
 	}
 
+	protected boolean hasChange() {
+		return hasChanged;
+	}
+	
+	protected void setChanged(boolean changed) {
+		this.hasChanged = changed;
+	}
+	
 }
