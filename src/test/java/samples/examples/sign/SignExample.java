@@ -202,6 +202,7 @@ public class SignExample implements Module {
 	@Action("index2")
 	@Secured(isApi=false)
 	public Response index2() {
+		identity.getUser().setProperty("index2", true);
 		return Response.getTemplate("/index2.jsp", new HashMap<>());
 	}
 	

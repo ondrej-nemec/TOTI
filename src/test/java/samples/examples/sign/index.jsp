@@ -14,6 +14,8 @@
 	
 	<p>JS: <span id="loginCheck"></span></p>
 	
+	<p>Visit page index2: ${totiIdentity.getUser().getProperty("index2").getBoolean()}</p>
+	
 	<p id="flash"></p>
 
 	<script>
