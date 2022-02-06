@@ -26,6 +26,7 @@ import toti.templating.parsing.enums.ParserType;
 import toti.templating.parsing.structures.TagNode;
 import toti.url.MappedUrl;
 
+/** version 2.1 */
 public class TemplateParser {
 	
 	private final static char DEF = '\u0000';
