@@ -123,6 +123,7 @@ public class VariableParser implements Parser {
                      current, last, cache, Implode.implode((o)->"Object.class", ",", classes), last, Implode.implode(",", params)
                 ));
             declare.append("}");
+            params.clear();
 		} else if (mode == VarMode.METHOD_NAME) {
 			declare.append(String.format(
 				"Object %s=%s.getClass().getMethod(\"%s\").invoke(%s);",

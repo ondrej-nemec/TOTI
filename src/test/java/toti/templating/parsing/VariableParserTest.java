@@ -159,6 +159,17 @@ public class VariableParserTest {
 					false
 				},
 			new Object[] {
+					"map.get()}",
+					true,
+					"o0_1",
+					"getVariable(()->{"
+					+ "Object o0_0=getVariable(\"map\");"
+					+ "Object o0_1=o0_0.getClass().getMethod(\"get\").invoke(o0_0);"
+					+ "return o0_1;"
+					+ "})",
+					true
+				},
+			new Object[] {
 					"map.get(\"value\")}",
 					true,
 					"o0_1",
@@ -203,6 +214,23 @@ public class VariableParserTest {
 					+ "o0_1=o0_0.getClass().getMethod(\"get\",Object.class).invoke(o0_0,\"}\");"
 					+ "}"
 					+ "return o0_1;"
+					+ "})",
+					true
+				},
+			new Object[] {
+					"map.get(\"}\").getBoolean()}",
+					true,
+					"o0_2",
+					"getVariable(()->{"
+					+ "Object o0_0=getVariable(\"map\");"
+					+ "Object o0_1=null;"
+					+ "try{"
+					+ "o0_1=o0_0.getClass().getMethod(\"get\",java.lang.String.class).invoke(o0_0,\"}\");"
+					+ "}catch(NoSuchMethodException e){"
+					+ "o0_1=o0_0.getClass().getMethod(\"get\",Object.class).invoke(o0_0,\"}\");"
+					+ "}"
+					+ "Object o0_2=o0_1.getClass().getMethod(\"getBoolean\").invoke(o0_1);"
+					+ "return o0_2;"
 					+ "})",
 					true
 				}
