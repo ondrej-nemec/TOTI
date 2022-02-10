@@ -50,7 +50,7 @@ public class Link {
 	
 	private ThrowingFunction<Class<?>, Module, Exception> getModule = (controllerClass)->{
 		String moduleClass = register._getFactory(controllerClass.getName())._2();
-		return Module.class.cast(Class.forName(moduleClass).newInstance());
+		return Module.class.cast(Class.forName(moduleClass).getDeclaredConstructor().newInstance());
 	};
 	private ThrowingSupplier<Class<?>, Exception> getController = ()->Class.forName(StackTrace.classParent(
 		ste->Class.forName(ste.getClassName()).isAnnotationPresent(Controller.class)
@@ -70,7 +70,7 @@ public class Link {
 	}
 	
 	public <M extends Module> Link setModule(Class<M> moduleClass) {
-		getModule = (c)->Module.class.cast(moduleClass.newInstance());
+		getModule = (c)->Module.class.cast(moduleClass.getDeclaredConstructor().newInstance());
 		return this;
 	}
 	
