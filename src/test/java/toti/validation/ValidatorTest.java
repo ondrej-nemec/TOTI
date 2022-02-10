@@ -16,8 +16,6 @@ import ji.json.JsonWritter;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import ji.socketCommunication.http.server.RequestParameters;
-import toti.validation.ItemRules;
-import toti.validation.Validator;
 import ji.translator.Translator;
 
 @RunWith(JUnitParamsRunner.class)
