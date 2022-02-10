@@ -80,6 +80,16 @@ public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProf
 			log.setBuilder(identifier, query, sql, params);
 		});
 	}
+
+	@Override
+	public void executed() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void executed(Object res) {
+		// TODO Auto-generated method stub
+	}
 	
 	/***********/
 	
