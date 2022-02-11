@@ -65,7 +65,7 @@ public class TemplateFactory {
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		if (compiler == null) {
 			try {
-				compiler = (JavaCompiler)Class.forName("com.sun.tools.javac.api.JavacTool").newInstance();
+				compiler = (JavaCompiler)Class.forName("com.sun.tools.javac.api.JavacTool").getDeclaredConstructor().newInstance();
 			} catch (Exception e) {
 				logger.fatal("Cannot load compiler", e);
 			}
@@ -145,7 +145,7 @@ public class TemplateFactory {
 				TemplateFactory.class.getClassLoader()
 		)) {
 			try {
-				Template template = (Template)loader.loadClass(className).newInstance();
+				Template template = (Template)loader.loadClass(className).getDeclaredConstructor().newInstance();
 				if (lastModifition != template.getLastModification()) {
 					logger.warn("Class " + className + " has change, compile " + lastModifition + " vs " + template.getLastModification());
 					compileNewCache(templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), lastModifition, module);
@@ -158,7 +158,7 @@ public class TemplateFactory {
 			}
 		}
 		try (URLClassLoader loader = new URLClassLoader(new URL[] {cacheDir.toURI().toURL()});) {
-			return (Template)loader.loadClass(className).newInstance();
+			return (Template)loader.loadClass(className).getDeclaredConstructor().newInstance();
 		}
 	}
 	
