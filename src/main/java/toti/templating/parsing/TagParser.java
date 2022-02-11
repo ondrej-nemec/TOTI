@@ -66,14 +66,14 @@ public class TagParser implements Parser {
 			finishParameter('\u0000');
 			finishTagName();
 			return true;
-		} else if (mode == TagMode.TAG && actual == ' ') {
+		} else if (mode == TagMode.TAG && Character.isWhitespace(actual)) {
 			mode = TagMode.NAN;
 			finishTagName();
 		} else if (mode == TagMode.TAG) {
 			tagName += actual;
 			
 		// parameter name
-		} else if (mode == TagMode.PARAM_NAME && actual == ' ') {
+		} else if (mode == TagMode.PARAM_NAME && Character.isWhitespace(actual)) {
 			mode = TagMode.NAN;
 		} else if (mode == TagMode.PARAM_NAME && actual == '=') {
 			mode = TagMode.AFTER_PARAM;
@@ -81,12 +81,12 @@ public class TagParser implements Parser {
 			paramName += actual;
 		} else if (mode == TagMode.NAN && actual == '=') {
 			mode = TagMode.AFTER_PARAM;
-		} else if (mode == TagMode.NAN && actual != ' ' && !isSingleQuoted && !isDoubleQuoted) {
+		} else if (mode == TagMode.NAN && !Character.isWhitespace(actual) && !isSingleQuoted && !isDoubleQuoted) {
 			mode = TagMode.PARAM_NAME;
 			finishParameter('\u0000');
 			paramName = "" + actual;
 		// new param name, previous has no value
-		} else if (mode == TagMode.AFTER_PARAM && !isSingleQuoted && !isDoubleQuoted && actual != ' ') { 
+		} else if (mode == TagMode.AFTER_PARAM && !isSingleQuoted && !isDoubleQuoted && !Character.isWhitespace(actual)) { 
 			finishParameter('\u0000');
 			mode = TagMode.PARAM_NAME;
 		// parameter value

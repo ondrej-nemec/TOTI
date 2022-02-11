@@ -223,6 +223,19 @@ public class TagParserTest {
 						new TagParserParam("param", "myClass", '"', true)
 					)
 				},
+			new Object[] {
+                "div param=\"myClass \n"
+                 + " secondClass\"\n"
+                 + "param2=\"val\">",
+                 true,
+                 "div",
+                 true,
+                 TagType.START,
+                 Arrays.asList(
+                     new TagParserParam("param", "myClass \\\\n secondClass", '"'),
+                     new TagParserParam("param2", "val", '"')
+                 )
+            },
 		};
 	}
 	
