@@ -96,6 +96,8 @@ public class TagParser implements Parser {
 		} else if (mode == TagMode.PARAM_VALUE && !isSingleQuoted && !isDoubleQuoted) {
 			mode = TagMode.NAN;
 			finishParameter(actual);
+		} else if (mode == TagMode.PARAM_VALUE && actual == '\n') {
+			paramValue += "\\\\n";
 		} else if (mode == TagMode.PARAM_VALUE) {
 			paramValue += actual;
 		}
