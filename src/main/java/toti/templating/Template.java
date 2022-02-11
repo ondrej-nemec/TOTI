@@ -178,22 +178,22 @@ public interface Template {
 		// TODO test and improve
 		/*
 		http://server.org:80/some/path
-http://server.org/some/path
-https://server.org:80/some/path
-https://server.org/some/path
-https://ser-ver.org/some/path
-https://ser_ver.org/some/path
-/some/path
-some/path
-server.org/some/path
-
-server.org:80/some/path
-javascript:server.org/some/path
-javascript:alert('1')
+		http://server.org/some/path
+		https://server.org:80/some/path
+		https://server.org/some/path
+		https://ser-ver.org/some/path
+		https://ser_ver.org/some/path
+		/some/path
+		some/path
+		server.org/some/path
+		
+		server.org:80/some/path
+		javascript:server.org/some/path
+		javascript:alert('1')
 		 */
 		// ^(((http)([s]?)(:\/\/)([a-zA-Z0-9\.\-_]*)(:([0-9]+))?)?([^:\n]*))$
 		if (variable.toString().matches("^(((http)([s]?)(:\\/\\/)([a-zA-Z0-9\\.\\-_]*)(:([0-9]+))?)?([^:\\n]*))$")) {
-			return variable.toString();
+			return escapeHtml(variable);
 		}
 		return "";
 	}
