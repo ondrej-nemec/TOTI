@@ -15,7 +15,6 @@ public class AuthenticatorTest {
 	public void testCreateTokenReturnsCorrectTokenWithoutCustomData() throws HashException {
 		Hash hash = Mockito.mock(Hash.class);
 		Mockito.when(hash.toHash(Mockito.anyString())).thenReturn("hash");
-		@SuppressWarnings("unchecked")
 		Authenticator auth = new Authenticator(123, "salt", Mockito.mock(AuthenticationCache.class), hash, Mockito.mock(Logger.class));
 		assertEquals("hashr@ndomid2000", auth.createToken(
 				"r@ndom", 
@@ -29,7 +28,6 @@ public class AuthenticatorTest {
 		Hash hash = Mockito.mock(Hash.class);
 		Mockito.when(hash.toHash(Mockito.anyString())).thenReturn("hash");
 		Mockito.when(hash.compare(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
-		@SuppressWarnings("unchecked")
 		Authenticator auth = new Authenticator(123, "salt", Mockito.mock(AuthenticationCache.class), hash, Mockito.mock(Logger.class));
 		Identity identity = new Identity("", null, null, 
 				// "QlKvbHfY5F4wgrK0tlmrcRImLCx6t59RWq8XvTqmIL4=f1jmBdmnjIgFCEczXFkOYGE7tFulK9pJ1R3EleUauqvMT4WcgMqQqHSXrHW7i8wrFrOLJLHPd2X7Re2D1618244602626"
