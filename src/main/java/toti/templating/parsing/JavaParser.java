@@ -20,6 +20,7 @@ public class JavaParser implements Parser {
 	private boolean firstAccept = true;
 	
 	private final StringBuilder content = new StringBuilder();
+	private boolean isReturning = false;
 	
 	@Override
 	public boolean accept(char previous, char actual, boolean isSingleQuoted, boolean isDoubleQuoted) {
@@ -35,6 +36,10 @@ public class JavaParser implements Parser {
 			state = State.JAVA;
 			content.append(cache);
 			cache = "";
+		} else if (firstAccept && actual == '='){
+			state = State.JAVA;
+			isReturning = true;
+			return false;
 		} else if (state == State.COMMENT && actual == '-') {
 			state = State.CLOSE_COMMENT_CANDIDATE1;
 		} else if (state == State.CLOSE_COMMENT_CANDIDATE1 && actual == '-') {
@@ -70,6 +75,10 @@ public class JavaParser implements Parser {
 
 	public String getContent() {
 		return content.toString();
+	}
+	
+	public boolean isReturning() {
+		return isReturning;
 	}
 
 	@Override
