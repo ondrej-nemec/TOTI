@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import ji.common.functions.Implode;
 import toti.templating.TemplateException;
+import toti.templating.parsing.enums.VariableSource;
 
 /**
  * Activated if previous == '$' and actual == '{'
@@ -165,30 +166,42 @@ public class VariableParser implements Parser {
 	protected String getVariableName() {
 		return String.format("o%s_%s", position, level-1);
 	}
-	
-	public String getCalling() {
-		return getCalling(escape);
-	}
-	
-	private String getCalling(boolean escape) {
+
+	public String getCalling(VariableSource mode) {
 		String calling = String.format("getVariable(()->{%sreturn o%s_%s;})", declare.toString(), position, level-1);
-		if (escape) {
-			calling = String.format("Template.escapeVariable(%s)", calling);
-		}
 		if (clazz != null) {
-			return String.format("new DictionaryValue(%s).getValue(%s.class)", calling, clazz);
+			calling = String.format("new DictionaryValue(%s).getValue(%s.class)", calling, clazz);
+		}
+		if (escape) {
+			calling = selectEscape(calling, mode);
 		}
 		return calling;
 	}
 
+	private String selectEscape(String calling, VariableSource mode) {
+		switch (mode) {
+			case NO_ESCAPE: return calling;
+			case JAVASCRIPT: return String.format("Template.escapeJavascript(%s,null)", calling);
+			case JAVASCRIPT_S: return String.format("Template.escapeJavascript(%s,false)", calling);
+			case JAVASCRIPT_D: return String.format("Template.escapeJavascript(%s,true)", calling);
+			case JAVASCRIPT_PARAMETER: return String.format("Template.escapeJsParameter(%s)", calling);
+			case STYLE: return String.format("Template.escapeStyle(%s)", calling);
+			case STYLE_PARAMETER: return String.format("Template.escapeStyleParameter(%s)", calling);
+			case URL: return String.format("Template.escapeUrl(%s)", calling);
+			case PARAMETER:
+			case HTML:
+			default: return String.format("Template.escapeHtml(%s)", calling);
+		}
+	}
+
 	@Override
 	public String toString() {
-		return "Variable " + declare + " [" + getCalling() + "]";
+		return "Variable " + declare + " [" + getCalling(VariableSource.NO_ESCAPE) + "]";
 	}
 
 	@Override
 	public void addVariable(VariableParser var) {
-		declare.append(String.format("Object %s_aux=%s;", var.getVariableName(), var.getCalling(false)));
+		declare.append(String.format("Object %s_aux=%s;", var.getVariableName(), var.getCalling(VariableSource.NO_ESCAPE)));
 		classes.add(var.clazz == null ? String.format("%s_aux.getClass()", var.getVariableName()) : var.clazz + ".class");
 		params.add(String.format("%s_aux", var.getVariableName()));
 	}

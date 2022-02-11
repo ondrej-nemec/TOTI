@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import ji.common.exceptions.LogicException;
 import toti.templating.Parameter;
 import toti.templating.Tag;
+import toti.templating.parsing.enums.VariableSource;
 import toti.templating.parsing.enums.TagType;
 import toti.templating.parsing.structures.TagParserParam;
 
@@ -109,21 +110,13 @@ public class TagParser implements Parser {
 	}
 
 	private void finishParameter(char quote) {
-		// TODO t: parameters
 		if (!paramName.isEmpty()) {
 			params.add(new TagParserParam(paramName, paramValue, quote));
 		}
 		paramValue = null;
 		paramName = "";
 	}
-/*
-	public void addVariable(VariableParser var) {
-		// TODO check allready can be started param mode
-		paramValue += var.getCalling();
-		mode = TagMode.PARAM_VALUE;
-	}
-*/
-	
+
 	public TagType getTagType() {
 		return type;
 	}
@@ -202,9 +195,24 @@ public class TagParser implements Parser {
 	@Override
 	public void addVariable(VariableParser parser) {
 		if (paramValue != null) {
-			paramValue += getCodeFormat(parser.getCalling(), false);
+			// TODO test this
+			if (!isHtmlTag) {
+				paramValue += getCodeFormat(parser.getCalling(VariableSource.NO_ESCAPE), false);
+			} else if (paramName.startsWith("on")) {
+				paramValue += getCodeFormat(parser.getCalling(VariableSource.JAVASCRIPT_PARAMETER), false);
+			} else if (paramName.equals("src") || paramName.equals("href") || paramName.equals("action")) {
+				paramValue += getCodeFormat(parser.getCalling(VariableSource.URL), false);
+			} else if (paramName.equals("style")) {
+				paramValue += getCodeFormat(parser.getCalling(VariableSource.STYLE_PARAMETER), false);
+			} else {
+				paramValue += getCodeFormat(parser.getCalling(VariableSource.HTML), false);
+			}
 		} else {
-			paramName += getCodeFormat(parser.getCalling(), false);
+			if (isHtmlTag) {
+				paramName += getCodeFormat(parser.getCalling(VariableSource.HTML), false);
+			} else {
+				paramName += getCodeFormat(parser.getCalling(VariableSource.NO_ESCAPE), false);
+			}
 		}
 	}
 	

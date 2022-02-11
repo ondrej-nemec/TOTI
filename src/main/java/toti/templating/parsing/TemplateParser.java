@@ -142,11 +142,15 @@ public class TemplateParser {
 		
 		int level = 0;
 		LinkedList<ParserWrapper> parsers = new LinkedList<>();
+		LinkedList<String> htmlTag = new LinkedList<>();
 		StringBuilder node = new StringBuilder();
 
 		char actual;
 		char previous = DEF;
 		char cache = DEF;
+		
+		boolean isSingleQuoted = false;
+		boolean isDoubleQuoted = false;
 		
 		node.append("write(\"");
 		while((actual = (char)br.read()) != (char)-1) {
@@ -157,7 +161,12 @@ public class TemplateParser {
 				} else if (actual == '\'' && previous != '\\' && !last.isDoubleQuoted()) {
 					last.setSingleQuoted();
 				}
-				
+			} else {
+				if (actual == '"' && previous != '\\' && !isSingleQuoted) {
+					isDoubleQuoted = !isDoubleQuoted;
+				} else if (actual == '\'' && previous != '\\' && !isDoubleQuoted) {
+					isSingleQuoted = !isSingleQuoted;
+				}
 			}
 			// java, comment, tag
 			if ((last == null || last.allowChildren()) && actual == '<') {
@@ -170,25 +179,25 @@ public class TemplateParser {
 					writeText(node, cache, previous);
 					writeText(node, previous, actual);
 				} else {
-					writeParser(node, parsers, last, cache, previous);
-					writeParser(node, parsers, last, previous, actual);
+					writeParser(node, parsers, htmlTag, last, cache, previous, null);
+					writeParser(node, parsers, htmlTag, last, previous, actual, null);
 				}
 				cache = DEF;
 			} else if ((last == null || last.allowChildren()) && previous == '<') {
 				parsers.add(new ParserWrapper(new TagParser(actual)));
 			// variable
-			} else if ((last == null || last.allowVariable()) && actual == '$') {
+			} else if (actual == '$') {
 				//candidate
 				cache = previous;
-			} else if ((last == null || last.allowVariable()) && previous == '$' && actual == '{') {
+			} else if (previous == '$' && actual == '{') {
 				parsers.add(new ParserWrapper(new VariableParser(level++)));
-			} else if ((last == null || last.allowVariable()) && previous == '$' && actual != '{') {
+			} else if (previous == '$' && actual != '{') {
 				if (last == null) {
 					writeText(node, cache, previous);
 					writeText(node, previous, actual);
 				} else {
-					writeParser(node, parsers, last, cache, previous);
-					writeParser(node, parsers, last, previous, actual);
+					writeParser(node, parsers, htmlTag, last, cache, previous, null);
+					writeParser(node, parsers, htmlTag, last, previous, actual, null);
 				}
 				cache = DEF;
 			// inline
@@ -202,13 +211,16 @@ public class TemplateParser {
 					writeText(node, cache, previous);
 					writeText(node, previous, actual);
 				} else {
-					writeParser(node, parsers, last, cache, previous);
-					writeParser(node, parsers, last, previous, actual);
+					writeParser(node, parsers, htmlTag, last, cache, previous, null);
+					writeParser(node, parsers, htmlTag, last, previous, actual, null);
 				}
 				cache = DEF;
 			// write
 			} else if (last != null) {
-				writeParser(node, parsers, last, previous, actual);
+				writeParser(
+					node, parsers, htmlTag, last, previous, actual,
+					!isDoubleQuoted && !isSingleQuoted ? null : isDoubleQuoted
+				);
 			} else {
 				writeText(node, previous, actual);
 			}
@@ -220,10 +232,12 @@ public class TemplateParser {
 	
 	// TODO if called twice in one row - can be problem
 	private void writeParser(
-			StringBuilder node, LinkedList<ParserWrapper> parsers, 
-			ParserWrapper last, char previous, char actual) {
+			StringBuilder node, LinkedList<ParserWrapper> parsers,
+			LinkedList<String> htmlTags,
+			ParserWrapper last, char previous, char actual, Boolean isDoubleQuoted) {
 		if (last.accept(previous, actual)) {
 			parsers.removeLast();
+			last.finishTag(htmlTags);
 			if (parsers.size() > 0) {
 				if (last.getType() == ParserType.VARIABLE) {
 					parsers.getLast().addVariable(last);
@@ -232,7 +246,11 @@ public class TemplateParser {
 				}
 			} else {
 				node.append("\");");
-				node.append(last.getContent(tags, parameters));
+				node.append(last.getContent(
+					tags, parameters,
+					htmlTags.size() == 0 ? null : htmlTags.getLast(),
+					isDoubleQuoted
+				));
 				node.append("write(\"");
 			}
 		}
@@ -255,46 +273,6 @@ public class TemplateParser {
 				node.append(actual + "");
 			}
 		}
-		/*
-			node.append(
-				cache
-				.replace("\r", "")
-				.replace("\\", "\\\\")
-				.replace("\"", "\\\"")
-				.replace("\n", "\");write(\"" + (minimalize ? "" : "\\n"))
-			);
-			cache = "";
-			if (actual == '\r') {
-				// ignored
-			} else if (actual == '\n') {
-				node.append(
-					"\");write(\"" + (minimalize ? "" : "\\n")
-				);
-			} else {
-				if (minimalize && (actual == '\t' || (actual == ' ' && previous == ' ') )) {
-					// ignore
-				} else {
-					if (actual == '\"' || actual == '\\') {
-						node.append("\\");
-					}
-					node.append(actual + "");
-				}
-			}
-		*/
 	}
-	
-/*
-	private void addParser(LinkedList<Parser> parsers, Parser parser) {
-		if (parsers.size() == 0) {
-			parsers.add(parser);
-		} else if (parsers.size() > 0 && parser.getType() == ParserType.TAG) {
-			throw new LogicException("Tag cannot be inside tag, variable, in-line cond or code");
-		} else if (parsers.getLast().getType() == ParserType.VARIABLE && parser.getType() == ParserType.INLINE) {
-			throw new LogicException("Inline condition cannot be inside variable");
-		} else {
-			parsers.add(parser);
-		}
-	}
-*/
 
 }

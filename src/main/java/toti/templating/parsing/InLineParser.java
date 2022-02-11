@@ -1,5 +1,7 @@
 package toti.templating.parsing;
 
+import toti.templating.parsing.enums.VariableSource;
+
 /**
  * Activate if previous == '{' and actual == '{'
  * @author Ondřej Němec
@@ -10,6 +12,10 @@ public class InLineParser implements Parser {
 	private final StringBuilder content = new StringBuilder();
 	
 	private boolean closeCandidate = false;
+	
+	public InLineParser() {
+		System.err.println("Using inline parser is deprecated ({{ }})");
+	}
 
 	@Override
 	public boolean accept(char previous, char actual, boolean isSingleQuoted, boolean isDoubleQuoted) {
@@ -33,7 +39,7 @@ public class InLineParser implements Parser {
 
 	@Override
 	public void addVariable(VariableParser parser) {
-		content.append(parser.getCalling());
+		content.append(parser.getCalling(VariableSource.HTML)); // TODO closest html tag
 	}
 	
 }

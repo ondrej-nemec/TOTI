@@ -8,8 +8,6 @@ import ji.files.text.Text;
 import ji.files.text.basic.WriteText;
 import toti.logging.TotiLogger;
 import toti.security.Authorizator;
-import toti.templating.Template;
-import toti.templating.TemplateFactory;
 import ji.translator.Locale;
 import ji.translator.Translator;
 

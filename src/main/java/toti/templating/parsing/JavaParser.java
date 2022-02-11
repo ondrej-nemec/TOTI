@@ -1,5 +1,7 @@
 package toti.templating.parsing;
 
+import toti.templating.parsing.enums.VariableSource;
+
 /**
  * Activated if previous == '<' and actual == '%'
  * @author Ondřej Němec
@@ -83,7 +85,9 @@ public class JavaParser implements Parser {
 
 	@Override
 	public void addVariable(VariableParser parser) {
-		// this is not supported
+		if (state == State.JAVA) {
+			content.append(parser.getCalling(VariableSource.NO_ESCAPE));
+		}
 	}
 
 }

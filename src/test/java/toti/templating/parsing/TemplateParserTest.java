@@ -22,6 +22,7 @@ import static org.mockito.Mockito.*;
 public class TemplateParserTest {
 	
 	// TODO throwing tests
+	// TODO test with variable escape
 	
 	@Test
 	@Parameters(method="dataParseWorks")
@@ -89,10 +90,16 @@ public class TemplateParserTest {
 				"some text <%-- comment --%> text continue",
 				"write(\"some text \");write(\" text continue\");"
 			},
+			// TODO this is deprecated
 			// inline
 			new Object[] {
 				true,
 				"the value is {{ inline java code }}!",
+				"write(\"the value is \");write( inline java code );write(\"!\");"
+			},
+			new Object[] {
+				true,
+				"the value is <%= inline java code %>!",
 				"write(\"the value is \");write( inline java code );write(\"!\");"
 			},
 			// variable
@@ -170,6 +177,7 @@ public class TemplateParserTest {
 					+ "write(\"\");"
 				},
 			// variable in inline
+			// TODO this is deprecated
 			new Object[] {
 					true,
 					"class='{{ ${color} > 8 ? \"red\" : \"blue\" }}'",
@@ -182,6 +190,18 @@ public class TemplateParserTest {
 					  + " > 8 ? \"red\" : \"blue\" );"
 					+ "write(\"'\");"
 				},
+			new Object[] {
+				true,
+				"class='<%= ${color} > 8 ? \"red\" : \"blue\" =>'",
+				"write(\"class='\");"
+				+ "write( "
+					+"Template.escapeVariable(getVariable(()->{"
+					+ "Object o0_0=getVariable(\"color\");"
+					+ "return o0_0;"
+					+ "}))"
+				  + " > 8 ? \"red\" : \"blue\" );"
+				+ "write(\"'\");"
+			},
 			// comment in tag
 			new Object[] {
 					true,

@@ -1,10 +1,14 @@
 package toti.templating.parsing;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import toti.templating.Parameter;
 import toti.templating.Tag;
+import toti.templating.parsing.enums.VariableSource;
 import toti.templating.parsing.enums.ParserType;
+import toti.templating.parsing.enums.TagType;
 
 public class ParserWrapper {
 	
@@ -35,6 +39,25 @@ public class ParserWrapper {
 	}
 	
 	/*******************/
+	
+	public void finishTag(LinkedList<String> htmlTags) {
+		if (parser instanceof TagParser) {
+			TagParser tag = TagParser.class.cast(parser);
+			if (!tag.isHtmlTag()) {
+				return;
+			}
+			if (tag.getTagType() == TagType.START) {
+				htmlTags.add(tag.getName());
+			}
+			if (tag.getTagType() == TagType.END) {
+				if (htmlTags.isEmpty() || !htmlTags.getLast().equals(tag.getName())) {
+					// TODO throw or log or do somethid
+					return;
+				}
+				htmlTags.removeLast();
+			}
+		}
+	}
 	
 	public boolean accept(char previous, char actual) {
 		return parser.accept(previous, actual, isSingleQuoted, isDoubleQuoted);
@@ -72,6 +95,13 @@ public class ParserWrapper {
 		this.isDoubleQuoted = !isDoubleQuoted;
 	}
 	
+	/**
+	 * @return null - no quote, false - single, true - double
+	 */
+/*	public Boolean isQuoted() {
+		return (!isSingleQuoted && !isDoubleQuoted) ? null : isDoubleQuoted;
+	}
+*/
 	/*******************/
 	
 	public boolean allowChildren() {
@@ -84,22 +114,16 @@ public class ParserWrapper {
 		}
 	}
 	
-	public boolean allowVariable() {
-		switch (type) {
-			case INLINE: return true;
-			case JAVA: return false;
-			case TAG: return true;
-			case VARIABLE: return true;
-			default: return true;
-		}
-	}
-	
-	public String getContent(Map<String, Tag> tags, Map<String, Parameter> parameters) {
+	public String getContent(Map<String, Tag> tags, Map<String, Parameter> parameters, String element, Boolean isDoubleQuoted) {
 		switch (type) {
 			case INLINE:
 				return String.format("write(%s);", InLineParser.class.cast(parser).getCalling());
 			case JAVA:
-				return JavaParser.class.cast(parser).getContent();
+				JavaParser java = JavaParser.class.cast(parser);
+				if (java.isReturning()) {
+					return String.format("write(%s);", java.getContent());
+				}
+				return java.getContent();
 			case TAG:
 				TagParser tag = TagParser.class.cast(parser);
 				if (tag.isHtmlTag()) {
@@ -108,7 +132,19 @@ public class ParserWrapper {
 				return tag.getAsString(tags, parameters);
 			case VARIABLE:
 				VariableParser variable = VariableParser.class.cast(parser);
-				return String.format("write(%s);", variable.getCalling());
+				if ("style".equals(element)) {
+					return String.format("write(%s);", variable.getCalling(VariableSource.STYLE));
+				}
+				if ("script".equals(element)) {
+					if (isDoubleQuoted == null) {
+						return String.format("write(%s);", variable.getCalling(VariableSource.JAVASCRIPT));
+					}
+					if (isDoubleQuoted) {
+						return String.format("write(%s);", variable.getCalling(VariableSource.JAVASCRIPT_D));
+					}
+					return String.format("write(%s);", variable.getCalling(VariableSource.JAVASCRIPT_S));
+				}
+				return String.format("write(%s);", variable.getCalling(VariableSource.HTML));
 			default: return "";
 		}
 	}
