@@ -2,16 +2,19 @@ package toti.templating.parsing;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 
+@Deprecated
 @RunWith(JUnitParamsRunner.class)
 public class InLineParserTest {
 	
 	@Test
+	@Ignore
 	public void testAddVariable() {
 		InLineParser inline = new InLineParser();
 		VariableParser var = new VariableParser(0);

@@ -122,10 +122,10 @@ public class VariableParserTest {
 					"age|Integer}",
 					true,
 					"o0_0",
-					"new DictionaryValue(Template.escapeHtml(getVariable(()->{"
+					"Template.escapeHtml(new DictionaryValue(getVariable(()->{"
 					+ "Object o0_0=getVariable(\"age\");"
 					+ "return o0_0;"
-					+ "}))).getValue(Integer.class)",
+					+ "})).getValue(Integer.class))",
 					true
 				},
 			new Object[] {

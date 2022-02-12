@@ -23,6 +23,7 @@ public class TemplateParserTest {
 	
 	// TODO throwing tests
 	// TODO test with variable escape
+	// TODO test code in tag
 	
 	@Test
 	@Parameters(method="dataParseWorks")
@@ -107,7 +108,7 @@ public class TemplateParserTest {
 					true,
 					"another value: ${value}.",
 					"write(\"another value: \");"
-					+ "write(Template.escapeVariable("
+					+ "write(Template.escapeHtml("
 					+ "getVariable(()->{"
 					+ "Object o0_0=getVariable(\"value\");"
 					+ "return o0_0;"
@@ -158,7 +159,7 @@ public class TemplateParserTest {
 			new Object[] {
 					true,
 					"texts are ${first.equals(${second})}",
-					"write(\"texts are \");write(Template.escapeVariable("
+					"write(\"texts are \");write(Template.escapeHtml("
 						+"getVariable(()->{"
 						+ "Object o0_0=getVariable(\"first\");"
 						+ "Object o1_0_aux=getVariable(()->{"
@@ -183,7 +184,7 @@ public class TemplateParserTest {
 					"class='{{ ${color} > 8 ? \"red\" : \"blue\" }}'",
 					"write(\"class='\");"
 					+ "write( "
-						+"Template.escapeVariable(getVariable(()->{"
+						+"Template.escapeHtml(getVariable(()->{"
 						+ "Object o0_0=getVariable(\"color\");"
 						+ "return o0_0;"
 						+ "}))"
@@ -192,13 +193,13 @@ public class TemplateParserTest {
 				},
 			new Object[] {
 				true,
-				"class='<%= ${color} > 8 ? \"red\" : \"blue\" =>'",
+				"class='<%= ${color} > 8 ? \"red\" : \"blue\" %>'",
 				"write(\"class='\");"
 				+ "write( "
-					+"Template.escapeVariable(getVariable(()->{"
+					+"getVariable(()->{"
 					+ "Object o0_0=getVariable(\"color\");"
 					+ "return o0_0;"
-					+ "}))"
+					+ "})"
 				  + " > 8 ? \"red\" : \"blue\" );"
 				+ "write(\"'\");"
 			},
@@ -216,10 +217,10 @@ public class TemplateParserTest {
 					"something <t:tagA class='${clazz}'/> text",
 					"write(\"something \");"
 					+ "--tagA-unpair-- {class="
-						+"Template.escapeVariable(getVariable(()->{"
+						+"getVariable(()->{"
 						+ "Object o0_0=getVariable(\"clazz\");"
 						+ "return o0_0;"
-						+ "}))"
+						+ "})"
 						+ "}"
 					+ "write(\" text\");"
 				},
@@ -228,10 +229,10 @@ public class TemplateParserTest {
 					"something <t:tagA class=\"${clazz}\"/> text",
 					"write(\"something \");"
 					+ "--tagA-unpair-- {class="
-						+"Template.escapeVariable(getVariable(()->{"
+						+"getVariable(()->{"
 						+ "Object o0_0=getVariable(\"clazz\");"
 						+ "return o0_0;"
-						+ "}))"
+						+ "})"
 						+ "}"
 					+ "write(\" text\");"
 				},
@@ -239,13 +240,13 @@ public class TemplateParserTest {
 					true,
 					"something <div class=\"${clazz}\"/> text",
 					"write(\"something \");write(\"<div class=\\\"\" + "
-						+"Template.escapeVariable(getVariable(()->{"
+						+"Template.escapeHtml(getVariable(()->{"
 						+ "Object o0_0=getVariable(\"clazz\");"
 						+ "return o0_0;"
 						+ "}))"
 					+ " + \"\\\" />\");write(\" text\");"
 				},
-			// inline in tag
+			// inline in tag // TODO deprecated
 			new Object[] {
 					true,
 					"something <t:tagA class='{{ 9 > 4 ? 'D' : 'L' }}'/> text",
@@ -275,6 +276,32 @@ public class TemplateParserTest {
 					"something <t:tagA t:paramA=\"clazz\"/> text",
 					"write(\"something \");"
 					+ "--tagA-unpair-- {paramA=-- parameter - clazz --}"
+					+ "write(\" text\");"
+				},
+			// variable in code
+			new Object[] {
+					true,
+					"something <% System.out.println(${clazz}); %> text",
+					"write(\"something \");"
+						+" System.out.println(getVariable(()->{"
+						+ "Object o0_0=getVariable(\"clazz\");"
+						+ "return o0_0;"
+						+ "})); "
+					+ "write(\" text\");"
+				},
+			new Object[] {
+					true,
+					"something <%-- System.out.println(${clazz}); --%> text",
+					"write(\"something \");write(\" text\");"
+				},
+			new Object[] {
+					true,
+					"something <%= ${clazz} %> text",
+					"write(\"something \");"
+						+"write( getVariable(()->{"
+						+ "Object o0_0=getVariable(\"clazz\");"
+						+ "return o0_0;"
+						+ "}) );"
 					+ "write(\" text\");"
 				},
 		};
