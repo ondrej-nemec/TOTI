@@ -23,7 +23,6 @@ public class TemplateParserTest {
 	
 	// TODO throwing tests
 	// TODO test with variable escape
-	// TODO test code in tag
 	
 	@Test
 	@Parameters(method="dataParseWorks")
