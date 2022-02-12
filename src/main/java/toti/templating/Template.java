@@ -152,6 +152,7 @@ public interface Template {
 				+ variable.toString()
 					.replace("\\", "\\\\")
 					.replace("\"", "\\\"")
+					.replace("</script>", "")
 				+ '"'
 				;
 		}
@@ -159,11 +160,13 @@ public interface Template {
 			return variable.toString()
 				.replace("\\", "\\\\")
 				.replace("\"", "\\\"")
+				.replace("</script>", "")
 				;
 		}
 		return variable.toString()
 			.replace("\\", "\\\\")
 			.replace("'", "\\'")
+			.replace("</script>", "")
 			;
 	}
 	
@@ -191,9 +194,9 @@ public interface Template {
 		javascript:server.org/some/path
 		javascript:alert('1')
 		 */
-		// ^(((http)([s]?)(:\/\/)([a-zA-Z0-9\.\-_]*)(:([0-9]+))?)?([^:\n]*))$
+		// "${backlink}".replaceAll("&amp;", "&")
 		if (variable.toString().matches("^(((http)([s]?)(:\\/\\/)([a-zA-Z0-9\\.\\-_]*)(:([0-9]+))?)?([^:\\n]*))$")) {
-			return escapeHtml(variable);
+			return escapeHtml(variable); // TODO is required
 		}
 		return "";
 	}
