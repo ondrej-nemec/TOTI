@@ -14,6 +14,7 @@ import toti.HttpServerFactory;
 import toti.Module;
 import toti.annotations.Action;
 import toti.annotations.Controller;
+import toti.annotations.Param;
 import toti.application.Task;
 import toti.register.Register;
 import toti.response.Response;
@@ -69,6 +70,29 @@ public class TemplateExample implements Module {
 		return Response.getTemplate("variables.jsp", params);
 	}
 	
+	/**
+	 * 
+	 * @return http://localhost:8080/examples/template/owasp-form
+	 */
+	@Action("owasp-form")
+	public Response owaspForm() {
+		Map<String, Object> params = new HashMap<>();
+		params.put("action", Link.get().create(getClass(), c->c.owaspTest(null, null)));
+		return Response.getTemplate("owaspForm.jsp", params);
+	}
+	
+	/**
+	 * 
+	 * @return http://localhost:8080/examples/template/owasp-print
+	 */
+	@Action("owasp-print")
+	public Response owaspTest(@Param("first") String first, @Param("second") String second) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("first", first);
+		params.put("second", second);
+		return Response.getTemplate("owaspPrint.jsp", params);
+	}
+	
 	/*******************/
 	
 	@Override
@@ -101,9 +125,6 @@ public class TemplateExample implements Module {
 		try {
 			HttpServer server = new HttpServerFactory()
 				.setPort(8080)
-				.setTokenExpirationTime(30 * 1000) // 30s
-				.setMinimalize(false)
-				.setDeleteTempJavaFiles(false)
 				.get(modules, null, null);
 			
 			/* start */
