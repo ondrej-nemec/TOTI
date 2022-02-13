@@ -26,6 +26,7 @@ import toti.annotations.Params;
 import toti.annotations.ParamsValidator;
 import toti.annotations.Secured;
 import toti.register.Register;
+import toti.security.Mode;
 import toti.validation.Validator;
 
 public class LoadUrls {
@@ -77,16 +78,16 @@ public class LoadUrls {
 		    			String methodName = m.getName();
 		    			
 		    			Domain[] methodDomains = null;
-		    			boolean isApi = false;
+		    			Mode securityMode = Mode.NO_TOKEN;
 		    			if (m.isAnnotationPresent(Secured.class)) {
 		    				methodDomains = m.getAnnotation(Secured.class).value();
-		    				isApi = m.getAnnotation(Secured.class).isApi();
+		    				securityMode = m.getAnnotation(Secured.class).mode();
 		    			}
 		    			
 		    			MappedUrl mappedUrl = new MappedUrl(
 		    					moduleName, controllerUrl, methodUrl, path,
 		    					className, methodName,
-		    					ArrayUtils.addAll(classDomains, methodDomains), isApi,
+		    					ArrayUtils.addAll(classDomains, methodDomains), securityMode,
 		    					getValidator(m, register)
 		    			);
 		    			List<UrlParam> linkParams = new LinkedList<>();

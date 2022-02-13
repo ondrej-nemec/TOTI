@@ -21,6 +21,7 @@ import toti.annotations.Secured;
 import toti.application.Task;
 import toti.register.Register;
 import toti.response.Response;
+import toti.security.Mode;
 import toti.url.Link;
 
 /**
@@ -40,7 +41,7 @@ public class RoutingExample implements Module {
 	 *  http://localhost:8080/api/routing/secured
 	 */
 	@Action("secured")
-	@Secured(isApi = false)
+	@Secured(mode = Mode.COOKIE)
 	public Response secured() {
 		return Response.getText("Secured");
 	}

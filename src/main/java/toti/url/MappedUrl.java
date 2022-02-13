@@ -9,6 +9,7 @@ import ji.common.structures.ThrowingFunction;
 import ji.common.structures.Tuple3;
 import ji.json.Jsonable;
 import toti.annotations.Domain;
+import toti.security.Mode;
 import toti.validation.Validator;
 
 public class MappedUrl implements Jsonable{
@@ -30,7 +31,7 @@ public class MappedUrl implements Jsonable{
 	
 	private final ThrowingFunction<Object, Validator, Exception> validator;
 	
-	private final boolean isApi;
+	private final Mode securityMode;
 
 	public MappedUrl(
 			String moduleName,
@@ -38,7 +39,7 @@ public class MappedUrl implements Jsonable{
 			String methodUrl,
 			String pathUrl,
 			String className, String methodName,
-			Domain[] domains, boolean isApi,
+			Domain[] domains, Mode securityMode,
 			ThrowingFunction<Object, Validator, Exception> validator) {
 		this.moduleName = moduleName;
 		this.controllerUrl = controllerUrl;
@@ -50,7 +51,7 @@ public class MappedUrl implements Jsonable{
 		this.params = new LinkedList<>();
 		this.paramNames = new LinkedList<>();
 		this.domains = domains;
-		this.isApi = isApi;
+		this.securityMode = securityMode;
 		this.validator = validator;
 	}
 
@@ -104,8 +105,16 @@ public class MappedUrl implements Jsonable{
 		return validator.apply(o);
 	}
 
+	public Mode getSecurityMode() {
+		return securityMode;
+	}
+	
 	public boolean isApi() {
-		return isApi;
+		return securityMode == Mode.HEADER;
+	}
+	
+	public boolean isTokenRequired() {
+		return securityMode == Mode.CFRT;
 	}
 	
 	public String getModuleName() {
@@ -127,7 +136,7 @@ public class MappedUrl implements Jsonable{
 				+ ", pathUrl=" + pathUrl + ", allowedMethods="
 				+ ", className=" + className + ", methodName=" + methodName
 				+ ", params=" + params + ", paramNames=" + paramNames + ", isRegex=" + isRegex + ", domains="
-				+ Arrays.toString(domains) + ", validator=" + validator + ", isApi=" + isApi + "}";
+				+ Arrays.toString(domains) + ", validator=" + validator + ", isApi=" + securityMode + "}";
 	}
 	@Override
 	public Object toJson() {

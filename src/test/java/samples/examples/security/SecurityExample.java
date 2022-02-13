@@ -27,6 +27,7 @@ import toti.response.Response;
 import toti.security.Authenticator;
 import toti.security.Authorizator;
 import toti.security.Identity;
+import toti.security.Mode;
 import toti.security.User;
 import toti.url.Link;
 
@@ -94,7 +95,7 @@ public class SecurityExample implements Module {
 	 * @return http://localhost:8080/examples/security/secured
 	 */
 	@Action("secured")
-	@Secured(isApi = false)
+	@Secured(mode = Mode.COOKIE)
 	public Response secured() {
 		return Response.getText("Secured");
 	}

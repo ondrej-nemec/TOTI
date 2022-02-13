@@ -43,6 +43,7 @@ import toti.control.inputs.TextArea;
 import toti.control.inputs.Time;
 import toti.control.inputs.Week;
 import toti.response.Response;
+import toti.security.Mode;
 import toti.url.Link;
 import ji.translator.Translator;
 
@@ -59,7 +60,7 @@ public class ExamplePageController {
 	}
 	
 	@Action("list")
-	@Secured(isApi = false, value={@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.READ)})
+	@Secured(mode = Mode.COOKIE, value={@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.READ)})
 	public Response grid() {
 		Map<String, Object> params = new HashMap<>();
 	//	Grid grid = new Grid("/example-module/api/example/all", "get");
@@ -133,20 +134,20 @@ public class ExamplePageController {
 	}
 	
 	@Action("add")
-	@Secured(isApi = false, value={@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.CREATE)})
+	@Secured(mode = Mode.COOKIE, value={@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.CREATE)})
 	public Response add() {
 		return getOne(null, true, null);
 	}
 
 	@Action("edit")
-	@Secured(isApi = false, value={@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.UPDATE)})
+	@Secured(mode = Mode.COOKIE, value={@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.UPDATE)})
 	public Response edit(@ParamUrl("id") Integer id, @Param("template") String template) {
 		return getOne(id, true, template);
 	}
 
 	@Action("detail")
 	@Method({HttpMethod.GET})
-	@Secured(isApi = false, value={@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.READ)})
+	@Secured(mode = Mode.COOKIE, value={@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.READ)})
 	public Response detail(@ParamUrl("id") Integer id, @Param("template") String template) {
 		return getOne(id, false, template);
 	}
