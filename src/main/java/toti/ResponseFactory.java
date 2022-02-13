@@ -33,6 +33,7 @@ import toti.security.Authenticator;
 import toti.security.Authorizator;
 import toti.security.Identity;
 import toti.security.IdentityFactory;
+import toti.security.Owner;
 import toti.security.exceptions.AccessDeniedException;
 import toti.security.exceptions.NotAllowedActionException;
 import toti.templating.DirectoryTemplate;
@@ -261,6 +262,11 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			MappedUrl mapped, RequestParameters params,
 			Identity identity, Optional<WebSocket> websocket) throws ServerException {
 		try {
+			// TODO check crft token
+			/*if (mapped.isTokenRequired()) {
+				
+			}*/
+			// create instance here - validator can be method of that object
 			Object o = register
 					.getFactory(mapped.getClassName())
 					.apply(translator.withLocale(identity.getLocale()), identity, authorizator, authenticator);
@@ -284,7 +290,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			});
 			/** authorize */
 			try {
-				authorize(mapped, params, identity, params);
+				authorize(mapped, params, identity, validatorParams);
 			} catch (ServerException e) {
 				if (mapped.isApi() || router.getRedirectOnNotLoggedInUser() == null) {
 					throw e;
@@ -357,7 +363,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
              return fullUrl;
         }
     }
-	private void authorize(MappedUrl mapped, RequestParameters params, Identity identity, RequestParameters prop) throws ServerException {
+	private void authorize(MappedUrl mapped, RequestParameters params, Identity identity, RequestParameters validator) throws ServerException {
 		if (mapped.isSecured()) {
 			if (identity.isAnonymous()) {
 				throw new ServerException(StatusCode.UNAUTHORIZED, mapped, "Method require logged user");
@@ -366,12 +372,28 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				throw new ServerException(StatusCode.FORBIDDEN, mapped, "For this url you cannot use cookie token");
 			}
 			for (Domain domain : mapped.getSecured()) {
-				if (domain.owner().isEmpty()) {
+				if (domain.owner().isEmpty() && domain.mode() != Owner.USER_ID) {
 					authorizator.authorize(identity.getUser(), domain.name(), domain.action());
 				} else {
-					authorizator.authorize(identity.getUser(), domain.name(), domain.action(), params.get(domain.owner()));
+					authorizator.authorize(
+						identity.getUser(),
+						domain.name(), domain.action(),
+						getOwner(domain.mode(), domain.name(), identity, params, validator)
+					);
 				}
 			}
+		}
+	}
+	
+	private Object getOwner(
+			Owner ownerMode, String ownerName, Identity identity,
+			RequestParameters request, RequestParameters validator) {
+		switch (ownerMode) {
+			case REQUERST: return request.get(ownerName);
+			case USER_DATA: return identity.getUser().getContent().get(ownerName);
+			case USER_ID: return identity.getUser().getId();
+			case VALIDATOR: return validator.get(ownerName);
+			default: return null;
 		}
 	}
 
