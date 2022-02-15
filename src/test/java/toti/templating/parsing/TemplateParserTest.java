@@ -303,6 +303,14 @@ public class TemplateParserTest {
 						+ "}) );"
 					+ "write(\" text\");"
 				},
+            // tag in JS string
+            new Object[] {
+                true,
+                "var tag = '<a href=\"some-url'\r\n + id +'\">'",
+                "write(\"var tag = '\");"
+                + "write(\"<a href=\\\"some-url' + id +'\\\">\");"
+                + "write(\"'\");"
+            },
 		};
 	}
 	

@@ -20,7 +20,7 @@ import toti.templating.parsing.structures.TagParserParam;
 public class TagParser implements Parser {
 	
 	enum TagMode {
-		TAG, NAN, PARAM_NAME, AFTER_PARAM, PARAM_VALUE;
+		TAG, NAN, PARAM_NAME, AFTER_PARAM, PARAM_VALUE_S, PARAM_VALUE_D;
 	}
 	
 	private TagType type;
@@ -44,6 +44,9 @@ public class TagParser implements Parser {
 	
 	@Override
 	public boolean accept(char previous, char actual, boolean isSingleQuoted, boolean isDoubleQuoted) {
+		if (actual == '\r') {
+			return false;
+		}
 		if ((mode == TagMode.TAG || mode == TagMode.NAN || mode == TagMode.PARAM_NAME) && (isSingleQuoted || isDoubleQuoted)) {
 			throw new LogicException("Tag syntax error: quotes.");
 		}
@@ -90,15 +93,25 @@ public class TagParser implements Parser {
 			finishParameter('\u0000');
 			mode = TagMode.PARAM_NAME;
 		// parameter value
-		} else if (mode == TagMode.AFTER_PARAM && (actual == '\'' || actual == '"')) {
-			mode = TagMode.PARAM_VALUE;
+		} else if (mode == TagMode.AFTER_PARAM && actual == '"') {
+			mode = TagMode.PARAM_VALUE_D;
 			paramValue = "";
-		} else if (mode == TagMode.PARAM_VALUE && !isSingleQuoted && !isDoubleQuoted) {
+		} else if (mode == TagMode.PARAM_VALUE_D && !isDoubleQuoted) {
 			mode = TagMode.NAN;
 			finishParameter(actual);
-		} else if (mode == TagMode.PARAM_VALUE && actual == '\n') {
-			paramValue += "\\\\n";
-		} else if (mode == TagMode.PARAM_VALUE) {
+			
+		} else if (mode == TagMode.AFTER_PARAM && actual == '\'') {
+			mode = TagMode.PARAM_VALUE_S;
+			paramValue = "";
+		} else if (mode == TagMode.PARAM_VALUE_S && !isSingleQuoted) {
+			mode = TagMode.NAN;
+			finishParameter(actual);
+		} else if (mode == TagMode.PARAM_VALUE_S && actual == '"') {
+			paramValue += "\\\"";
+			
+		} else if ((mode == TagMode.PARAM_VALUE_S || mode == TagMode.PARAM_VALUE_D) && actual == '\n') {
+			//paramValue += "\\\\n";
+		} else if (mode == TagMode.PARAM_VALUE_S || mode == TagMode.PARAM_VALUE_D) {
 			paramValue += actual;
 		}
 		return false;
