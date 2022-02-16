@@ -232,7 +232,7 @@ public class TagParserTest {
                  true,
                  TagType.START,
                  Arrays.asList(
-                     new TagParserParam("param", "myClass \\\\n secondClass", '"'),
+                     new TagParserParam("param", "myClass  secondClass", '"'),
                      new TagParserParam("param2", "val", '"')
                  )
             },
@@ -240,5 +240,3 @@ public class TagParserTest {
 	}
 	
 }
-
-
