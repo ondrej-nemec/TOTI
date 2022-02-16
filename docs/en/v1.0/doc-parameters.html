@@ -1,0 +1,25 @@
+<h1>Template parameters</h1>
+
+<h2>HREF</h2>
+
+<p>
+	Create link to given controller and method. Controller must be full class name. Method is name of function. Controller and method are splited by <code>:</code>.
+</p>
+
+<pre><code class="language-html">
+&lt;a t:href="" /&gt;
+&lt;!-- example --&gt;
+&lt;a t:href="org.example.app.controllers.MyController:myAction" /&gt;
+</code></pre>
+
+<h2>Title</h2>
+
+<p>
+	Print translated message as title parameter.
+</p>
+
+<pre><code class="language-html">
+&lt;div t:title="" /&gt;
+&lt;!-- example --&gt;
+&lt;div t:title="messages.tooltips.div-title" /&gt;
+</code></pre>

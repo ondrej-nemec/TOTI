@@ -34,7 +34,6 @@ public class TemplateParserTest {
 		};
 		parser.parse(br, bw);
 	}
-
 	
 	public Object[] dataParseWorks() {
 		return new Object[] {
@@ -90,13 +89,7 @@ public class TemplateParserTest {
 				"some text <%-- comment --%> text continue",
 				"write(\"some text \");write(\" text continue\");"
 			},
-			// TODO this is deprecated
 			// inline
-			new Object[] {
-				true,
-				"the value is {{ inline java code }}!",
-				"write(\"the value is \");write( inline java code );write(\"!\");"
-			},
 			new Object[] {
 				true,
 				"the value is <%= inline java code %>!",
@@ -126,7 +119,7 @@ public class TemplateParserTest {
 					+ ");"
 					+ "write(\".\");"
 				},
-			// TODO add translated variables?
+			// TODO add translated variables? url variables?
 			// html tag
 			new Object[] {
 					true,
@@ -154,6 +147,32 @@ public class TemplateParserTest {
 					+ "--tagA-unpair-- {class=clazz}"
 					+ "write(\" text\");"
 				},
+            // tag in JS string
+            new Object[] {
+                true,
+                "var tag = '<a href=\"some-url'\r\n + id +'\">'",
+                "write(\"var tag = '\");"
+                + "write(\"<a href=\\\"some-url' + id +'\\\">\");"
+                + "write(\"'\");"
+            },
+			// tag with parameter
+			new Object[] {
+					true,
+					"text <div t:paramA=\"value\">",
+					"write(\"text \");"
+					+ "write(\"<div paramA=\\\"\"+"
+					+ "-- parameter - value --"
+					+ "+\"\\\">\");"
+					+ "write(\"\");"
+				},
+			new Object[] {
+					true,
+					"something <t:tagA t:paramA=\"clazz\"/> text",
+					"write(\"something \");"
+					+ "--tagA-unpair-- {paramA=-- parameter - clazz --}"
+					+ "write(\" text\");"
+				},
+			/***** inside *******/			
 			// variable in variable
 			new Object[] {
 					true,
@@ -176,20 +195,7 @@ public class TemplateParserTest {
 					+ "));"
 					+ "write(\"\");"
 				},
-			// variable in inline
-			// TODO this is deprecated
-			new Object[] {
-					true,
-					"class='{{ ${color} > 8 ? \"red\" : \"blue\" }}'",
-					"write(\"class='\");"
-					+ "write( "
-						+"Template.escapeHtml(getVariable(()->{"
-						+ "Object o0_0=getVariable(\"color\");"
-						+ "return o0_0;"
-						+ "}))"
-					  + " > 8 ? \"red\" : \"blue\" );"
-					+ "write(\"'\");"
-				},
+			// variable in returning
 			new Object[] {
 				true,
 				"class='<%= ${color} > 8 ? \"red\" : \"blue\" %>'",
@@ -202,14 +208,6 @@ public class TemplateParserTest {
 				  + " > 8 ? \"red\" : \"blue\" );"
 				+ "write(\"'\");"
 			},
-			// comment in tag
-			new Object[] {
-					true,
-					"something <t:tagA <%-- class=\"clazz\" --%>/> text",
-					"write(\"something \");"
-					+ "--tagA-unpair-- {}"
-					+ "write(\" text\");"
-				},
 			// variable in tag
 			new Object[] {
 					true,
@@ -245,38 +243,6 @@ public class TemplateParserTest {
 						+ "}))"
 					+ " + \"\\\" />\");write(\" text\");"
 				},
-			// inline in tag // TODO deprecated
-			new Object[] {
-					true,
-					"something <t:tagA class='{{ 9 > 4 ? 'D' : 'L' }}'/> text",
-					"write(\"something \");"
-					+ "--tagA-unpair-- {class=( 9 > 4 ? 'D' : 'L' )}"
-					+ "write(\" text\");"
-				},
-			new Object[] {
-					true,
-					"something <div class='{{ 9 > 4 ? 'D' : 'L' }}'/> text",
-					"write(\"something \");"
-					+ "write(\"<div class='\" + ( 9 > 4 ? 'D' : 'L' ) + \"' />\");"
-					+ "write(\" text\");"
-				},
-			// tag with parameter
-			new Object[] {
-					true,
-					"text <div t:paramA=\"value\">",
-					"write(\"text \");"
-					+ "write(\"<div paramA=\\\"\"+"
-					+ "-- parameter - value --"
-					+ "+\"\\\">\");"
-					+ "write(\"\");"
-				},
-			new Object[] {
-					true,
-					"something <t:tagA t:paramA=\"clazz\"/> text",
-					"write(\"something \");"
-					+ "--tagA-unpair-- {paramA=-- parameter - clazz --}"
-					+ "write(\" text\");"
-				},
 			// variable in code
 			new Object[] {
 					true,
@@ -303,17 +269,97 @@ public class TemplateParserTest {
 						+ "}) );"
 					+ "write(\" text\");"
 				},
-            // tag in JS string
-            new Object[] {
-                true,
-                "var tag = '<a href=\"some-url'\r\n + id +'\">'",
-                "write(\"var tag = '\");"
-                + "write(\"<a href=\\\"some-url' + id +'\\\">\");"
-                + "write(\"'\");"
-            },
+			// not returning in comment
+			new Object[] {
+					true,
+					"aa <%-- <% some code %> --%> bb",
+					"write(\"aa \");"
+					+ "write(\" bb\");"
+				},
+			// not returing in tag
+			new Object[] {
+					true,
+					"class='<% some code %>'",
+					"write(\"class='\");"
+					+ " some code "
+					+ "write(\"'\");"
+				},
+			// returnign in comment
+			new Object[] {
+					true,
+					"aa <%-- <%= some code %> --%> bb",
+					"write(\"aa \");"
+					+ "write(\" bb\");"
+				},
+			// returning in tag
+			new Object[] {
+				true,
+				"class='<%= ${color} > 8 ? \"red\" : \"blue\" %>'",
+				"write(\"class='\");"
+				+ "write( "
+					+"getVariable(()->{"
+					+ "Object o0_0=getVariable(\"color\");"
+					+ "return o0_0;"
+					+ "})"
+				  + " > 8 ? \"red\" : \"blue\" );"
+				+ "write(\"'\");"
+			},
+			new Object[] {
+					true,
+					"something <t:tagA class='<%= 10 > 8 ? \"red\" : \"blue\" %>'/> text",
+					"write(\"something \");"
+					+ "--tagA-unpair-- {class="
+						+"( 10 > 8 ? \"red\" : \"blue\" )" // TODO this need improve?
+						+ "}"
+					+ "write(\" text\");"
+				},
+			// comment in tag
+			new Object[] {
+					true,
+					"something <t:tagA <%-- class=\"clazz\" --%>/> text",
+					"write(\"something \");"
+					+ "--tagA-unpair-- {}"
+					+ "write(\" text\");"
+				},
+			// tag in comment
+			new Object[] {
+					true,
+					"something <%-- <t:tagA class=\"clazz\"/> --%> text",
+					"write(\"something \");"
+					+ "write(\" text\");"
+				},
+			
+			/* not supported */
+			// tag in tag
+	        new Object[] {
+		            true,
+		            "aa <t:tagA class='<t:tagA id=\"my-id\" >' > bb",
+		            "write(\"aa \");"
+		            + "--tagA-pair-start-- {class=}"
+		            + "write(\" bb\");"
+		        },
+	        // comment in comment
+	        new Object[] {
+		            true,
+		            "aa <%-- cc <%-- ee --%> dd --%> bb",
+		            "write(\"aa \");"
+		            + "write(\" dd --%> bb\");" // inside code finish main
+		        },
+			// TODO not-retu in not return
+			// TODO not retur in return
+			// TODO not-retu in variable
+			// TODO return in variable
+			// TODO return in not return
+			// TODO return in return
+			// TODO comment in variable
+			// TODO comment in not return
+			// TODO comment in return
+			// TODO tag in variable
+			// TODO tag in not return 
+			// TODO tag in return
 		};
 	}
-	
+
 	private Map<String, Parameter> getTestingParameters() {
 		Map<String, Parameter> parameters = new HashMap<>();
 		parameters.put("paramA", new Parameter() {

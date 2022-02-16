@@ -231,6 +231,7 @@ public class TagParser implements Parser {
 		}
 	}
 	
+	@Deprecated
 	public void addInline(InLineParser parser) {
 		if (paramValue != null) {
 			paramValue += getCodeFormat(parser.getCalling(), true);
@@ -239,7 +240,18 @@ public class TagParser implements Parser {
 		}
 	}
 	
+	public void addCode(JavaParser parser) {
+		if (paramValue != null) {
+			paramValue += getCodeFormat(parser.getContent(), true);
+		} else {
+			paramName += getCodeFormat(parser.getContent(), true);
+		}
+	}
+	
 	private String getCodeFormat(String calling, boolean isCode) {
+		if (calling.isEmpty()) {
+			return "";
+		}
 		String base = isCode ? "(%s)" : "%s";
 		if (isHtmlTag) {
 			return String.format("\" + " + base + " + \"", calling);

@@ -1,1 +1,153 @@
 <h1>Templates</h1>
+
+<p>
+	TOTI provides templating system that parse template to HTML. Usually, TOTI template ends with <code>.jsp</code>. TOTI templating system is not using JSP but has very similar syntax to JSP and JSTL. HTML code can be generated using special tags and parameters or directly by Java code. Variables can be used ,too.
+</p>
+
+<p class="alert alert-success">
+	Full working templating sample is <a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/template">here</a>.
+</p>
+
+<h2>Tags and parameters</h2>
+
+<h3>Tags</h3>
+
+<p>
+	TOTI tags generate HTML code. Tags looks like standart HTML tag, just tag name starts with <code>t:</code>. Example of <code>if</code> tag: <code>&lt;t:if&gt;</code>.
+</p>
+
+<p class="alert alert-success">
+	List of all TOTI tags is <a href="?file=doc-tags.html">here</a>.
+</p>
+
+<p>
+	Tag can be inside:
+	<ul>
+		<li>Text</li>
+		<li>Comment</li>
+	</ul>
+</p>
+
+<h3>Parameters</h3>
+
+<p>
+	TOTI parameters can be parameters of standart tag, but change/generate value. TOTI parameters start with <code>t:</code>. Example of <code>href</code> parameter: <code>&lt;a t:href="org.example.app.controllers.MyController:myAction" /&gt;</code>
+</p>
+
+<p class="alert alert-success">
+	List of all TOTI parameters is <a href="?file=doc-parameters.html">here</a>.
+</p>
+
+<p>
+	Parameter can be parameter of standart tag or TOTI tag.
+</p>
+
+<h2>Variables</h2>
+
+<p>
+	The variables can be passed to template by calling: <code>${<i>--variable-name--</i>}</code>. For example: <code>${myVariable}</code>.
+</p>
+
+<p class="alert alert-warning">
+	Variables are escaped by default. Escaping can prevent some cases of XSS. Even so, follow secirity rules. Good tips are <a href="https://owasp.org/">OWASP</a>.
+</p>
+
+<p>
+	Variable can be primitive value or some Object. Simply <code>${<i>--variable-name--</i>}</code> calls <code>toString</code> method (with <code>NULL</code> check). If variable is Object, you can call its methods.
+</p>
+
+<pre><code>
+// calling getMyParam() method
+${myVariable.getMyParam()}
+// optionally getters can be simplified to:
+${myVariable.myParam}
+
+// methods with parameter
+${myVariable.equals("some-text")}
+
+// more calling
+${myVariablegetMyParam().equals("some-text")}
+
+// variable inside variable
+${myVariable.equals(${mySecondVariable})}
+</code></pre>
+
+<p class="alert alert-warning">
+	You cannot call <code>void</code> methods.
+</p>
+
+<p>
+	Variable can be inside:
+	<ul>
+		<li>Text</li>
+		<li>Comment</li>
+		<li>Variable</li>
+		<li>Not returning code</li>
+		<li>Returnnig code</li>
+		<li>Tag</li>
+	</ul>
+</p>
+
+<h2>Java</h2>
+
+<p>
+	You can still write Java code inside template. TOTI provided three types of code: not returning code, returning code (result will be written to template) and comment.
+</p>
+
+<h3>Not returning code</h3>
+
+<p>
+	Starts with &lt;%, ends with %&gt;. Execute some code, but nothing is returned to template.
+</p>
+
+<pre><code>
+&lt;% some java code %&gt;
+</code></pre>
+
+<p>
+	Not returning code can be inside:
+	<ul>
+		<li>Text</li>
+		<li>Comment</li>
+		<li>Tag</li>
+	</ul>
+</p>
+
+<h3>Returning code</h3>
+
+<p>
+	Starts with &lt;%=, ends with %&gt;. The result is returned to template. Always is single line code. Usualy used for single line if.
+</p>
+
+<pre><code>
+&lt;%= this will be written to template %&gt;
+// with single line if
+&lt;%= 10 > 9 ? "yes" : "no" %&gt;
+</code></pre>
+
+<p>
+	Returning code can be inside:
+	<ul>
+		<li>Text</li>
+		<li>Comment</li>
+		<li>Tag</li>
+	</ul>
+</p>
+
+<h3>Comment</h3>
+
+<p>
+	Starts with &lt;%--, ends with --%&gt;. Nothing in space between this two marks will be in template.
+</p>
+
+<pre><code>
+&lt;%-- this will not be in template --%&gt;
+</code></pre>
+
+<p>
+	Comment can be inside:
+	<ul>
+		<li>Text</li>
+		<li>Tag</li>
+	</ul>
+</p>

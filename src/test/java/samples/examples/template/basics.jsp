@@ -22,10 +22,9 @@
 		<%--This text will not appear in HTML page --%>
 	</p>
 	
-	<h2>In line code</h2>
+	<h2>Returning code</h2>
 	
 	<p>
-		Java code with returning value: {{ 10 > 9 ? "Math works" : "Math does not works" }} <br>
 		Java code with returning value: <%= 10 > 9 ? "Math works" : "Math does not works" %>
 	</p>
 	
@@ -38,7 +37,10 @@
 	<h2>Tags</h2>
 	
 	<p>
-		Tag in example create link to this page: <t:link controller="samples.examples.template.TemplateExample" method="basics" />
+		Tag in example create link to this page: 
+		<t:link
+		 controller="samples.examples.template.TemplateExample" 
+		 method="basics" />
 	</p>
 	
 	<h2>Parameters</h2>
@@ -47,5 +49,53 @@
 		Parameter in example create link to this page: <a t:href="samples.examples.template.TemplateExample:basics">link</a>
 	</p>
 	
+	<h2>Inside each other</h2>
+	
+	<h3>Variable in Java code</h3>
+	
+	<% 
+		System.err.println("Title is: " + ${title});
+	%>
+	
+	<h3>Variable inside returning code</h3>
+	
+	<p>
+		Title variable is <%= ${title.length()|Integer} > 5 ? "long" : "short" %>
+	<p>
+	
+	<h3>Variable in comment = commented variable</h3>
+	
+	<%--This is commented ${title} --%>
+	
+	<h3>Variable in tag</h3>
+	
+	<p>
+		<t:if cond="${title.length()|Integer} > 5">
+			Title variable is long
+		<t:else />
+			Title variable is short
+		</t:if>
+	</p>	
+	
+	<h3>Returning code in Tag</h3>
+	
+	<p>
+		<t:if cond="<%= 10 > 5 %>">
+			Math works
+		<t:else />
+			Math not works
+		</t:if>
+	</p>
+	
+	<h3>Tag in comment</h3>
+	<%--
+	<p>
+		<t:if cond="${title.length()} > 5">
+			Title variable is long
+		<t:else />
+			Title variable is short
+		</t:if>
+	</p>
+	 --%>
 </body>
 </html>

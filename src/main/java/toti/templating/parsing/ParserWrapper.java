@@ -74,6 +74,8 @@ public class ParserWrapper {
 	public void addParser(ParserWrapper wrapper) {
 		if (type == ParserType.TAG && wrapper.type == ParserType.INLINE) {
 			TagParser.class.cast(parser).addInline(InLineParser.class.cast(wrapper.parser));
+		} else if (type == ParserType.TAG && wrapper.type == ParserType.JAVA) {
+			TagParser.class.cast(parser).addCode(JavaParser.class.cast(wrapper.parser));
 		}
 	}
 	
