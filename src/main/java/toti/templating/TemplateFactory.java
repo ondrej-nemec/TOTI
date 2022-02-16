@@ -255,9 +255,9 @@ public class TemplateFactory {
 		tags.add(new VariablePrintTag());
 		tags.add(new VariableSetTag());
 		tags.add(new WhileTag());
-		tags.add(new LayoutTag(/*actualFileDir*/));
+		tags.add(new LayoutTag());
 		tags.add(new BlockTag());
-		tags.add(new IncludeTag(/*actualFileDir*/));
+		tags.add(new IncludeTag());
 		tags.add(new ControlTag());
 		tags.add(new FormError());
 		tags.add(new FormInput());
