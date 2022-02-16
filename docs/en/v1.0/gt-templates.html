@@ -53,6 +53,13 @@
 </p>
 
 <p>
+	Print unescaped variable: <code>${myVariable|noescape}</code>. <br>
+	Get variable as given class: <code>${myVariable|String}</code> OR <code>${myVariable|boolean}</code>.
+	<br>
+	Get variable as given class and not escaped: <code>${myVariable|String|noescape}</code> OR <code>${myVariable|noescape|String}</code>.
+</p>
+
+<p>
 	Variable can be primitive value or some Object. Simply <code>${<i>--variable-name--</i>}</code> calls <code>toString</code> method (with <code>NULL</code> check). If variable is Object, you can call its methods.
 </p>
 
