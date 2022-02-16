@@ -21,6 +21,7 @@ import ji.common.functions.FileExtension;
 import ji.common.structures.ThrowingFunction;
 import ji.common.structures.Tuple2;
 import toti.templating.parameters.HrefParameter;
+import toti.templating.parameters.TitleParameter;
 import toti.templating.parsing.TemplateParser;
 import toti.templating.tags.*;
 
@@ -270,6 +271,7 @@ public class TemplateFactory {
 	protected List<Parameter> initParameters() {
 		List<Parameter> parameters = new ArrayList<>();
 		parameters.add(new HrefParameter());
+		parameters.add(new TitleParameter());
 		return parameters;
 	}
 	
