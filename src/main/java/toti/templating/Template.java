@@ -33,6 +33,10 @@ public interface Template {
 		return escapeHtml(variable);
 	}
 	
+	static boolean check(String string) {
+		return string.matches("^([a-zA-Z_]{1})([0-9a-zA-Z_]*)$");
+	}
+	
 	// parameter " &#x22; and ' &#x27;
 	// json < to \u003c  >  ;
 	

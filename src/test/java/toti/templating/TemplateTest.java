@@ -11,6 +11,33 @@ import junitparams.Parameters;
 @RunWith(JUnitParamsRunner.class)
 public class TemplateTest {
 
+	@Test
+	@Parameters(method = "dataCheckWorks")
+	public void testCheckWorks(String string, boolean expected) {
+		assertEquals(expected, Template.check(string));
+	}
+	
+	public Object[] dataCheckWorks() {
+		return new Object[] {
+			new Object[] {"not alpah num", false},
+			new Object[] {"$*aa", false},
+			new Object[] {"not-alpha", false},
+			
+			new Object[] {"12", false},
+			new Object[] {"", false},
+			
+			new Object[] {"justText", true},
+			new Object[] {"text123", true},
+			new Object[] {"text_123", true},
+			new Object[] {"JustText", true},
+			new Object[] {"Text123", true},
+			new Object[] {"Text_123", true},
+			new Object[] {"_", true},
+			new Object[] {"_12", true},
+			new Object[] {"_text", true}
+		};
+	}
+	
 	// escaping: https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html
 
 	@Test
