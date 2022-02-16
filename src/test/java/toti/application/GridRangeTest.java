@@ -1,4 +1,4 @@
-package toti;
+package toti.application;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,7 +7,6 @@ import org.junit.runner.RunWith;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
-import toti.application.GridRange;
 
 @RunWith(JUnitParamsRunner.class)
 public class GridRangeTest {
