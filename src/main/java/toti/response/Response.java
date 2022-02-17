@@ -120,7 +120,7 @@ public interface Response {
 	 * @param text
 	 * @return
 	 */
-	static Response getText(String text) {
+	static Response getText(Object text) {
 		return new TextResponse(StatusCode.OK, text);
 	}
 	
@@ -130,7 +130,7 @@ public interface Response {
 	 * @param text
 	 * @return
 	 */
-	static Response getText(StatusCode code, String text) {
+	static Response getText(StatusCode code, Object text) {
 		return new TextResponse(code, text);
 	}
 	

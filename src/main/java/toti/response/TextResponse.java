@@ -14,8 +14,8 @@ public class TextResponse implements Response {
 	private final String text;
 	private final StatusCode code;
 	
-	public TextResponse(StatusCode code, String text) {
-		this.text = text;
+	public TextResponse(StatusCode code, Object text) {
+		this.text = text == null ? "" : text.toString();
 		this.code = code;
 	}
 	
