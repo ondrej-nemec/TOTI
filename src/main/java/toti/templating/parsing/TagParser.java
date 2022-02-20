@@ -231,15 +231,6 @@ public class TagParser implements Parser {
 		}
 	}
 	
-	@Deprecated
-	public void addInline(InLineParser parser) {
-		if (paramValue != null) {
-			paramValue += getCodeFormat(parser.getCalling(), true);
-		} else {
-			paramName += getCodeFormat(parser.getCalling(), true);
-		}
-	}
-	
 	public void addCode(JavaParser parser) {
 		if (paramValue != null) {
 			paramValue += getCodeFormat(parser.getContent(), true);

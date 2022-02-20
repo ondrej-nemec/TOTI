@@ -201,7 +201,7 @@ public class TemplateParser {
 				}
 				cache = DEF;
 			// inline
-			} else if ((last == null || last.allowChildren()) && previous != '{' && actual == '{') {
+			/*} else if ((last == null || last.allowChildren()) && previous != '{' && actual == '{') {
 				//candidate
 				cache = previous;
 			} else if ((last == null || last.allowChildren()) && previous == '{' && actual == '{') {
@@ -214,7 +214,7 @@ public class TemplateParser {
 					writeParser(node, parsers, htmlTag, last, cache, previous, null);
 					writeParser(node, parsers, htmlTag, last, previous, actual, null);
 				}
-				cache = DEF;
+				cache = DEF;*/
 			// write
 			} else if (last != null) {
 				writeParser(
