@@ -32,8 +32,8 @@ public class TagsEndToEndTest {
 	private final static String PATH = "toti/templating/tags";
 	
 	@Test
-	@Parameters(method="dataLayout")
-	public void testLayout(String module, String template, String expected) throws Exception {
+	@Parameters(method="dataTags")
+	public void testTags(String module, String template, String expected) throws Exception {
 		User user = mock(User.class);
 		Identity identity = mock(Identity.class);
 		when(identity.getUser()).thenReturn(user);
@@ -78,7 +78,7 @@ public class TagsEndToEndTest {
 		assertEquals(expected, t);
 	}
 	
-	public Object[] dataLayout() {
+	public Object[] dataTags() {
 		return new Object[] {
 			// layout + block
 			new Object[] {
