@@ -113,7 +113,7 @@ public class TagParser implements Parser {
 		} else if (mode == TagMode.PARAM_VALUE_S && !isSingleQuoted) {
 			mode = TagMode.NAN;
 			finishParameter(actual);
-		} else if (mode == TagMode.PARAM_VALUE_S && actual == '"') {
+		} else if (mode == TagMode.PARAM_VALUE_S && isHtmlTag && actual == '"') {
 			paramValue += "\\\"";
 			
 		} else if ((mode == TagMode.PARAM_VALUE_S || mode == TagMode.PARAM_VALUE_D) && actual == '\n') {
@@ -222,7 +222,7 @@ public class TagParser implements Parser {
 		if (paramValue != null) {
 			// TODO test this
 			if (!isHtmlTag) {
-				paramValue += getVariableFormat(parser.getCalling(VariableSource.NO_ESCAPE));
+				paramValue += getCodeFormat(parser.getCalling(VariableSource.NO_ESCAPE), false);
 			} else if (paramName.startsWith("on")) {
 				paramValue += getCodeFormat(parser.getCalling(VariableSource.JAVASCRIPT_PARAMETER), false);
 			} else if (paramName.equals("src") || paramName.equals("href") || paramName.equals("action")) {
@@ -244,7 +244,7 @@ public class TagParser implements Parser {
 	public void addCode(JavaParser parser) {
 		if (paramValue != null) {
 			if (!isHtmlTag) {
-				paramValue += getVariableFormat(parser.getContent());
+				paramValue += getCodeFormat(parser.getContent(), true);
 			} else {
 				paramValue += getCodeFormat(parser.getContent(), true);
 			}
@@ -253,20 +253,12 @@ public class TagParser implements Parser {
 		}
 	}
 	
-	private String getVariableFormat(String calling) {
-		boolean split = tag.splitTextForVariable(paramName);
-		return
-			(split ? "\" + " : "")
-			+ getCodeFormat(calling, false)
-			+ (split ? "+ \"" : "");
-	}
-	
 	private String getCodeFormat(String calling, boolean isCode) {
 		if (calling.isEmpty()) {
 			return "";
 		}
 		String base = isCode ? "(%s)" : "%s";
-		if (isHtmlTag) {
+		if (isHtmlTag || tag.splitTextForVariable(paramName)) {
 			return String.format("\" + " + base + " + \"", calling);
 		}
 		return String.format(base, calling);
