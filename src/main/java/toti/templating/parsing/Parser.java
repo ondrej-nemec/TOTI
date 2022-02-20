@@ -8,6 +8,4 @@ public interface Parser {
 	 */
 	boolean accept(char previous, char actual, boolean isSingleQuoted, boolean isDoubleQuoted);
 	
-	void addVariable(VariableParser parser);
-	
 }

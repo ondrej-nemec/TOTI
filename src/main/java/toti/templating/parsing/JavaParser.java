@@ -83,7 +83,6 @@ public class JavaParser implements Parser {
 		return isReturning;
 	}
 
-	@Override
 	public void addVariable(VariableParser parser) {
 		if (state == State.JAVA) {
 			content.append(parser.getCalling(VariableSource.NO_ESCAPE));

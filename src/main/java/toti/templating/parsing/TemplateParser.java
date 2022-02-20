@@ -242,7 +242,7 @@ public class TemplateParser {
 				if (last.getType() == ParserType.VARIABLE) {
 					parsers.getLast().addVariable(last);
 				} else {
-					parsers.getLast().addParser(last);
+					parsers.getLast().addCode(last);
 				}
 			} else {
 				node.append("\");");

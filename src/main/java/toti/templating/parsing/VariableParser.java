@@ -199,7 +199,6 @@ public class VariableParser implements Parser {
 		return "Variable " + declare + " [" + getCalling(VariableSource.NO_ESCAPE) + "]";
 	}
 
-	@Override
 	public void addVariable(VariableParser var) {
 		declare.append(String.format("Object %s_aux=%s;", var.getVariableName(), var.getCalling(VariableSource.NO_ESCAPE)));
 		classes.add(var.clazz == null ? String.format("%s_aux.getClass()", var.getVariableName()) : var.clazz + ".class");

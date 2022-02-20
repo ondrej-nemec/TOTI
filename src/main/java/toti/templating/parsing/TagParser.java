@@ -207,7 +207,6 @@ public class TagParser implements Parser {
 		}
 	}
 
-	@Override
 	public void addVariable(VariableParser parser) {
 		if (paramValue != null) {
 			// TODO test this

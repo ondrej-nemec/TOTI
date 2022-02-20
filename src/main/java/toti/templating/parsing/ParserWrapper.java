@@ -61,16 +61,6 @@ public class ParserWrapper {
 		return type;
 	}
 	
-	public void addVariable(ParserWrapper var) {
-		parser.addVariable(VariableParser.class.cast(var.parser));
-	}
-	
-	public void addParser(ParserWrapper wrapper) {
-		if (type == ParserType.TAG && wrapper.type == ParserType.JAVA) {
-			TagParser.class.cast(parser).addCode(JavaParser.class.cast(wrapper.parser));
-		}
-	}
-	
 	/*******************/
 
 	public boolean isSingleQuoted() {
@@ -104,6 +94,36 @@ public class ParserWrapper {
 			case TAG: return true;
 			case VARIABLE: return false;
 			default: return true;
+		}
+	}
+	
+	public void addVariable(ParserWrapper var) {
+		VariableParser variable = VariableParser.class.cast(var.parser);
+		switch (type) {
+			case JAVA:
+				JavaParser.class.cast(parser).addVariable(variable);
+				break;
+			case TAG:
+				TagParser.class.cast(parser).addVariable(variable);
+				break;
+			case VARIABLE:
+				VariableParser.class.cast(parser).addVariable(variable);
+				break;
+			default:
+				break;
+		}
+	}
+	
+	public void addCode(ParserWrapper wrapper) {
+		JavaParser code = JavaParser.class.cast(wrapper.parser);
+		switch (type) {
+			case TAG:
+				TagParser.class.cast(parser).addCode(code);
+				break;
+			case JAVA:
+			case VARIABLE:
+			default:
+				break;
 		}
 	}
 	
