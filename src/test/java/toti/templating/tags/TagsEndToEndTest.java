@@ -142,12 +142,6 @@ public class TagsEndToEndTest {
 					"switchCase", "switchDefault.jsp", "Switch: Default"
 				},
 			new Object[] {
-					"switchCase", "switchCaseReturning.jsp", "Switch: Case"
-				},
-			new Object[] {
-					"switchCase", "switchCaseVariable.jsp", "Switch: Case"
-				},
-			new Object[] {
 					"switchCase", "switchVariable.jsp", "Switch: Case"
 				},
 			new Object[] {

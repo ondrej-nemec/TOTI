@@ -2,6 +2,7 @@ package toti.templating.tags;
 
 import java.util.Map;
 
+import ji.common.exceptions.LogicException;
 import toti.templating.Tag;
 
 public class SwitchTag implements Tag {
@@ -23,7 +24,7 @@ public class SwitchTag implements Tag {
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
-		return "";
+		throw new LogicException("Switch tag must be paired");
 	}
 
 }
