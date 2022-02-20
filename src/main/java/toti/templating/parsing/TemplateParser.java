@@ -184,7 +184,7 @@ public class TemplateParser {
 				}
 				cache = DEF;
 			} else if ((last == null || last.allowChildren()) && previous == '<') {
-				parsers.add(new ParserWrapper(new TagParser(actual)));
+				parsers.add(new ParserWrapper(new TagParser(actual, tags, parameters)));
 			// variable
 			} else if (actual == '$') {
 				//candidate
@@ -247,7 +247,6 @@ public class TemplateParser {
 			} else {
 				node.append("\");");
 				node.append(last.getContent(
-					tags, parameters,
 					htmlTags.size() == 0 ? null : htmlTags.getLast(),
 					isDoubleQuoted
 				));
