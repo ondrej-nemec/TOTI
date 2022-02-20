@@ -72,8 +72,6 @@ public class TagsEndToEndTest {
 				)
 				.append("list", Arrays.asList("a", "b", "c"))
 				.toMap();
-		// 
-		// 
 		String t = create(
 			module, template, variables, trans, mock(Authorizator.class), mock(MappedUrl.class), mock(Logger.class)
 		);
@@ -225,7 +223,7 @@ public class TagsEndToEndTest {
 			},
 			// if + else if + else
 			new Object[] {
-				"condition", "if.jsp", "Cond: Yes"
+				"condition", "ifTag.jsp", "Cond: Yes"
 			},
 			new Object[] {
 				"condition", "ifElse.jsp", "Cond: Yes"
@@ -253,7 +251,7 @@ public class TagsEndToEndTest {
 			},
 			// for + break + continue
 			new Object[] {
-				"cycles", "for.jsp", "For: 0 1 2"
+				"cycles", "forTag.jsp", "For: 0 1 2"
 			},
 			new Object[] {
 				"cycles", "forBreak.jsp", "For: 0"
@@ -294,7 +292,7 @@ public class TagsEndToEndTest {
 			},
 			// while + break + continue
 			new Object[] {
-				"cycles", "while.jsp", "Dowhile: 0 1 2"
+				"cycles", "whileTag.jsp", "Dowhile: 0 1 2"
 			},
 			new Object[] {
 				"cycles", "whileBreak.jsp", "Dowhile: 0"
