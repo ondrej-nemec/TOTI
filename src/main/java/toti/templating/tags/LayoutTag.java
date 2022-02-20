@@ -6,13 +6,12 @@ import toti.templating.Tag;
 import toti.templating.TemplateException;
 
 public class LayoutTag implements Tag {
-	/*
-	private final String actualFileDir;
-
-	public LayoutTag(String actualFile) {
-		this.actualFileDir = actualFile;
+	
+	@Override
+	public boolean splitTextForVariable(String name) {
+		return true;
 	}
-*/
+
 	@Override
 	public String getName() {
 		return "layout";
