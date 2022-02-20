@@ -64,5 +64,7 @@ dependencies {
 	testImplementation  group: 'org.mockito', name: 'mockito-core', version: '2.19.1'	
 	// https://mvnrepository.com/artifact/pl.pragmatists/JUnitParams
 	testImplementation  group: 'pl.pragmatists', name: 'JUnitParams', version: '1.1.1'
+	
+	testImplementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
 }
 
