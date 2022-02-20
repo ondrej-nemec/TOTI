@@ -23,7 +23,7 @@ public class FinallyTag implements Tag {
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
-		return "}finally{";
+		return "flushNode();}finally{initNode(new HashMap<>());";
 	}
 
 }

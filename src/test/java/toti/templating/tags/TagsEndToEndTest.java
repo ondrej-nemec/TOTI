@@ -160,12 +160,6 @@ public class TagsEndToEndTest {
 			new Object[] {
 					"tryCatch", "tryFinally.jsp", "Try: tried finally"
 				},
-			new Object[] {
-					"tryCatch", "tryCatchReturning.jsp", "Try: tried"
-				},
-			new Object[] {
-					"tryCatch", "tryCatchVariable.jsp", "Try: tried"
-				},
 			// variables
 			new Object[] {
 				"variables", "define.jsp", "Variable: NULL"
