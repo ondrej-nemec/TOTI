@@ -5,6 +5,10 @@ import java.util.Map;
 
 public interface Tag {
 
+	default boolean splitTextForVariable(String name) {
+		return false; // TODO no default
+	}
+	
 	String getName();
 	
 	String getPairStartCode(Map<String, String> params);

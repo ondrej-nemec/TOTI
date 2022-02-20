@@ -34,7 +34,14 @@ public class TagParser implements Parser {
 	private boolean isCandidate = false;
 	private List<TagParserParam> params = new LinkedList<>();
 	
-	public TagParser(char first) {
+	private final Map<String, Tag> tags;
+	private final Map<String, Parameter> parameters;
+	
+	private Tag tag;
+	
+	public TagParser(char first, Map<String, Tag> tags, Map<String, Parameter> parameters) {
+		this.parameters = parameters;
+		this.tags = tags;
 		if (first == '/') {
 			type = TagType.END;
 		} else {
@@ -121,6 +128,11 @@ public class TagParser implements Parser {
 		if (tagName.startsWith("t:")) {
 			isHtmlTag = false;
 			tagName = tagName.substring(2);
+			Tag tag = tags.get(tagName);
+			if (tag == null) {
+				throw new LogicException("Unknown TOTI tag " + tagName);
+			}
+			this.tag = tag;
 		}
 	}
 
@@ -148,7 +160,7 @@ public class TagParser implements Parser {
 		return params;
 	}
 
-	public String getAsString(Map<String, Parameter> parameters) {
+	public String getHtmlString() {
 		StringBuilder paramString = new StringBuilder();
 		params.forEach((param)->{
 			paramString.append(" ");
@@ -180,8 +192,7 @@ public class TagParser implements Parser {
 		);
 	}
 	
-	public String getAsString(Map<String, Tag> tags, Map<String, Parameter> parameters) {
-		Tag tag = tags.get(tagName);
+	public String getTotiTag() {
 		if (tag == null) {
 			throw new LogicException("Unknown TOTI tag " + tagName);
 		}
@@ -211,7 +222,7 @@ public class TagParser implements Parser {
 		if (paramValue != null) {
 			// TODO test this
 			if (!isHtmlTag) {
-				paramValue += getCodeFormat(parser.getCalling(VariableSource.NO_ESCAPE), false);
+				paramValue += getVariableFormat(parser.getCalling(VariableSource.NO_ESCAPE));
 			} else if (paramName.startsWith("on")) {
 				paramValue += getCodeFormat(parser.getCalling(VariableSource.JAVASCRIPT_PARAMETER), false);
 			} else if (paramName.equals("src") || paramName.equals("href") || paramName.equals("action")) {
@@ -229,13 +240,25 @@ public class TagParser implements Parser {
 			}
 		}
 	}
-	
+
 	public void addCode(JavaParser parser) {
 		if (paramValue != null) {
-			paramValue += getCodeFormat(parser.getContent(), true);
+			if (!isHtmlTag) {
+				paramValue += getVariableFormat(parser.getContent());
+			} else {
+				paramValue += getCodeFormat(parser.getContent(), true);
+			}
 		} else {
 			paramName += getCodeFormat(parser.getContent(), true);
 		}
+	}
+	
+	private String getVariableFormat(String calling) {
+		boolean split = tag.splitTextForVariable(paramName);
+		return
+			(split ? "\" + " : "")
+			+ getCodeFormat(calling, false)
+			+ (split ? "+ \"" : "");
 	}
 	
 	private String getCodeFormat(String calling, boolean isCode) {

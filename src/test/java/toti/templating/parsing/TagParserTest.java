@@ -3,6 +3,7 @@ package toti.templating.parsing;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Ignore;
@@ -22,7 +23,7 @@ public class TagParserTest {
 	@Test
 	@Ignore
 	public void testAddVariable() {
-		TagParser parser = new TagParser('d');
+		TagParser parser = new TagParser('d', new HashMap<>(), new HashMap<>());
 		VariableParser var = new VariableParser(0);
 		
 		ParsingSimulator.simulate(parser, "iv class='-");
@@ -49,7 +50,7 @@ public class TagParserTest {
 			String text, boolean finished, 
 			String tagName, boolean isHtml, TagType type,
 			List<TagParserParam> parameters) {
-		TagParser parser = new TagParser(text.charAt(0));
+		TagParser parser = new TagParser(text.charAt(0), new HashMap<>(), new HashMap<>());
 		assertEquals(finished, ParsingSimulator.simulate(parser, text.substring(1)));
 		assertEquals(type, parser.getTagType());
 		assertEquals(parameters, parser.getParams());

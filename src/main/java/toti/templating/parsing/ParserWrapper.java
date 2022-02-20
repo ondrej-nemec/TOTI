@@ -1,10 +1,7 @@
 package toti.templating.parsing;
 
 import java.util.LinkedList;
-import java.util.Map;
 
-import toti.templating.Parameter;
-import toti.templating.Tag;
 import toti.templating.parsing.enums.VariableSource;
 import toti.templating.parsing.enums.ParserType;
 import toti.templating.parsing.enums.TagType;
@@ -127,7 +124,7 @@ public class ParserWrapper {
 		}
 	}
 	
-	public String getContent(Map<String, Tag> tags, Map<String, Parameter> parameters, String element, Boolean isDoubleQuoted) {
+	public String getContent(String element, Boolean isDoubleQuoted) {
 		switch (type) {
 			case JAVA:
 				JavaParser java = JavaParser.class.cast(parser);
@@ -138,9 +135,9 @@ public class ParserWrapper {
 			case TAG:
 				TagParser tag = TagParser.class.cast(parser);
 				if (tag.isHtmlTag()) {
-					return String.format("write(\"%s\");",tag.getAsString(parameters));
+					return String.format("write(\"%s\");",tag.getHtmlString());
 				}
-				return tag.getAsString(tags, parameters);
+				return tag.getTotiTag();
 			case VARIABLE:
 				VariableParser variable = VariableParser.class.cast(parser);
 				if ("style".equals(element)) {
