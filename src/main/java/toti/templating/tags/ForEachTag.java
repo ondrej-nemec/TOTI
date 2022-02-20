@@ -14,6 +14,7 @@ public class ForEachTag implements Tag {
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
+		// TODO nepouzivat Template.to*, ale dictionaryValue -> pujde pouzit JSON
 		if (params.get("map") != null) {
 			String[] keyP = parseItem(params.get("key"));
 			String[] valueP = parseItem(params.get("value"));

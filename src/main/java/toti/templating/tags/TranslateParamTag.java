@@ -4,6 +4,7 @@ import java.util.Map;
 
 import toti.templating.Tag;
 
+@Deprecated
 public class TranslateParamTag implements Tag {
 
 	@Override

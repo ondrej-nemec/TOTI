@@ -31,7 +31,7 @@ public class TranslateTag implements Tag {
 			}
 		});
 		variables.append(".toMap()");
-		if (params.get("variable") != null) {
+		if (params.get("variable") != null) { // TODO remove it after code/variable handling
 			return String.format(
 				"write(Template.escapeVariable(translator.translate(%s, %s)));",
 				params.get("variable"), variables.toString()

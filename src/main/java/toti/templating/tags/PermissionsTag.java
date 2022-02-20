@@ -13,12 +13,12 @@ public class PermissionsTag implements Tag {
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
-		return getNotPairCode(params) + "{";
+		return getNotPairCode(params) + "{initNode(new HashMap<>());";
 	}
 
 	@Override
 	public String getPairEndCode(Map<String, String> params) {
-		return "}";
+		return "flushNode();}";
 	}
 
 	@Override

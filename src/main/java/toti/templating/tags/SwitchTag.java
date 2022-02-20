@@ -18,7 +18,7 @@ public class SwitchTag implements Tag {
 
 	@Override
 	public String getPairEndCode(Map<String, String> params) {
-		return "*/}";
+		return "/**/}";
 	}
 
 	@Override

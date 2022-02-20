@@ -23,6 +23,6 @@ public class DefaultTag implements Tag {
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
-		return getPairStartCode(params) + getPairEndCode(params);
+		return getPairStartCode(params); // + getPairEndCode(params);
 	}
 }
