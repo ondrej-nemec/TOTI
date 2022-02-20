@@ -1,0 +1,1 @@
+Layout from this module <t:include block="mainContent" />

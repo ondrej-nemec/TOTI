@@ -1,0 +1,1 @@
+Set: <t:var type="Object" name="someVariable" /><t:set name="someVariable" value="123" /><t:out name="someVariable" />

@@ -1,0 +1,1 @@
+<t:layout path="layout.jsp" module="module"/><t:block name="mainContent">Content</t:block>

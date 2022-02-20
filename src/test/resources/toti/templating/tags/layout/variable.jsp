@@ -1,0 +1,1 @@
+<t:layout path="${layout}" /><t:block name="mainContent">Content</t:block>

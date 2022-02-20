@@ -1,0 +1,1 @@
+Try: <t:try>tried<t:catch exception="${exceptionClass}" name="e">cached</t:try>

@@ -1,0 +1,1 @@
+Switch: <t:switch object="123" ><t:case cond="${caseValue}" />Case</t:case></t:switch>

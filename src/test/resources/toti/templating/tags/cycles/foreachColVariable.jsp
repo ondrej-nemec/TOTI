@@ -1,0 +1,1 @@
+Collection: <t:foreach item="String item" collection="${list}">${item}</t:foreach>

@@ -1,0 +1,1 @@
+Trans: <t:trans variable="<%= "some.key" %>" />

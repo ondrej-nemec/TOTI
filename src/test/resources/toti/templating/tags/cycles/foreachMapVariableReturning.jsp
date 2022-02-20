@@ -1,0 +1,1 @@
+Map: <t:foreach key="String key" value="String value" map="<%= new ji.common.structures.MapInit<String, String>().append("a", "aa").append("b", "bb").append("c", "cc").toMap() %>">${item}</t:foreach>

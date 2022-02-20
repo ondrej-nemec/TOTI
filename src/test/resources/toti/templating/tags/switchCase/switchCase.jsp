@@ -1,0 +1,1 @@
+Switch: <t:switch object="123" ><t:case cond="123" /><t:case cond="124">Case</t:case><t:case cond="125">Case2</t:case></t:switch>

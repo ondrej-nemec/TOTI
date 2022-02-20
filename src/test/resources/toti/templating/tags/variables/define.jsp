@@ -1,0 +1,1 @@
+Variable: <t:var name="someVariable" /><t:out name="someVariable" />

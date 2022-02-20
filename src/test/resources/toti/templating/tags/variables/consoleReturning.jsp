@@ -1,0 +1,1 @@
+Console: <t:console value="<%= "some text" %>" />
