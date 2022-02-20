@@ -6,13 +6,12 @@ import toti.templating.Tag;
 import toti.templating.TemplateException;
 
 public class IncludeTag implements Tag {
-	/*
-	private final String actualFileDir;
-
-	public IncludeTag(String actualFile) {
-		this.actualFileDir = actualFile;
+	
+	@Override
+	public boolean splitTextForVariable(String name) {
+		return true;
 	}
-*/
+	
 	@Override
 	public String getName() {
 		return "include";
@@ -34,6 +33,21 @@ public class IncludeTag implements Tag {
 			throw new TemplateException("Tag 'include' has to contains parameter 'block' or 'file'");
 		}
 		if (params.get("block") != null) {
+			StringBuilder code = new StringBuilder();
+			code.append(String.format(
+				"getBlock(\"%s\",%s)", 
+				params.get("block"),
+				params.get("optional") == null ? "true" : "false"
+			));
+			code.append(".accept(new MapInit<String, Object>()");
+			params.forEach((name, value)->{
+				if (!name.equals("block") && !name.equals("optional")) {
+					code.append(String.format(".append(\"%s\", \"%s\")", name, value));
+				}
+			});
+			code.append(".toMap());");
+			return code.toString();
+			/*
 			StringBuilder code = new StringBuilder("{");
 			code.append(String.format(
 				"ThrowingConsumer<Map<String, Object>,Exception> %s = getBlock(\"%s\");",
@@ -52,6 +66,7 @@ public class IncludeTag implements Tag {
 			code.append("}");
 			code.append("}");
 			return code.toString(); // String.format("b.append(blocks.get(\"%s\").toString());", params.get("block"));
+			*/
 		}
 		StringBuilder code = new StringBuilder("{");
 		if (params.get("module") == null) {
