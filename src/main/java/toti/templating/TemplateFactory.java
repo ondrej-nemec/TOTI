@@ -191,11 +191,12 @@ public class TemplateFactory {
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
 		List<String> optionList = new ArrayList<String>();
 		optionList.addAll(Arrays.asList("-classpath", System.getProperty("java.class.path")));
-		TemplateDiagnostic diagnostic = new TemplateDiagnostic();
+		TemplateDiagnostic diagnostic = new TemplateDiagnostic(namespace, templateFile);
 		compiler.getTask(diagnostic, null, diagnostic, optionList, null, fileManager.getJavaFileObjects(file)).call();
 		if (diagnostic.isError()) {
-			System.err.println(diagnostic.getError());
-			throw new TemplateException("Some unknow syntax error in " + templateFile);
+			throw new TemplateException(diagnostic.getError());
+		//	System.err.println(diagnostic.getError());
+		//	throw new TemplateException("Some unknow syntax error in " + templateFile);
 		}
 		
 		//*/
@@ -229,7 +230,6 @@ public class TemplateFactory {
 
 	/**
 	 * Protected for test purpose only
-	 * @param actualFileDir
 	 * @return
 	 */
 	protected List<Tag> initTags() {
@@ -248,7 +248,6 @@ public class TemplateFactory {
 		tags.add(new ForTag());
 		tags.add(new IfTag());
 		tags.add(new SwitchTag());
-		tags.add(new TranslateParamTag());
 		tags.add(new TranslateTag());
 		tags.add(new TryTag());
 		tags.add(new VariableDefineTag());
