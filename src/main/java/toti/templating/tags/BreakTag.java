@@ -4,6 +4,7 @@ import java.util.Map;
 
 import toti.templating.Tag;
 
+// this tag cannot be used for break switch - it is in case
 public class BreakTag implements Tag {
 
 	@Override
@@ -13,6 +14,7 @@ public class BreakTag implements Tag {
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
+		// double flushNode - break usualy inside if
 		return "if(true){flushNode();flushNode();break;}";
 	}
 
