@@ -1,1 +1,1 @@
-Map: <t:foreach key="String key" value="String value" map="${map}">${item}</t:foreach>
+Map:<t:foreach key="String key" value="String value" map="${map}"> ${key}:${value}</t:foreach>

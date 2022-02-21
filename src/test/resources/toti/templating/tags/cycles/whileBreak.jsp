@@ -1,1 +1,1 @@
-While: <% int i = 0; %><t:while cond="i < 3"> ${i}<% i++; %><t:if cond="i > 1"><t:break></t:if></t:while>
+While:<t:var type="Integer" name="i" value="0"/><t:while cond="i < 3"> ${i}<t:set name="i" value="i+1"/><t:if cond="i > 1"><t:break></t:if></t:while>

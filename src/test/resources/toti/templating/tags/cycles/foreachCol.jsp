@@ -1,1 +1,1 @@
-Collection: <t:foreach item="String item" collection='["a", "b", "c"]'>${item}</t:foreach>
+Collection:<t:foreach item="String item" collection='["a", "b", "c"]'> ${item}</t:foreach>

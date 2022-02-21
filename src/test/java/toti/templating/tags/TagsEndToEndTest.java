@@ -66,8 +66,8 @@ public class TagsEndToEndTest {
 					"map",
 					new MapInit<String, String>()
 					.append("a", "aa")
-					.append("a", "bb")
-					.append("a", "cc")
+					.append("b", "bb")
+					.append("c", "cc")
 					.toMap()
 				)
 				.append("list", Arrays.asList("a", "b", "c"))
@@ -262,35 +262,35 @@ public class TagsEndToEndTest {
 			},
 			// while + break + continue
 			new Object[] {
-				"cycles", "whileTag.jsp", "Dowhile: 0 1 2"
+				"cycles", "whileTag.jsp", "While: 0 1 2"
 			},
 			new Object[] {
-				"cycles", "whileBreak.jsp", "Dowhile: 0 1"
+				"cycles", "whileBreak.jsp", "While: 0 1"
 			},
 			new Object[] {
-				"cycles", "whileContinue.jsp", "Dowhile: 0 2"
+				"cycles", "whileContinue.jsp", "While: 1 3"
 			},
 			new Object[] {
-				"cycles", "whileReturning.jsp", "Dowhile: 0 1 2"
+				"cycles", "whileReturning.jsp", "While: 0 1 2"
 			},
 			new Object[] {
-				"cycles", "whileVariable.jsp", "Dowhile: 0 1 2"
+				"cycles", "whileVariable.jsp", "While: 0 1 2"
 			},
 			// do while + break + continue
 			new Object[] {
-				"cycles", "dowhile.jsp", "Dowhile: 0 1 2 3"
+				"cycles", "dowhile.jsp", "Dowhile: 0 1 2"
 			},
 			new Object[] {
 				"cycles", "dowhileBreak.jsp", "Dowhile: 0 1"
 			},
 			new Object[] {
-				"cycles", "dowhileContinue.jsp", "Dowhile: 0 1 3"
+				"cycles", "dowhileContinue.jsp", "Dowhile: 1 3"
 			},
 			new Object[] {
-				"cycles", "dowhileReturning.jsp", "Dowhile: 0 1 2 3"
+				"cycles", "dowhileReturning.jsp", "Dowhile: 0 1 2"
 			},
 			new Object[] {
-				"cycles", "dowhileVariable.jsp", "Dowhile: 0 1 2 3"
+				"cycles", "dowhileVariable.jsp", "Dowhile: 0 1 2"
 			},
 			// if current + else
 			new Object[] {
