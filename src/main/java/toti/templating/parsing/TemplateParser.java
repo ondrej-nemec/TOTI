@@ -175,17 +175,23 @@ public class TemplateParser {
 				cache = previous;
 			} else if ((last == null || last.allowChildren()) && previous == '<' && actual == '%') {
 				parsers.add(new ParserWrapper(new JavaParser()));
-			} else if ((last == null || last.allowChildren()) && previous == '<' && !Character.isLetter(actual) && actual != '/') {
-				if (last == null) {
+			} else if ((last == null /*|| last.allowChildren()*/) && previous == '<' && !Character.isLetter(actual) && actual != '/') {
+				//if (last == null) {
 					writeText(node, cache, previous);
 					writeText(node, previous, actual);
-				} else {
+				/*} else {
 					writeParser(node, parsers, htmlTag, last, cache, previous, null);
 					writeParser(node, parsers, htmlTag, last, previous, actual, null);
-				}
+				}*/
 				cache = DEF;
-			} else if ((last == null || last.allowChildren()) && previous == '<') {
+			} else if ((last == null /*|| last.allowChildren()*/) && previous == '<') {
 				parsers.add(new ParserWrapper(new TagParser(actual, tags, parameters)));
+			} else if (last != null && previous == '<' && actual == '$') {
+				writeParser(node, parsers, htmlTag, last, cache, previous, null);
+				cache = previous;
+			} else if (last != null && previous == '<') {
+				writeParser(node, parsers, htmlTag, last, cache, previous, null);
+				writeParser(node, parsers, htmlTag, last, previous, actual, null);
 			// variable
 			} else if (actual == '$') {
 				//candidate

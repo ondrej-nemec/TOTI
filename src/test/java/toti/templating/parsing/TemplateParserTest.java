@@ -335,7 +335,7 @@ public class TemplateParserTest {
 		            true,
 		            "aa <t:tagA class='<t:tagA id=\"my-id\" >' > bb",
 		            "write(\"aa \");"
-		            + "--tagA-pair-start-- {class=}"
+		            + "--tagA-pair-start-- {class=<t:tagA id=\"my-id\" >}"
 		            + "write(\" bb\");"
 		        },
 	        // comment in comment
@@ -345,6 +345,36 @@ public class TemplateParserTest {
 		            "write(\"aa \");"
 		            + "write(\" dd --%> bb\");" // inside code finish main
 		        },
+	        // tag with <
+			new Object[] {
+					true,
+					"<t:tag cond='a < b'>",
+					"write(\"\");"
+					+ "TS a < b"
+					+ "write(\"\");"
+				},
+			new Object[] {
+					true,
+					"<div cond='a < b'>",
+					"write(\"\");"
+					+ "write(\"<div cond='a < b'>\");"
+					+ "write(\"\");"
+				},
+			// tag with $
+			new Object[] {
+					true,
+					"<t:tag cond='a <${var}'>",
+					"write(\"\");"
+					+ "TS a <getVariable(()->{Object o0_0=getVariable(\"var\");return o0_0;})"
+					+ "write(\"\");"
+				},
+			new Object[] {
+					true,
+					"<t:tag cond='a < ${var}'>",
+					"write(\"\");"
+					+ "TS a < getVariable(()->{Object o0_0=getVariable(\"var\");return o0_0;})"
+					+ "write(\"\");"
+				},
 			// TODO not-retu in not return
 			// TODO not retur in return
 			// TODO not-retu in variable
@@ -387,6 +417,20 @@ public class TemplateParserTest {
 			}
 			@Override public String getName() {
 				return "tagA";
+			}
+		});
+		tags.put("tag", new Tag() {
+			@Override public String getPairStartCode(Map<String, String> params) {
+				return "TS " + params.get("cond");
+			}
+			@Override public String getPairEndCode(Map<String, String> params) {
+				return "TE " + params.get("cond");
+			}
+			@Override public String getNotPairCode(Map<String, String> params) {
+				return "T " + params.get("cond");
+			}
+			@Override public String getName() {
+				return "tag";
 			}
 		});
 		return tags;
