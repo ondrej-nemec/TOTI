@@ -1,1 +1,1 @@
-While: <% int i = 0; %><t:while cond="i < ${max}"> ${i}<% i++; %></t:while>
+While: <% int i = 0; %><t:while cond="i < ${max|int}"> ${i}<% i++; %></t:while>

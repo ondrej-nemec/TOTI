@@ -1,1 +1,1 @@
-Foreach: <t:foreach item="String item" collection="${list}">${item}<t:continue></t:foreach>
+Foreach:<t:foreach item="String item" collection="${list}"><t:if cond="${item.equals("b")}"><t:continue></t:if> ${item}</t:foreach>

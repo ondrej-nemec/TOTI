@@ -1,1 +1,1 @@
-For: <t:for from="int i = 0" to="i < ${max}" change="i++">${i}</t:for>
+For:<t:for from="int i = 0" to="i < ${max|Integer}" change="i++"> ${i}</t:for>

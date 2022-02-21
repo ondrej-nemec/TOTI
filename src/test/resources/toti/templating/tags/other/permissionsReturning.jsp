@@ -1,1 +1,1 @@
-Allowed: <t:allowed domain="my-domain" action="<%= toti.security.Action.READ %>">Yes</t:allowed>
+Allowed: <t:allowed domain="my-domain" action="<%= "read" %>">Yes</t:allowed>

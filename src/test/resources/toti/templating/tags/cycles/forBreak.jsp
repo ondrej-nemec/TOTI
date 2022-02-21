@@ -1,1 +1,1 @@
-For: <t:for from="int i = 0" to="i < 3" change="i++">${i}<t:break></t:for>
+For:<t:for from="int i = 0" to="i < 3" change="i++"> ${i}<t:if cond="i > 0"><t:break></t:if></t:for>

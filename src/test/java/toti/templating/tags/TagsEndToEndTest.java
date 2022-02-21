@@ -200,15 +200,6 @@ public class TagsEndToEndTest {
 			new Object[] {
 				"variables", "setVariable.jsp", "Set: some.key"
 			},
-			new Object[] {
-				"variables", "consoleText.jsp", "Console: "
-			},
-			new Object[] {
-				"variables", "consoleVariable.jsp", "Console: "
-			},
-			new Object[] {
-				"variables", "consoleReturning.jsp", "Console: "
-			},
 			// if + else if + else
 			new Object[] {
 				"condition", "ifTag.jsp", "Cond: Yes"
@@ -218,15 +209,6 @@ public class TagsEndToEndTest {
 			},
 			new Object[] {
 				"condition", "ifElseIf.jsp", "Cond: Another"
-			},
-			new Object[] {
-				"condition", "ifSingle.jsp", "Cond: Yes"
-			},
-			new Object[] {
-				"condition", "ifElseSingle.jsp", "Cond: Yes"
-			},
-			new Object[] {
-				"condition", "ifElseifSingle.jsp", "Cond: Another"
 			},
 			new Object[] {
 				"condition", "ifElseIfElse.jsp", "Cond: No"
@@ -242,10 +224,10 @@ public class TagsEndToEndTest {
 				"cycles", "forTag.jsp", "For: 0 1 2"
 			},
 			new Object[] {
-				"cycles", "forBreak.jsp", "For: 0"
+				"cycles", "forBreak.jsp", "For: 0 1"
 			},
 			new Object[] {
-				"cycles", "forContinue.jsp", "For: 0 1 2"
+				"cycles", "forContinue.jsp", "For: 0 2"
 			},
 			new Object[] {
 				"cycles", "forReturning.jsp", "For: 0 1 2"
@@ -255,10 +237,10 @@ public class TagsEndToEndTest {
 			},
 			// foreach + break + continue
 			new Object[] {
-				"cycles", "foreachBreak.jsp", "Foreach: a"
+				"cycles", "foreachBreak.jsp", "Foreach: a b"
 			},
 			new Object[] {
-				"cycles", "foreachContinue.jsp", "Foreach: a b c"
+				"cycles", "foreachContinue.jsp", "Foreach: a c"
 			},
 			new Object[] {
 				"cycles", "foreachCol.jsp", "Collection: a b c"
@@ -283,10 +265,10 @@ public class TagsEndToEndTest {
 				"cycles", "whileTag.jsp", "Dowhile: 0 1 2"
 			},
 			new Object[] {
-				"cycles", "whileBreak.jsp", "Dowhile: 0"
+				"cycles", "whileBreak.jsp", "Dowhile: 0 1"
 			},
 			new Object[] {
-				"cycles", "whileContinue.jsp", "Dowhile: 0 1 2"
+				"cycles", "whileContinue.jsp", "Dowhile: 0 2"
 			},
 			new Object[] {
 				"cycles", "whileReturning.jsp", "Dowhile: 0 1 2"
@@ -299,10 +281,10 @@ public class TagsEndToEndTest {
 				"cycles", "dowhile.jsp", "Dowhile: 0 1 2 3"
 			},
 			new Object[] {
-				"cycles", "dowhileBreak.jsp", "Dowhile: 0"
+				"cycles", "dowhileBreak.jsp", "Dowhile: 0 1"
 			},
 			new Object[] {
-				"cycles", "dowhileContinue.jsp", "Dowhile: 0 1 2 3"
+				"cycles", "dowhileContinue.jsp", "Dowhile: 0 1 3"
 			},
 			new Object[] {
 				"cycles", "dowhileReturning.jsp", "Dowhile: 0 1 2 3"
@@ -356,6 +338,16 @@ public class TagsEndToEndTest {
 					"other", "translateParamVariable.jsp", "Trans: some.key {param=some.value}"
 				},
 			//TODO link is missing - no controlelr
+			// print
+			new Object[] {
+					"variables", "consoleText.jsp", "Console: "
+				},
+				new Object[] {
+					"variables", "consoleVariable.jsp", "Console: "
+				},
+				new Object[] {
+					"variables", "consoleReturning.jsp", "Console: "
+				},
 		};
 	}
 	
