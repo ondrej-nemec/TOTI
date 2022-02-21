@@ -1,1 +1,1 @@
-Dowhile:<t:var type="Integer" name="i" value="0"/><t:dowhile> ${i}<% i++; %><t:if cond="i > 1"><t:break/></t:if></t:dowhile cond="i<3">
+Dowhile:<t:var type="Integer" name="i" value="0"/><t:dowhile> ${i}<t:set name="i" value="i+1"/><t:if cond="i > 1"><t:break/></t:if></t:dowhile cond="i<3">
