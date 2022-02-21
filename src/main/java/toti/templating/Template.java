@@ -3,6 +3,7 @@ package toti.templating;
 import java.util.LinkedList;
 import java.util.Map;
 
+import ji.common.structures.DictionaryValue;
 import ji.common.structures.ListDictionary;
 import ji.common.structures.MapDictionary;
 import toti.security.Authorizator;
@@ -209,11 +210,14 @@ public interface Template {
 	static <T> Iterable<T> toIterable(Object o, Class<T> clazz) {
 		if (o instanceof ListDictionary) {
 			return ListDictionary.class.cast(o).toList();
-		} else if (o.getClass().isArray()) {
+		}
+		if (o.getClass().isArray()) {
 			return java.util.Arrays.asList((T[])o);
-		} else /*if (o16_1 instanceof Iterable<?>)*/ {
+		}
+		if (o instanceof Iterable<?>) {
 			return (Iterable<T>) o;
 		}
+		return new DictionaryValue(o).getList();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -221,6 +225,9 @@ public interface Template {
 		if (o instanceof MapDictionary) {
 			return MapDictionary.class.cast(o).toMap();
 		}
-		return (Map<K, V>)o;
+		if (o instanceof Map) {
+			return (Map<K, V>)o;
+		}
+		return new DictionaryValue(o).getMap();
 	}
 }
