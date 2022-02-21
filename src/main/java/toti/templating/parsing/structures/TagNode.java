@@ -1,6 +1,8 @@
 package toti.templating.parsing.structures;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import ji.common.structures.ThrowingConsumer;
 
@@ -26,6 +28,13 @@ public class TagNode {
 	
 	public Map<String,ThrowingConsumer<Map<String, Object>, Exception>> getBlocks() {
 		return blocks;
+	}
+	
+	public void updateVariables(TagNode removed) {
+		Set<String> initializedInBlock = new HashSet<>(removed.variables.keySet());
+		initializedInBlock.removeAll(variables.keySet());
+		removed.variables.keySet().removeAll(initializedInBlock);
+		variables.putAll(removed.variables);
 	}
 
 	@Override
