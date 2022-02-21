@@ -7,6 +7,14 @@ import toti.templating.Tag;
 public class TranslateTag implements Tag {
 	
 	@Override
+	public boolean splitTextForVariable(String name) {
+		if ("variable".equals(name)) { // TODO remove variable
+			return false;
+		}
+		return true;
+	}
+	
+	@Override
 	public String getName() {		
 		return "trans";
 	}

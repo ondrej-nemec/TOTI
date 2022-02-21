@@ -5,6 +5,11 @@ import java.util.Map;
 import toti.templating.Tag;
 
 public class PermissionsTag implements Tag {
+	
+	@Override
+	public boolean splitTextForVariable(String name) {
+		return true;
+	}
 
 	@Override
 	public String getName() {

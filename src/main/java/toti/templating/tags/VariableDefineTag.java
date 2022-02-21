@@ -7,6 +7,14 @@ import toti.templating.Tag;
 public class VariableDefineTag implements Tag {
 	
 	@Override
+	public boolean splitTextForVariable(String name) {
+		if ("value".equals(name)) {
+			return true;
+		}
+		return Tag.super.splitTextForVariable(name);
+	}
+	
+	@Override
 	public String getName() {
 		return "var";
 	}
@@ -32,7 +40,7 @@ public class VariableDefineTag implements Tag {
 			define = "final " + define;
 		}
 		if (params.get("value") == null) {
-			define = String.format("addVariable(\"class_%s\", %s.class)", name, type) + define;
+			define = String.format("addVariable(\"class_%s\", %s.class);", name, type) + define;
 		}
 		return define + "=" + value + ";"
 				+ String.format("addVariable(\"%s\", %s);", name, value);
