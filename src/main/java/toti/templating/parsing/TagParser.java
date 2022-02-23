@@ -6,8 +6,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import ji.common.exceptions.LogicException;
+import ji.common.structures.DictionaryValue;
 import toti.templating.Parameter;
 import toti.templating.Tag;
+import toti.templating.TagVariableMode;
 import toti.templating.parsing.enums.VariableSource;
 import toti.templating.parsing.enums.TagType;
 import toti.templating.parsing.structures.TagParserParam;
@@ -23,8 +25,12 @@ public class TagParser implements Parser {
 		TAG, NAN, PARAM_NAME, AFTER_PARAM, PARAM_VALUE_S, PARAM_VALUE_D;
 	}
 	
+	enum ParMode {
+		CANDIDATE, CONCATED_LEFT, CONCATED_RIGHT, CONCATED
+	}
+	
 	private TagType type;
-	private boolean isHtmlTag = true;
+	//private boolean isHtmlTag = true;
 	
 	private String tagName = "";
 	private String paramName = "";
@@ -38,6 +44,8 @@ public class TagParser implements Parser {
 	private final Map<String, Parameter> parameters;
 	
 	private Tag tag;
+	private TagVariableMode tagParamMode;
+	private ParMode parmode;
 	
 	public TagParser(char first, Map<String, Tag> tags, Map<String, Parameter> parameters) {
 		this.parameters = parameters;
@@ -84,8 +92,10 @@ public class TagParser implements Parser {
 			
 		// parameter name
 		} else if (mode == TagMode.PARAM_NAME && Character.isWhitespace(actual)) {
+			finishParamName();
 			mode = TagMode.NAN;
 		} else if (mode == TagMode.PARAM_NAME && actual == '=') {
+			finishParamName();
 			mode = TagMode.AFTER_PARAM;
 		} else if (mode == TagMode.PARAM_NAME) {
 			paramName += actual;
@@ -113,20 +123,38 @@ public class TagParser implements Parser {
 		} else if (mode == TagMode.PARAM_VALUE_S && !isSingleQuoted) {
 			mode = TagMode.NAN;
 			finishParameter(actual);
-		} else if (mode == TagMode.PARAM_VALUE_S && isHtmlTag && actual == '"') {
-			paramValue += "\\\"";
+		} else if (mode == TagMode.PARAM_VALUE_S && tag == null && actual == '"') {
+			addParamValue("\\\""); // paramValue += "\\\"";
 			
 		} else if ((mode == TagMode.PARAM_VALUE_S || mode == TagMode.PARAM_VALUE_D) && actual == '\n') {
-			//paramValue += "\\\\n";
+			//ignore // paramValue += "\\\\n";
 		} else if (mode == TagMode.PARAM_VALUE_S || mode == TagMode.PARAM_VALUE_D) {
-			paramValue += actual;
+			addParamValue(actual); // paramValue += actual;
 		}
 		return false;
 	}
 	
+	private void finishParamName() {
+		if (tag != null) {
+			tagParamMode = tag.getMode(paramName);
+		}
+	}
+	
+	private void addParamValue(Object text) {
+		if (parmode != null) {
+			parmode = parmode == ParMode.CANDIDATE ? ParMode.CONCATED_RIGHT : ParMode.CONCATED;
+			paramValue += " + \"";
+		}
+		paramValue += text;
+	}
+	
+	private void addVariableToParamValue(Object text) {
+		paramValue += text;
+	}
+
 	private void finishTagName() {
 		if (tagName.startsWith("t:")) {
-			isHtmlTag = false;
+			//isHtmlTag = false;
 			tagName = tagName.substring(2);
 			Tag tag = tags.get(tagName);
 			if (tag == null) {
@@ -138,10 +166,30 @@ public class TagParser implements Parser {
 
 	private void finishParameter(char quote) {
 		if (!paramName.isEmpty()) {
-			params.add(new TagParserParam(paramName, paramValue, quote));
+			params.add(new TagParserParam(paramName, getParamValue(), quote));
 		}
+		parmode = null;
 		paramValue = null;
 		paramName = "";
+	}
+	
+	private String getParamValue() {
+		if (parmode != null) {
+			// TODO add dictionary value?
+			switch (parmode) {
+				case CONCATED: return String.format("\"%s\"", paramValue);
+				case CONCATED_LEFT: return String.format("\"%s", paramValue);
+				case CONCATED_RIGHT: return String.format("%s\"", paramValue);
+				default: return paramValue;
+			}
+		}
+		if (tag != null && tag.getMode(paramName) == TagVariableMode.OBJECT) {
+			DictionaryValue v = new DictionaryValue(paramValue);
+			if (!v.is(Double.class) || !v.is(Boolean.class)) {
+				return String.format("\"%s\"", paramValue);
+			}
+		}
+		return paramValue;
 	}
 
 	public TagType getTagType() {
@@ -149,7 +197,7 @@ public class TagParser implements Parser {
 	}
 
 	public boolean isHtmlTag() {
-		return isHtmlTag;
+		return tag == null;
 	}
 
 	public String getName() {
@@ -221,19 +269,24 @@ public class TagParser implements Parser {
 	public void addVariable(VariableParser parser) {
 		if (paramValue != null) {
 			// TODO test this
-			if (!isHtmlTag) {
-				paramValue += getCodeFormat(parser.getCalling(VariableSource.NO_ESCAPE), false);
+			if (tag != null) {
+				addVariableToParamValue(formatParser(parser.getCalling(VariableSource.NO_ESCAPE)));
+				// paramValue += formatParser(parser.getCalling(VariableSource.NO_ESCAPE));
 			} else if (paramName.startsWith("on")) {
-				paramValue += getCodeFormat(parser.getCalling(VariableSource.JAVASCRIPT_PARAMETER), false);
+				addParamValue(getCodeFormat(parser.getCalling(VariableSource.JAVASCRIPT_PARAMETER), false));
+				// paramValue += getCodeFormat(parser.getCalling(VariableSource.JAVASCRIPT_PARAMETER), false);
 			} else if (paramName.equals("src") || paramName.equals("href") || paramName.equals("action")) {
-				paramValue += getCodeFormat(parser.getCalling(VariableSource.URL), false);
+				addParamValue(getCodeFormat(parser.getCalling(VariableSource.URL), false));
+				// paramValue += getCodeFormat(parser.getCalling(VariableSource.URL), false);
 			} else if (paramName.equals("style")) {
-				paramValue += getCodeFormat(parser.getCalling(VariableSource.STYLE_PARAMETER), false);
+				addParamValue(getCodeFormat(parser.getCalling(VariableSource.STYLE_PARAMETER), false));
+				// paramValue += getCodeFormat(parser.getCalling(VariableSource.STYLE_PARAMETER), false);
 			} else {
-				paramValue += getCodeFormat(parser.getCalling(VariableSource.HTML), false);
+				addParamValue(getCodeFormat(parser.getCalling(VariableSource.HTML), false));
+				// paramValue += getCodeFormat(parser.getCalling(VariableSource.HTML), false);
 			}
 		} else {
-			if (isHtmlTag) {
+			if (tag == null) {
 				paramName += getCodeFormat(parser.getCalling(VariableSource.HTML), false);
 			} else {
 				paramName += getCodeFormat(parser.getCalling(VariableSource.NO_ESCAPE), false);
@@ -243,13 +296,32 @@ public class TagParser implements Parser {
 
 	public void addCode(JavaParser parser) {
 		if (paramValue != null) {
-			if (!isHtmlTag) {
-				paramValue += getCodeFormat(parser.getContent(), true);
+			if (tag != null) {
+				addVariableToParamValue(formatParser(parser.getContent()));
+				// paramValue += formatParser(parser.getContent());
 			} else {
-				paramValue += getCodeFormat(parser.getContent(), true);
+				addParamValue(getCodeFormat(parser.getContent(), true));
+				// paramValue += getCodeFormat(parser.getContent(), true);
 			}
 		} else {
 			paramName += getCodeFormat(parser.getContent(), true);
+		}
+	}
+	
+	private String formatParser(String calling) {
+		switch (tagParamMode) {
+			case STRING:
+				return String.format("\" + (%s) + \"", calling);
+			case CODE: return calling;
+			case OBJECT:
+				if (paramValue.isEmpty()) {
+					parmode = ParMode.CANDIDATE;
+					return String.format("(%s)", calling);
+				} else {
+					parmode = ParMode.CONCATED_LEFT;
+					return String.format("\" + (%s)", calling);
+				}
+			default: return calling;
 		}
 	}
 	
@@ -258,10 +330,7 @@ public class TagParser implements Parser {
 			return "";
 		}
 		String base = isCode ? "(%s)" : "%s";
-		if (isHtmlTag || tag.splitTextForVariable(paramName)) {
-			return String.format("\" + " + base + " + \"", calling);
-		}
-		return String.format(base, calling);
+		return String.format("\" + " + base + " + \"", calling);
 	}
 	
 }

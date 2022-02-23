@@ -5,8 +5,8 @@ import java.util.Map;
 
 public interface Tag {
 
-	default boolean splitTextForVariable(String name) {
-		return false; // TODO no default
+	default TagVariableMode getMode(String name) {
+		return TagVariableMode.OBJECT; // TODO no default
 	}
 	
 	String getName();

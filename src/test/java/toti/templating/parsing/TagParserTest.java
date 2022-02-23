@@ -5,13 +5,14 @@ import static org.junit.Assert.assertEquals;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+import toti.templating.Tag;
 import toti.templating.parsing.enums.TagType;
 import toti.templating.parsing.structures.TagParserParam;
 
@@ -19,30 +20,6 @@ import toti.templating.parsing.structures.TagParserParam;
 public class TagParserTest {
 	
 	// TODO test with invalid html -> throwing
-	
-	@Test
-	@Ignore
-	public void testAddVariable() {
-		TagParser parser = new TagParser('d', new HashMap<>(), new HashMap<>());
-		VariableParser var = new VariableParser(0);
-		
-		ParsingSimulator.simulate(parser, "iv class='-");
-		ParsingSimulator.simulate(var, "title}");
-		parser.addVariable(var);
-		ParsingSimulator.simulate(parser, "-'>");
-		/*
-		assertEquals(
-			"",
-			parser.getAsString()
-		);
-		*/
-		/*
-		"getVariable(()->{"
-				+ "Object o0_0=getVariable(\"title\");"
-				+ "return o0_0;"
-				+ "})",
-		 */
-	}
 
 	@Test
 	@Parameters(method="dataAcceptWorks")
@@ -50,7 +27,20 @@ public class TagParserTest {
 			String text, boolean finished, 
 			String tagName, boolean isHtml, TagType type,
 			List<TagParserParam> parameters) {
-		TagParser parser = new TagParser(text.charAt(0), new HashMap<>(), new HashMap<>());
+		Map<String, Tag> tags = new HashMap<>();
+		tags.put(tagName, new Tag() {
+			@Override public String getPairStartCode(Map<String, String> params) {
+				return null;
+			}
+			@Override public String getPairEndCode(Map<String, String> params) {
+				return null;
+			}
+			@Override public String getNotPairCode(Map<String, String> params) {
+				return null;
+			}
+			@Override public String getName() { return tagName; }
+		});
+		TagParser parser = new TagParser(text.charAt(0), tags, new HashMap<>());
 		assertEquals(finished, ParsingSimulator.simulate(parser, text.substring(1)));
 		assertEquals(type, parser.getTagType());
 		assertEquals(parameters, parser.getParams());

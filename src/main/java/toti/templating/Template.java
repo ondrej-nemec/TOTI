@@ -217,6 +217,9 @@ public interface Template {
 		if (o instanceof Iterable<?>) {
 			return (Iterable<T>) o;
 		}
+		if (o instanceof DictionaryValue) {
+			return DictionaryValue.class.cast(o).getList();
+		}
 		return new DictionaryValue(o).getList();
 	}
 	
@@ -227,6 +230,9 @@ public interface Template {
 		}
 		if (o instanceof Map) {
 			return (Map<K, V>)o;
+		}
+		if (o instanceof DictionaryValue) {
+			return DictionaryValue.class.cast(o).getMap();
 		}
 		return new DictionaryValue(o).getMap();
 	}

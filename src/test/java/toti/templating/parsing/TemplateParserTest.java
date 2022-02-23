@@ -14,6 +14,7 @@ import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import toti.templating.Parameter;
 import toti.templating.Tag;
+import toti.templating.TagVariableMode;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -135,7 +136,7 @@ public class TemplateParserTest {
 					true,
 					"something <t:tagA class=\"clazz\">content</t:tagA> text",
 					"write(\"something \");"
-					+ "--tagA-pair-start-- {class=clazz}"
+					+ "--tagA-pair-start-- {class=\"clazz\"}"
 					+ "write(\"content\");"
 					+ "--tagA-pair-end-- {}"
 					+ "write(\" text\");"
@@ -144,7 +145,7 @@ public class TemplateParserTest {
 					true,
 					"something <t:tagA class=\"clazz\"/> text",
 					"write(\"something \");"
-					+ "--tagA-unpair-- {class=clazz}"
+					+ "--tagA-unpair-- {class=\"clazz\"}"
 					+ "write(\" text\");"
 				},
             // tag in JS string
@@ -169,7 +170,7 @@ public class TemplateParserTest {
 					true,
 					"something <t:tagA t:paramA=\"clazz\"/> text",
 					"write(\"something \");"
-					+ "--tagA-unpair-- {paramA=-- parameter - clazz --}"
+					+ "--tagA-unpair-- {paramA=-- parameter - \"clazz\" --}"
 					+ "write(\" text\");"
 				},
 			/***** inside *******/			
@@ -214,10 +215,10 @@ public class TemplateParserTest {
 					"something <t:tagA class='${clazz}'/> text",
 					"write(\"something \");"
 					+ "--tagA-unpair-- {class="
-						+"getVariable(()->{"
+						+"(getVariable(()->{"
 						+ "Object o0_0=getVariable(\"clazz\");"
 						+ "return o0_0;"
-						+ "})"
+						+ "}))"
 						+ "}"
 					+ "write(\" text\");"
 				},
@@ -226,10 +227,10 @@ public class TemplateParserTest {
 					"something <t:tagA class=\"${clazz}\"/> text",
 					"write(\"something \");"
 					+ "--tagA-unpair-- {class="
-						+"getVariable(()->{"
+						+"(getVariable(()->{"
 						+ "Object o0_0=getVariable(\"clazz\");"
 						+ "return o0_0;"
-						+ "})"
+						+ "}))"
 						+ "}"
 					+ "write(\" text\");"
 				},
@@ -335,7 +336,7 @@ public class TemplateParserTest {
 		            true,
 		            "aa <t:tagA class='<t:tagA id=\"my-id\" >' > bb",
 		            "write(\"aa \");"
-		            + "--tagA-pair-start-- {class=<t:tagA id=\"my-id\" >}"
+		            + "--tagA-pair-start-- {class=\"<t:tagA id=\"my-id\" >\"}"
 		            + "write(\" bb\");"
 		        },
 	        // comment in comment
@@ -375,6 +376,84 @@ public class TemplateParserTest {
 					+ "TS a < getVariable(()->{Object o0_0=getVariable(\"var\");return o0_0;})"
 					+ "write(\"\");"
 				},
+			// params and variables
+			new Object[] {
+					true,
+					"<t:testing object=\"aaa\">", //  => String "aaa" 
+					"write(\"\");"
+					+ "write(\"aaa\");"
+					+ "write(\"\");"
+				},
+			new Object[] {
+					true,
+					"<t:testing object=\"<%= \"aaa\" %>\">", //  => String "aaa" 
+					"write(\"\");"
+					+ "write(( \"aaa\" ));"
+					+ "write(\"\");"
+				},
+			new Object[] {
+					true,
+					"<t:testing object=\"${var}\">", //  => String "aaa" 
+					"write(\"\");"
+					+ "write((getVariable(()->{"
+						+ "Object o0_0=getVariable(\"var\");return o0_0;})"
+					+ "));"
+					+ "write(\"\");"
+				},
+			new Object[] {
+					true,
+					"<t:testing object=\"aa${var}\">", //  => String "aaa" 
+					"write(\"\");"
+					+ "write("
+						+ "\"aa\" + (getVariable(()->{Object o0_0=getVariable(\"var\");return o0_0;}))"
+					+ ");"
+					+ "write(\"\");"
+				},
+			new Object[] {
+					true,
+					"<t:testing object=\"123\">", //  => int 123
+					"write(\"\");"
+					+ "write(123);"
+					+ "write(\"\");"
+				},
+			new Object[] {
+					true,
+					"<t:testing object=\"<%= 123 %>\">", //  => int 123
+					"write(\"\");"
+					+ "write(( 123 ));"
+					+ "write(\"\");"
+				},
+			new Object[] {
+					true,
+					"<t:testing code=\"${var|int} > 1\">", //  => getVariable
+					"write(\"\");"
+					+ "if(new DictionaryValue(getVariable(()->{"
+						+ "Object o0_0=getVariable(\"var\");return o0_0;})"
+					+ ").getValue(int.class) > 1){write(\"condition\");}"
+					+ "write(\"\");"
+				},
+			new Object[] {
+					true,
+					"<t:testing code=\"<%= (true ? 2 : 1) %> > 1\">", //  => getVariable
+					"write(\"\");"
+					+ "if( (true ? 2 : 1)  > 1){write(\"condition\");}"
+					+ "write(\"\");"
+				},
+			new Object[] {
+					true,
+					"<t:testing string=\"aaa.${var}\">", //  => String "aaa." + getVariable
+					"write(\"\");"
+					+ "write(\"aaa.\" + (getVariable(()->{Object o0_0=getVariable(\"var\");return o0_0;})) + \"\");"
+					+ "write(\"\");"
+				},
+			new Object[] {
+					true,
+					"<t:testing string=\"aaa.<%= \"bb\" %>\">", //  => String "aaa." + getVariable
+					"write(\"\");"
+					+ "write(\"aaa.\" + ( \"bb\" ) + \"\");"
+					+ "write(\"\");"
+				},
+			
 			// TODO not-retu in not return
 			// TODO not retur in return
 			// TODO not-retu in variable
@@ -420,6 +499,14 @@ public class TemplateParserTest {
 			}
 		});
 		tags.put("tag", new Tag() {
+			@Override public TagVariableMode getMode(String name) {
+				switch (name) {
+					case "cond": return TagVariableMode.CODE;
+					//case "string": return TagVariableMode.STRING;
+					//case "object": return TagVariableMode.OBJECT;
+				}
+				return Tag.super.getMode(name);
+			}
 			@Override public String getPairStartCode(Map<String, String> params) {
 				return "TS " + params.get("cond");
 			}
@@ -432,6 +519,31 @@ public class TemplateParserTest {
 			@Override public String getName() {
 				return "tag";
 			}
+		});
+		tags.put("testing", new Tag() {
+			@Override public TagVariableMode getMode(String name) {
+				switch (name) {
+					case "code": return TagVariableMode.CODE;
+					case "string": return TagVariableMode.STRING;
+					case "object": return TagVariableMode.OBJECT;
+				}
+				return Tag.super.getMode(name);
+			}
+			@Override public String getPairStartCode(Map<String, String> params) {
+				if (params.containsKey("code")) {
+					return String.format("if(%s){write(\"condition\");}", params.get("code"));
+				}
+				if (params.containsKey("string")) {
+					return String.format("write(\"%s\");", params.get("string"));
+				}
+				if (params.containsKey("object")) {
+					return String.format("write(%s);", params.get("object"));
+				}
+				return null;
+			}
+			@Override public String getPairEndCode(Map<String, String> params) { return null; }
+			@Override public String getNotPairCode(Map<String, String> params) { return null; }
+			@Override public String getName() { return "testing"; }
 		});
 		return tags;
 	}
