@@ -7,7 +7,7 @@ public class GridRange {
              return new GridRange(0, 0, 1);
         }
         if (pageSize < 1) {
-             return new GridRange(0, 0, 1);
+        	pageSize = totalCount; // return new GridRange(0, 0, 1);
         }
         if (pageIndex < 1) {
              pageIndex = 1;
