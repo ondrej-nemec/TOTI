@@ -110,10 +110,10 @@ public class TemplateParser {
 	private void loadFile(String fileName, BufferedWriter bw, String module) throws IOException {
 		InputStream is = null;
 		try {
-			is = InputStreamLoader.createInputStream(this.getClass(), fileName);
+			is = InputStreamLoader.createInputStream(this.getClass(), module + "/" + fileName);
 		} catch (FileNotFoundException e1) {
 			try {
-				is = InputStreamLoader.createInputStream(this.getClass(), module + "/" + fileName);
+				is = InputStreamLoader.createInputStream(this.getClass(), fileName);
 			} catch (FileNotFoundException e2) {
 				throw new FileNotFoundException("Template file not found: " + e1.getMessage() + " OR " + e2.getMessage());
 			}
