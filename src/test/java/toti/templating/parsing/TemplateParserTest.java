@@ -136,7 +136,7 @@ public class TemplateParserTest {
 					true,
 					"something <t:tagA class=\"clazz\">content</t:tagA> text",
 					"write(\"something \");"
-					+ "--tagA-pair-start-- {class=\"clazz\"}"
+					+ "--tagA-pair-start-- {class=clazz}"
 					+ "write(\"content\");"
 					+ "--tagA-pair-end-- {}"
 					+ "write(\" text\");"
@@ -145,7 +145,7 @@ public class TemplateParserTest {
 					true,
 					"something <t:tagA class=\"clazz\"/> text",
 					"write(\"something \");"
-					+ "--tagA-unpair-- {class=\"clazz\"}"
+					+ "--tagA-unpair-- {class=clazz}"
 					+ "write(\" text\");"
 				},
             // tag in JS string
@@ -170,7 +170,7 @@ public class TemplateParserTest {
 					true,
 					"something <t:tagA t:paramA=\"clazz\"/> text",
 					"write(\"something \");"
-					+ "--tagA-unpair-- {paramA=-- parameter - \"clazz\" --}"
+					+ "--tagA-unpair-- {paramA=-- parameter - clazz --}"
 					+ "write(\" text\");"
 				},
 			/***** inside *******/			
@@ -215,10 +215,10 @@ public class TemplateParserTest {
 					"something <t:tagA class='${clazz}'/> text",
 					"write(\"something \");"
 					+ "--tagA-unpair-- {class="
-						+"(getVariable(()->{"
+						+"getVariable(()->{"
 						+ "Object o0_0=getVariable(\"clazz\");"
 						+ "return o0_0;"
-						+ "}))"
+						+ "})"
 						+ "}"
 					+ "write(\" text\");"
 				},
@@ -227,10 +227,10 @@ public class TemplateParserTest {
 					"something <t:tagA class=\"${clazz}\"/> text",
 					"write(\"something \");"
 					+ "--tagA-unpair-- {class="
-						+"(getVariable(()->{"
+						+"getVariable(()->{"
 						+ "Object o0_0=getVariable(\"clazz\");"
 						+ "return o0_0;"
-						+ "}))"
+						+ "})"
 						+ "}"
 					+ "write(\" text\");"
 				},
@@ -310,7 +310,7 @@ public class TemplateParserTest {
 					"something <t:tagA class='<%= 10 > 8 ? \"red\" : \"blue\" %>'/> text",
 					"write(\"something \");"
 					+ "--tagA-unpair-- {class="
-						+"( 10 > 8 ? \"red\" : \"blue\" )" // TODO this need improve?
+						+" 10 > 8 ? \"red\" : \"blue\" "
 						+ "}"
 					+ "write(\" text\");"
 				},
@@ -336,7 +336,7 @@ public class TemplateParserTest {
 		            true,
 		            "aa <t:tagA class='<t:tagA id=\"my-id\" >' > bb",
 		            "write(\"aa \");"
-		            + "--tagA-pair-start-- {class=\"<t:tagA id=\\\"my-id\\\" >\"}"
+		            + "--tagA-pair-start-- {class=<t:tagA id=\"my-id\" >}"
 		            + "write(\" bb\");"
 		        },
 	        // comment in comment
@@ -381,23 +381,23 @@ public class TemplateParserTest {
 					true,
 					"<t:testing object=\"aaa\">", //  => String "aaa" 
 					"write(\"\");"
-					+ "write(\"aaa\");"
+					+ "write(aaa);"
 					+ "write(\"\");"
 				},
 			new Object[] {
 					true,
 					"<t:testing object=\"<%= \"aaa\" %>\">", //  => String "aaa" 
 					"write(\"\");"
-					+ "write(( \"aaa\" ));"
+					+ "write( \"aaa\" );"
 					+ "write(\"\");"
 				},
 			new Object[] {
 					true,
 					"<t:testing object=\"${var}\">", //  => String "aaa" 
 					"write(\"\");"
-					+ "write((getVariable(()->{"
+					+ "write(getVariable(()->{"
 						+ "Object o0_0=getVariable(\"var\");return o0_0;})"
-					+ "));"
+					+ ");"
 					+ "write(\"\");"
 				},
 			new Object[] {
@@ -405,7 +405,7 @@ public class TemplateParserTest {
 					"<t:testing object=\"aa${var}\">", //  => String "aaa" 
 					"write(\"\");"
 					+ "write("
-						+ "\"aa\" + (getVariable(()->{Object o0_0=getVariable(\"var\");return o0_0;}))"
+						+ "aagetVariable(()->{Object o0_0=getVariable(\"var\");return o0_0;})"
 					+ ");"
 					+ "write(\"\");"
 				},
@@ -420,7 +420,7 @@ public class TemplateParserTest {
 					true,
 					"<t:testing object=\"<%= 123 %>\">", //  => int 123
 					"write(\"\");"
-					+ "write(( 123 ));"
+					+ "write( 123 );"
 					+ "write(\"\");"
 				},
 			new Object[] {
@@ -459,7 +459,7 @@ public class TemplateParserTest {
 					"something <t:tagA class='<%= List<String> %>'/> text",
 					"write(\"something \");"
 					+ "--tagA-unpair-- {class="
-						+"( List<String> )"
+						+" List<String> "
 						+ "}"
 					+ "write(\" text\");"
 				},

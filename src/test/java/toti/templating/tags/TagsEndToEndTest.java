@@ -338,6 +338,7 @@ public class TagsEndToEndTest {
 					"other", "translateParamVariable.jsp", "Trans: some.key {param=some.value}"
 				},
 			//TODO link is missing - no controlelr
+			// TODO form tags
 			// print
 			new Object[] {
 					"variables", "consoleText.jsp", "Console: "
