@@ -123,27 +123,17 @@
 
 <h3>If</h3>
 
-<strong>Paired or unpaired</strong>
+<strong>Paired</strong>
 
-<p>Java <i>if</i>. If unpaired, works like Java <i>if</i> statement without <code>{}</code>. Text in <code>cond</code> parameter is standart Java code.</p>
+<p>Java <i>if</i>. Text in <code>cond</code> parameter is standart Java code.</p>
 
 <pre><code>
-// unpaired
-&lt;t:if cond="" /&gt;
-	// your code
-// example
-
-&lt;t:if cond='${message}.equals("text")' /&gt;
-	// your code
-
-
-// paired
 &lt;t:if cond="" &gt;
 	// your code
 &lt;/t:if &gt;
 
 // example
-&lt;t:if cond='${message}.equals("text")' &gt;
+&lt;t:if cond='${message.equals("text")}' &gt;
 	// your code
 &lt;/t:if &gt;
 </code></pre>
