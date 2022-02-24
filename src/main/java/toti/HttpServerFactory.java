@@ -92,6 +92,7 @@ public class HttpServerFactory {
 			templateFactories.put(module.getName(), templateFactory);
 			if (module.getTranslationPath() != null) {
 				trans.add(module.getTranslationPath());
+				trans.add(module.getPath() + "/" + module.getTranslationPath());
 			}
 			tasks.addAll(
 				module.initInstances(env, translator, register, database, TotiLogger.getLogger(module.getName()))
