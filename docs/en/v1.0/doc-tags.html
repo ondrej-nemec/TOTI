@@ -496,14 +496,18 @@
 
 <strong>Unpaired</strong>
 
-<p>Create link. You need method name and controller. The controller is optional. If not filled, the current controller is used. The controller is full class path. The method is name of method.</p>
+<p>Create link. You need method name and controller. The controller is optional. If not filled, the current controller is used. The controller is full class path. The method is name of method. URL parameters are in method parameter splited with <code>:</code>. All parameters except <code>controller</code> and <code>method</code> are GET parameters.</p>
 
 <pre><code>
 &lt;t:link controller="" method="" /&gt;
-// example 1
+// example 1: with controller
 &lt;t:link controller="org.example.main.controllers.FirstController" method="index" /&gt;
-// example 2
+// example 2: without controller
 &lt;t:link method="index" /&gt;
+// example 3: URL parameter
+&lt;t:link controller="org.example.main.controllers.FirstController" method="index:12" /&gt;
+// example 4: GET parameter
+&lt;t:link controller="org.example.main.controllers.FirstController" method="index" id="123" /&gt;
 </code></pre>
 
 
