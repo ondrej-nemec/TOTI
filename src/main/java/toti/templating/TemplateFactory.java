@@ -148,13 +148,13 @@ public class TemplateFactory {
 			try {
 				Template template = (Template)loader.loadClass(className).getDeclaredConstructor().newInstance();
 				if (lastModifition != template.getLastModification()) {
-					logger.warn("Class " + className + " has change, compile " + lastModifition + " vs " + template.getLastModification());
+					logger.warn("Class "  + module + " " + className + " has change, compile " + lastModifition + " vs " + template.getLastModification());
 					compileNewCache(templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), lastModifition, module);
 				} else {
 					return template;
 				}
 			} catch (ClassNotFoundException e) {
-				logger.warn("Class " + className + " not found, compile");
+				logger.warn("Class "  + module + " " + className + " not found, compile");
 				compileNewCache(templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), lastModifition, module);
 			}
 		}
