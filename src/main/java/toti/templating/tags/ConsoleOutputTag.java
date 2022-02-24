@@ -3,8 +3,14 @@ package toti.templating.tags;
 import java.util.Map;
 
 import toti.templating.Tag;
+import toti.templating.TagVariableMode;
 
 public class ConsoleOutputTag implements Tag{
+	
+	@Override
+	public TagVariableMode getMode(String name) {
+		return TagVariableMode.STRING;
+	}
 
 	@Override
 	public String getName() {
@@ -23,10 +29,10 @@ public class ConsoleOutputTag implements Tag{
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
-		if (params.get("text") != null) {
+		//if (params.get("text") != null) {
 			return "System.out.println(\"" + params.get("text") + "\");";
-		}
-		return "System.out.println(" + params.get("value") + ");";
+	//	}
+	//	return "System.out.println(" + params.get("value") + ");";
 	}
 
 }

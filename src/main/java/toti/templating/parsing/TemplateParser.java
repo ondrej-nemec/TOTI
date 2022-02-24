@@ -189,7 +189,7 @@ public class TemplateParser {
 			} else if (last != null && previous == '<' && actual == '$') {
 				writeParser(node, parsers, htmlTag, last, cache, previous, null);
 				cache = previous;
-			} else if (last != null && previous == '<') {
+			} else if (last != null && last.allowChildren() && previous == '<') {
 				writeParser(node, parsers, htmlTag, last, cache, previous, null);
 				writeParser(node, parsers, htmlTag, last, previous, actual, null);
 			// variable

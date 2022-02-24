@@ -4,8 +4,15 @@ import java.util.Map;
 
 import ji.common.exceptions.LogicException;
 import toti.templating.Tag;
+import toti.templating.TagVariableMode;
 
 public class SwitchTag implements Tag {
+	
+	@Override
+	public TagVariableMode getMode(String name) {
+		return TagVariableMode.CODE;
+		// throw new LogicException("case expressions must be constant expressions");
+	}
 
 	@Override
 	public String getName() {

@@ -3,15 +3,13 @@ package toti.templating.tags;
 import java.util.Map;
 
 import toti.templating.Tag;
+import toti.templating.TagVariableMode;
 
 public class TranslateTag implements Tag {
 	
 	@Override
-	public boolean splitTextForVariable(String name) {
-		if ("variable".equals(name)) { // TODO remove variable
-			return false;
-		}
-		return true;
+	public TagVariableMode getMode(String name) {
+		return TagVariableMode.STRING;
 	}
 	
 	@Override
@@ -34,17 +32,17 @@ public class TranslateTag implements Tag {
 		StringBuilder variables = new StringBuilder();
 		variables.append("new MapInit<String, Object>()");
 		params.forEach((name, value)->{
-			if (!name.equals("message") && !name.equals("variable")) {
+			if (!name.equals("message")/* && !name.equals("variable")*/) {
 				variables.append(String.format(".append(\"%s\", \"%s\")", name, value));
 			}
 		});
 		variables.append(".toMap()");
-		if (params.get("variable") != null) { // TODO remove it after code/variable handling
+	/*	if (params.get("variable") != null) { // TODO remove it after code/variable handling
 			return String.format(
 				"write(Template.escapeVariable(translator.translate(%s, %s)));",
 				params.get("variable"), variables.toString()
 			);
-		}
+		}*/
 		return String.format(
 			"write(Template.escapeVariable(translator.translate(\"%s\", %s)));",
 			params.get("message"), variables.toString()

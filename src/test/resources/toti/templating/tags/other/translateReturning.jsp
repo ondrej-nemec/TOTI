@@ -1,1 +1,1 @@
-Trans: <t:trans variable="<%= "some.key" %>" />
+Trans: <t:trans message="<%= "some.key" %>" />

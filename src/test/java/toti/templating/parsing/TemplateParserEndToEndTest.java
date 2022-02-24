@@ -12,6 +12,7 @@ import ji.files.text.basic.WriteText;
 import toti.logging.TotiLogger;
 import toti.templating.Parameter;
 import toti.templating.Tag;
+import toti.templating.TagVariableMode;
 import toti.templating.Template;
 import toti.templating.TemplateFactory;
 
@@ -25,6 +26,10 @@ public class TemplateParserEndToEndTest extends TemplateFactory {
 	public static void main(String[] args) {
 		try {
 			TemplateFactory.addTag(new Tag() {
+				
+				@Override public TagVariableMode getMode(String name) {
+					return TagVariableMode.NOT_SUPPORTED;
+				}
 				
 				@Override
 				public String getPairStartCode(Map<String, String> params) {

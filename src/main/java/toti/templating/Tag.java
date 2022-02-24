@@ -5,9 +5,7 @@ import java.util.Map;
 
 public interface Tag {
 
-	default TagVariableMode getMode(String name) {
-		return TagVariableMode.OBJECT; // TODO no default
-	}
+	TagVariableMode getMode(String name);
 	
 	String getName();
 	

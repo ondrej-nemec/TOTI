@@ -4,9 +4,14 @@ import java.util.Map;
 
 import ji.common.exceptions.LogicException;
 import toti.templating.Tag;
+import toti.templating.TagVariableMode;
 import toti.url.Link;
 
 public class LinkTag implements Tag {
+	
+	public TagVariableMode getMode(String name) {
+		return TagVariableMode.STRING;
+	}
 
 	@Override
 	public String getName() {

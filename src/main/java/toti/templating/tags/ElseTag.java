@@ -3,8 +3,13 @@ package toti.templating.tags;
 import java.util.Map;
 
 import toti.templating.Tag;
+import toti.templating.TagVariableMode;
 
 public class ElseTag implements Tag {
+	
+	public TagVariableMode getMode(String name) {
+		return TagVariableMode.NOT_SUPPORTED;
+	}
 
 	@Override
 	public String getName() {

@@ -3,15 +3,16 @@ package toti.templating.tags;
 import java.util.Map;
 
 import toti.templating.Tag;
+import toti.templating.TagVariableMode;
 
 public class VariableDefineTag implements Tag {
 	
 	@Override
-	public boolean splitTextForVariable(String name) {
-		if ("value".equals(name)) {
-			return true;
+	public TagVariableMode getMode(String name) {
+		if ("type".equalsIgnoreCase(name)) {
+			return TagVariableMode.CODE;
 		}
-		return Tag.super.splitTextForVariable(name);
+		return TagVariableMode.STRING;
 	}
 	
 	@Override

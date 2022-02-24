@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import toti.templating.Tag;
+import toti.templating.TagVariableMode;
 import toti.templating.parsing.enums.TagType;
 import toti.templating.parsing.structures.TagParserParam;
 
@@ -29,15 +30,12 @@ public class TagParserTest {
 			List<TagParserParam> parameters) {
 		Map<String, Tag> tags = new HashMap<>();
 		tags.put(tagName, new Tag() {
-			@Override public String getPairStartCode(Map<String, String> params) {
-				return null;
+			@Override public TagVariableMode getMode(String name) {
+				return TagVariableMode.STRING;
 			}
-			@Override public String getPairEndCode(Map<String, String> params) {
-				return null;
-			}
-			@Override public String getNotPairCode(Map<String, String> params) {
-				return null;
-			}
+			@Override public String getPairStartCode(Map<String, String> params) { return null; }
+			@Override public String getPairEndCode(Map<String, String> params) { return null; }
+			@Override public String getNotPairCode(Map<String, String> params) { return null; }
 			@Override public String getName() { return tagName; }
 		});
 		TagParser parser = new TagParser(text.charAt(0), tags, new HashMap<>());

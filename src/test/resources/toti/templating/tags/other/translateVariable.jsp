@@ -1,1 +1,1 @@
-Trans: <t:trans variable="${toTranslate|String}" />
+Trans: <t:trans message="${toTranslate|String}" />

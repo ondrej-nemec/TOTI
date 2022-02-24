@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import ji.common.exceptions.LogicException;
-import ji.common.structures.DictionaryValue;
 import toti.templating.Parameter;
 import toti.templating.Tag;
 import toti.templating.TagVariableMode;
@@ -175,21 +174,35 @@ public class TagParser implements Parser {
 	
 	private String getParamValue() {
 		if (parmode != null) {
-			// TODO add dictionary value?
 			switch (parmode) {
+			// TODO need escape?
 				case CONCATED: return String.format("\"%s\"", paramValue);
 				case CONCATED_LEFT: return String.format("\"%s", paramValue);
 				case CONCATED_RIGHT: return String.format("%s\"", paramValue);
 				default: return paramValue;
 			}
 		}
-		if (tag != null && tag.getMode(paramName) == TagVariableMode.OBJECT) {
-			DictionaryValue v = new DictionaryValue(paramValue);
-			if (!v.is(Double.class) || !v.is(Boolean.class)) {
-				return String.format("\"%s\"", paramValue);
-			}
+		if (tag != null && tag.getMode(paramName) == TagVariableMode.DICTIONARY_VALUE) {
+			return String.format("new DictionaryValue(\"%s\")", paramValue.replace("\"", "\\\""));
 		}
 		return paramValue;
+	}
+	
+	private String formatParser(String calling) {
+		switch (tagParamMode) {
+			case STRING:
+				return String.format("\" + (%s) + \"", calling);
+			case CODE: return calling;
+			case DICTIONARY_VALUE:
+				if (paramValue.isEmpty()) {
+					parmode = ParMode.CANDIDATE;
+					return String.format("(%s)", calling);
+				} else {
+					parmode = ParMode.CONCATED_LEFT;
+					return String.format("\" + (%s)", calling);
+				}
+			default: return calling;
+		}
 	}
 
 	public TagType getTagType() {
@@ -305,23 +318,6 @@ public class TagParser implements Parser {
 			}
 		} else {
 			paramName += getCodeFormat(parser.getContent(), true);
-		}
-	}
-	
-	private String formatParser(String calling) {
-		switch (tagParamMode) {
-			case STRING:
-				return String.format("\" + (%s) + \"", calling);
-			case CODE: return calling;
-			case OBJECT:
-				if (paramValue.isEmpty()) {
-					parmode = ParMode.CANDIDATE;
-					return String.format("(%s)", calling);
-				} else {
-					parmode = ParMode.CONCATED_LEFT;
-					return String.format("\" + (%s)", calling);
-				}
-			default: return calling;
 		}
 	}
 	

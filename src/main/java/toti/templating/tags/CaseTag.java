@@ -2,14 +2,15 @@ package toti.templating.tags;
 
 import java.util.Map;
 
-import ji.common.exceptions.LogicException;
 import toti.templating.Tag;
+import toti.templating.TagVariableMode;
 
 public class CaseTag implements Tag {
 	
 	@Override
-	public boolean splitTextForVariable(String name) {
-		throw new LogicException("case expressions must be constant expressions");
+	public TagVariableMode getMode(String name) {
+		return TagVariableMode.CODE;
+		// throw new LogicException("case expressions must be constant expressions");
 	}
 
 	@Override

@@ -3,8 +3,14 @@ package toti.templating.tags;
 import java.util.Map;
 
 import toti.templating.Tag;
+import toti.templating.TagVariableMode;
 
 public class VariablePrintTag implements Tag {
+	
+	@Override
+	public TagVariableMode getMode(String name) {
+		return TagVariableMode.STRING;
+	}
 	
 	@Override
 	public String getName() {

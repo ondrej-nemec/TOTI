@@ -2,14 +2,15 @@ package toti.templating.tags;
 
 import java.util.Map;
 
-import ji.common.exceptions.LogicException;
 import toti.templating.Tag;
+import toti.templating.TagVariableMode;
 
 public class CatchTag implements Tag {
-	
+
 	@Override
-	public boolean splitTextForVariable(String name) {
-		throw new LogicException("Variable or returning code cannot be resolved to a type");
+	public TagVariableMode getMode(String name) {
+		return TagVariableMode.CODE;
+		//throw new LogicException("Variable or returning code cannot be resolved to a type");
 	}
 
 	@Override

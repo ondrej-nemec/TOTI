@@ -3,12 +3,13 @@ package toti.templating.tags;
 import java.util.Map;
 
 import toti.templating.Tag;
+import toti.templating.TagVariableMode;
 
 public class PermissionsTag implements Tag {
 	
 	@Override
-	public boolean splitTextForVariable(String name) {
-		return true;
+	public TagVariableMode getMode(String name) {
+		return TagVariableMode.STRING;
 	}
 
 	@Override

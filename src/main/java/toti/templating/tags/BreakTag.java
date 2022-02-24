@@ -3,9 +3,14 @@ package toti.templating.tags;
 import java.util.Map;
 
 import toti.templating.Tag;
+import toti.templating.TagVariableMode;
 
 // this tag cannot be used for break switch - it is in case
 public class BreakTag implements Tag {
+	
+	public TagVariableMode getMode(String name) {
+		return TagVariableMode.NOT_SUPPORTED;
+	}
 
 	@Override
 	public String getName() {

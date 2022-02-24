@@ -336,7 +336,7 @@ public class TemplateParserTest {
 		            true,
 		            "aa <t:tagA class='<t:tagA id=\"my-id\" >' > bb",
 		            "write(\"aa \");"
-		            + "--tagA-pair-start-- {class=\"<t:tagA id=\"my-id\" >\"}"
+		            + "--tagA-pair-start-- {class=\"<t:tagA id=\\\"my-id\\\" >\"}"
 		            + "write(\" bb\");"
 		        },
 	        // comment in comment
@@ -453,6 +453,16 @@ public class TemplateParserTest {
 					+ "write(\"aaa.\" + ( \"bb\" ) + \"\");"
 					+ "write(\"\");"
 				},
+			// returning with < inside
+			new Object[] {
+					true,
+					"something <t:tagA class='<%= List<String> %>'/> text",
+					"write(\"something \");"
+					+ "--tagA-unpair-- {class="
+						+"( List<String> )"
+						+ "}"
+					+ "write(\" text\");"
+				},
 			
 			// TODO not-retu in not return
 			// TODO not retur in return
@@ -497,6 +507,9 @@ public class TemplateParserTest {
 			@Override public String getName() {
 				return "tagA";
 			}
+			@Override public TagVariableMode getMode(String name) {
+				return TagVariableMode.NOT_SUPPORTED;
+			}
 		});
 		tags.put("tag", new Tag() {
 			@Override public TagVariableMode getMode(String name) {
@@ -504,8 +517,8 @@ public class TemplateParserTest {
 					case "cond": return TagVariableMode.CODE;
 					//case "string": return TagVariableMode.STRING;
 					//case "object": return TagVariableMode.OBJECT;
+					default: return TagVariableMode.NOT_SUPPORTED;
 				}
-				return Tag.super.getMode(name);
 			}
 			@Override public String getPairStartCode(Map<String, String> params) {
 				return "TS " + params.get("cond");
@@ -526,8 +539,8 @@ public class TemplateParserTest {
 					case "code": return TagVariableMode.CODE;
 					case "string": return TagVariableMode.STRING;
 					case "object": return TagVariableMode.OBJECT;
+					default: return TagVariableMode.NOT_SUPPORTED;
 				}
-				return Tag.super.getMode(name);
 			}
 			@Override public String getPairStartCode(Map<String, String> params) {
 				if (params.containsKey("code")) {

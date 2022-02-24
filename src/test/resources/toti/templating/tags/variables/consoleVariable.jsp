@@ -1,1 +1,1 @@
-Console: <t:console value="${toTranslate}" />
+Console: <t:console text="${toTranslate}" />

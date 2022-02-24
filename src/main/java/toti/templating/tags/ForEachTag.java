@@ -3,9 +3,21 @@ package toti.templating.tags;
 import java.util.Map;
 
 import toti.templating.Tag;
+import toti.templating.TagVariableMode;
 import toti.templating.TemplateException;
 
 public class ForEachTag implements Tag {
+	
+	@Override
+	public TagVariableMode getMode(String name) {
+		if ("map".equals(name)) {
+			return TagVariableMode.DICTIONARY_VALUE;
+		}
+		if ("collection".equals(name)) {
+			return TagVariableMode.DICTIONARY_VALUE;
+		}
+		return TagVariableMode.CODE;
+	}
 
 	@Override
 	public String getName() {
@@ -14,7 +26,6 @@ public class ForEachTag implements Tag {
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
-		// TODO nepouzivat Template.to*, ale dictionaryValue -> pujde pouzit JSON
 		if (params.get("map") != null) {
 			String[] keyP = parseItem(params.get("key"));
 			String[] valueP = parseItem(params.get("value"));
