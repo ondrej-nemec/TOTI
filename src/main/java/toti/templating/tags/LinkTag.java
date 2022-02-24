@@ -30,17 +30,24 @@ public class LinkTag implements Tag {
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
-		Link link = Link.get();
-		String controller = params.get("controller");
-		if (controller != null) {
-			link.setController(controller);
-		}
-		String method = params.get("method");
-		if (method == null) {
-			throw new LogicException("LinkTag: 'method' parameter is required");
-		}
-		link.setMethod(method);
-		return "write(\"" + link.create() + "\");";
-	}
+        Link link = Link.get();
+        String controller = params.remove("controller");
+        if (controller != null) {
+             link.setController(controller);
+        }
+        String method = params.remove("method");
+        if (method == null || method.isEmpty()) {
+             throw new LogicException("LinkTag: 'method' parameter is required and must be non-empty");
+        }
+        String[] function = method.split(":");
+        link.setMethod(function[0]);
+        for (int i = 1; i < function.length; i++) {
+             link.addUrlParam(function[i]);
+        }
+        params.forEach((name, value)->{
+             link.addGetParam(name, value);
+        });
+        return "write(\"" + link.create() + "\");";
+    }
 
 }
