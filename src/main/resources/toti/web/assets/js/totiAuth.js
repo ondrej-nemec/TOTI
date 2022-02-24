@@ -1,4 +1,4 @@
-/* TOTI Auth version 1.0.0 */
+/* TOTI Auth version 1.0.1 */
 var totiAuth = {
 	variableToken: "authenticationToken",
 	variableConfig: "authenticationConfig",
@@ -51,13 +51,16 @@ var totiAuth = {
 			return false;
 		}
 		totiAuth.isRefreshActive = true;
-		setTimeout(function() {
+		var refresh = function() {
 			totiLoad.async(
 				config.url,
 				config.method, 
 				{}, 
 				totiLoad.getHeaders(), 
-				function() {
+				function(response) {
+					if (config.hasOwnProperty("onSuccess")) {
+						config.onSuccess(response);
+					}
 					totiAuth.isRefreshActive = false;
 					totiAuth.setTokenRefresh();
 				}, 
@@ -67,7 +70,9 @@ var totiAuth = {
 					location.reload();			
 				}
 			);
-		}, token.expires_in * 2 / 3);
+		};
+		refresh();
+		setTimeout(refresh, token.expires_in * 2 / 3);
 		return true;
 	}
 };

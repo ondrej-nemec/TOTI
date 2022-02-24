@@ -1,4 +1,4 @@
-/* TOTI script version 0.1.2 */
+/* TOTI script version 0.1.3 */
 <t:include file="assets/js/totiSettings.js" />
 <t:include file="assets/js/totiImages.js" />
 <t:include file="assets/js/totiTranslations.js" />
@@ -19,7 +19,7 @@
 <t:if cond="${totiIdentity.isPresent()}" >
 	totiAuth.login({
 		"access_token": "${totiIdentity.getToken()}",
-		"expires_in": Date.now() + ${totiIdentity.getExpirationTime()}
+		"expires_in": ${totiIdentity.getExpirationTime()}
 	});
 <t:else>
 	<%-- token is in JS but not on server - server restarted OR sync logout --%>
