@@ -21,6 +21,15 @@ public class GridOptions implements Entity {
 	@MapperParameter({@MapperType("sorting")})
 	private Map<String, Object> sorting = new HashMap<>();
 	
+	public GridOptions() {}
+	
+	public GridOptions(Integer pageIndex, Integer pageSize, Map<String, Object> filters, Map<String, Object> sorting) {
+		this.pageIndex = pageIndex;
+		this.pageSize = pageSize;
+		this.filters = filters;
+		this.sorting = sorting;
+	}
+	
 	public Integer getPageIndex() {
 		return pageIndex;
 	}
