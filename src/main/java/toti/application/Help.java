@@ -33,5 +33,10 @@ public class Help {
 	public boolean isDisabled() {
 		return disabled;
 	}
+
+	@Override
+	public String toString() {
+		return "Help [value=" + value + ", title=" + title + ", optgroup=" + optgroup + ", disabled=" + disabled + "]";
+	}
 	
 }

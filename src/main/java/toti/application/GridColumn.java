@@ -43,4 +43,10 @@ public class GridColumn {
 	public Class<?> getType() {
 		return clazz;
 	}
+
+	@Override
+	public String toString() {
+		return "GridColumn [name=" + name + ", useInFilter=" + useInFilter + ", useInSorting=" + useInSorting
+				+ ", clazz=" + clazz + "]";
+	}
 }

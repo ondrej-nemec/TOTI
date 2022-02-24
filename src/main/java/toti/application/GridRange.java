@@ -43,4 +43,9 @@ public class GridRange {
     public int getLimit() {
         return limit;
     }
+
+	@Override
+	public String toString() {
+		return "GridRange [offset=" + offset + ", limit=" + limit + ", pageIndex=" + pageIndex + "]";
+	}
 }
