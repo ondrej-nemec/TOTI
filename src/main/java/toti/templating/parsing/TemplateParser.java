@@ -24,6 +24,7 @@ import toti.templating.TemplateException;
 import toti.templating.TemplateFactory;
 import toti.templating.parsing.enums.ParserType;
 import toti.templating.parsing.structures.TagNode;
+import toti.url.Link;
 import toti.url.MappedUrl;
 
 /** version 2.1 */
@@ -67,6 +68,7 @@ public class TemplateParser {
 				+ String.format("import %s;", Template.class.getCanonicalName())
 				+ String.format("import %s;", TagNode.class.getCanonicalName())
 				+ String.format("import %s;", TemplateException.class.getCanonicalName())
+				+ String.format("import %s;", Link.class.getCanonicalName())
 				+ "public class %s implements Template{"
 					+ "private LinkedList<TagNode> nodes = new LinkedList<>();"
 				

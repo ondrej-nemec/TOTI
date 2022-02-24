@@ -182,6 +182,27 @@ public class Link {
 			throw new RuntimeException("Cannot create link", e);
 		}
 	}
+	
+	/**
+	 * Parse string to link
+	 * Required format <[controller]>:[method]<:[parameter]>{n}
+	 * @param url
+	 * @return
+	 */
+	public String create(String url) {
+        String[] values = url.split(":");
+        if (values.length == 1) {
+            throw new LogicException("HREF parameter required format: '<[controller]>:[method]<:[parameter]>{n}'");
+        }
+        if (!values[0].isEmpty()) {
+            setController(values[0]);
+        }
+        setMethod(values[1]);
+        for (int i = 2; i < values.length; i++) {
+            addUrlParam(values[i]);
+        }
+		return create();
+	}
 
 	protected String create(String module, String path, String controller, String method, List<UrlParam> params) {
 		return create(pattern, module, path, controller, method, params);
