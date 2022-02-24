@@ -30,13 +30,14 @@ public class PermissionsTag implements Tag {
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
 		return String.format(
-			"if(authorizator.isAllowed("
+			"if(%sauthorizator.isAllowed("
                + "toti.security.Identity.class.cast("
                   + "getVariable(\"totiIdentity\")"
                + ").getUser(),"
                + " \"%s\", "
                + "toti.security.Action.valueOf(\"%s\"))"
             + ")",
+            params.containsKey("not") ? "!":"",
 			params.get("domain"),
 			params.get("action").toUpperCase()
 		);
