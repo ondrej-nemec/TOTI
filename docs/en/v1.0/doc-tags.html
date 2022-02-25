@@ -45,19 +45,14 @@
 
 <strong>Unpair</strong>
 
-<p>Print variable or text into std out. Printing variable means to print variable defined by tag or JSP variables. Printing text is for prints static text.</p>
+<p>Print variable or text into std out.</p>
 
 <pre><code>
-// print variables
-&lt;t:console value="" /&gt;
-// example 1: print variable, notice 'variableName' was defined early
-&lt;t:console value="variableName" /&gt;
-// example 2: print JSP variable 'greatings'
-&lt;t:console value="${greatings}" /&gt;
-
 // print text
 &lt;t:console text="" /&gt;
-// example: print 'Hello world' to console
+// example 1: print JSP variable 'greatings'
+&lt;t:console text="${greatings}" /&gt;
+// example 2: print 'Hello world' to console
 &lt;t:console text="Hello world" /&gt;
 </code></pre>
 
