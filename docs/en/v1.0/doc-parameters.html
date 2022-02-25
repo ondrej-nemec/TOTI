@@ -3,13 +3,15 @@
 <h2>HREF</h2>
 
 <p>
-	Create link to given controller and method. Controller must be full class name. Method is name of function. Controller and method are splited by <code>:</code>.
+	Create link to given controller and method. Controller must be full class name. Method is name of function. Controller and method are splited by <code>:</code>. URL parameters are after method name and splited by <code>:</code>.
 </p>
 
 <pre><code class="language-html">
 &lt;a t:href="" /&gt;
 &lt;!-- example --&gt;
 &lt;a t:href="org.example.app.controllers.MyController:myAction" /&gt;
+&lt;!-- example with parameter --&gt;
+&lt;a t:href="org.example.app.controllers.MyController:myAction:123" /&gt;
 </code></pre>
 
 <h2>Title</h2>
