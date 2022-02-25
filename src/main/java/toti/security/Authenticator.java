@@ -44,7 +44,7 @@ public class Authenticator {
 			String token = createToken(random, id);
 			cache.save(id, expired, user);
 			identity.loginUser(token, id, expirationTime, user);
-			return new SecurityToken(token, expired);
+			return new SecurityToken(token, expirationTime);
 		} catch (Exception e) {
 			throw new AuthentizationException(e);
 		}
