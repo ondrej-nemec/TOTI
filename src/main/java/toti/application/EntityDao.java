@@ -39,45 +39,30 @@ public interface EntityDao<T extends Entity> {
 			});
 		});
 	}
-	
-	default GridDataSet<T> getAll(GridOptions options, Collection<Object> forOwners) throws SQLException {
-        return getAll(
-             options.getPageIndex(),
-             options.getPageSize(),
-             options.getFilters(),
-             options.getSorting(),
-             forOwners
-        );
-    }
 
-    @Deprecated
-	default GridDataSet<T> getAll(
-			int indexOfPage,
-			int pageSize, 
-			Map<String, Object> filters,
-			Map<String, Object> sorting,
-			Collection<Object> forOwners) throws SQLException {
+	default GridDataSet<T> getAll(GridOptions options, Collection<Object> forOwners) throws SQLException {
 		return getDatabase().applyBuilder((builder)->{
 			SelectBuilder count = _getAll("count(*)", builder);
-			_applyFilters(builder, count, filters, forOwners);
+			_applyFilters(builder, count, options.getFilters(), forOwners);
 			
 			SelectBuilder select = _getAll("*", builder);
-			_applyFilters(builder, select, filters, forOwners);
+			_applyFilters(builder, select, options.getFilters(), forOwners);
 			StringBuilder orderBY = new StringBuilder();
-			sorting.forEach((sort, direction)->{
+			options.getSorting().forEach((sort, direction)->{
 				if (!orderBY.toString().isEmpty()) {
 					orderBY.append(", ");
 				}
 				orderBY.append(sort + " " + direction);
 			});
-			if (!sorting.isEmpty()) {
+			if (!options.getSorting().isEmpty()) {
 				select.orderBy(orderBY.toString());
 			}
 			
 			int countOfResults = count.fetchSingle().getInteger();
-			GridRange range = GridRange.create(countOfResults, indexOfPage, pageSize);
-			
-			select.limit(range.getLimit(), range.getOffset());
+			GridRange range = GridRange.create(countOfResults, options.getPageIndex(), options.getPageSize());
+			if (range.isPresent()) {
+				select.limit(range.getLimit(), range.getOffset());
+			}
 			List<T> items = new LinkedList<>();
 			select.fetchAll().forEach((row)->{
 				items.add(createEntity(row));

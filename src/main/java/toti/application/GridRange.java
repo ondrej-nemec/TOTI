@@ -2,9 +2,12 @@ package toti.application;
 
 public class GridRange {
    
-    public static GridRange create(int totalCount, int pageIndex, int pageSize) {
+    public static GridRange create(int totalCount, Integer pageIndex, Integer pageSize) {
         if (totalCount == 0) {
              return new GridRange(0, 0, 1);
+        }
+        if (pageSize == null || pageIndex == null) {
+        	return new GridRange();
         }
         if (pageSize < 1) {
         	pageSize = totalCount; // return new GridRange(0, 0, 1);
@@ -25,11 +28,18 @@ public class GridRange {
     private int offset;
     private int limit;
     private int pageIndex;
+    
+    private final boolean used;
+    
+    public GridRange() {
+		this.used = false;
+	}
 
-    private GridRange(int offset, int limit, int pageIndex) {
+    private GridRange(int offset, Integer limit, Integer pageIndex) {
         this.offset = offset;
         this.limit = limit;
         this.pageIndex = pageIndex;
+        this.used = true;
     }
     
     public int getPageIndex() {
@@ -42,6 +52,10 @@ public class GridRange {
 
     public int getLimit() {
         return limit;
+    }
+    
+    public boolean isPresent() {
+    	return used;
     }
 
 	@Override
