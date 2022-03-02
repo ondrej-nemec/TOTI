@@ -38,6 +38,16 @@ public class ExceptionsExample implements Module {
 	public Response inMethod() {
 		throw new LogicException("Example of logic exception");
 	}
+	
+	/**
+	 * Exception throwed inside method before Response is returned
+	 * @throws LogicException
+	 * @return http://localhost:8080/examples/exceptions/cause
+	 */
+	@Action("cause")
+	public Response inMethodCause() {
+		throw new RuntimeException(new LogicException("Example of logic exception"));
+	}
 
 	/**
 	 * Exception is throwed by TOTI before method is called

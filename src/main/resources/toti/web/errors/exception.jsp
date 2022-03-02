@@ -120,13 +120,13 @@
 					<table>
 						<t:foreach key="String key" value="Object value" map="${parameters}">
 							<tr>
-								<th><t:out name="key" /></th>
+								<th><t:out name="${key}" /></th>
 								<t:if cond="value == null">
-									<td><t:out name="value" /></td>
+									<td><t:out name="${value}" /></td>
 									<td></td>
 								<t:else>
-									<td><t:out name="value" /></td>
-									<td><t:out name="value.getClass().getName()" /></td>
+									<td><t:out name="${value}" /></td>
+									<td><t:out name="${value.getClass().getName()}" /></td>
 								</t:if>
 								
 							</tr>
@@ -145,13 +145,13 @@
 					<table>
 						<t:foreach key="String key" value="Object value" map="${headers}">
 							<tr>
-								<th><t:out name="key" /></th>
+								<th><t:out name="${key}" /></th>
 								<t:if cond="value == null">
-									<td><t:out name="value" /></td>
+									<td><t:out name="${value}" /></td>
 									<td></td>
 								<t:else>
-									<td><t:out name="value" /></td>
-									<td><t:out name="value.getClass().getName()" /></td>
+									<td><t:out name="${value}" /></td>
+									<td><t:out name="${value.getClass().getName()}" /></td>
 								</t:if>
 								
 							</tr>
@@ -165,15 +165,15 @@
 	<div>
 		<h2>StackTrace</h2>
 		<div>
-			<t:var type="java.lang.Throwable" name="t" value="(java.lang.Throwable)${t}" />
+			<t:var type="java.lang.Throwable" name="t" value="${t|Throwable}" />
 			<t:while cond="t != null">
-				<p><t:out name="t.getClass()">: <t:out name="t.getMessage()"></p>
-				<t:foreach item="java.lang.StackTraceElement el" collection="t.getStackTrace()">
-					<t:out name="el.getClassName()">.<t:out name="el.getMethodName()">
-					(<t:out name="el.getFileName()">:<t:out name="el.getLineNumber()">)
+				<p><t:out name="${t.getClass()}">: <t:out name="${t.getMessage()}"></p>
+				<t:foreach item="java.lang.StackTraceElement el" collection="${t.getStackTrace()}">
+					<t:out name="${el.getClassName()}">.<t:out name="${el.getMethodName()}">
+					(<t:out name="${el.getFileName()}">:<t:out name="${el.getLineNumber()}">)
 					<br>
 				</t:foreach>
-				<t:set name="t" value="t.getCause()" />
+				<t:set name="t" value="${t.getCause()|Throwable}" />
 				<t:if cond="t != null">
 					<h4>Caused:</h4>
 				</t:if>
