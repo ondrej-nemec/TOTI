@@ -54,7 +54,9 @@ public class TemplateFactory {
 			boolean minimalize,
 			Logger logger) {
 		String cachePath = tempPath + "/cache/" + module;
-		new File(cachePath).mkdir();
+		if (!new File(cachePath).mkdirs()) {
+			logger.warn("Temp cache dir cannot be created: " + cachePath);
+		}
 		this.tempPath = cachePath;
 		this.templatePath = templatePath;
 		this.deleteAuxJavaClass = deleteAuxJavaClass;

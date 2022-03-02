@@ -37,7 +37,9 @@ public class AuthenticationCache {
 		this.cachePath = tempPath + "/" + "sessions";
 		this.useCache = useCache;
 		if (useCache) {
-			new File(cachePath).mkdir();
+			if (!new File(cachePath).mkdirs()) {
+				logger.error("Temp session folder cannot be created: " + cachePath);
+			}
 		}
 	}
 	
