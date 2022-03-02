@@ -6,9 +6,9 @@ import toti.control.columns.Filter;
 
 public class Number implements Input, Filter {
 		
-	private Integer step = null;
-	private Integer min = null;
-	private Integer max = null;
+	private java.lang.Number step = null;
+	private java.lang.Number min = null;
+	private java.lang.Number max = null;
 	
 	private final Wrapper wrapper;
 	
@@ -25,17 +25,17 @@ public class Number implements Input, Filter {
 		this.wrapper = new Wrapper("number", name, required);
 	}
 	
-	public Number setStep(Integer step) {
+	public Number setStep(java.lang.Number step) {
 		this.step = step;
 		return this;
 	}
 
-	public Number setMin(Integer min) {
+	public Number setMin(java.lang.Number min) {
 		this.min = min;
 		return this;
 	}
 
-	public Number setMax(Integer max) {
+	public Number setMax(java.lang.Number max) {
 		this.max = max;
 		return this;
 	}

@@ -61,12 +61,12 @@ public class Datetime implements Input, Filter {
 		wrapper.setDisabled(disabled);
 		return this;
 	}
-
+/*
 	public Datetime setPlaceholder(String placeholder) {
 		wrapper.setPlaceholder(placeholder);
 		return this;
 	}
-	
+*/
 	public Datetime setExclude(boolean exclude) {
 		wrapper.setExclude(exclude);
 		return this;

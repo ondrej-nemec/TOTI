@@ -54,12 +54,12 @@ public class Time implements Input, Filter {
 		wrapper.setDisabled(disabled);
 		return this;
 	}
-
+/*
 	public Time setPlaceholder(String placeholder) {
 		wrapper.setPlaceholder(placeholder);
 		return this;
 	}
-	
+*/
 	public Time setExclude(boolean exclude) {
 		wrapper.setExclude(exclude);
 		return this;

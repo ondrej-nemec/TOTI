@@ -47,12 +47,12 @@ public class Week implements Input, Filter {
 		wrapper.setDisabled(disabled);
 		return this;
 	}
-
+/*
 	public Week setPlaceholder(String placeholder) {
 		wrapper.setPlaceholder(placeholder);
 		return this;
 	}
-	
+*/
 	public Week setExclude(boolean exclude) {
 		wrapper.setExclude(exclude);
 		return this;

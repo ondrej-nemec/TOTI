@@ -47,12 +47,12 @@ public class Month implements Input, Filter {
 		wrapper.setDisabled(disabled);
 		return this;
 	}
-
+/*
 	public Month setPlaceholder(String placeholder) {
 		wrapper.setPlaceholder(placeholder);
 		return this;
 	}
-	
+*/
 	public Month setExclude(boolean exclude) {
 		wrapper.setExclude(exclude);
 		return this;

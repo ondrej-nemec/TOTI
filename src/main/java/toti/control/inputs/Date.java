@@ -47,12 +47,12 @@ public class Date implements Input, Filter {
 		wrapper.setDisabled(disabled);
 		return this;
 	}
-
+/*
 	public Date setPlaceholder(String placeholder) {
 		wrapper.setPlaceholder(placeholder);
 		return this;
 	}
-	
+*/
 	public Date setExclude(boolean exclude) {
 		wrapper.setExclude(exclude);
 		return this;
