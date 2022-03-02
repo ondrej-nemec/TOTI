@@ -56,6 +56,7 @@ public class TagsEndToEndTest {
 				.append("caseValue", 132)
 				.append("switchValue", 123)
 				.append("exceptionClass", Exception.class)
+				.append("defineException", new Exception("Exception message"))
 				.append("currentMethod", "myMethod")
 				.append("securityDoamin", "my-domain")
 				.append("toTranslate", "some.key")
@@ -174,6 +175,9 @@ public class TagsEndToEndTest {
 				"variables", "defineValueFinal.jsp", "Variable: 123"
 			},
 			new Object[] {
+				"variables", "defineValueVariableInteger.jsp", "Variable: 132"
+			},
+			new Object[] {
 				"variables", "defineValueChar.jsp", "Variable: a"
 			},
 			new Object[] {
@@ -183,7 +187,7 @@ public class TagsEndToEndTest {
 				"variables", "defineValueReturned.jsp", "Variable: value"
 			},
 			new Object[] {
-				"variables", "defineValueVariable.jsp", "Variable: some.key"
+				"variables", "defineValueVariable.jsp", "Variable: java.lang.Exception: Exception message"
 			},
 			new Object[] {
 				"variables", "set.jsp", "Set: 123"

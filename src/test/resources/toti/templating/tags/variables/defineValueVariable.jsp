@@ -1,1 +1,1 @@
-Variable: <t:var type="String" name="someVariable" value="${toTranslate}" /><t:out name="someVariable" />
+Variable: <t:var type="Exception" name="someVariable" value="${defineException}" /><t:out name="someVariable" />

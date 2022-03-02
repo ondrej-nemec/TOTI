@@ -6,12 +6,18 @@
 
 <strong>Unpaired</strong>
 
-<p>Create new variable with given type, name and optionally value. Can be final, too. Value is available in JSP variables ('${...}').</p>
+<p>Create new variable with given type (type is optionall, default <code>Object</code>), name and optionally value. Can be final, too. Value is available in JSP variables ('${...}').</p>
+
+<p>If you wish set string or character (directly, not by variable), add quotes.</p>
 
 <pre><code>
 &lt;t:var type="" name="" value="" final /&gt;
 // example
-&lt;t:var type="String" name="variableName" value="some value" /&gt;
+&lt;t:var name="variableName" value="123" /&gt;
+// example with string
+&lt;t:var type="String" name="variableName" value='"some value"' /&gt;
+// example with char
+&lt;t:var type="char" name="variableName" value="'a'" /&gt;
 </code></pre>
 
 <h3>Set variable value</h3>
@@ -20,10 +26,16 @@
 
 <p>Set value to variable.</p>
 
+<p>If you wish set string or character (directly, not by variable), add quotes.</p>
+
 <pre><code>
 &lt;t:set name="" value="" /&gt; <br>
 // example
-&lt;t:set name="variableName" value="another value" /&gt;
+&lt;t:set name="variableName" value="321" /&gt;
+// example string
+&lt;t:set name="variableName" value='"another value"' /&gt;
+// example char
+&lt;t:set name="variableName" value="'b'" /&gt;
 </code></pre>
 
 <h3>Print variable</h3>
@@ -444,7 +456,7 @@
 
 <strong>Paired</strong>
 
-<p>Print text inside this tag if user is allowed for given domain and action. For more see TODO. You can use <code>else</code> inside this tag.</p>
+<p>Print text inside this tag if user is allowed for given domain and action. For more see TODO. You can use <code>else</code> inside this tag. The parameter <code>not</code> indicate opposition.</p>
 
 <pre><code>
 &lt;t:allowed domain="" action="" &gt;
@@ -461,6 +473,12 @@
 &lt;t:allowed domain="users" action="READ" &gt;
 	// your code
 &lt;t:else/&gt;
+	// your code
+&lt;/t:allowed&gt;
+
+// example with not
+&lt;t:allowed domain="users" action="READ" not&gt;
+	// if not allowed
 	// your code
 &lt;/t:allowed&gt;
 </code></pre>

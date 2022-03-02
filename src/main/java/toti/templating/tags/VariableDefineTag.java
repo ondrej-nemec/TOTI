@@ -12,7 +12,10 @@ public class VariableDefineTag implements Tag {
 		if ("type".equalsIgnoreCase(name)) {
 			return TagVariableMode.CODE;
 		}
-		return TagVariableMode.STRING;
+		if ("name".equalsIgnoreCase(name)) {
+			return TagVariableMode.STRING;
+		}
+		return TagVariableMode.CODE;
 	}
 	
 	@Override
@@ -34,7 +37,8 @@ public class VariableDefineTag implements Tag {
 	public String getNotPairCode(Map<String, String> params) {
 		String name = params.get("name");
 		String type = params.get("type") == null ? "Object" : params.get("type");
-		String value = params.get("value") == null ? "null" : String.format(getValue(type), params.get("value"));
+		// String value = params.get("value") == null ? "null" : String.format(getValue(type), params.get("value"));
+		String value = params.get("value") == null ? "null" : params.get("value");
 		
 		String define = String.format("%s %s", type, name);
 		if (params.get("final") != null) {
@@ -43,10 +47,10 @@ public class VariableDefineTag implements Tag {
 		if (params.get("value") == null) {
 			define = String.format("addVariable(\"class_%s\", %s.class);", name, type) + define;
 		}
-		return define + "=" + value + ";"
+		return String.format("%s=(%s)%s;", define, type, value)
 				+ String.format("addVariable(\"%s\", %s);", name, value);
 	}
-	
+/*
 	private String getValue(String type) {
 		if (type.equals("String") || type.endsWith(".String")) {
 			return "\"%s\"";
@@ -56,5 +60,5 @@ public class VariableDefineTag implements Tag {
 		}
 		return "%s";
 	}
-
+*/
 }

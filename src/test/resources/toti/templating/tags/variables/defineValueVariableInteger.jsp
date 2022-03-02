@@ -1,0 +1,1 @@
+Variable: <t:var type="Integer" name="someVariable" value="${caseValue}" /><t:out name="someVariable" />
