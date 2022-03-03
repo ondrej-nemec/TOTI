@@ -1,4 +1,4 @@
-/* TOTI Grid version 0.0.18 */
+/* TOTI Grid version 0.0.19 */
 class TotiGrid {
 
 	constructor(config) {
@@ -32,10 +32,12 @@ class TotiGrid {
 			footer.appendChild(space);
 			footer.appendChild(space);
 		}
+		if (this.config.hasOwnProperty("pagesButtonCount")) {
+			footer.appendChild(this.createPages(uniqueName, this.config.pagesButtonCount, 1));
+			footer.appendChild(space);
+			footer.appendChild(space);
+		}
 		if (this.config.hasOwnProperty("pages")) {
-			footer.appendChild(this.createPages(uniqueName, this.config.pages.pagesButtonCount, 1));
-			footer.appendChild(space);
-			footer.appendChild(space);
 			footer.appendChild(this.createPagesSize(uniqueName, this.config.pages.pagesSizes, this.config.pages.defaultSize));
 		}
 		/***********/
@@ -143,7 +145,7 @@ class TotiGrid {
 				checkbox.onclick = function() {
 					var chBoxs = document.querySelectorAll("." + uniqueName + "-grid-action");
 					if (chBoxs !== null) {
-						chBox.forEach(function(el) {el.setAttribute("checked", checkbox.checked);});
+						chBoxs.forEach(function(el) { el.checked = checkbox.checked; });
 					}
 				};
 				cell.appendChild(checkbox);
@@ -215,7 +217,7 @@ class TotiGrid {
 				totiDisplay.flash("error", totiTranslations.actions.noSelectedItems);
 				return false;
 			}
-			var params = {"ids": ids};
+			var params = {"ids": JSON.stringify(ids)};
 			if (async === 'true') {
 				if (submitConfirmation !== null
 					&& submitConfirmation !== undefined
@@ -312,21 +314,22 @@ class TotiGrid {
 				var tableRow = document.createElement("tr");
 				tableRow.setAttribute("index", rowIndex);
 				tableRow.setAttribute("class", "toti-row-" + (rowIndex %2) + " toti-row-" + uniqueName);
-				tableRow.onclick = function(event) {
-					/* TODO only if settings select row == true */
-					if (event.target.type !== undefined) { /*is input*/
-						return;
-					}
-					var actualClass = tableRow.getAttribute("class");
-					Array.prototype.forEach.call(document.getElementsByClassName('row-selected'), function(element) {
-			    		var clazz = element.getAttribute("class");
-						element.setAttribute("class", clazz.replace("row-selected", ""));
-					});
-					var clazz = tableRow.getAttribute("class");
-					if (!actualClass.includes("row-selected")) {
-						tableRow.setAttribute("class", actualClass + " row-selected");
-					}
-				};
+				if (object.config.useRowSelection) {
+					tableRow.onclick = function(event) {
+						if (event.target.type !== undefined) { /*is input*/
+							return;
+						}
+						var actualClass = tableRow.getAttribute("class");
+						Array.prototype.forEach.call(document.getElementsByClassName('row-selected'), function(element) {
+				    		var clazz = element.getAttribute("class");
+							element.setAttribute("class", clazz.replace("row-selected", ""));
+						});
+						var clazz = tableRow.getAttribute("class");
+						if (!actualClass.includes("row-selected")) {
+							tableRow.setAttribute("class", actualClass + " row-selected");
+						}
+					};
+				}
 
 				columns.forEach(function(column, colIndex) {
 					var td = document.createElement("td");
@@ -384,7 +387,7 @@ class TotiGrid {
 							td.appendChild(buttonElement);
 						});
 					} else if (column.hasOwnProperty("renderer")) {
-						var renderer = window[column.renderer](row[column.name], row);
+						var renderer = totiUtils.execute(column.renderer, [row[column.name], row]);
 						if (typeof renderer === "object") {
 							td.appendChild(renderer);
 						} else {
@@ -408,7 +411,11 @@ class TotiGrid {
 					}
 					tableRow.append(td);
 				});
-				body.append(tableRow);
+				if (object.config.hasOwnProperty("onRowRenderer")) {
+					body.append(totiUtils.execute(object.config.onRowRenderer, [tableRow, row]));
+				} else {
+					body.append(tableRow);
+				}
 			});
 			return body;
 		};
@@ -473,6 +480,9 @@ class TotiGrid {
 			var name = element.getAttribute('data-name');
 			if (element.children.length > 0 && data[name] !== undefined) {
 				element.children[0].value = data[name];
+				if (element.children[0].type === "fieldset") {
+					element.children[0].set();
+				}
 			}
 		});
 	}
