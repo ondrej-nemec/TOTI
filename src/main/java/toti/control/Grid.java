@@ -15,13 +15,15 @@ public class Grid implements Control {
 	private final String loadDataUrl;
 	private final String loadDataMethod;
 	private String uniqueRowIdentifier = "id";
+	private boolean useRowSelection = false;
+	private String onRowRenderer = null;
 	private final List<Jsonable> columns = new LinkedList<>();
 	private final List<Jsonable> actions = new LinkedList<>();
 	
 	// paging
 	private List<Integer> pagesSizes = Arrays.asList(5, 10, 20, 50, 100);
 	private Integer defaultPageSize = null;
-	private int pagesButtonCount = 5;
+	private Integer pagesButtonCount = 5;
 	
 	public Grid(String loadDataUrl, String loadDataMethod) {
 		this.loadDataMethod = loadDataMethod;
@@ -33,18 +35,29 @@ public class Grid implements Control {
 		return this;
 	}
 	
-	public Grid setPagesButtonCount(int pagesButtonCount) {
-		this.pagesButtonCount = pagesButtonCount;
+	public Grid setPagesSizes(List<Integer> pagesSizes, Integer defaultPageSize) {
+		this.defaultPageSize = defaultPageSize;
+		this.pagesSizes = pagesSizes;
 		return this;
 	}
 	
-	public Grid setDefaultPageSize(Integer defaultPageSize) {
-		this.defaultPageSize = defaultPageSize;
+	public Grid setPagesButtonCount(Integer pagesButtonCount) {
+		this.pagesButtonCount = pagesButtonCount;
 		return this;
 	}
 	
 	public Grid setUniqueRowIdentifier(String uniqueRowIdentifier) {
 		this.uniqueRowIdentifier = uniqueRowIdentifier;
+		return this;
+	}
+	
+	public Grid useRowSelection(boolean useSelectionRow) {
+		this.useRowSelection = useSelectionRow;
+		return this;
+	}
+	
+	public Grid setOnRowRenderer(String onRowRenderer) {
+		this.onRowRenderer = onRowRenderer;
 		return this;
 	}
 	
@@ -64,16 +77,24 @@ public class Grid implements Control {
 		json.put("dataLoadUrl", loadDataUrl);
 		json.put("dataLoadMethod", loadDataMethod);
 		json.put("identifier", uniqueRowIdentifier);
+		json.put("useRowSelection", useRowSelection);
+		if (onRowRenderer != null) {
+			json.put("onRowRenderer", onRowRenderer);
+		}
 		json.put("columns", columns);
 		
-		Map<String, Object> pages = new HashMap<>();
-		json.put("pages", pages);
-		pages.put("pagesSizes", pagesSizes);
-		if (defaultPageSize == null && !pagesSizes.isEmpty()) {
-			defaultPageSize = pagesSizes.get(0);
+		if (pagesSizes != null && !pagesSizes.isEmpty()) {
+			Map<String, Object> pages = new HashMap<>();
+			json.put("pages", pages);
+			pages.put("pagesSizes", pagesSizes);
+			pages.put(
+				"defaultSize", 
+				defaultPageSize == null || !pagesSizes.contains(defaultPageSize) ? pagesSizes.get(0) : defaultPageSize
+			);
 		}
-		pages.put("defaultSize", defaultPageSize);
-		pages.put("pagesButtonCount", pagesButtonCount);
+		if (pagesButtonCount != null) {
+			json.put("pagesButtonCount", pagesButtonCount);
+		}
 		
 		json.put("actions", actions);
 		return json;
