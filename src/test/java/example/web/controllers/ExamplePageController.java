@@ -64,7 +64,7 @@ public class ExamplePageController {
 	public Response grid() {
 		Map<String, Object> params = new HashMap<>();
 	//	Grid grid = new Grid("/example-module/api/example/all", "get");
-		Grid grid = new Grid(Link.get().create(ExampleApiController.class, c->c.getAll(null, null, null, null, null)), "get");
+		Grid grid = new Grid(Link.get().create(ExampleApiController.class, c->c.getAll(null)), "get");
 		// HERE
 		grid.addColumn(new ValueColumn("id").setTitle(translator.translate("grid.id", new MapInit<String, Object>("a", "aa").toMap())));
 		grid.addColumn(new ValueColumn("name").setTitle("Name").setFilter(Text.filter()).setUseSorting(true));

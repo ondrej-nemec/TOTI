@@ -24,6 +24,7 @@ import toti.annotations.Param;
 import toti.annotations.ParamUrl;
 import toti.annotations.Params;
 import toti.annotations.Secured;
+import toti.application.GridOptions;
 import toti.application.Help;
 import toti.response.Response;
 import toti.security.Identity;
@@ -109,14 +110,10 @@ public class ExampleApiController {
 	@Method({HttpMethod.GET})
 	@Secured({@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.READ)})
 	public Response getAll(
-			@Param("pageIndex") Integer pageIndex,
-			@Param("pageSize") Integer pageSize,
-			@Param("filters") Map<String, Object> filters,
-			@Param("sorting") Map<String, Object> sorting,
-			@Params RequestParameters prop
+			@Params GridOptions options
 		) {
 		try {
-			return Response.getJson(dao.getAll(pageIndex, pageSize, filters, sorting, identity.getUser().getAllowedIds()));
+			return Response.getJson(dao.getAll(options, identity.getUser().getAllowedIds()));
 		} catch (Exception e) {
 			logger.error("Example GetAll", e);
 			return Response.getJson(StatusCode.INTERNAL_SERVER_ERROR, new HashMap<>());
