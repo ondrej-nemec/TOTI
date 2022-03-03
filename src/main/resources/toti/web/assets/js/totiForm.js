@@ -1,4 +1,4 @@
-/* TOTI Form version 0.0.24 */
+/* TOTI Form version 0.0.25 */
 class TotiForm {
 
 	constructor(config) {
@@ -130,8 +130,8 @@ class TotiForm {
 
 						field.template.appendChild(itemTemplate);
 						var removeButton = itemTemplate.querySelector("[name='remove']");
-						removeButton.style.cursor = "pointer";
 						if (removeButton !== null) {
+							removeButton.style.cursor = "pointer";
 							if (editable) {
 								removeButton.onclick = function() {
 									itemTemplate.parentNode.removeChild(itemTemplate);
@@ -146,6 +146,7 @@ class TotiForm {
 						spanIdent.setAttribute("name", "toti-list-item-" + field.name);
 
 						var removeButton = document.createElement("div");
+						removeButton.style.cursor = "pointer";
 						removeButton.setAttribute("name", "remove");
 						removeButton.innerText = totiTranslations.formButtons.remove;
 
@@ -302,7 +303,7 @@ class TotiForm {
 			field.originType = field.type;
 			if (field.type === 'select') {
 				totiControl.inputs.select(field); /* load select options if are*/
-				input = this.printSelectFunc(field, 'options');
+				input = this.printSelectFunc(field, 'renderOptions');
 			} else if (field.type === 'radiolist') {
 				input = this.printSelectFunc(field, 'radios');
 			} else if (field.type === 'checkbox') {
@@ -327,7 +328,6 @@ class TotiForm {
 			}
 			var type = field.type;
 			input = totiControl.input(field);
-
 			if (type === 'submit' || type === 'image') {
 				input.onclick = this.getSubmit(uniqueName, input);
 			} else if (type === 'button') {
@@ -360,9 +360,17 @@ class TotiForm {
 		});
 		var withOption = function(i, option) {
 			var span = document.createElement('span');
-			span.setAttribute("value", option.value);
-			span.innerText = option.title;
-			if (field.value !== option.value) {
+            var val;
+            if (typeof option === 'object') {
+                val = option.value;
+                span.setAttribute("value", option.value);
+                span.innerText = option.title;
+            } else { /* for renderOptions*/
+                span.setAttribute("value", i);
+                span.innerText = option;
+                val = i;
+            }
+             if (field.value !== value) {
 				span.style.display = "none";
 			}
 			input.appendChild(span);
@@ -429,6 +437,7 @@ class TotiForm {
 				event.preventDefault();
 				return false;
 			}
+			/* TODO sync send not working - required preventDefault - exclude,disabled,... */
 			if (submit.getAttribute("async")) {
 				event.preventDefault();
 				var header = totiLoad.getHeaders();
