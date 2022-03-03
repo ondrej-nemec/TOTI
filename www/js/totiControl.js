@@ -1,4 +1,4 @@
-/* TOTI Control version 0.0.19 */
+/* TOTI Control version 0.0.20 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -77,6 +77,10 @@ var totiControl = {
 			return totiControl.inputs.radiolist(attributes);
 		} else if (type === 'button') {
 			return totiControl.inputs.button(attributes);
+		} else if (type === 'range') {
+			return totiControl.inputs._createOptionalInput("range", attributes);
+		} else if (type === 'color') {
+			return totiControl.inputs._createOptionalInput("color", attributes);
 		} else {
 			return totiControl.inputs._createInput(type, attributes);
 		}
@@ -90,6 +94,47 @@ var totiControl = {
 				input.setAttribute(key, name);
 			}
 			return input;
+		},
+		_createOptionalInput: function(type, attributes) {
+			if (attributes.hasOwnProperty("required") && attributes.required) {
+				return totiControl.inputs._createInput(type, attributes);
+			}
+			var container = document.createElement("fieldset");
+		    for ([key, name] of Object.entries(attributes)) {
+		    	if (key !== "value") {
+					container.setAttribute(key, name);
+		    	}
+		    }
+		    var checkbox = document.createElement("input");
+			checkbox.setAttribute("type", "checkbox");
+
+		    var input = totiControl.inputs._createInput(type, attributes);
+
+			checkbox.checked = false;
+			input.setAttribute("disabled", true);
+
+			container.set = function() {
+				checkbox.checked = true;
+				input.removeAttribute("disabled");
+				input.value = container.value;
+			};
+			input.onchange = function() {
+				container.value = input.value;
+			};
+			checkbox.onclick = function() {
+				if (checkbox.checked) {
+					input.removeAttribute("disabled");
+					container.value = input.value;
+				} else {
+					container.value = '';
+					input.setAttribute("disabled", true);
+				}
+			};
+
+		    container.appendChild(checkbox);
+		    container.appendChild(input);
+
+		    return container;
 		},
 		button: function(attributes) {
 			var button = document.createElement("input");
@@ -316,7 +361,7 @@ var totiControl = {
 			dateAttr.id = attributes.id + "-date";
 		    if (attributes.hasOwnProperty('required')) {
 		        dateAttr.required = attributes.required;
-		     }
+		    }
 		    var date = totiControl.inputs._createInput("date", dateAttr);
 
 		    var timeAttr = {};
