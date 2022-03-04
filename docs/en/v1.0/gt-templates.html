@@ -95,6 +95,28 @@ ${myVariable.equals(${mySecondVariable})}
 	</ul>
 </p>
 
+<h3>Automatic variables</h3>
+
+<p>
+	TOTI automatically send to template some variables.
+</p>
+
+<h4>Identity</h4>
+
+<p>
+	The <code>totiIdentity</code> variable contains <code>Identity</code> with all methods, like <code>isPresent()</code>, <code>getUser()</code> or <code>getIP()</code>.
+</p>
+
+<h4>Nonce</h4>
+
+<p>
+	Nonce is unique string used by Content Security Policy. TOTI generates unique nonce everytime the template response is required. Then replace <code>{nonce}</code> in all response headers.
+</p>
+
+<p class="alert alert-info">
+	For CSP, add <code>Content-Security-Policy script-src 'nonce-{nonce}' ¨...</code> to headers list and use <code>&lt;script src="...." nonce="${nonce}"&gt;&lt;/script&gt;</code>
+</p>
+
 <h2>Java</h2>
 
 <p>
