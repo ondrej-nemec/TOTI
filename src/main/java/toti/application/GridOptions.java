@@ -17,13 +17,15 @@ public class GridOptions implements Entity {
 	@MapperParameter({@MapperType("pageSize")})
 	private Integer pageSize;
 	@MapperParameter({@MapperType("filters")})
-	private Map<String, Object> filters = new HashMap<>();
+	//private List<Filter> filters = new LinkedList<>();
+	private Map<String, Filter> filters = new HashMap<>();
 	@MapperParameter({@MapperType("sorting")})
-	private Map<String, Object> sorting = new HashMap<>();
+	private Map<String, Sort> sorting = new HashMap<>();
+	//private List<Sort> sorting = new LinkedList<>();
 	
 	public GridOptions() {}
-	
-	public GridOptions(Integer pageIndex, Integer pageSize, Map<String, Object> filters, Map<String, Object> sorting) {
+
+	public GridOptions(Integer pageIndex, Integer pageSize, Map<String, Filter> filters, Map<String, Sort> sorting) {
 		this.pageIndex = pageIndex;
 		this.pageSize = pageSize;
 		this.filters = filters;
@@ -36,11 +38,27 @@ public class GridOptions implements Entity {
 	public Integer getPageSize() {
 		return pageSize;
 	}
-	public Map<String, Object> getFilters() {
+	
+	public Map<String, Filter> getFilters() {
 		return filters;
 	}
-	public Map<String, Object> getSorting() {
+	public Map<String, Sort> getSorting() {
 		return sorting;
+	}
+	
+	public boolean containsFilter(String name) {
+		return filters.containsKey(name);
+	}
+	public boolean containsSorting(String name) {
+		return sorting.containsKey(name);
+	}
+	
+	public void addFilter(String name, FilterMode mode, Object value) {
+		filters.put(name, new Filter(name, mode, value));
+	}
+	
+	public void addSorting(String name, boolean isDesc) {
+		sorting.put(name, new Sort(name, isDesc));
 	}
 	
 	public static Validator getValidator(List<GridColumn> gridColumns) {
@@ -50,19 +68,31 @@ public class GridOptions implements Entity {
 			if (column.isUseInFilter()) {
 				filters.addRule(
 					ItemRules.forName(column.getName(), false).setType(column.getType())
+					.setChangeValue((v)->{
+						if (v == null) {
+							return null;
+						}
+						return new Filter(column.getName(), column.getFilterMode(), v);
+					})
 				);
 			}
 			if (column.isUseInSorting()) {
 				sorting.addRule(
 					ItemRules.forName(column.getName(), false).setAllowedValues(Arrays.asList("DESC", "ASC"))
+					.setChangeValue((v)->{
+						if (v == null) {
+							return null;
+						}
+						return new Sort(column.getSortingName(), v.equals("DESC"));
+					})
 				);
 			}
 		});
 		return new Validator(true)
-				.addRule(ItemRules.forName("pageIndex", true))
-				.addRule(ItemRules.forName("pageSize", true))
-				.addRule(ItemRules.forName("filters", true).setMapSpecification(filters))
-				.addRule(ItemRules.forName("sorting", true).setMapSpecification(sorting));
+			.addRule(ItemRules.forName("pageIndex", true))
+			.addRule(ItemRules.forName("pageSize", true))
+			.addRule(ItemRules.forName("filters", true).setMapSpecification(filters))
+			.addRule(ItemRules.forName("sorting", true).setMapSpecification(sorting));
 	}
 
 }

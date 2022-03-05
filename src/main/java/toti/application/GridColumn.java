@@ -3,9 +3,11 @@ package toti.application;
 public class GridColumn {
 
 	private final String name;
+	private FilterMode filterMode = FilterMode.EQUALS;
 	private boolean useInFilter;
 	private boolean useInSorting;
 	private final Class<?> clazz;
+	private String sortingName;
 	
 	public GridColumn(String name) {
 		this(name, String.class);
@@ -16,6 +18,17 @@ public class GridColumn {
 		this.clazz = clazz;
 		this.useInFilter = true;
 		this.useInSorting = true;
+		this.sortingName = name;
+	}
+	
+	public GridColumn setSortingName(String sortingName) {
+		this.sortingName = sortingName;
+		return this;
+	}
+	
+	public GridColumn setFilterMode(FilterMode filterMode) {
+		this.filterMode = filterMode;
+		return this;
 	}
 	
 	public GridColumn setUseInSorting(boolean useInSorting) {
@@ -38,6 +51,14 @@ public class GridColumn {
 
 	public boolean isUseInSorting() {
 		return useInSorting;
+	}
+	
+	public FilterMode getFilterMode() {
+		return filterMode;
+	}
+	
+	public String getSortingName() {
+		return sortingName;
 	}
 
 	public Class<?> getType() {
