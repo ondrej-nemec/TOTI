@@ -23,7 +23,7 @@
 <body>
 	<div id="lang"></div>
 	<script>
-		totiAuth.onLoad();
+		//totiAuth.onLoad();
 		document.getElementById("lang").innerText = totiLang.getLang();
 	</script>
 	<div id="flash"></div>

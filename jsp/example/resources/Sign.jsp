@@ -12,14 +12,8 @@
 				username: "user-name"
 			}, {}, function(response) {
 				totiAuth.login(response, {
-					logout: {
-						url: "/example-module/api/sign/out",
-						method: "post"
-					},
-					refresh: {
-						url: "/example-module/api/sign/refresh",
-						method: "post"
-					}
+					url: "/example-module/api/sign/refresh",
+					method: 'post'
 				});
 				location.reload();
 			}, function (xhr) {
@@ -32,6 +26,6 @@
 			location.reload();
 		};
 	</script>
-	<a href='<t:link controller="example.web.controllers.ExamplePageController" method="grid"/>'>List</a>
+	<a t:href='example.web.controllers.ExamplePageController:grid'>List</a>
 
 </t:block>

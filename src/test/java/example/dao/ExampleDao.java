@@ -4,9 +4,12 @@ import java.util.Optional;
 
 import ji.database.Database;
 import ji.database.support.DatabaseRow;
+import ji.querybuilder.QueryBuilder;
+import ji.querybuilder.builders.SelectBuilder;
 import toti.application.EntityDao;
+import toti.application.GridEntityDao;
 
-public class ExampleDao implements EntityDao<Example> {
+public class ExampleDao implements EntityDao<Example>, GridEntityDao<Example> {
 
 	private final Database database;
 	private final String table = "Example";
@@ -47,6 +50,11 @@ public class ExampleDao implements EntityDao<Example> {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Override
+	public SelectBuilder _getGrid(String select, QueryBuilder builder) {
+		return _getAll(select, builder);
 	}
 
 }

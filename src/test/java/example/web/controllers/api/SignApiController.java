@@ -27,19 +27,18 @@ public class SignApiController {
 		this.identity = identity;
 		this.authenticator = authenticator;
 	}
-/*
+
 	@Method({HttpMethod.POST})
 	@Action("in")
 	public Response login(@Param("username") String username) {
 		try {
-			String bearer = authenticator.login(new User("User: " + username, new Perm()), identity);
-			return generateToken(bearer);
+			return Response.getJson(authenticator.login(new User("User: " + username, new Perm()), identity));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.getJson(StatusCode.INTERNAL_SERVER_ERROR, new HashMap<>());
 		}
 	}
-*/
+
 	@Method({HttpMethod.POST})
 	@Action("out")
 	@Secured
@@ -47,19 +46,18 @@ public class SignApiController {
 		authenticator.logout(identity);
 		return Response.getJson(new HashMap<>());
 	}
-/*
+
 	@Method({HttpMethod.POST})
 	@Action("refresh")
 	@Secured // own active token used
 	public Response refresh() throws AuthentizationException {
 		try {
-			String bearer = authenticator.refresh(identity);
-			return generateToken(bearer);
+			return Response.getText("");
 		} catch (Exception e) {
 			return Response.getJson(StatusCode.INTERNAL_SERVER_ERROR, new HashMap<>());
 		}
 	}
-*/
+
 	private Response generateToken(String bearer) {
 		Map<String, Object> json = new HashMap<>();
 		json.put("access_token", bearer);

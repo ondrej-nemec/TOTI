@@ -24,6 +24,7 @@ import toti.annotations.Param;
 import toti.annotations.ParamUrl;
 import toti.annotations.Params;
 import toti.annotations.Secured;
+import toti.application.GridColumn;
 import toti.application.GridOptions;
 import toti.application.Help;
 import toti.response.Response;
@@ -87,7 +88,18 @@ public class ExampleApiController {
 	}
 	
 	public Validator getValidator() {
-		return new Validator(false)
+		return GridOptions.getValidator(Arrays.asList(
+			new GridColumn("name"),
+			new GridColumn("age", Integer.class),
+			new GridColumn("active", Boolean.class),
+			new GridColumn("parent", Integer.class),
+			new GridColumn("simple_date"),
+			new GridColumn("dt_local"),
+			new GridColumn("month"),
+			new GridColumn("week"),
+			new GridColumn("time")
+		));
+	/*	return new Validator(false)
 		.addRule(ItemRules.forName("file", false))
 		.addRule(ItemRules.forName("map", false).setMapSpecification(new Validator(false)
 			.addRule(ItemRules.forName("subText1", false).setType(String.class).setMaxLength(10))
@@ -102,16 +114,14 @@ public class ExampleApiController {
 				.addRule(ItemRules.forName("second-in-pair", true).setMaxLength(5))
 			))
 		))
-		;
+		;*/
 	}
 	
 	//@Action(value = "all", validator = ExampleValidator.NAME_GRID)
 	@Action(value = "all", validator = "getValidator")
 	@Method({HttpMethod.GET})
 	@Secured({@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.READ)})
-	public Response getAll(
-			@Params GridOptions options
-		) {
+	public Response getAll(@Params GridOptions options) {
 		try {
 			return Response.getJson(dao.getAll(options, identity.getUser().getAllowedIds()));
 		} catch (Exception e) {
