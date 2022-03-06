@@ -19,6 +19,8 @@ public class GridExampleEntity implements Entity {
 	private double number;
 	@MapperParameter(@MapperType("range"))
 	private int range;
+	@MapperParameter(@MapperType("select"))
+	private Boolean select;
 	@MapperParameter(@MapperType("datetime"))
 	private LocalDateTime datetime;
 	@MapperParameter(@MapperType("date"))
@@ -32,13 +34,14 @@ public class GridExampleEntity implements Entity {
 	
 	public GridExampleEntity(
 			int id,
-			String text, double number, int range,
+			String text, double number, int range, Boolean select,
 			LocalDateTime datetime, LocalDate date,
 			LocalTime time, String month, String week) {
 		this.id = id;
 		this.text = text;
 		this.number = number;
 		this.range = range;
+		this.select = select;
 		this.datetime = datetime;
 		this.date = date;
 		this.time = time;
@@ -57,7 +60,14 @@ public class GridExampleEntity implements Entity {
 	}
 	
 	private boolean equals(String key, Object value, Map<String, Object> entity) {
-		return entity.get(key).toString().contains(value.toString()); // TODO equals,like,...
+		return entity.get(key).toString().contains(value.toString());
+	}
+
+	@Override
+	public String toString() {
+		return "GridExampleEntity [id=" + id + ", text=" + text + ", number=" + number + ", range=" + range
+				+ ", select=" + select + ", datetime=" + datetime + ", date=" + date + ", time=" + time + ", month="
+				+ month + ", week=" + week + "]";
 	}
 	
 }

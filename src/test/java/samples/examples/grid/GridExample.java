@@ -23,6 +23,7 @@ import toti.annotations.Method;
 import toti.annotations.Param;
 import toti.annotations.ParamUrl;
 import toti.annotations.Params;
+import toti.application.FilterMode;
 import toti.application.GridColumn;
 import toti.application.GridOptions;
 import toti.application.Task;
@@ -159,7 +160,7 @@ public class GridExample implements Module {
 	/**
 	 * Returns data for all filters grid
 	 * Called internally
-	 * @return http://localhost:8080/examples/grid/all
+	 * @return http://localhost:8080/examples/grid/all-data
 	 */
 	@Action(value = "all-data", validator = "allFilersValidator")
 	public Response allFilters(@Params GridOptions options) {
@@ -399,17 +400,130 @@ public class GridExample implements Module {
 		return Response.getText(String.format("Async action with string ids. IDS: " + ids));
 	}
 	
+	/****/
+	
+	/**
+	 * Ways of filtering, EQUALS is default
+	 * @return http://localhost:8080/examples/grid/filtering
+	 */
+	@Action("filtering")
+	public Response filtering() {
+		Grid grid = new Grid(Link.get().create(getClass(), c->c.filtering(null)), "get");
+		grid.addColumn(new ValueColumn("id").setTitle("ID"));
+		// like, startswith, endswith, equasl
+		// LIKE
+		grid.addColumn(
+			new ValueColumn("text")
+			.setTitle("Text - Like")
+			.setFilter(Text.filter())
+			.setUseSorting(true)
+		);
+		// starts with
+		grid.addColumn(
+			new ValueColumn("number")
+			.setTitle("Number - Starts with")
+			.setFilter(Number.filter())
+			.setUseSorting(true)
+		);
+		// ends with
+		grid.addColumn(
+			new ValueColumn("range")
+			.setTitle("Range - Ends with")
+			.setFilter(Range.filter().setStep(5).setMax(5).setMin(0))
+			.setUseSorting(true)
+		);
+		// equals
+		grid.addColumn(
+			new ValueColumn("select")
+			.setTitle("Select - Equals")
+			.setFilter(
+				Select.filter(Arrays.asList(
+					Option.create("", "---"),
+					Option.create(true, "Yes"),
+					Option.create(false, "No")
+				))
+				.setPlaceholder("Filter for Select")
+				// .setDefaultValue(...)
+			)
+			.setUseSorting(true)
+		);
+		
+		Map<String, Object> params = new HashMap<>();
+		params.put("grid", grid);
+		return Response.getTemplate("filters.jsp", params);
+	}
+	
+	/**
+	 * Returns data for filters grid
+	 * Called internally
+	 * @return http://localhost:8080/examples/grid/filtering-data
+	 */
+	@Action(value = "filtering-data", validator = "filteringValidator")
+	public Response filtering(@Params GridOptions options) {
+		try {
+			return Response.getJson(dao.getAll(options, null));
+		} catch (Exception e) {
+			logger.error("all filters", e);
+			return Response.getText(StatusCode.INTERNAL_SERVER_ERROR, "Error occur: " + e.getMessage());
+		}
+	}
+	
+	public Validator filteringValidator() {
+		return GridOptions.getValidator(Arrays.asList(
+			new GridColumn("text").setFilterMode(FilterMode.LIKE),
+			new GridColumn("number").setFilterMode(FilterMode.STARTS_WITH),
+			new GridColumn("range").setFilterMode(FilterMode.ENDS_WITH),
+			new GridColumn("select").setFilterMode(FilterMode.EQUALS)
+		));
+	}
+	
+	/****/
+	
+	/**
+	 * Shows sorting substitution
+	 * @return http://localhost:8080/examples/grid/subst
+	 */
+	@Action("subst")
+	public Response sortingSubst() {
+		Grid grid = new Grid(Link.get().create(getClass(), c->c.filtering(null)), "get");
+		
+		grid.addColumn(new ValueColumn("id").setTitle("ID"));
+		grid.addColumn(
+			new ValueColumn("number")
+			.setTitle("Number")
+			.setUseSorting(true)
+		);
+		
+		Map<String, Object> params = new HashMap<>();
+		params.put("grid", grid);
+		return Response.getTemplate("filters.jsp", params);
+	}
+	
+	/**
+	 * Returns data for filters grid
+	 * Called internally
+	 * @return http://localhost:8080/examples/grid/substitution-data
+	 */
+	@Action(value = "substitution-data", validator = "substitutionValidator")
+	public Response substitution(@Params GridOptions options) {
+		try {
+			return Response.getJson(dao.getAll(options, null));
+		} catch (Exception e) {
+			logger.error("all filters", e);
+			return Response.getText(StatusCode.INTERNAL_SERVER_ERROR, "Error occur: " + e.getMessage());
+		}
+	}
+	
+	public Validator substitutionValidator() {
+		return GridOptions.getValidator(Arrays.asList(
+			new GridColumn("number").setSortingName("id")
+		));
+	}
+	
 	// TODO
 	/*
-	 * full filters
-	 * buttons
-	 * paging, page size
-	 * grid bez veci okolo - strankovani apod
-	 * column and row renderers, on row selection
-	 * actions (execute)
-	 * 
 	 * equals, like, startswith, endswith
-	 * substitutions
+	 * substitutions sorting
 	 * memory vs db (indexing)
 	 */
 

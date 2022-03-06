@@ -3,11 +3,15 @@ package samples.examples.grid;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import ji.common.structures.DictionaryValue;
+import ji.common.structures.ObjectBuilder;
 import toti.application.GridDataSet;
 import toti.application.GridOptions;
 import toti.application.GridRange;
@@ -22,7 +26,8 @@ public class GridExampleDao {
 				i,
 				"Item #" + i,
 				getNextInt(100, -100) / 10.0, 
-				getNextInt(20, 0)*5, 
+				getNextInt(20, 0)*5,
+				i%3 == 2 ? null : (i%3 == 1),
 				getRandomLocal(), 
 				getRandomLocal().toLocalDate(),
 				getRandomLocal().toLocalTime(),
@@ -45,14 +50,64 @@ public class GridExampleDao {
 	
 	public GridDataSet<GridExampleEntity> getAll(GridOptions options, Collection<Object> forOwners) throws SQLException {
 		List<GridExampleEntity> aux = data.stream().filter((e)->{
-			return e.equals(options.getFilters());
+			ObjectBuilder<Boolean> result = new ObjectBuilder<>(true);
+			Map<String, Object> map = e.toMap();
+			options.getFilters().forEach((name, filter)->{
+				if (!result.get()) {
+					return;
+				}
+				switch (filter.getMode()) {
+					case ENDS_WITH:
+						result.set(map.get(name).toString().endsWith(filter.getValue().toString()));
+						break;
+					case LIKE:
+						result.set(map.get(name).toString().contains(filter.getValue().toString()));
+						break;
+					case STARTS_WITH:
+						result.set(map.get(name).toString().startsWith(filter.getValue().toString()));
+						break;
+					case EQUALS:
+					default: result.set(filter.getValue().equals(map.get(name))); break;
+				}
+			});
+			return result.get();
 		}).collect(Collectors.toList());
+		Collections.sort(aux, (item1, item2)->{
+			Map<String, Object> v1 = item1.toMap();
+			Map<String, Object> v2 = item2.toMap();
+			
+			ObjectBuilder<Integer> index = new ObjectBuilder<>((int)Math.pow(10, options.getSorting().size()));
+			ObjectBuilder<Integer> compared = new ObjectBuilder<>(0);
+			options.getSorting().forEach((name, sort)->{
+				System.err.println(name + " " + (compared.get() + (compare(v1.get(name), v2.get(name)) * index.get())) );
+				compared.set(compared.get() + (compare(v1.get(name), v2.get(name)) * index.get()));
+				index.set(index.get()/10);
+				/*System.err.println("compared: " + compared.get() + " " + index.get());
+				System.err.println("--> " + v1.get(name) + " " + v2.get(name));
+				System.err.println("--> " + v1.get(name).getClass() + " " + v2.get(name).getClass());
+				System.err.println(compare(v1.get(name), v2.get(name)));
+				System.err.println();*/
+			});
+			return compared.get();
+		});
 		int size = aux.size();
 		GridRange range = GridRange.create(aux.size(), options.getPageIndex(), options.getPageSize());
 		if (range.isPresent()) {
 			aux = aux.subList(range.getOffset(), range.getOffset() + range.getLimit());
 		}
 		return new GridDataSet<>(aux, size, range.getPageIndex());
+	}
+	
+	private int compare(Object v1, Object v2) {
+		DictionaryValue w1 = new DictionaryValue(v1);
+		DictionaryValue w2 = new DictionaryValue(v2);
+		if (v1.getClass().isAssignableFrom(Boolean.class) || v2.getClass().isAssignableFrom(Boolean.class) ) {
+			return w1.getBoolean().compareTo(w2.getBoolean());
+		}
+		if (v1.getClass().isAssignableFrom(Number.class) && v2.getClass().isAssignableFrom(Number.class)) {
+			return w1.getDouble().compareTo(w2.getDouble());
+		}
+		return w1.toString().compareTo(w2.toString());
 	}
 	
 }

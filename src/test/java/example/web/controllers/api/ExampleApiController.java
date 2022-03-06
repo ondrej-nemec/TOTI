@@ -29,7 +29,6 @@ import toti.application.GridOptions;
 import toti.application.Help;
 import toti.response.Response;
 import toti.security.Identity;
-import toti.validation.ItemRules;
 import toti.validation.Validator;
 import ji.translator.Translator;
 
@@ -123,7 +122,7 @@ public class ExampleApiController {
 	@Secured({@Domain(name=SECURITY_DOMAIN, action=toti.security.Action.READ)})
 	public Response getAll(@Params GridOptions options) {
 		try {
-			return Response.getJson(dao.getAll(options, identity.getUser().getAllowedIds()));
+			return Response.getJson(dao.getAll(options, identity.getUser().getAllowedIds(), translator));
 		} catch (Exception e) {
 			logger.error("Example GetAll", e);
 			return Response.getJson(StatusCode.INTERNAL_SERVER_ERROR, new HashMap<>());
