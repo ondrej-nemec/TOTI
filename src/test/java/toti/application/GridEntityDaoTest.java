@@ -19,6 +19,7 @@ import ji.querybuilder.QueryBuilder;
 import ji.querybuilder.builders.SelectBuilder;
 import ji.querybuilder.mysql.MySqlQueryBuilder;
 import ji.querybuilder.mysql.MySqlSelectBuilder;
+import ji.translator.Translator;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 
@@ -36,7 +37,7 @@ public class GridEntityDaoTest implements Entity {
 		GridEntityDao<GridEntityDaoTest> dao = new GridEntityDao<GridEntityDaoTest>() {			
 			@Override public String getTableName() { return null; }
 			@Override public Database getDatabase() { return null; }
-			@Override public GridEntityDaoTest createEntity(DatabaseRow row) { return null; }
+			@Override public GridEntityDaoTest createEntity(DatabaseRow row, Translator translator) { return null; }
 			@Override public Optional<String> getOwnerColumnName() { return owner; }
 			@Override public SelectBuilder _getGrid(String select, QueryBuilder builder) { return null; }
 		};
@@ -124,7 +125,7 @@ public class GridEntityDaoTest implements Entity {
 		GridEntityDao<GridEntityDaoTest> dao = new GridEntityDao<GridEntityDaoTest>() {			
 			@Override public String getTableName() { return null; }
 			@Override public Database getDatabase() { return null; }
-			@Override public GridEntityDaoTest createEntity(DatabaseRow row) { return null; }
+			@Override public GridEntityDaoTest createEntity(DatabaseRow row, Translator translator) { return null; }
 			@Override public Optional<String> getOwnerColumnName() { return null; }
 			@Override public SelectBuilder _getGrid(String select, QueryBuilder builder) { return null; }
 		};
@@ -193,7 +194,7 @@ public class GridEntityDaoTest implements Entity {
 			
 			@Override public String getTableName() { return "tableName"; }
 			@Override public Database getDatabase() { return null; }
-			@Override public GridEntityDaoTest createEntity(DatabaseRow row) { return null; }
+			@Override public GridEntityDaoTest createEntity(DatabaseRow row, Translator translator) { return null; }
 			@Override public Optional<String> getOwnerColumnName() { return null; }
 			@Override public SelectBuilder _getGrid(String select, QueryBuilder builder) { return null; }
 		};

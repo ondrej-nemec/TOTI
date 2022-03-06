@@ -11,6 +11,7 @@ import ji.database.Database;
 import ji.database.support.DatabaseRow;
 import ji.querybuilder.QueryBuilder;
 import ji.querybuilder.builders.SelectBuilder;
+import ji.translator.Translator;
 
 public interface GridEntityDao<T extends Entity> {
 	
@@ -18,7 +19,7 @@ public interface GridEntityDao<T extends Entity> {
 	
 	String getTableName();
 	
-	T createEntity(DatabaseRow row);
+	T createEntity(DatabaseRow row, Translator translator);
 /*
 	default SelectBuilder _getAll(String select, QueryBuilder builder) {
 		return builder.select(select).from(getTableName());
@@ -30,7 +31,7 @@ public interface GridEntityDao<T extends Entity> {
 		return Optional.empty();
 	}
 
-	default GridDataSet<T> getAll(GridOptions options, Collection<Object> forOwners) throws SQLException {
+	default GridDataSet<T> getAll(GridOptions options, Collection<Object> forOwners, Translator translator) throws SQLException {
 		return getDatabase().applyBuilder((builder)->{
 			SelectBuilder count = _getGrid("count(*)", builder);
 			_applyFilters(builder, count, options.getFilters(), forOwners);
@@ -46,7 +47,7 @@ public interface GridEntityDao<T extends Entity> {
 			}
 			List<T> items = new LinkedList<>();
 			select.fetchAll().forEach((row)->{
-				items.add(createEntity(row));
+				items.add(createEntity(row, translator));
 			});
 			return new GridDataSet<>(items, countOfResults, range.getPageIndex());
 		});
