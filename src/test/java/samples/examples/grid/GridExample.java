@@ -485,7 +485,7 @@ public class GridExample implements Module {
 	 */
 	@Action("subst")
 	public Response sortingSubst() {
-		Grid grid = new Grid(Link.get().create(getClass(), c->c.filtering(null)), "get");
+		Grid grid = new Grid(Link.get().create(getClass(), c->c.substitution(null)), "get");
 		
 		grid.addColumn(new ValueColumn("id").setTitle("ID"));
 		grid.addColumn(
@@ -520,13 +520,6 @@ public class GridExample implements Module {
 		));
 	}
 	
-	// TODO
-	/*
-	 * equals, like, startswith, endswith
-	 * substitutions sorting
-	 * memory vs db (indexing)
-	 */
-
 	/*******************************/
 	
 	@Override
