@@ -1,6 +1,7 @@
 package example.dao.migrations;
 
 import java.sql.SQLException;
+import java.util.Random;
 
 import ji.migration.Migration;
 import ji.querybuilder.QueryBuilder;
@@ -38,6 +39,22 @@ public class E1__example_table implements Migration {
 			.addColumn("favorite_color", ColumnType.string(7))
 			.addColumn("comment", ColumnType.string(255))
 			.execute();
+		for (int i = 0; i < 100; i++) {
+			builder.insert("example")
+			.addValue("name", "Item #" + i)
+			.addValue("email", i+ "@example.com")
+			.addValue("age", new Random().nextInt(90))
+			.addValue("pasw", "")
+			.addValue("range", new Random().nextInt(90))
+			.addValue("active", i%2==0)
+			/*.addValue("defValue", "")
+			.addValue("sex", "")
+			.addValue("simple_date", "")
+			.addValue("dt_local", "")
+			.addValue("", "")
+			.addValue("", "")*/
+			.execute();
+		}
 	}
 
 	@Override
