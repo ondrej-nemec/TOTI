@@ -1,4 +1,4 @@
-/* TOTI Control version 0.0.20 */
+/* TOTI Control version 0.0.21 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -293,16 +293,19 @@ var totiControl = {
 			var originOptions = totiUtils.clone(params.options);
 
 		    var optGroupRenderer = function(depends) {
-		        var groups = select.querySelectorAll("optgroup");
-		        Array.prototype.forEach.call(groups, function(group) {
-		            var label = depends.querySelector("[value='"+ group.getAttribute("label") + "']");
-		            group.setAttribute("label", label.innerText);
-		        });
+				var setTitles = function () {
+	             	select.querySelectorAll("optgroup").forEach(function(group) {
+	                    var label = depends.querySelector("[value='"+ group.getAttribute("label") + "']");
+	                    group.setAttribute("label", label.innerText);
+	                });
+	            };
+	            setTitles();
 		        depends.onchange = function() {
 			        select.innerHTML = "";
 		            params.options = totiUtils.clone(originOptions);
 		            if (depends.value === "") {
 		                addOptions(select, null, select.value);
+                 		setTitles();
 		            } else {
 		                addOptions(select, depends.value, select.value);
 		            }
