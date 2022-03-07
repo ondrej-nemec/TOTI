@@ -79,14 +79,8 @@ public class GridExampleDao {
 			ObjectBuilder<Integer> index = new ObjectBuilder<>((int)Math.pow(10, options.getSorting().size()));
 			ObjectBuilder<Integer> compared = new ObjectBuilder<>(0);
 			options.getSorting().forEach((name, sort)->{
-				System.err.println(name + " " + (compared.get() + (compare(v1.get(name), v2.get(name)) * index.get())) );
 				compared.set(compared.get() + (compare(v1.get(name), v2.get(name)) * index.get()));
 				index.set(index.get()/10);
-				/*System.err.println("compared: " + compared.get() + " " + index.get());
-				System.err.println("--> " + v1.get(name) + " " + v2.get(name));
-				System.err.println("--> " + v1.get(name).getClass() + " " + v2.get(name).getClass());
-				System.err.println(compare(v1.get(name), v2.get(name)));
-				System.err.println();*/
 			});
 			return compared.get();
 		});
