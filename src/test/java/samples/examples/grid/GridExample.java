@@ -189,6 +189,37 @@ public class GridExample implements Module {
 	/******/
 	
 	/**
+	 * Usage of reset button
+	 * @return http://localhost:8080/examples/grid/reset
+	 */
+	@Action("reset")
+	public Response reset() {
+		Grid grid = new Grid(Link.get().create(getClass(), c->c.allFilters(null)), "get");
+		grid.addColumn(new ValueColumn("id"));
+		grid.addColumn(
+				new ValueColumn("text")
+				.setTitle("Text")
+				.setFilter(Text.filter())
+				.setUseSorting(true)
+			);
+		grid.addColumn(
+				new ValueColumn("datetime")
+				.setTitle("Datetime")
+				.setFilter(Datetime.filter().setStep(1))
+				.setUseSorting(true)
+			);
+		grid.addColumn(
+			new ButtonsColumn("buttons")
+			.setResetFiltersButton(true) // disable reset-filter button
+		);
+		Map<String, Object> params = new HashMap<>();
+		params.put("grid", grid);
+		return Response.getTemplate("filters.jsp", params);
+	}
+	
+	/******/
+	
+	/**
 	 * Demonstrate grid buttons
 	 * @return http://localhost:8080/examples/grid/buttons
 	 */
