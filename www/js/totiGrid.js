@@ -1,4 +1,4 @@
-/* TOTI Grid version 0.0.19 */
+/* TOTI Grid version 0.0.20 */
 class TotiGrid {
 
 	constructor(config) {
@@ -297,6 +297,7 @@ class TotiGrid {
 		var object = this;
 		var loadDataSuccess = function(body, uniqueName, response, columns, identifier) {
 			if (response.data.length === 0) {
+				body.innerHTML = "";
 				var td = document.createElement("td");
 				td.setAttribute("colspan", 100);
 				td.innerText = totiTranslations.gridMessages.noItemsFound;

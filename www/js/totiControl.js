@@ -436,6 +436,7 @@ var totiControl = {
 		        } else {
 		             if (date.value === '' && time.value === '') {
 		                /*event.preventDefault(); // not working in firefox */
+		                datetime.value = '';
                			return false;
 		             } else if (date.value === '') {
 		                 datetime.value = time.value;
