@@ -19,6 +19,10 @@ public interface GridEntityDao<T extends Entity> {
 	
 	String getTableName();
 	
+	default String getHelpTable() {
+		return getTableName();
+	}
+	
 	T createEntity(DatabaseRow row, Translator translator);
 /*
 	default SelectBuilder _getAll(String select, QueryBuilder builder) {
@@ -85,9 +89,12 @@ public interface GridEntityDao<T extends Entity> {
 			String where = "";
 			if (filter.getValue() == null) {
 				where = filter.getName() + " is null";
+			} else if (filter.getMode() == FilterMode.EQUALS) {
+				where = filter.getName() + " = :" + filter.getName() + "Value";
 			} else {
-				where = filter.getName() + " " + (filter.getMode() == FilterMode.EQUALS ? "=" : "LIKE")
-					+ " :" + filter.getName() + "Value";
+				where =builder.getSqlFunctions().concat(":empty", filter.getName())
+						+ " LIKE :" + filter.getName() + "Value";
+				select.addParameter(":empty", ""); // cast to string
 			}
 			/*else if (value.toString().length() > 20) {
 				where = builder.getSqlFunctions().concat(":empty", filter)
@@ -152,20 +159,21 @@ public interface GridEntityDao<T extends Entity> {
 			select.append(" AS ");
 			select.append(HELP_GROUP_NAME);
 		}
-		return builder.select(select.toString()).from(getTableName()).orderBy(getHelpDisplayValue());
+		return builder.select(select.toString()).from(getHelpTable());
 	}
 	
 	default List<Help> getHelp(Collection<Object> forOwners) throws SQLException {
 		return getDatabase().applyBuilder((builder)->{
 			List<Help>items = new LinkedList<>();
 			SelectBuilder select = _getHelp(builder);
-			if (getOwnerColumnName().isPresent()) {
+			if (getOwnerColumnName().isPresent() && forOwners != null) {
 				if (!forOwners.isEmpty()) {
 					select.where(getOwnerColumnName().get() + " in (:in)").addParameter(":in", forOwners);
 				} else {
 					select.where("1=2"); // no results
 				}
 			}
+			select.orderBy(getHelpDisplayValue());
 			select.fetchAll().forEach((row)->{
 				items.add(
 					new Help(
