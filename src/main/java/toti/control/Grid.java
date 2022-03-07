@@ -21,7 +21,7 @@ public class Grid implements Control {
 	private final List<Jsonable> actions = new LinkedList<>();
 	
 	// paging
-	private List<Integer> pagesSizes = Arrays.asList(5, 10, 20, 50, 100);
+	private List<Integer> pagesSizes = Arrays.asList(10, 20, 50, 100);
 	private Integer defaultPageSize = null;
 	private Integer pagesButtonCount = 5;
 	
