@@ -26,6 +26,7 @@ import toti.annotations.Params;
 import toti.application.FilterMode;
 import toti.application.GridColumn;
 import toti.application.GridOptions;
+import toti.application.GridRange;
 import toti.application.Task;
 import toti.control.Grid;
 import toti.control.columns.ActionsColumn;
@@ -46,6 +47,7 @@ import toti.control.inputs.Week;
 import toti.register.Register;
 import toti.response.Response;
 import toti.url.Link;
+import toti.validation.ItemRules;
 import toti.validation.Validator;
 
 /**
@@ -550,6 +552,81 @@ public class GridExample implements Module {
 			new GridColumn("number").setSortingName("id")
 		));
 	}
+	
+	/*****/
+	
+	/**
+	 * Usage methods without GridDataSet and GridOptions
+	 * @return http://localhost:8080/examples/grid/subst
+	 */
+	@Action("raw")
+	public Response raw() {
+		Grid grid = new Grid(Link.get().create(getClass(), c->c.raw(0, 0, null, null)), "get");
+		
+		grid.addColumn(
+			new ValueColumn("id").setTitle("ID")
+			.setUseSorting(true)
+			.setFilter(Number.filter())
+		);
+		grid.addColumn(
+			new ValueColumn("text")
+			.setTitle("Text")
+			.setUseSorting(true)
+			.setFilter(Text.filter())
+		);
+		
+		Map<String, Object> params = new HashMap<>();
+		params.put("grid", grid);
+		return Response.getTemplate("filters.jsp", params);
+	}
+	
+	/**
+	 * Returns data for filters grid
+	 * Called internally
+	 * @return http://localhost:8080/examples/grid/substitution-data
+	 */
+	@Action(value = "raw-data", validator = "rawValidator")
+	public Response raw(
+			@Param("pageIndex") int pageIndex, 
+			@Param("pageSize") int pageSize,
+			@Param("filters") Map<String, Object> filters,
+			@Param("sorting") Map<String, Object> sorting) {
+		try {
+			List<GridExampleEntity> dataset = dao.getAll();
+			
+			// there will be filtering and sorting
+			// filters: name is column name and value is filtering value
+			// sorting: name is column name and value is "DESC" or "ASC"
+			
+			GridRange range = GridRange.create(dao.getAll().size(), pageIndex, pageSize);
+			dataset = dataset.subList(range.getOffset(), range.getLimit() + range.getLimit() + 1);
+			
+			Map<String, Object> json = new HashMap<>();
+			json.put("data", dataset);
+			json.put("itemsCount", dataset.size());
+			json.put("pageIndex", pageIndex);
+			return Response.getJson(json);
+		} catch (Exception e) {
+			logger.error("all filters", e);
+			return Response.getText(StatusCode.INTERNAL_SERVER_ERROR, "Error occur: " + e.getMessage());
+		}
+	}
+	
+	public Validator rawValidator() {
+		return new Validator(true)
+		.addRule(ItemRules.forName("pageIndex", true))
+		.addRule(ItemRules.forName("pageSize", true))
+		.addRule(ItemRules.forName("filters", true).setMapSpecification(new Validator(true)
+			.addRule(ItemRules.forName("id", false).setType(Integer.class))
+			.addRule(ItemRules.forName("text", false).setType(String.class))
+		))
+		.addRule(ItemRules.forName("sorting", true).setMapSpecification(new Validator(true)
+			.addRule(ItemRules.forName("id", false).setAllowedValues(Arrays.asList("ASC", "DESC")))
+			.addRule(ItemRules.forName("text", false).setAllowedValues(Arrays.asList("ASC", "DESC")))
+		));
+	}
+	
+	
 	
 	/*******************************/
 	

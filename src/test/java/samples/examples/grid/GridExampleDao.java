@@ -48,6 +48,10 @@ public class GridExampleDao {
 		return new Random().nextInt(max - min) + min;
 	}
 	
+	public List<GridExampleEntity> getAll() {
+		return data;
+	}
+	
 	public GridDataSet<GridExampleEntity> getAll(GridOptions options, Collection<Object> forOwners) throws SQLException {
 		List<GridExampleEntity> aux = data.stream().filter((e)->{
 			ObjectBuilder<Boolean> result = new ObjectBuilder<>(true);

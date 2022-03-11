@@ -1,0 +1,180 @@
+<h1>Grids</h1>
+
+<p class="alert alert-success">
+	Full grid example is <a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/grid">here</a>.
+</p>
+
+<p>
+	TODO
+	data loaded async
+	propojeni java - javascript; neni nutne pouzivat
+
+	TODO check renderes for XSS
+</p>
+
+<h2>Init and print</h2>
+
+<p>
+	The <code>Grid</code> constructor requires URL (as string) and HTTP method (get, post,... as string) for data loading.
+</p>
+
+<pre><code class="language-java">
+Grid grid = new Grid("/load/data/url", "get");
+</code></pre>
+
+<p>
+	Put <code>Grid</code> instance to template parameters.
+</p>
+
+<pre><code class="language-java">
+Map<String, Object> params = new HashMap&lt;&gt;();
+// ...
+params.put("gridInstance", grid);
+return Response.getTemplate("...", params);
+</code></pre>
+
+<p>
+	In template, use unpaired <code>control</code> tag for print grid. Use variable name as control name.
+</p>
+
+<pre><code>
+&lt;t:control name="gridInstance" /&gt;
+</code></pre>
+
+<p class="alert alert-info">
+	You can get JS class instance of grid calling <code>${--variable-name--}</code> in JS.
+</p>
+
+<pre><code class="language-javascript">
+var gridObject = ${gridInstance|noescape};
+</code></pre>
+
+<h2>Source data method</h2>
+
+<p>
+	Grid data request and response have specific format. For simplifing, there is <code>GridOptions</code> (for grid request) and <code>GridDataSet</code> (for response). You can always create data method without <code>GridOptions</code> and <code>GridDataSet</code>.
+</p>
+
+<h3>GridDataSet</h3>
+
+<p>
+	Structure for data. Holds list of rows (filtered and sorted), total row count and page index. <code>GridDataSet</code> implements Jsonable.
+</p>
+
+<h3>GridOptions</h3>
+
+<p>
+	<code>GridOptions</code> holds filters, sorting, page index and page size. Also contains static method for creating validator.
+</p>
+
+<strong>Raw - without GridOptions</strong>
+
+<pre><code>
+{
+	"itemsCount": --number--,
+	"pageIndex": --number--,
+	"data" []
+}
+</code></pre>
+
+<p>
+	<code>data</code> is list of JSON objects, where property is name of column and value will be displayed.
+</p>
+
+<strong>Validator</strong>
+
+<p>
+	Validator for grid method is <code>GridOptions.getValidator</code>. Requires List of <code>GridColumn</code>. <code>GridColumn</code> requires column name. The value class can be speficified, too.
+</p>
+
+<p>
+	Methods:
+	<ul>
+		<li>Constructor 1: <code>new GridColumn(name)</code> - column with only name specified</li>
+		<li>Constructor 2: <code>new GridColumn(name, clazz)</code> - column with name and type</li>
+		<li>Use in sorting: <code>setUseInSorting(true|false)</code> - if rule will be used for sorting, default: true</li>
+		<li>Use in filtering: <code>setUseInFilter(true|false)</code> - if rule will be used for filtering, default: true</li>
+		<li>Filtering mode: <code>setFilterMode(LIKE|EQUALS|STARTS_WITH|ENDS_WITH)</code> - default: EQUALS</li>
+		<li>Change sorting name: <code>setSortingName(newName)</code> - usualy used if you wish one column sort by id and filter by name.</li>
+	</ul>
+</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-java">
+@Action(value = "url", validator = "exampleMethodValidator")
+public Response exampleDataMethod(@Params GridOptions options) {
+	// TODO returns data using GridDataSet or JSON
+}
+
+public Validator exampleMethodValidator() {
+	return GridOptions.getValidator(Arrays.asList(
+		new GridColumn("one"), // only column name specified
+		new GridColumn("two", Double.class), // column name and value type
+		new GridColumn("three").setUseInSorting(false), // use only for filter
+		new GridColumn("four").setUseInFilter(false), // use only fo sorting
+		new GridColumn("five").setUseInFilterFilterMode.LIKE), // set sorting mode
+		new GridColumn("six").setSortingName("seven") // change column name for sorting
+	));
+}
+</code></pre>
+
+<strong>Raw</strong>
+
+<pre><code class="language-java">
+new Validator(true)
+	.addRule(ItemRules.forName("pageIndex", true))
+	.addRule(ItemRules.forName("pageSize", true))
+	.addRule(ItemRules.forName("filters", true).setMapSpecification(new Validator(true)
+		// add one rule for each column, name is required, type is optional
+		.addRule(ItemRules.forName(--column-name--, false).setType(String.class))
+	))
+	.addRule(ItemRules.forName("sorting", true).setMapSpecification(new Validator(true)
+		// add one rule for each column, name and allowed values are required
+		.addRule(ItemRules.forName("name", false).setAllowedValues(Arrays.asList("ASC", "DESC")))
+	));
+</code></pre>
+
+<h2>Grid columns</h2>
+
+<p>
+	Into <code>Grid</code> can be added three types of column: <code>ValueColumn</code>, <code>ButtonColumn</code> and <code>ActionColumn</code>.
+</p>
+
+<h3>ValueColumn</h3>
+
+<p>
+	<code>ValueColumn</code> will display value. The value will be displayed as except: column has renderer (see bellow), column has select filter (TOTI try find the value in select's options and display it. If no founded, the value will be displayed) and column has some of date and time filters (date or time is parsed with local format).
+</p>
+
+<p>
+	Methods:
+	<ul>
+		<li>Constructor: <code>new ValueColumn(name)</code></li>
+		<li>Set column title: <code>setTitle(title)</code>. Default: same as name.</li>
+		<li>Allow sorting: <code>setUseSorting(true|false)</code>. Only for GUI, has no effect on data method. Default: false.</li>
+		<li>Set filter: <code>setFilter(filter)</code>. Add filter input. List of all filters is <a href="?file=doc-inputs.html">here</a>.</li>
+		<li>JS value renderer: <code>setRenderer</code>. Name of JS function. TOTI send two parametes into method: value (as first) and all values from given row (as second)</li>
+	</ul>
+</p>
+
+<h3>ButtonColumn</h3>
+
+- title
+- type
+
+<h3>ActionColumn</h3>
+
+- title
+- name, sorting?
++ actions
+
+
+- nastaveni
+	- row renderer
+	- strankovani
+	- velikost stranky
+	- vyber radku
+
+- actions
+	- row unique
