@@ -8,6 +8,7 @@ import java.util.Map;
 
 import ji.common.Logger;
 import ji.common.functions.Env;
+import ji.common.structures.MapInit;
 import ji.database.Database;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
@@ -367,6 +368,7 @@ public class GridExample implements Module {
 		grid.addAction(
 			new GroupAction("Async action", Link.get().create(getClass(), c->c.asyncActionLink(null)))
 			.setOnFailure("actionOnFailure").setOnSuccess("actionOnSuccess")
+			.setConfirmation("Really?")
 		);
 		grid.addAction(
 			new GroupAction("Sync action", Link.get().create(getClass(), c->c.syncActionLink(null)))
@@ -418,8 +420,8 @@ public class GridExample implements Module {
 			.setOnFailure("actionOnFailure").setOnSuccess("actionOnSuccess")
 		);
 		
-		grid.setUniqueRowIdentifier("text");
-		grid.addColumn(new ActionsColumn(""));
+		grid.addColumn(new ActionsColumn("byText").setUniqueRowIdentifier("text"));
+		grid.addColumn(new ActionsColumn("byId").setUniqueRowIdentifier("id"));
 		grid.addColumn(new ValueColumn("id"));
 		grid.addColumn(new ValueColumn("text"));
 		
@@ -557,7 +559,7 @@ public class GridExample implements Module {
 	
 	/**
 	 * Usage methods without GridDataSet and GridOptions
-	 * @return http://localhost:8080/examples/grid/subst
+	 * @return http://localhost:8080/examples/grid/raw
 	 */
 	@Action("raw")
 	public Response raw() {
@@ -583,7 +585,7 @@ public class GridExample implements Module {
 	/**
 	 * Returns data for filters grid
 	 * Called internally
-	 * @return http://localhost:8080/examples/grid/substitution-data
+	 * @return http://localhost:8080/examples/grid/raw-data
 	 */
 	@Action(value = "raw-data", validator = "rawValidator")
 	public Response raw(
@@ -624,6 +626,77 @@ public class GridExample implements Module {
 			.addRule(ItemRules.forName("id", false).setAllowedValues(Arrays.asList("ASC", "DESC")))
 			.addRule(ItemRules.forName("text", false).setAllowedValues(Arrays.asList("ASC", "DESC")))
 		));
+	}
+	
+	/*****/
+	
+	/**
+	 * Usage methods without GridDataSet and GridOptions
+	 * @return http://localhost:8080/examples/grid/xss
+	 */
+	@Action("xss")
+	public Response xss() {
+		Grid grid = new Grid(Link.get().create(getClass(), c->c.xss(null)), "get");
+		
+		grid.addColumn(new ValueColumn("id"));
+		grid.addColumn(
+			new ValueColumn("text")
+			.setFilter(Text.filter())
+		);
+		grid.addColumn(
+			new ValueColumn("select")
+			.setFilter(
+				Select.filter(Arrays.asList(
+					Option.create("", "---"),
+					Option.create("0", "<script>alert('select');</script>")
+				)).setLoadData(Link.get().create(getClass(), c->c.xssLoad()), "get")
+			)
+		);
+		grid.addColumn(
+			new ValueColumn("datetime")
+			.setFilter(Datetime.filter())
+		);
+		
+		Map<String, Object> params = new HashMap<>();
+		params.put("grid", grid);
+		return Response.getTemplate("filters.jsp", params);
+	}
+	
+	@Action("xss-load")
+	public Response xssLoad() {
+		Map<String, Object> json = new HashMap<>();
+		json.put("value", 1);
+		json.put("title", "<script>alert('select');</script>");
+		return Response.getJson(Arrays.asList(json));
+	}
+	
+	/**
+	 * Returns data for filters grid
+	 * Called internally
+	 * @return http://localhost:8080/examples/grid/xss-data
+	 */
+	@Action(value = "xss-data")
+	public Response xss(@Params GridOptions options) {
+		try {
+			List<Object> dataset = new LinkedList<>();
+			dataset.add(
+				new MapInit<>()
+				.append("id", "1")
+				.append("text", "<script>alert('value');</script>")
+				.append("select", "1")
+				.append("datetime", "<script>alert('datetime');</script>")
+				.toMap()
+			);
+			
+			Map<String, Object> json = new HashMap<>();
+			json.put("data", dataset);
+			json.put("itemsCount", dataset.size());
+			json.put("pageIndex", 1);
+			return Response.getJson(json);
+		} catch (Exception e) {
+			logger.error("all filters", e);
+			return Response.getText(StatusCode.INTERNAL_SERVER_ERROR, "Error occur: " + e.getMessage());
+		}
 	}
 	
 	

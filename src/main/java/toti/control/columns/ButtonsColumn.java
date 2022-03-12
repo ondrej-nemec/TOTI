@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import toti.control.inputs.Button;
-import toti.templating.Template;
 
 public class ButtonsColumn implements Column {
 	
@@ -41,9 +40,9 @@ public class ButtonsColumn implements Column {
 	@Override
 	public Map<String, Object> getGridSettings() {
 		Map<String, Object> json = new HashMap<>();
-		json.put("name", Template.escapeVariable(name));
+		json.put("name", name);
 		json.put("type", type);
-		json.put("title", Template.escapeVariable(title));
+		json.put("title", title);
 		json.put("reset", useResetButton);
 		json.put("sorting", false);
 		json.put("buttons", buttons);

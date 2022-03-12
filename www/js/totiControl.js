@@ -1,4 +1,4 @@
-/* TOTI Control version 0.0.21 */
+/* TOTI Control version 0.0.22 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -20,7 +20,7 @@ var totiControl = {
 		
 		for ([key, name] of Object.entries(attributes)) {
 			if (key === "value") {
-				button.innerHTML = name;
+				button.innerText = name;
 			} else if (key === "action") {
 				if (typeof attributes.action === "object") {
 					button.onclick = totiControl.getAction(attributes.action);
@@ -194,7 +194,7 @@ var totiControl = {
 			var textarea = document.createElement('textarea');
 			for ([key, name] of Object.entries(params)) {
 				if (key === "value") {
-					textarea.innerHTML = name;
+					textarea.innerText = name;
 				} else {
 					textarea.setAttribute(key, name);
 				}
@@ -348,7 +348,7 @@ var totiControl = {
 			var option = document.createElement('option');
 			for ([key, value] of Object.entries(params)) {
 				if (key === "title") {
-					option.innerHTML = value;
+					option.innerText = value;
 				} else {
 					option.setAttribute(key, value);
 				}

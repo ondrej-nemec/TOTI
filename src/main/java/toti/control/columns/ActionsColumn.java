@@ -3,14 +3,12 @@ package toti.control.columns;
 import java.util.HashMap;
 import java.util.Map;
 
-import toti.templating.Template;
-
 public class ActionsColumn implements Column {
 
 	private final String name;
 	private final String type;
-	private final boolean useSorting = false;
 	private String title;
+	private String identifier = "id";
 		
 	public ActionsColumn(String name) {
 		this.name = name;
@@ -23,13 +21,19 @@ public class ActionsColumn implements Column {
 		return this;
 	}
 	
+	public ActionsColumn setUniqueRowIdentifier(String uniqueRowIdentifier) {
+		this.identifier = uniqueRowIdentifier;
+		return this;
+	}
+	
 	@Override
 	public Map<String, Object> getGridSettings() {
 		Map<String, Object> json = new HashMap<>();
-		json.put("name", Template.escapeVariable(name));
+		json.put("name", name);
+		json.put("identifier", identifier);
 		json.put("type", type);
-		json.put("title", Template.escapeVariable(title));
-		json.put("sorting", useSorting);
+		json.put("title", title);
+		json.put("sorting", false);
 		return json;
 	}
 	

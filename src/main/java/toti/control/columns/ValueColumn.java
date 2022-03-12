@@ -3,8 +3,6 @@ package toti.control.columns;
 import java.util.HashMap;
 import java.util.Map;
 
-import toti.templating.Template;
-
 public class ValueColumn implements Column {
 	
 	private final String name;
@@ -44,9 +42,9 @@ public class ValueColumn implements Column {
 	@Override
 	public Map<String, Object> getGridSettings() {
 		Map<String, Object> json = new HashMap<>();
-		json.put("name", Template.escapeVariable(name));
+		json.put("name", name);
 		json.put("type", type);
-		json.put("title", Template.escapeVariable(title));
+		json.put("title", title);
 		json.put("useSorting", useSorting);
 		if (filter != null) {
 			Map<String, Object> filterConf = new HashMap<>(filter.getFilterSettings());

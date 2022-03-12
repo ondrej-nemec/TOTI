@@ -5,7 +5,6 @@ import java.util.Map;
 
 import ji.json.Jsonable;
 import toti.control.Control;
-import toti.templating.Template;
 
 public class GroupAction implements Jsonable {
 	
@@ -51,7 +50,7 @@ public class GroupAction implements Jsonable {
 	public Object toJson() {
 		Map<String, Object> json = new HashMap<>();
 		json.put("async", async);
-		json.put("title", Template.escapeVariable(title));
+		json.put("title", title);
 		json.put("link", link);
 		json.put("method", method);
 		if (confirmation != null) {

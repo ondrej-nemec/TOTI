@@ -14,7 +14,6 @@ public class Grid implements Control {
 
 	private final String loadDataUrl;
 	private final String loadDataMethod;
-	private String uniqueRowIdentifier = "id";
 	private boolean useRowSelection = false;
 	private String onRowRenderer = null;
 	private final List<Jsonable> columns = new LinkedList<>();
@@ -46,11 +45,6 @@ public class Grid implements Control {
 		return this;
 	}
 	
-	public Grid setUniqueRowIdentifier(String uniqueRowIdentifier) {
-		this.uniqueRowIdentifier = uniqueRowIdentifier;
-		return this;
-	}
-	
 	public Grid useRowSelection(boolean useSelectionRow) {
 		this.useRowSelection = useSelectionRow;
 		return this;
@@ -76,7 +70,6 @@ public class Grid implements Control {
 		Map<String, Object> json = new HashMap<>();
 		json.put("dataLoadUrl", loadDataUrl);
 		json.put("dataLoadMethod", loadDataMethod);
-		json.put("identifier", uniqueRowIdentifier);
 		json.put("useRowSelection", useRowSelection);
 		if (onRowRenderer != null) {
 			json.put("onRowRenderer", onRowRenderer);

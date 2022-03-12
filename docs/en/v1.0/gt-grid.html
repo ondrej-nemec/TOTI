@@ -5,14 +5,19 @@
 </p>
 
 <p>
-	TODO
-	data loaded async
-	propojeni java - javascript; neni nutne pouzivat
-
-	TODO check renderes for XSS
+	TOTI provides JS library for displaying date in tables. The configuration for table/grid can be created with Java code and send to template, where will be displayed. Data are always laoded asynchronious.
 </p>
 
-<h2>Init and print</h2>
+<p class="alert alert-warning">
+	For using TOTI JS grid library is nessessary to add <code>/toti/totiJs.js</code> to your page.
+</p>
+
+<p class="alert alert-warning">
+	Text putted to configuration (column names, JS function names, titles, ... ) are NOT escaped to prevent XSS. <br>
+	Data loaded to grid are in secured agains XSS.
+</p>
+
+<h2>Init and display</h2>
 
 <p>
 	The <code>Grid</code> constructor requires URL (as string) and HTTP method (get, post,... as string) for data loading.
@@ -21,6 +26,20 @@
 <pre><code class="language-java">
 Grid grid = new Grid("/load/data/url", "get");
 </code></pre>
+
+<h3>Settings</h3>
+
+<p>
+	Methods:
+	<ul>
+		<li>Page size select: <code>setPagesSizes(listOfSizes)</code> and <code>setPagesSizes(listOfSizes, defautlSelectedSize)</code> - display select box with page sizes. If list of sizes is null, no paging used. Default is: [10, 20, 50, 100].</li>
+		<li>Count of paging buttons <code>setPagesButtonCount(buttonsCount)</code>. Default is 5.</li>
+		<li>Row renderer: <code>setOnRowRenderer(rowRenderer)</code> - name of JS function. If specified, call custom JS function. To function are passed two parameters: row container and object of all values.</li>
+		<li>Row selection: <code>useRowSelection(true|false)</code> - if use can select row. Selected row contains class 'row-selected'.</li>
+	</ul>
+</p>
+
+<h3>Display</h3>
 
 <p>
 	Put <code>Grid</code> instance to template parameters.
@@ -104,7 +123,7 @@ var gridObject = ${gridInstance|noescape};
 <pre><code class="language-java">
 @Action(value = "url", validator = "exampleMethodValidator")
 public Response exampleDataMethod(@Params GridOptions options) {
-	// TODO returns data using GridDataSet or JSON
+	// return data using GridDataSet or JSON
 }
 
 public Validator exampleMethodValidator() {
@@ -158,23 +177,59 @@ new Validator(true)
 	</ul>
 </p>
 
-<h3>ButtonColumn</h3>
+<h3>ButtonsColumn</h3>
 
-- title
-- type
+<p>
+	<code>ButtonsColumn</code> holds list of buttons. Also can contains reset button for filters.
+</p>
 
-<h3>ActionColumn</h3>
+<p>
+	Methods:
+	<ul>
+		<li>Constructor: <code>new ButtonsColumn(name)</code></li>
+		<li>Set title: <code>setTitle(title)</code> - title of column, default is same as name</li>
+		<li>Reset filter button: <code>setResetFiltersButton(true|false)</code> - show reset button. Default is true.</li>
+		<li>Buttons: <code>addButton(button)</code> - add button to list, can be called more times.</li>
+	</ul>
+</p>
 
-- title
-- name, sorting?
-+ actions
+<p>
+	<strong>Can be used moretimes, but remember to have unique name.</strong>
+</p>
 
+<h3>ActionsColumn</h3>
 
-- nastaveni
-	- row renderer
-	- strankovani
-	- velikost stranky
-	- vyber radku
+<p>
+	<code>ActionsColumn</code> contains only checkboxex. This is for Group actions.
+</p>
 
-- actions
-	- row unique
+<p>
+	Methods:
+	<ul>
+		<li>Constructor: <code>new ActionsColumn(name)</code></li>
+		<li>Set title: <code>setTitle(title)</code> - title of column, default is same as name</li>
+		<li>Row unique: <code>setUniqueRowIdentifier(unique)</code> - unique from row values. This value will be sended to Action method. Default is 'id'.</li>
+	</ul>
+</p>
+
+<p>
+	<strong>Can be used moretimes, but remember to have unique name.</strong>
+</p>
+
+<h2>Group actions</h2>
+
+<p>
+	<code>GroupAction</code> allows execute some code for more rows at once. Requires at least one <code>ActionsColumn</code>. Add <code>GroupAction</code> to <code>Grid</code> calling <code>addAction(action)</code> (can be called more times).
+</p>
+
+<p>
+	Methods:
+	<ul>
+		<li>Constructor: <code>new GroupAction(title, link)</code></li>
+		<li>Confirmation: <code>setConfirmatio(textOfConfirmaion)</code> - if specified, TOTI display confirmation before executing.</li>
+		<li>Async/sync sending: <code>setAsync(true|false)</code> - send request async or not. Defautl is true.</li>
+		<li>Request method: <code>setMethod(method)</code> - Default is "get".</li>
+		<li>On success: <code>setOnSuccess(methodName)</code> - name of JS function called on success.</li>
+		<li>On failure: <code>setOnFailure(methodName)</code> - name of JS function called on failure.</li>
+	</ul>
+</p>

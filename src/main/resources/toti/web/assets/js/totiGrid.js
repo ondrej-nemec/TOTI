@@ -1,4 +1,4 @@
-/* TOTI Grid version 0.0.20 */
+/* TOTI Grid version 0.0.21 */
 class TotiGrid {
 
 	constructor(config) {
@@ -295,7 +295,7 @@ class TotiGrid {
 
 	load(uniqueName, initialLoad = false) {
 		var object = this;
-		var loadDataSuccess = function(body, uniqueName, response, columns, identifier) {
+		var loadDataSuccess = function(body, uniqueName, response, columns) {
 			if (response.data.length === 0) {
 				body.innerHTML = "";
 				var td = document.createElement("td");
@@ -339,7 +339,7 @@ class TotiGrid {
 						td.appendChild(totiControl.input({
 							type: "checkbox",
 							"class": uniqueName + "-grid-action",
-							"data-unique": row[identifier]
+							"data-unique": row[column.identifier]
 						}));
 					} else if (column.type === 'buttons') {
 						var showButton = function(rowData, condition, evaluate) {
@@ -460,8 +460,7 @@ class TotiGrid {
 						body,
 						uniqueName,
 						response, 
-						object.config.columns,
-						object.config.identifier
+						object.config.columns
 					);
 				} catch (e) {
 					console.error(e);
