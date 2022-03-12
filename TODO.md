@@ -5,11 +5,10 @@
 ## FIX and Bugs
 
 * sync form sending is not working
+* JS not editable form: select and date time not working
 * create style of exception and error page, profiler, viewer, profiler bar, welcome page
 * Check: Cross Site Scripting (DOM Based)
-* JS not editable form: select and date time not working
-* Range, Color: actual value
-* examples/samples/grid/filters.jsp remove develop links
+* documentation - filters and inputs - check methods(placeholder)
 
 ## TODO
 
@@ -23,19 +22,17 @@
 		* variable define
 * Control
 	* Check firefox datetime with step 60
-	* Grid: add on row translation etc.
 	* Add title element (tooltip)
 	* Grid: page size hidden value. set at init, user cannot change
 * JS
 	* TotiLoad: remove deprecated sync calling Synchronous XMLHttpRequest on the main thread is deprecated because of its detrimental effects to the end user's experience. For more help, check https://xhr.spec.whatwg.org/.
 	* JS method: take html element or element content and use as link. Element will be invisible
-* EntityDao
-	* some substituion in sorting for substituted items
-	* allow create entity with translator
+	* Range, Color: actual value
 * DB viewer
 * Profiler - improve
 * Logging - new Log4j or some general way
-* Routiong - add lang to route
+* Routing - add lang to route
+* Routing - translate routes
 * Tests:
 	* Improve parsing tests - TODOs
 	* Register
@@ -54,9 +51,9 @@
 	* datalist - will be working like select - defined data + load
 * Control
 	* Grid
-		* Filtering: switch for like/equals, add to EntityDao
-		* Sorting: sort by something replaced, like sort by id but displayed name
+		* Filtering: switch for like/equals
 		* autorefresh
+		* translated text in display - filtering not working
 	* Form
 		* submit url - replace 'id' - custumize pattern, keys
 		* some simple api for dynamic input displaying
@@ -67,7 +64,6 @@
 	* Max/Min value include/exclude
 	* Automatic cast map to list - maybe in JI
 * EntityDao
-	* Support for grid like/equals
 	* column names add alpha-numeric check
 * Allow user defined error pages
 * User data saved in token/loaded by service from register + switch

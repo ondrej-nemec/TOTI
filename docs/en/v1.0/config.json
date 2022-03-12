@@ -41,6 +41,10 @@
 			{
 				"title": "Grids",
 				"link": "gt-grid.html"
+			},
+			{
+				"title": "Forms",
+				"link": "gt-forms.html"
 			}
 		]
 	},
