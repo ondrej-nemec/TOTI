@@ -12,7 +12,10 @@ import ji.translator.Translator;
 public class ItemRules {
 
 	public static ItemRules defaultRule() {
-		return new ItemRules("", false, (t, param)->"");
+		return new ItemRules("", false, (t, param)->t.translate(
+			"common.validation.default-rule-not-match",
+			new MapInit<String, Object>().append("parameter", param).toMap()
+		));
 	}
 	
 	public static ItemRules forName(String name, boolean required) {
