@@ -29,7 +29,17 @@ public class FormLabel implements Tag {
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
-		return String.format("write(\"<div name='form-label-%s' class='dynamic-container-part'></div>\");", params.get("name"));
+		StringBuilder code = new StringBuilder(
+			String.format("write(\"<div name='form-label-%s' class='dynamic-container-part'", params.get("name"))
+		);
+		params.forEach((name, value)->{
+			if ("name".equals(name)) {
+				return;
+			}
+			code.append(String.format(" p-%s='%s'", name, value));
+		});
+		code.append("></div>\");");
+		return code.toString();
 	}
 
 }
