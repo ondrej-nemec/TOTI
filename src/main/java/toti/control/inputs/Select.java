@@ -77,11 +77,6 @@ public class Select implements Input, Filter {
 		wrapper.setDisabled(disabled);
 		return this;
 	}
-
-	public Select setPlaceholder(String placeholder) {
-		wrapper.setPlaceholder(placeholder);
-		return this;
-	}
 	
 	public Select setExclude(boolean exclude) {
 		wrapper.setExclude(exclude);
