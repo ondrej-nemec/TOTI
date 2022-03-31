@@ -1,4 +1,4 @@
-/* TOTI Control version 0.0.22 */
+/* TOTI Control version 0.0.23 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -112,6 +112,7 @@ var totiControl = {
 
 			checkbox.checked = false;
 			input.setAttribute("disabled", true);
+			input.setAttribute("exclude", true);
 
 			container.set = function() {
 				checkbox.checked = true;
@@ -124,10 +125,12 @@ var totiControl = {
 			checkbox.onclick = function() {
 				if (checkbox.checked) {
 					input.removeAttribute("disabled");
+					input.removeAttribute("exclude");
 					container.value = input.value;
 				} else {
 					container.value = '';
 					input.setAttribute("disabled", true);
+					input.setAttribute("exclude", true);
 				}
 			};
 
@@ -259,7 +262,7 @@ var totiControl = {
 		                            option.disabled = "disabled";
 		                        }
 	                       		if (opt.optgroup) {
-									if (selectedOptGroup !== null) {
+									if (selectedOptGroup !== null && selectedOptGroup !== '') {
                                     	use = opt.optgroup === selectedOptGroup;
                                 	} else if (params.hasOwnProperty("optionGroup")) {
 										use = opt.optgroup === params.optionGroup;
@@ -296,6 +299,9 @@ var totiControl = {
 				var setTitles = function () {
 	             	select.querySelectorAll("optgroup").forEach(function(group) {
 	                    var label = depends.querySelector("[value='"+ group.getAttribute("label") + "']");
+	                    if (label === null) {
+	                    	return;
+	                    }
 	                    group.setAttribute("label", label.innerText);
 	                });
 	            };
@@ -321,7 +327,7 @@ var totiControl = {
 		    };
 
 		    if (params.hasOwnProperty("depends") && params.editable && params.hasOwnProperty("form")) {
-		        /* only for forms */
+		    	/* only for forms */
 		        setTimeout(function() {
 		             var depends = document.getElementById(params.form).querySelector("[name='" + params.depends + "']");
 		             addOptions(select, depends.value, select.value);
@@ -483,7 +489,7 @@ var totiControl = {
 						totiDisplay.flash("success", res);
 					}
 				}, function(xhr) {
-					if (clickSettings.hasOwnProperty('onError')) {
+					if (clickSettings.hasOwnProperty('onFailure')) {
 						window[clickSettings.onError](xhr);
 					} else {
 						totiDisplay.flash("error", xhr);
