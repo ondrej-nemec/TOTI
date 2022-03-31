@@ -11,7 +11,7 @@ public class Wrapper {
 	private final String type;
 	private final Map<String, String> params = new HashMap<>();
 	
-	private String value = null;
+	private Object value = null;
 
 	// input
 	private String title;	
@@ -86,11 +86,12 @@ public class Wrapper {
 	}
 	
 	public void setDefaultValue(Object value) {
-		if (value != null) {
+		this.value = value;
+		/*if (value != null) {
 			this.value = value.toString();
 		} else {
 			this.value = null;
-		}
+		}*/
 	}
 
 	public void setPlaceholder(String placeholder) {
