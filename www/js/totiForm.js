@@ -1,4 +1,4 @@
-/* TOTI Form version 0.0.25 */
+/* TOTI Form version 0.0.26 */
 class TotiForm {
 
 	constructor(config) {
@@ -71,10 +71,14 @@ class TotiForm {
 				if (!field.hasOwnProperty("name") || field.name === "") {
 					field.id += "_" + index;
 				}
-				field.name = parent.name + "[" + (field.hasOwnProperty("name") ? field.name : "") + "]";
+				var fieldName = parent.name;
+                if (Object.keys(fields).length !== 1) {
+                	fieldName += "[" + (field.hasOwnProperty("name") ? field.name : "") + "]";
+                }
+                field.name = fieldName;
 			}
 			if (listPosition !== null && field.hasOwnProperty("title")) {
-				field.title = field.title.replace("{i}", listPosition);
+				field.title = field.title.replace('{i}', parseInt(listPosition));
 			}
 			if (field.type === "dynamic") {
 				var template = this.createInputArea(uniqueName, field, index, editable, useTemplate, form, container);
@@ -88,26 +92,37 @@ class TotiForm {
 							dynamicCount, 
 							template.querySelectorAll('[name="toti-list-item-' + field.name + '"]').length
 						);
-						addButton.onclick = function() {
-							var count = parseInt(addButton.getAttribute(dynamicCount));
-							object.dynamic[field.name](count, field.name)
+						addButton.setAttribute("input", field.id);
+						addButton.onclick = function(addButtonEvent) {
+							var count = parseInt(addButtonEvent.srcElement.getAttribute(dynamicCount));
+							object.dynamic[field.name](count, field.name, addButtonEvent.srcElement);
 						};
 						addButton.style.cursor = "pointer";
 					} else {
 						addButton.style.display = "none";
 					}
 				}
-				this.dynamic[field.name] = function(position, inputName) {
-					if (addButton !== null) {
-						addButton.setAttribute(dynamicCount, parseInt(addButton.getAttribute(dynamicCount))+ 1);
+				this.dynamic[field.name] = function(position, inputName, sourceInput = null) {
+					if (sourceInput === null) {
+						sourceInput = document.querySelector("[name='add'][input='" + uniqueName + "-id-" + inputName + "']");
 					}
-					var itemTemplate = field.template;
-					var removeFunc = function () {
+					if (sourceInput !== null) {
+						sourceInput.setAttribute(dynamicCount, parseInt(sourceInput.getAttribute(dynamicCount))+ 1);
+					}
+					var removeFunc = function (removeButtonEvent) {
+						var addButton = sourceInput;
+						if (addButton === null) {
+							addButton = document.querySelector('[name="add"][input="' + removeButtonEvent.srcElement.getAttribute("input") + '"]');
+						}
+						if (addButton === null) {
+							return;
+						}
 						addButton.setAttribute(
                             dynamicCount,
-							 parseInt(addButton.getAttribute(dynamicCount)) - 1
+							parseInt(addButton.getAttribute(dynamicCount)) - 1
                         );
 					};
+					var itemTemplate = field.template;
 					if (useTemplate) {
 						var pattern = itemTemplate.querySelector('template[name="pattern"]').content.cloneNode(true);
 						if (pattern.childElementCount === 1) {
@@ -132,10 +147,12 @@ class TotiForm {
 						var removeButton = itemTemplate.querySelector("[name='remove']");
 						if (removeButton !== null) {
 							removeButton.style.cursor = "pointer";
+							removeButton.setAttribute("input", field.id);
+							removeButton.setAttribute(dynamicCount, position);
 							if (editable) {
-								removeButton.onclick = function() {
+								removeButton.onclick = function(removeButtonEvent) {
 									itemTemplate.parentNode.removeChild(itemTemplate);
-									removeFunc();
+									removeFunc(removeButtonEvent);
 								};
 							} else {
 								removeButton.style.display = "none";
@@ -149,8 +166,10 @@ class TotiForm {
 						removeButton.style.cursor = "pointer";
 						removeButton.setAttribute("name", "remove");
 						removeButton.innerText = totiTranslations.formButtons.remove;
+						removeButton.setAttribute("input", field.id);
+						removeButton.setAttribute(dynamicCount, position);
 
-						removeButton.onclick = function() {
+						removeButton.onclick = function(removeButtonEvent) {
 							Array.prototype.forEach.call(
 								document.querySelectorAll("[name^='" + inputName + "[" + position + "']"),
 								function(item) {
@@ -159,7 +178,7 @@ class TotiForm {
 							);
 							itemTemplate.removeChild(removeButton);
 							itemTemplate.removeChild(spanIdent);
-							removeFunc();
+							removeFunc(removeButtonEvent);
 						};
 
 						itemTemplate.appendChild(spanIdent);
@@ -175,7 +194,7 @@ class TotiForm {
 							name: field.name + "[" + position + "]",
 							id: field.id + "_" + position
 						},
-						position
+						sourceInput === null ? null : sourceInput.getAttribute(dynamicCount)
 					);
 				};
 			} else if (field.type === "list") {
@@ -197,6 +216,7 @@ class TotiForm {
 
 		var error = document.createElement("div");
 		error.setAttribute("id", uniqueName + '-errors-' + field.name);
+		error.style.display = "inline-block";
 		if (useTemplate) {
 			return this.getInputTemplate(field, container, label, input, error, index);
 		} else {
@@ -215,13 +235,28 @@ class TotiForm {
 			}
 			return section;
 		}
-		
 		var selectAndSetElement = function(querySelector, child) {
 			var elements = container.querySelectorAll(querySelector);
 			if (elements.length > 0) {
 				var element = (elements.length === 1) ? elements[0] : elements[index];
 				if (element !== null && child !== null) {
-					element.appendChild(child);
+					for (var i = 0; i < element.attributes.length; i++) {
+					    var attrib = element.attributes[i];
+					    if (attrib.name === "p-id") {
+					    	console.warn("Custom id is not allowed.");
+					    	continue;
+					    } else if (attrib.name === 'p-class' || attrib.name === 'class') {
+					    	attrib.value.split().forEach(function(clazz) {
+					    		child.classList.add(clazz);
+					    	});
+					    } else if (attrib.name.startsWith("p-")) {
+					    	child.setAttribute(attrib.name.substring(2), attrib.value);
+					    }
+					}
+
+					element.parentNode.insertBefore(child, element);
+					element.remove();
+					/*element.appendChild(child);*/
 				}
 			}
 		};
@@ -331,21 +366,25 @@ class TotiForm {
 			if (type === 'submit' || type === 'image') {
 				input.onclick = this.getSubmit(uniqueName, input);
 			} else if (type === 'button') {
-				var onClick = totiControl.getAction({
+				var config = {
 					href: field.href,
 					method: field.method,
 					async: field.async,
 					params: field.requestParams,
 					submitConfirmation: function() {
 						if (field.hasOwnProperty('confirmation')) {
-							return totiDisplay.confirm(field.confirmation, row);
+							return totiDisplay.confirm(field.confirmation, {});
 						}
 						return true;
-					}/*,
-					onSuccess: "",
-					onFailure: ""*/
-				});
-				input.onclick = onClick;
+					}
+				};
+				if (field.hasOwnProperty("onError")) {
+					config.onFailure = field.onError;
+				}
+				if (field.hasOwnProperty("onSuccess")) {
+					config.onSuccess = field.onSuccess;
+				}
+				input.onclick = totiControl.getAction(config);
 			}
 		}
 		return input;
@@ -370,10 +409,14 @@ class TotiForm {
                 span.innerText = option;
                 val = i;
             }
-             if (field.value !== value) {
+            if (!(field.hasOwnProperty("value") && field.value === val)) {
 				span.style.display = "none";
 			}
 			input.appendChild(span);
+           /*if (field.hasOwnProperty("value") && field.value !== val) {
+				span.style.display = "none";
+			}
+			input.appendChild(span);*/
 		};
 		totiUtils.forEach(options, withOption);
 		return input;
@@ -381,119 +424,153 @@ class TotiForm {
 
 	getSubmit(uniqueName, submit) {
 		return function(event) {
-			event.preventDefault();
-			var errorLists = document.getElementsByClassName('error-list');
-			while(errorLists[0]) {
-				errorLists[0].remove();
-			}
-
-			var form = document.getElementById(uniqueName);
-			if (!form.reportValidity()) {
-				return false;
-			}
-			var data = new FormData(); /* if parameter is form, all not disabled params are added */
-			Array.prototype.forEach.call(form.elements, function(input) {
-				var type = input.getAttribute("type");
-				var name = input.getAttribute("name");
-                if (name === null) {
-                    return;
-                }
-                if (input.getAttribute("exclude") !== null && input.getAttribute("exclude") === "true") {
-                    return;
-                }
-				if (input.type === "fieldset" && input.getAttribute("origintype") !== "datetime-local") {
-					/* ignored*/
-					return;
+			try {
+				var errorLists = document.getElementsByClassName('error-list');
+				while(errorLists[0]) {
+					errorLists[0].remove();
 				}
-                if (type === "submit" || type === "button" || type === "reset" || type === "image") {
-					/* ignored*/
-					return;
-                }
-				/******/
-				if (input.getAttribute("origintype") === "datetime-local") {
-					data.append(name, input.value);
-				} else if (type === "radio") {
-					if (input.checked) {
+
+				var form = document.getElementById(uniqueName);
+				if (!form.reportValidity()) {
+					return false;
+				}
+				var data = new FormData(); /* if parameter is form, all not disabled params are added */
+				Array.prototype.forEach.call(form.elements, function(input) {
+					var type = input.getAttribute("type");
+					var name = input.getAttribute("name");
+	                if (name === null) {
+	                    return;
+	                }
+	                if (input.getAttribute("exclude") !== null && input.getAttribute("exclude") === "true") {
+	                    return;
+	                }
+					if (input.type === "fieldset" && input.getAttribute("origintype") !== "datetime-local") {
+						/* ignored*/
+						return;
+					}
+	                if (type === "submit" || type === "button" || type === "reset" || type === "image") {
+						/* ignored*/
+						return;
+	                }
+					/******/
+					if (input.getAttribute("origintype") === "datetime-local") {
+						if (input.value !== undefined) {
+							data.append(name, input.value);
+						}
+					} else if (type === "radio") {
+						if (input.checked) {
+							data.append(name, input.value);
+						}
+					} else if (type === "checkbox") {
+						data.append(name, input.checked);
+					} else if (type === "file") {
+						if (input.files.length > 0) {
+							data.append(name, input.files[0]);
+						}
+					} else {
 						data.append(name, input.value);
 					}
-				} else if (type === "checkbox") {
-					data.append(name, input.checked);
-				} else if (type === "file") {
-					if (input.files.length > 0) {
-						data.append(name, input.files[0]);
+				});
+				var submitConfirmation = function() {
+					if (submit.getAttribute("confirmation") !== null) {
+						return totiDisplay.confirm(submit.getAttribute("confirmation"));
 					}
-				} else {
-					data.append(name, input.value);
+					return true;
+				};
+				if (!submitConfirmation(data)) {
+					event.preventDefault();
+					return false;
 				}
-			});
-
-			var submitConfirmation = function() {
-				if (submit.hasOwnProperty('confirmation')) {
-					return totiDisplay.confirm(submit.confirmation);
-				}
-				return true;
-			};
-			if (submitConfirmation !== null && !submitConfirmation(data)) {
-				event.preventDefault();
-				return false;
-			}
-			/* TODO sync send not working - required preventDefault - exclude,disabled,... */
-			if (submit.getAttribute("async")) {
-				event.preventDefault();
-				var header = totiLoad.getHeaders();
-				if (form.getAttribute("enctype") !== null) {
-					header.enctype = form.getAttribute("enctype");
-				}
-				totiLoad.async(
-					form.getAttribute("action"), 
-					form.getAttribute("method"), 
-					data, 
-					header, 
-					function(response) {
-						if (submit.getAttribute("onSuccess") != null) {
-							window[submit.getAttribute("onSuccess")](response, submit, form);
-						} else if (submit.getAttribute("redirect") === null) {
-							totiDisplay.flash('success', response.message);
-						} else {
-							totiDisplay.storedFlash('success', response.message);
-						}
-						if (submit.getAttribute("redirect") != null) {
-							window.location = submit.getAttribute("redirect").replace("{id}", response.id);
-						}
-					}, 
-					function(xhr) {
-						if (xhr.status === 400) {
-							for (const[key, list] of Object.entries(JSON.parse(xhr.responseText))) {
-								var ol = document.createElement("ul");
-								ol.setAttribute("class", "error-list");
-								list.forEach(function(item) {
-									var li = document.createElement("li");
-									li.innerText = item;
-									ol.appendChild(li);
-								});
-								var elementId = key.replaceAll("[", "\\[").replaceAll("]", "\\]");
-								var elementIdentifiers = elementId.split(":");
-								
-								if (elementIdentifiers.length > 1) {
-									elementId = elementId.replace(elementIdentifiers[0] + ":", "");
-									document
-										.querySelectorAll('#' + uniqueName + '-errors-' + elementId + '')[elementIdentifiers[0]]
-										.appendChild(ol);
+				if (submit.getAttribute("async") === 'true') {
+					event.preventDefault();
+					var header = totiLoad.getHeaders();
+					if (form.getAttribute("enctype") !== null) {
+						header.enctype = form.getAttribute("enctype");
+					}
+					totiLoad.async(
+						form.getAttribute("action"), 
+						form.getAttribute("method"), 
+						data, 
+						header, 
+						function(response) {
+							var getMessage = function(r) {
+								if (typeof r === 'object') {
+									return r.message;
 								} else {
-									document.querySelector('#' + uniqueName + '-errors-' + elementId + '').appendChild(ol);
+									return r;
 								}
+							};
+							if (submit.getAttribute("onSuccess") != null) {
+								window[submit.getAttribute("onSuccess")](response, submit, form);
+							} else if (submit.getAttribute("redirect") === null) {
+								totiDisplay.flash('success', getMessage(response));
+							} else {
+								totiDisplay.storedFlash('success', getMessage(response));
 							}
-						} else if (submit.getAttribute("onFailure") != null) {
-							window[submit.getAttribute("onFailure")](xhr, submit, form);
-						} else {
-							/* TODO xhr.response - objekt or message and 403*/
-							totiDisplay.flash('error', totiTranslations.formMessages.saveError);
+							if (submit.getAttribute("redirect") != null) {
+								var id = typeof response === 'object' ? response.id : "";
+								window.location = submit.getAttribute("redirect").replace("{id}", id);
+							}
+						}, 
+						function(xhr) {
+							if (xhr.status === 400) {
+								for (const[key, list] of Object.entries(JSON.parse(xhr.responseText))) {
+									var ol = document.createElement("ul");
+									ol.setAttribute("class", "error-list");
+									list.forEach(function(item) {
+										var li = document.createElement("li");
+										li.innerText = item;
+										ol.appendChild(li);
+									});
+									var elementId = key.replaceAll("[", "\\[").replaceAll("]", "\\]");
+									var elementIdentifiers = elementId.split(":");
+									
+									if (elementIdentifiers.length > 1) {
+										elementId = elementId.replace(elementIdentifiers[0] + ":", "");
+										var inputErrors = document
+											.querySelectorAll('#' + uniqueName + '-errors-' + elementId + '');
+										if (inputErrors.length > 0) {
+											inputErrors[elementIdentifiers[0]].appendChild(ol);
+										}
+									} else {
+										var inputError = document.querySelector('#' + uniqueName + '-errors-' + elementId + '');
+										if (inputError !== null) {
+											inputError.appendChild(ol);
+										}
+										
+									}
+								}
+							} else if (submit.getAttribute("onFailure") != null) {
+								window[submit.getAttribute("onFailure")](xhr, submit, form);
+							} else {
+								/* TODO xhr.response - objekt or message and 403*/
+								totiDisplay.flash('error', totiTranslations.formMessages.saveError);
+							}
 						}
-					}
-				);
+					);
+					return false;
+				}
+				/* TODO send form data */
+				/*event.preventDefault();
+				var formTosend = document.createElement("form");
+				formTosend.setAttribute("action", form.getAttribute("action"));
+				formTosend.setAttribute("method", form.getAttribute("method"));
+				if (form.getAttribute("enctype") !== null) {
+					formTosend.setAttribute("enctype", form.getAttribute("enctype"));
+				}
+				for (const[name, value] of data.entries()) {
+					var hidden = document.createElement("input");
+					hidden.name = name;
+					hidden.value = value;
+					formTosend.appendChild(hidden);
+				}
+				formTosend.submit();*/
+				return true;
+			} catch (ex) {
+				console.log(ex);
+				totiDisplay.flash('error', totiTranslations.formMessages.saveError);
 				return false;
 			}
-			return true;
 		};
 	}
 
