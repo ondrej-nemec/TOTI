@@ -117,7 +117,6 @@ public class GridExample implements Module {
 					Option.create(true, "Yes"),
 					Option.create(false, "No")
 				))
-				.setPlaceholder("Filter for Select")
 				// .setDefaultValue(...)
 			)
 			.setUseSorting(true)
@@ -477,7 +476,6 @@ public class GridExample implements Module {
 					Option.create(true, "Yes"),
 					Option.create(false, "No")
 				))
-				.setPlaceholder("Filter for Select")
 				// .setDefaultValue(...)
 			)
 			.setUseSorting(true)
