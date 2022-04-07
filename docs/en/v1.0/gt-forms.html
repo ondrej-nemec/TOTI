@@ -1,1 +1,116 @@
 <h1>Forms</h1>
+
+<p class="alert alert-success">
+	Full form example is <a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/form">here</a>.
+</p>
+
+<p>
+	TOTI provides JS library for displaying and sending forms synchronious and asychronious. The configuration for form can be created with Java code and send to template, where will be displayed. Data can be binded asynchronious.
+</p>
+
+<p>
+	Form can be displayed editable (standart form) or not editable - display data in <code>div</code>/<code>span</code> elements.
+</p>
+
+<p class="alert alert-warning">
+	For using TOTI JS form library is nessessary to add <code>/toti/totiJs.js</code> to your page.
+</p>
+
+<h2>Init and display</h2>
+
+<p>
+	The <code>Form</code> constructor requires URL (form action, as string) and boolean <code>isEditable</code>.
+</p>
+
+<pre><code class="language-java">
+Form grid = new Form("/save/form/url", true);
+</code></pre>
+
+<h3>Settings</h3>
+
+<p>
+	Methods:
+	<ul>
+		<li>Form method: <code>setFormMethod(method)</code> - HTTP method for form submit. Default is <code>GET</code></li>
+		<li>After print: <code>setAfterPrint(methodName)</code> - name of JS function called after form is printed. Default is null and means no call.</li>
+		<li>Before bind: <code>setBeforeBind(methodName)</code> - name of JS function called before data bind (only if bind URL is set). Default is null and means no call.</li>
+		<li>After bind: <code>setAfterBind(methodName)</code> - name of JS function called after data bind (only if bind URL is set). Default is null and means no call.</li>
+		<li>Bind URL: <code>setBindUrl(url)</code> - URL for async data binding. Default is null and means no binding.</li>
+		<li>Bind method: <code>setBindMethod(method)</code> - HTTP method for async data binding. Default is <code>GET</code>.</li>
+		<li>On bind failure: <code>setOnBindFailure(methodName)</code> - name of JS function called if bind fail. Default is null and means no call.</li>
+		<li>Add input: <code>addInput(input)</code> - add input to form. List of all inputs are <a href="?file=doc-inputs.html">here</a>.</li>
+	</ul>
+</p>
+
+<h3>Display</h3>
+
+<p>
+	Put <code>Form</code> instance to template parameters.
+</p>
+
+<pre><code class="language-java">
+Map<String, Object> params = new HashMap&lt;&gt;();
+// ...
+params.put("formInstance", form);
+return Response.getTemplate("...", params);
+</code></pre>
+
+<h4>Default display</h4>
+
+<p>
+	Default display print form in the easyest way.
+</p>
+
+<p>
+	In template, use unpaired <code>control</code> tag for print form. Use variable name as control name.
+</p>
+
+<pre><code>
+&lt;t:control name="formInstance" /&gt;
+</code></pre>
+
+<h4>Custom display</h4>
+
+<p>
+	Custom display allow change HTML inside form.
+</p>
+
+<p>
+	In template, use paired <code>control</code> tag for print form. Use variable name as control name. For print each input, use <code>label</code>(print input label), <code>input</code>(print HTML input) and <code>error</code>(print container for input errors) tags. This tags require <code>name</code> parameter, so use input name. See <a href="?file=doc-tags.html">here</a> for more about tags.
+</p>
+
+<pre><code>
+&lt;t:control name="formInstance" &gt;
+&lt;%-- container for global errors --%&gt;
+&lt;t:error name="form" /&gt;
+
+&lt;t:label name="firstInput" /&gt;
+&lt;t:input name="firstInput" /&gt;
+&lt;t:error name="firstInput" /&gt;
+...
+
+&lt;/t:control &gt;
+</code></pre>
+
+<h4>Using in JS</h4>
+
+<p class="alert alert-info">
+	You can get JS class instance of form calling <code>${--variable-name--}</code> in JS.
+</p>
+
+<pre><code class="language-javascript">
+var formObject = ${formInstance|noescape};
+</code></pre>
+
+<h2>Submit</h2>
+
+<p>
+	If you with allow form submit, you have to add <code>Submit</code> input to form. <br>
+	Form can has more <code>Submit</code>.<br>
+	The <code>Submit</code> determines if form will be send sync or async.<br>
+	For more about <code>Submit</code> options and usage, see <a href="?file=doc-inputs.html">list of inputs</a> or <a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/form">form example</a>.<br>
+</p>
+
+<p>
+	Form action is standart controller method. <strong>Allways remember validate inputs before processing.</strong>
+</p>

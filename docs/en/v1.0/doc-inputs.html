@@ -1,5 +1,13 @@
 <h1>Form inputs and grid filters</h1>
 
+<p class="alert alert-success">
+	Examples of using inputs in form are <a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/form">here</a>.
+</p>
+
+<p class="alert alert-success">
+	Examples of using inputs as grid filters are <a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/grid">here</a>.
+</p>
+
 <p>
 	The filters and inputs (controls) have some predefined parameters. If you need some other, you can use <code>addParam</code> method (more times for one control).
 </p>
@@ -139,6 +147,10 @@
 	</ul>
 </p>
 
+<strong>NOTE:</strong>
+<p>
+	This tag not support empty value by default. If <code>required</code> is set to FALSE, TOTI display checkbox with. Checked means send input value, not checked means not send (if checkbox is not checked, input is disabled).
+</p>
 
 <h2>Determination of time</h2>
 
@@ -188,7 +200,7 @@
 <p>
 	<ul>
 		<li>Time deep <code>setStep</code>: "1" means use hours, minutes and hours, "60" means use hours and minutes, "3600" means use only hours</li>
-		<li>Use full value <code>setStrict</code> (effect filter only): if false, it allows to use only date or only time</li>
+		<li>Use full value <code>setStrict</code>: if false, it allows to use only date or only time. Effect datetime in filter and not required datetime in form</li>
 	</ul>
 </p>
 
@@ -236,11 +248,18 @@
 
 	<strong>Only for asynchronious</strong>
 	<ul>
-		<li>Redirect after success <code>setRedirect</code>: URL redirect to. If URL <code>{id}</code> is it replaced with input 'id' from form.</li>
+		<li>Redirect after success <code>setRedirect</code>: URL redirect to. If URL contains<code>{id}</code> and submit response is object containing 'id' parameter, '{id}' is it replaced with <code>response.id</code>.</li>
 		<li>Do after success <code>setOnSuccess</code>: name of JS function. As parameters are used (in order) response, submit and form.</li>
 		<li>Do after failure <code>setOnFailure</code>: name of JS function. As parameters are used (in order) response, submit and form.</li>
 		<li>Confirmation before <code>setConfirmation</code>: text of confirmation. If no text set, no confirmation appear.</li>
 	</ul>
+</p>
+
+<strong>Async submit response</strong>
+
+<p>
+	If response is object, TOTI expects two attributes: <code>message</code> (is used as flash message to users) and <code>id</code> (used for replacing <code>{id}</code> in redirect message if exists).
+	Otherwise, TOTI use response as flash message for users.
 </p>
 
 <h3>Button</h3>
@@ -269,6 +288,7 @@
 		<li>Do after failure response <code>setOnFailure</code>: name of JS function called after failure response. Response is used as parameter</li>
 		<li>Confirmation before <code>setConfirmation</code>: text of confirmation. If no text set, no confirmation appear. If used in grid, you can parametrize URL with '<i>{*name-of-parameter*}</i>'.</li>
 		<li>Request parameters <code>addRequestParam</code>: add new request parameter (can be called more times)</li>
+		<li>Print condition (grid only): <code>setCondition(jsCode, evaluate)</code> - during print, TOTI execute JS code. If result is true, display button. The second parameter says if <code>jsCode</code> is parametrized with {*name-of-row-property*}</li>
 	</ul>
 </p>
 
@@ -316,7 +336,7 @@
 <h3>Select</h3>
 
 <p>
-	Select from list of values. Options into select can be loaded from URL. For required data format see TODO EntityDao. HTML standard tag
+	Select from list of values. Options into select can be loaded from URL. HTML standard tag
 </p>
 
 <p>
@@ -341,6 +361,35 @@ select.setShowedOptionGroup(String optionGroup);
 </code></pre>
 
 	</ul>
+</p>
+
+<h4>Load data to select</h4>
+<p>
+	For dynamic load data to select, TOTI expects this format of result:
+</p>
+
+<pre><code>
+[
+	{
+		value: '-value-',
+		title: '-title-',
+		optgroup: '-opt-group-', // optional
+		disabled: true/false // optional
+	},
+	...
+]
+</code></pre>
+
+<p>
+	<strong>This result can be created using <code>List</code> of <code>Help</code>.</strong>
+</p>
+
+<h4>Depends</h4>
+
+<p>
+	If <code>Select</code> ('Target') contains optgroups, it can depends on another <code>Select</code> ('Source'). 
+	If source has no selected value, target display normally (but optgroups in target are replaced with source options title: target.optgroup = sourceOption.id => target display sourceOption.title as optgroup)
+	If source contais value, target display only options without optgroup or with optgroup same as source value.
 </p>
 
 <h3>Option</h3>
@@ -381,10 +430,14 @@ select.setShowedOptionGroup(String optionGroup);
 	Show color picker. Input only. HTML standard tag
 </p>
 
-<p class="alert alert-danger"><strong>NOTE:</strong> this tag not support empty value</p>
 
 <p>
 	<strong>Create input:</strong> <code>Color.input(String name, boolean required)</code> <br>
+</p>
+
+<strong>NOTE:</strong>
+<p>
+	This tag not support empty value by default. If <code>required</code> is set to FALSE, TOTI display checkbox with. Checked means send input value, not checked means not send (if checkbox is not checked, input is disabled).
 </p>
 
 <h3>File</h3>
@@ -411,7 +464,9 @@ select.setShowedOptionGroup(String optionGroup);
 	Add input to list: <code>inputList.addInput(Input input)</code>
 </p>
 
-TODO example from class and  template, picture maybe
+<p>
+	Example of usage is <a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/form">here</a> (including form bind).
+</p>
 
 <h3>DynamicList</h3>
 
@@ -434,15 +489,6 @@ TODO example from class and  template, picture maybe
 	</ul>
 </p>
 
-TODO example from class and  template, picture maybe, AND data
-```
-{
-	first: "some-value",
-	second: "another-value",
-	dynamic: [
-		"first",
-		123,
-		false
-	]
-}
-```
+<p>
+	Example of usage is <a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/form">here</a> (including form bind).
+</p>

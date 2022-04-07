@@ -347,7 +347,7 @@ public class FormExample implements Module {
 			.setTitle("Load data")
 		);
 		form.addInput(
-			Select.input("load", false, Arrays.asList(
+			Select.input("load-with", false, Arrays.asList(
 				Option.create("", "-- Select --").setDisabled(true),
 				Option.create("some-option", "Some option").setOptGroup("Default"),
 				Option.create("another", "Another").setOptGroup("Default")
