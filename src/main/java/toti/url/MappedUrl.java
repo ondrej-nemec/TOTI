@@ -9,7 +9,7 @@ import ji.common.structures.ThrowingFunction;
 import ji.common.structures.Tuple3;
 import ji.json.Jsonable;
 import toti.annotations.Domain;
-import toti.security.Mode;
+import toti.security.AuthMode;
 import toti.validation.Validator;
 
 public class MappedUrl implements Jsonable{
@@ -31,7 +31,7 @@ public class MappedUrl implements Jsonable{
 	
 	private final ThrowingFunction<Object, Validator, Exception> validator;
 	
-	private final Mode securityMode;
+	private final AuthMode securityMode;
 
 	public MappedUrl(
 			String moduleName,
@@ -39,7 +39,7 @@ public class MappedUrl implements Jsonable{
 			String methodUrl,
 			String pathUrl,
 			String className, String methodName,
-			Domain[] domains, Mode securityMode,
+			Domain[] domains, AuthMode securityMode,
 			ThrowingFunction<Object, Validator, Exception> validator) {
 		this.moduleName = moduleName;
 		this.controllerUrl = controllerUrl;
@@ -105,18 +105,10 @@ public class MappedUrl implements Jsonable{
 		return validator.apply(o);
 	}
 
-	public Mode getSecurityMode() {
+	public AuthMode getSecurityMode() {
 		return securityMode;
 	}
-	
-	public boolean isApi() {
-		return securityMode == Mode.HEADER;
-	}
-	
-	public boolean isTokenRequired() {
-		return securityMode == Mode.CFRT;
-	}
-	
+
 	public String getModuleName() {
 		return moduleName;
 	}

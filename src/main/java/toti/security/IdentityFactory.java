@@ -68,7 +68,7 @@ public class IdentityFactory {
 	}
 	
 	public Identity createIdentity(Properties headers, String IP, boolean useProfiler) {
-		Tuple2<String, Boolean> token = getToken(headers);
+		Tuple2<String, AuthMode> token = getToken(headers);
 		Identity identity = new Identity(IP, getLocale(headers), headers, token._1(), token._2());
 		if (useProfiler) {
 			identity.setPageId(getPageId(headers));
@@ -87,19 +87,20 @@ public class IdentityFactory {
 		return pageHeader;
 	}
 
-	private Tuple2<String, Boolean> getToken(Properties headers) {
+	private Tuple2<String, AuthMode> getToken(Properties headers) {
 		String token = null;
-		boolean apiAllowed = false;
+		AuthMode mode = AuthMode.NO_TOKEN;
 		if (headers.get(SESSION_HEADER_NAME) != null) {
 			String[] vals = headers.get(SESSION_HEADER_NAME).toString().split(" ", 2);
 			if (vals.length == 2) {
 				token = vals[1];
-				apiAllowed = true;
+				mode = AuthMode.HEADER;
 			}
 		} else {
 			token = Identity.getCookieValue(headers, SESSION_COOKIE_NAME);
+			mode = AuthMode.COOKIE;
 		}
-		return new Tuple2<>(token, apiAllowed);
+		return new Tuple2<>(token, mode);
 	}
 	
 	private Locale getLocale(Properties header) {

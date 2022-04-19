@@ -116,7 +116,7 @@ public class HttpServerFactory {
 				new Authenticator(
 					tokenExpirationTime, tokenCustomSalt, 
 					sessionCache,
-					new Hash("SHA-256"),
+					Hash.getSha256(),
 					logger
 				),
 				new Authorizator(logger),

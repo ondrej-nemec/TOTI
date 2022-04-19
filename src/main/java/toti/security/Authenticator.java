@@ -8,10 +8,15 @@ import org.apache.commons.lang3.RandomStringUtils;
 import ji.common.Logger;
 import toti.authentication.AuthentizationException;
 import ji.common.functions.Hash;
+import ji.socketCommunication.http.server.RequestParameters;
 import ji.common.exceptions.HashException;
 import ji.common.exceptions.LogicException;
 
 public class Authenticator {
+	
+	public static final String CSRF_TOKEN_PARAMETER = "_csrf_token";
+	private static final String CSRF_TOKEN = "CSRF-TOKEN";
+	private static final String AUTH_TOKEN = "AUTH-TOKEN";
 
 	private final long expirationTime;
 	private final String tokenSalt;
@@ -39,40 +44,19 @@ public class Authenticator {
 		try {
 			long now = new Date().getTime();
 			String id = RandomStringUtils.randomAlphanumeric(30);
-			String random = RandomStringUtils.randomAlphanumeric(50);
+			String authToken = createToken(RandomStringUtils.randomAlphanumeric(50), id, AUTH_TOKEN);
+			String csrfToken = createToken(RandomStringUtils.randomAlphanumeric(50), id, CSRF_TOKEN);
+			
 			long expired = now + expirationTime;
-			String token = createToken(random, id);
-			cache.save(id, expired, user);
-			identity.loginUser(token, id, expirationTime, user);
-			return new SecurityToken(token, expirationTime);
+			cache.save(id, expired, user, csrfToken);
+			
+			identity.loginUser(authToken, csrfToken, id, expirationTime, user);
+			return new SecurityToken(authToken, expirationTime);
 		} catch (Exception e) {
 			throw new AuthentizationException(e);
 		}
 	}
-/*
-	public String refresh(Identity identity) throws AuthentizationException {
-		return getToken(identity.getUser(), identity);
-	}
-	
-	private String getToken(User user, Identity identity) throws AuthentizationException {
-		try {
-			long now = new Date().getTime();
-			String id = identity.isAnonymous() ? RandomStringUtils.randomAlphanumeric(30) : identity.getId();
-			String random = RandomStringUtils.randomAlphanumeric(50);
-			long expired = now + expirationTime;
-			String token = createToken(random, id, now, expired);
-			if (identity.isAnonymous()) {
-				cache.save(id, expired, user);
-			} else {
-				cache.refresh(id, expired);
-			}
-			identity.loginUser(token, id, expirationTime, user);
-			return token;
-		} catch (Exception e) {
-			throw new AuthentizationException(e);
-		}
-	}
-*/
+
 	public void logout(Identity identity) {
 		try {
 			cache.delete(identity.getId());
@@ -82,25 +66,27 @@ public class Authenticator {
 		}
 	}
 	
-	public void authenticate(Identity identity) {
+	public void authenticate(Identity identity, RequestParameters parameters) {
 		try {
-			authenticate(identity, new Date().getTime());
+			authenticate(identity, parameters, new Date().getTime());
 		} catch (Exception e) {
 			logger.debug("Problem with authentication", e);
 		}
 	}
 
-	protected void authenticate(Identity identity, long now) throws Exception {
+	protected void authenticate(Identity identity, RequestParameters parameters, long now) throws Exception {
 		String token = identity.getToken();
 		if (token == null || token.isEmpty()) {
 			return;
 		}
-		String hash = token.substring(0, 44);
-		String random = token.substring(44, 94);
-		String id = token.substring(94, 124);
-		//long expired = Long.parseLong(token.substring(124, 137)); // length == 13, OK until Sat Nov 20 18:46:39 CET 2286
-		if (!hasher.compare(createHashMessage(random, id/*, expired, content*/), hash)) {
+		String id = validateToken(token, AUTH_TOKEN);
+		if (id == null) {
 			throw new RuntimeException("Token corrupted");
+		}
+		String csrfToken = null;
+		if (parameters.containsKey(CSRF_TOKEN_PARAMETER) && validateToken(parameters.getString(CSRF_TOKEN_PARAMETER), CSRF_TOKEN) != null) {
+			csrfToken = parameters.getString(CSRF_TOKEN_PARAMETER);
+			parameters.remove(CSRF_TOKEN_PARAMETER);
 		}
 		
 		Long expired = cache.getExpirationTime(id);
@@ -119,7 +105,7 @@ public class Authenticator {
 			identity.clear();
 		} else {
 			cache.refresh(id, now + expirationTime);
-			identity.setUser(id, expirationTime, user);
+			identity.setUser(id, cache.getCsrfToken(id), expirationTime, user, cache.validateCsrfToken(id, csrfToken));
 		}
 	}
 	
@@ -129,19 +115,32 @@ public class Authenticator {
 		}
 	}
 
+	public long getExpirationTime() {
+		return expirationTime;
+	}
+	
+	/******** TOKEN *****/
+	
+	private String validateToken(String token, String type) {
+		String hash = token.substring(0, 44);
+		String random = token.substring(44, 94);
+		String id = token.substring(94, 124);
+		//long expired = Long.parseLong(token.substring(124, 137)); // length == 13, OK until Sat Nov 20 18:46:39 CET 2286
+		if (!hasher.compare(createHashMessage(random, id/*, expired, content*/, type), hash, tokenSalt)) {
+			return null;
+		}
+		return id;
+	}
+
 	// TODO add content - will contains a) data for service from registr, b) serialized, crypted user
-	protected String createToken(String random, String id) throws HashException {
-		String hash = hasher.toHash(createHashMessage(random, id));
+	protected String createToken(String random, String id, String type) throws HashException {
+		String hash = hasher.toHash(createHashMessage(random, id, type), tokenSalt);
 		return String.format("%s%s%s", hash, random, id);
 	}
 
 	// token: hash(43), random(50), id(30)
-	private String createHashMessage(String random, String id) {
-		return String.format("%s%s%s", random, id, tokenSalt);
-	}
-
-	public long getExpirationTime() {
-		return expirationTime;
+	private String createHashMessage(String random, String id, String type) {
+		return String.format("%s%s%s", random, id, type);
 	}
 
 }

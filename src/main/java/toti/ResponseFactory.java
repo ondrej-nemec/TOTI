@@ -33,6 +33,7 @@ import toti.security.Authenticator;
 import toti.security.Authorizator;
 import toti.security.Identity;
 import toti.security.IdentityFactory;
+import toti.security.AuthMode;
 import toti.security.Owner;
 import toti.security.exceptions.AccessDeniedException;
 import toti.security.exceptions.NotAllowedActionException;
@@ -130,7 +131,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			RequestParameters params,
 			Identity identity,
 			Optional<WebSocket> websocket) {
-		authenticator.authenticate(identity);
+		authenticator.authenticate(identity, params);
 		try {
 			return getNormalizedResponse(method, url, fullUrl, protocol, params, identity, websocket);
 		/*} catch (AuthentizationException e) {
@@ -292,7 +293,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			try {
 				authorize(mapped, params, identity, validatorParams);
 			} catch (ServerException e) {
-				if (mapped.isApi() || router.getRedirectOnNotLoggedInUser() == null) {
+				if (mapped.getSecurityMode() == AuthMode.HEADER || router.getRedirectOnNotLoggedInUser() == null) {
 					throw e;
 				}
 				logger.debug(fullUrl + " Redirect to login page: " + e.getMessage());
@@ -368,9 +369,19 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			if (identity.isAnonymous()) {
 				throw new ServerException(StatusCode.UNAUTHORIZED, mapped, "Method require logged user");
 			}
-			if (mapped.isApi() && !identity.isApiAllowed()) {
+			if (mapped.getSecurityMode() == AuthMode.HEADER && identity.getLoginMode() != AuthMode.HEADER) {
 				throw new ServerException(StatusCode.FORBIDDEN, mapped, "For this url you cannot use cookie token");
 			}
+			if (mapped.getSecurityMode() == AuthMode.COOKIE_AND_CSRF
+					&& (identity.getLoginMode() == AuthMode.COOKIE || identity.getLoginMode() == AuthMode.NO_TOKEN)) {
+				throw new ServerException(StatusCode.FORBIDDEN, mapped, "For this url you need CSRF token");
+			}
+			/*if (mapped.isApi() && !identity.isApiAllowed()) {
+				throw new ServerException(StatusCode.FORBIDDEN, mapped, "For this url you cannot use cookie token");
+			}
+			if (mapped.isTokenRequired() && !identity.isCsrfOk() && !identity.isApiAllowed()) {
+				throw new ServerException(StatusCode.FORBIDDEN, mapped, "For this url you need CSRF token");
+			}*/
 			for (Domain domain : mapped.getSecured()) {
 				if (domain.owner().isEmpty() && domain.mode() != Owner.USER_ID) {
 					authorizator.authorize(identity.getUser(), domain.name(), domain.action());

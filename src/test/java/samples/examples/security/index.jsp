@@ -37,14 +37,16 @@
 			<th>Name</th>
 			<th>URL</th>
 			<th>Run with auth header</th>
+			<th>Run with cookie and CSRF token</th>
 			<th>Run with cookie</th>
 		</tr>
-		<t:foreach key="name" value="link" map="${links}">
+		<t:foreach item="ji.common.structures.Tuple2 value" collection="${links}">
 			<tr>
-				<td>${name}</td>
-				<td>${link}</td>
-				<td><button href="${link}" class="run-headers">Run</button></td>
-				<td><button href="${link}" class="run-cookies">Run</button></td>
+				<td>${value._1()}</td>
+				<td>${value._2()}</td>
+				<td><button href="${value._2()}" class="run-headers">Run</button></td>
+				<td><button href="${value._2()}" class="run-csrf">Run</button></td>
+				<td><button href="${value._2()}" class="run-cookies">Run</button></td>
 			</tr>
 		</t:foreach>
 	</table>
@@ -76,6 +78,7 @@
 					document.getElementById("not-logged").style.display = "none";
 					document.getElementById("logged").style.display = "block";
 					document.getElementById("username").innerText = document.querySelector("[name=username]").value;
+					window.location.reload();
 				},
 				function (xhr) {
 					console.log(xhr);
@@ -92,24 +95,35 @@
 		/* tests with auth header */
 		document.querySelectorAll(".run-headers").forEach(function (button) {
 			button.onclick = function() {
-				run(button, totiLoad.getHeaders(true));
+				run(button, totiLoad.getHeaders(true), false);
+			};
+		});
+		/* tests with cookie auth and csrf */
+		document.querySelectorAll(".run-csrf").forEach(function (button) {
+			button.onclick = function() {
+				run(button, {}, true);
 			};
 		});
 		/* tests with cookie auth */
 		document.querySelectorAll(".run-cookies").forEach(function (button) {
 			button.onclick = function() {
-				run(button, {});
+				run(button, {}, false);
 			};
 		});
 		
-		function run(button, headers) {
+		function run(button, headers, useCsrf) {
 			var display = document.getElementById("request-result");
+			var requestBody = {
+				id: document.getElementById("id").value
+			};
+			if (useCsrf) {
+				/* FIX: CSRF token is usualy part of form, there is no form */
+				requestBody._csrf_token = '${totiIdentity.getCsrfToken()}';
+			}
 			totiLoad.async(
 				button.getAttribute("href"),
-				"get",
-				{
-					id: document.getElementById("id").value
-				},
+				"post",
+				requestBody,
 				headers,
 				function (response) {
 					display.innerText = response;

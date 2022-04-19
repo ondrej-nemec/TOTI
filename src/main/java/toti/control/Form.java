@@ -5,7 +5,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import toti.control.inputs.Hidden;
 import toti.control.inputs.Input;
+import toti.security.Authenticator;
+import toti.security.Identity;
 
 public class Form implements Control {
 
@@ -17,17 +20,23 @@ public class Form implements Control {
 	private String afterBind;
 	private String afterPrint;
 	
-	//private final String formId;
 	private final String formAction;
 	private String formMethod = "get";
 
 	private final List<Map<String, Object>> fields;
 	
-	public Form(/*String formId, */String action, boolean editable) {
-	//	this.formId = formId;
+	public Form(String action, boolean editable) {
 		this.formAction = action;
 		this.fields = new LinkedList<>();
 		this.editable = editable;
+	}
+	
+	public void setCsrfSecured(Identity identity) {
+		fields.add(
+			Hidden.input(Authenticator.CSRF_TOKEN_PARAMETER)
+			.setDefaultValue(identity.getCsrfToken())
+			.getInputSettings()
+		);
 	}
 	
 	public Form addInput(Input input) {

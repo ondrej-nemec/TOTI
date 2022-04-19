@@ -26,7 +26,7 @@ import toti.annotations.Params;
 import toti.annotations.ParamsValidator;
 import toti.annotations.Secured;
 import toti.register.Register;
-import toti.security.Mode;
+import toti.security.AuthMode;
 import toti.validation.Validator;
 
 public class LoadUrls {
@@ -78,7 +78,7 @@ public class LoadUrls {
 		    			String methodName = m.getName();
 		    			
 		    			Domain[] methodDomains = null;
-		    			Mode securityMode = Mode.NO_TOKEN;
+		    			AuthMode securityMode = AuthMode.NO_TOKEN;
 		    			if (m.isAnnotationPresent(Secured.class)) {
 		    				methodDomains = m.getAnnotation(Secured.class).value();
 		    				securityMode = m.getAnnotation(Secured.class).mode();

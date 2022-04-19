@@ -36,7 +36,7 @@ import toti.control.inputs.Submit;
 import toti.control.inputs.Text;
 import toti.control.inputs.TextArea;
 import toti.response.Response;
-import toti.security.Mode;
+import toti.security.AuthMode;
 import ji.translator.Translator;
 
 @Controller("entity")
@@ -130,7 +130,7 @@ public class EntityPageController {
 	
 	@Action("action2")
 	@Method({HttpMethod.POST})
-	@Secured(mode = Mode.COOKIE)
+	@Secured(mode = AuthMode.COOKIE)
 	public Response actionMethod2(@Params RequestParameters prop) {
 		System.out.println("Action 2 properties:");
 		System.out.println(prop);

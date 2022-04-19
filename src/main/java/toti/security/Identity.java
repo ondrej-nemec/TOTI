@@ -12,7 +12,8 @@ public class Identity {
 	private final Locale locale;
 	private final Properties requestHeaders;
 	private String token; // full session string
-	private final boolean isApiAllowed; // resolved with token
+	
+	private AuthMode loginMode = AuthMode.NO_TOKEN;
 
 	private String pageId;
 	
@@ -20,24 +21,31 @@ public class Identity {
 	private long expired; // range, how long will be active
 	private User user; // user loaded from cache
 	
+	private String csrf; // for using in form, not from request
+	
 	private final List<String> responseHeaders = new LinkedList<>();
 	
-	protected Identity(String IP, Locale locale, Properties requestHeaders, String token, boolean isApiAllowed) {
+	protected Identity(String IP, Locale locale, Properties requestHeaders, String token, AuthMode loginMode) {
 		this.IP = IP;
 		this.locale = locale;
 		this.requestHeaders = requestHeaders;
-		this.isApiAllowed = isApiAllowed;
+		this.loginMode = loginMode;
 		this.token = token;
 	}
 	
-	protected void setUser(String id, long expired, User user) {
+	protected void setUser(String id, String csrf, long expired, User user, boolean isCsrf) {
 		this.id = id;
 		this.expired = expired;
 		this.user = user;
+		this.csrf = csrf;
+		if (isCsrf && loginMode == AuthMode.COOKIE) {
+			this.loginMode = AuthMode.COOKIE_AND_CSRF;
+		}
 	}
 	
-	protected void loginUser(String token, String id, long expired, User user) {
+	protected void loginUser(String token, String csrf, String id, long expired, User user) {
 		this.token = token;
+		this.csrf = csrf;
 		this.id = id;
 		this.expired = expired;
 		this.user = user;
@@ -47,12 +55,26 @@ public class Identity {
 		return expired;
 	}
 	
+	public AuthMode getLoginMode() {
+		return loginMode;
+	}
+	
 	/**
 	 * Token from auth header/cookie
 	 * @return full token with hash, random,...
 	 */
 	public String getToken() {
 		return token;
+	}
+	
+	/**
+	 * CSFR token related to this Identity (if user is loged)
+	 * This value is not from request, it is created on login
+	 * Is used for sending in form or for verifing
+	 * @return CSRF token in String
+	 */
+	public String getCsrfToken() {
+		return csrf;
 	}
 	
 	protected void clear() {
@@ -129,10 +151,6 @@ public class Identity {
 	public Locale getLocale() {
 		return locale;
 	}
-
-	public boolean isApiAllowed() {
-		return isApiAllowed;
-	}
 	
 	/**
 	 * Add header to response
@@ -155,7 +173,7 @@ public class Identity {
 	@Override
 	public String toString() {
 		return "Identity [IP=" + IP + ", locale=" + locale + ", token=" + token
-				+ ", isApiAllowed=" + isApiAllowed + ", id=" + id + ", expired=" + expired //+ ", content=" + content
+				+ ", loginMode=" + loginMode + ", id=" + id + ", expired=" + expired //+ ", content=" + content
 				+ ", user=" + user + ", requestHeaders=" + requestHeaders + "]";
 	}
 

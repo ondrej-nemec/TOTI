@@ -25,7 +25,9 @@ import toti.annotations.Method;
 import toti.annotations.Param;
 import toti.annotations.ParamUrl;
 import toti.annotations.Params;
+import toti.annotations.Secured;
 import toti.application.Task;
+import toti.authentication.AuthentizationException;
 import toti.control.Form;
 import toti.control.inputs.Button;
 import toti.control.inputs.Checkbox;
@@ -51,6 +53,10 @@ import toti.control.inputs.Time;
 import toti.control.inputs.Week;
 import toti.register.Register;
 import toti.response.Response;
+import toti.security.Authenticator;
+import toti.security.Identity;
+import toti.security.AuthMode;
+import toti.security.User;
 import toti.url.Link;
 import toti.validation.ItemRules;
 import toti.validation.Validator;
@@ -64,11 +70,15 @@ import toti.validation.Validator;
 public class FormExample implements Module {
 	
 	private FormExampleDao dao;
+	private Identity identity;
+	private Authenticator authenticator;
 	
 	public FormExample() {}
 	
-	public FormExample(FormExampleDao dao) {
+	public FormExample(FormExampleDao dao, Identity identity, Authenticator authenticator) {
 		this.dao = dao;
+		this.identity = identity;
+		this.authenticator = authenticator;
 	}
 	
 	/**
@@ -1004,13 +1014,56 @@ public class FormExample implements Module {
 		return Response.getTemplate("inputs.jsp", params);
 	}
 	
+	/************************/
+	
+	/**
+	 * Sync form with CSRF token
+	 * @return http://localhost:8080/examples/form/csrf
+	 */
+	@Action("csrf")
+	public Response csrf() throws AuthentizationException {
+		if (identity.isAnonymous()) {
+			// automatic login before page load
+			// demonstation requires logged user
+			authenticator.login(new User("someuser", new FormPermissions()), identity);
+		}
+		
+		Form form = new Form(Link.get().create(getClass(), c->c.saveCsrf(null)), true);
+		form.setCsrfSecured(identity);
+		form.setFormMethod("post");
+		
+		form.addInput(Text.input("textInput", true).setTitle("Text"));
+		
+		form.addInput(Submit.create("Submit sync", "sync").setAsync(false));
+		
+		Map<String, Object> params = new HashMap<>();
+		params.put("form", form);
+		params.put("title", "Sync and async send");
+		return Response.getTemplate("inputs.jsp", params);
+	}
+	
+	/**
+	 * Save for form testing
+	 * @return (POST)http://localhost:8080/examples/form/save
+	 */
+	@Action("save-csrf")
+	@Method(HttpMethod.POST)
+	@Secured(mode = AuthMode.COOKIE_AND_CSRF)
+	public Response saveCsrf(@Params RequestParameters params) {
+		authenticator.logout(identity);
+		return Response.getText("Secured with CSRF OK: " + params);
+	}
+	
 	/**************/
 
 	@Override
 	public List<Task> initInstances(Env env, Translator translator, Register register, Database database, Logger logger)
 			throws Exception {
 		FormExampleDao dao = new FormExampleDao();
-		register.addFactory(FormExample.class, ()->new FormExample(dao));
+		register.addFactory(
+			FormExample.class,
+			(t, identity, auth, authenticator)->new FormExample(dao, identity, authenticator)
+		);
 		return Arrays.asList();
 	}
 	

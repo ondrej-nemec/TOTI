@@ -2,11 +2,13 @@ package samples.examples.security;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import ji.common.Logger;
 import ji.common.functions.Env;
+import ji.common.structures.Tuple2;
 import ji.database.Database;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
@@ -27,7 +29,7 @@ import toti.response.Response;
 import toti.security.Authenticator;
 import toti.security.Authorizator;
 import toti.security.Identity;
-import toti.security.Mode;
+import toti.security.AuthMode;
 import toti.security.User;
 import toti.url.Link;
 
@@ -64,17 +66,18 @@ public class SecurityExample implements Module {
 	 */
 	@Action("index")
 	public Response index() {
-		Map<String, String> links = new HashMap<>();
+		List<Tuple2<String, String>> links = new LinkedList<>();
 		
-		links.put("Not secured", Link.get().create(SecurityExample.class, c->c.notSecured()));
-		links.put("Secured", Link.get().create(SecurityExample.class, c->c.secured()));
-		links.put("Super secured", Link.get().create(SecurityExample.class, c->c.superSecured()));
-		links.put("Domain READ", Link.get().create(SecurityExample.class, c->c.domaiRead()));
-		links.put("Domain DELETE", Link.get().create(SecurityExample.class, c->c.domainDelete()));
-		links.put("Multiple domains", Link.get().create(SecurityExample.class, c->c.domainMultiple()));
-		links.put("Owner", Link.get().create(SecurityExample.class, c->c.owner()));
-		links.put("Owner IDs", Link.get().create(SecurityExample.class, c->c.ownerIds()));
-		links.put("In method calling", Link.get().create(SecurityExample.class, c->c.inMethod()));
+		links.add(new Tuple2<>("Not secured", Link.get().create(SecurityExample.class, c->c.notSecured())));
+		links.add(new Tuple2<>("Secured", Link.get().create(SecurityExample.class, c->c.secured())));
+		links.add(new Tuple2<>("Secured with CSRF", Link.get().create(SecurityExample.class, c->c.securedCsrf())));
+		links.add(new Tuple2<>("Super secured", Link.get().create(SecurityExample.class, c->c.superSecured())));
+		links.add(new Tuple2<>("Domain READ", Link.get().create(SecurityExample.class, c->c.domaiRead())));
+		links.add(new Tuple2<>("Domain DELETE", Link.get().create(SecurityExample.class, c->c.domainDelete())));
+		links.add(new Tuple2<>("Multiple domains", Link.get().create(SecurityExample.class, c->c.domainMultiple())));
+		links.add(new Tuple2<>("Owner", Link.get().create(SecurityExample.class, c->c.owner())));
+		links.add(new Tuple2<>("Owner IDs", Link.get().create(SecurityExample.class, c->c.ownerIds())));
+		links.add(new Tuple2<>("In method calling", Link.get().create(SecurityExample.class, c->c.inMethod())));
 		
 		Map<String, Object> params = new HashMap<>();
 		params.put("links", links);
@@ -91,13 +94,23 @@ public class SecurityExample implements Module {
 	}
 
 	/**
-	 * Secured, require loged user. Can authenticate with header and cookie
+	 * Secured, require loged user. Can authenticate with header and cookie (with or without CSRF token)
 	 * @return http://localhost:8080/examples/security/secured
 	 */
 	@Action("secured")
-	@Secured(mode = Mode.COOKIE)
+	@Secured(mode = AuthMode.COOKIE)
 	public Response secured() {
 		return Response.getText("Secured");
+	}
+
+	/**
+	 * Secured, require loged user. Can authenticate with header and cookie(only with CSRF token)
+	 * @return http://localhost:8080/examples/security/secured
+	 */
+	@Action("secured-csrf")
+	@Secured(mode = AuthMode.COOKIE_AND_CSRF)
+	public Response securedCsrf() {
+		return Response.getText("Secured CSRF");
 	}
 	
 	/**
@@ -197,7 +210,7 @@ public class SecurityExample implements Module {
 				)
 			);
 		} catch (AuthentizationException e) {
-			return Response.getText(StatusCode.INTERNAL_SERVER_ERROR, "");
+			return Response.getText(StatusCode.INTERNAL_SERVER_ERROR, "Login fail: " + e.getMessage());
 		}
 	}
 	

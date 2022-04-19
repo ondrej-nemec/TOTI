@@ -90,8 +90,8 @@
 						</tr>
 					<t:if cond="${identity.isPresent()}" >
 						<tr>
-							<th>Is API allowed</th>
-							<td>${identity.isApiAllowed()}</td>
+							<th>Login method</th>
+							<td>${identity.getLoginMode()}</td>
 						</tr>
 						<tr>
 							<th>Content</th>

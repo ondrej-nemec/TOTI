@@ -31,7 +31,7 @@ import toti.register.Register;
 import toti.response.Response;
 import toti.security.Authenticator;
 import toti.security.Identity;
-import toti.security.Mode;
+import toti.security.AuthMode;
 import toti.security.User;
 import toti.url.Link;
 
@@ -178,7 +178,7 @@ public class SignExample implements Module {
 	 * @return http://localhost:8080/examples/sign/sync-logout
 	 */
 	@Action("sync-logout")
-	@Secured(mode = Mode.COOKIE)
+	@Secured(mode = AuthMode.COOKIE)
 	public Response syncLogout() {
 		authenticator.logout(identity);
 		return Response.getRedirect(Link.get().create(SignExample.class, c->c.syncLoginPage(null)));
@@ -191,7 +191,7 @@ public class SignExample implements Module {
 	 * @return http://localhost:8080/examples/sign/index
 	 */
 	@Action("index")
-	@Secured(mode = Mode.COOKIE)
+	@Secured(mode = AuthMode.COOKIE)
 	public Response index() {
 		return Response.getTemplate("/index.jsp", new HashMap<>());
 	}
@@ -201,7 +201,7 @@ public class SignExample implements Module {
 	 * @return http://localhost:8080/examples/sign/index2
 	 */
 	@Action("index2")
-	@Secured(mode = Mode.COOKIE)
+	@Secured(mode = AuthMode.COOKIE)
 	public Response index2() {
 		identity.getUser().setProperty("index2", true);
 		return Response.getTemplate("/index2.jsp", new HashMap<>());

@@ -136,7 +136,7 @@ public class ProfilerLog implements Jsonable{
 				user.put("content", identity.getUser().getContent());
 				// TODO maybe serialize user
 			}
-			iden.put("isApiAllowed", identity.isApiAllowed());
+			iden.put("loginMode", identity.getLoginMode());
 			if (identity.isPresent()) {
 				iden.put("user", user);
 			}

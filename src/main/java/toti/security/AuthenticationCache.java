@@ -19,6 +19,22 @@ import ji.common.functions.FileExtension;
 
 public class AuthenticationCache {
 	
+	class Token {
+		long expired;
+		String csrfToken;
+		
+		public Token() {}
+		public Token(long expired, String csrf) {
+			this.expired = expired;
+			this.csrfToken = csrf;
+		}
+		@Override
+		public String toString() {
+			return String.format("Token: E=%s,T=%s", expired, csrfToken);
+		}
+		
+	}
+	
 	private final static String EXT = "session";
 	
 	private final String cachePath;
@@ -26,7 +42,7 @@ public class AuthenticationCache {
 	private final boolean useCache;
 	
 	private final ScheduledExecutorService scheduledPool = Executors.newSingleThreadScheduledExecutor();
-	private final Map<String, Long> activeTokens = new HashMap<>();
+	private final Map<String, Token> activeTokens = new HashMap<>();
 	private final Logger logger;
 	
 	private ScheduledFuture<?> future;
@@ -53,10 +69,10 @@ public class AuthenticationCache {
 						if (!EXT.equals(ext.getExtension())) {
 							return; // silently ignore
 						}
-						Long expired = activeTokens.get(ext.getName());
-						if (expired == null) {
+						Token token = activeTokens.get(ext.getName());
+						if (token == null) {
 							delete(ext.getName());
-						} else if (expired < new Date().getTime()) {
+						} else if (token.expired < new Date().getTime()) {
 							delete(ext.getName());
 						}
 					}
@@ -88,7 +104,8 @@ public class AuthenticationCache {
 	}
 	
 	public void refresh(String id, Long expirated) {
-		activeTokens.put(id, expirated);
+		// activeTokens.put(id, expirated);
+		activeTokens.get(id).expired = expirated;
 	}
 	
 	public void refresh(String id, User user) throws IOException {
@@ -101,13 +118,31 @@ public class AuthenticationCache {
 		}
 	}
 	
-	public void save(String id, Long expirated, User user) throws IOException {
-		refresh(id, expirated);
+	public void save(String id, Long expirated, User user, String csrfToken) throws IOException {
+	//	refresh(id, expirated);
+		activeTokens.put(id, new Token(expirated, csrfToken));
 		refresh(id, user);
 	}
 	
 	public Long getExpirationTime(String id) {
-		return activeTokens.get(id);
+		if (activeTokens.containsKey(id)) {
+			return activeTokens.get(id).expired;
+		}
+		return null;
+	}
+	
+	public String getCsrfToken(String id) {
+		if (activeTokens.containsKey(id)) {
+			return activeTokens.get(id).csrfToken;
+		}
+		return null;
+	}
+	
+	public boolean validateCsrfToken(String id, String token) {
+		if (activeTokens.containsKey(id)) {
+			return activeTokens.get(id).csrfToken.equals(token);
+		}
+		return false;
 	}
 	
 	public User get(String id) throws IOException, ClassNotFoundException {

@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 
 import ji.common.Logger;
 import ji.common.functions.Hash;
+import ji.socketCommunication.http.server.RequestParameters;
 import ji.common.exceptions.HashException;
 
 public class AuthenticatorTest {
@@ -14,20 +15,22 @@ public class AuthenticatorTest {
 	@Test
 	public void testCreateTokenReturnsCorrectTokenWithoutCustomData() throws HashException {
 		Hash hash = Mockito.mock(Hash.class);
-		Mockito.when(hash.toHash(Mockito.anyString())).thenReturn("hash");
+		Mockito.when(hash.toHash(Mockito.anyString(), Mockito.anyString())).thenReturn("hash");
 		Authenticator auth = new Authenticator(123, "salt", Mockito.mock(AuthenticationCache.class), hash, Mockito.mock(Logger.class));
 		assertEquals("hashr@ndomid2000", auth.createToken(
 				"r@ndom", 
-				"id"
+				"id",
+				"AUTH"
 		));
 	}
 	
 	@Test
 	// TODO test corrupted token and expired token
+	// TODO csrf token
 	public void testAuthenticateWorks() throws Exception {
 		Hash hash = Mockito.mock(Hash.class);
-		Mockito.when(hash.toHash(Mockito.anyString())).thenReturn("hash");
-		Mockito.when(hash.compare(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
+		Mockito.when(hash.toHash(Mockito.anyString(), Mockito.anyString())).thenReturn("hash");
+		Mockito.when(hash.compare(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
 		Authenticator auth = new Authenticator(123, "salt", Mockito.mock(AuthenticationCache.class), hash, Mockito.mock(Logger.class));
 		Identity identity = new Identity("", null, null, 
 				// "QlKvbHfY5F4wgrK0tlmrcRImLCx6t59RWq8XvTqmIL4=f1jmBdmnjIgFCEczXFkOYGE7tFulK9pJ1R3EleUauqvMT4WcgMqQqHSXrHW7i8wrFrOLJLHPd2X7Re2D1618244602626"
@@ -35,9 +38,9 @@ public class AuthenticatorTest {
 				+ "rand1rand2rand3rand4rand5rand6rand7rand8rand9rand0"
 				+ "id1id2id3id4id5id6id7id8id9id0"
 				+ "1234567890123",
-				false
+				AuthMode.COOKIE
 		);
-		auth.authenticate(identity, 1234567890122L);
+		auth.authenticate(identity, new RequestParameters(), 1234567890122L);
 		// TODO nesedi, protoze id neni obsazeno v aktivnich
 		assertEquals("id1id2id3id4id5id6id7id8id9id0", identity.getId());
 		assertEquals(1234567890123L, identity.getExpirationTime());
