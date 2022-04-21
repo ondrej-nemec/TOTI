@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import ji.common.structures.DictionaryValue;
 import toti.security.permissions.Permissions;
@@ -70,6 +71,11 @@ public class User implements Serializable {
 	public void setProperty(String key, Object value) {
 		customData.put(key, value);
 		hasChanged = true;
+	}
+	
+	public void updateProperty(String key, Function<Object, Object> update) {
+		Object old = customData.get(key);
+		customData.put(key, update.apply(old));
 	}
 	
 	/**

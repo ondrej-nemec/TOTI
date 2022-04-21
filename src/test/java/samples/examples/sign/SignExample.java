@@ -11,6 +11,7 @@ import ji.database.Database;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
 import ji.translator.Translator;
+import samples.examples.form.FormPermissions;
 import toti.HttpServer;
 import toti.HttpServerFactory;
 import toti.Module;
@@ -205,6 +206,28 @@ public class SignExample implements Module {
 	public Response index2() {
 		identity.getUser().setProperty("index2", true);
 		return Response.getTemplate("/index2.jsp", new HashMap<>());
+	}
+	
+	/***************/
+	
+	/**
+	 * Example of using user data
+	 * @return http://localhost:8080/examples/sign/user-data
+	 */
+	@Action("user-data")
+	public Response userData() throws AuthentizationException {
+		if (identity.isAnonymous()) {
+			// automatic login before page load
+			// demonstation requires logged user
+			authenticator.login(new User("someuser", null), identity);
+		}
+		User user = identity.getUser();
+		if (user.getProperty("counter").isPresent()) {
+			user.updateProperty("counter", (old)->old + "*");
+		} else {
+			user.setProperty("counter", "*");
+		}
+		return Response.getText("Counter: " + user.getProperty("counter"));
 	}
 	
 	/***************/
