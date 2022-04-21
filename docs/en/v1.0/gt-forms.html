@@ -39,7 +39,12 @@ Form grid = new Form("/save/form/url", true);
 		<li>Bind method: <code>setBindMethod(method)</code> - HTTP method for async data binding. Default is <code>GET</code>.</li>
 		<li>On bind failure: <code>setOnBindFailure(methodName)</code> - name of JS function called if bind fail. Default is null and means no call.</li>
 		<li>Add input: <code>addInput(input)</code> - add input to form. List of all inputs are <a href="?file=doc-inputs.html">here</a>.</li>
+		<li>Use CSRF token: setCsrfSecured(identity) - TOTI add hidden input <code>_csrf_token</code>.</li>
 	</ul>
+</p>
+
+<p class="alert alert-info">
+	If you use forms with async submit and Authentication header, you don't need use CSRF token.
 </p>
 
 <h3>Display</h3>
