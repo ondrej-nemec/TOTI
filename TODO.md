@@ -32,6 +32,10 @@
 * Profiler - improve
 * Logging - new Log4j or some general way
 * Permissions - Rule - owner ids will not be supplier but list ?
+* Entity
+	* Delete, get,... - customize column name - second optional parameter? - update doc (int in methods)
+	* Get, delete,... - id more general? - update doc (int in methods)
+	* insert not returns int but object or dictionry value
 * Routing
 	* add lang to route
 	* translate routes

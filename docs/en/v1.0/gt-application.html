@@ -1,0 +1,94 @@
+<h1>CRUD</h1>
+
+<p>
+	TOTI provides functionality for simplifying CRUD operations. It is optional.
+</p>
+
+<h2>Entity</h2>
+
+<p>
+	Interface for dataobject. Used mainly in <code>EntityDao</code>. Contains method <code>serialize(String key)</code> with default implementation using <code>Mapper</code> from <a href="https://ondrej-nemec.github.io/JI/?file=common-functions.html">JI Common</a>
+</p>
+
+<h2>EntityDao</h2>
+
+<p>
+	Interface with default method for database communication. Define some required methods and some predefined. Works with <code>Entity</code> implementation (T).
+</p>
+
+<h3>Required</h3>
+
+<ul>
+	<li><code>getDatabase()</code>: returns <code>Database</code> from JI Database.</li>
+	<li><code>getTableName()</code>: returns string. Table for data read/write.</li>
+	<li><code>createEntity(DatabaseRow row)</code>: returns instance of <code>T</code> created from <code>DatabaseRow</code>.</li>
+</ul>
+
+<h3>Predefined</h3>
+
+<ul>
+	<li><code>getAll()</code>: returns list of <code>T</code></li>
+	<li><code>get(int id)</code>: returns <code>T</code></li>
+	<li><code>delete(int id)</code>: delete row with given id (column 'id'), returns deleted <code>T</code></li>
+	<li><code>update(int id, T entity)</code>: returns count of affected rows</li>
+	<li><code>insert(T entity)</code>: returns generated id</li>
+</ul>
+
+<h2>GridDataSet</h2>
+
+<p>
+	Holds data loaded from <code>GridEntityDao</code>. <code>GridDataSet</code> implements <code>Jsonable</code> and its JSON is for TOTI JS grids.
+</p>
+
+<h2>Help</h2>
+
+<p>
+	Holds data from <code>GridEntityDao</code>. <code>Help</code> implements <code>Jsonable</code> and its JSON is for TOTI JS select box.
+</p>
+
+<h2>GridEntityDao</h2>
+
+<p>
+	Interface with default method for loading grid data from database. Define some required methods and some predefined.
+</p>
+
+<h3>Required</h3>
+
+<ul>
+	<li><code>getDatabase()</code>: returns <code>Database</code> from JI Database.</li>
+	<li><code>getTableName()</code>: returns string. Table for data read/write.</li>
+</ul>
+
+<h3>Predefined</h3>
+
+<ul>
+	<li><code>getAll(GridOptions options, Collection&lt;Object&gt; forOwners, Translator translator)</code>: returns <code>GridDataSet</code>, <code>GridOptions</code> was explained in <a href="?file=gt-grid.html">Grid</a> chapter, forOwners is explained bellow, <code>Translator</code> can be null and is sent to <code>onRow</code> method</li>
+	<li><code>onRow(DatabaseRow row, Translator translator)</code>: for customizing result. Default: returns row</li>
+	<li><code>getOwnerColumnName()</code>: returns <code>Optional</code> of string. Define column name that will be used as owner column (see bellow). Default <code>Optional.empty</code> and means not use owner filtering.</li>
+
+	<li><code>getHelp(Collection&lt;Object&gt; forOwners)</code>: returns list of <code>Help</code>. That are data for <code>Select</code> input (Rest API load).</li>
+	<li><code>getHelpTable()</code>: define source table for help. Default returns <code>getTableName()</code></li>
+	<li><code>getHelpKey()</code>: define column name for HTML option value.</li>
+	<li><code>getHelpDisplayValue()</code>: define column name for HTML option text</li>
+	<li><code>getHelpDisabled()</code>: define column name specifying the HTML option is disabled or not. If method returns null, it means not use disable switch.</li>
+	<li><code>getHelpOptgroup()</code>: define column name for HTML optgroup. If methods returns ull, it means not use optgroup.</li>
+</ul>
+
+<strong>For owners</strong>
+
+<p>
+	<code>GridEntityDao</code> can filter result rows depending on user permissions. For example: load data from table <i>Book</i> with filterig and sorting given by user but only where <i>Book.id</i> id in list of paid books.
+</p>
+
+<p>
+	From user perspective: in <i>Books</i> are only books I paid and I can sort them and filter in them.
+</p>
+
+<p>
+	<code>getOwnerColumnName</code> specify if use owner filtering and if so, give table column name. <br>
+	<code>Collection&lt;Object&gt; forOwners</code> define owner ids. If owner filtering is used and <code>forOwners</code> is empty, <code>GridEntityDao</code> returns empty result.
+</p>
+
+<p>
+	For owners configuration is for both: <code>getAll</code> and <code>getHelp</code>.
+</p>

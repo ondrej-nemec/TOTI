@@ -45,6 +45,10 @@
 			{
 				"title": "Forms",
 				"link": "gt-forms.html"
+			},
+			{
+				"title": "CRUD",
+				"link": "gt-application.html"
 			}
 		]
 	},

@@ -193,6 +193,20 @@ new Rule(Action.READ, ()->Arrays.asList(1,2)); // rule for READ with two owners 
 	Each <code>Domain</code> is evaluated independently and then is used logical AND for results.
 </p>
 
+<strong>Why TOTI use owners</strong>
+
+<p>
+	Image this examples: <br> 
+	Library system has table of Books and table of Authors. Author can edit info about his/her book.<br>
+	User of some social network can see photos of his/her friends and can edit profile of his/her own. <br>
+</p>
+
+<p>
+	With owners, you can specify: <br>
+	Author can: <i>READ</i> from domain <i>books</i>, <i>UPDATE</i> from domain <i>Books</i> if <code>Book:autorId</code> == <code>Identity:getUser:getId</code> <br>
+	User can: <i>READ</i> from dommain <i>users_photos</i> if <code>Photo:owner</code> is in <i>user -&gt; friends</i>, <i>UPDATE</i> from domain <i>profiles</i> if <code>Profile:userId</code> == <code>Identity:getUser:getId</code>
+</p>
+
 <h4>With specified owner</h4>
 
 <pre><code class="language-java">
@@ -238,6 +252,7 @@ new Rule(Action.READ, ()->Arrays.asList(1,2)); // rule for READ with two owners 
 			All rule owners are add to common owners list
 			The highest action is set to <code>Rule:action</code>
 	TOTI check highest action with <code>Action</code> from <code>Domain</code>. How: see bellow
+	After that, owners from common owners list are available on <code>User:getAllowedIds</code>
 </pre>
 
 <h4>Action</h4>
