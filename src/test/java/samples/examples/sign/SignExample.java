@@ -11,7 +11,6 @@ import ji.database.Database;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
 import ji.translator.Translator;
-import samples.examples.form.FormPermissions;
 import toti.HttpServer;
 import toti.HttpServerFactory;
 import toti.Module;

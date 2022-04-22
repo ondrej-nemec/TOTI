@@ -2,10 +2,10 @@
 
 ## Known issue
 
+* sync form - exclude not working
+
 ## FIX and Bugs
 
-* sync form sending is not working
-* JS not editable form: select and date time not working
 * create style of exception and error page, profiler, viewer, profiler bar, welcome page
 * Check: Cross Site Scripting (DOM Based)
 * documentation - filters and inputs - check methods(placeholder)
@@ -31,8 +31,10 @@
 * DB viewer
 * Profiler - improve
 * Logging - new Log4j or some general way
-* Routing - add lang to route
-* Routing - translate routes
+* Permissions - Rule - owner ids will not be supplier but list ?
+* Routing
+	* add lang to route
+	* translate routes
 * Tests:
 	* Improve parsing tests - TODOs
 	* Register
@@ -50,6 +52,7 @@
 	* conditions - relations between inputs (if filled - display/max-length/...)
 	* datalist - will be working like select - defined data + load
 * Control
+	* Add ZonedDateTIme - need something in JS
 	* Grid
 		* Filtering: switch for like/equals
 		* autorefresh

@@ -73,10 +73,25 @@
 <h2>User</h2>
 
 <p>
-	<code>User</code> holds information about logged user. 
+	<code>User</code> holds information about logged user. This class holds user identifier, <code>Permissions</code> (used for authorization, see bellow) and custom data (optional). <code>Identity</code> is created on each request, <code>User</code> is on request start loaded from disk and on the request end is saved back to disk. <strong>Never store sensitive data in <code>User</code>.</strong>
 </p>
 
-// TODO id, permissions, custom data
+<p>
+	User unique or id is accessible on <code>User:getId()</code> (returns <code>Object</code>) or <code>User:getUnique()</code> (returns <code>DictionaryValue</code>).
+</p>
+
+<p>
+	In <code>User</code> you can store all data available in each request. Methods:
+	<ul>
+		<li>Get value: <code>getProperty(String name)</code> - returns <code>DictionaryValue</code></li>
+		<li>Set value: <code>setProperty(String name, Object value)</code> - set (override) value</li>
+		<li>Update value: <code>updateProperty(String name, Function&lt;Object, Object&gt; update)</code> - update value using given function. Input is old value, output is new value.</li>
+	</ul>
+</p>
+
+<p class="alert alert-warning">
+	All classes in custom data or in <code>Permissions</code> (attributes of your implementation) have to implements <code>Serializable</code>.
+</p>
 
 <h2>Secured actions</h2>
 
@@ -84,6 +99,170 @@
 	Full working authenticate example is <a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/security">here</a>.
 </p>
 
-domain, isApi, action, owner...
+<p>
+	Action methods can be unsecured (everyone can access) or secured (access can be limited to logged users only or logged users with given permissions).
+</p>
 
-<h2>Authorizator</h2>
+<p>
+	Action method is secured if has <code>Secured</code> annotation. This annotation works on three levels (mode) of authentication:
+	<ul>
+		<li><code>@Secured(mode=AuthMode.HEADER)</code>: allows user access only if security token was in <code>Authentication</code> header. Default value</li>
+		<li><code>@Secured(mode=AuthMode.COOKIE_AND_CSRF)</code>: allows user access if security token was in cookie and request parameters contains valid CSRF token (for sync form only, how add CSRF token to form, see <a href="?file=gt-forms.html">forms</a>) OR security token was in <code>Authentication</code> header.</li>
+		<li><code>@Secured(mode=AuthMode.COOKIE)</code>: allows user access if security token was in cookie OR security token was in <code>Authentication</code> header.</li>
+	</ul>
+</p>
+
+<p class="alert alert-info">
+	<code>@Secured()</code> is same as <code>@Secured(mode=AuthMode.HEADER)</code>.
+</p>
+
+<p class="alert alert-info">
+	Method with <code>@Secured(mode=AuthMode.NO_TOKEN)</code> is same as method without annotation.
+</p>
+
+<p>
+	<code>Secured</code> annotation can holds information for authorizing (explained bellow). For this, <code>Secured</code> has array of <code>Domain</code> annotations stored in value. Default value is empty array.
+</p>
+
+<p>
+	The reason for <code>Domain</code> and its parameters will be explained later in this chapter.
+</p>
+
+<pre><code class="language-java">
+@Secured() // mode is HEADER, value is {}
+@Secured(mode=....) // mode is specified, value is {}
+@Secured(value={....}) // mode is HEADER, value is specified
+@Secured(value={@Domain(....), @Domain(...)})
+</code></pre>
+
+<p>
+	<code>Domain</code> requires <code>String name</code> (in authorizator called domain) and <code>Action action</code> (it is enum, fe. READ, UPDATE, CREATE,...). Optionally, you can specify <code>String owner</code> - name of parameter (default is empty string and means no owner required) and <code>Owner mode</code> - the source of owner:
+	<ul>
+		<li><code>Owner.REQUEST</code>: owner value will be from request data. Default value</li>
+		<li><code>>Owner.VALIDATOR</code>: owner value will be from validator data (see <code>Validator:setGlobalFunction</code>).</li>
+		<li><code>>Owner.USER_ID</code>: owner value is user unique (<code>Domain:owner</code> can be empty)</li>
+		<li><code>>Owner.USER_DATA</code>: owner value is in custom data</li>
+	</ul>
+</p>
+
+<h2>Authorizing</h2>
+
+<p>
+	TOTI authorizes users automatically using data in <code>Permissions</code> (from <code>User</code>) and in <code>Secured</code> annotation of action method.
+</p>
+
+<h3>Permissions</h3>
+
+<p>
+	This section describe <code>Permissions</code> interface and related classes. The reason for that classes and their parameters is in next section (bellow).
+</p>
+
+<p>
+	Interface with one method: <code>getRulesForDomain(String domain)</code>. This method returns <code>Rules</code> - collection of <code>Rule</code> <strong>for requested domain</strong>.
+</p>
+
+<h4>Rules</h4>
+
+<p>
+	Contains list of <code>Rule</code> - 'ordinal' rules with same priority and optionally can be set 'privileged' rule with highest priority.
+</p>
+
+<pre><code class="language-java">
+new Rules(Arrays.asList(....)) // all rules has same priority
+new Rules(Rule privileged, Arrays.asList(....)) // one rule has higher priority
+</code></pre>
+
+<h4>Rule</h4>
+
+<p>
+	Always related to given domain. Contains <code>Action</code> and <code>Supplier&lt;List&lt;Object&gt;&gt; owners</code> (owners are not requred in all cases, so TOTI call supplier only if owners are required).
+</p>
+
+<pre><code class="language-java">
+new Rule(Action.READ, ()->Arrays.asList()); // rule for READ, no owners
+new Rule(Action.READ, ()->Arrays.asList(1,2)); // rule for READ with two owners ids
+</code></pre>
+
+<h3>Authorizator</h3>
+
+<p>
+	The authorizing is in two scenarios: in <code>Domain</code> the owner is specified (or mode is <code>USER_ID</code>) or no owner specified.
+</p>
+
+<p class="alert alert-info">
+	Each <code>Domain</code> is evaluated independently and then is used logical AND for results.
+</p>
+
+<h4>With specified owner</h4>
+
+<pre><code class="language-java">
+// required 'id' parameter in request data
+@Secured({@Domain(name="domainName", action=toti.security.Action.READ, owner="id")})
+// required 'id' parameter in custom data
+@Secured({@Domain(name="domainName", action=toti.security.Action.READ, owner="id", mode=Owner.USER_DATA)})
+// the user unique (id) will be used
+@Secured({@Domain(name="domainName", action=toti.security.Action.READ, mode=Owner.USER_ID)})
+</code></pre>
+
+<pre>
+	TOTI get owner value (owner ID) depending on mode.
+	TOTI get instance of <code>Rules</code> from <code>Permissions</code> using <code>Domain:name</code>.
+	If rules are null, user is not allowed.
+	If rules contains privileged <code>Rule</code>
+		TOTI check if owner ID is in <code>Rule:getOwners:get</code> (<code>Rule:getOwners</code> == null is same as empty list =&gt; not allowed).
+			TOTI check <code>Action</code> from <code>Rule</code> with <code>Action</code> from <code>Domain</code>.  How: see bellow
+		Else not allowed
+	Else TOTI iterate over all <code>Rule</code>s (the null list is same as empty)
+		TOTI check if owner ID is in <code>Rule:getOwners:get</code> (<code>Rule:getOwners</code> == null is same as empty list =&gt; not allowed).
+			TOTI select highest <code>Action</code> from <code>Rule</code>s and check with <code>Action</code> from <code>Domain</code>. How: see bellow
+		Else not allowed
+</pre>
+
+<h4>Without specified owner</h4>
+
+<pre><code class="language-java">
+@Secured({@Domain(name="domainName", action=toti.security.Action.READ)})
+</code></pre>
+
+<pre>
+	TOTI get instance of <code>Rules</code> from <code>Permissions</code> using <code>Domain:name</code>.
+	If rules are null, user is not allowed.
+	TOTI iterate over all <code>Rule</code>s (null list is same as empty list)
+		TOTI select highest <code>Action</code> from <code>Rule</code>s
+		TOTI get owners from <code>Rule</code>s and add to common list.
+	TOTI remove from common owners list all owners where <code>Rule:action</code> was <code>Forbidden</code>
+	If <code>Rules</code> contains privileged <code>Rule</code>
+		If <code>Rule:action</code> is <code>FORBIDDEN</code>,
+			All rule owners are removed from common owners list.
+		Else
+			All rule owners are add to common owners list
+			The highest action is set to <code>Rule:action</code>
+	TOTI check highest action with <code>Action</code> from <code>Domain</code>. How: see bellow
+</pre>
+
+<h4>Action</h4>
+
+<p>
+	<code>Action</code> annotation contains following values: <br>
+	UNDEFINED<br>
+	FORBIDDEN<br>
+	ALLOWED<br>
+	READ<br>
+	UPDATE<br>
+	CREATE<br>
+	DELETE<br>
+	ADMIN
+</p>
+
+<p>
+	<code>FORBIDDEN</code> is for strict explicit access denied. <br>
+	<code>UNDEFINED</code> is just for internal use only.
+</p>
+
+<p>
+	<code>Action</code> values are sorted from lowest to highest. User is automaticall allowed for lowest action that is permitted (except <code>FORBIDDEN</code> and <code>UNDEFINED</code>). Example: if user is permitted to <code>CREATE</code>, automatically is allowed to <code>UPDATE</code>, <code>READ</code> and <code>ALLOWED</code>.
+</p>
+
+<p>
+	User is alloed if his action is on same level or is higher than required action.
+</p>
