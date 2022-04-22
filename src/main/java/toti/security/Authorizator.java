@@ -105,7 +105,7 @@ public class Authorizator {
 		if (privileged != null && privileged.getAction() != Action.UNDEFINED) {
 			logger.debug("Privileged rule used: " + who + " -> " + where + " -> " + what + " (" + owner + ")");
 			boolean owned = owner != null && privileged.getOwners() != null ? privileged.getOwners().get().contains(owner) : true;
-			return isAllowed(privileged.getAction(), what) && owned;
+			return owned && isAllowed(privileged.getAction(), what);
 		}
 		
 		Action action = Action.UNDEFINED;
