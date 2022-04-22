@@ -93,11 +93,13 @@ public interface GridEntityDao<T extends Entity> {
 				where = filter.getName() + " is null";
 			} else if (filter.getMode() == FilterMode.EQUALS) {
 				where = filter.getName() + " = :" + filter.getName() + "Value";
+			// v2
 			} else {
-				where =builder.getSqlFunctions().concat(":empty", filter.getName())
+				where = builder.getSqlFunctions().concat(":empty", filter.getName())
 						+ " LIKE :" + filter.getName() + "Value";
 				select.addParameter(":empty", ""); // cast to string
 			}
+			// v1
 			/*else if (value.toString().length() > 20) {
 				where = builder.getSqlFunctions().concat(":empty", filter)
 						+ " like :" + filter + "LikeValue"

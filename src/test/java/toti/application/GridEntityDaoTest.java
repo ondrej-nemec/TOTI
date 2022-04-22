@@ -14,12 +14,11 @@ import org.junit.runner.RunWith;
 import ji.common.structures.MapInit;
 import ji.common.structures.ObjectBuilder;
 import ji.database.Database;
-import ji.database.support.DatabaseRow;
 import ji.querybuilder.QueryBuilder;
 import ji.querybuilder.builders.SelectBuilder;
+import ji.querybuilder.mysql.MySqlFunctions;
 import ji.querybuilder.mysql.MySqlQueryBuilder;
 import ji.querybuilder.mysql.MySqlSelectBuilder;
-import ji.translator.Translator;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 
@@ -29,69 +28,77 @@ public class GridEntityDaoTest implements Entity {
 	@Test
 	@Parameters(method = "dataApplyFilters")
 	public void testApplyFilters(
+			String message,
 			Optional<String> owner, Collection<Object> forOwners,
 			Map<String, Filter> filters, String expected) {
 		QueryBuilder builder = mock(QueryBuilder.class);
 		SelectBuilder select = new MySqlSelectBuilder(null, ""); // mock(SelectBuilder.class);
+		when(builder.getSqlFunctions()).thenReturn(new MySqlFunctions());
 		
 		GridEntityDao<GridEntityDaoTest> dao = new GridEntityDao<GridEntityDaoTest>() {			
 			@Override public String getTableName() { return null; }
 			@Override public Database getDatabase() { return null; }
-			@Override public GridEntityDaoTest createEntity(DatabaseRow row, Translator translator) { return null; }
 			@Override public Optional<String> getOwnerColumnName() { return owner; }
 			@Override public SelectBuilder _getGrid(String select, QueryBuilder builder) { return null; }
 		};
 		
 		dao._applyFilters(builder, select, filters, forOwners);
-		assertEquals("SELECT  " + expected, select.createSql());
+		assertEquals(message, "SELECT  " + expected, select.createSql());
 	}
 	
 	public Object[] dataApplyFilters() {
 		return new Object[] {
 			// owner specified, owners is empty, no filters
 			new Object[] {
+					"owner specified, owners is empty, no filters",
 				Optional.of("ownerId"), Arrays.asList(),
 				new MapInit<String, Filter>().toMap(),
 				"WHERE (1=1) AND (1=2)"
 			},
 			// owner specified, owners with ids, no filters
 			new Object[] {
+					"owner specified, owners with ids, no filters",
 				Optional.of("ownerId"), Arrays.asList(1, "--id--", false),
 				new MapInit<String, Filter>().toMap(),
 				"WHERE (1=1) AND (ownerId in (1,'--id--',false))"
 			},
 			// no owner, owners with ids, no filters
 			new Object[] {
+					"no owner, owners with ids, no filters",
 				Optional.empty(), Arrays.asList(1, "--id--", false),
 				new MapInit<String, Filter>().toMap(),
 				"WHERE (1=1)"
 			},
 			// no owner, no ids, like
 			new Object[] {
+					"no owner, no ids, like",
 				Optional.empty(), Arrays.asList(),
 				new MapInit<String, Filter>()
 					.append("likeColumn", new Filter("likeColumn", FilterMode.LIKE, "--value--"))
 					.toMap(),
-				"WHERE (1=1) AND (likeColumn LIKE '%--value--%')"
+				"WHERE (1=1) AND (CONCAT('', likeColumn) LIKE '%--value--%')"
 			},
 			// no owner, no ids, starts
 			new Object[] {
+					"no owner, no ids, starts",
 				Optional.empty(), Arrays.asList(),
 				new MapInit<String, Filter>()
 					.append("startsColumn", new Filter("startsColumn", FilterMode.STARTS_WITH, "--value--"))
 					.toMap(),
-				"WHERE (1=1) AND (startsColumn LIKE '%--value--')"
+				"WHERE (1=1) AND (CONCAT('', startsColumn) LIKE '%--value--')"
 			},
 			// no owner, no ids, ends
 			new Object[] {
+					"no owner, no ids, ends",
 				Optional.empty(), Arrays.asList(),
 				new MapInit<String, Filter>()
 				.append("endsColumn", new Filter("endsColumn", FilterMode.ENDS_WITH, "--value--"))
 				.toMap(),
-				"WHERE (1=1) AND (endsColumn LIKE '--value--%')"
+				"WHERE (1=1) AND (CONCAT('', endsColumn) LIKE '--value--%')"
 			},
 			// no owner, no ids, equas
 			new Object[] {
+					"no owner, no ids, equas",
 				Optional.empty(), Arrays.asList(),
 				new MapInit<String, Filter>()
 				.append("equalsColumn", new Filter("equalsColumn", FilterMode.EQUALS, "--value--"))
@@ -100,6 +107,7 @@ public class GridEntityDaoTest implements Entity {
 			},
 			// combined
 			new Object[] {
+					"combined",
 				Optional.of("ownerId"), Arrays.asList(1, "--id--", false),
 				new MapInit<String, Filter>()
 				.append("likeColumn", new Filter("likeColumn", FilterMode.LIKE, "--value--"))
@@ -109,9 +117,9 @@ public class GridEntityDaoTest implements Entity {
 				.toMap(),
 				"WHERE (1=1) AND (ownerId in (1,'--id--',false))"
 				+ " AND (equalsColumn = '--value--')"
-				+ " AND (startsColumn LIKE '%--value--')"
-				+ " AND (likeColumn LIKE '%--value--%')"
-				+ " AND (endsColumn LIKE '--value--%')"
+				+ " AND (CONCAT('', startsColumn) LIKE '%--value--')"
+				+ " AND (CONCAT('', likeColumn) LIKE '%--value--%')"
+				+ " AND (CONCAT('', endsColumn) LIKE '--value--%')"
 			},
 		};
 	}
@@ -125,7 +133,6 @@ public class GridEntityDaoTest implements Entity {
 		GridEntityDao<GridEntityDaoTest> dao = new GridEntityDao<GridEntityDaoTest>() {			
 			@Override public String getTableName() { return null; }
 			@Override public Database getDatabase() { return null; }
-			@Override public GridEntityDaoTest createEntity(DatabaseRow row, Translator translator) { return null; }
 			@Override public Optional<String> getOwnerColumnName() { return null; }
 			@Override public SelectBuilder _getGrid(String select, QueryBuilder builder) { return null; }
 		};
@@ -194,7 +201,6 @@ public class GridEntityDaoTest implements Entity {
 			
 			@Override public String getTableName() { return "tableName"; }
 			@Override public Database getDatabase() { return null; }
-			@Override public GridEntityDaoTest createEntity(DatabaseRow row, Translator translator) { return null; }
 			@Override public Optional<String> getOwnerColumnName() { return null; }
 			@Override public SelectBuilder _getGrid(String select, QueryBuilder builder) { return null; }
 		};
@@ -208,22 +214,22 @@ public class GridEntityDaoTest implements Entity {
 			new Object[] {
 				"helpKey", "helpValue", null, null,
 				"SELECT helpKey AS help_key,helpValue AS help_display_value"
-				+ " FROM tableName ORDER BY helpValue"
+				+ " FROM tableName" //  ORDER BY helpValue // order move after user
 			},
 			new Object[] {
 				"helpKey", "helpValue", "isDisabled", null,
 				"SELECT helpKey AS help_key,helpValue AS help_display_value, isDisabled AS help_disabled"
-				+ " FROM tableName ORDER BY helpValue"
+				+ " FROM tableName" //  ORDER BY helpValue // order move after user
 			},
 			new Object[] {
 				"helpKey", "helpValue", null, "optGroup",
 				"SELECT helpKey AS help_key,helpValue AS help_display_value, optGroup AS help_group"
-				+ " FROM tableName ORDER BY helpValue"
+				+ " FROM tableName" // ORDER BY helpValue // order move after user
 			},
 			new Object[] {
 				"helpKey", "helpValue", "isDisabled", "optGroup",
 				"SELECT helpKey AS help_key,helpValue AS help_display_value, isDisabled AS help_disabled, optGroup AS help_group"
-				+ " FROM tableName ORDER BY helpValue"
+				+ " FROM tableName" // ORDER BY helpValue // order move after user
 			}
 		};
 	}
