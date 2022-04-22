@@ -2,6 +2,7 @@ package samples.examples.grid;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -52,7 +53,7 @@ public class GridExampleDao {
 		return data;
 	}
 	
-	public GridDataSet<GridExampleEntity> getAll(GridOptions options, Collection<Object> forOwners) throws SQLException {
+	public GridDataSet getAll(GridOptions options, Collection<Object> forOwners) throws SQLException {
 		List<GridExampleEntity> aux = data.stream().filter((e)->{
 			ObjectBuilder<Boolean> result = new ObjectBuilder<>(true);
 			Map<String, Object> map = e.toMap();
@@ -93,7 +94,7 @@ public class GridExampleDao {
 		if (range.isPresent()) {
 			aux = aux.subList(range.getOffset(), range.getOffset() + range.getLimit());
 		}
-		return new GridDataSet<>(aux, size, range.getPageIndex());
+		return new GridDataSet(new ArrayList<>(aux), size, range.getPageIndex());
 	}
 	
 	private int compare(Object v1, Object v2) {

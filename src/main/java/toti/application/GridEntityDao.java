@@ -23,7 +23,9 @@ public interface GridEntityDao<T extends Entity> {
 		return getTableName();
 	}
 	
-	T createEntity(DatabaseRow row, Translator translator);
+	default Object onRow(DatabaseRow row, Translator translator) {
+		return row;
+	}
 /*
 	default SelectBuilder _getAll(String select, QueryBuilder builder) {
 		return builder.select(select).from(getTableName());
@@ -35,7 +37,7 @@ public interface GridEntityDao<T extends Entity> {
 		return Optional.empty();
 	}
 
-	default GridDataSet<T> getAll(GridOptions options, Collection<Object> forOwners, Translator translator) throws SQLException {
+	default GridDataSet getAll(GridOptions options, Collection<Object> forOwners, Translator translator) throws SQLException {
 		return getDatabase().applyBuilder((builder)->{
 			SelectBuilder count = _getGrid("count(*)", builder);
 			_applyFilters(builder, count, options.getFilters(), forOwners);
@@ -49,11 +51,11 @@ public interface GridEntityDao<T extends Entity> {
 			if (range.isPresent()) {
 				select.limit(range.getLimit(), range.getOffset());
 			}
-			List<T> items = new LinkedList<>();
+			List<Object> items = new LinkedList<>();
 			select.fetchAll().forEach((row)->{
-				items.add(createEntity(row, translator));
+				items.add(onRow(row, translator));
 			});
-			return new GridDataSet<>(items, countOfResults, range.getPageIndex());
+			return new GridDataSet(items, countOfResults, range.getPageIndex());
 		});
 	}
 	

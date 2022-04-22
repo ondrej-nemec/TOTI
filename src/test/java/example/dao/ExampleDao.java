@@ -52,11 +52,6 @@ public class ExampleDao implements EntityDao<Example>, GridEntityDao<Example> {
 			throw new RuntimeException(e);
 		}
 	}
-
-	@Override
-	public Example createEntity(DatabaseRow row, Translator translator) {
-		return createEntity(row);
-	}
 	
 	@Override
 	public SelectBuilder _getGrid(String select, QueryBuilder builder) {

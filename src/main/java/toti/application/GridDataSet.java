@@ -6,23 +6,23 @@ import java.util.Map;
 
 import ji.json.Jsonable;
 
-public class GridDataSet<T extends Entity> implements Jsonable {
+public class GridDataSet implements Jsonable {
 	
-	private final List<T> items;
+	private final List<Object> items;
 	private final int totalCount;
 	private final int pageIndex;
 	
-	public static <T extends Entity> GridDataSet<T> create(List<T> items, int pageIndex, int pageSize) {
+	public static  GridDataSet create(List<Object> items, int pageIndex, int pageSize) {
 		GridRange range = GridRange.create(items.size(), pageIndex, pageSize);
-		List<T> dataset = items.subList(range.getOffset(), range.getLimit() + range.getLimit() + 1);
-		return new GridDataSet<>(
+		List<Object> dataset = items.subList(range.getOffset(), range.getLimit() + range.getLimit() + 1);
+		return new GridDataSet(
 			dataset, 
 			items.size(),
 			range.getPageIndex()
 		);
 	}
 
-	public GridDataSet(List<T> items, int totalCount, int pageIndex) {
+	public GridDataSet(List<Object> items, int totalCount, int pageIndex) {
 		this.items = items;
 		this.totalCount = totalCount;
 		this.pageIndex = pageIndex;
