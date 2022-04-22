@@ -1,8 +1,11 @@
 package toti.security.permissions;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Rules {
+public class Rules implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private final Rule privilegedAction;
 	
