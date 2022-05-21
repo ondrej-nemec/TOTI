@@ -7,7 +7,7 @@ import ji.common.Logger;
 import ji.common.functions.Env;
 import ji.common.structures.ListInit;
 import ji.database.Database;
-import ji.socketCommunication.http.server.RequestParameters;
+import ji.socketCommunication.http.structures.RequestParameters;
 import ji.translator.Translator;
 import toti.HttpServer;
 import toti.HttpServerFactory;

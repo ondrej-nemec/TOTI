@@ -1,12 +1,12 @@
 package toti.response;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
 import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.server.RestApiResponse;
-import toti.ResponseHeaders;
+import toti.Headers;
 import toti.security.Authorizator;
 import toti.security.Identity;
 import toti.templating.Template;
@@ -27,8 +27,9 @@ public class TemplateResponse implements Response {
 	}
 
 	@Override
-	public RestApiResponse getResponse(
-			ResponseHeaders header, 
+	public ji.socketCommunication.http.structures.Response getResponse(
+			String protocol,
+			Headers header, 
 			TemplateFactory templateFactory, 
 			Translator translator,
 			Authorizator authorizator,
@@ -38,23 +39,22 @@ public class TemplateResponse implements Response {
 		String nonce = RandomStringUtils.randomAlphanumeric(50);
 		params.put("nonce", nonce);
 		params.put("totiIdentity", identity);
-		header.getHeaders().forEach((head)->{
-			head.replace("{nonce}", nonce);
+		
+		Headers resHeaders = new Headers(new HashMap<>());
+		header.getHeaders().forEach((n, l)->{
+			l.forEach(v->{
+				if (v != null && v instanceof String) {
+					resHeaders.addHeader(n, v.toString().replace("{nonce}", nonce));
+				} else {
+					resHeaders.addHeader(n, v);
+				}
+			});
 		});
-		header.addHeader(getContentType(fileName, charset));
-		String response = createResponse(templateFactory, translator, authorizator, current);
-		return RestApiResponse.textResponse(
-			code,
-			header.getHeaders(),
-			(bw)->{
-				bw.write(response);
-				/*try {
-					Template template = templateFactory.getTemplate(fileName);
-					bw.write(template.create(templateFactory, params, translator, authorizator, current));
-				} catch (Exception e) {
-					throw new RuntimeException(e);
-				}*/
-		});
+		setContentType(fileName, charset, header);
+		ji.socketCommunication.http.structures.Response response = new ji.socketCommunication.http.structures.Response(code, protocol);
+		response.setHeaders(resHeaders.getHeaders());
+		response.setBody(createResponse(templateFactory, translator, authorizator, current).getBytes());
+		return response;
 	}
 	
 	public String createResponse(

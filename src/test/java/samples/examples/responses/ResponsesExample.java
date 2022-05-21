@@ -1,5 +1,7 @@
 package samples.examples.responses;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -11,7 +13,7 @@ import ji.common.functions.FileExtension;
 import ji.common.structures.MapInit;
 import ji.database.Database;
 import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.server.WebSocket;
+import ji.socketCommunication.http.structures.WebSocket;
 import ji.translator.Translator;
 import toti.HttpServer;
 import toti.HttpServerFactory;
@@ -66,11 +68,15 @@ public class ResponsesExample implements Module {
 	 */
 	@Action("generate")
 	public Response getGenerated() {
-		return Response.getFileDownload(StatusCode.OK, "generatedFileToDownload_" + new Date().getTime() + ".odt", (bout)->{
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		try {
 			bout.write("Generated".getBytes());
 			bout.write("\n".getBytes());
 			bout.write("File content :-D".getBytes());
-		});
+		} catch (IOException e) {
+			// never happends
+		}
+		return Response.getFileDownload(StatusCode.OK, "generatedFileToDownload_" + new Date().getTime() + ".odt", bout.toByteArray());
 	}
 
 	/**

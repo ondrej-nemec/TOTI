@@ -1,8 +1,7 @@
 package toti.response;
 
 import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.server.RestApiResponse;
-import toti.ResponseHeaders;
+import toti.Headers;
 import toti.security.Authorizator;
 import toti.security.Identity;
 import toti.templating.TemplateFactory;
@@ -24,15 +23,18 @@ public class RedirectResponse implements Response {
 	}
 	
 	@Override
-	public RestApiResponse getResponse(
-			ResponseHeaders header,
+	public ji.socketCommunication.http.structures.Response getResponse(
+			String protocol,
+			Headers header,
 			TemplateFactory templateFactory, 
 			Translator translator, 
 			Authorizator authorizator,
 			Identity identity, MappedUrl current,
 			String charset) {
-		header.addHeader("Location: " + url);
-		return RestApiResponse.textResponse(code, header.getHeaders(), (bw)->{});
+		header.addHeader("Location", url);
+		ji.socketCommunication.http.structures.Response res = new ji.socketCommunication.http.structures.Response(code, protocol);
+		res.setHeaders(header.getHeaders());
+		return res;
 	}
 
 }

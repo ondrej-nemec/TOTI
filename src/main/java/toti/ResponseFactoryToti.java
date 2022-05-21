@@ -8,9 +8,9 @@ import ji.common.exceptions.NotImplementedYet;
 import ji.common.structures.MapInit;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.server.RequestParameters;
-import ji.socketCommunication.http.server.RestApiResponse;
-import ji.socketCommunication.http.server.WebSocket;
+import ji.socketCommunication.http.structures.Request;
+import ji.socketCommunication.http.structures.RequestParameters;
+import ji.socketCommunication.http.structures.WebSocket;
 import ji.translator.Translator;
 import toti.profiler.Profiler;
 import toti.response.Response;
@@ -37,22 +37,22 @@ public class ResponseFactoryToti {
 		this.charset = charset;
 	}
 
-	public RestApiResponse getTotiResponse(
-			HttpMethod method, String url, RequestParameters params,
-			Identity identity, ResponseHeaders headers, Optional<WebSocket> websocket) {
-		return getResponse(method, url, params, identity, headers)
+	public ji.socketCommunication.http.structures.Response getTotiResponse(
+			String url, Request request,
+			Identity identity, Headers responseHeaders, Optional<WebSocket> websocket) {
+		return getResponse(request.getMethod(), url, request.getBodyInParameters(), identity, responseHeaders)
 			.getResponse(
-				headers, templateFactory, translator.withLocale(identity.getLocale()),
+				request.getProtocol(), responseHeaders, templateFactory, translator.withLocale(identity.getLocale()),
 				null /*authorizator*/, identity, null /* mapped url */, charset
 			);
 	}
 	
-	private Response getResponse(HttpMethod method, String url, RequestParameters params, Identity identity, ResponseHeaders headers) {
+	private Response getResponse(HttpMethod method, String url, RequestParameters params, Identity identity, Headers responseHeaders) {
 		if ((url.length() < 2 || url.equals("/index.html")) && developIps.contains(identity.getIP())) {// "/toti"->"" OR "/toti/"->"/"
 			return getWelcomePage();
 		}
 		if (url.startsWith("db")) {
-			return getDbViewer(method, url, params, identity, headers);
+			return getDbViewer(method, url, params, identity, responseHeaders);
 		}
 		if (url.startsWith("/profiler")) {
 			return getProfiler(method, params, identity);
@@ -60,6 +60,7 @@ public class ResponseFactoryToti {
 		return getTotiFiles(url);
 	}
 	
+	// TODO use full body
 	private Response getProfiler(HttpMethod method, RequestParameters params, Identity identity) {
 		if (profiler.isUse() && developIps.contains(identity.getIP())) {
 			return profiler.getResponse(method, params);
@@ -71,7 +72,7 @@ public class ResponseFactoryToti {
 		return Response.getTemplate("/assets" + url, new MapInit<String, Object>().append("useProfiler", profiler.isUse()).toMap());
 	}
 	
-	private Response getDbViewer(HttpMethod method, String url, RequestParameters params, Identity identity, ResponseHeaders headers) {
+	private Response getDbViewer(HttpMethod method, String url, RequestParameters params, Identity identity, Headers responseHeaders) {
 		throw new NotImplementedYet();
 		// TODO return dbViewer.getResponse(method, url.substring(8), params, identity, headers);
 	}

@@ -9,8 +9,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 import ji.database.Database;
 import ji.database.DatabaseConfig;
 import ji.socketCommunication.http.HttpMethod;
-import ji.socketCommunication.http.server.RequestParameters;
-import toti.ResponseHeaders;
+import ji.socketCommunication.http.structures.RequestParameters;
+import toti.Headers;
 import toti.logging.TotiLogger;
 import toti.response.Response;
 import toti.security.Identity;
@@ -26,7 +26,7 @@ public class DbViewerRouter {
 			String path, 
 			RequestParameters params, 
 			Identity identity, 
-			ResponseHeaders responseHeaders) {
+			Headers responseHeaders) {
 		String authCookie = identity.getCookieValue(COOKIE_NAME);
 		/*
 		if ("".equals(path)) {
@@ -42,8 +42,8 @@ public class DbViewerRouter {
 				if (authCookie == null && params.size() > 0) { // login
 					authCookie = RandomStringUtils.randomAlphanumeric(50);
 					responseHeaders.addHeader(
-						"Set-Cookie: "
-						+ COOKIE_NAME + "=" + authCookie
+						"Set-Cookie",
+						COOKIE_NAME + "=" + authCookie
 						+ "; HttpOnly"
 						+ "; Path=/toti/db"
 						+ "; SameSite=Strict"
@@ -104,12 +104,12 @@ public class DbViewerRouter {
 		*/
 	}
 	
-	private Response logOut(String authCookie, ResponseHeaders responseHeaders) {
+	private Response logOut(String authCookie, Headers responseHeaders) {
 		if (authCookie != null) {
 			viewers.remove(authCookie);
 			responseHeaders.addHeader(
-				"Set-Cookie: "
-				+ COOKIE_NAME + "=" + authCookie
+				"Set-Cookie",
+				COOKIE_NAME + "=" + authCookie
 				+ "; HttpOnly"
 				+ "; Path=/toti/db"
 				+ "; SameSite=Strict"

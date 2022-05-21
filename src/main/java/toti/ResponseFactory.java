@@ -11,19 +11,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ji.common.Logger;
 import ji.common.structures.DictionaryValue;
 import ji.common.structures.MapDictionary;
-import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.server.RequestParameters;
-import ji.socketCommunication.http.server.RestApiResponse;
-import ji.socketCommunication.http.server.RestApiServerResponseFactory;
-import ji.socketCommunication.http.server.WebSocket;
+import ji.socketCommunication.http.structures.RequestParameters;
+import ji.socketCommunication.http.structures.WebSocket;
+import ji.socketCommunication.http.structures.Request;
 import toti.annotations.Domain;
 import toti.profiler.Profiler;
 import toti.register.Register;
@@ -44,10 +41,10 @@ import toti.url.MappedUrl;
 import toti.url.UrlPart;
 import ji.translator.Translator;
 
-public class ResponseFactory implements RestApiServerResponseFactory {
+public class ResponseFactory implements ji.socketCommunication.http.ResponseFactory {
 	
 	private final Register register;
-	private final ResponseHeaders responseHeaders;
+	private final Headers responseHeaders;
 	private final String charset;
 	private final boolean dirResponseAllowed;
 	private final Logger logger;
@@ -69,7 +66,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	private final ResponseFactoryExceptions expRes;
 	
 	public ResponseFactory(
-			ResponseHeaders responseHeaders,
+			Headers responseHeaders,
 			String resourcesDir,
 			Router router,
 			Map<String, TemplateFactory> modules,
@@ -105,47 +102,31 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	}
 	
 	@Override
-	public RestApiResponse accept(
-			HttpMethod method,
-			String url,
-			String fullUrl,
-			String protocol,
-			Properties header,
-			RequestParameters params,
-			String ip,
-			Optional<WebSocket> websocket) throws IOException {
+	public ji.socketCommunication.http.structures.Response accept(Request request, String ip, Optional<WebSocket> websocket) throws IOException {
 		/*
 		System.err.println("URL: " + fullUrl);
 		System.err.println("Header: " + header);
 		System.err.println("Params: " + params);
 		//*/
-		Identity identity = identityFactory.createIdentity(header, ip, profiler.isUse());
-		return getCatchedResponse(method, url, fullUrl, protocol, params, identity, websocket);
+		Identity identity = identityFactory.createIdentity(request.getHeaders(), ip, profiler.isUse());
+		return getCatchedResponse(request, identity, websocket);
 	}
 
-	private RestApiResponse getCatchedResponse(
-			HttpMethod method,
-			String url,
-			String fullUrl,
-			String protocol,
-			RequestParameters params,
-			Identity identity,
-			Optional<WebSocket> websocket) {
-		authenticator.authenticate(identity, params);
+	private ji.socketCommunication.http.structures.Response getCatchedResponse(Request request, Identity identity, Optional<WebSocket> websocket) {
+		authenticator.authenticate(identity, request.getBodyInParameters());
 		try {
-			return getNormalizedResponse(method, url, fullUrl, protocol, params, identity, websocket);
+			return getNormalizedResponse(request.getPlainUri(), request, identity, websocket);
 		/*} catch (AuthentizationException e) {
 			return onException(401, method, url, fullUrl, protocol, header, params, locale, ip, e);
 		} catch (NotAllowedActionException | AccessDeniedException e) {
 			return expRes.onException(403, method, url, fullUrl, protocol, header, params, identity, e);*/
 		} catch (ServerException e) {
 			return expRes.getExceptionResponse(
-				e.getStatusCode(), method, url, fullUrl, protocol, 
-				params, identity, e.getUrl(), e.getCause() == null ? e : e.getCause()
+				e.getStatusCode(), request, identity, e.getUrl(), e.getCause() == null ? e : e.getCause()
 			);
 		} catch (Throwable t) {
 			return expRes.getExceptionResponse(
-				StatusCode.INTERNAL_SERVER_ERROR, method, url, fullUrl, protocol, params, identity, null, t
+				StatusCode.INTERNAL_SERVER_ERROR, request, identity, null, t
 			);
 		}
 	}
@@ -153,62 +134,49 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	@Override
 	public void catchException(Exception e) throws IOException {
 		logger.fatal("Uncaught exception", e);
-		RestApiServerResponseFactory.super.catchException(e);
+		ji.socketCommunication.http.ResponseFactory.super.catchException(e);
 	}
 	
-	private RestApiResponse getNormalizedResponse(
-			HttpMethod method,
+	private ji.socketCommunication.http.structures.Response getNormalizedResponse(
 			String url,
-			String fullUrl,
-			String protocol,
-			RequestParameters params,
+			Request request,
 			Identity identity, 
 			Optional<WebSocket> websocket) throws ServerException {
 		return getTotiFilteredResponse(
-				method, url.endsWith("/") ? url.substring(0, url.length()-1) : url,
-				fullUrl, protocol, params, identity, websocket
+				url.endsWith("/") ? url.substring(0, url.length()-1) : url,
+				request, identity, websocket
 		);
 	}
 	
-	private RestApiResponse getTotiFilteredResponse(
-			HttpMethod method,
+	private ji.socketCommunication.http.structures.Response getTotiFilteredResponse(
 			String url,
-			String fullUrl,
-			String protocol,
-			RequestParameters params,
+			Request request,
 			Identity identity, 
 			Optional<WebSocket> websocket) throws ServerException {
-		ResponseHeaders headers = responseHeaders.get();
+		Headers responseHeaders = this.responseHeaders.clone();
 		// toti exclusive
 		if (url.startsWith("/toti")) {
-			return totiRes.getTotiResponse(method, url.substring(5), params, identity, headers, websocket);
+			return totiRes.getTotiResponse(url.substring(5), request, identity, responseHeaders, websocket);
 		}
-		return getRoutedResponse(method, url, fullUrl, protocol, params, identity, headers, websocket);
+		return getRoutedResponse(url, request, identity, responseHeaders, websocket);
 	}
 	
-	private RestApiResponse getRoutedResponse(
-			HttpMethod method,
+	private ji.socketCommunication.http.structures.Response getRoutedResponse(
 			String url,
-			String fullUrl,
-			String protocol,
-			RequestParameters params,
+			Request request,
 			Identity identity,
-			ResponseHeaders headers,
+			Headers responseHeaders,
 			Optional<WebSocket> websocket) throws ServerException {
 		if (router.getUrlMapping(url) == null) {
-			return getMappedResponse(method, url, fullUrl, protocol, params, identity, headers, websocket);
+			return getMappedResponse(url, request, identity, responseHeaders, websocket);
 		}
-		return getMappedResponse(method, router.getUrlMapping(url), fullUrl, protocol, params, identity, headers, websocket);
+		return getMappedResponse(router.getUrlMapping(url), request, identity, responseHeaders, websocket);
 	}
 	
-	private RestApiResponse getMappedResponse(
-			HttpMethod method,
-			String url,
-			String fullUrl,
-			String protocol,
-			RequestParameters params,
+	private ji.socketCommunication.http.structures.Response getMappedResponse(
+			String url, Request request,
 			Identity identity,
-			ResponseHeaders headers,
+			Headers responseHeaders,
 			Optional<WebSocket> websocket) throws ServerException {
 		// controllers
 		String[] urls = url.length() == 0 ? new String[] {} : url.substring(1).split("/");
@@ -228,7 +196,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			}
 		}
 		if (last.isPresent()) {
-			last = last.getDictionaryMap().getDictionaryValue(new UrlPart(method));
+			last = last.getDictionaryMap().getDictionaryValue(new UrlPart(request.getMethod()));
 		}
 		if (last.isPresent() && last.is(MappedUrl.class)) {
 			MappedUrl mapped = last.getValue(MappedUrl.class);
@@ -237,36 +205,35 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		    	Matcher m = p.matcher(url);
 		    	if (m.find()) {
 		    		for (int i = 2; i <= m.groupCount(); i++) { // group 0 is origin text, 1 match url
-		    			params.put(mapped.getParamName(i - 2), m.group(i));
+		    			request.getBodyInParameters().put(mapped.getParamName(i - 2), m.group(i));
 		    		}
 		    	}
 			}
 			if (profiler != null) {
 		   		profiler.setPageId(identity.getPageId());
-		   		profiler.logRequest(identity, method, url, fullUrl, protocol, params);
+		   		profiler.logRequest(identity,request);
 		   	}
-		   	return getControllerResponse(headers, fullUrl, mapped, params, identity, websocket);
+		   	return getControllerResponse(responseHeaders, mapped, request, identity, websocket);
 		}
 		// files
 		File file = new File(resourcesDir + url);
 		if (!file.exists() || (file.isDirectory() && !dirResponseAllowed)) {
-			throw new ServerException(StatusCode.NOT_FOUND, String.format("URL not fouded: %s (%s)", url, method));
+			throw new ServerException(StatusCode.NOT_FOUND, String.format("URL not fouded: %s (%s)", url, request.getMethod()));
 		}
 		if (file.isDirectory()) {
-			return getDirResponse(headers, file.listFiles(), url);
+			return getDirResponse(request, responseHeaders, file.listFiles(), url);
 		}
-		return Response.getFile(resourcesDir + url).getResponse(headers, charset);
+		return Response.getFile(resourcesDir + url).getResponse(request.getProtocol(), responseHeaders, charset);
 	}
 
-	private RestApiResponse getControllerResponse(
-			ResponseHeaders headers, String fullUrl,
-			MappedUrl mapped, RequestParameters params,
+	private ji.socketCommunication.http.structures.Response getControllerResponse(
+			Headers responseHeaders, MappedUrl mapped, Request request,
 			Identity identity, Optional<WebSocket> websocket) throws ServerException {
 		try {
-			// TODO check crft token
-			/*if (mapped.isTokenRequired()) {
-				
-			}*/
+			RequestParameters params = new RequestParameters();
+			params.putAll(request.getBodyInParameters().toMap());
+			params.putAll(request.getUrlParameters().toMap());
+			
 			// create instance here - validator can be method of that object
 			Object o = register
 					.getFactory(mapped.getClassName())
@@ -280,7 +247,8 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			// TODO authorize and bad request response order
 			if (!errors.isEmpty()) {
 				// check errors after authrization
-				return Response.getJson(StatusCode.BAD_REQUEST, errors).getResponse(headers, charset);
+				return Response.getJson(StatusCode.BAD_REQUEST, errors)
+						.getResponse(request.getProtocol(), responseHeaders, charset);
 			}
 			/** preparing params*/
 			List<Class<?>> classesList = new ArrayList<>();
@@ -296,14 +264,14 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 				if (mapped.getSecurityMode() == AuthMode.HEADER || router.getRedirectOnNotLoggedInUser() == null) {
 					throw e;
 				}
-				logger.debug(fullUrl + " Redirect to login page: " + e.getMessage());
+				logger.debug(request.getUri() + " Redirect to login page: " + e.getMessage());
 				String backlink = "";
-				if (!fullUrl.equals("/")) {
-					backlink = "?backlink=" + getBackLink(fullUrl);
+				if (!request.getUri().equals("/")) {
+					backlink = "?backlink=" + getBackLink(request.getUri());
 				}
 				return Response.getRedirect(
 					router.getRedirectOnNotLoggedInUser() + backlink
-			     ).getResponse(headers, charset);
+			     ).getResponse(request.getProtocol(), responseHeaders, charset);
 			}
 			/** response */
 			TemplateFactory templateFactory = modules.get(mapped.getModuleName());
@@ -316,7 +284,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 			Response response = (Response)o.getClass()
 	    				.getMethod(mapped.getMethodName(), classes)
 	    				.invoke(o, values);
-	    	headers.addHeaders(identityFactory.getResponseHeaders(identity)); // for cookies and custom headers
+	    	identityFactory.setResponseHeaders(identity, responseHeaders); // for cookies and custom headers
 	    	try {
 	    		authenticator.saveIdentity(identity);
 	    	} catch (Exception e) {
@@ -324,7 +292,7 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 	    	}
 	    	
 			return response.getResponse(
-				headers, templateFactory, 
+				request.getProtocol(), responseHeaders, templateFactory, 
 				translator.withLocale(identity.getLocale()), 
 				authorizator, identity, mapped, charset
 			);
@@ -408,18 +376,20 @@ public class ResponseFactory implements RestApiServerResponseFactory {
 		}
 	}
 
-	private RestApiResponse getDirResponse(ResponseHeaders headers, File[] files, String path) {
-		headers.addHeader("Content-Type: text/html; charset=" + charset);
-		return RestApiResponse.textResponse(
-			StatusCode.OK,
-			headers.getHeaders(),
-			(bw)->{
-				try {
-					bw.write(new DirectoryTemplate(files, path).create(null, null, null, null, null));
-				} catch (Exception e) {
-					throw new RuntimeException(e);
-				}
-		});
+	// TODO use as standart TOTI response?
+	private ji.socketCommunication.http.structures.Response getDirResponse(
+			Request request, Headers responseHeaders, File[] files, String path) throws ServerException {
+		responseHeaders.addHeader("Content-Type", "text/html; charset=" + charset);
+		ji.socketCommunication.http.structures.Response response = new ji.socketCommunication.http.structures.Response(
+				StatusCode.OK, request.getProtocol()
+		);
+		response.setHeaders(responseHeaders.getHeaders());
+		try {
+			response.setBody(new DirectoryTemplate(files, path).create(null, null, null, null, null).getBytes());
+		} catch (Exception e) {
+			throw new ServerException(StatusCode.INTERNAL_SERVER_ERROR, null, "Directory list fail: " + path);
+		}
+		return response;
 	}
 
 }

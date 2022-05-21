@@ -4,15 +4,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import ji.common.Logger;
 import ji.common.functions.Env;
 import ji.common.structures.MapInit;
 import ji.database.Database;
 import ji.socketCommunication.http.HttpMethod;
-import ji.socketCommunication.http.server.RequestParameters;
-import ji.socketCommunication.http.server.UploadedFile;
+import ji.socketCommunication.http.structures.RequestParameters;
+import ji.socketCommunication.http.structures.UploadedFile;
 import ji.translator.LanguageSettings;
 import ji.translator.Locale;
 import ji.translator.Translator;
@@ -772,7 +771,7 @@ public class FormExample implements Module {
 	 */
 	@Action("file-save")
 	public Response fileSave(@Param("fileInput") UploadedFile file) {
-		return Response.getText("OK: " + file.getFileName() + " " + file.getContent().size() + "b");
+		return Response.getText("OK: " + file.getFileName() + " " + file.getContent().length + "b");
 	}
 	
 	/*****/
@@ -1093,8 +1092,7 @@ public class FormExample implements Module {
 			HttpServer server = new HttpServerFactory()
 				.setPort(8080)
 				.setLanguageSettings(new LanguageSettings(Arrays.asList(new Locale("en", true, Arrays.asList()))))
-				.setAllowedUploadFileTypes(Optional.empty())
-				.setMaxUploadFileSize(10 * 1000 * 1000) // 10 MB
+				.setMaxRequestBodySize(10 * 1000 * 1000) // 10 MB !! for all body
 				.get(modules, null, null);
 			
 			/* start */

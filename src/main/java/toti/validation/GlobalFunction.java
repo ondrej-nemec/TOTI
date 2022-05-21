@@ -2,7 +2,7 @@ package toti.validation;
 
 import java.util.Set;
 
-import ji.socketCommunication.http.server.RequestParameters;
+import ji.socketCommunication.http.structures.RequestParameters;
 import ji.translator.Translator;
 
 public interface GlobalFunction {

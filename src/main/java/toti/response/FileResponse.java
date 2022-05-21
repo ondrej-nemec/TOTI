@@ -1,14 +1,12 @@
 package toti.response;
 
-import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import ji.common.functions.InputStreamLoader;
-import ji.common.structures.ThrowingConsumer;
-import ji.files.text.Binary;
 import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.server.RestApiResponse;
-import toti.ResponseHeaders;
+import toti.Headers;
 import toti.security.Authorizator;
 import toti.security.Identity;
 import toti.templating.TemplateFactory;
@@ -20,7 +18,7 @@ public class FileResponse implements Response {
 	private final String fileName;
 	private final boolean download;
 	private final StatusCode code;
-	private final ThrowingConsumer<BufferedOutputStream, IOException> binaryContent;
+	private final byte[] binaryContent;
 	
 	public FileResponse(StatusCode code, String fileName) {
 		this(code, fileName, binaryContent(fileName), false);
@@ -30,11 +28,11 @@ public class FileResponse implements Response {
 		this(code, fileName, binaryContent(source), true);
 	}
 	
-	public FileResponse(StatusCode code, String fileName, ThrowingConsumer<BufferedOutputStream, IOException> binaryContent) {
+	public FileResponse(StatusCode code, String fileName, byte[] binaryContent) {
 		this(code, fileName, binaryContent, true);
 	}
 	
-	private FileResponse(StatusCode code, String fileName, ThrowingConsumer<BufferedOutputStream, IOException> binaryContent, boolean download) {
+	private FileResponse(StatusCode code, String fileName, byte[] binaryContent, boolean download) {
 		this.code = code;
 		this.fileName = fileName;
 		this.binaryContent = binaryContent;
@@ -42,34 +40,37 @@ public class FileResponse implements Response {
 	}
 
 	@Override
-	public RestApiResponse getResponse(
-			ResponseHeaders header,
+	public ji.socketCommunication.http.structures.Response getResponse(
+			String protocol,
+			Headers responseHeader,
 			TemplateFactory templateFactory, 
 			Translator translator, 
 			Authorizator authorizator,
 			Identity identity, MappedUrl current,
 			String charset) {
-		String head = getContentType(fileName, charset);
-		if (head != null) {
-			header.addHeader(head);
-		}
+		setContentType(fileName, charset, responseHeader);
 		if (download) {
 			//	header.addHeader("Content-Disposition: attachment; filename=\"" + fileName + "\"");
-			header.addHeader("Content-Disposition: inline; filename=\"" + fileName + "\"");
+			responseHeader.addHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
 		}
-		return RestApiResponse.binaryResponse(code, header.getHeaders(), binaryContent);
+		ji.socketCommunication.http.structures.Response response = new  ji.socketCommunication.http.structures.Response(code, protocol);
+		response.setHeaders(responseHeader.getHeaders());
+		response.setBody(binaryContent);
+		return response;
 	}
 	
-	private static ThrowingConsumer<BufferedOutputStream, IOException> binaryContent(String name) {
-		return (bout)->{
-			Binary.get().read((bin)->{
-				byte[] b = new byte[2048];
-				int len = 0;
-				while((len = bin.read(b)) != -1) {
-					bout.write(b, 0, len);
-				}
-			}, InputStreamLoader.createInputStream(FileResponse.class, name));
-		};
+	private static byte[] binaryContent(String name) {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		try (InputStream is = InputStreamLoader.createInputStream(FileResponse.class, name)) {
+			byte[] b = new byte[1024];
+			int readed;
+			while((readed = is.read(b, 0, b.length)) != -1) {
+				bos.write(b, 0, readed);
+			}
+		} catch (IOException e) {
+			throw new ResponseException(e);
+		}
+		return bos.toByteArray();
 	}
 
 }

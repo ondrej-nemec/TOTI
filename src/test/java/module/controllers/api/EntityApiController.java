@@ -10,7 +10,7 @@ import ji.common.structures.MapDictionary;
 import module.AuditTrail;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.server.RequestParameters;
+import ji.socketCommunication.http.structures.RequestParameters;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Method;

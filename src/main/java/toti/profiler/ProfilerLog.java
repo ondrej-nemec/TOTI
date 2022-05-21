@@ -7,9 +7,8 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import ji.json.Jsonable;
-import ji.socketCommunication.http.HttpMethod;
-import ji.socketCommunication.http.server.RequestParameters;
-import ji.socketCommunication.http.server.profiler.HttpServerProfilerEvent;
+import ji.socketCommunication.http.structures.Request;
+import ji.socketCommunication.http.profiler.HttpServerProfilerEvent;
 import toti.security.Identity;
 
 public class ProfilerLog implements Jsonable{
@@ -19,22 +18,12 @@ public class ProfilerLog implements Jsonable{
 	private final String threadName;
 	
 	private long createdAt;
-	
-	/***************/
-	
-	private HttpMethod method;
-	
-	private String url;
-	
-	private String fullUrl;
-	
-	private String protocol;
 		
 	/***************/
 	
 	private Identity identity;
 	
-	private RequestParameters params;
+	private Request request;
 	
 	private final Map<String, SqlLog> sqlLogs = new HashMap<>();
 	
@@ -50,13 +39,9 @@ public class ProfilerLog implements Jsonable{
 		this.createdAt = System.currentTimeMillis();
 	}
 	
-	public void setRequestInfo(Identity identity, HttpMethod method, String url, String fullUrl, String protocol, RequestParameters params) {
+	public void setRequestInfo(Identity identity, Request request) {
 		this.identity = identity;
-		this.method = method;
-		this.url = url;
-		this.fullUrl = fullUrl;
-		this.protocol = protocol;
-		this.params = params;
+		this.request = request;
 	}
 	
 	public void addServerEvent(long time, HttpServerProfilerEvent event) {
@@ -123,10 +108,10 @@ public class ProfilerLog implements Jsonable{
 		Map<String, Object> iden = new HashMap<>();
 		Map<String, Object> rendering = new HashMap<>();
 		if (!serverEvents.isEmpty()) {
-			requestInfo.put("method", method);
-			requestInfo.put("url", url);
-			requestInfo.put("fullUrl", fullUrl);
-			requestInfo.put("protocol", protocol);
+			requestInfo.put("method", request.getMethod());
+			requestInfo.put("url", request.getPlainUri());
+			requestInfo.put("fullUrl", request.getUri());
+			requestInfo.put("protocol", request.getProtocol());
 			requestInfo.put("IP", identity.getIP());
 			/********/
 			Map<String, Object> user = new HashMap<>();
@@ -160,7 +145,7 @@ public class ProfilerLog implements Jsonable{
 		json.put("name", threadName);
 		
 		json.put("requestInfo", requestInfo);
-		json.put("params", params);
+		json.put("params", request.getBodyInParameters()); // TODO full body
 		json.put("rendering", rendering);
 		json.put("identity", iden);
 		

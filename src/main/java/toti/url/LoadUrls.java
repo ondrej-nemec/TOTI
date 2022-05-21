@@ -12,7 +12,7 @@ import ji.common.structures.DictionaryValue;
 import ji.common.structures.MapDictionary;
 import ji.common.structures.ThrowingFunction;
 import ji.socketCommunication.http.HttpMethod;
-import ji.socketCommunication.http.server.WebSocket;
+import ji.socketCommunication.http.structures.WebSocket;
 import toti.Module;
 import toti.Router;
 import toti.annotations.Action;

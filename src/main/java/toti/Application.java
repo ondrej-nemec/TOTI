@@ -2,7 +2,6 @@ package toti;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 import ji.common.Logger;
 import ji.common.functions.Env;
@@ -121,7 +120,15 @@ public class Application {
 				factory.setReadTimeout(env.getInteger("http.read-timeout"));
 			}
 			if (env.getString("http.headers") != null) {
-				factory.setHeaders(env.getList("http.headers", "\\|"));
+				Headers headers = new Headers();
+				env.getList("http.headers", "\\|").forEach(h->{
+					String[] hds = h.split(":", 2);
+					if (hds.length == 1) {
+						headers.addHeader(hds[0].trim(), "");
+					} else {
+						headers.addHeader(hds[0].trim(), hds[1].trim());
+					}
+				});
 			}
 			if (env.getString("http.charset") != null) {
 				factory.setCharset(env.getString("http.charset"));
@@ -192,16 +199,7 @@ public class Application {
 				factory.setDevelopIpAdresses(env.getList("http.ip", "\\|"));
 			}
 			if (env.getString("http.max-upload-size") != null) {
-				factory.setMaxUploadFileSize(env.getInteger("http.max-upload-size"));
-			}
-			if (env.getString("http.allowed-file-types") != null) {
-				if (env.getString("http.allowed-file-types").isEmpty()) {
-					factory.setAllowedUploadFileTypes(Optional.empty());
-				} else {
-					factory.setAllowedUploadFileTypes(Optional.of(
-						env.getList("http.allowed-file-types", "|")
-					));
-				}
+				factory.setMaxRequestBodySize(env.getInteger("http.max-upload-size"));
 			}
 			if (env.getString("http.use-profiler") != null) {
 				factory.setUseProfiler(env.getBoolean("http.use-profiler"));

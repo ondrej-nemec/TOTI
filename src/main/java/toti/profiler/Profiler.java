@@ -13,9 +13,10 @@ import ji.translator.TransProfiler;
 import ji.json.Jsonable;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.server.RequestParameters;
-import ji.socketCommunication.http.server.profiler.HttpServerProfiler;
-import ji.socketCommunication.http.server.profiler.HttpServerProfilerEvent;
+import ji.socketCommunication.http.structures.Request;
+import ji.socketCommunication.http.structures.RequestParameters;
+import ji.socketCommunication.http.profiler.HttpServerProfiler;
+import ji.socketCommunication.http.profiler.HttpServerProfilerEvent;
 import toti.response.Response;
 import toti.security.Identity;
 
@@ -93,9 +94,9 @@ public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProf
 	
 	/***********/
 	
-	public void logRequest(Identity identity, HttpMethod method, String url, String fullUrl, String protocol, RequestParameters params) {
+	public void logRequest(Identity identity, Request request) {
 		log((log)->{
-			log.setRequestInfo(identity, method, url, fullUrl, protocol, params);
+			log.setRequestInfo(identity, request);
 		});
 	}
 	

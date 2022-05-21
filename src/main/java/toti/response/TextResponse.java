@@ -1,8 +1,7 @@
 package toti.response;
 
 import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.server.RestApiResponse;
-import toti.ResponseHeaders;
+import toti.Headers;
 import toti.security.Authorizator;
 import toti.security.Identity;
 import toti.templating.TemplateFactory;
@@ -20,16 +19,18 @@ public class TextResponse implements Response {
 	}
 	
 	@Override
-	public RestApiResponse getResponse(
-			ResponseHeaders header,
+	public ji.socketCommunication.http.structures.Response getResponse(
+			String protocol,
+			Headers header,
 			TemplateFactory templateFactory, 
 			Translator translator, 
 			Authorizator authorizator,
 			Identity identity, MappedUrl current,
 			String charset) {
-		return RestApiResponse.textResponse(code, header.getHeaders(), (bw)->{
-			bw.write(text);
-		});
+		ji.socketCommunication.http.structures.Response response = new ji.socketCommunication.http.structures.Response(code, protocol);
+		response.setHeaders(header.getHeaders());
+		response.setBody(text.getBytes());
+		return response;
 	}
 
 }

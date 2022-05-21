@@ -15,7 +15,7 @@ import ji.json.JsonStreamException;
 import ji.json.JsonWritter;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
-import ji.socketCommunication.http.server.RequestParameters;
+import ji.socketCommunication.http.structures.RequestParameters;
 import ji.translator.Translator;
 
 @RunWith(JUnitParamsRunner.class)

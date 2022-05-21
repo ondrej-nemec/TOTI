@@ -4,15 +4,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import ji.common.Logger;
 import ji.common.functions.Env;
 import ji.common.structures.MapInit;
 import ji.database.Database;
 import ji.socketCommunication.http.HttpMethod;
-import ji.socketCommunication.http.server.RequestParameters;
-import ji.socketCommunication.http.server.UploadedFile;
+import ji.socketCommunication.http.structures.RequestParameters;
+import ji.socketCommunication.http.structures.UploadedFile;
 import ji.translator.Translator;
 import toti.HttpServer;
 import toti.HttpServerFactory;
@@ -186,8 +185,7 @@ public class RequestsExample implements Module  {
 		try {
 			HttpServer server = new HttpServerFactory()
 				.setPort(8080)
-				.setAllowedUploadFileTypes(Optional.empty())
-				.setMaxUploadFileSize(1024 * 10) // 10 kB
+				.setMaxRequestBodySize(1024 * 10) // 10 kB - !! for all body
 				.get(modules, null, null);
 			
 			/* start */

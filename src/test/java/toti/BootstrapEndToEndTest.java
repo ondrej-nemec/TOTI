@@ -37,7 +37,7 @@ public class BootstrapEndToEndTest {
 					// factory.setLogger(LoggerFactory.getLogger("toti"));
 					factory.setMinimalize(false);
 					factory.setDeleteTempJavaFiles(false);
-					factory.setHeaders(Arrays.asList(
+					/*factory.setHeaders(Arrays.asList(
 						"CSP:frame-ancestors 'none'" // nacteni stranky ve framu
 						, "Content-Security-Policy-Report-Only"
 							+ " script-src 'strict-dynamic' 'nonce-{nonce}' 'unsafe-inline' http: https:;"
@@ -45,9 +45,8 @@ public class BootstrapEndToEndTest {
 							+ " form-action 'self';"
 							+ " report-uri '/entity/api/entity/reporting'"
 						, "Access-Control-Allow-Origin: *"
-					));
-					factory.setAllowedUploadFileTypes(Optional.empty());
-					factory.setMaxUploadFileSize(1000000);
+					));*/
+					factory.setMaxRequestBodySize(1000000);
 					
 					MapDictionary<String, Object> config = new DictionaryValue(Text.get().read((br)->{
 						return ReadText.get().asString(br);

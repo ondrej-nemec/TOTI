@@ -11,7 +11,7 @@ import java.util.Map;
 import ji.database.Database;
 import ji.database.support.DatabaseRow;
 import ji.socketCommunication.http.HttpMethod;
-import ji.socketCommunication.http.server.RequestParameters;
+import ji.socketCommunication.http.structures.RequestParameters;
 import toti.response.Response;
 
 public class DbViewer {

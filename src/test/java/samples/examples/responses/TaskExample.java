@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import ji.common.Logger;
-import ji.socketCommunication.http.server.WebSocket;
+import ji.socketCommunication.http.structures.WebSocket;
 import toti.application.Task;
 
 public class TaskExample implements Task {

@@ -11,8 +11,8 @@ import ji.common.Logger;
 import ji.files.text.Text;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.server.RequestParameters;
-import ji.socketCommunication.http.server.RestApiResponse;
+import ji.socketCommunication.http.structures.Request;
+import ji.socketCommunication.http.structures.RequestParameters;
 import ji.translator.Translator;
 import toti.response.Response;
 import toti.response.TemplateResponse;
@@ -27,7 +27,7 @@ public class ResponseFactoryExceptions {
 	private final TemplateFactory templateFactory;
 	private final Translator translator;
 	private final String charset;
-	private final ResponseHeaders responseHeaders;
+	private final Headers responseHeaders;
 	
 	/*
 	 * exceptin resp
@@ -39,7 +39,7 @@ public class ResponseFactoryExceptions {
 	 */
 	
 	public ResponseFactoryExceptions(
-			Translator translator, TemplateFactory templateFactory, ResponseHeaders responseHeaders,
+			Translator translator, TemplateFactory templateFactory, Headers responseHeaders,
 			String charset, List<String> developIps, Logger logger) {
 		this.developIps = developIps;
 		this.logger = logger;
@@ -49,36 +49,35 @@ public class ResponseFactoryExceptions {
 		this.responseHeaders = responseHeaders;
 	}
 	
-	public RestApiResponse getExceptionResponse(
+	public ji.socketCommunication.http.structures.Response getExceptionResponse(
 			StatusCode responseCode, 
-			HttpMethod method,
-			String url,
-			String fullUrl,
-			String protocol,
-			RequestParameters params,
+			Request request,
 			Identity identity, 
 			MappedUrl mappedUrl, // can be null
 			Throwable t) {
-		return getException(responseCode, method, url, fullUrl, protocol, params, identity, mappedUrl, t)
+		return getException(responseCode, request, identity, mappedUrl, t)
 			.getResponse(
-				responseHeaders.get(), templateFactory, translator.withLocale(identity.getLocale()),
+				request.getProtocol(), responseHeaders, templateFactory, translator.withLocale(identity.getLocale()),
 				null /*authorizator*/, identity, mappedUrl, charset
 			);
 	}
 	
 	private Response getException(
 			StatusCode status, 
-			HttpMethod method,
-			String url,
-			String fullUrl,
-			String protocol,
-			RequestParameters params,
+			Request request,
 			Identity identity, 
 			MappedUrl mappedUrl,
 			Throwable t) {
-		logger.error(String.format("Exception occured %s URL: %s", status, fullUrl), t);
+		logger.error(String.format("Exception occured %s URL: %s", status, request.getUri()), t);
 				
-		TemplateResponse response = getTemplate(status, method, url, fullUrl, protocol, params, identity, mappedUrl, t);
+		TemplateResponse response = getTemplate(
+				status, 
+				request.getMethod(), 
+				request.getPlainUri(), 
+				request.getUri(), 
+				request.getProtocol(), 
+				request.getBodyInParameters(), // TODO complete body 
+				identity, mappedUrl, t);
 		if (identity.isAsyncRequest()) { // probably js request
 			saveToFile(response);
 			if (developIps.contains(identity.getIP())) {

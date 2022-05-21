@@ -7,8 +7,7 @@ import ji.json.JsonStreamException;
 import ji.json.OutputJsonStream;
 import ji.json.JsonWritter;
 import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.server.RestApiResponse;
-import toti.ResponseHeaders;
+import toti.Headers;
 import toti.security.Authorizator;
 import toti.security.Identity;
 import toti.templating.TemplateFactory;
@@ -26,29 +25,19 @@ public class JsonResponse implements Response {
 	}
 
 	@Override
-	public RestApiResponse getResponse(
-			ResponseHeaders header,
+	public ji.socketCommunication.http.structures.Response getResponse(
+			String protocol,
+			Headers header,
 			TemplateFactory templateFactory, 
 			Translator translator, 
 			Authorizator authorizator,
 			Identity identity, MappedUrl current,
 			String charset) {
-		header.addHeader("Content-Type: application/json; charset=" + charset);
-		String response = createResponse();
-		return RestApiResponse.textResponse(
-			code,
-			header.getHeaders(),
-			(bw)->{
-				bw.write(response);
-				/*
-				try {
-					OutputJsonStream stream = new OutputJsonStream(new OutputWriterProvider(bw));
-					JsonWritter writter = new JsonWritter();
-					writter.write(stream, json);
-				} catch (JsonStreamException e) {
-					throw new RuntimeException(e);
-				}*/
-		});
+		header.addHeader("Content-Type", "application/json; charset=" + charset);
+		ji.socketCommunication.http.structures.Response response = new ji.socketCommunication.http.structures.Response(code, protocol);
+		response.setHeaders(header.getHeaders());
+		response.setBody(createResponse().getBytes());
+		return response;
 	}
 	
 	private String createResponse() {

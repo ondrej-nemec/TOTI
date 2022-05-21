@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 import ji.common.exceptions.LogicException;
 import ji.common.structures.DictionaryValue;
 import ji.common.structures.MapInit;
-import ji.socketCommunication.http.server.RequestParameters;
-import ji.socketCommunication.http.server.UploadedFile;
+import ji.socketCommunication.http.structures.RequestParameters;
+import ji.socketCommunication.http.structures.UploadedFile;
 import ji.translator.Translator;
 
 public class Validator {
@@ -236,7 +236,7 @@ public class Validator {
 					rule.getFileMaxSize(),
 					(maxSize)->{
 						UploadedFile file = (UploadedFile)o;
-						return file.getContent().size() > maxSize;
+						return file.getContent().length > maxSize;
 					},
 					errors,
 					propertyName,
@@ -246,7 +246,7 @@ public class Validator {
 					rule.getFileMinSize(),
 					(minSize)->{
 						UploadedFile file = (UploadedFile)o;
-						return file.getContent().size() < minSize;
+						return file.getContent().length < minSize;
 					},
 					errors,
 					propertyName,

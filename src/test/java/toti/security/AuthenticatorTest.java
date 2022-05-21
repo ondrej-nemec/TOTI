@@ -7,7 +7,7 @@ import org.mockito.Mockito;
 
 import ji.common.Logger;
 import ji.common.functions.Hash;
-import ji.socketCommunication.http.server.RequestParameters;
+import ji.socketCommunication.http.structures.RequestParameters;
 import ji.common.exceptions.HashException;
 
 public class AuthenticatorTest {

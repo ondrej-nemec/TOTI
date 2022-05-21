@@ -7,7 +7,7 @@ import java.util.Map;
 import ji.common.structures.MapInit;
 import ji.common.structures.Tuple2;
 import ji.socketCommunication.http.HttpMethod;
-import ji.socketCommunication.http.server.RequestParameters;
+import ji.socketCommunication.http.structures.RequestParameters;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Method;

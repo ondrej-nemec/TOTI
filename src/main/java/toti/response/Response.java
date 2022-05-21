@@ -1,16 +1,13 @@
 package toti.response;
 
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.function.Consumer;
 
 import ji.common.functions.FileExtension;
-import ji.common.structures.ThrowingConsumer;
 import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.server.RestApiResponse;
-import ji.socketCommunication.http.server.WebSocket;
-import toti.ResponseHeaders;
+import ji.socketCommunication.http.structures.WebSocket;
+import toti.Headers;
 import toti.security.Authorizator;
 import toti.security.Identity;
 import toti.templating.TemplateFactory;
@@ -19,8 +16,9 @@ import ji.translator.Translator;
 
 public interface Response {
 
-	RestApiResponse getResponse(
-			ResponseHeaders header,
+	ji.socketCommunication.http.structures.Response getResponse(
+			String protocol,
+			Headers responseHeaders,
 			TemplateFactory templateFactory,
 			Translator translator,
 			Authorizator authorizator,
@@ -29,8 +27,8 @@ public interface Response {
 			String charset
 	);
 
-	default RestApiResponse getResponse(ResponseHeaders header, String charset) {
-		return getResponse(header, null, null, null, null, null, charset);
+	default ji.socketCommunication.http.structures.Response getResponse(String protocol, Headers responseHeaders, String charset) {
+		return getResponse(protocol, responseHeaders, null, null, null, null, null, charset);
 	}
 	
 	/***********/
@@ -81,7 +79,7 @@ public interface Response {
 	 * @param binaryContent
 	 * @return
 	 */
-	static Response getFileDownload(String fileName, ThrowingConsumer<BufferedOutputStream, IOException> binaryContent) {
+	static Response getFileDownload(String fileName, byte[] binaryContent) {
 		return new FileResponse(StatusCode.OK, fileName, binaryContent);
 	}
 
@@ -92,7 +90,7 @@ public interface Response {
 	 * @param binaryContent
 	 * @return
 	 */
-	static Response getFileDownload(StatusCode code, String fileName, ThrowingConsumer<BufferedOutputStream, IOException> binaryContent) {
+	static Response getFileDownload(StatusCode code, String fileName, byte[] binaryContent) {
 		return new FileResponse(code, fileName, binaryContent);
 	}
 	
@@ -206,6 +204,13 @@ public interface Response {
 		return new WebsocketResponse(websocket, onMessage, onError);
 	}
 	
+	default void setContentType(String fileName, String charset, Headers responseHeaders) {
+		String type = getContentType(fileName, charset);
+		if (type != null) {
+			responseHeaders.addHeader("Content-Type", type);
+		}
+	}
+	
 	default String getContentType(String fileName, String charset) {
 		if (fileName == null) {
 			return null;
@@ -215,27 +220,27 @@ public interface Response {
 		switch (ext) {
 		// TODO more https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
 			case "jsp":
-			case "html": return "Content-Type: text/html; charset=" + charset;
-			case "css": return "Content-Type: text/css; charset=" + charset;
-			case "csv": return "Content-Type: text/csv; charset=" + charset;
-			case "js": return "Content-Type: text/javascript; charset=" + charset;
-			case "txt": return "Content-Type: text/plain; charset=" + charset;
-			case "json": return "Content-Type: application/json; charset=" + charset;
-			case "ico": return "Content-Type: image/ico";
+			case "html": return "text/html; charset=" + charset;
+			case "css": return "text/css; charset=" + charset;
+			case "csv": return "text/csv; charset=" + charset;
+			case "js": return "text/javascript; charset=" + charset;
+			case "txt": return "text/plain; charset=" + charset;
+			case "json": return "application/json; charset=" + charset;
+			case "ico": return "image/ico";
 			case "jpeg":
-			case "jpg": return "Content-Type: image/jpeg";
-			case "png": return "Content-Type: image/png";
-			case "giff": return "Content-Type: image/giff";
-			case "gif": return "Content-Type: image/gif";
+			case "jpg": return "image/jpeg";
+			case "png": return "image/png";
+			case "giff": return "image/giff";
+			case "gif": return "image/gif";
 			
 			// TODO add more https://wiki.documentfoundation.org/Faq/General/036
-			case "odt": return "Content-Type: application/vnd.oasis.opendocument.text";
-			case "ods": return "Content-Type: application/vnd.oasis.opendocument.spreadsheet";
-			case "ots": return "Content-Type: application/vnd.oasis.opendocument.spreadsheet-template";
+			case "odt": return "application/vnd.oasis.opendocument.text";
+			case "ods": return "application/vnd.oasis.opendocument.spreadsheet";
+			case "ots": return "application/vnd.oasis.opendocument.spreadsheet-template";
 			
 			// TODO add microsoft https://filext.com/faq/office_mime_types.html
 			
-			default: return "Content-Type: application/x-binary"; // application/octet-stream
+			default: return "application/x-binary"; // application/octet-stream
 			//default: return null;
 		}
 	}

@@ -8,7 +8,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import ji.common.Logger;
 import toti.authentication.AuthentizationException;
 import ji.common.functions.Hash;
-import ji.socketCommunication.http.server.RequestParameters;
+import ji.socketCommunication.http.structures.RequestParameters;
 import ji.common.exceptions.HashException;
 import ji.common.exceptions.LogicException;
 

@@ -17,7 +17,7 @@ import ji.common.structures.MapDictionary;
 import ji.database.Database;
 import ji.socketCommunication.Server;
 import ji.socketCommunication.SslCredentials;
-import ji.socketCommunication.http.server.RestApiServer;
+import ji.socketCommunication.http.RestApiServer;
 import ji.translator.LanguageSettings;
 import ji.translator.Translator;
 import toti.application.Task;
@@ -36,9 +36,17 @@ import toti.url.UrlPart;
 public class HttpServerFactory {
 	
 	// todo maybe regist here too OR only list - new header in creating response
-	private ResponseHeaders headers = new ResponseHeaders(Arrays.asList(
-			"Access-Control-Allow-Origin: *"
-	));
+	private Headers responseHeaders = new Headers()
+			.addHeader("Access-Control-Allow-Origin", "*");
+	/*
+		"CSP:frame-ancestors 'none'" // nacteni stranky ve framu
+		, "Content-Security-Policy-Report-Only"
+			+ " script-src 'strict-dynamic' 'nonce-{nonce}' 'unsafe-inline' http: https:;"
+			+ " object-src 'none';"
+			+ " form-action 'self';"
+			+ " report-uri '/entity/api/entity/reporting'"
+		, "Access-Control-Allow-Origin: *"
+	*/
 	
 	private Translator translator;
 	
@@ -54,8 +62,7 @@ public class HttpServerFactory {
 	private boolean dirResponseAllowed = false;
 	private boolean minimalize = true;
 	private List<String> developIps = Arrays.asList("/127.0.0.1", "/0:0:0:0:0:0:0:1");
-	private int maxUploadFileSize = 0;
-	private Optional<List<String>> allowedUploadFileTypes = Optional.of(new LinkedList<>());
+	private Integer maxUploadFileSize = null;
 	private long tokenExpirationTime = 1000 * 60 * 10;
 	private String tokenCustomSalt = "";
 	private boolean useProfiler = false;
@@ -102,7 +109,7 @@ public class HttpServerFactory {
 		};
 		AuthenticationCache sessionCache = new AuthenticationCache(tempPath, true, logger);
 		ResponseFactory response = new ResponseFactory(
-				headers,
+				responseHeaders,
 				resourcesPath,
 				router,
 				templateFactories,
@@ -135,7 +142,6 @@ public class HttpServerFactory {
 				response,
 				certs,
 				maxUploadFileSize,
-				allowedUploadFileTypes,
 				charset,
 				logger
 		);
@@ -160,23 +166,18 @@ public class HttpServerFactory {
 		return this;
 	}
 
-	public HttpServerFactory setMaxUploadFileSize(int maxUploadFileSize) {
+	public HttpServerFactory setMaxRequestBodySize(int maxUploadFileSize) {
 		this.maxUploadFileSize = maxUploadFileSize;
 		return this;
 	}
 
-	/**
-	 * 
-	 * @param allowedUploadFileTypes - empty Optional means all types, Optional with empty list means no types
-	 * @return
-	 */
-	public HttpServerFactory setAllowedUploadFileTypes(Optional<List<String>> allowedUploadFileTypes) {
-		this.allowedUploadFileTypes = allowedUploadFileTypes;
+	public HttpServerFactory setHeaders(Map<String, List<Object>> headers) {
+		this.responseHeaders = new Headers(headers);
 		return this;
 	}
 
-	public HttpServerFactory setHeaders(List<String> headers) {
-		this.headers = new ResponseHeaders(headers);
+	public HttpServerFactory setHeaders(Headers headers) {
+		this.responseHeaders = headers;
 		return this;
 	}
 
