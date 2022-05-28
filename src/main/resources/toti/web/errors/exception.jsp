@@ -143,18 +143,19 @@
 				</div>
 				<div class="block">
 					<table>
-						<t:foreach key="String key" value="Object value" map="${headers}">
-							<tr>
-								<th><t:out name="${key}" /></th>
-								<t:if cond="value == null">
-									<td><t:out name="${value}" /></td>
-									<td></td>
-								<t:else>
-									<td><t:out name="${value}" /></td>
-									<td><t:out name="${value.getClass().getName()}" /></td>
-								</t:if>
-								
-							</tr>
+						<t:foreach key="String key" value="Object list" map="${headers.getHeaders()}">
+							<t:foreach item="Object value" collection="${list}">
+								<tr>
+									<th><t:out name="${key}" /></th>
+									<t:if cond="value == null">
+										<td><t:out name="${value}" /></td>
+										<td></td>
+									<t:else>
+										<td><t:out name="${value}" /></td>
+										<td><t:out name="${value.getClass().getName()}" /></td>
+									</t:if>
+								</tr>
+							</t:foreach>
 						</t:foreach>
 					</table>
 				</div>
