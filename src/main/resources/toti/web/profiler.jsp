@@ -1,4 +1,4 @@
-<!-- TOTI Profiler version 0.0.3 -->
+<!-- TOTI Profiler version 0.1.0 -->
 <html>
 <head>
     <meta charset="utf-8">
@@ -10,13 +10,16 @@
 
 	<style type="text/css">
 		body {
-			background-color: #cccccc;
+			/*background-color: #cccccc;*/
+			background-color: #7FC6CC;
 		}
 		h1 {
 			text-align: center;
-			color: white;
-			background-color: #3366ff;
 			padding: 0.5em;
+			/*color: white;
+			background-color: #3366ff;*/
+			color: #e3ffff; /*#86daff;*/
+			background-color: #017CA5;
 		}
 		h2, h3 {
 			display: inline-block;
@@ -55,7 +58,7 @@
 		#menu {
 			float: left;
 			width: 25%;
-		  background-color: #595959;
+		    background-color: #595959;
 		}
 		#content {
 			margin-left: 25%;
@@ -99,11 +102,10 @@
 	</div>
 	<div>
 		<div>
-			<label><input type="checkbox" id="chb-page-request" {{ ${enable|Boolean} ? "checked" : ""}}>Log page requests</label>
+			<label><input type="checkbox" id="chb-page-request" <%= ${enable|Boolean} ? "checked" : "" %>>Log page requests</label>
 		</div>
 		<div id="content"></div>
 	</div>
-
 
 	<!-- menu templates -->
 
@@ -147,7 +149,7 @@
 		<div class="section">
 			<div>
 				<span><img width="25px" class="block-icon" id="lang" src=""></span>
-				<h2>Localization: <span id="data-trans-locale"></span></h2>
+				<h2>Selected language: <span id="data-trans-locale"></span></h2>
 				<img src="" class="block-show" width="20px">
 				<img src="" class="block-hide" width="20px">
 			</div>
@@ -156,6 +158,7 @@
 					<strong>Left To Right:</strong>&nbsp;<span id="data-trans-ltr"></span> <br>
 					<strong>Substitutions:</strong>&nbsp;<span id="data-trans-substitutions"></span>
 				</p>
+				<h3>Missing translations</h3>
 				<table id="data-trans-missingTranslations">
 				  	<tr>
 				  		<th>Locale</th>
@@ -213,6 +216,8 @@
 				  </dd>
 				  <dt>Is Executed</dt>
 				  <dd id="data-sql-executed"></dd>
+				  <dt>Result</dt>
+				  <dd id="data-sql-result"></dd>
 				</dl>
 			</div>
 		</div>
@@ -232,6 +237,10 @@
 				<div><strong>Full URL:</strong>&nbsp;&nbsp;<span id="data-request-fullUrl"></span></div>
 				<div><strong>IP:</strong>&nbsp;&nbsp;<span id="data-request-ip"></span></div>
 				<div><strong>Protocol:</strong>&nbsp;&nbsp;<span id="data-request-protocol"></span></div>
+				<hr>
+				<div><strong>Module:</strong>&nbsp;&nbsp;<span id="data-request-controller-module">---</span></div>
+				<div><strong>Class:</strong>&nbsp;&nbsp;<span id="data-request-controller-class">---</span></div>
+				<div><strong>Method:</strong>&nbsp;&nbsp;<span id="data-request-controller-method">---</span></div>
 				
 			</div>
 		</div>
@@ -246,12 +255,22 @@
 				<img src="" class="block-hide" width="20px">
 			</div>
 			<div class="block">
-				<table id="data-params">
+				<h3>Url parameters</h3>
+				<table id="data-params-url">
 					<tr>
 						<th>Name</th>
 						<th>Value</th>
 					</tr>
 				</table>
+				<h3>Body parameters</h3>
+				<table id="data-params-body">
+					<tr>
+						<th>Name</th>
+						<th>Value</th>
+					</tr>
+				</table>
+				<h3>Body</h3>
+				<div id="data-body"></div>
 			</div>
 		</div>
 	</template>
@@ -266,10 +285,8 @@
 				</div>
 				<div class="block">
 					<dl>
-					  <dt>Is API allowed</dt>
-					  <dd id="data-identity-apiAllowed"></dd>
-					  <dt>Content</dt>
-					  <dd id="data-identity-content"></dd>
+					  <dt>Login mode</dt>
+					  <dd id="data-identity-loginMode"></dd>
 					  <dt>User</dt>
 					  <dd>
 					  	 <dl>
@@ -277,6 +294,8 @@
 							  <dd id="data-identity-user-id">---</dd>
 							  <dt>Allowed IDs</dt>
 							  <dd id="data-identity-user-ids">---</dd>
+							  <dt>Content</dt>
+							  <dd id="data-identity-content"></dd>
 					  	 </dl>
 					  </dd>
 					</dl>
@@ -307,7 +326,7 @@
 	<script type="text/javascript">
 		function loadProfilerData(method, params, onSuccess) {
 			totiLoad.async(
-				"/toti/profiler", method, params, {}, 
+				"/toti/profiler", method, params, {},
 				function(res) { onSuccess(res); }, 
 				function(xhr) { console.log(xhr); },
 				false
@@ -401,6 +420,11 @@
 			container.querySelector("#data-request-url").innerText = request.url;
 			container.querySelector("#data-request-protocol").innerText = request.protocol;
 			container.querySelector("#data-request-ip").innerText = request.IP;
+			if (request.hasOwnProperty("controller")) {
+				container.querySelector("#data-request-controller-module").innerText = request.controller.module;
+				container.querySelector("#data-request-controller-class").innerText = request.controller.class;
+				container.querySelector("#data-request-controller-method").innerText = request.controller.method;
+			}
 			return container;
 		}
 
@@ -460,6 +484,7 @@
 				});
 				container.querySelector("#data-sql-sql").innerText = log.sql;
 				container.querySelector("#data-sql-executed").innerText = log.isExecuted;
+				container.querySelector("#data-sql-result").innerText = log.result;
 
 				block.appendChild(container);
 			}
@@ -475,31 +500,37 @@
 
 		function getIdentityLog(identity) {
 			var container = getTemplate(document.getElementById("identity-template"));
-			container.querySelector("#data-identity-apiAllowed").innerText = identity.isApiAllowed;
-			container.querySelector("#data-identity-content").innerText = identity.content;
+			container.querySelector("#data-identity-loginMode").innerText = identity.loginMode;
 			if (identity.hasOwnProperty("user")) {
+				container.querySelector("#data-identity-content").innerText = identity.user.content;
 				container.querySelector("#data-identity-user-id").innerText = identity.user.id;
 				container.querySelector("#data-identity-user-ids").innerText = JSON.stringify(identity.user.allowedIds);
 			}
 			return container;
 		}
 
-		function getRequestParametersLog(params) {
+		function getRequestParametersLog(urlParams, bodyParams, body) {
 			var container = getTemplate(document.getElementById("request-parameters-template"));
 			addParametersToTable(
-				container.querySelector("#data-params"),
-				params
+				container.querySelector("#data-params-url"),
+				urlParams
 			);
+			addParametersToTable(
+				container.querySelector("#data-params-params-body"),
+				bodyParams
+			);
+			container.querySelector('#data-body').innerText = JSON.stringify(body);
 			return container;
 		}
 
 		function getRenderingLog(rendering) {
 			var container = getTemplate(document.getElementById("rendering-template"));
 			container.querySelector("#data-rendering-render").innerText = rendering.render;
-			addParametersToTable(
-				container.querySelector("#data-rendering-times"),
-				rendering.times
-			);
+			var times = {};
+			rendering.times.forEach(function(time) {
+				times[time['_1']] = time['_2'];
+			});
+			addParametersToTable(container.querySelector("#data-rendering-times"), times);
 			return container;
 		}
 
@@ -509,6 +540,11 @@
 			var div = document.createElement("div");
 			if (isPage) {
 				div.appendChild(getRequestLog(log.requestInfo));
+				div.appendChild(getRequestParametersLog(
+					log.requestInfo.UrlParams,
+					log.requestInfo.BodyParams,
+					log.requestInfo.Body
+				));
 			}
 			div.appendChild(getLogInfo(log));
 			div.appendChild(getTranslationsLog(log.trans));
@@ -516,7 +552,6 @@
 			if (isPage) {
 				div.appendChild(getIdentityLog(log.identity));
 				div.appendChild(getRenderingLog(log.rendering));
-				div.appendChild(getRequestParametersLog(log.params));
 			}
 
 			target.appendChild(div);

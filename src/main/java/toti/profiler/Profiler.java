@@ -19,6 +19,7 @@ import ji.socketCommunication.http.profiler.HttpServerProfiler;
 import ji.socketCommunication.http.profiler.HttpServerProfilerEvent;
 import toti.response.Response;
 import toti.security.Identity;
+import toti.url.MappedUrl;
 
 public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProfiler,  Jsonable {
 
@@ -60,7 +61,6 @@ public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProf
 			log.executeSql(identifier);
 		});
 	}
-
 	@Override
 	public void prepare(String identifier, String sql) {
 		log((log)->{
@@ -83,20 +83,18 @@ public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProf
 	}
 
 	@Override
-	public void executed() {
-		// TODO Auto-generated method stub
+	public void executed(String identifier, Object res) {
+		log((log)->{
+			log.executeSql(identifier, res);
+		});
 	}
 
-	@Override
-	public void executed(Object res) {
-		// TODO Auto-generated method stub
-	}
 	
 	/***********/
 	
-	public void logRequest(Identity identity, Request request) {
+	public void logRequest(Identity identity, Request request, MappedUrl mapped) {
 		log((log)->{
-			log.setRequestInfo(identity, request);
+			log.setRequestInfo(identity, request, mapped);
 		});
 	}
 	

@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import ji.common.structures.Tuple2;
 import ji.json.Jsonable;
 import ji.socketCommunication.http.structures.Request;
 import ji.socketCommunication.http.profiler.HttpServerProfilerEvent;
 import toti.security.Identity;
+import toti.url.MappedUrl;
 
 public class ProfilerLog implements Jsonable{
 
@@ -25,9 +27,11 @@ public class ProfilerLog implements Jsonable{
 	
 	private Request request;
 	
+	private MappedUrl mapped;
+	
 	private final Map<String, SqlLog> sqlLogs = new HashMap<>();
 	
-	private Map<HttpServerProfilerEvent, Long> serverEvents = new HashMap<>();
+	private List<Tuple2<HttpServerProfilerEvent, Long>> serverEvents = new LinkedList<>();
 	
 	private List<String> missingLocales = new LinkedList<>();
 	
@@ -39,13 +43,14 @@ public class ProfilerLog implements Jsonable{
 		this.createdAt = System.currentTimeMillis();
 	}
 	
-	public void setRequestInfo(Identity identity, Request request) {
+	public void setRequestInfo(Identity identity, Request request, MappedUrl mapped) {
 		this.identity = identity;
 		this.request = request;
+		this.mapped = mapped;
 	}
 	
 	public void addServerEvent(long time, HttpServerProfilerEvent event) {
-		serverEvents.put(event, time);
+		serverEvents.add(new Tuple2<>(event, time));
 	}
 	
 	public void addSql(String id, String sql) {
@@ -63,6 +68,12 @@ public class ProfilerLog implements Jsonable{
 	public void executeSql(String id) {
 		logSql(id, (log)->{
 			log.setExecuted();
+		});
+	}
+	
+	public void executeSql(String id, Object res) {
+		logSql(id, (log)->{
+			log.setExecuted(res);
 		});
 	}
 
@@ -90,12 +101,10 @@ public class ProfilerLog implements Jsonable{
 	}
 
 	private long getRequestTime() {
-		Long first= serverEvents.get(HttpServerProfilerEvent.RESPONSE_SENDED);
-		Long second = serverEvents.get(HttpServerProfilerEvent.REQUEST_ACCEPT);
-		if (first == null || second == null) {
+		if (serverEvents.size() != 4) {
 			return -1;
 		}
-		return first - second;
+		return serverEvents.get(3)._2() - serverEvents.get(0)._2();
 	}
 
 	public long getThreadId() {
@@ -113,13 +122,23 @@ public class ProfilerLog implements Jsonable{
 			requestInfo.put("fullUrl", request.getUri());
 			requestInfo.put("protocol", request.getProtocol());
 			requestInfo.put("IP", identity.getIP());
+			requestInfo.put("BodyParams", request.getBodyInParameters());
+			requestInfo.put("UrlParams", request.getUrlParameters());
+			requestInfo.put("Body", request.getBody());
+			/********/
+			if (mapped != null) {
+				Map<String, Object> controller = new HashMap<>();
+				controller.put("module", mapped.getModuleName());
+				controller.put("class", mapped.getClassName());
+				controller.put("method", mapped.getMethodName());
+				requestInfo.put("controller", controller);
+			}
 			/********/
 			Map<String, Object> user = new HashMap<>();
 			if (identity.isPresent()) {
 				user.put("id", identity.getUser().getId());
 				user.put("allowedIds", identity.getUser().getAllowedIds());
 				user.put("content", identity.getUser().getContent());
-				// TODO maybe serialize user
 			}
 			iden.put("loginMode", identity.getLoginMode());
 			if (identity.isPresent()) {
@@ -145,7 +164,6 @@ public class ProfilerLog implements Jsonable{
 		json.put("name", threadName);
 		
 		json.put("requestInfo", requestInfo);
-		json.put("params", request.getBodyInParameters()); // TODO full body
 		json.put("rendering", rendering);
 		json.put("identity", iden);
 		

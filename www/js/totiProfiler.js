@@ -1,4 +1,4 @@
-/* TOTI Profiler version 0.0.4 */
+/* TOTI Profiler version 0.1.0 */
 var totiProfiler = {
 	pageId: null,
 	interval: null,
@@ -46,7 +46,7 @@ var totiProfiler = {
 			"Server processing time"
 		));
 		tr.appendChild(totiProfiler.getDataItem(
-			data.requestInfo.method + ": " + data.requestInfo.url + " " + Object.entries(data.params).length, 
+			data.requestInfo.method + ": " + data.requestInfo.url, /* + " " + Object.entries(data.params).length,  */
 			totiImages.web, 
 			"Request: [methood]: [url] [parametersCount]"
 		));
@@ -56,7 +56,7 @@ var totiProfiler = {
 			"Localization"
 		));
 		tr.appendChild(totiProfiler.getDataItem(
-			data.identity.isApiAllowed === true ? "API" : "NotApi",
+			data.identity.loginMode,
 			totiImages.security, 
 			"Security Level"
 		));
@@ -74,14 +74,17 @@ var totiProfiler = {
 	},
 	getDetailPanel: function(rows) {
 		var table = document.createElement("table");
-		rows.forEach(function(row) {
+		rows.forEach(function(row, index) {
+			if (index === 0) {
+				return;
+			}
 			table.appendChild(totiProfiler.getDataRow(row));
 		});
-		table.setAttribute("style", "background-color: white; width: 100%;");
+		table.setAttribute("style", "background-color: #7FC6CC; width: 100%;");
 
 		var container = document.createElement("div");
 		container.setAttribute("id", "toti-profiler-detail");
-		container.setAttribute("style", "background-color: black; padding: 0.25em;");
+		/*container.setAttribute("style", "background-color: black; padding: 0.25em;");*/
 		container.appendChild(table);
 		return container;
 	},
@@ -97,18 +100,19 @@ var totiProfiler = {
 			if (totiProfiler.interval != null) {
 				clearInterval(totiProfiler.interval);
 			}
-		}, 30));
-		closeButton.style.width = 30;
+		}, 20));
+		closeButton.style.width = 20;
 		closeButton.style["background-color"] = "red";
-		closeButton.width = "2em";
+		/*closeButton.width = "2em";*/
 		
 		var titleLink = document.createElement("a");
 		titleLink.setAttribute("href", "/toti/profiler#" + pageId);
 		titleLink.setAttribute("target", "_blank");
-		titleLink.setAttribute("style", "color: black; text-decoration: none;");
+		titleLink.setAttribute("style", "color: #e3ffff; text-decoration: none;");
 		titleLink.innerText = "TOTI Profiler";
 		var title = document.createElement("td");
-		title.setAttribute("style", "text-align: center; color: white; background-color: #3366ff; width: 7em; margin:auto;");
+		title.setAttribute("style", "text-align: center; color: #e3ffff; background-color: #017CA5; width: 7em; margin:auto;");
+		/* #3366ff */
 		title.appendChild(titleLink);
 
 		var showButton = document.createElement("div");
@@ -163,7 +167,8 @@ var totiProfiler = {
 		profiler.setAttribute("id", "toti-profiler");
 		profiler.setAttribute(
 			"style",
-			 "height: 30px; width: 100%; position: fixed; bottom: 5px; background-color: #f5c6cb; z-index: 1000; margin: 0;"
+			 "height: 30px; width: 100%; position: fixed; bottom: 5px; background-color: #7FC6CC; z-index: 1000; margin: 0;"
+			 /*#f5c6cb*/
 		);
 		totiProfiler.addHeader(profiler, pageId);
 

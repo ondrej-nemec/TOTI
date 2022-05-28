@@ -60,7 +60,6 @@ public class ResponseFactoryToti {
 		return getTotiFiles(url);
 	}
 	
-	// TODO use full body
 	private Response getProfiler(HttpMethod method, RequestParameters params, Identity identity) {
 		if (profiler.isUse() && developIps.contains(identity.getIP())) {
 			return profiler.getResponse(method, params);

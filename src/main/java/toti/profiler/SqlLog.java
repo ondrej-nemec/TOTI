@@ -8,6 +8,8 @@ import ji.common.annotations.MapperIgnored;
 
 public class SqlLog {
 
+	// maybe add date of sqlLog create and order by this date, use in profiler
+	
 	@MapperIgnored
 	private final String id;
 
@@ -21,12 +23,18 @@ public class SqlLog {
 	private String replacedSql;
 	private Map<String, String> builderParams;
 	
+	private Object result;
+	
 	public SqlLog(String id) {
 		this.id = id;
 	}
 
 	public String getId() {
 		return id;
+	}
+	
+	public Object getResuslt() {
+		return result;
 	}
 
 	public String getSql() {
@@ -63,6 +71,11 @@ public class SqlLog {
 
 	public void setExecuted() {
 		this.isExecuted = true;
+	}
+
+	public void setExecuted(Object result) {
+		this.isExecuted = true;
+		this.result = result;
 	}
 
 	public void setBuilder(String preparedSql, String replacedSql, Map<String, String> builderParams) {
