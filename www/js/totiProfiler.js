@@ -206,7 +206,7 @@ var totiProfiler = {
 		totiProfiler.interval = setInterval(showData, 30000);
     	return profiler;
 	}
-}
+};
 
 document.addEventListener("DOMContentLoaded", function(event) {
 	if (totiSettings.showProfiler) {

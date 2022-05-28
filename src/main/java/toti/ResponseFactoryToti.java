@@ -57,7 +57,7 @@ public class ResponseFactoryToti {
 		if (url.startsWith("/profiler")) {
 			return getProfiler(method, params, identity);
 		}
-		return getTotiFiles(url);
+		return getTotiFiles(url, identity);
 	}
 	
 	private Response getProfiler(HttpMethod method, RequestParameters params, Identity identity) {
@@ -67,8 +67,13 @@ public class ResponseFactoryToti {
 		return Response.getText(StatusCode.FORBIDDEN, "");
 	}
 	
-	private Response getTotiFiles(String url) {
-		return Response.getTemplate("/assets" + url, new MapInit<String, Object>().append("useProfiler", profiler.isUse()).toMap());
+	private Response getTotiFiles(String url, Identity identity) {
+		return Response.getTemplate(
+			"/assets" + url, 
+			new MapInit<String, Object>()
+			.append("useProfiler", profiler.isUse() && developIps.contains(identity.getIP()))
+			.toMap()
+		);
 	}
 	
 	private Response getDbViewer(HttpMethod method, String url, RequestParameters params, Identity identity, Headers responseHeaders) {

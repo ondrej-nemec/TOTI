@@ -110,6 +110,8 @@ public class DevelopToolsExample implements Module {
 			Env env = new Env("samples/examples/developtools/app.properties");
 			HttpServer server = new HttpServerFactory()
 				.setPort(8080)
+				// uncomment for test response with disabled develop view
+				//.setDevelopIpAdresses(Arrays.asList()) // no develop ips
 				.setUseProfiler(true)
 				.get(modules, env, new Database(
 					new DatabaseConfig(

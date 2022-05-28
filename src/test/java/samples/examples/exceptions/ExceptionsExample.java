@@ -9,10 +9,14 @@ import ji.common.exceptions.LogicException;
 import ji.common.functions.Env;
 import ji.database.Database;
 import ji.socketCommunication.http.HttpMethod;
+import ji.socketCommunication.http.StatusCode;
+import ji.socketCommunication.http.structures.Request;
 import ji.translator.Translator;
+import toti.CustomExceptionResponse;
 import toti.HttpServer;
 import toti.HttpServerFactory;
 import toti.Module;
+import toti.Router;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Method;
@@ -20,6 +24,8 @@ import toti.annotations.Secured;
 import toti.application.Task;
 import toti.register.Register;
 import toti.response.Response;
+import toti.security.Identity;
+import toti.url.MappedUrl;
 
 /**
  * This example shows TOTI reaction on varios exceptions
@@ -116,12 +122,28 @@ public class ExceptionsExample implements Module {
 		return Response.getTemplate("/async.jsp", new HashMap<>());
 	}
 	
+	@Override
+	public void addRoutes(Router router) {
+		// uncoment for trying custm exception handler
+		// router.setCustomExceptionResponse(getCustomExceptionHandler());
+	}
+	
+	protected CustomExceptionResponse getCustomExceptionHandler() {
+		return new CustomExceptionResponse() {
+			@Override
+			public Response catchException(StatusCode status, Request request, Identity identity, MappedUrl mappedUrl,
+					Throwable t, Translator translator, boolean isDevelopResponseAllowed, boolean isAsyncRequest) {
+				return Response.getText("Oops, something happends.");
+			}
+		};
+	}
 	
 	public static void main(String[] args) {
 		List<Module> modules = Arrays.asList(new ExceptionsExample());
 		try {
 			HttpServer server = new HttpServerFactory()
 				.setPort(8080)
+				// uncomment for test response with disabled develp view
 				// .setDevelopIpAdresses(Arrays.asList()) // no develop ips
 				.get(modules, null, null);
 			
