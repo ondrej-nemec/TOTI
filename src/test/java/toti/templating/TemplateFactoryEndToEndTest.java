@@ -3,10 +3,9 @@ package toti.templating;
 import java.util.HashMap;
 import java.util.Map;
 
-import ji.common.Logger;
 import ji.files.text.Text;
 import ji.files.text.basic.WriteText;
-import toti.logging.TotiLogger;
+import toti.logging.TotiLoggerFactory;
 import toti.security.Authorizator;
 import ji.translator.Locale;
 import ji.translator.Translator;
@@ -21,32 +20,10 @@ public class TemplateFactoryEndToEndTest {
 		variables.put("limit", 10);
 		
 		//*
-		TemplateFactory factory = new TemplateFactory("temp/cache", "toti/templating", "", "", new HashMap<>(), false, false, new Logger() {
-			
-			@Override public void warn(Object message, Throwable t) {}
-			
-			@Override public void warn(Object message) {}
-			
-			@Override public void trace(Object message, Throwable t) {}
-			
-			@Override public void trace(Object message) {}
-			
-			@Override public void info(Object message, Throwable t) {}
-			
-			@Override public void info(Object message) {}
-			
-			@Override public void fatal(Object message, Throwable t) {}
-			
-			@Override public void fatal(Object message) {}
-			
-			@Override public void error(Object message, Throwable t) {}
-			
-			@Override public void error(Object message) {}
-			
-			@Override public void debug(Object message, Throwable t) {}
-			
-			@Override public void debug(Object message) {}
-		});
+		TemplateFactory factory = new TemplateFactory(
+			"temp/cache", "toti/templating", "", "", new HashMap<>(), 
+			false, false, TotiLoggerFactory.get().apply("")
+		);
 		Template template = factory.getTemplate("dir/dir2/index.jsp");
 	//	Logger logger = LoggerFactory.getLogger("test");
 		Translator translator = new Translator() {
@@ -78,7 +55,7 @@ public class TemplateFactoryEndToEndTest {
 				return null;
 			}
 		};
-		Authorizator authorizator = new Authorizator(TotiLogger.getLogger("temlateTest"));
+		Authorizator authorizator = new Authorizator(TotiLoggerFactory.get().apply("temlateTest"));
 		String html = template.create(factory, variables, translator, authorizator, null);
 		System.out.println(html);
 		Text.get().write((bw)->{

@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import ji.common.Logger;
+import org.apache.logging.log4j.Logger;
 import ji.common.functions.Env;
 import ji.common.functions.FileExtension;
 import ji.common.structures.MapInit;

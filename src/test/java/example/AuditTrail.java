@@ -1,11 +1,11 @@
 package example;
 
-import ji.common.Logger;
-import toti.logging.TotiLogger;
+import org.apache.logging.log4j.Logger;
+import toti.logging.TotiLoggerFactory;
 
 public class AuditTrail {
 
-	private final Logger logger = TotiLogger.getLogger("audit-trail");
+	private final Logger logger = TotiLoggerFactory.get().apply("audit-trail");
 	
 	public void insert(Object userId, Object inserted) {
 		logger.info(String.format("User #%s insert. Values: %s", userId, inserted));

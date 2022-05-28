@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import ji.common.Logger;
+import org.apache.logging.log4j.Logger;
 import ji.common.structures.MapInit;
 import ji.files.text.Text;
 import ji.files.text.basic.WriteText;
-import toti.logging.TotiLogger;
+import toti.logging.TotiLoggerFactory;
 import toti.templating.Parameter;
 import toti.templating.Tag;
 import toti.templating.TagVariableMode;
@@ -85,7 +85,8 @@ public class TemplateParserEndToEndTest extends TemplateFactory {
 			f.delete();
 			
 			TemplateParserEndToEndTest test = new TemplateParserEndToEndTest(
-				"temp", "toti/templating/parsing", "", "", new HashMap<>(), false, false, TotiLogger.getLogger("parsing")
+				"temp", "toti/templating/parsing", "", "", new HashMap<>(), 
+				false, false, TotiLoggerFactory.get().apply("parsing")
 			);
 			Template t = test.getTemplate("template.jsp");
 			Text.get().write((bw)->{

@@ -14,7 +14,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import ji.common.Logger;
+import org.apache.logging.log4j.Logger;
 import ji.common.functions.FileExtension;
 
 public class AuthenticationCache {

@@ -3,7 +3,7 @@ package example;
 import java.util.Arrays;
 import java.util.List;
 
-import ji.common.Logger;
+import org.apache.logging.log4j.Logger;
 import ji.database.Database;
 import example.dao.ExampleDao;
 import example.web.controllers.ExamplePageController;

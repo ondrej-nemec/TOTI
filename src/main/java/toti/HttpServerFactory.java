@@ -9,8 +9,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
-import ji.common.Logger;
+import org.apache.logging.log4j.Logger;
+
 import ji.common.functions.Env;
 import ji.common.functions.Hash;
 import ji.common.structures.MapDictionary;
@@ -21,7 +23,7 @@ import ji.socketCommunication.http.RestApiServer;
 import ji.translator.LanguageSettings;
 import ji.translator.Translator;
 import toti.application.Task;
-import toti.logging.TotiLogger;
+import toti.logging.TotiLoggerFactory;
 import toti.profiler.Profiler;
 import toti.register.Register;
 import toti.security.AuthenticationCache;
@@ -67,12 +69,13 @@ public class HttpServerFactory {
 	private String tokenCustomSalt = "";
 	private boolean useProfiler = false;
 	private String urlPattern = "/[module]</[path]>/[controller]/[method]</[param]>";
+	private Function<String, Logger> loggerFactory = TotiLoggerFactory.get();
 	
 	public HttpServerFactory() {}
 	
 	public <T extends Module> HttpServer get(List<T> modules, Env env, Database database) throws Exception {
 		// maybe more - separated - loggers??
-		Logger logger = TotiLogger.getLogger("totiServer");
+		Logger logger = loggerFactory.apply("toti"); //TotiLogger.getLogger("totiServer");
 		
 		Register register = new Register();
 		Link.init(urlPattern, register); // TODO not static ??
@@ -82,7 +85,8 @@ public class HttpServerFactory {
 		Set<String> trans = new HashSet<>();
 		List<Task> tasks = new LinkedList<>();
 		if (translator == null) {
-			this.translator = Translator.create(settings, trans, TotiLogger.getLogger("translator"));
+			// this.translator = Translator.create(settings, trans, TotiLogger.getLogger("translator"));
+			this.translator = Translator.create(settings, trans, loggerFactory.apply("translator"));
 		}
 		MapDictionary<UrlPart, Object> mapping = MapDictionary.hashMap();
 		for (Module module : modules) {
@@ -102,7 +106,7 @@ public class HttpServerFactory {
 				trans.add(module.getPath() + "/" + module.getTranslationPath());
 			}
 			tasks.addAll(
-				module.initInstances(env, translator, register, database, TotiLogger.getLogger(module.getName()))
+				module.initInstances(env, translator, register, database, loggerFactory.apply(module.getName()))
 			);
 			LoadUrls.loadUrlMap(mapping, module, router, register);
 			module.addRoutes(router);

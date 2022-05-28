@@ -2,7 +2,7 @@ package toti;
 
 import java.util.List;
 
-import ji.common.Logger;
+import org.apache.logging.log4j.Logger;
 import ji.common.functions.Env;
 import ji.database.Database;
 import toti.application.Task;

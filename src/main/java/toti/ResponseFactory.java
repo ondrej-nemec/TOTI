@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ji.common.Logger;
+import org.apache.logging.log4j.Logger;
 import ji.common.structures.DictionaryValue;
 import ji.common.structures.MapDictionary;
 import ji.socketCommunication.http.StatusCode;

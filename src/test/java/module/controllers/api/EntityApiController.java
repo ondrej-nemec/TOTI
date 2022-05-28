@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ji.common.Logger;
+import org.apache.logging.log4j.Logger;
 import ji.common.structures.DictionaryValue;
 import ji.common.structures.MapDictionary;
 import module.AuditTrail;

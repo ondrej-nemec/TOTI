@@ -7,7 +7,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import ji.common.Logger;
+import org.apache.logging.log4j.Logger;
 import ji.socketCommunication.http.structures.WebSocket;
 import toti.application.Task;
 

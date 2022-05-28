@@ -3,7 +3,7 @@ package samples.examples.validation;
 import java.util.Arrays;
 import java.util.List;
 
-import ji.common.Logger;
+import org.apache.logging.log4j.Logger;
 import ji.common.functions.Env;
 import ji.common.structures.ListInit;
 import ji.database.Database;

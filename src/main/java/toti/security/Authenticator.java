@@ -5,7 +5,7 @@ import java.util.Date;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
-import ji.common.Logger;
+import org.apache.logging.log4j.Logger;
 import toti.authentication.AuthentizationException;
 import ji.common.functions.Hash;
 import ji.socketCommunication.http.structures.RequestParameters;

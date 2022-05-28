@@ -11,7 +11,7 @@ import ji.database.DatabaseConfig;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.structures.RequestParameters;
 import toti.Headers;
-import toti.logging.TotiLogger;
+import toti.logging.TotiLoggerFactory;
 import toti.response.Response;
 import toti.security.Identity;
 
@@ -49,7 +49,7 @@ public class DbViewerRouter {
 						+ "; SameSite=Strict"
 						+ "; Max-Age=" + 900
 					);
-					viewers.put(authCookie, new DbViewer(new Database(createConfig(params), TotiLogger.getLogger("dbViewer"))));
+					viewers.put(authCookie, new DbViewer(new Database(createConfig(params), TotiLoggerFactory.get().apply("dbViewer"))));
 					return Response.getRedirect("/toti/db");
 				} else if (params.containsKey("logout")) {
 					// logout

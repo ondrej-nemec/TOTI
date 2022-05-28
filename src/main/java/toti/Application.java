@@ -2,8 +2,9 @@ package toti;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
 
-import ji.common.Logger;
+import org.apache.logging.log4j.Logger;
 import ji.common.functions.Env;
 import ji.common.functions.InputStreamLoader;
 import ji.common.structures.DictionaryValue;
@@ -13,7 +14,7 @@ import ji.database.DatabaseConfig;
 import ji.files.text.Text;
 import ji.files.text.basic.ReadText;
 import ji.socketCommunication.SslCredentials;
-import toti.logging.TotiLogger;
+import toti.logging.TotiLoggerFactory;
 import toti.register.Register;
 import ji.translator.LanguageSettings;
 import ji.translator.Locale;
@@ -26,16 +27,16 @@ public class Application {
 	private HttpServer server;
 	private Database database;
 	private final Logger logger;
-	
+
 	public <T extends Module> Application(List<T> modules) {
 		this(modules, null);
 	}
-	
-	public <T extends Module> Application(List<T> modules, Logger logger) {
-		if (logger == null) {
-			logger = TotiLogger.getLogger("totiServer");
+
+	public <T extends Module> Application(List<T> modules, Function<String, Logger> loggerFactory) {
+		if (loggerFactory == null) {
+			loggerFactory = TotiLoggerFactory.get();
 		}
-		this.logger = logger;
+		this.logger = loggerFactory.apply("toti");
 		logger.info("Initialization...");
 		try {
 			Env env = null;
@@ -56,7 +57,7 @@ public class Application {
 				database = null;
 				logger.warn("Database config is null, so database is null");
 			} else {
-				database = new Database(databaseConfig, TotiLogger.getLogger("database"));
+				database = new Database(databaseConfig, loggerFactory.apply("database"));
 			}
 			/*** init class ****/
 			this.server = createServerFactory(env).get(modules, env, database);

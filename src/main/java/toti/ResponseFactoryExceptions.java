@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import ji.common.Logger;
+import org.apache.logging.log4j.Logger;
 import ji.files.text.Text;
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.Request;

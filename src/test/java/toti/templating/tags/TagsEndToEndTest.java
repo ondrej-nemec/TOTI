@@ -13,7 +13,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import ji.common.Logger;
+import org.apache.logging.log4j.Logger;
 import ji.common.structures.MapInit;
 import ji.translator.Locale;
 import ji.translator.Translator;

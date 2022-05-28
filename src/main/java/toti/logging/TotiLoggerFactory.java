@@ -1,13 +1,29 @@
 package toti.logging;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.spi.LoggerFactory;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 
-public class TotiLoggerFactory implements LoggerFactory {
+import org.apache.logging.log4j.Logger;
 
-	@Override
-	public Logger makeNewLoggerInstance(String name) {
-		return new TotiLogger(name);
+import ji.common.Log4j2LoggerTestImpl;
+
+public class TotiLoggerFactory implements Function<String, Logger> {
+	
+	private final static TotiLoggerFactory instance = new TotiLoggerFactory();
+	
+	public static TotiLoggerFactory get() {
+		return instance;
 	}
 
+	private final Map<String, Logger> loggers = new HashMap<>();
+
+	@Override
+	public Logger apply(String name) {
+		if (!loggers.containsKey(name)) {
+			loggers.put(name, new Log4j2LoggerTestImpl(name));
+		}
+		return loggers.get(name);
+	}
+	
 }

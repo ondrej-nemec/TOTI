@@ -3,7 +3,8 @@ package module;
 import java.util.Arrays;
 import java.util.List;
 
-import ji.common.Logger;
+import org.apache.logging.log4j.Logger;
+
 import ji.database.Database;
 import ji.translator.Translator;
 import module.controllers.EntityPageController;

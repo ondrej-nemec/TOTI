@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import ji.common.Logger;
+import org.apache.logging.log4j.Logger;
 import ji.common.functions.Hash;
 import ji.socketCommunication.http.structures.RequestParameters;
 import ji.common.exceptions.HashException;
