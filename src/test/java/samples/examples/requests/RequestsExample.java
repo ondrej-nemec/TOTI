@@ -179,6 +179,18 @@ public class RequestsExample implements Module  {
 			).toMap());
 	}
 	
+	/**
+	 * Request body contains binary data or plain text data (xml, json, ...)
+	 * Request header must contains content-type header
+	 * Do this request via Postman or similar program
+	 * @return
+	 *  http://localhost:8080/examples/requests/body
+	 */
+	@Action("body")
+	public Response byteBody(byte[] body) {
+		return Response.getTemplate("/response.jsp", new MapInit<String, Object>("params", new String(body)).toMap());
+	}
+	
 
 	public static void main(String[] args) {
 		List<Module> modules = Arrays.asList(new RequestsExample());

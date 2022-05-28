@@ -109,6 +109,8 @@ public class LoadUrls {
 		    					mappedUrl.addParam(p.getType(), null, false);
 		    				} else if (WebSocket.class.equals(p.getType())) {
 		    					mappedUrl.addParam(p.getType(), null, false);
+		    				} else if (p.getType() != null && p.getType().isArray() && p.getType().getComponentType().isAssignableFrom(byte.class)) {
+		    					mappedUrl.addParam(p.getType(), null, false);
 		    				} else {
 		    					throw new LogicException(
 		    						"Not anotated param " + p.getName()

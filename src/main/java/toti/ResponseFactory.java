@@ -255,7 +255,10 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 			List<Object> valuesList = new ArrayList<>();
 			mapped.forEachParams((clazz, name, isRequestParam)->{
 				classesList.add(clazz);
-				addValueToList((isRequestParam ? params : validatorParams), name, clazz, valuesList, websocket);
+				addValueToList(
+					(isRequestParam ? params : validatorParams), request.getBody(),
+					name, clazz, valuesList, websocket
+				);
 			});
 			/** authorize */
 			try {
@@ -311,9 +314,11 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 		}
 	}
 
-	private void addValueToList(RequestParameters params, String name, Class<?> clazz, List<Object> valuesList, Optional<WebSocket> websocket) {
+	private void addValueToList(RequestParameters params, byte[] body, String name, Class<?> clazz, List<Object> valuesList, Optional<WebSocket> websocket) {
 		if (WebSocket.class.equals(clazz) && name == null) {
 			valuesList.add(websocket.orElse(null));
+		} else if (clazz.isArray() && clazz.getComponentType().isAssignableFrom(byte.class) && name == null) {
+			valuesList.add(body);
 		} else if (name == null) {
 			valuesList.add(new DictionaryValue(params).getValue(clazz));
 		} else if (clazz.isInstance(params.get(name))) {
