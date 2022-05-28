@@ -98,16 +98,14 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 		this.mapping = mapping;
 		
 		this.totiRes = new ResponseFactoryToti(profiler, developIps, translator, totiTemplateFactory, charset);
-		this.expRes = new ResponseFactoryExceptions(translator, totiTemplateFactory, responseHeaders, charset, developIps, logger);
+		this.expRes = new ResponseFactoryExceptions(
+			translator, totiTemplateFactory, responseHeaders,
+			router.getCustomExceptionResponse(), charset, developIps, logger
+		);
 	}
 	
 	@Override
 	public ji.socketCommunication.http.structures.Response accept(Request request, String ip, Optional<WebSocket> websocket) throws IOException {
-		/*
-		System.err.println("URL: " + fullUrl);
-		System.err.println("Header: " + header);
-		System.err.println("Params: " + params);
-		//*/
 		Identity identity = identityFactory.createIdentity(request.getHeaders(), ip, profiler.isUse());
 		return getCatchedResponse(request, identity, websocket);
 	}
@@ -122,11 +120,14 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 			return expRes.onException(403, method, url, fullUrl, protocol, header, params, identity, e);*/
 		} catch (ServerException e) {
 			return expRes.getExceptionResponse(
-				e.getStatusCode(), request, identity, e.getUrl(), e.getCause() == null ? e : e.getCause()
+				e.getStatusCode(), request, identity, e.getUrl(),
+				translator.withLocale(identity.getLocale()),
+				e.getCause() == null ? e : e.getCause()
 			);
 		} catch (Throwable t) {
 			return expRes.getExceptionResponse(
-				StatusCode.INTERNAL_SERVER_ERROR, request, identity, null, t
+				StatusCode.INTERNAL_SERVER_ERROR, request, identity, null,
+				translator.withLocale(identity.getLocale()), t
 			);
 		}
 	}

@@ -9,10 +9,8 @@ import java.util.Random;
 
 import ji.common.Logger;
 import ji.files.text.Text;
-import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.Request;
-import ji.socketCommunication.http.structures.RequestParameters;
 import ji.translator.Translator;
 import toti.response.Response;
 import toti.response.TemplateResponse;
@@ -28,25 +26,18 @@ public class ResponseFactoryExceptions {
 	private final Translator translator;
 	private final String charset;
 	private final Headers responseHeaders;
-	
-	/*
-	 * exceptin resp
-	 *   throw in method
-	 * 
-	 * catch
-	 *   missing template file
-	 *   exception in template 
-	 */
+	private final CustomExceptionResponse customExceptionResponse;
 	
 	public ResponseFactoryExceptions(
 			Translator translator, TemplateFactory templateFactory, Headers responseHeaders,
-			String charset, List<String> developIps, Logger logger) {
+			CustomExceptionResponse customExceptionResponse, String charset, List<String> developIps, Logger logger) {
 		this.developIps = developIps;
 		this.logger = logger;
 		this.templateFactory = templateFactory;
 		this.translator = translator;
 		this.charset = charset;
 		this.responseHeaders = responseHeaders;
+		this.customExceptionResponse = customExceptionResponse;
 	}
 	
 	public ji.socketCommunication.http.structures.Response getExceptionResponse(
@@ -54,8 +45,9 @@ public class ResponseFactoryExceptions {
 			Request request,
 			Identity identity, 
 			MappedUrl mappedUrl, // can be null
+			Translator translator,
 			Throwable t) {
-		return getException(responseCode, request, identity, mappedUrl, t)
+		return getException(responseCode, request, identity, mappedUrl, translator, t)
 			.getResponse(
 				request.getProtocol(), responseHeaders, templateFactory, translator.withLocale(identity.getLocale()),
 				null /*authorizator*/, identity, mappedUrl, charset
@@ -63,30 +55,31 @@ public class ResponseFactoryExceptions {
 	}
 	
 	private Response getException(
-			StatusCode status, 
-			Request request,
-			Identity identity, 
-			MappedUrl mappedUrl,
-			Throwable t) {
+			StatusCode status, Request request, Identity identity, 
+			MappedUrl mappedUrl, Translator translator, Throwable t) {
 		logger.error(String.format("Exception occured %s URL: %s", status, request.getUri()), t);
 				
-		TemplateResponse response = getTemplate(
-				status, 
-				request.getMethod(), 
-				request.getPlainUri(), 
-				request.getUri(), 
-				request.getProtocol(), 
-				request.getBodyInParameters(), // TODO complete body 
-				identity, mappedUrl, t);
-		if (identity.isAsyncRequest()) { // probably js request
+		TemplateResponse response = getTemplate(status, request, identity, mappedUrl, t);
+		boolean isDevelopResponseAllowed = developIps.contains(identity.getIP());
+		boolean isAsyncRequest = identity.isAsyncRequest(); // probably js request
+		if (customExceptionResponse != null) {
+			try {
+				return customExceptionResponse.catchException(
+					status, request, identity, mappedUrl, t,
+					translator, isDevelopResponseAllowed, isAsyncRequest
+				);
+			} catch (Throwable t1) {
+				logger.error("CustomExceptionResponse fail, default implementation continue", t1);
+			}
+		}
+		if (isAsyncRequest) {
 			saveToFile(response);
-			if (developIps.contains(identity.getIP())) {
+			if (isDevelopResponseAllowed) {
 				return Response.getText(status, t.getClass() + ": " + t.getMessage());
 			}
 			return Response.getText(status, status.getDescription());
 		}
-		
-		if (developIps.contains(identity.getIP())) {
+		if (isDevelopResponseAllowed) {
 			return response;
 		}
 		return getSyncException(status, response);
@@ -123,22 +116,20 @@ public class ResponseFactoryExceptions {
 	
 	private TemplateResponse getTemplate(
 			StatusCode code, 
-			HttpMethod method,
-			String url,
-			String fullUrl,
-			String protocol,
-			RequestParameters params,
+			Request request,
 			Identity identity,
 			MappedUrl mappedUrl,
 			Throwable t) {
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("code", code);
-		variables.put("url", url);
-		variables.put("fullUrl", fullUrl);
-		variables.put("method", method);
-		variables.put("protocol", protocol);
+		variables.put("url", request.getPlainUri());
+		variables.put("fullUrl", request.getUri());
+		variables.put("method", request.getMethod());
+		variables.put("protocol", request.getProtocol());
 		variables.put("headers", identity.getHeaders());
-		variables.put("parameters", params);
+		variables.put("urlParameters", request.getUrlParameters());
+		variables.put("bodyParameters", request.getBodyInParameters());
+		variables.put("body", request.getBody());
 		variables.put("identity", identity);
 		variables.put("mappedUrl", mappedUrl);
 		variables.put("t", t);
