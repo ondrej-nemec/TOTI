@@ -133,7 +133,7 @@ itemRules.setRegex(regex, (translator)->translator.translate("message"));
 
 <h2>Maximal file size</h2>
 
-<p>Specify maximal allowed file size in bytes. Efects only on files. <strong>Cannot override maximal file size defined in server configuration.</strong></p>
+<p>Specify maximal allowed file size in bytes. Efects only on files. <strong>Cannot override maximal request size defined in server configuration.</strong></p>
 
 <pre><code class="language-java">
 Integer fileMaxSize = ...
@@ -169,7 +169,7 @@ itemRules.setFileMinSize(fileMinSize, (translator)->translator.translate("messag
 
 <h2>Allowed file types</h2>
 
-<p>Spefify allowed file types. Efects only on files. <strong>Cannot override allowed file types defined in server configuration.</strong> Empty collection means no allowed types.</p>
+<p>Spefify allowed file types. Efects only on files. Empty collection means no allowed types.</p>
 
 <pre><code class="language-java">
 Collection&lt;Object&gt; types = ...

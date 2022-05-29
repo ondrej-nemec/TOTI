@@ -104,3 +104,38 @@ HttpServer server = new HttpServerFactory()
 <p>
 	Both <code>Application</code> and <code>HttpServer</code> contains methods <code>getTranslator</code> (<a href="https://ondrej-nemec.github.io/JI/?file=translate.html">JI Translator</a>) and <code>getRegister</code> (see in next chapter).
 </p>
+
+<h2>Logging</h2>
+
+<p>
+	TOTI uses <a href="https://logging.apache.org/log4j/2.x/">Log4j 2 API</a>. By default, TOTI contains simple console logger. For using your own:
+
+	<strong>Application</strong>
+	<pre><code class="language-java">
+	Application application = new Application(Arrays.asList(
+		// modules
+	), (loggerName)->{
+		// TODO return logger
+		// fe: return LogManager.getLogger(loggerName);
+	});
+	</code></pre>
+
+	<strong>HttpServerFactory</strong>
+	<pre><code class="language-java">
+	Database database = ...; // can be null
+	Env env = ...; // can be null
+	HttpServer server = new HttpServerFactory()
+		.setLoggerFactory((loggerName)->{
+			// TODO return logger
+			// fe: return LogManager.getLogger(loggerName);
+		})
+		// calling settings
+		// ...
+		.get(modules, env, database);
+	</code></pre>
+
+</p>
+
+<p>
+	There are names of logger required in TOTI: <code>toti</code>, <code>translator</code>, <code>database</code> (with using <code>Application</code> only) and name of each module.
+</p>

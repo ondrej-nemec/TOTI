@@ -87,7 +87,7 @@ public Response myAction() {
 </p>
 
 <p>
-	All parameters in action definition have to be anotated (except <code>WebSocket</code> class). Available annotations:
+	All parameters in action definition have to be anotated (except <code>WebSocket</code> class and <code>byte[]</code>). Available annotations:
 
 	<ul>
 		<li><code>Param</code>: specify one request parameter. Requires string name.</li>
@@ -213,3 +213,18 @@ public Response getWebsocket(WebSocket websocket) {
 <p class="alert alert-warning">
 	If you want to be active and not just wait on client message, pass on websocket to another thread.
 </p>
+
+<h3>Plain request body</h3>
+
+<p>
+	If body is not form-data nor urlencoded data, request body can be obtained in <code>byte[]</code>
+</p>
+
+<strong>Example</strong>
+
+<pre><code>
+@Action("json-request")
+public Response jsonBodyRequest(byte[] body) {
+	// ...
+}
+</code></pre>
