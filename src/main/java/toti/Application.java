@@ -199,8 +199,8 @@ public class Application {
 			if (env.getString("http.ip") != null) {
 				factory.setDevelopIpAdresses(env.getList("http.ip", "\\|"));
 			}
-			if (env.getString("http.max-upload-size") != null) {
-				factory.setMaxRequestBodySize(env.getInteger("http.max-upload-size"));
+			if (env.getString("http.max-request-size") != null) {
+				factory.setMaxRequestBodySize(env.getInteger("http.max-request-size"));
 			}
 			if (env.getString("http.use-profiler") != null) {
 				factory.setUseProfiler(env.getBoolean("http.use-profiler"));

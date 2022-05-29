@@ -195,6 +195,12 @@ public class HttpServerFactory {
 		return this;
 	}
 */
+	
+	public HttpServerFactory setLoggerFactory(Function<String, Logger> loggerFactory) {
+		this.loggerFactory = loggerFactory;
+		return this;
+	}
+	
 	public HttpServerFactory setPort(int port) {
 		this.port = port;
 		return this;
