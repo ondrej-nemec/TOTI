@@ -1,0 +1,74 @@
+<h1>Exceptions</h1>
+
+<p>
+	This article describes handling exception.
+</p>
+
+<p>
+	<ul>
+		<li>Exception is always logged using default <code>Logger</code> (name: <code>toti</code>)</li>
+		<li>
+			If custom exception handler (see bellow) is specified
+			<ul>
+				<li>Send custom error response.</li>
+			</ul>
+		</li>
+		<li>
+			If custom excepton handler is not specified OR throws exception too
+			<ul>
+				<li>
+					If request is asynchronious 
+					<ul>
+						<li>Save exception detail to <i>logs</i> dir as HTML</li>
+						<li>
+							If request IP is in develop IPs
+							<ul>
+								<li>Send response in format <i>exceptionClass: exceptionMessage</i></li>
+							</ul>
+						</li>
+						<li>
+							If request IP is NOT in develop IPs
+							<ul>
+								<li>Send status code message as response</li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+				<li>
+					If request is synchronious 
+					<ul>
+						<li>
+							If request IP is in develop IPs
+							<ul>
+								<li>Send exception detail in HTML as response</li>
+							</ul>
+						</li>
+						<li>
+							If request IP is NOT in develop IPs
+							<ul>
+								<li>Save exception detail to <i>logs</i> dir as HTML</li>
+								<li>Send error page</li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+	</ul>
+</p>
+
+<p class="alert alert-info">
+	Full working exception example is <a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/exceptions">here</a>.
+</p>
+
+<h2>Custom exception handler</h2>
+
+<p>
+	If you wish make your own error pages, you need implement <code>CustomExceptionResponse</code>. The interface define <code>catchException</code>. Result of the method will be used as error page. If the method throws exception, default exception handling will be used.
+</p>
+
+<p>
+	As the second step, you must 
+	TODO router - factory with normal inpust
+	router.setCustomExceptionResponse(getCustomExceptionHandler());
+</p>
