@@ -169,4 +169,9 @@ public class ProfilerLog implements Jsonable{
 		
 		return json;
 	}
+	
+	@Override
+	public String toString() {
+		return toJson().toString();
+	}
 }
