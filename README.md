@@ -12,4 +12,4 @@ Main purpose of this framework is create GUI for java servers f.e. in Industry 4
 
 ## Where now
 
-Documentation is available on [https://ondrej-nemec.github.io/TOTI](Official website)
+Documentation is available on [Official website](https://ondrej-nemec.github.io/TOTI)
