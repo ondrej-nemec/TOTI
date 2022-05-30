@@ -9,6 +9,7 @@
 * create style of exception and error page, profiler, viewer, profiler bar, welcome page
 * Check: Cross Site Scripting (DOM Based)
 * documentation - filters and inputs - check methods(placeholder)
+* JS lib doc
 
 ## TODO
 
@@ -29,8 +30,7 @@
 	* JS method: take html element or element content and use as link. Element will be invisible
 	* Range, Color: actual value
 * DB viewer
-* Profiler - improve
-* Logging - new Log4j or some general way
+* Profiler - memory and CPU graphs, log dir requests
 * Permissions - Rule - owner ids will not be supplier but list ?
 * Entity
 	* Delete, get,... - customize column name - second optional parameter? - update doc (int in methods)
@@ -72,7 +72,6 @@
 	* Automatic cast map to list - maybe in JI
 * EntityDao
 	* column names add alpha-numeric check
-* Allow user defined error pages
 * User data saved in token/loaded by service from register + switch
 * Allow xml language configuration
 * "Nice URL" - translations, language in URL
