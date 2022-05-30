@@ -107,7 +107,7 @@ public class DevelopToolsExample implements Module {
 	public static void main(String[] args) {
 		List<Module> modules = Arrays.asList(new DevelopToolsExample());
 		try {
-			Env env = new Env("samples/examples/developtools/app.properties");
+			Env env = new Env("samples/examples/app.properties");
 			HttpServer server = new HttpServerFactory()
 				.setPort(8080)
 				// uncomment for test response with disabled develop view
