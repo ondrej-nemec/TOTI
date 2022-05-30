@@ -68,7 +68,12 @@
 </p>
 
 <p>
-	As the second step, you must 
-	TODO router - factory with normal inpust
-	router.setCustomExceptionResponse(getCustomExceptionHandler());
+	As the second step, you must set instance of the interface to router.
 </p>
+
+<pre><code class="language-java">
+@Override
+public void addRoutes(Router router) {
+	router.setCustomExceptionResponse(myCustomExceptionResponse);
+}
+</code></pre>
