@@ -1,4 +1,4 @@
-/* TOTI Grid version 0.0.21 */
+/* TOTI Grid version 0.0.22 */
 class TotiGrid {
 
 	constructor(config) {
@@ -353,6 +353,7 @@ class TotiGrid {
 								return;
 							}
 							var href = totiUtils.parametrizedString(button.href, row);
+							/* todo check usage of settings and onX methds - update doc-inputs#button */
 							var settings = {
 								href: href,
 								method: button.method,
@@ -480,7 +481,7 @@ class TotiGrid {
 			var name = element.getAttribute('data-name');
 			if (element.children.length > 0 && data[name] !== undefined) {
 				element.children[0].value = data[name];
-				if (element.children[0].type === "fieldset") {
+				if (element.children[0].hasOwnProperty('set')) {
 					element.children[0].set();
 				}
 			}
