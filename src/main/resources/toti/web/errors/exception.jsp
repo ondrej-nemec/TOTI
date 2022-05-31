@@ -5,13 +5,30 @@
 	 h2, h3 {
 	 	display: inline-block;
 	 }
+	 h1 {
+	     text-align: center;
+	     padding: 0.5em;
+	     color: #e3ffff;
+	     background-color: #017CA5;
+	 }
+	 body {
+	     background-color: #7FC6CC;
+	 }
+	 .body {
+	 	padding-left: 1em;
+	 	padding-right: 1em;
+	 }
+	 .message {
+	 	font-size: 1.2em;
+	 }
 	</style>
 </head>
 <body>
 	<h1>Exception occured: ${code.getCode()} ${code.getDescription()}</h1>
-	<p>${t.getClass()}: ${t.getMessage()}</p>
 	
-	<div class="section">
+	<p class="body message">${t.getClass()}: ${t.getMessage()}</p>
+	
+	<div class="section body">
 		<div>
 			<h2>Request</h2>
 			<img src="" class="block-show" width="20px">
@@ -182,7 +199,7 @@
 		</div>
 	</div>
 	
-	<div>
+	<div class="body">
 		<h2>StackTrace</h2>
 		<div>
 			<t:var type="java.lang.Throwable" name="t" value="${t|Throwable}" />
