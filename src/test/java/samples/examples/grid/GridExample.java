@@ -1,5 +1,7 @@
 package samples.examples.grid;
 
+import static org.mockito.Mockito.mock;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -10,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import ji.common.functions.Env;
 import ji.common.structures.MapInit;
 import ji.database.Database;
+import ji.database.DatabaseConfig;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
 import ji.translator.LanguageSettings;
@@ -109,7 +112,7 @@ public class GridExample implements Module {
 			.setUseSorting(true)
 		);
 		grid.addColumn(
-			new ValueColumn("select")
+			new ValueColumn("select_col")
 			.setTitle("Select")
 			.setFilter(
 				Select.filter(Arrays.asList(
@@ -122,19 +125,19 @@ public class GridExample implements Module {
 			.setUseSorting(true)
 		);
 		grid.addColumn(
-			new ValueColumn("datetime")
+			new ValueColumn("datetime_col")
 			.setTitle("Datetime")
 			.setFilter(Datetime.filter().setStep(1)) // .setDefaultValue(...)
 			.setUseSorting(true)
 		);
 		grid.addColumn(
-			new ValueColumn("date")
+			new ValueColumn("date_col")
 			.setTitle("Date")
 			.setFilter(Date.filter()) // .setDefaultValue(...)
 			.setUseSorting(true)
 		);
 		grid.addColumn(
-			new ValueColumn("time")
+			new ValueColumn("time_col")
 			.setTitle("Time")
 			.setFilter(Time.filter().setStep(1))// .setDefaultValue(...)
 			.setUseSorting(true)
@@ -167,7 +170,7 @@ public class GridExample implements Module {
 	@Action(value = "all-data", validator = "allFilersValidator")
 	public Response allFilters(@Params GridOptions options) {
 		try {
-			return Response.getJson(dao.getAll(options, null));
+			return Response.getJson(dao.getAll(options, null, null));
 		} catch (Exception e) {
 			logger.error("all filters", e);
 			return Response.getText(StatusCode.INTERNAL_SERVER_ERROR, "Error occur: " + e.getMessage());
@@ -179,10 +182,10 @@ public class GridExample implements Module {
 			new GridColumn("text"),
 			new GridColumn("number", Double.class),
 			new GridColumn("range", Integer.class),
-			new GridColumn("select", Boolean.class),
-			new GridColumn("datetime"),
-			new GridColumn("date"),
-			new GridColumn("time"),
+			new GridColumn("select_col", Boolean.class),
+			new GridColumn("datetime_col").setFilterMode(FilterMode.LIKE),
+			new GridColumn("date_col"),
+			new GridColumn("time_col"),
 			new GridColumn("month"),
 			new GridColumn("week")
 		));
@@ -205,7 +208,7 @@ public class GridExample implements Module {
 				.setUseSorting(true)
 			);
 		grid.addColumn(
-				new ValueColumn("datetime")
+				new ValueColumn("datetime_col")
 				.setTitle("Datetime")
 				.setFilter(Datetime.filter().setStep(1))
 				.setUseSorting(true)
@@ -468,7 +471,7 @@ public class GridExample implements Module {
 		);
 		// equals
 		grid.addColumn(
-			new ValueColumn("select")
+			new ValueColumn("select_col")
 			.setTitle("Select - Equals")
 			.setFilter(
 				Select.filter(Arrays.asList(
@@ -494,7 +497,7 @@ public class GridExample implements Module {
 	@Action(value = "filtering-data", validator = "filteringValidator")
 	public Response filtering(@Params GridOptions options) {
 		try {
-			return Response.getJson(dao.getAll(options, null));
+			return Response.getJson(dao.getAll(options, null, null));
 		} catch (Exception e) {
 			logger.error("all filters", e);
 			return Response.getText(StatusCode.INTERNAL_SERVER_ERROR, "Error occur: " + e.getMessage());
@@ -506,7 +509,7 @@ public class GridExample implements Module {
 			new GridColumn("text").setFilterMode(FilterMode.LIKE),
 			new GridColumn("number").setFilterMode(FilterMode.STARTS_WITH),
 			new GridColumn("range").setFilterMode(FilterMode.ENDS_WITH),
-			new GridColumn("select").setFilterMode(FilterMode.EQUALS)
+			new GridColumn("select_col").setFilterMode(FilterMode.EQUALS)
 		));
 	}
 	
@@ -540,7 +543,7 @@ public class GridExample implements Module {
 	@Action(value = "substitution-data", validator = "substitutionValidator")
 	public Response substitution(@Params GridOptions options) {
 		try {
-			return Response.getJson(dao.getAll(options, null));
+			return Response.getJson(dao.getAll(options, null, null));
 		} catch (Exception e) {
 			logger.error("all filters", e);
 			return Response.getText(StatusCode.INTERNAL_SERVER_ERROR, "Error occur: " + e.getMessage());
@@ -642,7 +645,7 @@ public class GridExample implements Module {
 			.setFilter(Text.filter())
 		);
 		grid.addColumn(
-			new ValueColumn("select")
+			new ValueColumn("select_col")
 			.setFilter(
 				Select.filter(Arrays.asList(
 					Option.create("", "---"),
@@ -651,7 +654,7 @@ public class GridExample implements Module {
 			)
 		);
 		grid.addColumn(
-			new ValueColumn("datetime")
+			new ValueColumn("datetime_col")
 			.setFilter(Datetime.filter())
 		);
 		
@@ -724,7 +727,7 @@ public class GridExample implements Module {
 	@Override
 	public List<Task> initInstances(Env env, Translator translator, Register register, Database database, Logger logger)
 			throws Exception {
-		GridExampleDao dao = new GridExampleDao();
+		GridExampleDao dao = new GridExampleDao(database);
 		register.addFactory(GridExample.class, ()->new GridExample(dao, logger));
 		return new LinkedList<>();
 	}
@@ -732,13 +735,29 @@ public class GridExample implements Module {
 	public static void main(String[] args) {
 		List<Module> modules = Arrays.asList(new GridExample());
 		try {
+			Env env = new Env("samples/examples/app.properties");
+			Database database = new Database(
+					new DatabaseConfig(
+							env.getString("db.type"),
+							env.getString("db.url"), 
+							false, 
+							env.getString("db.schema"), 
+							env.getString("db.username"), 
+							env.getString("db.password"),
+							Arrays.asList(),
+							1
+						),
+						mock(Logger.class) // real logger is not required
+					);
 			HttpServer server = new HttpServerFactory()
 				.setPort(8080)
 				.setLanguageSettings(new LanguageSettings(Arrays.asList(new Locale("en", true, Arrays.asList()))))
-				.get(modules, null, null);
+				.setUseProfiler(true)
+				.get(modules, env, database);
 			
 			/* start */
 			server.start();
+			new GridExampleDao(database).initDb(); // cannot be in initInstances
 	
 			// sleep for 2min before automatic close
 			try { Thread.sleep(10 * 60 * 1000); } catch (InterruptedException e) { e.printStackTrace(); }
