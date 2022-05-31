@@ -27,11 +27,14 @@ public class ResponseFactoryExceptions {
 	private final String charset;
 	private final Headers responseHeaders;
 	private final CustomExceptionResponse customExceptionResponse;
+	private final String logsPath;
 	
 	public ResponseFactoryExceptions(
 			Translator translator, TemplateFactory templateFactory, Headers responseHeaders,
-			CustomExceptionResponse customExceptionResponse, String charset, List<String> developIps, Logger logger) {
+			CustomExceptionResponse customExceptionResponse, String charset, String logsPath,
+			List<String> developIps, Logger logger) {
 		this.developIps = developIps;
+		this.logsPath = logsPath;
 		this.logger = logger;
 		this.templateFactory = templateFactory;
 		this.translator = translator;
@@ -86,8 +89,6 @@ public class ResponseFactoryExceptions {
 	}
 	
 	private Response getSyncException(StatusCode code, TemplateResponse response) {
-	//	return Response.getFile(code, String.format("toti/errors/%s.html", code));
-		// TODO custom pages
 		saveToFile(response);
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("code", code);
@@ -95,9 +96,13 @@ public class ResponseFactoryExceptions {
 	}
 	
 	private String saveToFile(TemplateResponse response) {
+		if (logsPath == null) {
+			return "-- log exception detail is disabled --";
+		}	
 		try {
-			String fileName = 
-					"logs/exception-" // TODO correct path
+			String fileName =
+					logsPath + (logsPath.endsWith("/") ? "" : "/")
+					+ "/exception-"
 					+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")) 
 					+ "__"
 					+ new Random().nextInt()

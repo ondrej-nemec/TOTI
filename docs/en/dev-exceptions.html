@@ -1,7 +1,7 @@
 <h1>Exceptions</h1>
 
 <p>
-	This article describes handling exception.
+	This article describes handling exception. A <i>logs-dir</i> is <code>http.logs-path</code> or <code>setLogsPath</code>.
 </p>
 
 <p>
@@ -19,7 +19,7 @@
 				<li>
 					If request is asynchronious 
 					<ul>
-						<li>Save exception detail to <i>logs</i> dir as HTML</li>
+						<li>Save exception detail to <i>logs-dir</i> (if is not null) as HTML</li>
 						<li>
 							If request IP is in develop IPs
 							<ul>
@@ -46,7 +46,7 @@
 						<li>
 							If request IP is NOT in develop IPs
 							<ul>
-								<li>Save exception detail to <i>logs</i> dir as HTML</li>
+								<li>Save exception detail to <i>logs-dir</i> (if is not null) as HTML</li>
 								<li>Send error page</li>
 							</ul>
 						</li>

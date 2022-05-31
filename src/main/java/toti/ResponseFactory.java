@@ -77,6 +77,7 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 			Authorizator authorizator,
 			String charset,
 			boolean dirResponseAllowed,
+			String logsPath,
 			List<String> developIps,
 			Logger logger,
 			Profiler profiler,
@@ -100,7 +101,7 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 		this.totiRes = new ResponseFactoryToti(profiler, developIps, translator, totiTemplateFactory, charset);
 		this.expRes = new ResponseFactoryExceptions(
 			translator, totiTemplateFactory, responseHeaders,
-			router.getCustomExceptionResponse(), charset, developIps, logger
+			router.getCustomExceptionResponse(), charset, logsPath, developIps, logger
 		);
 	}
 	

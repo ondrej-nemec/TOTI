@@ -70,6 +70,7 @@ public class HttpServerFactory {
 	private boolean useProfiler = false;
 	private String urlPattern = "/[module]</[path]>/[controller]/[method]</[param]>";
 	private Function<String, Logger> loggerFactory = TotiLoggerFactory.get();
+	private String logsPath = "logs";
 	
 	public HttpServerFactory() {}
 	
@@ -133,6 +134,7 @@ public class HttpServerFactory {
 				new Authorizator(logger),
 				charset,
 				dirResponseAllowed,
+				logsPath,
 				developIps,
 				logger,
 				this.initProfiler(logger),
@@ -199,6 +201,11 @@ public class HttpServerFactory {
 	
 	public HttpServerFactory setLoggerFactory(Function<String, Logger> loggerFactory) {
 		this.loggerFactory = loggerFactory;
+		return this;
+	}
+	
+	public HttpServerFactory setLogsPath(String logsPath) {
+		this.logsPath = logsPath;
 		return this;
 	}
 	

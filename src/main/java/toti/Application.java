@@ -140,6 +140,9 @@ public class Application {
 			if (env.getString("http.resource-path") != null) {
 				factory.setResourcesPath(env.getString("http.resource-path"));
 			}
+			if (env.getString("http.logs-path") != null) {
+				factory.setLogsPath(env.getString("http.logs-path"));
+			}
 			if (env.getString("http.minimalize-templates") != null) {
 				factory.setMinimalize(env.getBoolean("http.minimalize-templates"));
 			}
