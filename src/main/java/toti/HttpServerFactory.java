@@ -135,7 +135,7 @@ public class HttpServerFactory {
 				dirResponseAllowed,
 				developIps,
 				logger,
-				this.initProfiler(),
+				this.initProfiler(logger),
 				register,
 				mapping
 		);
@@ -152,10 +152,11 @@ public class HttpServerFactory {
 		return new HttpServer(server, tasks, translator, register, sessionCache);
 	}
 
-	private Profiler initProfiler() {
+	private Profiler initProfiler(Logger logger) {
 		Profiler profiler = new Profiler();
 		profiler.setUse(useProfiler);
 		if (useProfiler) {
+			logger.warn("Profiler is enabled");
 			Database.PROFILER = profiler;
 			RestApiServer.PROFILER = profiler;
 			LanguageSettings.PROFILER = profiler;
