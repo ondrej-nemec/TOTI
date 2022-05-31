@@ -1,4 +1,4 @@
-/* TOTI Auth version 1.0.2 */
+/* TOTI Auth version 1.0.3 */
 var totiAuth = {
      variableToken: "authenticationToken",
      variableConfig: "authenticationConfig",
@@ -26,7 +26,8 @@ var totiAuth = {
                   function(res) {},
                   function(xhr, a, error) {
                        console.log(xhr, a, error);
-                  }
+                  },
+                  false
               );
          }
         totiStorage.removeVariable(totiAuth.variableConfig);
