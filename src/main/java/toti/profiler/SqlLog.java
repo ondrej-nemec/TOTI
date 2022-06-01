@@ -5,8 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import ji.common.annotations.MapperIgnored;
+import ji.json.Jsonable;
 
-public class SqlLog {
+public class SqlLog implements Jsonable {
 
 	// maybe add date of sqlLog create and order by this date, use in profiler
 	

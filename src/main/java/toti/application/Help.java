@@ -1,6 +1,8 @@
 package toti.application;
 
-public class Help {
+import ji.json.Jsonable;
+
+public class Help implements Jsonable {
 
 	private final Object value;
 	private final Object title;

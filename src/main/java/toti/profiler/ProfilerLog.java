@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import ji.common.functions.Mapper;
 import ji.common.structures.Tuple2;
 import ji.json.Jsonable;
 import ji.socketCommunication.http.structures.Request;
@@ -150,7 +151,7 @@ public class ProfilerLog implements Jsonable{
 		}
 		
 		Map<String, Object> trans = new HashMap<>();
-		trans.put("locale", identity == null ? null : identity.getLocale());
+		trans.put("locale", identity == null ? null : Mapper.get().serialize(identity.getLocale()));
 		trans.put("missingFiles", missingLocales);
 		trans.put("missingTranslations", transLog);
 		

@@ -2,7 +2,9 @@ package toti.profiler;
 
 import java.util.Map;
 
-public class TransLog {
+import ji.json.Jsonable;
+
+public class TransLog implements Jsonable {
 
 	private final String locale;
 	private final String module;
