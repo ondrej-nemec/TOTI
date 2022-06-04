@@ -2,6 +2,10 @@ plugins {
     id 'java-library'
 }
 
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+compileTestJava.options.encoding = 'UTF-8'
+
 repositories {
 	mavenCentral()
 	maven { url 'https://jitpack.io' }
@@ -25,12 +29,12 @@ sourceSets {
 //*/
 
 dependencies {
-	api 'com.github.ondrej-nemec.JI:JI:5c3de18e90'
+	api 'com.github.ondrej-nemec.JI:JI:ab3d15df2e'
 	
 	// compile files("${System.properties['java.home']}/../lib/tools.jar")
 	
 	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
+	//implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
 	
 	implementation group: 'at.favre.lib', name: 'bcrypt', version: '0.9.0'
 	// TODO can be removed ?
