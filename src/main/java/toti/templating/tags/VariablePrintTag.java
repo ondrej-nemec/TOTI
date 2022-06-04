@@ -32,7 +32,7 @@ public class VariablePrintTag implements Tag {
 		if (params.get("nonescape") != null) {
 			return String.format("write(\"%s\");", params.get("name")); 
 		}
-		return String.format("write(Template.escapeVariable(\"%s\"));", params.get("name"));
+		return String.format("write(Template.escapeVariable(%s));", params.get("name"));
 	}
 		
 }
