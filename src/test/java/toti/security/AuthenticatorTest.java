@@ -17,7 +17,7 @@ public class AuthenticatorTest {
 		Hash hash = Mockito.mock(Hash.class);
 		Mockito.when(hash.toHash(Mockito.anyString(), Mockito.anyString())).thenReturn("hash");
 		Authenticator auth = new Authenticator(123, "salt", Mockito.mock(AuthenticationCache.class), hash, Mockito.mock(Logger.class));
-		assertEquals("hashr@ndomid2000", auth.createToken(
+		assertEquals("hashr@ndomid", auth.createToken(
 				"r@ndom", 
 				"id",
 				"AUTH"
@@ -31,7 +31,11 @@ public class AuthenticatorTest {
 		Hash hash = Mockito.mock(Hash.class);
 		Mockito.when(hash.toHash(Mockito.anyString(), Mockito.anyString())).thenReturn("hash");
 		Mockito.when(hash.compare(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
-		Authenticator auth = new Authenticator(123, "salt", Mockito.mock(AuthenticationCache.class), hash, Mockito.mock(Logger.class));
+		AuthenticationCache cache = Mockito.mock(AuthenticationCache.class);
+		Mockito.when(cache.getExpirationTime("id1id2id3id4id5id6id7id8id9id0")).thenReturn(1234567890132L);
+		Mockito.when(cache.get("id1id2id3id4id5id6id7id8id9id0"))
+			.thenReturn(new User("id1id2id3id4id5id6id7id8id9id0", null));
+		Authenticator auth = new Authenticator(123, "salt", cache, hash, Mockito.mock(Logger.class));
 		Identity identity = new Identity("", null, null, 
 				// "QlKvbHfY5F4wgrK0tlmrcRImLCx6t59RWq8XvTqmIL4=f1jmBdmnjIgFCEczXFkOYGE7tFulK9pJ1R3EleUauqvMT4WcgMqQqHSXrHW7i8wrFrOLJLHPd2X7Re2D1618244602626"
 				"has1has2has3has4has5has6has7has8has9has0hash"
@@ -41,9 +45,8 @@ public class AuthenticatorTest {
 				AuthMode.COOKIE
 		);
 		auth.authenticate(identity, new RequestParameters(), 1234567890122L);
-		// TODO nesedi, protoze id neni obsazeno v aktivnich
 		assertEquals("id1id2id3id4id5id6id7id8id9id0", identity.getId());
-		assertEquals(1234567890123L, identity.getExpirationTime());
+		assertEquals(123, identity.getExpirationTime()); // 1234567890123L
 	}
 	
 }
