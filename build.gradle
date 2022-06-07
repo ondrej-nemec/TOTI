@@ -29,12 +29,9 @@ sourceSets {
 //*/
 
 dependencies {
-	api 'com.github.ondrej-nemec.JI:JI:ab3d15df2e'
+	api 'com.github.ondrej-nemec.JI:JI:436ed014b6'
 	
 	// compile files("${System.properties['java.home']}/../lib/tools.jar")
-	
-	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-	//implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
 	
 	implementation group: 'at.favre.lib', name: 'bcrypt', version: '0.9.0'
 	// TODO can be removed ?
@@ -45,6 +42,8 @@ dependencies {
 	// TODO temporary
 	// https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api
 	//implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.2'
+	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+	//implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
 	
 /*
 	// https://mvnrepository.com/artifact/com.itextpdf/itextpdf
