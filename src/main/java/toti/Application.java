@@ -60,7 +60,7 @@ public class Application {
 				database = new Database(databaseConfig, loggerFactory.apply("database"));
 			}
 			/*** init class ****/
-			this.server = createServerFactory(env).get(modules, env, database);
+			this.server = createServerFactory(env, loggerFactory).get(modules, env, database);
 		} catch (Exception e) {
 			logger.error("Start failed", e);
 			System.exit(1);
@@ -105,8 +105,9 @@ public class Application {
 	
 	/************/
 	
-	public HttpServerFactory createServerFactory(Env env) throws Exception {
+	public HttpServerFactory createServerFactory(Env env, Function<String, Logger> loggerFactory) throws Exception {
 		HttpServerFactory factory = new HttpServerFactory();
+		factory.setLoggerFactory(loggerFactory);
 		if (env != null) {
 			if (env.getString("http.url-pattern") != null) {
 				factory.setUrlPattern(env.getString("http.url-pattern"));

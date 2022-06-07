@@ -3,6 +3,9 @@ package toti;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
+
+import org.apache.logging.log4j.Logger;
 
 import example.ExampleModule;
 import ji.common.functions.Env;
@@ -28,8 +31,9 @@ public class BootstrapEndToEndTest {
 			Application a = new Application(modules) {
 				
 				@Override
-				public HttpServerFactory createServerFactory(Env env) throws Exception {
+				public HttpServerFactory createServerFactory(Env env, Function<String, Logger> loggerFactory) throws Exception {
 					HttpServerFactory factory = new HttpServerFactory();
+					factory.setLoggerFactory(loggerFactory);
 					factory.setPort(81);
 					factory.setThreadPool(10);
 					factory.setReadTimeout(60000);
