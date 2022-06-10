@@ -216,7 +216,7 @@ public class ExampleApiController {
 			
 			editValues(inserted, true);
 			
-			int id = dao.insert(inserted);
+			int id = dao.insert(inserted).getInteger();
 			inserted.setId(id);
 			auditTrail.insert(identity.getUser().getId(), inserted.toMap());
 			

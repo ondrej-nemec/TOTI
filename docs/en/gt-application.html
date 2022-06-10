@@ -28,10 +28,12 @@
 
 <ul>
 	<li><code>getAll()</code>: returns list of <code>T</code></li>
-	<li><code>get(int id)</code>: returns <code>T</code></li>
-	<li><code>delete(int id)</code>: delete row with given id (column 'id'), returns deleted <code>T</code></li>
-	<li><code>update(int id, T entity)</code>: returns count of affected rows</li>
-	<li><code>insert(T entity)</code>: returns generated id</li>
+	<li><code>get(Object id)</code>: returns <code>T</code></li>
+	<li><code>delete(Object id)</code>: delete row with given id (column 'id'), returns deleted <code>T</code></li>
+	<li><code>update(Object id, T entity)</code>: returns count of affected rows</li>
+	<li><code>insert(T entity)</code>: returns generated id as <code>DictionaryValue</code></li>
+	<li><code>getIdName</code>: returns name of unique column, default <code>id</code></li>
+</ul>
 </ul>
 
 <h2>GridDataSet</h2>
