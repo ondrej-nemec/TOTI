@@ -29,7 +29,7 @@ sourceSets {
 //*/
 
 dependencies {
-	api 'com.github.ondrej-nemec.JI:JI:51d37f57f1'
+	api 'com.github.ondrej-nemec.JI:JI:5138e23bbd'
 	
 	// compile files("${System.properties['java.home']}/../lib/tools.jar")
 	
