@@ -6,10 +6,10 @@
 
 ## FIX and Bugs
 
-* create style of exception and error page, profiler, viewer, profiler bar, welcome page
 * Check: Cross Site Scripting (DOM Based)
 * documentation - filters and inputs - check methods(placeholder)
 * JS lib doc
+* missing styles after error page
 
 ## TODO
 
@@ -32,10 +32,6 @@
 * DB viewer
 * Profiler - memory and CPU graphs, log dir requests
 * Permissions - Rule - owner ids will not be supplier but list ?
-* Entity
-	* Delete, get,... - customize column name - second optional parameter? - update doc (int in methods)
-	* Get, delete,... - id more general? - update doc (int in methods)
-	* insert not returns int but object or dictionry value
 * Routing
 	* add lang to route
 	* translate routes
@@ -60,7 +56,6 @@
 	* Grid
 		* Filtering: switch for like/equals
 		* autorefresh
-		* translated text in display - filtering not working
 	* Form
 		* submit url - replace 'id' - custumize pattern, keys
 		* some simple api for dynamic input displaying
@@ -74,7 +69,6 @@
 	* column names add alpha-numeric check
 * User data saved in token/loaded by service from register + switch
 * Allow xml language configuration
-* "Nice URL" - translations, language in URL
 * Profiler
 		Runtime runtime = Runtime.getRuntime();
 		return runtime.totalMemory() - runtime.freeMemory();
@@ -84,7 +78,6 @@
 * Set access rules for dirs and files in www folder
 * TemplateParser: charset for template reading TemplateParser:87
 * HTML to PDF
-* Split validator by type? I need check number length...
 * Grid: inrow form, dropdown rows
 * More authentication types
 * Add HTML tags:

@@ -9,6 +9,7 @@ import toti.url.MappedUrl;
 
 public interface CustomExceptionResponse {
 
+	// TODO make another api
 	Response catchException(
 		StatusCode status,
 		Request request,
