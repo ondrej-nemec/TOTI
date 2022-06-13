@@ -43,7 +43,7 @@ public class VariableParserTest {
 	}
 
 	private VariableParser parseText(String text, int position) {
-		VariableParser parser = new VariableParser(position);
+		VariableParser parser = new VariableParser(position, new ParsingInfo("", ""));
 		ParsingSimulator.simulate(parser, text);
 		return parser;
 	}
@@ -51,7 +51,7 @@ public class VariableParserTest {
 	@Test
 	@Parameters(method = "dataParseTextWorks")
 	public void testParseTextWorks(String template, boolean finished, String variableName, String expectedCalling, boolean escape) throws IOException {
-		VariableParser parser = new VariableParser(0);
+		VariableParser parser = new VariableParser(0, new ParsingInfo("", ""));
 		assertEquals(finished, ParsingSimulator.simulate(parser, template));
 		assertEquals(variableName, parser.getVariableName());
 		assertEquals(expectedCalling, parser.getCalling(VariableSource.HTML));

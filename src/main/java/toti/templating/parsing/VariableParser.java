@@ -25,8 +25,11 @@ public class VariableParser implements Parser {
 	private final StringBuilder declare = new StringBuilder();
 	private boolean escape = true;
 	
-	public VariableParser(int position) {
+	private final ParsingInfo info;
+	
+	public VariableParser(int position, ParsingInfo info) {
 		this.position = position;
+		this.info = info;
 	}
 	
 	private LinkedList<Object> params = new LinkedList<>();
@@ -59,9 +62,9 @@ public class VariableParser implements Parser {
 			auxCache = cache;
 			cache = "";
 		} else if (actual == ',' && !isSingleQuoted && !isDoubleQuoted && mode != VarMode.PARAMS) {
-			throw new TemplateException("Variable Syntax error: unexpected ','");
+			throw new TemplateException("Variable Syntax error: unexpected ','" + info);
 		} else if (actual == ')' && !isSingleQuoted && !isDoubleQuoted && mode != VarMode.PARAMS) {
-			throw new TemplateException("Variable Syntax error: unexpected ')'");
+			throw new TemplateException("Variable Syntax error: unexpected ')'" + info);
 		} else if (actual == ',' && !isSingleQuoted && !isDoubleQuoted && mode == VarMode.PARAMS) {
 			Object var = finishObjectParam(cache);
 			params.add(var);
@@ -131,7 +134,7 @@ public class VariableParser implements Parser {
 				current, last, cache, last
 			));
 		} else {
-			throw new TemplateException("Variable Syntax error: Missing ')'");
+			throw new TemplateException("Variable Syntax error: Missing ')'" + info);
 		}
 		level++;
 	}

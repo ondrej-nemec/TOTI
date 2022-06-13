@@ -38,7 +38,7 @@ public class TagParserTest {
 			@Override public String getNotPairCode(Map<String, String> params) { return null; }
 			@Override public String getName() { return tagName; }
 		});
-		TagParser parser = new TagParser(text.charAt(0), tags, new HashMap<>());
+		TagParser parser = new TagParser(text.charAt(0), tags, new HashMap<>(), new ParsingInfo("", ""));
 		assertEquals(finished, ParsingSimulator.simulate(parser, text.substring(1)));
 		assertEquals(type, parser.getTagType());
 		assertEquals(parameters, parser.getParams());

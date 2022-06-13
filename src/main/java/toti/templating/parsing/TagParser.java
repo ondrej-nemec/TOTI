@@ -45,8 +45,11 @@ public class TagParser implements Parser {
 	private Tag tag;
 	private TagVariableMode tagParamMode;
 	private ParMode parmode;
+
+	private final ParsingInfo info;
 	
-	public TagParser(char first, Map<String, Tag> tags, Map<String, Parameter> parameters) {
+	public TagParser(char first, Map<String, Tag> tags, Map<String, Parameter> parameters, ParsingInfo info) {
+		this.info = info;
 		this.parameters = parameters;
 		this.tags = tags;
 		if (first == '/') {
@@ -62,20 +65,20 @@ public class TagParser implements Parser {
 			return false;
 		}
 		if ((mode == TagMode.TAG || mode == TagMode.NAN || mode == TagMode.PARAM_NAME) && (isSingleQuoted || isDoubleQuoted)) {
-			throw new LogicException("Tag syntax error: quotes.");
+			throw new LogicException("Tag syntax error: quotes" + info);
 		}
 		if (actual == '/' && !isSingleQuoted && !isDoubleQuoted) {
 			isCandidate = true;
 		} else if (previous == '/' && isCandidate && actual == '>') {
 			if (type == TagType.END) {
-				throw new LogicException("Close tag not ends with '/>'.");
+				throw new LogicException("Close tag not ends with '/>'" + info);
 			}
 			type = TagType.SINGLE;
 			finishParameter('\u0000');
 			finishTagName();
 			return true;
 		} else if (previous == '/' && isCandidate && actual != '>') {
-			throw new LogicException("Unknow '/'.");
+			throw new LogicException("Unexpected '/'" + info);
 		} else if (actual == '>' && !isSingleQuoted && !isDoubleQuoted) {
 			if (type == null) {
 				type = TagType.START;
@@ -157,7 +160,7 @@ public class TagParser implements Parser {
 			tagName = tagName.substring(2);
 			Tag tag = tags.get(tagName);
 			if (tag == null) {
-				throw new LogicException("Unknown TOTI tag " + tagName);
+				throw new LogicException("Unknown TOTI tag " + tagName + info);
 			}
 			this.tag = tag;
 		}
@@ -234,7 +237,7 @@ public class TagParser implements Parser {
 					paramString.append("\"+");
 	        		Parameter p = parameters.get(param.getName());
 	        		if (p == null) {
-	        			throw new LogicException("Unknown TOTI parameter " + param.getName());
+	        			throw new LogicException("Unknown TOTI parameter " + param.getName() + info);
 	        		}
 					paramString.append(p.getCode(param.getValue()));
 					paramString.append("+\"");
@@ -255,14 +258,14 @@ public class TagParser implements Parser {
 	
 	public String getTotiTag() {
 		if (tag == null) {
-			throw new LogicException("Unknown TOTI tag " + tagName);
+			throw new LogicException("Unknown TOTI tag " + tagName + info);
 		}
 		Map<String, String> params = this.params.stream()
 		        .collect(Collectors.toMap(TagParserParam::getName, e->{
 		        	if (e.isTag()) {
 		        		Parameter p = parameters.get(e.getName());
 		        		if (p == null) {
-		        			throw new LogicException("Unknown TOTI parameter " + e.getName());
+		        			throw new LogicException("Unknown TOTI parameter " + e.getName() + info);
 		        		}
 		        		return p.getCode(e.getValue());
 		        	}

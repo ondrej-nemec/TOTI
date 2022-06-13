@@ -33,7 +33,7 @@ public class TemplateParserTest {
 		ThrowingConsumer<String, IOException> bw = (actual)->{
 			assertEquals(expected, actual);
 		};
-		parser.parse(br, bw);
+		parser.parse(br, bw, new ParsingInfo("", ""));
 	}
 	
 	public Object[] dataParseWorks() {

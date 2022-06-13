@@ -111,11 +111,14 @@ public class TemplateParser {
 	
 	private void loadFile(String fileName, BufferedWriter bw, String module) throws IOException {
 		InputStream is = null;
+		ParsingInfo info = new ParsingInfo(module, fileName);
 		try {
 			is = InputStreamLoader.createInputStream(this.getClass(), module + "/" + fileName);
+			info.setFilePath(module + "/" + fileName);
 		} catch (FileNotFoundException e1) {
 			try {
 				is = InputStreamLoader.createInputStream(this.getClass(), fileName);
+				info.setFilePath(fileName);
 			} catch (FileNotFoundException e2) {
 				throw new FileNotFoundException("Template file not found: " + e1.getMessage() + " OR " + e2.getMessage());
 			}
@@ -123,7 +126,7 @@ public class TemplateParser {
 		Text.get().read((br)->{
 			parse(br, (text)->{
 				bw.write(text);
-			});			
+			}, info);			
 			// TODO read s void
 			return null;
 		}, is, "utf-8"); // TODO maybe configurable
@@ -141,8 +144,7 @@ public class TemplateParser {
 	 * 
 	 */
 	
-	protected void parse(BufferedReader br, ThrowingConsumer<String, IOException> bw) throws IOException {
-		
+	protected void parse(BufferedReader br, ThrowingConsumer<String, IOException> bw, ParsingInfo info) throws IOException {
 		int level = 0;
 		LinkedList<ParserWrapper> parsers = new LinkedList<>();
 		LinkedList<String> htmlTag = new LinkedList<>();
@@ -157,6 +159,9 @@ public class TemplateParser {
 		
 		node.append("write(\"");
 		while((actual = (char)br.read()) != (char)-1) {
+			if (actual == '\n') {
+                info.addLine();
+            }
 			ParserWrapper last = parsers.size() > 0 ? parsers.getLast() : null;
 			if (last != null) {
 				if (actual == '"' && previous != '\\' && !last.isSingleQuoted()) {
@@ -187,7 +192,7 @@ public class TemplateParser {
 				}*/
 				cache = DEF;
 			} else if ((last == null /*|| last.allowChildren()*/) && previous == '<') {
-				parsers.add(new ParserWrapper(new TagParser(actual, tags, parameters)));
+				parsers.add(new ParserWrapper(new TagParser(actual, tags, parameters, info)));
 			} else if (last != null && previous == '<' && actual == '$') {
 				writeParser(node, parsers, htmlTag, last, cache, previous, null);
 				cache = previous;
@@ -199,7 +204,7 @@ public class TemplateParser {
 				//candidate
 				cache = previous;
 			} else if (previous == '$' && actual == '{') {
-				parsers.add(new ParserWrapper(new VariableParser(level++)));
+				parsers.add(new ParserWrapper(new VariableParser(level++, info)));
 			} else if (previous == '$' && actual != '{') {
 				if (last == null) {
 					writeText(node, cache, previous);
