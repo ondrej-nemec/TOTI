@@ -100,7 +100,7 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 		
 		this.totiRes = new ResponseFactoryToti(profiler, developIps, translator, totiTemplateFactory, charset);
 		this.expRes = new ResponseFactoryExceptions(
-			translator, totiTemplateFactory, responseHeaders,
+			translator, totiTemplateFactory, responseHeaders.clone(),
 			router.getCustomExceptionResponse(), charset, logsPath, developIps, logger
 		);
 	}
