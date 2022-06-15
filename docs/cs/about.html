@@ -1,0 +1,92 @@
+<img src="https://raw.githubusercontent.com/ondrej-nemec/TOTI/master/logo.jpg" width="100">
+
+<h1>O TOTI</h1>
+
+<a href="https://jitpack.io/#ondrej-nemec/TOTI"><img src="https://jitpack.io/v/ondrej-nemec/TOTI.svg"></a>
+<a href="https://github.com/ondrej-nemec/TOTI/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg"></a>
+
+<p class="introduction">
+	TOTI - <strong>T</strong>ip <strong>O</strong>f <strong>T</strong>he <strong>I</strong>ceberg (Špička ledovce) - je framework psaný v Javě. Poskytuje HTTP(S) rozhraní mezi aplikací a uživately. Umožňuje přidat aplikaci Rest API, generovat HTML ze šablon nebo jen spuštět webový server (jako Apache ale jednodušší - rozumněj primitivnější).
+</p>
+
+<p>
+	Hlavní účel TOTI je vytvoření GUI pro java aplikace, které běží jako server, například v Industry 4.0 (IIoT, Průmyslový internet věcí) or IoT (Internet věcí). TOTI je snadné včlenit do desktop aplikací. Může být použito jen jako MVC framework (jako třeba Symfony nebo Nette v PHP nebo ASP.NET v C#), ale  <strong>to není hlavním učelem</strong>.
+</p>
+
+<h2>Výhody</h2>
+
+<ul>
+	<li>Snadné začlenění</li>
+	<li>Není potřeba instalovat server</li>
+	<li>Parsování šablon do HTML a ne do servletů</li>
+	<li>Může být použito v serveru nebo desktopové aplikaci</li>
+</ul>
+
+<h2>Co dál</h2>
+
+<p>
+	<strong>Další části dokumentace nejsou v češtině zatím k dispozici.</strong>
+</p>
+
+<h2>Kompatibilita</h2>
+
+<table>
+	<tr>
+		<th>Java</th>
+		<th>Kompatibilní</th>
+	</tr>
+	<tr>
+		<td>&gt;8</td>
+		<td>Ne</td>
+	</tr>
+	<tr>
+		<td>8</td>
+		<td>Ano</td>
+	</tr>
+	<tr>
+		<td>&gt;17</td>
+		<td>Ano</td>
+	</tr>
+</table>
+
+<h2>Dependency</h2>
+
+<p>Jaké jsou možnosti přidání TOTI do vaší aplikace, najdete na <a href="https://jitpack.io/#ondrej-nemec/TOTI">JitPack</a> nebo rovnou použijte Gradle:</p>
+
+<strong>gradle.build</strong>
+
+<pre><code>
+repositories { 
+	...
+	maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    implementation 'com.github.ondrej-nemec.TOTI:Tag'
+}
+</code></pre>
+
+<p>
+	Pokud chcete použít šablonovací system v produkci, je nutné přidat <code>tools.jar</code> do buildpath. V Javě 8 se to dělá:
+</p>
+
+<pre><code>
+implementation files("${System.properties['java.home']}/../lib/tools.jar")
+</code></pre>
+
+<h2>Podpořit</h2>
+
+<p>
+	Chcete TOTI podpořit? Dejte projektu hvězdičku.
+</p>
+
+<p>
+	<strong>Hledáme spolupracovníky:</strong>
+	<ul>
+		<li>CSS styling</li>
+		<li>Překlady: dokumentace a základní lokalizace</li>
+		<li>Kontrola anglického textu - gramatika a srozumitelnost</li>
+		<li>Beta testery</li>
+		<li>Kdokoli s nápadem nebo řešením bugu</li>
+	</ul>
+</p>

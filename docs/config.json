@@ -1,7 +1,8 @@
 {
 	"name": "TOTI - Really cool framework",
 	"langs": {
-		"en": "English"
+		"en": "English",
+		"cs": "Čeština"
 	},
 	"versions": {
 		"v1.0": "v1.0.0"
