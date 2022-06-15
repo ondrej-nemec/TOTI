@@ -38,5 +38,3 @@ location.reload();
 ```
 
 ### Change language
-
-

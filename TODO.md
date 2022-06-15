@@ -9,11 +9,12 @@
 * Check: Cross Site Scripting (DOM Based)
 * documentation - filters and inputs - check methods(placeholder)
 * JS lib doc
-* missing styles after error page
+* incomplete HTML tag in JS comment cause exception
 
 ## TODO
 
 * Template
+	* Correct HTML parsing - paired and unpaired tags
 	* Tags: add alpha-numeric check for selected parameters
 	* Variable: escape URL with check of local
 	* Alphanumeric check:

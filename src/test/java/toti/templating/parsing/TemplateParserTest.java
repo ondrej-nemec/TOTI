@@ -463,7 +463,54 @@ public class TemplateParserTest {
 						+ "}"
 					+ "write(\" text\");"
 				},
-			
+			/* special cases */
+			// tag in JS
+			new Object[] {
+					false,
+					"<script><div></script>",
+					"write(\"\");"
+					+ "write(\"<script>\");"
+					+ "write(\"\");"
+					+ "write(\"<div>\");"
+					+ "write(\"\");"
+					+ "write(\"</script>\");"
+					+ "write(\"\");"
+				},
+			// tag in comment
+			new Object[] {
+					false,
+					"<!-- <div> -->",
+					"write(\"<!-- \");"
+					+ "write(\"<div>\");"
+					+ "write(\" -->\");"
+				},
+			new Object[] {
+					false,
+					"<!-- <script> -->",
+					"write(\"<!-- \");"
+					+ "write(\"<script>\");"
+					+ "write(\" -->\");"
+				},
+			// TODO solve this two or add to doc
+			/*
+			new Object[] {
+					false,
+					"<script>"
+					+ "// some commented <div"
+					+ "// another comment"
+					+ "</script>",
+					"write(\"\");"
+					+ "write(\"<script>\");"
+					+ "write(\"js\");"
+					+ "write(\"</script>\");"
+					+ "write(\"\");"
+				},
+			new Object[] {
+					false,
+					"<!-- <div // -->",
+					""
+				},
+			*/
 			// TODO not-retu in not return
 			// TODO not retur in return
 			// TODO not-retu in variable
