@@ -33,11 +33,11 @@ Application application = new Application(Arrays.asList(
 <p>
 	<code>start</code> method does:
 	<ol>
-		<li>Create and migrate database (if database and migrations used). <a href="https://ondrej-nemec.github.io/JI/?file=database-migrations.html">See about migrations</a></li>
+		<li>Create and migrate database (if database and migrations are used). <a href="https://ondrej-nemec.github.io/JI/?file=database-migrations.html">See about migrations</a></li>
 		<li>Run all tasks from modules (see in next chapter)</li>
 		<li>Start HTTP server</li>
 	</ol>
-	If <code>start</code> fails, no exception is throwed but <code>System.exit</code> called.
+	If <code>start</code> fails, no exception is throwed but <code>System.exit</code> is called.
 </p>
 
 <p>
@@ -46,7 +46,7 @@ Application application = new Application(Arrays.asList(
 		<li>Stop HTTP server</li>
 		<li>Stop all tasks from modules</li>
 	</ol>
-	If <code>stop</code> fails. no exception is throwed but <code>System.exit</code> called.
+	If <code>stop</code> fails. no exception is throwed but <code>System.exit</code> is called.
 </p>
 
 <p class="alert alert-warning">
@@ -108,7 +108,7 @@ HttpServer server = new HttpServerFactory()
 <h2>Logging</h2>
 
 <p>
-	TOTI uses <a href="https://logging.apache.org/log4j/2.x/">Log4j 2 API</a>. By default, TOTI contains simple console logger. For using your own:
+	TOTI uses <a href="https://logging.apache.org/log4j/2.x/">Log4j 2 API</a>. By default, TOTI contains simple console logger. For using your own: <br>
 
 	<strong>Application</strong>
 	<pre><code class="language-java">

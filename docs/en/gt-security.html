@@ -218,19 +218,19 @@ new Rule(Action.READ, ()->Arrays.asList(1,2)); // rule for READ with two owners 
 @Secured({@Domain(name="domainName", action=toti.security.Action.READ, mode=Owner.USER_ID)})
 </code></pre>
 
-<pre>
-	TOTI get owner value (owner ID) depending on mode.
-	TOTI get instance of <code>Rules</code> from <code>Permissions</code> using <code>Domain:name</code>.
-	If rules are null, user is not allowed.
-	If rules contains privileged <code>Rule</code>
-		TOTI check if owner ID is in <code>Rule:getOwners:get</code> (<code>Rule:getOwners</code> == null is same as empty list =&gt; not allowed).
-			TOTI check <code>Action</code> from <code>Rule</code> with <code>Action</code> from <code>Domain</code>.  How: see bellow
-		Else not allowed
-	Else TOTI iterate over all <code>Rule</code>s (the null list is same as empty)
-		TOTI check if owner ID is in <code>Rule:getOwners:get</code> (<code>Rule:getOwners</code> == null is same as empty list =&gt; not allowed).
-			TOTI select highest <code>Action</code> from <code>Rule</code>s and check with <code>Action</code> from <code>Domain</code>. How: see bellow
-		Else not allowed
-</pre>
+<div>
+	TOTI get owner value (owner ID) depending on mode. <br>
+	TOTI get instance of <code>Rules</code> from <code>Permissions</code> using <code>Domain:name</code>. <br>
+	If rules are null, user is not allowed. <br>
+	If rules contains privileged <code>Rule</code> <br>
+	&emsp;TOTI check if owner ID is in <code>Rule:getOwners:get</code> (<code>Rule:getOwners</code> == null is same as empty list =&gt; not allowed). <br>
+	&emsp;&emsp;TOTI check <code>Action</code> from <code>Rule</code> with <code>Action</code> from <code>Domain</code>.  How: see bellow <br>
+	&emsp;Else not allowed <br>
+	Else TOTI iterate over all <code>Rule</code>s (the null list is same as empty) <br>
+	&emsp;TOTI check if owner ID is in <code>Rule:getOwners:get</code> (<code>Rule:getOwners</code> == null is same as empty list =&gt; not allowed). <br>
+	&emsp;&emsp;TOTI select highest <code>Action</code> from <code>Rule</code>s and check with <code>Action</code> from <code>Domain</code>. How: see bellow <br>
+	&emsp;Else not allowed <br>
+</div>
 
 <h4>Without specified owner</h4>
 
@@ -238,22 +238,22 @@ new Rule(Action.READ, ()->Arrays.asList(1,2)); // rule for READ with two owners 
 @Secured({@Domain(name="domainName", action=toti.security.Action.READ)})
 </code></pre>
 
-<pre>
-	TOTI get instance of <code>Rules</code> from <code>Permissions</code> using <code>Domain:name</code>.
-	If rules are null, user is not allowed.
-	TOTI iterate over all <code>Rule</code>s (null list is same as empty list)
-		TOTI select highest <code>Action</code> from <code>Rule</code>s
-		TOTI get owners from <code>Rule</code>s and add to common list.
-	TOTI remove from common owners list all owners where <code>Rule:action</code> was <code>Forbidden</code>
-	If <code>Rules</code> contains privileged <code>Rule</code>
-		If <code>Rule:action</code> is <code>FORBIDDEN</code>,
-			All rule owners are removed from common owners list.
-		Else
-			All rule owners are add to common owners list
-			The highest action is set to <code>Rule:action</code>
-	TOTI check highest action with <code>Action</code> from <code>Domain</code>. How: see bellow
-	After that, owners from common owners list are available on <code>User:getAllowedIds</code>
-</pre>
+<div>
+	TOTI get instance of <code>Rules</code> from <code>Permissions</code> using <code>Domain:name</code>. <br>
+	If rules are null, user is not allowed. <br>
+	TOTI iterate over all <code>Rule</code>s (null list is same as empty list) <br>
+	&emsp;TOTI select highest <code>Action</code> from <code>Rule</code>s <br>
+	&emsp;TOTI get owners from <code>Rule</code>s and add to common list. <br>
+	TOTI remove from common owners list all owners where <code>Rule:action</code> was <code>Forbidden</code> <br>
+	If <code>Rules</code> contains privileged <code>Rule</code> <br>
+	&emsp;If <code>Rule:action</code> is <code>FORBIDDEN</code>, <br>
+	&emsp;&emsp;All rule owners are removed from common owners list. <br>
+	&emsp;Else <br>
+	&emsp;&emsp;All rule owners are add to common owners list <br>
+	&emsp;&emsp;The highest action is set to <code>Rule:action</code> <br>
+	TOTI check highest action with <code>Action</code> from <code>Domain</code>. How: see bellow <br>
+	After that, owners from common owners list are available on <code>User:getAllowedIds</code> <br>
+</div>
 
 <h4>Action</h4>
 
