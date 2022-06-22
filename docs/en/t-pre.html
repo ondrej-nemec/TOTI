@@ -1,0 +1,127 @@
+init a welcome page
+
+<pre><code class="language-java">
+public static void main(String[] args) {
+	List<Module> modules = Arrays.asList();
+	Application.APP_CONFIG_FILE = "samples/tutorial1/app.properties";
+	try {
+		Application app = new Application(modules);
+		app.start();
+		
+		// for security reason - automatic stop after 2 hours
+		try { Thread.sleep(2 * 3600 * 1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		app.stop();
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+	System.exit(0);
+}
+</code></pre>
+
+******************************
+first module and page
+
+<pre><code class="language-java">
+public class EdgeControlModule implements Module {
+
+	@Override
+	public List&lt;Task&gt; initInstances(Env env, Translator translator, Register register, Database database, Logger logger) throws Exception {
+		return Arrays.asList();
+	}
+
+	@Override
+	public void addRoutes(Router router) {
+		router.addUrl("", Link.get().create(WelcomePageController.class, c->c.welcomePage()));
+	}
+
+	@Override
+	public String getName() {
+		return "main";
+	}
+
+	@Override
+	public String getControllersPath() {
+		return "TODO";
+	}
+	
+	@Override
+	public String getTemplatesPath() {
+		return "TODO";
+	}
+	
+	@Override
+	public String getTranslationPath() {
+		return "TODO";
+	}
+
+}
+</code></pre>
+
+<pre><code class="language-java">
+@Controller("dashboar")
+public class WelcomePageController {
+
+	@Action("welcome")
+	public Response welcomePage() {
+		return Response.getTemplate("welcome.jsp", new HashMap&lt;&gt;());
+	}
+	
+}
+</code></pre>
+
+<pre><code class="language-html">
+&lt;html&gt;
+&lt;head&gt;
+	&lt;title&gt;&lt;t:include block="title" optional&gt;&lt;/title&gt;
+	&lt;link rel="stylesheet" href="/toti/totiStyle.css" /&gt;
+	&lt;script src="/toti/totiJs.js" nonce="${nonce}">&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+	&lt;t:include block="content" &gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+
+<pre><code class="language-html">
+&lt;t:layout path="/layout.jsp"&gt;
+
+&lt;t:block name="title"&gt;
+	&lt;t:trans message="messages.dashboard.welcome-page"&gt;
+&lt;/t:block&gt;
+
+&lt;t:block name="content"&gt;
+	&lt;h1&gt;&lt;t:trans message="messages.dashboard.welcome-page"&gt;&lt;/h1&gt;
+	&lt;div&gt;
+		&lt;t:trans message="messages.dashboard.welcome-text"&gt;
+	&lt;/div&gt;
+&lt;/t:block>
+</code></pre>
+
+<pre><code>
+dashboard.welcome-page=Welcome in Edge Devices Control
+dashboard.welcome-text=Enjoy the coding of this app
+</code></pre>
+
+upravi edge device control
+<pre><code class="language-java">
+List<Module> modules = Arrays.asList(
+	new EdgeControlModule()
+);
+</code></pre>
+
+
+
+<pre><code class="language-java">
+</code></pre>
+
+<pre><code class="language-java">
+</code></pre>
+
+<pre><code class="language-java">
+</code></pre>
+
+<pre><code class="language-java">
+</code></pre>
