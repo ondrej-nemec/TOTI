@@ -6,20 +6,24 @@
 </head>
 <body>
 
-	<div>
-		<t:if cond="${totiIdentity.isPresent()}">
-			<span>${totiIdentity.getUser().getProperty("name")}</span>
-			<button onclick="logout()"><t:trans message="messages.sign.out"></button>
-		<t:else>
-			<a t:href="samples.tutorial1.web.SignPageController:loginPage">
-				<t:trans message="messages.sign.in">
-			</a>
-		</t:if>
+	<div class="menu">
+		<div>
+			<t:if cond="${totiIdentity.isPresent()}">
+				<span>${totiIdentity.getUser().getProperty("name")}</span>
+				<button onclick="logout()"><t:trans message="messages.sign.out"></button>
+			<t:else>
+				<a t:href="samples.tutorial1.web.SignPageController:loginPage">
+					<t:trans message="messages.sign.in">
+				</a>
+			</t:if>
+		</div>
 	</div>
 
 	<div id="flash"></div>
 	
-	<t:include block="content" >
+	<div class="body">
+		<t:include block="content" >
+	</div>
 
 	<script>
 		function logout() {
