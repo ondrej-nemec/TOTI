@@ -68,14 +68,16 @@ public class User implements Serializable {
 	 * @param key
 	 * @param value
 	 */
-	public void setProperty(String key, Object value) {
+	public User setProperty(String key, Object value) {
 		customData.put(key, value);
 		hasChanged = true;
+		return this;
 	}
 	
-	public void updateProperty(String key, Function<Object, Object> update) {
+	public User updateProperty(String key, Function<Object, Object> update) {
 		Object old = customData.get(key);
 		customData.put(key, update.apply(old));
+		return this;
 	}
 	
 	/**
