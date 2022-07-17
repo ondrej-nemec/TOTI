@@ -138,6 +138,9 @@ public class Validator {
 			);
 		} else {
 			Object o = prop.get(ruleName);
+			if (o == null && !rule.getRequired()) {
+				return;
+			}
 			checkRule(
 					rule.getExpectedType(), 
 					(expectedType)->{
@@ -200,7 +203,7 @@ public class Validator {
 						try {
 							Long value = new DictionaryValue(o).getLong();
 							return value == null || maxValue.longValue() < value;
-						} catch (ClassCastException | NumberFormatException e) {
+						} catch (NullPointerException | ClassCastException | NumberFormatException e) {
 							return true;
 						}
 					},
@@ -214,7 +217,7 @@ public class Validator {
 						try {
 							Long value = new DictionaryValue(o).getLong();
 							return value == null || minValue.longValue() > value.longValue();
-						} catch (ClassCastException | NumberFormatException e) {
+						} catch (NullPointerException | ClassCastException | NumberFormatException e) {
 							return true;
 						}
 					},
