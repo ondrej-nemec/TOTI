@@ -27,6 +27,8 @@ import toti.templating.tags.*;
 
 public class TemplateFactory {
 	
+	public static TemplateProfiler PROFILER = null;
+	
 	private static final List<Tag> CUSTOM_TAG_PROVIDERS = new LinkedList<>();
 	private static final List<Parameter> CUSTOM_PARAMETERS_PROVIDERS = new LinkedList<>();
 
@@ -54,7 +56,7 @@ public class TemplateFactory {
 			boolean minimalize,
 			Logger logger) {
 		String cachePath = tempPath + "/cache/" + module;
-		if (!new File(cachePath).mkdirs()) {
+		if (!new File(cachePath).exists() && !new File(cachePath).mkdirs()) {
 			logger.warn("Temp cache dir cannot be created: " + cachePath);
 		}
 		this.tempPath = cachePath;
@@ -115,6 +117,9 @@ public class TemplateFactory {
 			String templateFile,
 			ThrowingFunction<File, Tuple2<String, String>, IOException> getClassNameAndNamespace,
 			String module) throws Exception {
+		if (PROFILER != null) {
+			PROFILER.logGetTemplate(module, templateFile);
+		}
 		if (templatePath == null) {
 			throw new LogicException("No template path set for this module: '" + this.module + "' (" + module + ")");
 		}
