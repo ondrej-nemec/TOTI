@@ -186,7 +186,7 @@ public class GridEntityDaoTest implements Entity {
 	public void testHelp(String key, String value, String disabled, String group, String expected) {
 		ObjectBuilder<SelectBuilder> select = new ObjectBuilder<>();
 		QueryBuilder builder = new QueryBuilder(new MySqlQueryBuilder(null) {
-			@Override public SelectBuilder select(String query) {
+			@Override public SelectBuilder select(String... query) {
 				SelectBuilder s = super.select(query);
 				select.set(s);
 				return s;

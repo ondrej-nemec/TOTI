@@ -35,7 +35,7 @@ public class GridExampleDao implements EntityDao<GridExampleEntity>, GridEntityD
 
 	@Override
 	public SelectBuilder _getGrid(String select, QueryBuilder builder) {
-		return _getAll(select, builder);
+		return builder._getAll(builder, getTableName(), select);
 	}
 
 	@Override
