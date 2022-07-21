@@ -1,4 +1,4 @@
-/* TOTI Control version 0.0.23 */
+/* TOTI Control version 0.0.24 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -19,24 +19,41 @@ var totiControl = {
 		}
 		
 		for ([key, name] of Object.entries(attributes)) {
-			if (key === "value") {
-				button.innerText = name;
-			} else if (key === "action") {
-				if (typeof attributes.action === "object") {
-					button.onclick = totiControl.getAction(attributes.action);
-				} else {
-					button.onclick = function(event) {
-						window[attributes.action](event);
-					};
-				}
-			} else if (key === "style") {
-				button.classList.add("toti-button-" + name);
-			} else if (key === "class") {
-				name.split(" ").forEach(function(clazz) {
-					button.classList.add(clazz);
-				});
-			} else {
-				button.setAttribute(key, name);
+			switch (key) {
+				case "value":
+					var span = document.createElement("span");
+	              	span.innerText = name;
+	              	button.appendChild(span);
+					break;
+				case "action":
+					if (typeof attributes.action === "object") {
+						button.onclick = totiControl.getAction(attributes.action);
+					} else {
+						button.onclick = function(event) {
+							window[attributes.action](event);
+						};
+					}
+					break;
+				case "class":
+					var clazzes = name;
+					if (!Array.isArray(name)) {
+						clazzes = name.split(" ");
+					}
+					clazzes.forEach(function(clazz) {
+						button.classList.add(clazz);
+					});
+					break;
+				case "style":
+					button.classList.add("toti-button-" + name);
+					break;
+				case "icon":
+		            var i = document.createElement("i");
+		            i.setAttribute("class", name);
+		            button.append(i);
+					break;
+				default:
+					button.setAttribute(key, name);
+					break;
 			}
 		}
 		return button;

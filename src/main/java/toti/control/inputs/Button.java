@@ -1,6 +1,8 @@
 package toti.control.inputs;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import toti.control.Control;
@@ -12,15 +14,18 @@ public class Button implements Input {
 	private final String url;
 	private String confirmation = null;
 	private String title = null;
+	private String tooltip = null;
+	private String icon = null;
 	private boolean async = false;
 	private String method = "get";
 	private Map<String, String> requestParams = new HashMap<>();
 	private final Map<String, String> params = new HashMap<>();
 	private String onFailure;
 	private String onSuccess;
-	private ButtonType type = ButtonType.BASIC;
+	private ButtonType type = null; // ButtonType.BASIC;
 	private String condition = null;
 	private boolean evaluate = false;
+	private List<String> classes = new LinkedList<>();
 
 	public static Button create(String url, String name) {
 		return new Button(url, name, false);
@@ -48,6 +53,7 @@ public class Button implements Input {
 		return this;
 	}
 	
+	@Deprecated
 	public Button setType(ButtonType type) {
 		this.type = type;
 		return this;
@@ -60,6 +66,16 @@ public class Button implements Input {
 
 	public Button setTitle(String title) {
 		this.title = title;
+		return this;
+	}
+	
+	public Button setIcon(String icon) {
+		this.icon = icon;
+		return this;
+	}
+	
+	public Button setTooltip(String tooltip) {
+		this.tooltip = tooltip;
 		return this;
 	}
 
@@ -75,6 +91,11 @@ public class Button implements Input {
 
 	public Button addParam(String name, String value) {
 		params.put(name, value);
+		return this;
+	}
+	
+	public Button addClass(String clazz) {
+		classes.add(clazz);
 		return this;
 	}
 
@@ -103,9 +124,16 @@ public class Button implements Input {
 		json.put("id", name);
 		json.put("method", method);
 		json.put("requestParams", requestParams);
+		json.put("class", classes);
 		if (title != null) {
 			json.put("value", title);
 		}
+		if (tooltip != null) {
+            json.put("title", tooltip);
+        }
+        if (icon != null) {
+            json.put("icon", icon);
+        }
 		if (confirmation != null) {
 			json.put("confirmation", confirmation);
 		}
@@ -119,7 +147,9 @@ public class Button implements Input {
 			json.put("condition", condition);
 			json.put("evaluate", evaluate);
 		}
-		json.put("style", type.toString().toLowerCase());
+		if (type != null) {
+			json.put("style", type.toString().toLowerCase());
+		}
 		json.putAll(params);
 		return json;
 	}
