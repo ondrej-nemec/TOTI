@@ -1,4 +1,4 @@
-/* TOTI Form version 0.0.26 */
+/* TOTI Form version 0.0.27 */
 class TotiForm {
 
 	constructor(config) {
@@ -236,30 +236,29 @@ class TotiForm {
 			return section;
 		}
 		var selectAndSetElement = function(querySelector, child) {
-			var elements = container.querySelectorAll(querySelector);
-			if (elements.length > 0) {
-				var element = (elements.length === 1) ? elements[0] : elements[index];
-				if (element !== null && child !== null) {
-					for (var i = 0; i < element.attributes.length; i++) {
-					    var attrib = element.attributes[i];
-					    if (attrib.name === "p-id") {
-					    	console.warn("Custom id is not allowed.");
-					    	continue;
-					    } else if (attrib.name === 'p-class' || attrib.name === 'class') {
-					    	attrib.value.split().forEach(function(clazz) {
-					    		child.classList.add(clazz);
-					    	});
-					    } else if (attrib.name.startsWith("p-")) {
-					    	child.setAttribute(attrib.name.substring(2), attrib.value);
-					    }
-					}
-
-					element.parentNode.insertBefore(child, element);
-					element.remove();
-					/*element.appendChild(child);*/
-				}
-			}
-		};
+            var elements = container.querySelectorAll(querySelector);
+            if (elements.length > 0 && child !== null) {
+                var element = elements[0];
+                if (element !== null) {
+                    for (var i = 0; i < element.attributes.length; i++) {
+                        var attrib = element.attributes[i];
+                        if (attrib.name === "p-id") {
+                            console.warn("Custom id is not allowed.");
+                            continue;
+                        } else if (attrib.name === 'p-class' || attrib.name === 'class') {
+                            attrib.value.split(" ").forEach(function(clazz) {
+                                child.classList.add(clazz);
+                            });
+                        } else if (attrib.name.startsWith("p-")) {
+                            child.setAttribute(attrib.name.substring(2), attrib.value);
+                        }
+                    }
+                    element.parentNode.insertBefore(child, element);
+                    element.remove();
+                    /*element.appendChild(child);*/
+                }
+            }
+        };
 		selectAndSetElement("[name='form-label-" + fieldName + "']", label);
 		selectAndSetElement("[name='form-input-" + fieldName + "']", input);
 		selectAndSetElement("[name='form-error-" + fieldName + "']", error);
