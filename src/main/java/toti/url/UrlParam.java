@@ -2,7 +2,7 @@ package toti.url;
 
 public class UrlParam {
 	
-	public static final String PARAM_REGEX = "([a-zA-Z0-9_]*)";
+	public static final String PARAM_REGEX = "([a-zA-Z0-9_.-]*)";
 		
 	private final Object value;
 	
