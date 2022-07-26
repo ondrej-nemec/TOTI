@@ -41,7 +41,7 @@ public interface EntityDao<T extends Entity> {
 	default T get(Object id) throws SQLException {
 		return getDatabase().applyBuilder((builder)->{
 			// return createEntity(_get(builder, id).fetchRow());
-			return createEntity(builder.get(builder, getTableName()));
+			return createEntity(builder.get(builder, getTableName(), getIdName(), id));
 		});
 	}
 	
@@ -66,7 +66,7 @@ public interface EntityDao<T extends Entity> {
 	default int update(Object id, T entity) throws SQLException {
 		return getDatabase().applyBuilder((builder)->{
 			// return _update(builder, id, entity);
-			return builder.update(builder, getTableName(), getIdName(), entity.toMap(), id);
+			return builder.update(builder, getTableName(), getIdName(), id, entity.toMap());
 		});
 	}
 /*
