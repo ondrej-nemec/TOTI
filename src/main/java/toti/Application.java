@@ -153,6 +153,9 @@ public class Application {
 			if (env.getString("http.dir-allowed") != null) {
 				factory.setDirResponseAllowed(env.getBoolean("http.dir-allowed"));
 			}
+			if (env.getString("http.dir-default-file") != null) {
+				factory.setDirDefaultFile(env.getString("http.dir-default-file").isEmpty() ? null : env.getString("http.dir-default-file"));
+			}
 			if (env.getString("http.locale-settings") != null) {
 				MapDictionary<String, Object> config = new DictionaryValue(
 					Text.get().read((br)->{

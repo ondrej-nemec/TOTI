@@ -47,6 +47,7 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 	private final Headers responseHeaders;
 	private final String charset;
 	private final boolean dirResponseAllowed;
+	private final String dirDefaultFile;
 	private final Logger logger;
 	
 	private final MapDictionary<UrlPart, Object> mapping;
@@ -77,6 +78,7 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 			Authorizator authorizator,
 			String charset,
 			boolean dirResponseAllowed,
+			String dirDefaultFile,
 			String logsPath,
 			List<String> developIps,
 			Logger logger,
@@ -95,6 +97,7 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 		this.modules = modules;
 		this.logger = logger;
 		this.dirResponseAllowed = dirResponseAllowed;
+		this.dirDefaultFile = dirDefaultFile;
 		this.profiler = profiler;
 		this.mapping = mapping;
 		
@@ -220,6 +223,10 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 		// files
 		File file = new File(resourcesDir + url);
 		if (!file.exists() || (file.isDirectory() && !dirResponseAllowed)) {
+			if (file.isDirectory() && dirDefaultFile != null && new File(resourcesDir + url + "/" + dirDefaultFile).exists()) {
+                return Response.getFile(resourcesDir + url + "/" + dirDefaultFile)
+                		.getResponse(request.getProtocol(), responseHeaders, charset);
+			}
 			throw new ServerException(StatusCode.NOT_FOUND, String.format("URL not fouded: %s (%s)", url, request.getMethod()));
 		}
 		if (file.isDirectory()) {

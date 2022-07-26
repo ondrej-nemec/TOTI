@@ -62,6 +62,7 @@ public class HttpServerFactory {
 	private String resourcesPath = "www";
 	private boolean deleteTempJavaFiles = true;
 	private boolean dirResponseAllowed = false;
+	private String dirDefaultFile = "index.html";
 	private boolean minimalize = true;
 	private List<String> developIps = Arrays.asList("/127.0.0.1", "/0:0:0:0:0:0:0:1");
 	private Integer maxUploadFileSize = null;
@@ -134,6 +135,7 @@ public class HttpServerFactory {
 				new Authorizator(logger),
 				charset,
 				dirResponseAllowed,
+				dirDefaultFile,
 				logsPath,
 				developIps,
 				logger,
@@ -170,6 +172,11 @@ public class HttpServerFactory {
 	
 	public HttpServerFactory setDirResponseAllowed(boolean dirResponseAllowed) {
 		this.dirResponseAllowed = dirResponseAllowed;
+		return this;
+	}
+	
+	public HttpServerFactory setDirDefaultFile(String dirDefaultFile) {
+		this.dirDefaultFile = dirDefaultFile;
 		return this;
 	}
 
