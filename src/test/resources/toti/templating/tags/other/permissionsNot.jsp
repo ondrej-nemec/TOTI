@@ -1,0 +1,1 @@
+Allowed: <t:allowed not domain="my-domain" action="READ">Yes<t:else/>No</t:allowed>

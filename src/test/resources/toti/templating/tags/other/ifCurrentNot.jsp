@@ -1,0 +1,1 @@
+If current: <t:ifcurrent not method="myMethod">Not current<t:else />Current</t:ifcurrent>

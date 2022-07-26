@@ -21,7 +21,7 @@ public class IfCurrentTag implements Tag {
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
 		StringBuilder result = new StringBuilder();
-		result.append(String.format("if(", params.containsKey("not") ? "!":""));
+		result.append(String.format("if(%s", params.containsKey("not") ? "!":""));
 		result.append("(true");
 		String module = params.get("module");
 		if (module != null) {

@@ -73,6 +73,7 @@ public class TagsEndToEndTest {
 				)
 				.append("list", Arrays.asList("a", "b", "c"))
 				.toMap();
+		
 		String t = create(
 			module, template, variables, trans, mock(Authorizator.class), mock(MappedUrl.class), mock(Logger.class)
 		);
@@ -304,6 +305,9 @@ public class TagsEndToEndTest {
 					"other", "ifCurrentElse.jsp", "If current: Not current"
 				},
 			new Object[] {
+					"other", "ifCurrentNot.jsp", "If current: Not current"
+				},
+			new Object[] {
 					"other", "ifCurrentReturning.jsp", "If current: "
 				},
 			new Object[] {
@@ -315,6 +319,9 @@ public class TagsEndToEndTest {
 				},
 			new Object[] {
 					"other", "permissionsElse.jsp", "Allowed: No"
+				},
+			new Object[] {
+					"other", "permissionsNot.jsp", "Allowed: Yes"
 				},
 			new Object[] {
 					"other", "permissionsReturning.jsp", "Allowed: "
