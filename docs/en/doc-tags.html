@@ -495,6 +495,10 @@
 
 <p>Print text inside this tag if given attributes (module OR controller OR method OR any combination) match URL. You can use <code>else</code> inside this tag. The module is string from <code>getName()</code> method from <code>Module</code>. The controller is full class path. The method is name of method.</p>
 
+<p>
+	The parameter <code>not</code> indicate opposition. You can use <code>else</code> inside this tag.
+</p>
+
 <pre><code>
 &lt;t:ifcurrent module="" controller="" method="" &gt;
 	// your code
@@ -508,6 +512,18 @@
 // example 2
 &lt;t:ifcurrent module="main" controller="org.example.main.controllers.FirstController" &gt;
 	// only if 'main' module AND 'org.example.main.controllers.FirstController' controller. It doesn't matter the method.
+&lt;/t:ifcurrent&gt;
+
+// using not
+&lt;t:ifcurrent not module="main" controller="org.example.main.controllers.FirstController" &gt;
+	// only if not 'main' module OR not 'org.example.main.controllers.FirstController' controller.
+&lt;/t:ifcurrent&gt;
+
+// using else
+&lt;t:ifcurrent module="main" controller="org.example.main.controllers.FirstController" &gt;
+	// only if 'main' module AND 'org.example.main.controllers.FirstController' controller. It doesn't matter the method.
+&lt;t:else/&gt;
+	// otherwise
 &lt;/t:ifcurrent&gt;
 </code></pre>
 

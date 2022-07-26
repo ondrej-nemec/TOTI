@@ -21,8 +21,8 @@ public class IfCurrentTag implements Tag {
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
 		StringBuilder result = new StringBuilder();
-		result.append("if(");
-		result.append("true");
+		result.append(String.format("if(", params.containsKey("not") ? "!":""));
+		result.append("(true");
 		String module = params.get("module");
 		if (module != null) {
 			result.append("&&");
@@ -38,7 +38,7 @@ public class IfCurrentTag implements Tag {
 			result.append("&&");
 			result.append("(\"" + method + "\").equals(current.getMethodName())");
 		}
-		result.append("){initNode(new HashMap<>());");
+		result.append(")){initNode(new HashMap<>());");
 		return result.toString();
 	}
 
