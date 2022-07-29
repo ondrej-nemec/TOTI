@@ -11,6 +11,7 @@ public class DynamicList implements Input {
 	private final String name;
 	private final String id;
 	private final List<Input> fields;
+	private Map<String, Object> load;
 	
 	private String title = null;
 	private boolean useAddButton = true;
@@ -56,6 +57,20 @@ public class DynamicList implements Input {
 		return this;
 	}
 	
+	public DynamicList setLoadData(String url, String method) {
+        return setLoadData(url, method, new HashMap<>());
+    }
+
+    public DynamicList setLoadData(String url, String method, Map<String, String> params) {
+        this.load = new HashMap<>();
+        load.put("url", url);
+        load.put("method", method);
+        load.put("params", params);
+        this.useAddButton = false;
+        this.useRemoveButton = false;
+        return this;
+    }
+	
 	@Override
 	public Map<String, Object> getInputSettings() {
 		Map<String, Object> json = new HashMap<>();
@@ -66,6 +81,9 @@ public class DynamicList implements Input {
 		if (title != null) {
 			json.put("title", title);
 		}
+		if (load != null) {
+            json.put("load", load);
+        }
 		json.put("addButton", useAddButton);
 		json.put("removeButton", useRemoveButton);
 		return json;
