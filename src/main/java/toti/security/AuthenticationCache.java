@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.Logger;
 import ji.common.functions.FileExtension;
+import ji.common.structures.NamedThredFactory;
 
 public class AuthenticationCache {
 	
@@ -41,7 +42,7 @@ public class AuthenticationCache {
 	
 	private final boolean useCache;
 	
-	private final ScheduledExecutorService scheduledPool = Executors.newSingleThreadScheduledExecutor();
+	private final ScheduledExecutorService scheduledPool = Executors.newSingleThreadScheduledExecutor(new NamedThredFactory("authentication-cache"));
 	private final Map<String, Token> activeTokens = new HashMap<>();
 	private final Logger logger;
 	
