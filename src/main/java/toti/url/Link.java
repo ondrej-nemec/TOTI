@@ -199,7 +199,12 @@ public class Link {
         }
         setMethod(values[1]);
         for (int i = 2; i < values.length; i++) {
-            addUrlParam(values[i]);
+        	if (values[i].contains("=")) {
+                String[] get = values[i].split("=", 2);
+                addGetParam(get[0], get[1]);
+        	} else {
+                addUrlParam(values[i]);
+        	}
         }
 		return create();
 	}

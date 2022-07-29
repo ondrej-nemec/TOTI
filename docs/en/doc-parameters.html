@@ -3,15 +3,19 @@
 <h2>HREF</h2>
 
 <p>
-	Create link to given controller and method. Controller must be full class name. Method is name of function. Controller and method are splited by <code>:</code>. URL parameters are after method name and splited by <code>:</code>.
+	Create link to given controller and method. Controller must be full class name. Method is name of function. Controller and method are splited by <code>:</code>.Parameters are after method name and splited by <code>:</code>. If parameter not contains <code>=</code>, the parameter is used as URL parameter, otherwise is used as GET parameter
 </p>
 
 <pre><code class="language-html">
 &lt;a t:href="" /&gt;
-&lt;!-- example --&gt;
+&lt;!-- example - approximate result: /modulename/my-controler/action --&gt;
 &lt;a t:href="org.example.app.controllers.MyController:myAction" /&gt;
-&lt;!-- example with parameter --&gt;
+&lt;!-- example with URL parameter - approximate result: /modulename/my-controler/action/123 --&gt;
 &lt;a t:href="org.example.app.controllers.MyController:myAction:123" /&gt;
+&lt;!-- example with more URL parameters - approximate result: /modulename/my-controler/action/123/a --&gt;
+&lt;a t:href="org.example.app.controllers.MyController:myAction:123:a" /&gt;
+&lt;!-- example with URL parameter and GET parameter - approximate result: /modulename/my-controler/action/123?foo=bar--&gt;
+&lt;a t:href="org.example.app.controllers.MyController:myAction:123:foo=bar" /&gt;
 </code></pre>
 
 <h2>Title</h2>
