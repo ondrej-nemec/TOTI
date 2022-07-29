@@ -1,4 +1,4 @@
-/* TOTI Control version 0.0.24 */
+/* TOTI Control version 0.0.25 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -346,9 +346,11 @@ var totiControl = {
 		    if (params.hasOwnProperty("depends") && params.editable && params.hasOwnProperty("form")) {
 		    	/* only for forms */
 		        setTimeout(function() {
-		             var depends = document.getElementById(params.form).querySelector("[name='" + params.depends + "']");
-		             addOptions(select, depends.value, select.value);
-		             optGroupRenderer(depends);
+		            var depends = document.getElementById(params.form).querySelector("[name='" + params.depends + "']");
+		            addOptions(select, depends === null ? params.depends : depends.value, select.value);
+		            if (depends !== null) {
+		            	optGroupRenderer(depends);
+		            }
 		        }, 1);
 		    } else if (params.hasOwnProperty("depends") && !params.hasOwnProperty("form")) {
 		        /* for grid only */

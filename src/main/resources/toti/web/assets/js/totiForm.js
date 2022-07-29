@@ -1,4 +1,4 @@
-/* TOTI Form version 0.0.27 */
+/* TOTI Form version 0.0.28 */
 class TotiForm {
 
 	constructor(config) {
@@ -78,8 +78,11 @@ class TotiForm {
                 field.name = fieldName;
 			}
 			if (listPosition !== null && field.hasOwnProperty("title")) {
-				field.title = field.title.replace('{i}', parseInt(listPosition));
+				field.title = field.title.replace('{i}', listPosition);
 			}
+            if (parent !== null && parent.hasOwnProperty("depends")) {
+				field.depends = parent.depends;
+            }
 			if (field.type === "dynamic") {
 				var template = this.createInputArea(uniqueName, field, index, editable, useTemplate, form, container);
 				field.template = template;
@@ -184,19 +187,27 @@ class TotiForm {
 						itemTemplate.appendChild(spanIdent);
 						itemTemplate.appendChild(removeButton);
 					}
+					var fields = totiUtils.clone(field.fields);
 					object.iterateFields(
 						uniqueName,
-						totiUtils.clone(field.fields),
+						fields,
 						form,
 						itemTemplate,
 						editable, useTemplate,
 						{
 							name: field.name + "[" + position + "]",
-							id: field.id + "_" + position
+							id: field.id + "_" + position,
+							depends: depends.value
 						},
-						sourceInput === null ? null : sourceInput.getAttribute(dynamicCount)
+						sdepends.hasOwnProperty("title") ? depends.title : (sourceInput === null ? null : sourceInput.getAttribute(dynamicCount))
 					);
 				};
+                if (field.hasOwnProperty("load")) {
+                    totiLoad.async(field.load.url, field.load.method, field.load.params, totiLoad.getHeaders(), function(loaded) {
+                        loaded.forEach(function(layer, index) {
+                            object.dynamic[field.name](layer.value, index, null, layer);
+                        });
+                    }, function(xhr) {console.log(xhr);}, false);
 			} else if (field.type === "list") {
 				this.iterateFields(uniqueName, field.fields, form, container, editable, useTemplate, {
 					name: field.name,
