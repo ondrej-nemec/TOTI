@@ -1,0 +1,44 @@
+package samples.tutorial1.web.api;
+
+import java.util.Arrays;
+
+import org.apache.logging.log4j.Logger;
+
+import ji.common.structures.DictionaryValue;
+import ji.socketCommunication.http.StatusCode;
+import ji.translator.Translator;
+import toti.annotations.Action;
+import toti.annotations.Controller;
+import toti.annotations.ParamUrl;
+import toti.annotations.Params;
+import toti.application.GridOptions;
+import toti.response.Response;
+import toti.validation.Validator;
+// import
+
+@Controller("%nameLC%")
+public class %nameUC%ApiController {
+
+	private final Logger logger;
+	private final Translator translator;
+	private final %nameUC%Dao dao;
+	
+	public %nameUC%ApiController(%nameUC%Dao dao, Translator translator, Logger logger) {
+		this.logger = logger;
+		this.translator = translator;
+		this.dao = dao;
+	}
+	
+// list
+
+// get
+
+// validator
+
+// insert
+
+// update
+
+// delete
+
+}

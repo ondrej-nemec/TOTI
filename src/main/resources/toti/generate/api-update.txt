@@ -1,0 +1,12 @@
+	@Action("update")
+	public Response update(@ParamUrl("%id%") Object id, @Params %nameUC% %nameLC%) {
+		try {
+			dao.update(id, %nameLC%);
+			return Response.getJson(
+				"TODO"
+			);
+		} catch (Exception e) {
+			logger.error("%nameUC%: Insert", e);
+			return Response.getText(StatusCode.INTERNAL_SERVER_ERROR, "");
+		}
+	}

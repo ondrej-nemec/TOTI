@@ -1,0 +1,12 @@
+	@Action("insert")
+	public Response insert(@Params %nameUC% %nameLC%) {
+		try {
+			DictionaryValue id = dao.insert(%nameLC%);
+			return Response.getJson(
+				""
+			);
+		} catch (Exception e) {
+			logger.error("%nameUC%: Insert", e);
+			return Response.getText(StatusCode.INTERNAL_SERVER_ERROR, "");
+		}
+	}

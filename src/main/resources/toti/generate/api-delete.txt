@@ -1,0 +1,12 @@
+	@Action("delete")
+	public Response delete(@ParamUrl("%id%") Object id) {
+		try {
+			dao.delete(id);
+			return Response.getJson(
+				""
+			);
+		} catch (Exception e) {
+			logger.error("%nameUC%: Insert", e);
+			return Response.getText(StatusCode.INTERNAL_SERVER_ERROR, "");
+		}
+	}
