@@ -1,5 +1,6 @@
 package toti;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -112,6 +113,7 @@ public class ResponseFactoryExceptions {
 					response.createResponse(templateFactory, translator, null, null)
 				);
 			}, fileName,  charset, false);
+			new File(fileName).setExecutable(true);
 			return fileName;
 		} catch (Exception e) {
 			e.printStackTrace();
