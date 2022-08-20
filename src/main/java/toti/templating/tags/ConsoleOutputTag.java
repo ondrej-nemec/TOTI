@@ -19,7 +19,7 @@ public class ConsoleOutputTag implements Tag{
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
-		return "";
+		return getNotPairCode(params);
 	}
 
 	@Override
