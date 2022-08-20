@@ -17,6 +17,8 @@ public class Submit implements Input {
 	private String onFailure = null;
 	private String onSuccess = null;
 	private final Map<String, String> params = new HashMap<>();
+	private Object value = null;
+	private SubmitPolicy submitPolicy = SubmitPolicy.EXCLUDE;
 	
 	public static Submit create(String title, String name) {
 		return new Submit(title, name);
@@ -42,6 +44,11 @@ public class Submit implements Input {
 			throw new RuntimeException("Open redirection is not allowed");
 		}
 		this.redirect = redirect;
+		return this;
+	}
+	
+	public Submit setValue(Object value) {
+		this.value = value;
 		return this;
 	}
 
@@ -78,6 +85,7 @@ public class Submit implements Input {
 		json.put("async", async);
 		json.put("id", name);
 		json.put("name", name);
+		json.put("submitPolicy", submitPolicy);
 		
 		json.putAll(params);
 		if (redirect != null) {
@@ -91,6 +99,9 @@ public class Submit implements Input {
 		}
 		if (onFailure != null) {
 			json.put("onFailure", onFailure);
+		}
+		if (value != null) {
+			json.put("realValue", value);
 		}
 		return json;
 	}
