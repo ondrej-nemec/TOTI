@@ -47,9 +47,10 @@ public class ValueColumn implements Column {
 		json.put("title", title);
 		json.put("useSorting", useSorting);
 		if (filter != null) {
-			Map<String, Object> filterConf = new HashMap<>(filter.getFilterSettings());
+			/*Map<String, Object> filterConf = new HashMap<>(filter.getFilterSettings());
 			json.put("filter", filterConf);
-			filterConf.put("type", filter.getType());
+			filterConf.put("type", filter.getType());*/
+			json.put("filter", filter.getFilterSettings());
 		}
 		if (renderer != null) {
 			json.put("renderer", renderer);

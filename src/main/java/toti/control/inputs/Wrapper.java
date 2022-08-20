@@ -37,6 +37,7 @@ public class Wrapper {
 		Map<String, Object> set = new HashMap<>();
 		set.put("id", id);
 		set.putAll(params);
+		set.put("type", type);
 		if (value != null) {
 			set.put("value", value);
 		}
@@ -52,7 +53,6 @@ public class Wrapper {
 
 	public Map<String, Object> getInputSettings(Map<String, Object> set) {
 		set.put("name", name);
-		set.put("type", type);
 		if (required) {
 			set.put("required", required);
 		}
