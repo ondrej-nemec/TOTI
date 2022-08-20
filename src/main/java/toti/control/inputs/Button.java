@@ -22,7 +22,6 @@ public class Button implements Input {
 	private final Map<String, String> params = new HashMap<>();
 	private String onFailure;
 	private String onSuccess;
-	private ButtonType type = null; // ButtonType.BASIC;
 	private String condition = null;
 	private boolean evaluate = false;
 	private List<String> classes = new LinkedList<>();
@@ -50,12 +49,6 @@ public class Button implements Input {
 
 	public Button setOnSuccess(String onSuccess) {
 		this.onSuccess = onSuccess;
-		return this;
-	}
-	
-	@Deprecated
-	public Button setType(ButtonType type) {
-		this.type = type;
 		return this;
 	}
 	
@@ -146,9 +139,6 @@ public class Button implements Input {
 		if (condition != null) {
 			json.put("condition", condition);
 			json.put("evaluate", evaluate);
-		}
-		if (type != null) {
-			json.put("style", type.toString().toLowerCase());
 		}
 		json.putAll(params);
 		return json;
