@@ -78,6 +78,7 @@ public class HttpServerFactory {
 	public <T extends Module> HttpServer get(List<T> modules, Env env, Database database) throws Exception {
 		// maybe more - separated - loggers??
 		Logger logger = loggerFactory.apply("toti"); //TotiLogger.getLogger("totiServer");
+		Profiler profiler = initProfiler(logger);
 		
 		Register register = new Register();
 		Link.init(urlPattern, register); // TODO not static ??
@@ -139,7 +140,7 @@ public class HttpServerFactory {
 				logsPath,
 				developIps,
 				logger,
-				this.initProfiler(logger),
+				profiler,
 				register,
 				mapping
 		);
