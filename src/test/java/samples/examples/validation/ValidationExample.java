@@ -101,8 +101,6 @@ public class ValidationExample implements Module {
 			.addRule(ItemRules.forName("login", true).setMinLength(3).setMaxLength(15))
 			.addRule(ItemRules.forName("width", true).setType(Integer.class).setMinValue(0));
 	}
-	
-	// TODO validator params
 
 	@Override
 	public List<Task> initInstances(Env env, Translator translator, Register register, Database database, Logger logger)

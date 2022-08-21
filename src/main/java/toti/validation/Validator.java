@@ -307,6 +307,15 @@ public class Validator {
 					propertyName,
 					rule.getOnExpectedTypeError().apply(translator)
 			);
+			if (rule.getCustomValidation().isPresent()) {
+				Set<String> messages = rule.getCustomValidation().get().apply(prop.get(ruleName), translator);
+				if (messages != null && messages.size() > 0) {
+					if (errors.get(propertyName) == null) {
+						errors.put(propertyName, new HashSet<>());
+					}
+					errors.get(propertyName).addAll(messages);
+				}
+			}
 		}
 	}
 	

@@ -2,6 +2,7 @@ package toti.validation;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -59,6 +60,8 @@ public class ItemRules {
 	
 	private Optional<Collection<Object>> allowedValues = Optional.empty();
 	private Function<Translator, String> onAllowedValuesError = (t)->"";
+	
+	private Optional<BiFunction<Object, Translator, Set<String>>> customValidation = Optional.empty();
 	
 	private Optional<Validator> mapSpecification = Optional.empty();
 	private Optional<Validator> listSpecification = Optional.empty();
@@ -260,6 +263,11 @@ public class ItemRules {
 		return this;
 	}
 	
+	public ItemRules setCustomValidation(Optional<BiFunction<Object, Translator, Set<String>>> customValidation) {
+		this.customValidation = customValidation;
+		return this;
+	}
+	
 	public ItemRules rename(String rename) {
 		this.rename = Optional.of(rename);
 		return this;
@@ -377,6 +385,10 @@ public class ItemRules {
 
 	public Function<Object, Object> getChangeValue() {
 		return changeValue;
+	}
+	
+	public Optional<BiFunction<Object, Translator, Set<String>>> getCustomValidation() {
+		return customValidation;
 	}
 	
 }
