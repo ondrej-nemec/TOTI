@@ -51,7 +51,7 @@ public class GroupAction implements Jsonable {
 		Map<String, Object> json = new HashMap<>();
 		json.put("async", async);
 		json.put("title", title);
-		json.put("link", link);
+		json.put("href", link);
 		json.put("method", method);
 		if (confirmation != null) {
 			json.put("submitConfirmation", confirmation);

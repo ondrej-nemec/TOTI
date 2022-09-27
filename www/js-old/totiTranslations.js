@@ -1,12 +1,11 @@
 /* TOTI Translations version 0.2.1 */
 var totiTranslations = {
 	"pages": {
-//		"title": /* "<t:trans message='common.grid.paging.pages'/>", /*/ "Pages:", //*/
+		"title": /* "<t:trans message='common.grid.paging.pages'/>", /*/ "Pages:", //*/
 		"first": /* "<t:trans message='common.grid.paging.first' />", /*/ "First", //*/
 		"previous": /* "<t:trans message='common.grid.paging.previous' />", /*/ "Previous", //*/
 		"next": /* "<t:trans message='common.grid.paging.next' />", /*/ "Next", //*/
-		"last": /* "<t:trans message='common.grid.paging.last' />" /*/ "Last", //*/
-		"loadNext": /* "<t:trans message='common.grid.paging.last' />" /*/ "Load next" //*/
+		"last": /* "<t:trans message='common.grid.paging.last' />" /*/ "Last" //*/
 	},
 	"actions": {
 		"select": /* "<t:trans message='common.grid.action.select' />", /*/ "Select action", //*/
@@ -18,14 +17,14 @@ var totiTranslations = {
 		"loadingError": /* "<t:trans message='common.grid.loading-error' />", /*/ "Problem with data loading", //*/
 		"tableCaption": /* "<t:trans message='common.grid.table-caption' />" /*/ "Showed {onPage}/{total} on page {pageIndex}" //*/
 	},
-//	"formMessages": {
-//		"saveError": /* "<t:trans message='common.form.saving-problem' />", /*/ "Problem with form saving", //*/
-//		"bindError": /* "<t:trans message='common.form.binding-problem' />" /*/ "Loading data failure" //*/
-//	},
-//	"formButtons": {
-//		"add": /* "<t:trans message='common.form.add-variant' />", /*/ "Add Variant", //*/
-//		"remove": /* "<t:trans message='common.form.remove-variant' />" /*/ "Remove Variant" //*/
-//	},
+	"formMessages": {
+		"saveError": /* "<t:trans message='common.form.saving-problem' />", /*/ "Problem with form saving", //*/
+		"bindError": /* "<t:trans message='common.form.binding-problem' />" /*/ "Loading data failure" //*/
+	},
+	"formButtons": {
+		"add": /* "<t:trans message='common.form.add-variant' />", /*/ "Add Variant", //*/
+		"remove": /* "<t:trans message='common.form.remove-variant' />" /*/ "Remove Variant" //*/
+	},
 	/* TODO use translations with JSON.parse() ??? */
 	"timestamp": {
 		dateString: {

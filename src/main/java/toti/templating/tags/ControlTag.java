@@ -18,25 +18,27 @@ public class ControlTag implements Tag {
 
 	@Override
 	public String getPairStartCode(Map<String, String> params) {
-		return String.format(
-				"{"
+		return getTagStart(params, false);
+		// TODO rozlisit mezi form a grid - v pripade, ze bude custom templ
+		/*return String.format(
+				"write(\"<div id='%s' class='toti-control'>\");"
+				+ "{"
 				+ "if(variables.get(\"%s\") == null) {throw new TemplateException(\"Tag Missing control varialble: '%s'\");}"
 				+ "toti.control.Control control=(toti.control.Control)(getVariable(\"%s\"));"
 				+ "write(\""
 				+ "<script>"
 				+ "\"+control.toString().replace(\"</script>\", \"\")+\""
-				+ ".init('%s', 'toti-\" + control.getType() + \"-%s');"
+				+ ".render('%s', 'toti-\" + control.getType() + \"-%s');"
 				+ "</script>"
 				+ "\");"
-				+ "}"
-				+ "write(\"<div id='%s' class='toti-control'>\");",
+				+ "}",
+				"control-" +params.get("name"),
 				params.get("name"),
 				params.get("name"),
 				params.get("name"),
 				"div#control-" +params.get("name"),
-				params.get("name"),
-				"control-" +params.get("name")
-		);
+				params.get("name")
+		);*/
 	}
 
 	@Override
@@ -46,7 +48,31 @@ public class ControlTag implements Tag {
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
-		return getPairStartCode(params) + getPairEndCode(params);
+		return getTagStart(params, true) + getPairEndCode(params);
 	}
 
+	private String getTagStart(Map<String, String> params, boolean useDefaultTemplate) {
+		// TODO rozlisit mezi form a grid - v pripade, ze bude custom templ
+		return String.format(
+				"write(\"<div id='%s' class='toti-control'>\");"
+				+ "{"
+				+ "if(variables.get(\"%s\") == null) {throw new TemplateException(\"Tag Missing control varialble: '%s'\");}"
+				+ "toti.control.Control control=(toti.control.Control)(getVariable(\"%s\"));"
+				+ "write(\""
+				+ "<script>"
+				+ "\"+control.toString().replace(\"</script>\", \"\")+\""
+				+ ".render('%s', 'toti-\" + control.getType() + \"-%s'"
+				+ (useDefaultTemplate ? "" : ", false")
+				+ ");"
+				+ "</script>"
+				+ "\");"
+				+ "}",
+				"control-" +params.get("name"),
+				params.get("name"),
+				params.get("name"),
+				params.get("name"),
+				"div#control-" +params.get("name"),
+				params.get("name")
+		);}
+	
 }

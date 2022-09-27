@@ -82,7 +82,9 @@ layout.jsp
 &lt;/head&gt;
 &lt;body&gt;
 
-	&lt;t:include block="content" &gt;
+	&lt;div class="body"&gt;
+		&lt;t:include block="content" &gt;
+	&lt;/div&gt;
 
 &lt;/body&gt;
 &lt;/html&gt;
@@ -258,20 +260,24 @@ upravit layout.jsp
 <pre><code class="language-html">
 &lt;body&gt;
 
-	&lt;div&gt;
-		&lt;t:if cond="${totiIdentity.isPresent()}"&gt;
-			&lt;span&gt;${totiIdentity.getUser().getProperty("name")}&lt;/span&gt;
-			&lt;button onclick="logout()"&gt;&lt;t:trans message="messages.sign.out"&gt;&lt;/button&gt;
-		&lt;t:else&gt;
-			&lt;a t:href="samples.tutorial1.web.SignPageController:loginPage"&gt;
-				&lt;t:trans message="messages.sign.in"&gt;
-			&lt;/a&gt;
-		&lt;/t:if&gt;
+	&lt;div class="menu"&gt;
+		&lt;div&gt;
+			&lt;t:if cond="${totiIdentity.isPresent()}"&gt;
+				&lt;span&gt;${totiIdentity.getUser().getProperty("name")}&lt;/span&gt;
+				&lt;button onclick="logout()"&gt;&lt;t:trans message="messages.sign.out"&gt;&lt;/button&gt;
+			&lt;t:else&gt;
+				&lt;a t:href="samples.tutorial1.web.SignPageController:loginPage"&gt;
+					&lt;t:trans message="messages.sign.in"&gt;
+				&lt;/a&gt;
+			&lt;/t:if&gt;
+		&lt;/div&gt;
 	&lt;/div&gt;
 
 	&lt;div id="flash"&gt;&lt;/div&gt;
 	
-	&lt;t:include block="content" &gt;
+	&lt;div class="body"&gt;
+		&lt;t:include block="content" &gt;
+	&lt;/div&gt;
 
 	&lt;script&gt;
 		function logout() {

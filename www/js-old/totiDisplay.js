@@ -1,4 +1,4 @@
-/* TOTI Display version 1.0.0 */
+/* TOTI Display version 0.0.1 */
 var totiDisplay = {
 	prompt: function(message, defValue = "") {
 		return prompt(message, defValue);
@@ -9,8 +9,6 @@ var totiDisplay = {
 	alert: function(message) {
 		alert(message);
 	},
-	/**********/
-	flashTimeout: 0,
 	flash: function(severity, message) {
 		var div = document.createElement("div");
 
@@ -29,15 +27,12 @@ var totiDisplay = {
 		div.appendChild(img);
 		div.appendChild(span);
 
-		if (totiDisplay.flashTimeout > 0) {
+		if (totiSettings.flashTimeout > 0) {
 			setTimeout(function() {
 				div.style.display = "none";
 			}, totiSettings.flashTimeout);
 		}
-		var flash = document.getElementById('flash');
-		if (flash !== null) {
-			flash.appendChild(div);
-		}
+		document.getElementById('flash').appendChild(div);
 		console.log("Flash " + severity + ":");
 		console.log(message);
 	},
@@ -53,33 +48,19 @@ var totiDisplay = {
 		actual[severity].push(message);
 		totiStorage.saveVariable(name, actual);
 	},
-	/**********/
-	isFade: false,
-	fadeIn: function() {
-		if (totiDisplay.isFade) {
-			return;
+	printStoredFlash: function() {
+		var name = 'flash';
+		var actual = totiStorage.getVariable(name);
+		if (actual !== null) {
+			for (const[severity, messages] of Object.entries(actual)) {
+				messages.forEach(function(message) {
+					totiDisplay.flash(severity, message);
+				});
+			}
+			totiStorage.removeVariable(name);
 		}
-		var fade = document.createElement('div');
-		fade.style.position = "absolute";
-		fade.style.top = 0;
-		fade.style.left = 0;
-		fade.style.width = "100%";
-		fade.style.height = "100%";
-		fade.style['z-index'] = 2000;
-		fade.style['background-color'] = "rgba(255,255,255,0.5)";
-
-		fade.setAttribute("id", "toti-fade-in");
-		fade.onclick = function() {}; /* prevent click */
-
-		document.body.appendChild(fade);
-// TODO loading picture
-		totiDisplay.isFade = true;
-	},
-	fadeOut: function() {
-		if (!totiDisplay.isFade) {
-			return;
-		}
-		document.querySelector("#toti-fade-in").remove();
-		totiDisplay.isFade = false;
 	}
 };
+document.addEventListener("DOMContentLoaded", function(event) { 
+	totiDisplay.printStoredFlash();
+});

@@ -6,16 +6,15 @@ import java.util.Map;
 public class ValueColumn implements Column {
 	
 	private final String name;
-	private final String type; // value, buttons, actions
 	private String title;
 	
 	private boolean useSorting = false;
+	private Boolean defaultSort = null;
 	private Filter filter = null;
 	private String renderer = null;
 	
 	public ValueColumn(String name) {
 		this.name = name;
-		this.type = "value";
 		this.title = name;
 	}
 	
@@ -38,14 +37,20 @@ public class ValueColumn implements Column {
 		this.renderer = renderer;
 		return this;
 	}
+	
+	public ValueColumn setDefaultSort(Boolean defaultSort) {
+		this.defaultSort = defaultSort;
+		return this;
+	}
 
 	@Override
 	public Map<String, Object> getGridSettings() {
 		Map<String, Object> json = new HashMap<>();
 		json.put("name", name);
-		json.put("type", type);
+		json.put("type", "value");
 		json.put("title", title);
 		json.put("useSorting", useSorting);
+		json.put("defSort", defaultSort);
 		if (filter != null) {
 			/*Map<String, Object> filterConf = new HashMap<>(filter.getFilterSettings());
 			json.put("filter", filterConf);

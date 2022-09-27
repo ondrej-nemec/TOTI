@@ -25,6 +25,7 @@ public class Button implements Input {
 	private String condition = null;
 	private boolean evaluate = false;
 	private List<String> classes = new LinkedList<>();
+	// TODO vyzkouset value
 
 	public static Button create(String url, String name) {
 		return new Button(url, name, false);
@@ -109,14 +110,27 @@ public class Button implements Input {
 	
 	@Override
 	public Map<String, Object> getInputSettings() {
+		// TODO action as string - JS func onClick
+		Map<String, Object> action = new HashMap<>();
+		action.put("href", url);
+		action.put("async", async);
+		action.put("method", method);
+		action.put("requestParams", requestParams);
+		if (confirmation != null) {
+			action.put("submitConfirmation", confirmation);
+		}
+		if (onFailure != null) {
+			action.put("onFailure", onFailure);
+		}
+		if (onSuccess != null) {
+			action.put("onSuccess", onSuccess);
+		}
+		
 		Map<String, Object> json = new HashMap<>();
-		json.put("href", url);
-		json.put("async", async);
 		json.put("type", "button");
-		json.put("name", name);
 		json.put("id", name);
-		json.put("method", method);
-		json.put("requestParams", requestParams);
+		json.put("name", name);
+		json.put("action", action);
 		json.put("class", classes);
 		if (title != null) {
 			json.put("value", title);
@@ -127,15 +141,6 @@ public class Button implements Input {
         if (icon != null) {
             json.put("icon", icon);
         }
-		if (confirmation != null) {
-			json.put("confirmation", confirmation);
-		}
-		if (onFailure != null) {
-			json.put("onError", onFailure);
-		}
-		if (onSuccess != null) {
-			json.put("onSuccess", onSuccess);
-		}
 		if (condition != null) {
 			json.put("condition", condition);
 			json.put("evaluate", evaluate);

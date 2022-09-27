@@ -10,20 +10,25 @@ import toti.control.inputs.Button;
 public class ButtonsColumn implements Column {
 	
 	private final String name;
-	private final String type; // value, buttons, actions
 	private String title;
 	
 	private boolean useResetButton = true;
+	// TODO add refresh button
 	private final List<Map<String, Object>> buttons = new LinkedList<>();
+	private final List<Map<String, Object>> mainuttons = new LinkedList<>();
 	
 	public ButtonsColumn(String name) {
 		this.name = name;
-		this.type = "buttons";
 		this.title = name;
 	}
 	
 	public ButtonsColumn addButton(Button button) {
 		buttons.add(button.getInputSettings());
+		return this;
+	}
+	
+	public ButtonsColumn addMainButton(Button button) {
+		mainuttons.add(button.getInputSettings());
 		return this;
 	}
 	
@@ -41,11 +46,12 @@ public class ButtonsColumn implements Column {
 	public Map<String, Object> getGridSettings() {
 		Map<String, Object> json = new HashMap<>();
 		json.put("name", name);
-		json.put("type", type);
+		json.put("type", "buttons");
 		json.put("title", title);
 		json.put("reset", useResetButton);
 		json.put("sorting", false);
 		json.put("buttons", buttons);
+		json.put("mainButtons", mainuttons);
 		return json;
 	}
 	
