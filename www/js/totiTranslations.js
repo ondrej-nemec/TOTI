@@ -18,6 +18,10 @@ var totiTranslations = {
 		"loadingError": /* "<t:trans message='common.grid.loading-error' />", /*/ "Problem with data loading", //*/
 		"tableCaption": /* "<t:trans message='common.grid.table-caption' />" /*/ "Showed {onPage}/{total} on page {pageIndex}" //*/
 	},
+	"buttons": {
+		"actionSuccess": "Action successfully done",
+		"actionFailure": "Action fails"
+	},
 //	"formMessages": {
 //		"saveError": /* "<t:trans message='common.form.saving-problem' />", /*/ "Problem with form saving", //*/
 //		"bindError": /* "<t:trans message='common.form.binding-problem' />" /*/ "Loading data failure" //*/

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import toti.control.inputs.Button;
+import toti.control.inputs.Reset;
 
 public class ButtonsColumn implements Column {
 	
@@ -15,7 +16,7 @@ public class ButtonsColumn implements Column {
 	private boolean useResetButton = true;
 	// TODO add refresh button
 	private final List<Map<String, Object>> buttons = new LinkedList<>();
-	private final List<Map<String, Object>> mainuttons = new LinkedList<>();
+	private final List<Map<String, Object>> mainButtons = new LinkedList<>();
 	
 	public ButtonsColumn(String name) {
 		this.name = name;
@@ -28,7 +29,7 @@ public class ButtonsColumn implements Column {
 	}
 	
 	public ButtonsColumn addMainButton(Button button) {
-		mainuttons.add(button.getInputSettings());
+		mainButtons.add(button.getInputSettings());
 		return this;
 	}
 	
@@ -48,10 +49,15 @@ public class ButtonsColumn implements Column {
 		json.put("name", name);
 		json.put("type", "buttons");
 		json.put("title", title);
-		json.put("reset", useResetButton);
+	//	json.put("useResetButton", useResetButton);
 		json.put("sorting", false);
 		json.put("buttons", buttons);
-		json.put("mainButtons", mainuttons);
+
+		List<Object> mains = new LinkedList<>(mainButtons);
+		if (useResetButton) {
+			mains.add(Reset.create("").getInputSettings());
+		}
+		json.put("mainButtons", mains);
 		return json;
 	}
 	

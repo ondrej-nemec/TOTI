@@ -77,6 +77,11 @@ class TotiGrid {
 							});
 						} else if (buttonConf.type === 'button') {
 							var button = totiControl.button(buttonConf);
+							button.addEventListener("click", function() {
+								setTimeout(function(){
+									grid.refreshData(clearPrevious);
+								}, 500);
+							});
 							buttons.push(button);
 						}
 					});
@@ -85,16 +90,21 @@ class TotiGrid {
 				case "value":
 					var filter = null;
 					if (column.hasOwnProperty("filter")) {
-						filter = totiControl.input(column.filter);
-						filter.classList.add("toti-grid-filtering");
+						var defValue = null;
 						if (column.filter.hasOwnProperty('value')) {
-							grid.filterBy(column.name, column.filter.value, false);
+							defvalue = column.filter.value;
 						}
 						if (filters.exists(column.name)) {
-							grid.filterBy(column.name, filters.get(column.name), false);
-							filter.value = filters.get(column.name);
-							// TODO nejde u selectu
+							defValue = filters.get(column.name);
 						}
+						if (defValue !== null) {
+							column.filter.value = defValue;
+							grid.filterBy(column.name, defValue, false);
+						}
+
+						filter = totiControl.input(column.filter);
+						filter.classList.add("toti-grid-filtering");
+
 						filter.addEventListener('change', function() {
 							grid.filterBy(column.name, filter.value);
 						});
@@ -108,22 +118,22 @@ class TotiGrid {
 		if (this.config.actions.length > 0) {
 			template.addActions(gridUnique, container, this.config.actions, function(event, settings) {
 				totiDisplay.fadeIn();
-				var ids = [];
+				var params = new URLSearchParams();
 				container.querySelectorAll('[unique="' + gridUnique + '"]:checked').forEach(function(checkbox) {
-					ids.push(checkbox.getAttribute("data-value"));
+					params.append("ids[]", checkbox.getAttribute("data-value"));
 				});
-				if (ids.length === 0) {
+				if (params.toString() === '') {
 					totiDisplay.fadeOut();
 					totiDisplay.flash("error", totiTranslations.actions.noSelectedItems);
 					return false;
 				}
 				var onClickSettings = totiUtils.clone(settings);
-				onClickSettings['params'] = ids;
+				onClickSettings['params'] = params;
 				return totiControl.getAction(onClickSettings)(event);
 			});
 		}
-		if (this.config.hasOwnProperty('pageSizes')) {
-			template.addPageSize(gridUnique, container, this.config.pageSizes, this.config.pageSize, this);
+		if (this.config.hasOwnProperty('pagesSizes')) {
+			template.addPageSize(gridUnique, container, this.config.pagesSizes, this.config.pageSize, this);
 		}
 		this.setPageSize(this.config.pageSize, false);
 		if (search.hasOwnProperty('pageSize')) {
@@ -310,9 +320,21 @@ class TotiGrid {
 						grid.template.addCell(grid.gridUnique, grid.container, row, checkbox, 1);
 					} else if (column.type === 'buttons') {
 						var buttons = [];
+						function showButton(condition, evaluate) {
+							if (evaluate) {
+								condition = totiUtils.parametrizedString(condition, rowData);
+							}
+							return totiUtils.execute(condition, [rowData], evaluate);
+						};
 						column.buttons.forEach(function(buttonConf) {
+							if (buttonConf.hasOwnProperty("condition") && !showButton(buttonConf.condition, buttonConf.evaluate)) {
+								return;
+							}
 							var btnConf = totiUtils.clone(buttonConf);
-							btnConf.href = totiUtils.parametrizedString(buttonConf.href, rowData);
+							btnConf.action.href = totiUtils.parametrizedString(buttonConf.action.href, rowData);
+							if (btnConf.action.hasOwnProperty('submitConfirmation')) {
+								btnConf.action.submitConfirmation = totiUtils.parametrizedString(btnConf.action.submitConfirmation, rowData);
+							}
 							var button = totiControl.button(btnConf);
 							buttons.push(button);
 							button.addEventListener("click", function() {
@@ -323,12 +345,11 @@ class TotiGrid {
 						});
 						grid.template.addCell(grid.gridUnique, grid.container, row, buttons, 2);
 					} else if (column.hasOwnProperty("renderer")) {
-						// TODO
+						var renderer = totiUtils.execute(column.renderer, [rowData[column.name], rowData]);
+						grid.template.addCell(grid.gridUnique, grid.container, row, renderer, 0);
 					} else if (!rowData.hasOwnProperty(column.name)) {
 						grid.template.addCell(grid.gridUnique, grid.container, row, "", 0);
 					} else if (column.hasOwnProperty("filter") && column.filter.hasOwnProperty("renderOptions")) {
-						// TODO 
-						/*
 						var value = rowData[column.name];
 						if (value !== null) {
                             if (column.filter.renderOptions.hasOwnProperty(value)) {
@@ -336,7 +357,6 @@ class TotiGrid {
                             }
 						}
 						grid.template.addCell(grid.gridUnique, grid.container, row, value, 0);
-						*/
 					} else if (column.hasOwnProperty("filter")  && column.filter.hasOwnProperty("originType")) {
 						grid.template.addCell(
 							grid.gridUnique, grid.container, row, 
@@ -350,6 +370,7 @@ class TotiGrid {
 			});
 		    
 		    grid.template.clearPageButtons(grid.gridUnique, grid.container);
+
 		    if (grid.config.paggingButtonsCount > 0)  {
 		    	var onClick = function(newIndex) {
 		    		return function() {
@@ -395,22 +416,12 @@ class TotiGrid {
 		    		grid.addNextPage();
 		    	});
 		    }
-			// TODO save cache
-
-
 			totiDisplay.fadeOut();
 		})
 		.catch(function(xhr) {
-			// totiTranslations.gridMessages.loadingError;
-			console.error(xhr); // TODO
-			
 			totiDisplay.fadeOut();
+			totiDisplay.flash("error", totiTranslations.gridMessages.loadingError);
 		});
-	}
-
-	// TODO pouzit?
-	executeGroupAction(link, ) {
-
 	}
 
 }

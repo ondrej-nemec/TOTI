@@ -134,10 +134,10 @@ var totiControl = {
 						button.setAttribute("title", name);
 						break;
 					case "action":
-						if (typeof name === "object") {
-							button.onclick = totiControl.getAction(name);
-						} else if (typeof name === 'function') {
-							button.addEventListener('click', name);
+						if (typeof attributes[key] === "object") {
+							button.onclick = totiControl.getAction(attributes[key]);
+						} else if (typeof attributes[key] === 'function') {
+							button.addEventListener('click', attributes[key]);
 						} else {
 							button.addEventListener("click", function(event) {
 								window[attributes.action](event); /*TODO use totiUtils execute instead?*/
@@ -150,7 +150,9 @@ var totiControl = {
 							clazzes = name.split(" ");
 						}
 						clazzes.forEach(function(clazz) {
-							button.classList.add(clazz);
+							if (clazz !== '') {
+								button.classList.add(clazz);
+							}
 						});
 						break;
 					case "icon":
@@ -274,9 +276,15 @@ var totiControl = {
 					}
 					return res;
 				})
-				.then(function(opions) {
+				.then(function(options) {
 					/* previous code sometimes returns null, sometimes promise*/
 					select.value = params.value;
+					/* render options for grid */
+					var renderOptions = {};
+					options.forEach(function(option) {
+						renderOptions[option.value] = option.title;
+					});
+					params.renderOptions = renderOptions;
 				});
 			}
 			
@@ -447,10 +455,16 @@ var totiControl = {
 	getAction: function(clickSettings) {
 		return function(event) {
 			event.preventDefault();
-			if (clickSettings.submitConfirmation !== null
-				 && clickSettings.submitConfirmation !== undefined 
-				 && !clickSettings.submitConfirmation()) {
-				return false;
+			if (clickSettings.submitConfirmation !== null && clickSettings.submitConfirmation !== undefined ) {
+				var confirmMessage = clickSettings.submitConfirmation;
+				if (typeof confirmMessage === 'string') {
+					confirmMessage = function() {
+						return totiDisplay.confirm(clickSettings.submitConfirmation);
+					};
+				}
+				if (!confirmMessage()) {
+					return false;
+				}
 			}
 			if (clickSettings.async) {
 				totiDisplay.fadeIn();
@@ -458,24 +472,25 @@ var totiControl = {
 					clickSettings.href,
 					clickSettings.method,
 					{},
+					{},
 					clickSettings.params
 				).then(function(res) {
 					totiDisplay.fadeOut();
 					if (clickSettings.hasOwnProperty('onSuccess')) {
 						totiUtils.execute(clickSettings.onSuccess, [res]);
-						//window[clickSettings.onSuccess](res);
 					} else {
-						totiDisplay.flash("success", res); // TODO tohle je potreba vyresit - text vs object + response code
+						totiDisplay.flash("success", totiTranslations.buttons.actionSuccess);
 					}
-				}).catch(function() {
+				}).catch(function(xhr) {
 					totiDisplay.fadeOut();
 					if (clickSettings.hasOwnProperty('onFailure')) {
-						totiUtils.execute(clickSettings.onFailure, [res]);
+						totiUtils.execute(clickSettings.onFailure, [xhr]);
 					} else {
-						totiDisplay.flash("error", xhr); // TODO tohle je potreba vyresit - text vs object + response code
+						totiDisplay.flash("error", totiTranslations.buttons.actionFailure);
 					}
 				});
 			} else {
+				totiDisplay.fadeOut();
 				/* totiControl.load.link(href, method, {}, totiControl.getHeaders()); */
 				window.location = clickSettings.href;
 			}

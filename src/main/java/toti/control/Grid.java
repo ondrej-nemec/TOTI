@@ -87,7 +87,7 @@ public class Grid implements Control {
 		if (pagesSizes != null && !pagesSizes.isEmpty()) {
 			json.put("pagesSizes", pagesSizes);
 		}
-		json.put("pagesButtonCount", pagesButtonCount);
+		json.put("paggingButtonsCount", pagesButtonCount);
 		json.put("useLoadButton", useLoadButton);
 		json.put("refresh", refreshInterval);
 		json.put("rowSelection", rowSelection);
