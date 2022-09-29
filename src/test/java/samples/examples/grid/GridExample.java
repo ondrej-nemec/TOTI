@@ -4,7 +4,6 @@ import static org.mockito.Mockito.mock;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +15,6 @@ import ji.database.Database;
 import ji.database.DatabaseConfig;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.structures.RequestParameters;
 import ji.translator.LanguageSettings;
 import ji.translator.Locale;
 import ji.translator.Translator;
@@ -180,7 +178,7 @@ public class GridExample implements Module {
 	}
 	
 	public Validator allFilersValidator() {
-		/*return GridOptions.getValidator(Arrays.asList(
+		return GridOptions.getValidator(Arrays.asList(
 			new GridColumn("text"),
 			new GridColumn("number", Double.class),
 			new GridColumn("range", Integer.class),
@@ -190,16 +188,25 @@ public class GridExample implements Module {
 			new GridColumn("time_col"),
 			new GridColumn("month"),
 			new GridColumn("week")
-		));*/
-		return new Validator(false).setGlobalFunction((r, p, t)->{
+		));
+		/*return new Validator(false).setGlobalFunction((r, p, t)->{
 			System.err.println("Request " + r + " " + p);
 			r.forEach((k, v)->{
-				System.err.println("  " + k + ": " + v);
+				System.err.println("  " + k + ": " + v + " " + v.getValue().getClass());
 			});
+			System.err.println("filters");
+			r.getDictionaryList("filters").forEach((val)->{
+				System.err.println(val.getDictionaryMap());
+			});
+			System.err.println("sorting");
+			r.getDictionaryList("sorting").forEach((val)->{
+				System.err.println(val.getDictionaryMap());
+			});
+			
 			r.put("filters", new RequestParameters());
 			r.put("sorting", new RequestParameters());
 			return new HashSet();
-		});
+		});*/
 	}
 	
 	/******/
@@ -224,10 +231,16 @@ public class GridExample implements Module {
 				.setFilter(Datetime.filter().setStep(1))
 				.setUseSorting(true)
 			);
-		// TODO add Add Button
 		grid.addColumn(
 			new ButtonsColumn("buttons")
 			.setResetFiltersButton(true) // disable reset-filter button
+			.addButton(
+				Button.create(
+					Link.get().addUrlParam("123").addGetParam("name", "Grid button name")
+						.create(getClass(), c->c.asyncButtonLink(0, null)),
+					"global-button"
+				)
+			)
 		);
 		Map<String, Object> params = new HashMap<>();
 		params.put("grid", grid);
@@ -352,22 +365,58 @@ public class GridExample implements Module {
 	/****/
 	
 	/**
-	 * TODO check renderers + add own template + override def template
+	 * Shows usage of custom cell renderer
 	 * @return http://localhost:8080/examples/grid/renderer
 	 */
-	@Action("rederer")
+	@Action("renderer")
+	@Deprecated // override JS instead
 	public Response renderers() {
 		Grid grid = new Grid(Link.get().create(getClass(), c->c.allFilters(null)), "get");
 		
 		grid.addColumn(new ValueColumn("id").setRenderer("onColumnRenderer"));
 		grid.addColumn(new ValueColumn("text"));
 		
-	//	grid.setOnRowRenderer("onRowRenderer");
 		grid.useRowSelection(true);
 		
 		Map<String, Object> params = new HashMap<>();
 		params.put("grid", grid);
 		return Response.getTemplate("filters.jsp", params);
+	}
+	
+	/**
+	 * Shows overriding default JS printing
+	 * @return http://localhost:8080/examples/grid/override-render
+	 */
+	@Action("override-render")
+	public Response overrideRender() {
+		Grid grid = new Grid(Link.get().create(getClass(), c->c.allFilters(null)), "get");
+		
+		grid.addColumn(new ValueColumn("id"));
+		grid.addColumn(new ValueColumn("text"));
+		
+		grid.useRowSelection(true);
+		
+		Map<String, Object> params = new HashMap<>();
+		params.put("grid", grid);
+		return Response.getTemplate("override.jsp", params);
+	}
+	
+	/**
+	 * Shows usage of custom template
+	 * @return http://localhost:8080/examples/grid/custom-template
+	 */
+	@Action("custom-template")
+	public Response customTemplate() {
+		Grid grid = new Grid(Link.get().create(getClass(), c->c.allFilters(null)), "get");
+		
+		grid.addColumn(new ValueColumn("id"));
+		grid.addColumn(new ValueColumn("text"));
+		
+		grid.useRowSelection(true);
+		
+		Map<String, Object> params = new HashMap<>();
+		params.put("grid", grid);
+		return Response.getTemplate("customTemplate.jsp", params);
 	}
 	
 	/****/
