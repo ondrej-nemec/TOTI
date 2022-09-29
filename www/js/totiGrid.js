@@ -2,7 +2,7 @@
 class TotiGrid {
 
 	cookieName = "grid-cache";
-	cookieAge = 60*5; // 5 min
+	cookieAge = 60*5; /* 5 min */
 	
 	constructor(config) {
 		this.config = config;

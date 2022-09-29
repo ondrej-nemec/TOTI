@@ -88,7 +88,7 @@ var totiUtils = {
 		}
 		var cookieString = name + "=" + value + ";SameSite=Strict;path=" + path;
 		if (maxAge !== null) {
-			cookieString += ";MayAge=" + maxAge;
+			cookieString += ";Max-Age=" + maxAge;
 		}
 		document.cookie = cookieString;
 	},

@@ -20,7 +20,7 @@ var totiLoad = {
 				};
 			}
 			if (urlData !== null && urlData !== {}) {
-				url = url + "?" + new URLSearchParams(urlData).toString();
+				url = url + "?" + ((bodyData instanceof URLSearchParams) ? bodyData : new URLSearchParams(urlData)).toString();
 			}
 			xhr.open(method, url); /* method*/
 
@@ -50,6 +50,12 @@ var totiLoad = {
 			};
 			if (bodyData instanceof FormData) {
 				xhr.send(bodyData);
+			} else if (bodyData instanceof URLSearchParams) {
+				/* clear automatic header */
+				if (!headers.hasOwnProperty("Content-Type")) {
+					xhr.setRequestHeader("Content-Type", "");
+				}
+				xhr.send(bodyData.toString());
 			} else if (typeof bodyData === 'string' || bodyData instanceof String) {
 				xhr.send(bodyData);
 			} else {
