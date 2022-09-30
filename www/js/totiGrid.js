@@ -159,7 +159,7 @@ class TotiGrid {
 		if (template === false) { /* parent.children.length > 0 */
 			totiTemplate = totiGridCustomTemplate;
 		}
-		if (template === null) {
+		if (template === null || template === false) {
 			template = {};
 		}
 		for (const[name, value] of Object.entries(totiTemplate)) {
@@ -419,6 +419,7 @@ class TotiGrid {
 			totiDisplay.fadeOut();
 		})
 		.catch(function(xhr) {
+			console.error(xhr);
 			totiDisplay.fadeOut();
 			totiDisplay.flash("error", totiTranslations.gridMessages.loadingError);
 		});

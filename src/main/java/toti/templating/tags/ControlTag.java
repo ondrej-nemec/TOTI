@@ -60,10 +60,21 @@ public class ControlTag implements Tag {
 				+ "toti.control.Control control=(toti.control.Control)(getVariable(\"%s\"));"
 				+ "write(\""
 				+ "<script>"
-				+ "\"+control.toString().replace(\"</script>\", \"\")+\""
-				+ ".render('%s', 'toti-\" + control.getType() + \"-%s'"
-				+ (useDefaultTemplate ? "" : ", false")
-				+ ");"
+				// observer func start
+				+ "function handleSomeDiv(someDiv) {"
+					 // init grid
+					+ "\"+control.toString().replace(\"</script>\", \"\")+\""
+					+ ".render('%s', 'toti-\" + control.getType() + \"-%s'"
+					+ (useDefaultTemplate ? "" : ", false")
+					+ ");" // grid init end
+				+ "}" // observer func end
+				// start observing
+				+ "const observer = new MutationObserver(function (mutations, mutationInstance) {"
+					+ "const someDiv = document.querySelector('%s');"
+					+ "if (someDiv) { handleSomeDiv(someDiv); mutationInstance.disconnect(); }"
+				+ "});"
+				+ "observer.observe(document, { childList: true, subtree: true });"
+				
 				+ "</script>"
 				+ "\");"
 				+ "}",
@@ -71,8 +82,9 @@ public class ControlTag implements Tag {
 				params.get("name"),
 				params.get("name"),
 				params.get("name"),
-				"div#control-" +params.get("name"),
-				params.get("name")
+				"div#control-" + params.get("name"),
+				params.get("name"),
+				"div#control-" + params.get("name")
 		);}
 	
 }

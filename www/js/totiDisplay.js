@@ -38,8 +38,17 @@ var totiDisplay = {
 		if (flash !== null) {
 			flash.appendChild(div);
 		}
-		console.log("Flash " + severity + ":");
-		console.log(message);
+		switch(severity.toLowerCase()) {
+			case "error":
+				console.error("Flash " + severity + ":" + message);
+				break;
+			case "warn":
+			case "warning":
+				console.warn("Flash " + severity + ":" + message);
+				break;
+			default:
+				console.log("Flash " + severity + ":" + message);
+		}
 	},
 	storedFlash: function(severity, message) {
 		var name = 'flash';

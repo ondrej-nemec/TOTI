@@ -1,7 +1,7 @@
 /* TOTI Grid custom template version 0.0.0 */
 var totiGridCustomTemplate = {
 	getContainer: function(parentSelector, gridUnique) {
-		return document.querySelector(parentSelector);;
+		return document.querySelector(parentSelector);
 	},
 	setTitle: function(gridUnique, container, name, title) {
 		var titleCell = container.querySelector('#toti-grid-title_' + name);
@@ -33,7 +33,7 @@ var totiGridCustomTemplate = {
 		}
 	},
 	addCheckbox: function(gridUnique, container, checkbox) {
-		container.app
+		
 	},
 	addButtons: function(gridUnique, container, buttons) {},
 	addPageSize: function(gridUnique, container, sizes, selectedSize, grid) {},	

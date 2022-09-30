@@ -358,42 +358,6 @@ public class GridExample implements Module {
 		return Response.getTemplate("filters.jsp", params);
 	}
 	
-	/**
-	 * Shows overriding default JS printing
-	 * @return http://localhost:8080/examples-grid/grid/override-render
-	 */
-	@Action("override-render")
-	public Response overrideRender() {
-		Grid grid = new Grid(Link.get().create(getClass(), c->c.allFilters(null)), "get");
-		
-		grid.addColumn(new ValueColumn("id"));
-		grid.addColumn(new ValueColumn("text"));
-		
-		grid.useRowSelection(true);
-		
-		Map<String, Object> params = new HashMap<>();
-		params.put("grid", grid);
-		return Response.getTemplate("override.jsp", params);
-	}
-	
-	/**
-	 * Shows usage of custom template
-	 * @return http://localhost:8080/examples-grid/grid/custom-template
-	 */
-	@Action("custom-template")
-	public Response customTemplate() {
-		Grid grid = new Grid(Link.get().create(getClass(), c->c.allFilters(null)), "get");
-		
-		grid.addColumn(new ValueColumn("id"));
-		grid.addColumn(new ValueColumn("text"));
-		
-		grid.useRowSelection(true);
-		
-		Map<String, Object> params = new HashMap<>();
-		params.put("grid", grid);
-		return Response.getTemplate("customTemplate.jsp", params);
-	}
-	
 	/****/
 	
 	/**
@@ -736,6 +700,132 @@ public class GridExample implements Module {
 			logger.error("all filters", e);
 			return Response.getText(StatusCode.INTERNAL_SERVER_ERROR, "Error occur: " + e.getMessage());
 		}
+	}
+	
+	/*************/
+	
+	/**
+	 * Shows usage of custom template with all settings
+	 * @return http://localhost:8080/examples-grid/grid/custom-template
+	 */
+	@Action("custom-template")
+	public Response customTemplate() {
+		Grid grid = new Grid(Link.get().create(getClass(), c->c.allFilters(null)), "get");
+		
+		grid.addColumn(new ActionsColumn("Group actions"));
+		
+		grid.addColumn(new ValueColumn("id").setTitle("ID"));
+		grid.addColumn(
+			new ValueColumn("text")
+			.setTitle("Text")
+			.setFilter(
+				Text.filter()
+				.setSize(7).setMaxLength(3).setMinLength(10)
+				.setPlaceholder("Filter for Text")
+				// .setDefaultValue(...)
+			)
+			.setUseSorting(true)
+		);
+		grid.addColumn(
+			new ValueColumn("number")
+			.setTitle("Number")
+			.setFilter(
+				Number.filter()
+				.setStep(0.1).setMax(10).setMin(-10)
+				.setPlaceholder("Filter for Number")
+				// .setDefaultValue(...)
+			)
+			.setUseSorting(true)
+		);
+		grid.addColumn(
+			new ValueColumn("range")
+			.setTitle("Range")
+			.setFilter(
+				Range.filter().setStep(5).setMin(0).setMax(100)
+				// .setDefaultValue(...)
+			)
+			.setUseSorting(true)
+		);
+		grid.addColumn(
+			new ValueColumn("select_col")
+			.setTitle("Select")
+			.setFilter(
+				Select.filter(Arrays.asList(
+					Option.create("", "---"),
+					Option.create(true, "Yes"),
+					Option.create(false, "No")
+				))
+				// .setDefaultValue(...)
+			)
+			.setUseSorting(true)
+		);
+		grid.addColumn(
+			new ValueColumn("datetime_col")
+			.setTitle("Datetime")
+			.setFilter(Datetime.filter().setStep(1)) // .setDefaultValue(...)
+			.setUseSorting(true)
+		);
+		grid.addColumn(
+			new ValueColumn("date_col")
+			.setTitle("Date")
+			.setFilter(Date.filter()) // .setDefaultValue(...)
+			.setUseSorting(true)
+		);
+		grid.addColumn(
+			new ValueColumn("time_col")
+			.setTitle("Time")
+			.setFilter(Time.filter().setStep(1))// .setDefaultValue(...)
+			.setUseSorting(true)
+		);
+		grid.addColumn(
+			new ValueColumn("month")
+			.setTitle("Month")
+			.setFilter(Month.filter()) // .setDefaultValue(...)
+			.setUseSorting(true)
+		);
+		grid.addColumn(
+			new ValueColumn("week")
+			.setTitle("Week")
+			.setFilter(
+				Week.filter() // .setDefaultValue(...)
+			)
+			.setUseSorting(true)
+		);
+
+		grid.addColumn(
+			new ButtonsColumn("buttons")
+			.setResetFiltersButton(true) // disable reset-filter button
+			.addButton(
+				Button.create(
+					Link.get().addUrlParam("123").addGetParam("name", "Grid button name")
+						.create(getClass(), c->c.asyncButtonLink(0, null)),
+					"global-button"
+				)
+			)
+		);
+		
+		
+		grid.addAction(
+			new GroupAction("Async action", Link.get().create(getClass(), c->c.asyncActionLink(null)))
+			.setOnFailure("actionOnFailure").setOnSuccess("actionOnSuccess")
+			.setConfirmation("Really?")
+		);
+		grid.addAction(
+			new GroupAction("Sync action", Link.get().create(getClass(), c->c.syncActionLink(null)))
+			.setAsync(false)
+		);
+		grid.addAction(
+			new GroupAction("Post action", Link.get().create(getClass(), c->c.postActionLink(null)))
+			.setOnFailure("actionOnFailure").setOnSuccess("actionOnSuccess")
+			.setMethod("post")
+		);
+		
+		
+		grid.useRowSelection(true);
+		
+		Map<String, Object> params = new HashMap<>();
+		params.put("grid", grid);
+		return Response.getTemplate("customTemplate.jsp", params);
 	}
 	
 	/*******************************/
