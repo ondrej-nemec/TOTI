@@ -4,9 +4,9 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
+import ji.common.structures.SortedMap;
 import ji.database.Database;
 import ji.database.support.DatabaseRow;
 import ji.querybuilder.QueryBuilder;
@@ -59,7 +59,7 @@ public interface GridEntityDao<T extends Entity> {
 		});
 	}
 	
-	default void _applySorting(SelectBuilder select, Map<String, Sort> sorting) {
+	default void _applySorting(SelectBuilder select, SortedMap<String, Sort> sorting) {
 		StringBuilder orderBY = new StringBuilder();
 		sorting.forEach((sortName, sort)->{
 			if (!orderBY.toString().isEmpty()) {
@@ -75,7 +75,7 @@ public interface GridEntityDao<T extends Entity> {
 	default void _applyFilters(
 			QueryBuilder builder,
 			SelectBuilder select,
-			Map<String, Filter> filters,
+			SortedMap<String, Filter> filters,
 			Collection<Object> forOwners) {
 		select.where("1=1");
 		if (getOwnerColumnName().isPresent()) {

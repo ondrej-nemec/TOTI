@@ -5,7 +5,6 @@ import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Optional;
 
 import org.junit.Test;
@@ -13,6 +12,7 @@ import org.junit.runner.RunWith;
 
 import ji.common.structures.MapInit;
 import ji.common.structures.ObjectBuilder;
+import ji.common.structures.SortedMap;
 import ji.database.Database;
 import ji.querybuilder.QueryBuilder;
 import ji.querybuilder.builders.SelectBuilder;
@@ -30,7 +30,7 @@ public class GridEntityDaoTest implements Entity {
 	public void testApplyFilters(
 			String message,
 			Optional<String> owner, Collection<Object> forOwners,
-			Map<String, Filter> filters, String expected) {
+			SortedMap<String, Filter> filters, String expected) {
 		QueryBuilder builder = mock(QueryBuilder.class);
 		SelectBuilder select = new MySqlSelectBuilder(null, ""); // mock(SelectBuilder.class);
 		when(builder.getSqlFunctions()).thenReturn(new MySqlFunctions());
@@ -52,21 +52,21 @@ public class GridEntityDaoTest implements Entity {
 			new Object[] {
 					"owner specified, owners is empty, no filters",
 				Optional.of("ownerId"), Arrays.asList(),
-				new MapInit<String, Filter>().toMap(),
+				new MapInit<String, Filter>().toSortedMap(),
 				"WHERE (1=1) AND (1=2)"
 			},
 			// owner specified, owners with ids, no filters
 			new Object[] {
 					"owner specified, owners with ids, no filters",
 				Optional.of("ownerId"), Arrays.asList(1, "--id--", false),
-				new MapInit<String, Filter>().toMap(),
+				new MapInit<String, Filter>().toSortedMap(),
 				"WHERE (1=1) AND (ownerId in (1,'--id--',false))"
 			},
 			// no owner, owners with ids, no filters
 			new Object[] {
 					"no owner, owners with ids, no filters",
 				Optional.empty(), Arrays.asList(1, "--id--", false),
-				new MapInit<String, Filter>().toMap(),
+				new MapInit<String, Filter>().toSortedMap(),
 				"WHERE (1=1)"
 			},
 			// no owner, no ids, like
@@ -75,7 +75,7 @@ public class GridEntityDaoTest implements Entity {
 				Optional.empty(), Arrays.asList(),
 				new MapInit<String, Filter>()
 					.append("likeColumn", new Filter("likeColumn", FilterMode.LIKE, "--value--"))
-					.toMap(),
+					.toSortedMap(),
 				"WHERE (1=1) AND (CONCAT('', likeColumn) LIKE '%--value--%')"
 			},
 			// no owner, no ids, starts
@@ -84,7 +84,7 @@ public class GridEntityDaoTest implements Entity {
 				Optional.empty(), Arrays.asList(),
 				new MapInit<String, Filter>()
 					.append("startsColumn", new Filter("startsColumn", FilterMode.STARTS_WITH, "--value--"))
-					.toMap(),
+					.toSortedMap(),
 				"WHERE (1=1) AND (CONCAT('', startsColumn) LIKE '%--value--')"
 			},
 			// no owner, no ids, ends
@@ -93,7 +93,7 @@ public class GridEntityDaoTest implements Entity {
 				Optional.empty(), Arrays.asList(),
 				new MapInit<String, Filter>()
 				.append("endsColumn", new Filter("endsColumn", FilterMode.ENDS_WITH, "--value--"))
-				.toMap(),
+				.toSortedMap(),
 				"WHERE (1=1) AND (CONCAT('', endsColumn) LIKE '--value--%')"
 			},
 			// no owner, no ids, equas
@@ -102,7 +102,7 @@ public class GridEntityDaoTest implements Entity {
 				Optional.empty(), Arrays.asList(),
 				new MapInit<String, Filter>()
 				.append("equalsColumn", new Filter("equalsColumn", FilterMode.EQUALS, "--value--"))
-				.toMap(),
+				.toSortedMap(),
 				"WHERE (1=1) AND (equalsColumn = '--value--')"
 			},
 			// combined
@@ -114,7 +114,7 @@ public class GridEntityDaoTest implements Entity {
 				.append("startsColumn", new Filter("startsColumn", FilterMode.STARTS_WITH, "--value--"))
 				.append("endsColumn", new Filter("endsColumn", FilterMode.ENDS_WITH, "--value--"))
 				.append("equalsColumn", new Filter("equalsColumn", FilterMode.EQUALS, "--value--"))
-				.toMap(),
+				.toSortedMap(),
 				"WHERE (1=1) AND (ownerId in (1,'--id--',false))"
 				+ " AND (equalsColumn = '--value--')"
 				+ " AND (CONCAT('', startsColumn) LIKE '%--value--')"
@@ -127,7 +127,7 @@ public class GridEntityDaoTest implements Entity {
 	@Test
 	@Parameters(method = "dataApplySorting")
 	public void testApplySorting(
-			Map<String, Sort> sorting, String expected) {
+			SortedMap<String, Sort> sorting, String expected) {
 		SelectBuilder select = new MySqlSelectBuilder(null, ""); // mock(SelectBuilder.class);
 		
 		GridEntityDao<GridEntityDaoTest> dao = new GridEntityDao<GridEntityDaoTest>() {			
@@ -145,21 +145,21 @@ public class GridEntityDaoTest implements Entity {
 		return new Object[] {
 			// no sorting
 			new Object[] {
-				new MapInit<String, Sort>().toMap(),
+				new MapInit<String, Sort>().toSortedMap(),
 				""
 			},
 			// one sort asc
 			new Object[] {
 				new MapInit<String, Sort>()
 				.append("sortAsc", new Sort("sortAsc", false))
-				.toMap(),
+				.toSortedMap(),
 				" ORDER BY sortAsc ASC"
 			},
 			// one sort desc
 			new Object[] {
 				new MapInit<String, Sort>()
 				.append("sortDesc", new Sort("sortDesc", true))
-				.toMap(),
+				.toSortedMap(),
 				" ORDER BY sortDesc DESC"
 			},
 			// more sorts
@@ -168,14 +168,14 @@ public class GridEntityDaoTest implements Entity {
 				.append("sortAsc", new Sort("sortAsc", false))
 				.append("sortDesc", new Sort("sortDesc", true))
 				.append("sortAsc2", new Sort("sortAsc2", false))
-				.toMap(),
+				.toSortedMap(),
 				" ORDER BY sortAsc ASC, sortDesc DESC, sortAsc2 ASC"
 			},
 			// name substitution
 			new Object[] {
 				new MapInit<String, Sort>()
 				.append("sortName", new Sort("realSortName", false))
-				.toMap(),
+				.toSortedMap(),
 				" ORDER BY realSortName ASC"
 			},
 		};

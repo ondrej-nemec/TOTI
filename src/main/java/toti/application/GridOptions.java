@@ -1,12 +1,10 @@
 package toti.application;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import ji.common.annotations.MapperParameter;
 import ji.common.annotations.MapperType;
+import ji.common.structures.SortedMap;
 import toti.validation.ItemRules;
 import toti.validation.Validator;
 
@@ -17,15 +15,15 @@ public class GridOptions implements Entity {
 	@MapperParameter({@MapperType("pageSize")})
 	private Integer pageSize;
 	@MapperParameter({@MapperType("filters")})
-	//private List<Filter> filters = new LinkedList<>();
-	private Map<String, Filter> filters = new HashMap<>();
+	private SortedMap<String, Filter> filters = new SortedMap<>();
+//	private Map<String, Filter> filters = new HashMap<>();
 	@MapperParameter({@MapperType("sorting")})
-	private Map<String, Sort> sorting = new HashMap<>();
-	//private List<Sort> sorting = new LinkedList<>();
+	private SortedMap<String, Sort> sorting = new SortedMap<>();
+//	private Map<String, Sort> sorting = new HashMap<>();
 	
 	public GridOptions() {}
 
-	public GridOptions(Integer pageIndex, Integer pageSize, Map<String, Filter> filters, Map<String, Sort> sorting) {
+	public GridOptions(Integer pageIndex, Integer pageSize, SortedMap<String, Filter> filters, SortedMap<String, Sort> sorting) {
 		this.pageIndex = pageIndex;
 		this.pageSize = pageSize;
 		this.filters = filters;
@@ -39,10 +37,10 @@ public class GridOptions implements Entity {
 		return pageSize;
 	}
 	
-	public Map<String, Filter> getFilters() {
+	public SortedMap<String, Filter> getFilters() {
 		return filters;
 	}
-	public Map<String, Sort> getSorting() {
+	public SortedMap<String, Sort> getSorting() {
 		return sorting;
 	}
 	
@@ -78,12 +76,13 @@ public class GridOptions implements Entity {
 			}
 			if (column.isUseInSorting()) {
 				sorting.addRule(
-					ItemRules.forName(column.getName(), false).setAllowedValues(Arrays.asList("DESC", "ASC"))
+					ItemRules.forName(column.getName(), false).setType(boolean.class)
+					//setAllowedValues(Arrays.asList("DESC", "ASC"))
 					.setChangeValue((v)->{
 						if (v == null) {
 							return null;
 						}
-						return new Sort(column.getSortingName(), v.equals("DESC"));
+						return new Sort(column.getSortingName(), (boolean)v);
 					})
 				);
 			}
@@ -91,8 +90,8 @@ public class GridOptions implements Entity {
 		return new Validator(true)
 			.addRule(ItemRules.forName("pageIndex", true))
 			.addRule(ItemRules.forName("pageSize", true))
-			.addRule(ItemRules.forName("filters", true).setMapSpecification(filters))
-			.addRule(ItemRules.forName("sorting", true).setMapSpecification(sorting));
+			.addRule(ItemRules.forName("filters", true).setSortedMapSpecification(filters))
+			.addRule(ItemRules.forName("sorting", true).setSortedMapSpecification(sorting));
 	}
 
 }

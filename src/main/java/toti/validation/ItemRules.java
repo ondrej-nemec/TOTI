@@ -65,6 +65,7 @@ public class ItemRules {
 	
 	private Optional<Validator> mapSpecification = Optional.empty();
 	private Optional<Validator> listSpecification = Optional.empty();
+	private Optional<Validator> sortedMapSpecification = Optional.empty();
 	
 	private Optional<String> rename = Optional.empty();
 	
@@ -258,6 +259,11 @@ public class ItemRules {
 		return this;
 	}
 
+	public ItemRules setSortedMapSpecification(Validator sortedMapSpecification) {
+		this.sortedMapSpecification = Optional.of(sortedMapSpecification);
+		return this;
+	}
+
 	public ItemRules setChangeValue(Function<Object, Object> changeValue) {
 		this.changeValue = changeValue;
 		return this;
@@ -381,6 +387,10 @@ public class ItemRules {
 
 	public Optional<Validator> getListSpecification() {
 		return listSpecification;
+	}
+	
+	public Optional<Validator> getSortedMapSpecification() {
+		return sortedMapSpecification;
 	}
 
 	public Function<Object, Object> getChangeValue() {

@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 import ji.common.exceptions.LogicException;
 import ji.common.structures.DictionaryValue;
 import ji.common.structures.MapInit;
+import ji.common.structures.SortedMap;
 import ji.socketCommunication.http.structures.RequestParameters;
 import ji.socketCommunication.http.structures.UploadedFile;
 import ji.translator.Translator;
@@ -268,13 +270,17 @@ public class Validator {
 			checkRule(
 					rule.getMapSpecification(),
 					(validator)->{
-						RequestParameters fields = new RequestParameters();
-						fields.putAll(new DictionaryValue(o).getMap());
-						RequestParameters global = new RequestParameters();
-						errors.putAll(validator.validate(propertyName + "[%s]", fields, global, translator));
-						prop.put(ruleName, fields);
-						validatorParams.put(ruleName, global);
-						return false;
+						try {
+							RequestParameters fields = new RequestParameters();
+							fields.putAll(new DictionaryValue(o).getMap());
+							RequestParameters global = new RequestParameters();
+							errors.putAll(validator.validate(propertyName + "[%s]", fields, global, translator));
+							prop.put(ruleName, fields);
+							validatorParams.put(ruleName, global);
+							return false;
+						} catch (NullPointerException | ClassCastException e) {
+							return true;
+						}
 					},
 					errors,
 					propertyName,
@@ -300,6 +306,33 @@ public class Validator {
 							prop.put(ruleName, new ArrayList<>(fields.values()));
 							return false;
 						} catch (ClassCastException | NumberFormatException e) {
+							return true;
+						}
+					},
+					errors,
+					propertyName,
+					rule.getOnExpectedTypeError().apply(translator)
+			);
+			checkRule(
+					rule.getSortedMapSpecification(), 
+					(validator)->{
+						try {
+							RequestParameters fields = new RequestParameters();
+							for (Object item : new DictionaryValue(o).getList()) {
+								DictionaryValue dvItem = new DictionaryValue(item);
+								if (!dvItem.is(Map.class) || dvItem.getMap().size() != 1) {
+									return true;
+								}
+								Entry<Object, Object> entryItem = dvItem.getMap().entrySet().iterator().next();
+								fields.put(entryItem.getKey().toString(), entryItem.getValue());
+							}
+							
+							RequestParameters global = new RequestParameters();
+							errors.putAll(validator.validate(propertyName + "[%s]", fields, global, translator));
+							prop.put(ruleName, new SortedMap<String, Object>().putAll(fields.toMap()));
+							validatorParams.put(ruleName, global);
+							return false;
+						} catch (Exception e) {
 							return true;
 						}
 					},
