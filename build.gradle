@@ -11,7 +11,7 @@ repositories {
 	maven { url 'https://jitpack.io' }
    // flatDir { dirs 'libs' }
 }
-/*
+//*
 sourceSets {
     main {
         java {
@@ -23,6 +23,19 @@ sourceSets {
             srcDirs '../javainit/ji-translate/src/main/java'
             srcDirs '../javainit/ji-files/src/main/java'
             srcDirs '../javainit/ji-testing/src/main/java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+        }
+    }
+    test {
+        java {
+            srcDir 'src/test/java'
+            srcDir 'samples/examples/java'
+        }
+        resources {
+            srcDir 'src/test/resources'
+            srcDir 'samples/examples/resources'
         }
     }
 }
