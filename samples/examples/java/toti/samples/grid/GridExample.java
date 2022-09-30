@@ -182,24 +182,6 @@ public class GridExample implements Module {
 			new GridColumn("month"),
 			new GridColumn("week")
 		));
-		/*return new Validator(false).setGlobalFunction((r, p, t)->{
-			System.err.println("Request " + r + " " + p);
-			r.forEach((k, v)->{
-				System.err.println("  " + k + ": " + v + " " + v.getValue().getClass());
-			});
-			System.err.println("filters");
-			r.getDictionaryList("filters").forEach((val)->{
-				System.err.println(val.getDictionaryMap());
-			});
-			System.err.println("sorting");
-			r.getDictionaryList("sorting").forEach((val)->{
-				System.err.println(val.getDictionaryMap());
-			});
-			
-			r.put("filters", new RequestParameters());
-			r.put("sorting", new RequestParameters());
-			return new HashSet();
-		});*/
 	}
 	
 	/******/
