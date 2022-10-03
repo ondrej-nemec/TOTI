@@ -10,7 +10,6 @@ var totiGridCustomTemplate = {
 		}
 	},
 	addSorting: function(gridUnique, container, name, grid, defautlValue = null) {
-		// TODO sorting je volitelný - nezobrazit, pokud neni nastaven
 		container.querySelectorAll('[totiSort][name="' + name + '"]').forEach(function(element) {
 			element.addEventListener("click", function() {
 				var sortOrder = grid.nextSort(element.getAttribute("name"));
@@ -33,14 +32,50 @@ var totiGridCustomTemplate = {
 		}
 	},
 	addCheckbox: function(gridUnique, container, checkbox) {
-		
+		var placeholders = container.querySelectorAll('toti[checkbox]');
+		placeholders.forEach(function(placeholder) {
+			var atts = placeholder.attributes;
+			for (var i = 0; i < atts.length; i++){
+				if (atts[i].nodeName !== 'checkbox') {
+					checkbox.setAttribute(atts[i].nodeName, atts[i].nodeValue);
+				}
+			}
+			placeholder.parentNode.replaceChild(checkbox, placeholder);
+		});
 	},
-	addButtons: function(gridUnique, container, buttons) {},
+	addButtons: function(gridUnique, container, name, buttons) {
+		var placeholder = container.querySelector('toti[buttons="' + name + '"]');
+		if (placeholder !== null) {
+			placeholder.parentNode.append(...buttons);
+			placeholder.remove();
+		}
+	},
 	addPageSize: function(gridUnique, container, sizes, selectedSize, grid) {},	
 	setCaption: function(gridUnique, container, displayed, total, text) {},
-	addRow: function(gridUnique, container) {},
+	addRow: function(gridUnique, container) {
+		var rowContainer = container.querySelector('template#toti-grid-row');
+		var row = rowContainer.content.firstElementChild.cloneNode(true);
+		rowContainer.parentNode.appendChild(row);
+		return row;
+	},
 	setRowSelected: function(gridUnique, container, row) {},
-	addCell: function(gridUnique, container, rowContainer, value, mode) {},
+	addCell: function(gridUnique, container, rowContainer, name, value, mode) {
+		var content = rowContainer.querySelector('#toti-grid-cell-' + name);
+		if (content === null) {
+			return;
+		}
+		switch(mode) {
+			case 0:
+				content.innerText = value;
+				break;
+			case 1:
+				content.appendChild(value);
+				break;
+			case 2:
+				content.append(...value);
+				break;
+		}
+	},
 	clearBody: function(gridUnique, container) {},
 	addActions: function(gridUnique, container, actions, onSelect) {},
 	addPageButton: function(gridUnique, container, title, isActual, onClick) {},

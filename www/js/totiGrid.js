@@ -85,7 +85,7 @@ class TotiGrid {
 							buttons.push(button);
 						}
 					});
-					template.addButtons(gridUnique, container, buttons);
+					template.addButtons(gridUnique, container, column.name, buttons);
 					break;
 				case "value":
 					var filter = null;
@@ -317,7 +317,7 @@ class TotiGrid {
 							unique: grid.gridUnique,
 							"data-value": rowData[column.identifier]
 						});
-						grid.template.addCell(grid.gridUnique, grid.container, row, checkbox, 1);
+						grid.template.addCell(grid.gridUnique, grid.container, row, column.name, checkbox, 1);
 					} else if (column.type === 'buttons') {
 						var buttons = [];
 						function showButton(condition, evaluate) {
@@ -343,12 +343,12 @@ class TotiGrid {
 								}, 500);
 							});
 						});
-						grid.template.addCell(grid.gridUnique, grid.container, row, buttons, 2);
+						grid.template.addCell(grid.gridUnique, grid.container, row, column.name, buttons, 2);
 					} else if (column.hasOwnProperty("renderer")) {
 						var renderer = totiUtils.execute(column.renderer, [rowData[column.name], rowData]);
-						grid.template.addCell(grid.gridUnique, grid.container, row, renderer, 0);
+						grid.template.addCell(grid.gridUnique, grid.container, row, column.name, renderer, 0);
 					} else if (!rowData.hasOwnProperty(column.name)) {
-						grid.template.addCell(grid.gridUnique, grid.container, row, "", 0);
+						grid.template.addCell(grid.gridUnique, grid.container, row, column.name, "", 0);
 					} else if (column.hasOwnProperty("filter") && column.filter.hasOwnProperty("renderOptions")) {
 						var value = rowData[column.name];
 						if (value !== null) {
@@ -356,15 +356,15 @@ class TotiGrid {
                                 value = column.filter.renderOptions[value];
                             }
 						}
-						grid.template.addCell(grid.gridUnique, grid.container, row, value, 0);
+						grid.template.addCell(grid.gridUnique, grid.container, row, column.name, value, 0);
 					} else if (column.hasOwnProperty("filter")  && column.filter.hasOwnProperty("originType")) {
 						grid.template.addCell(
-							grid.gridUnique, grid.container, row, 
+							grid.gridUnique, grid.container, row, column.name,
 							totiControl.parseValue(column.filter.originType, rowData[column.name]), 
 							0
 						);
 					} else {
-						grid.template.addCell(grid.gridUnique, grid.container, row, rowData[column.name], 0);
+						grid.template.addCell(grid.gridUnique, grid.container, row, column.name, rowData[column.name], 0);
 					}
 				});
 			});

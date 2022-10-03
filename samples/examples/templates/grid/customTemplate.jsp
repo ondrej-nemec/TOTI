@@ -29,14 +29,14 @@
 	<div>
 		<t:control name="grid">
 			<div>
-				<div style="display:inline-block;">
+				<div style="display:inline-block; width: 8.3%">
 					<div>
-						<div style="display:inline-block;" id="toti-grid-title_action"><!-- title --></div>
+						<div style="display:inline-block;" id="toti-grid-title_main"><!-- title --></div>
 					</div>
 					<div><toti checkbox="main"></div>
 				</div>
 
-				<div style="display:inline-block;">
+				<div style="display:inline-block; width: 8.3%">
 					<div>
 						<div style="display:inline-block;" id="toti-grid-title_id"><!-- title --></div>
 						<div style="color: red; display:inline-block;" totiSort="onSort" name="id" class="up"><strong>U</strong></div>
@@ -45,7 +45,7 @@
 					<div><toti filter="id" /></div>
 				</div>
 
-				<div style="display:inline-block;">
+				<div style="display:inline-block; width: 8.3%">
 					<div>
 						<div style="display:inline-block;" id="toti-grid-title_text"><!-- title --></div>
 						<div style="color: red; display:inline-block;" totiSort="onSort" name="text" class="up"><strong>U</strong></div>
@@ -54,7 +54,7 @@
 					<div><toti filter="text" /></div>
 				</div>
 
-				<div style="display:inline-block;">
+				<div style="display:inline-block; width: 8.3%">
 					<div>
 						<div style="display:inline-block;" id="toti-grid-title_number"><!-- title --></div>
 						<div style="color: red; display:inline-block;" totiSort="onSort" name="number" class="up"><strong>U</strong></div>
@@ -63,7 +63,7 @@
 					<div><toti filter="number" class="someClass" /></div>
 				</div>
 
-				<div style="display:inline-block;">
+				<div style="display:inline-block; width: 8.3%">
 					<div>
 						<div style="display:inline-block;" id="toti-grid-title_range"><!-- title --></div>
 						<div style="color: red; display:inline-block;" totiSort="onSort" name="range" class="up"><strong>U</strong></div>
@@ -72,7 +72,7 @@
 					<div><toti filter="range" /></div>
 				</div>
 
-				<div style="display:inline-block;">
+				<div style="display:inline-block; width: 8.3%">
 					<div>
 						<div style="display:inline-block;" id="toti-grid-title_select_col"><!-- title --></div>
 						<div style="color: red; display:inline-block;" totiSort="onSort" name="select_col" class="up"><strong>U</strong></div>
@@ -81,7 +81,7 @@
 					<div><toti filter="select_col" /></div>
 				</div>
 
-				<div style="display:inline-block;">
+				<div style="display:inline-block; width: 8.3%">
 					<div>
 						<div style="display:inline-block;" id="toti-grid-title_datetime_col"><!-- title --></div>
 						<div style="color: red; display:inline-block;" totiSort="onSort" name="datetime_col" class="up"><strong>U</strong></div>
@@ -90,7 +90,7 @@
 					<div><toti filter="datetime_col" /></div>
 				</div>
 
-				<div style="display:inline-block;">
+				<div style="display:inline-block; width: 8.3%">
 					<div>
 						<div style="display:inline-block;" id="toti-grid-title_date_col"><!-- title --></div>
 						<div style="color: red; display:inline-block;" totiSort="onSort" name="date_col" class="up"><strong>U</strong></div>
@@ -99,7 +99,7 @@
 					<div><toti filter="date_col" /></div>
 				</div>
 
-				<div style="display:inline-block;">
+				<div style="display:inline-block; width: 8.3%">
 					<div>
 						<div style="display:inline-block;" id="toti-grid-title_time_col"><!-- title --></div>
 						<div style="color: red; display:inline-block;" totiSort="onSort" name="time_col" class="up"><strong>U</strong></div>
@@ -108,7 +108,7 @@
 					<div><toti filter="time_col" /></div>
 				</div>
 
-				<div style="display:inline-block;">
+				<div style="display:inline-block; width: 8.3%">
 					<div>
 						<div style="display:inline-block;" id="toti-grid-title_month"><!-- title --></div>
 						<div style="color: red; display:inline-block;" totiSort="onSort" name="month" class="up"><strong>U</strong></div>
@@ -117,15 +117,32 @@
 					<div><toti filter="month" /></div>
 				</div>
 
-				<div style="display:inline-block;">
+				<div style="display:inline-block; width: 8.3%">
 					<div>
 						<div style="display:inline-block;" id="toti-grid-title_buttons"><!-- title --></div>
 					</div>
-					<div><!-- filter --></div>
+					<div><toti buttons="buttons"></div>
 				</div>
 			</div>
 			<div>
 				<!-- rows -->
+				<template id="toti-grid-row">
+					<div style="width: 100%">
+						<span id="toti-grid-cell-main" style="display: inline-block; width: 8.3%">
+							<toti checkbox="main">
+						</span>
+						<span id="toti-grid-cell-id" style="display: inline-block; width: 8.3%"></span>
+						<span id="toti-grid-cell-text" style="display: inline-block; width: 8.3%"></span>
+						<span id="toti-grid-cell-number" style="display: inline-block; width: 8.3%"></span>
+						<span id="toti-grid-cell-range" style="display: inline-block; width: 8.3%"></span>
+						<span id="toti-grid-cell-select_col" style="display: inline-block; width: 8.3%"></span>
+						<span id="toti-grid-cell-datetime_cl" style="display: inline-block; width: 8.3%"></span>
+						<span id="toti-grid-cell-date_col" style="display: inline-block; width: 8.3%"></span>
+						<span id="toti-grid-cell-time_col" style="display: inline-block; width: 8.3%"></span>
+						<span id="toti-grid-cell-month" style="display: inline-block; width: 8.3%"></span>
+						<span id="toti-grid-cell-buttons" style="display: inline-block; width: 8.3%"></span>
+					</div>
+				</template>
 			</div>
 		</t:control>
 

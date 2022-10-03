@@ -128,7 +128,7 @@ var totiGridDefaultTemplate = {
 		th.appendChild(checkbox);
 		container.querySelector("#toti-grid-filtering_" + gridUnique).appendChild(th);
 	},
-	addButtons: function(gridUnique, container, buttons) {
+	addButtons: function(gridUnique, container, name, buttons) {
 		var th = document.createElement('th');
 		th.append(...buttons);
 		container.querySelector("#toti-grid-filtering_" + gridUnique).appendChild(th);
@@ -183,7 +183,7 @@ var totiGridDefaultTemplate = {
 	*  1: checkbox
 	*  2: list of buttons
 	*/
-	addCell: function(gridUnique, container, rowContainer, value, mode) {
+	addCell: function(gridUnique, container, rowContainer, name, value, mode) {
 		var cell = document.createElement('td');
 		cell.setAttribute("style", "padding: 0.5em;");
 		switch(mode) {

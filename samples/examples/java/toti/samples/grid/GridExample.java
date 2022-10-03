@@ -712,7 +712,7 @@ public class GridExample implements Module {
 	public Response customTemplate() {
 		Grid grid = new Grid(Link.get().create(getClass(), c->c.allFilters(null)), "get");
 		
-		grid.addColumn(new ActionsColumn("Group actions"));
+		grid.addColumn(new ActionsColumn("main").setTitle("Group Actions"));
 		
 		grid.addColumn(new ValueColumn("id").setTitle("ID"));
 		grid.addColumn(
@@ -794,6 +794,7 @@ public class GridExample implements Module {
 
 		grid.addColumn(
 			new ButtonsColumn("buttons")
+			.setTitle("Buttons")
 			.setResetFiltersButton(true) // disable reset-filter button
 			.addButton(
 				Button.create(
