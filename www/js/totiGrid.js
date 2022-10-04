@@ -10,6 +10,7 @@ class TotiGrid {
 		this.filtering = new SortedMap();
 		this.pageIndex = 1;
 		this.pageSize = 0;
+		this.selectedRow = null;
 	}
 
 	render(selector, gridUnique, customTemplate = null) {
@@ -64,7 +65,7 @@ class TotiGrid {
 					break;
 				case "buttons":
 					var buttons = [];
-					column.mainButtons.forEach(function(buttonConf) {
+					column.globalButtons.forEach(function(buttonConf) {
 						if (buttonConf.type === 'reset') {
 							var reset = totiControl.input(buttonConf);
 							buttons.push(reset);
@@ -155,7 +156,7 @@ class TotiGrid {
 			console.error("Selector '" + parentSelector + "' is not pointing to existing element");
 			return null;
 		}
-		var totiTemplate = totiGridDefaultTemplate;
+		var totiTemplate = totiDisplay.gridTemplate;
 		if (template === false) { /* parent.children.length > 0 */
 			totiTemplate = totiGridCustomTemplate;
 		}
@@ -254,6 +255,7 @@ class TotiGrid {
 	*/
 	setPageSize(pageSize, refresh = true) {
 		this.pageSize = pageSize;
+		this.pageIndex = 1;
 		if (refresh) {
 			this.refreshData();
 		}
@@ -270,6 +272,10 @@ class TotiGrid {
 		if (this.refreshInterval !== null && this.refreshInterval !== undefined) {
 			clearInterval(this.refreshInterval);
 		}
+	}
+
+	getSelectedRow() {
+		return this.selectedRow;
 	}
 
 	/*
@@ -303,8 +309,8 @@ class TotiGrid {
 			response.data.forEach(function(rowData) {
 				var row = grid.template.addRow(grid.gridUnique, grid.container);
 				row.addEventListener("click", function() {
-					if (grid.config.rowSelection) {
-						grid.template.setRowSelected(grid.gridUnique, grid.container, row);
+					if (grid.config.useRowSelection) {
+						grid.selectedRow = grid.template.setRowSelected(grid.gridUnique, grid.container, row);
 					}
 				});
 				grid.config.columns.forEach(function(column) {

@@ -46,6 +46,11 @@ public class Grid implements Control {
 		return this;
 	}
 	
+	public Grid setUseLoadButton(boolean useLoadButton) {
+		this.useLoadButton = useLoadButton;
+		return this;
+	}
+	
 	public Grid setPagesSizes(List<Integer> pagesSizes, int defaultPageSize) {
 		this.pageSize = defaultPageSize;
 		this.pagesSizes = pagesSizes;

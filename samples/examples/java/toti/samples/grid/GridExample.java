@@ -313,8 +313,27 @@ public class GridExample implements Module {
 		params.put("grid", grid);
 		return Response.getTemplate("filters.jsp", params);
 	}
+
 	
-	// TODO load grid
+	/**
+	 * Demonstrate grid load - add more results
+	 * @return http://localhost:8080/examples-grid/grid/load
+	 */
+	@Action("load")
+	public Response gridLoad() {
+		Grid grid = new Grid(Link.get().create(getClass(), c->c.allFilters(null)), "get");
+		
+		grid.setPagesSizes(Arrays.asList(7, 14, 28, 35, 42), 14);
+		grid.setPagesButtonCount(0);
+		grid.setUseLoadButton(true);
+		
+		grid.addColumn(new ValueColumn("id"));
+		grid.addColumn(new ValueColumn("text"));
+		
+		Map<String, Object> params = new HashMap<>();
+		params.put("grid", grid);
+		return Response.getTemplate("filters.jsp", params);
+	}
 	
 	/****/
 	
@@ -349,6 +368,22 @@ public class GridExample implements Module {
 		Grid grid = new Grid(Link.get().create(getClass(), c->c.allFilters(null)), "get");
 		
 		grid.addColumn(new ValueColumn("id").setRenderer("onColumnRenderer"));
+		grid.addColumn(new ValueColumn("text"));
+		
+		Map<String, Object> params = new HashMap<>();
+		params.put("grid", grid);
+		return Response.getTemplate("filters.jsp", params);
+	}
+	
+	/**
+	 * Shows behaviour of row selection
+	 * @return http://localhost:8080/examples-grid/grid/selection
+	 */
+	@Action("selection")
+	public Response selection() {
+		Grid grid = new Grid(Link.get().create(getClass(), c->c.allFilters(null)), "get");
+		
+		grid.addColumn(new ValueColumn("id"));
 		grid.addColumn(new ValueColumn("text"));
 		
 		grid.useRowSelection(true);
@@ -565,6 +600,7 @@ public class GridExample implements Module {
 	 * @return http://localhost:8080/examples-grid/grid/raw
 	 */
 	@Action("raw")
+	@Deprecated
 	public Response raw() {
 		Grid grid = new Grid(Link.get().create(getClass(), c->c.raw(0, 0, null, null)), "get");
 		
@@ -591,6 +627,7 @@ public class GridExample implements Module {
 	 * @return http://localhost:8080/examples-grid/grid/raw-data
 	 */
 	@Action(value = "raw-data", validator = "rawValidator")
+	@Deprecated
 	public Response raw(
 			@Param("pageIndex") int pageIndex, 
 			@Param("pageSize") int pageSize,
@@ -616,7 +653,8 @@ public class GridExample implements Module {
 			return Response.getText(StatusCode.INTERNAL_SERVER_ERROR, "Error occur: " + e.getMessage());
 		}
 	}
-	
+
+	@Deprecated
 	public Validator rawValidator() {
 		return new Validator(true)
 		.addRule(ItemRules.forName("pageIndex", true))

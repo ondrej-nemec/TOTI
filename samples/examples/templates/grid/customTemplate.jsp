@@ -11,11 +11,11 @@
 	<script src="/js/totiLang.js" ></script>
 	<script src="/js/totiLoad.js" ></script>
 	<script src="/js/totiAuth.js" ></script> 
+	<script src="/js/totiGridDefaultTemplate.js" ></script>
 	<script src="/js/totiDisplay.js" ></script>
 	<script src="/js/totiControl.js" ></script>
 	
 	<script src="/js/totiGridCustomTemplate.js" ></script>
-	<script src="/js/totiGridDefaultTemplate.js" ></script>
 	<script src="/js/totiGrid.js" ></script>
 	
 </head>
@@ -125,25 +125,41 @@
 					<div><toti buttons="buttons"></div>
 				</div>
 			</div>
-			<div>
+			<div toti-grid="rows">
 				<!-- rows -->
-				<template id="toti-grid-row">
+				<template>
 					<div style="width: 100%">
-						<span id="toti-grid-cell-main" style="display: inline-block; width: 4.5%">
+						<span toti-grid-cell="main" style="display: inline-block; width: 4.5%">
 							<toti checkbox="main">
 						</span>
-						<span id="toti-grid-cell-id" style="display: inline-block; width: 3.5%"></span>
-						<span id="toti-grid-cell-text" style="display: inline-block; width: 7%"></span>
-						<span id="toti-grid-cell-number" style="display: inline-block; width: 7%"></span>
-						<span id="toti-grid-cell-range" style="display: inline-block; width: 16%"></span>
-						<span id="toti-grid-cell-select_col" style="display: inline-block; width: 5%"></span>
-						<span id="toti-grid-cell-datetime_cl" style="display: inline-block; width: 12%"></span>
-						<span id="toti-grid-cell-date_col" style="display: inline-block; width: 9%"></span>
-						<span id="toti-grid-cell-time_col" style="display: inline-block; width: 9%"></span>
-						<span id="toti-grid-cell-month" style="display: inline-block; width: 9%"></span>
-						<span id="toti-grid-cell-buttons" style="display: inline-block; width: 8.3%"></span>
+						<span toti-grid-cell="id" style="display: inline-block; width: 3.5%"></span>
+						<span toti-grid-cell="text" style="display: inline-block; width: 7%"></span>
+						<span toti-grid-cell="number" style="display: inline-block; width: 7%"></span>
+						<span toti-grid-cell="range" style="display: inline-block; width: 16%"></span>
+						<span toti-grid-cell="select_col" style="display: inline-block; width: 5%"></span>
+						<span toti-grid-cell="datetime_cl" style="display: inline-block; width: 12%"></span>
+						<span toti-grid-cell="date_col" style="display: inline-block; width: 9%"></span>
+						<span toti-grid-cell="time_col" style="display: inline-block; width: 9%"></span>
+						<span toti-grid-cell="month" style="display: inline-block; width: 9%"></span>
+						<span toti-grid-cell="buttons" style="display: inline-block; width: 8.3%"></span>
 					</div>
 				</template>
+			</div>
+			<div>
+				<div toti-grid="page-buttons" style="width: 30%; display: inline-block;">
+					<template>
+						<button toti-grid-page-button="title"></button>
+					</template>
+				</div>
+				
+				<div style="width: 10%; display: inline-block;">
+					<select toti-grid="page-size">
+						<option value="10">10</option>
+						<option value="20">20</option>
+						<option value="30">30</option>
+						<option value="50">50</option>
+					</select>
+				</div>
 			</div>
 		</t:control>
 

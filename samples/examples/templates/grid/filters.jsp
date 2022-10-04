@@ -11,11 +11,11 @@
 	<script src="/js/totiLang.js" ></script>
 	<script src="/js/totiLoad.js" ></script>
 	<script src="/js/totiAuth.js" ></script> 
+	<script src="/js/totiGridDefaultTemplate.js" ></script>
 	<script src="/js/totiDisplay.js" ></script>
 	<script src="/js/totiControl.js" ></script>
 	
 	<script src="/js/totiGridCustomTemplate.js" ></script>
-	<script src="/js/totiGridDefaultTemplate.js" ></script>
 	<script src="/js/totiGrid.js" ></script>
 	
 </head>
