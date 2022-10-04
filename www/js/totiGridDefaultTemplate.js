@@ -165,17 +165,20 @@ var totiGridDefaultTemplate = {
 		return row;
 	},
 	setRowSelected: function(gridUnique, container, row, values) {
-		/*
-		// TODO selected and odd and even backgrounds
 		var color = "lightgreen";
-		container.querySelectorAll('.toti-grid-row').forEach(function(old) {
-			var actual = row.style['background-color'];
-			if () {
-
-			}
-		});
-		row.style['background-color'] = "lightgreen";
-		*/
+		if (row.classList.contains('toti-grid-selected')) {
+			row.style['background-color'] = "white";
+			row.classList.remove('toti-grid-selected');
+			return null;
+		} else {
+			container.querySelectorAll('.toti-grid-selected').forEach(function(old) {
+				old.classList.remove('toti-grid-selected');
+				old.style['background-color'] = "white";
+			});
+			row.classList.add('toti-grid-selected');
+			row.style['background-color'] = "lightgreen";
+			return values;
+		}
 	},
 	/**
 	* Mode:
