@@ -16,7 +16,7 @@ public class ButtonsColumn implements Column {
 	private boolean useResetButton = true;
 	// TODO add refresh button
 	private final List<Map<String, Object>> buttons = new LinkedList<>();
-	private final List<Map<String, Object>> mainButtons = new LinkedList<>();
+	private final List<Map<String, Object>> globalButtons = new LinkedList<>();
 	
 	public ButtonsColumn(String name) {
 		this.name = name;
@@ -28,8 +28,8 @@ public class ButtonsColumn implements Column {
 		return this;
 	}
 	
-	public ButtonsColumn addMainButton(Button button) {
-		mainButtons.add(button.getInputSettings());
+	public ButtonsColumn addGlobalButton(Button button) {
+		globalButtons.add(button.getInputSettings());
 		return this;
 	}
 	
@@ -53,11 +53,11 @@ public class ButtonsColumn implements Column {
 		json.put("sorting", false);
 		json.put("buttons", buttons);
 
-		List<Object> mains = new LinkedList<>(mainButtons);
+		List<Object> mains = new LinkedList<>(globalButtons);
 		if (useResetButton) {
 			mains.add(Reset.create("").getInputSettings());
 		}
-		json.put("mainButtons", mains);
+		json.put("globalButtons", mains);
 		return json;
 	}
 	

@@ -209,7 +209,7 @@ public class GridExample implements Module {
 		grid.addColumn(
 			new ButtonsColumn("buttons")
 			.setResetFiltersButton(true) // disable reset-filter button
-			.addButton(
+			.addGlobalButton(
 				Button.create(
 					Link.get().addUrlParam("123").addGetParam("name", "Grid button name")
 						.create(getClass(), c->c.asyncButtonLink(0, null)),
@@ -796,12 +796,45 @@ public class GridExample implements Module {
 			new ButtonsColumn("buttons")
 			.setTitle("Buttons")
 			.setResetFiltersButton(true) // disable reset-filter button
+			.addGlobalButton(Button.create(
+				Link.get().addUrlParam("123").addGetParam("name", "Grid button name")
+					.create(getClass(), c->c.asyncButtonLink(0, null)),
+				"global-button"
+			).setTitle("Global"))
 			.addButton(
 				Button.create(
-					Link.get().addUrlParam("123").addGetParam("name", "Grid button name")
-						.create(getClass(), c->c.asyncButtonLink(0, null)),
-					"global-button"
+					Link.get()
+					.addUrlParam("{id}")
+					.addGetParam("name", "{text}")
+					.create(getClass(), c->c.syncButtonLink(0, null)),
+					"sync"
 				)
+				.setMethod("get").setAsync(false).setTitle("Sync")
+			)
+			.addButton(
+				Button.create(
+					Link.get()
+					.addUrlParam("{id}")
+					.addGetParam("name", "{text}")
+					.create(getClass(), c->c.asyncButtonLink(0, null)),
+					"async"
+				)
+				.setMethod("post").setAsync(true).setTitle("Async")
+				.setConfirmation("Really async {id}:{text}")
+				.setOnFailure("buttonOnFailure") // name of JS method, by default print message to flash
+				.setOnSuccess("buttonOnSuccess") // name of JS method, by default print result to flash
+			)
+			.addButton(
+				Button.create(
+					Link.get()
+					.addUrlParam("{id}")
+					.addGetParam("name", "{text}")
+					.create(getClass(), c->c.syncButtonPost(0, null, null)),
+					"cond"
+				)
+				.setMethod("post").setAsync(true).setTitle("Cond")
+				.setCondition("{id}%3==0", true) // display button on every third row
+				.addRequestParam("postParam", "value in post param")
 			)
 		);
 		
