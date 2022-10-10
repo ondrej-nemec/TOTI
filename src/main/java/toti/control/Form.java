@@ -18,7 +18,10 @@ public class Form implements Control {
 	private String onBindFailure;
 	private String beforeBind;
 	private String afterBind;
+	private String beforePrint;
 	private String afterPrint;
+	private String beforeSubmit;
+	private String afterSubmit;
 	
 	private final String formAction;
 	private String formMethod = "get";

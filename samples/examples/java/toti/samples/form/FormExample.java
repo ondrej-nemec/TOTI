@@ -157,7 +157,7 @@ public class FormExample implements Module {
 		);
 		Map<String, String> radioListOptions = new HashMap<>();
 		for (FormEnum e : FormEnum.values()) {
-			radioListOptions.put(e.toString(), e.toString());
+			radioListOptions.put(e.toString(), e.toString().replace("_", " "));
 		}
 		form.addInput(
 			RadioList.input("radiolist", true, radioListOptions)
@@ -345,7 +345,7 @@ public class FormExample implements Module {
 	public Response select() {
 		Form form = new Form(Link.get().create(getClass(), c->c.save(null)), true);
 		form.setFormMethod("post");
-		
+		// TODO podle select.html
 		form.addInput(
 			Select.input("load", false, Arrays.asList(Option.create("", "-- Select --").setDisabled(true)))
 			.setLoadData(Link.get().create(getClass(), c->c.loadToSelect()), "get")
@@ -529,7 +529,7 @@ public class FormExample implements Module {
 	/********/
 	
 	/**
-	 * Shows extended inputs
+	 * Shows checkbox options
 	 * @return http://localhost:8080/examples-form/form/checkbox
 	 */
 	@Action("checkbox")
@@ -582,7 +582,7 @@ public class FormExample implements Module {
 	/********/
 	
 	/**
-	 * Using exclude and disabled
+	 * Usage and disabled
 	 * @return http://localhost:8080/examples-form/form/exclude
 	 */
 	@Action("exclude")

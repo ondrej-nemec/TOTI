@@ -22,10 +22,10 @@ var totiTranslations = {
 		"actionSuccess": "Action successfully done",
 		"actionFailure": "Action fails"
 	},
-//	"formMessages": {
-//		"saveError": /* "<t:trans message='common.form.saving-problem' />", /*/ "Problem with form saving", //*/
-//		"bindError": /* "<t:trans message='common.form.binding-problem' />" /*/ "Loading data failure" //*/
-//	},
+	"formMessages": {
+		"saveError": /* "<t:trans message='common.form.saving-problem' />", /*/ "Problem with form saving", //*/
+		"bindError": /* "<t:trans message='common.form.binding-problem' />" /*/ "Loading data failure" //*/
+	},
 //	"formButtons": {
 //		"add": /* "<t:trans message='common.form.add-variant' />", /*/ "Add Variant", //*/
 //		"remove": /* "<t:trans message='common.form.remove-variant' />" /*/ "Remove Variant" //*/

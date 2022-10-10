@@ -90,5 +90,8 @@ var totiDisplay = {
 		}
 		document.querySelector("#toti-fade-in").remove();
 		totiDisplay.isFade = false;
-	}
+	},
+	/*********************/
+	gridTemplate: totiGridDefaultTemplate,
+	formTemplate: totiFormDefaultTemplate
 };

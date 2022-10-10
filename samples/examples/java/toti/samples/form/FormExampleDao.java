@@ -17,9 +17,9 @@ public class FormExampleDao {
 				"Some long text " + i,
 				"user_" + i + "@example.com",
 				"#"
-					+ Integer.toHexString(getNextInt(255, 0))
-					+ Integer.toHexString(getNextInt(255, 0))
-					+ Integer.toHexString(getNextInt(255, 0)),
+					+ prepareColor(Integer.toHexString(getNextInt(255, 0)))
+					+ prepareColor(Integer.toHexString(getNextInt(255, 0)))
+					+ prepareColor(Integer.toHexString(getNextInt(255, 0))),
 				i%3==0,
 				(i + i%7) * 0.1,
 				"password", // high security :-D
@@ -35,6 +35,13 @@ public class FormExampleDao {
 		}
 	}
 	
+	private String prepareColor(String hexString) {
+		if (hexString.length() == 1) {
+			return "0" + hexString;
+		}
+		return hexString;
+	}
+
 	private LocalDateTime getRandomLocal() {
 		return LocalDateTime.of(
 			2022, getNextInt(12, 1), getNextInt(28, 1), 

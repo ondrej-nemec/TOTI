@@ -285,6 +285,7 @@ var totiControl = {
 						renderOptions[option.value] = option.title;
 					});
 					params.renderOptions = renderOptions;
+					return options;
 				});
 			}
 			
@@ -389,7 +390,7 @@ var totiControl = {
 		    if (attributes.hasOwnProperty("value")) {
 		        setValue(attributes.value);
 		    }
-
+		    /*TODO improve with observer */
 		    var formWaiting = function() {
 		        if (datetime.form === null) {
 		            setTimeout(formWaiting, 50);
