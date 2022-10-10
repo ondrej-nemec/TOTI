@@ -42,7 +42,7 @@ public class GridEntityDaoTest implements Entity {
 			@Override public SelectBuilder _getGrid(String select, QueryBuilder builder) { return null; }
 		};
 		
-		dao._applyFilters(builder, select, filters, forOwners);
+		dao._applyFilters(builder, select, filters, forOwners, owner);
 		assertEquals(message, "SELECT  " + expected, select.createSql());
 	}
 	
@@ -180,7 +180,8 @@ public class GridEntityDaoTest implements Entity {
 			},
 		};
 	}
-	
+	// TODO test for help
+	/*
 	@Test
 	@Parameters(method = "dataHelp")
 	public void testHelp(String key, String value, String disabled, String group, String expected) {
@@ -232,6 +233,6 @@ public class GridEntityDaoTest implements Entity {
 				+ " FROM tableName" // ORDER BY helpValue // order move after user
 			}
 		};
-	}
+	}*/
 
 }
