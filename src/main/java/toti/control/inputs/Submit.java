@@ -19,6 +19,7 @@ public class Submit implements Input {
 	private final Map<String, String> params = new HashMap<>();
 	private Object value = null;
 	private SubmitPolicy submitPolicy = SubmitPolicy.EXCLUDE;
+	private boolean disabled = false;
 	
 	public static Submit create(String title, String name) {
 		return new Submit(title, name);
@@ -71,6 +72,16 @@ public class Submit implements Input {
 		this.confirmation = Control.escapeJs(confirmation);
 		return this;
 	}
+	
+	public Submit setDisabled(boolean disabled) {
+		this.disabled = disabled;
+		return this;
+	}
+	
+	public Submit setSubmitPolicy(SubmitPolicy submitPolicy) {
+		this.submitPolicy = submitPolicy;
+		return this;
+	}
 
 	public Submit addParam(String name, String value) {
 		params.put(name, value);
@@ -88,6 +99,9 @@ public class Submit implements Input {
 		json.put("submitPolicy", submitPolicy);
 		
 		json.putAll(params);
+		if (disabled) {
+			json.put("disabled", disabled);
+		}
 		if (redirect != null) {
 			json.put("redirect", redirect);
 		}

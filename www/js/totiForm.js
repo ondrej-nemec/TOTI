@@ -50,7 +50,9 @@ class TotiForm {
 	}
 
 	render(selector, formUnique, customTemplate = null) {
-		// TODO beforePrint/Render
+		if (this.config.hasOwnProperty("beforeRender") && this.config.beforeRender !== null) {
+			totiUtils.execute(this.config.beforeRender);
+		}
 		this.formUnique = formUnique;
 		var template = this.template = this.getTemplate(selector, customTemplate);
 		var container = this.container = template.getContainer(selector, formUnique, this.config.editable);
@@ -61,7 +63,9 @@ class TotiForm {
 		this.config.fields.forEach(function(field) {
 			form.addInput(field);
 		});
-		// TOOD afterPrint/Render
+		if (this.config.hasOwnProperty("afterRender") && this.config.afterRender !== null) {
+			totiUtils.execute(this.config.afterRender);
+		}
 		if (this.config.hasOwnProperty("bind")) {
 			this.bind(this.config.bind, formUnique, container);
 		}
@@ -98,6 +102,7 @@ class TotiForm {
 			// TODO implement
 		} else if (!editable) {
 			switch(field.type) {
+					// TODO realValue u selectu
 				case "submit":
 				case "image":
 				case "hidden":
@@ -134,8 +139,9 @@ class TotiForm {
 				case "submit":
 				case "image":
 					var form = this;
-					input.addEventListener("click", function() {
-						form.submit(input);
+					input.addEventListener("click", function(e) {
+						e.preventDefault();
+						return form.submit(input);
 					});
 					this.template.addControl(this.formUnique, this.container, input);
 					break;
@@ -152,6 +158,171 @@ class TotiForm {
 	addDynamicField(name) {}
 
 	removeDynamicField(name, index) {}
+
+	submit(srcElement) {
+		var form = this.container;
+		if (this.container.tagName !== 'FORM') {
+			form = this.container.querySelector('form');
+		}
+
+		if (!form.reportValidity()) {
+			return false;
+		}
+		var data = new FormData(); /* if parameter is form, all not disabled params are added */
+		form.querySelectorAll("input, select, fieldset").forEach((input)=>{
+			var type = input.getAttribute("type");
+			var name = input.getAttribute("name");
+			if (name === null) {
+				return;
+			}
+			if (input.getAttribute("exclude") !== null && input.getAttribute("exclude") === "true") {
+				return;
+			}
+			// TODO optional fields - color, range
+			if (input.type === "fieldset") { /* no more required: && input.getAttribute("origintype") !== "datetime-local"*/
+				/* ignored*/
+				return;
+			}
+			if (type === "button" || type === "reset") { /*type === "submit" ||  || type === "image"*/
+				/* ignored*/
+				return;
+			}
+			
+			/* no more required: if (input.getAttribute("origintype") === "datetime-local") {
+				if (input.value !== undefined) {
+					data.append(name, input.value);
+				}
+			} else */ if (type === "submit" || type === "image") {
+				switch(input.getAttribute("submitpolicy")) {
+					case "EXCLUDE": return;
+					case "INCLUDE_ON_CLICK":
+						if (input !== srcElement) {
+							return;
+						}
+					case "INCLUDE":
+						data.append(name, input.getAttribute("realvalue"));
+						break;
+				}
+			} else  if (type === "radio") {
+				if (input.checked) {
+					data.append(name, input.value);
+				}
+			} else if (type === "checkbox") {
+				data.append(name, input.checked);
+			} else if (type === "file") {
+				if (input.files.length > 0) {
+					data.append(name, input.files[0]);
+				}
+			} else {
+				data.append(name, input.value);
+			}
+		});
+		var submitConfirmation = function() {
+			if (srcElement.getAttribute("confirmation") !== null) {
+				return totiDisplay.confirm(srcElement.getAttribute("confirmation"));
+			}
+			return true;
+		};
+		if (!submitConfirmation(data)) {
+			return false;
+		}
+		if (srcElement.getAttribute("async") === 'true') {
+			var headers = {};
+			if (form.getAttribute("enctype") !== null) {
+				headers.enctype = form.getAttribute("enctype");
+			}
+			// load: function(url, method, headers = {}, urlData = {}, bodyData = {}) {
+			totiLoad.load(
+				form.getAttribute("action"), 
+				form.getAttribute("method"), 
+				headers,
+				{},
+				data
+			).then(function(result) {
+				// TODO
+				console.log("success", result);
+				/*
+				function(response) {
+					var getMessage = function(r) {
+						if (typeof r === 'object') {
+							return r.message;
+						} else {
+							return r;
+						}
+					};
+					if (submit.getAttribute("onSuccess") != null) {
+						window[submit.getAttribute("onSuccess")](response, submit, form);
+					} else if (submit.getAttribute("redirect") === null) {
+						totiDisplay.flash('success', getMessage(response));
+					} else {
+						totiDisplay.storedFlash('success', getMessage(response));
+					}
+					if (submit.getAttribute("redirect") != null) {
+						var id = typeof response === 'object' ? response.id : "";
+						window.location = submit.getAttribute("redirect").replace("{id}", id);
+					}
+				},
+				*/
+			}).catch(function(error) {
+				// TODO
+				console.log("error", error);
+				/*
+				function(xhr) {
+					if (xhr.status === 400) {
+						for (const[key, list] of Object.entries(JSON.parse(xhr.responseText))) {
+							var ol = document.createElement("ul");
+							ol.setAttribute("class", "error-list");
+							list.forEach(function(item) {
+								var li = document.createElement("li");
+								li.innerText = item;
+								ol.appendChild(li);
+							});
+							var elementId = key.replaceAll("[", "\\[").replaceAll("]", "\\]");
+							var elementIdentifiers = elementId.split(":");
+
+							if (elementIdentifiers.length > 1) {
+								elementId = elementId.replace(elementIdentifiers[0] + ":", "");
+								var inputErrors = document
+								.querySelectorAll('#' + uniqueName + '-errors-' + elementId + '');
+								if (inputErrors.length > 0) {
+									inputErrors[elementIdentifiers[0]].appendChild(ol);
+								}
+							} else {
+								var inputError = document.querySelector('#' + uniqueName + '-errors-' + elementId + '');
+								if (inputError !== null) {
+									inputError.appendChild(ol);
+								}
+
+							}
+						}
+					} else if (submit.getAttribute("onFailure") != null) {
+						window[submit.getAttribute("onFailure")](xhr, submit, form);
+					} else {
+						ii TODO xhr.response - objekt or message and 403
+						totiDisplay.flash('error', totiTranslations.formMessages.saveError);
+					}
+				}
+				*/
+			});
+			return false;
+		}
+		/* TODO send form data */
+		/*event.preventDefault();
+		var formTosend = document.createElement("form");
+		formTosend.setAttribute("action", form.getAttribute("action"));
+		formTosend.setAttribute("method", form.getAttribute("method"));
+		if (form.getAttribute("enctype") !== null) {
+			formTosend.setAttribute("enctype", form.getAttribute("enctype"));
+		}
+		for (const[name, value] of data.entries()) {
+			var hidden = document.createElement("input");
+			hidden.name = name;
+			hidden.value = value;
+			formTosend.appendChild(hidden);
+		}
+		formTosend.submit();*/
+		return true;
+	}
 
 	bind(bindConfig, formUnique, container) {
 		if (bindConfig.hasOwnProperty("beforeBind") && bindConfig.beforeBind !== null) {
@@ -182,6 +353,7 @@ class TotiForm {
                    			radiolist.checked = value ? "checked" : false;
 						}
 						break;
+					// TODO realValue u selectu
 					case "select-one":
 						var val = value;
 						var select = element;
@@ -204,7 +376,5 @@ class TotiForm {
 			}
 		});
 	}
-
-	submit(srcElement) {}
 
 }

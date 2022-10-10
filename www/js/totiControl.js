@@ -39,11 +39,12 @@ var totiControl = {
 			if (!attributes.strict) {
 				return totiControl.inputs.datetime(attributes);
 			}
+			/*console.error("Your browser probably not support datetime-local");*/
+			/* firefox support datetime-local!!!
 			var browser = totiUtils.browser();
 			if (browser !== "opera" && !browser.includes("chrom")) {
 				return totiControl.inputs.datetime(attributes);
-				/*console.error("Your browser probably not support datetime-local");*/
-			}
+			}*/
 			return totiControl.inputs._createInput("datetime-local", attributes);
 		} else if (type === 'textarea') {
 			return totiControl.inputs.textarea(attributes);

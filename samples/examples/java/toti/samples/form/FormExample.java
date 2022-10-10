@@ -42,6 +42,7 @@ import toti.control.inputs.RadioList;
 import toti.control.inputs.Range;
 import toti.control.inputs.Select;
 import toti.control.inputs.Submit;
+import toti.control.inputs.SubmitPolicy;
 import toti.control.inputs.Text;
 import toti.control.inputs.TextArea;
 import toti.control.inputs.Time;
@@ -225,6 +226,40 @@ public class FormExample implements Module {
 		Map<String, Object> params = new HashMap<>();
 		params.put("form", form);
 		params.put("title", "Sync and async send");
+		return Response.getTemplate("inputs.jsp", params);
+	}
+	
+	/**
+	 * Form with sync and async submit
+	 * @return http://localhost:8080/examples-form/form/submit-modes
+	 */
+	@Action("submit-modes")
+	@Method(HttpMethod.GET)
+	public Response submitModes() {
+		Form form = new Form(Link.get().create(getClass(), c->c.save(null)), true);
+		form.setFormMethod("post");
+		
+		form.addInput(Text.input("textInput", true).setTitle("Text"));
+		
+		form.addInput(
+			Submit.create("Excluded", "excluded")
+			.setSubmitPolicy(SubmitPolicy.EXCLUDE) // default value
+			.setValue("value1")
+		);
+		form.addInput(
+			Submit.create("Included", "included")
+			.setSubmitPolicy(SubmitPolicy.INCLUDE)
+			.setValue("value2")
+		);
+		form.addInput(
+			Submit.create("Included if clicked", "ifClicked")
+			.setSubmitPolicy(SubmitPolicy.INCLUDE_ON_CLICK)
+			.setValue("value3")
+		);
+		
+		Map<String, Object> params = new HashMap<>();
+		params.put("form", form);
+		params.put("title", "Submit modes send");
 		return Response.getTemplate("inputs.jsp", params);
 	}
 	
@@ -780,7 +815,7 @@ public class FormExample implements Module {
 	public Response callbacks() {
 		Form form = new Form(Link.get().addUrlParam(10).create(getClass(), c->c.allInputs(0, null)), true);
 		form.setAfterBind("afterBindCallback");
-		form.setAfterPrint("afterPrintCallback");
+		form.setAfterRender("afterPrintCallback");
 		form.setBeforeBind("beforeBindCallback");
 		
 		form.addInput(Text.input("text", true).setTitle("Text input"));

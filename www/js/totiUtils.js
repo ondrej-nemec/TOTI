@@ -14,6 +14,7 @@ var totiUtils = {
 		return string;
 	},
 	browser: function() {
+		console.warning("totiUtils.browser() is deprecated");
 		/* https://stackoverflow.com/a/9851769 */
 		/* Opera 8.0+ */
 		if ((!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0) {

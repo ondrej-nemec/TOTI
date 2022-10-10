@@ -18,8 +18,8 @@ public class Form implements Control {
 	private String onBindFailure;
 	private String beforeBind;
 	private String afterBind;
-	private String beforePrint;
-	private String afterPrint;
+	private String beforeRender;
+	private String afterRender;
 	private String beforeSubmit;
 	private String afterSubmit;
 	
@@ -72,13 +72,18 @@ public class Form implements Control {
 		return this;
 	}
 	
-	public Form setAfterPrint(String afterPrint) {
-		this.afterPrint = afterPrint;
+	public Form setAfterRender(String afterRender) {
+		this.afterRender = afterRender;
 		return this;
 	}
 	
 	public Form setBeforeBind(String beforeBind) {
 		this.beforeBind = beforeBind;
+		return this;
+	}
+	
+	public Form setBeforeRender(String beforeRender) {
+		this.beforeRender = beforeRender;
 		return this;
 	}
 
@@ -89,8 +94,11 @@ public class Form implements Control {
 		json.put("method", formMethod);
 		json.put("fields", fields);
 		json.put("editable", editable);
-		if (afterPrint != null) {
-			json.put("afterPrint", afterPrint);
+		if (afterRender != null) {
+			json.put("afterRender", afterRender);
+		}
+		if (beforeRender != null) {
+			json.put("beforeRender", beforeRender);
 		}
 		if (bindUrl != null) {
 			Map<String, Object> bind = new HashMap<>();
