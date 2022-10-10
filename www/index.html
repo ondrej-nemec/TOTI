@@ -1,44 +1,183 @@
 <html>
 <head>
-	<title></title>
+	<title>TOTI samples</title>
+	<style type="text/css">
+		code {
+			font-size: .875em;
+		    color: #d63384;
+		    word-wrap: break-word;
+		}
+	</style>
 </head>
 <body>
-<a href="https://www.sessions.edu/color-calculator/">color calculator</a>
-<a href="https://learnui.design/tools/accessible-color-generator.html">Contrast generator</a>
+	<h1>TOTI samples disambiguation</h1>
 
-	<img src="../logo.jpg" width="300px">
+	<p><strong>Links will be working if <code>toti.samples.TotiSamplesRunner</code> class is running</strong></p>
 
-	<p style="padding: 2em; background-color: #017CA5">
-		<span style="color: #e3ffff"> Pismo <strong>Pismo</strong></span>
-		<span style="color: #86daff; font-size: 1.2em;"> Pismo <strong>Pismo</strong></span>
-	</p>
+	<div id="modules"></div>
 
-	<p style="padding: 2em; background-color: #4994B1">
-		<span style="color: #00263e"> Pismo <strong>Pismo</strong></span>
-		<span style="color: #b7ffff; font-size: 1.2em;"> Pismo <strong>Pismo</strong></span>
-	</p>
+	<script type="text/javascript">
+		var modules = [
+			{
+				name: 'Forms',
+				description: '',
+				links: [
+					{
+						name: 'Input with bind',
+						description: 'Show all available inputs with bind',
+						link: '/examples-form/form/inputs/5'
+					},
+					{
+						name: 'Not editable inputs',
+						description: 'Display not editable form',
+						link: '/examples-form/form/detail/5'
+					},
+					{
+						name: 'Inputs without bind',
+						description: 'Show all available inputs without bind',
+						link: '/examples-form/form/insert'
+					},
+					{
+						name: 'Submit',
+						description: 'Form with sync and async submit',
+						link: '/examples-form/form/async'
+					},
+					{
+						name: 'Submit Modes',
+						description: 'Example of usage of submit modes',
+						link: '/examples-form/form/submit-modes'
+					},
+					{
+						name: 'Buttons',
+						description: 'Example of buttons',
+						link: '/examples-form/form/buttons'
+					},
+					{
+						name: 'Custom template',
+						description: 'Form printed with template',
+						link: '/examples-form/form/template'
+					},
+					{
+						name: 'Select',
+						description: 'Show select options: load, depends',
+						link: '/examples-form/form/select'
+					},
+					{
+						name: 'Datetime',
+						description: 'Shows options of datetime',
+						link: '/examples-form/form/datetime'
+					},
+					{
+						name: 'Exteded inputs',
+						description: 'Shows extended inputs',
+						link: '/examples-form/form/optional'
+					},
+					{
+						name: 'Checkbox',
+						description: 'Shows checkbox options',
+						link: '/examples-form/form/checkbox'
+					},
+					{
+						name: 'Exclude and disable',
+						description: 'Usage exclude and disabled',
+						link: '/examples-form/form/exclude'
+					},
+					{
+						name: 'Editable 1',
+						description: 'Not editable form with editable input',
+						link: '/examples-form/form/not-editable'
+					},
+					{
+						name: 'Editable 2',
+						description: 'Not editable form with editable input',
+						link: '/examples-form/form/editable'
+					},
+					{
+						name: 'After submit redirect',
+						description: 'Redirect after async form submit',
+						link: '/examples-form/form/redirect'
+					},
+					{
+						name: 'File',
+						description: 'Example of uploading file',
+						link: '/examples-form/form/file'
+					},
+					{
+						name: 'Form callbacks',
+						description: 'Usage form callbaks',
+						link: '/examples-form/form/callbacks'
+					},
+					{
+						name: 'InputList',
+						description: 'Using input list',
+						link: '/examples-form/form/inputlist'
+					},
+					{
+						name: 'Input list template',
+						description: 'Using input list with custom template',
+						link: '/examples-form/form/inputlist-template'
+					},
+					{
+						name: 'DynamicList',
+						description: 'Using dynamic input list',
+						link: '/examples-form/form/dynamiclist'
+					},
+					{
+						name: 'DynamicList template',
+						description: 'Using dynamic input list with custom template',
+						link: '/examples-form/form/dynamiclist-template'
+					},
+					{
+						name: 'Dynamic list and buttons',
+						description: 'Dynamic list with custom buttons',
+						link: '/examples-form/form/dynamiclist-buttons'
+					},
+					{
+						name: 'CSRF',
+						description: 'Sync form with CSRF token',
+						link: '/examples-form/form/csrf'
+					}
+				]
+			}
+		];
 
-	<p style="padding: 2em; background-color: #7FC6CC ">
-		<span style="color: #005359"> Pismo <strong>Pismo</strong></span>
-		<span style="color: #216e74; font-size: 1.2em;"> Pismo <strong>Pismo</strong></span>
-	</p>
+		modules.forEach(function(module) {
+			var headline = document.createElement("h3");
+			headline.innerText = module.name;
+			var desc = document.createElement('p');
+			desc.innerText = module.description;
+			var links = document.createElement("div");
+			module.links.forEach(function(link) {
+				var a = document.createElement("a");
+				a.innerText = link.name;
+				a.setAttribute("href", link.link);
+				var h = document.createElement("h5");
+				h.appendChild(a);
 
-	<p style="padding: 2em; background-color: #cccccc">
-		Pismo <strong>Pismo</strong> <span style="color: white;">Pismo <strong>Pismo</strong></span> <a href="">Pismo</a>
-		<br>
-		<span style="color: #017CA5">Pismo <strong>Pismo</strong></span>
-		<br>
-		<span style="color: #4994B1">Pismo <strong>Pismo</strong></span>
-		<br>
-		<span style="color: #7FC6CC">Pismo <strong>Pismo</strong></span>
-	</p>
+				var d = document.createElement('p');
+				d.innerText = link.description;
 
+				var container = document.createElement("div");
+				container.style.width = "200px";
+				container.style.display = "inline-block";
+				container.style['background-color'] = '#7FC6CC';
+				container.style.color = "#e3ffff";
+				container.style.padding = "1em";
+				container.style.margin = "0.5em";
 
-<p>
-r   1 g 124 b 165 - modrá  #017CA5
-r  73 g 148 b 177 - písmo  #4994B1
-r 127 g 198 b 204 - zelenomodrá  #7FC6CC  
-</p>
+				container.appendChild(h);
+				container.appendChild(d);
+
+				links.appendChild(container);
+			});
+			var container = document.createElement("div");
+			container.appendChild(headline);
+			container.appendChild(desc);
+			container.appendChild(links);
+
+			document.querySelector("#modules").appendChild(container);
+		});
+	</script>
 
 </body>
 </html>
