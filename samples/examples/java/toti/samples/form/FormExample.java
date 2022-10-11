@@ -380,8 +380,82 @@ public class FormExample implements Module {
 	public Response select() {
 		Form form = new Form(Link.get().create(getClass(), c->c.save(null)), true);
 		form.setFormMethod("post");
-		// TODO podle select.html
+		
+		List<Option> defOptions = Arrays.asList(
+			Option.create("no-group", "No group item"),
+			Option.create("disabled", "Disabled").setDisabled(true),
+			Option.create("a1", "Item A in Group 1").setOptGroup("group1"),
+			Option.create("a2", "Item B in Group 1").setOptGroup("group1"),
+			Option.create("b1", "Item A in Group 2").setOptGroup("group2"),
+			Option.create("b2", "Item B in Group 2").setOptGroup("group2")
+		);
 		form.addInput(
+			Select.input("options-only", false, defOptions)
+			.setTitle("Options only")
+		);
+		form.addInput(
+			Select.input("load-only", false, Arrays.asList(Option.create("", "---")))
+			.setTitle("Load with empty option")
+			.setLoadData(Link.get().create(getClass(), c->c.loadToSelect()), "get")
+		);
+		// TODO tohle nejde
+		form.addInput(
+			Select.input("load-with-def", false, defOptions)
+			.setTitle("Load with default options")
+			.setLoadData(Link.get().create(getClass(), c->c.loadToSelect()), "get")
+		);
+		
+		form.addInput(
+			Select.input("groups", false, Arrays.asList(
+				Option.create("", "---"),
+				Option.create("group1", "Group 1"),
+				Option.create("group2", "Group 2")
+			))
+			.setTitle("Depends Parent")
+		);
+		form.addInput(
+			Select.input("depends", false, defOptions)
+			.setLoadData(Link.get().create(getClass(), c->c.loadToSelect()), "get")
+			.setTitle("Depends on previous input")
+			.setDepends("[name=groups]")
+		);
+		// TODO depends on text, radio
+
+		form.addInput(
+			Select.input("selected-group", false, defOptions)
+			.setLoadData(Link.get().create(getClass(), c->c.loadToSelect()), "get")
+			.setTitle("Selected Group 1")
+			.setShowedOptionGroup("group1")
+		);
+				
+		form.addInput(
+			Select.input("groupsSelected", false, Arrays.asList(
+				Option.create("", "---"),
+				Option.create("group1", "Group 1"),
+				Option.create("group2", "Group 2")
+			))
+			.setTitle("Depends Parent with selected value")
+			.setDefaultValue("group1")
+		);
+		form.addInput(
+			Select.input("depends-on-selected", false, defOptions)
+			.setLoadData(Link.get().create(getClass(), c->c.loadToSelect()), "get")
+			.setTitle("Depends on previous input - selected value")
+			.setDepends("[name=groupsSelected]")
+		);
+
+		form.addInput(
+			Select.input("load-with-def-value", false, defOptions)
+			.setTitle("Load with default options and default value")
+			.setLoadData(Link.get().create(getClass(), c->c.loadToSelect()), "get")
+			.setDefaultValue(5)
+		);
+		
+		
+		
+		
+		// TODO podle select.html
+		/*form.addInput(
 			Select.input("load", false, Arrays.asList(Option.create("", "-- Select --").setDisabled(true)))
 			.setLoadData(Link.get().create(getClass(), c->c.loadToSelect()), "get")
 			.setTitle("Load data")
@@ -419,7 +493,7 @@ public class FormExample implements Module {
 			.setDepends("groups")
 			.setLoadData(Link.get().create(getClass(), c->c.loadGroup()), "get")
 			.setTitle("Depends on previous input")
-		);
+		);*/
 		
 		form.addInput(Submit.create("Submit", "submit"));
 		
@@ -437,20 +511,39 @@ public class FormExample implements Module {
 	public Response loadToSelect() {
 		return Response.getJson(Arrays.asList(
 			new MapInit<String, Object>()
-				.append("value", "first")
-				.append("title", "First")
+				.append("value", "0")
+				.append("title", "Item 0 without group")
 				.toMap(),
 			new MapInit<String, Object>()
-				.append("value", "second")
-				.append("title", "Second")
+				.append("value", "1")
+				.append("title", "Item 1 in Group 1")
+				.append("optgroup", "group1")
 				.toMap(),
 			new MapInit<String, Object>()
-				.append("value", "third")
-				.append("title", "Third")
+				.append("value", "2")
+				.append("title", "Item 2 in Group 1 (disabled)")
+				.append("optgroup", "group1")
+				.append("disabled", true)
 				.toMap(),
 			new MapInit<String, Object>()
-				.append("value", "fourth")
-				.append("title", "Fourth")
+				.append("value", "3")
+				.append("title", "Item 3 in Group 1")
+				.append("optgroup", "group1")
+				.toMap(),
+			new MapInit<String, Object>()
+				.append("value", "4")
+				.append("title", "Item 1 in Group 2")
+				.append("optgroup", "group2")
+				.toMap(),
+			new MapInit<String, Object>()
+				.append("value", "5")
+				.append("title", "Item 2 in Group 2")
+				.append("optgroup", "group2")
+				.toMap(),
+			new MapInit<String, Object>()
+				.append("value", "6")
+				.append("title", "Item 3 in Group 3")
+				.append("optgroup", "group2")
 				.toMap()
 		));
 	}

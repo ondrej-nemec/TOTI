@@ -231,7 +231,6 @@ class TotiForm {
 			if (form.getAttribute("enctype") !== null) {
 				headers.enctype = form.getAttribute("enctype");
 			}
-			// load: function(url, method, headers = {}, urlData = {}, bodyData = {}) {
 			totiLoad.load(
 				form.getAttribute("action"), 
 				form.getAttribute("method"), 
@@ -263,6 +262,13 @@ class TotiForm {
 					}
 				},
 				*/
+				if (srcElement.getAttribute("redirect") !== null) {
+					var redirect = srcElement.getAttribute("redirect");
+					if (typeof result === 'object') {
+						redirect = totiUtils.parametrizedString(redirect, result);
+					}
+					window.location = redirect;
+				}
 			}).catch(function(error) {
 				// TODO
 				console.log("error", error);
