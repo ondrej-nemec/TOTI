@@ -25,20 +25,6 @@ class TotiForm {
 		submit confirmation
 		after submit redirect - u submitu
 
-	možnost odeslat post synchroně: ??? 
-				var formTosend = document.createElement("form");
-				formTosend.setAttribute("action", form.getAttribute("action"));
-				formTosend.setAttribute("method", form.getAttribute("method"));
-				if (form.getAttribute("enctype") !== null) {
-					formTosend.setAttribute("enctype", form.getAttribute("enctype"));
-				}
-				for (const[name, value] of data.entries()) {
-					var hidden = document.createElement("input");
-					hidden.name = name;
-					hidden.value = value;
-					formTosend.appendChild(hidden);
-				}
-				formTosend.submit();
 
 	*/
 
@@ -47,6 +33,7 @@ class TotiForm {
 		this.template = null;
 		this.container = null;
 		this.formUnique = null;
+		this.dynamic = {};
 	}
 
 	render(selector, formUnique, customTemplate = null) {
@@ -56,8 +43,8 @@ class TotiForm {
 		this.formUnique = formUnique;
 		var template = this.template = this.getTemplate(selector, customTemplate);
 		var container = this.container = template.getContainer(selector, formUnique, this.config.editable);
-		container.setAttribute("action", this.config.action);
-		container.setAttribute("method", this.config.method);
+		template.setFormAttribute(formUnique, container, "action", this.config.action);
+		template.setFormAttribute(formUnique, container, "method", this.config.method);
 
 		var form = this;
 		this.config.fields.forEach(function(field) {
@@ -92,45 +79,86 @@ class TotiForm {
 		return template;
 	}
 
-	addInput(field) {
+	addInput(field, parent = null) {
 		var editable = field.hasOwnProperty("editable") ? field.editable : this.config.editable;
-		// TODO list position title
-		// TODO upravit jmeno, pokud je predek: predek[jmeno]
+		var form = this;
+		if (parent !== null) {
+			var fieldName = parent.name;
+            if (parent.position !== false) {
+               	fieldName += "[" + (field.hasOwnProperty("name") ? field.name : "") + "]";
+            }
+            field.name = fieldName;
+
+			if (parent.position !== false && field.hasOwnProperty("title")) {
+				field.title = field.title.replace('{i}', parent.position);
+			}
+		}
+
 		if (field.type === "dynamic") {
 			// TODO implement
+			console.log(field);
+			var addItem = function() {
+				// TODO pouzit jiny container
+				field.fields.forEach(function(f) {
+					form.addInput(f);
+				});
+			};
+			var removeItem = function(identifier) {
+				// TODO
+			};
+			var dynamicContainer = form.template.getDynamicContainer(form.formUnique, form.container, field.name, addItem);
+			addItem();
+			/*
+			do formu pridat container pro inputy a s add tlacitekm
+			na add tlacitko navazat funkci
+			pridat prvni item
+
+			pri pridani itemu
+				iterovat fields touto metodou
+				najit remove a navazat funkci
+			*/
+			this.dynamic[field.name] = {
+				add: addItem
+			};
 		} else if (field.type === "list") {
-			// TODO implement
+			field.fields.forEach(function(subField, index) {
+				form.addInput(subField, {
+					name: field.name,
+					position: index
+				});
+			});
 		} else if (!editable) {
 			switch(field.type) {
-					// TODO realValue u selectu
 				case "submit":
+					/* IMPROVE: display real value*/
 				case "image":
 				case "hidden":
 				case "reset":
 				case "password":
 					/* ignored */
 					break;
+				case "file":
+					/* IMPROVE: display value */
+					break;
 				case "button":
 					var input = totiControl.button(field);
-					this.template.addControl(this.formUnique, this.container, input);
+					this.template.addControl(this.formUnique, this.container, field.name, input);
 					break;
 				case "checkbox":
-					this.template.addOptionRow(this.formUnique, this.container, field.name, field.type, field.title, field.values);
+					this.template.addOptionRow(this.formUnique, this.container, field.name, field.type, field.title, field.values, field.value);
 					break;
 				case "radiolist":
-					this.template.addOptionRow(this.formUnique, this.container, field.name, field.type, field.title, field.radios);
+					this.template.addOptionRow(this.formUnique, this.container, field.name, field.type, field.title, field.radios, field.value);
 					break;
 				case "select":
 					var select = totiControl.input(field);
 					this.template.addPromisedRow(this.formUnique, this.container, field.name, field.type, field.title, select.setOptions);
 					break;
 				default:
-					this.template.addRow(this.formUnique, this.container, field.name, field.type, field.title);
+					this.template.addRow(this.formUnique, this.container, field.name, field.type, field.title, field.value);
 					break;
 			}
 		} else {
-			// TODO file - set form.setAttribute("enctype", "multipart/form-data");
-
 			var input = totiControl.input(field);
 			switch(field.originType) {
 				case "hidden":
@@ -143,11 +171,14 @@ class TotiForm {
 						e.preventDefault();
 						return form.submit(input);
 					});
-					this.template.addControl(this.formUnique, this.container, input);
+					this.template.addControl(this.formUnique, this.container, field.name, input);
 					break;
 				case "button":
-					this.template.addControl(this.formUnique, this.container, input);
+					this.template.addControl(this.formUnique, this.container, field.name, input);
 					break;
+				case "file":
+					this.template.setFormAttribute(this.formUnique, this.container, "enctype", "multipart/form-data");
+					/* no break */
 				default:
 					this.template.addInput(this.formUnique, this.container, field.name, field.title, input);
 					break;
@@ -160,6 +191,7 @@ class TotiForm {
 	removeDynamicField(name, index) {}
 
 	submit(srcElement) {
+		/* IMPROVE: before and after submit callbacks ? */
 		var form = this.container;
 		if (this.container.tagName !== 'FORM') {
 			form = this.container.querySelector('form');
@@ -178,8 +210,8 @@ class TotiForm {
 			if (input.getAttribute("exclude") !== null && input.getAttribute("exclude") === "true") {
 				return;
 			}
-			// TODO optional fields - color, range
-			if (input.type === "fieldset") { /* no more required: && input.getAttribute("origintype") !== "datetime-local"*/
+			/* for not strict datetime */
+			if (input.type === "fieldset" && input.getAttribute("origintype") !== "datetime-local") {
 				/* ignored*/
 				return;
 			}
@@ -188,11 +220,11 @@ class TotiForm {
 				return;
 			}
 			
-			/* no more required: if (input.getAttribute("origintype") === "datetime-local") {
+			if (input.getAttribute("origintype") === "datetime-local") {
 				if (input.value !== undefined) {
 					data.append(name, input.value);
 				}
-			} else */ if (type === "submit" || type === "image") {
+			} else if (type === "submit" || type === "image") {
 				switch(input.getAttribute("submitpolicy")) {
 					case "EXCLUDE": return;
 					case "INCLUDE_ON_CLICK":
@@ -238,30 +270,13 @@ class TotiForm {
 				{},
 				data
 			).then(function(result) {
-				// TODO
-				console.log("success", result);
-				/*
-				function(response) {
-					var getMessage = function(r) {
-						if (typeof r === 'object') {
-							return r.message;
-						} else {
-							return r;
-						}
-					};
-					if (submit.getAttribute("onSuccess") != null) {
-						window[submit.getAttribute("onSuccess")](response, submit, form);
-					} else if (submit.getAttribute("redirect") === null) {
-						totiDisplay.flash('success', getMessage(response));
-					} else {
-						totiDisplay.storedFlash('success', getMessage(response));
-					}
-					if (submit.getAttribute("redirect") != null) {
-						var id = typeof response === 'object' ? response.id : "";
-						window.location = submit.getAttribute("redirect").replace("{id}", id);
-					}
-				},
-				*/
+				if (submit.getAttribute("onSuccess") != null) {
+					window[submit.getAttribute("onSuccess")](result, srcElement, form);
+				} else if (submit.getAttribute("redirect") === null) {
+					totiDisplay.flash('success', totiTranslations.formMessages.sendSuccess);
+				} else {
+					totiDisplay.storedFlash('success', totiTranslations.formMessages.sendSuccess);
+				}
 				if (srcElement.getAttribute("redirect") !== null) {
 					var redirect = srcElement.getAttribute("redirect");
 					if (typeof result === 'object') {
@@ -270,51 +285,45 @@ class TotiForm {
 					window.location = redirect;
 				}
 			}).catch(function(error) {
-				// TODO
-				console.log("error", error);
-				/*
-				function(xhr) {
-					if (xhr.status === 400) {
-						for (const[key, list] of Object.entries(JSON.parse(xhr.responseText))) {
-							var ol = document.createElement("ul");
-							ol.setAttribute("class", "error-list");
-							list.forEach(function(item) {
-								var li = document.createElement("li");
-								li.innerText = item;
-								ol.appendChild(li);
-							});
-							var elementId = key.replaceAll("[", "\\[").replaceAll("]", "\\]");
-							var elementIdentifiers = elementId.split(":");
+				if (error.hasOwnProperty('status') && error.status === 400) {
+					for (const[key, list] of Object.entries(JSON.parse(error.responseText))) {
+						var ol = document.createElement("ul");
+						ol.setAttribute("class", "error-list");
+						list.forEach(function(item) {
+							var li = document.createElement("li");
+							li.innerText = item;
+							ol.appendChild(li);
+						});
+						var elementId = key.replaceAll("[", "\\[").replaceAll("]", "\\]");
+						var elementIdentifiers = elementId.split(":");
 
-							if (elementIdentifiers.length > 1) {
-								elementId = elementId.replace(elementIdentifiers[0] + ":", "");
-								var inputErrors = document
-								.querySelectorAll('#' + uniqueName + '-errors-' + elementId + '');
-								if (inputErrors.length > 0) {
-									inputErrors[elementIdentifiers[0]].appendChild(ol);
-								}
-							} else {
-								var inputError = document.querySelector('#' + uniqueName + '-errors-' + elementId + '');
-								if (inputError !== null) {
-									inputError.appendChild(ol);
-								}
-
+						if (elementIdentifiers.length > 1) {
+							elementId = elementId.replace(elementIdentifiers[0] + ":", "");
+							var inputErrors = form.querySelectorAll('[toti-error="' + elementId + '"]');
+							if (inputErrors.length > 0) {
+								inputErrors[elementIdentifiers[0]].appendChild(ol);
+							}
+						} else {
+							var inputError = form.querySelector('[toti-error="' + elementId + '"]');
+							if (inputError !== null) {
+								inputError.appendChild(ol);
 							}
 						}
-					} else if (submit.getAttribute("onFailure") != null) {
-						window[submit.getAttribute("onFailure")](xhr, submit, form);
-					} else {
-						ii TODO xhr.response - objekt or message and 403
-						totiDisplay.flash('error', totiTranslations.formMessages.saveError);
 					}
+				} else if (submit.getAttribute("onFailure") != null) {
+					window[submit.getAttribute("onFailure")](err, srcElement, form);
+				} else if (error.hasOwnProperty('status') && error.status === 403) {
+					totiDisplay.flash('error', totiTranslations.formMessages.submitErrorForbidden);
+				} else {
+					totiDisplay.flash('error', totiTranslations.formMessages.submitError);
 				}
-				*/
 			});
 			return false;
 		}
-		/* TODO send form data */
-		/*event.preventDefault();
 		var formTosend = document.createElement("form");
+		formTosend.style.display = "none";
+		this.container.appendChild(formTosend);
+
 		formTosend.setAttribute("action", form.getAttribute("action"));
 		formTosend.setAttribute("method", form.getAttribute("method"));
 		if (form.getAttribute("enctype") !== null) {
@@ -326,57 +335,70 @@ class TotiForm {
 			hidden.value = value;
 			formTosend.appendChild(hidden);
 		}
-		formTosend.submit();*/
-		return true;
+		formTosend.submit();
+		formTosend.remove();
+		return false;
 	}
 
 	bind(bindConfig, formUnique, container) {
-		if (bindConfig.hasOwnProperty("beforeBind") && bindConfig.beforeBind !== null) {
-			totiUtils.execute(bindConfig.beforeBind);
+		function bindElement(name, value, position = 0) {
+			if (Array.isArray(value)) {
+				value.forEach(function(val, index) {
+					bindElement(name + "[]", val, index);
+				});
+				return;
+			} else if (typeof value === 'object') {
+				for (const[k, v] of Object.entries(value)) {
+					bindElement(name + "[" + k + "]", v);
+				}
+				return;
+			}
+			var elements = container.querySelectorAll("[name='" + name + "']");
+			if (elements.length === 0) {
+				return;
+			}
+			var element = elements[position];
+			switch(element.type) {
+				case undefined:
+					/* not editable */
+					if (element.bind !== undefined) {
+						element.bind(totiControl.parseValue(element.getAttribute('origintype'), value));
+					}
+					break;
+				case "checkbox":
+					element.checked = value ? "checked" : false;
+					break;
+				case "radio":
+					var radiolist = container.querySelector("[name='" + name + "'][value='" + value + "']");
+					if (radiolist !== null) {
+						radiolist.checked = value ? "checked" : false;
+					}
+					break;
+				/* IMPROVE: realValue u selectu */
+				case "select-one":
+					var val = value;
+					var select = element;
+					element.setOptions.then(function() {
+						select.value = val;
+					});
+					break;
+				default:
+					element.value = value;
+			}
 		}
 		totiLoad.load(bindConfig.url, bindConfig.method).then(function(values) {
-			console.log("TODO bind", values);
-			for (const[k, value] of Object.entries(values)) {
-				var element = container.querySelector("[name='" + k + "']");
-				if (element === null) {
-					continue;
-				}
-				// TODO dynamic list, input list
-				// TODO not editable
-				switch(element.type) {
-					case undefined:
-						/* not editable */
-						if (element.bind !== undefined) {
-							element.bind(totiControl.parseValue(element.getAttribute('origintype'), value));
-						}
-						break;
-					case "checkbox":
-                   		element.checked = value ? "checked" : false;
-						break;
-					case "radio":
-						var radiolist = container.querySelector("[name='" + k + "'][value='" + value + "']");
-						if (radiolist !== null) {
-                   			radiolist.checked = value ? "checked" : false;
-						}
-						break;
-					// TODO realValue u selectu
-					case "select-one":
-						var val = value;
-						var select = element;
-						element.setOptions.then(function() {
-							select.value = val;
-						});
-						break;
-					default:
-						element.value = value;
-				}
+			if (bindConfig.hasOwnProperty("beforeBind") && bindConfig.beforeBind !== null) {
+				totiUtils.execute(bindConfig.beforeBind, [values]);
+			}
+			for (const[name, value] of Object.entries(values)) {
+				bindElement(name, value);
 			}
 			if (bindConfig.hasOwnProperty("afterBind") && bindConfig.afterBind !== null) {
-				totiUtils.execute(bindConfig.afterBind);
+				totiUtils.execute(bindConfig.afterBind, [values]);
 			}
 		}).catch(function(error) {
 			if (bindConfig.onFailure === null) {
-				totiDisplay.flash("error", totiTranslations.formMessages.bindError);
+				totiDisplay.flash("error", totiTranslations.formMessages.bindError, error);
 			} else {
 				totiUtils.execute(bindConfig.onFailure, [error]);
 			}

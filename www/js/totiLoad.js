@@ -38,14 +38,16 @@ var totiLoad = {
 				} else {
 					reject({
 						status: xhr.status,
-						statusText: xhr.statusText
+						statusText: xhr.statusText,
+						responseText: xhr.responseText
 					});
 				}
 			};
 			xhr.onerror = function () {
 				reject({
 					status: xhr.status,
-					statusText: xhr.statusText
+					statusText: xhr.statusText,
+					responseText: xhr.responseText
 				});
 			};
 			if (bodyData instanceof FormData) {

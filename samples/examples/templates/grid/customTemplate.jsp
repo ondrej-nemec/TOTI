@@ -12,6 +12,7 @@
 	<script src="/js/totiLoad.js" ></script>
 	<script src="/js/totiAuth.js" ></script> 
 	<script src="/js/totiGridDefaultTemplate.js" ></script>
+	<script src="/js/totiFormDefaultTemplate.js" ></script>
 	<script src="/js/totiDisplay.js" ></script>
 	<script src="/js/totiControl.js" ></script>
 	

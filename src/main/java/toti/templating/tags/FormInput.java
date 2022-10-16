@@ -30,13 +30,13 @@ public class FormInput implements Tag {
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
 		StringBuilder code = new StringBuilder(
-			String.format("write(\"<div name='form-input-%s' class='dynamic-container-part'", params.get("name"))
+			String.format("write(\"<div toti-input='%s'", params.get("name"))
 		);
 		params.forEach((name, value)->{
 			if ("name".equals(name)) {
 				return;
 			}
-			code.append(String.format(" p-%s='%s'", name, value));
+			code.append(String.format(" %s='%s'", name, value));
 		});
 		code.append("></div>\");");
 		return code.toString();

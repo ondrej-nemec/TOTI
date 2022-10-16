@@ -427,7 +427,7 @@ class TotiGrid {
 		.catch(function(xhr) {
 			console.error(xhr);
 			totiDisplay.fadeOut();
-			totiDisplay.flash("error", totiTranslations.gridMessages.loadingError);
+			totiDisplay.flash("error", totiTranslations.gridMessages.loadingError, xhr);
 		});
 	}
 

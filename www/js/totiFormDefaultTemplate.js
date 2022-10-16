@@ -31,6 +31,9 @@ var totiFormDefaultTemplate = {
 		form.appendChild(buttons1);
 		return form;
 	},
+	setFormAttribute: function(formUnique, container, name, value) {
+		container.setAttribute(name, value);
+	},
 	addInput: function(formUnique, container, name, label, input) {
 		var row = document.createElement("tr");
 
@@ -55,10 +58,10 @@ var totiFormDefaultTemplate = {
 	addHidden: function(formUnique, container, input) {
 		container.querySelector('#toti-form-hiddens').appendChild(input);
 	},
-	addControl: function(formUnique, container, button) {
+	addControl: function(formUnique, container, name, button) {
 		container.querySelector("#toti-form-buttons-" + formUnique).appendChild(button);
 	},
-	addRow: function(formUnique, container, name, originType, label) {
+	addRow: function(formUnique, container, name, originType, label, value) {
 		var row = document.createElement("tr");
 
 		var labelCell = document.createElement('td');
@@ -68,19 +71,22 @@ var totiFormDefaultTemplate = {
 		inputCell.setAttribute('name', name);
 		inputCell.setAttribute('originType', originType);
 
-		inputCell.bind = function(value) {
-			inputCell.innerText = value;
+		inputCell.bind = function(val) {
+			inputCell.innerText = val;
 			if (originType === 'color') {
-				inputCell.style['background-color'] = value;
+				inputCell.style['background-color'] = val;
 			}
 		};
+		if (value !== null && value !== undefined) {
+			inputCell.bind(value);
+		}
 
 		row.appendChild(labelCell);
 		row.appendChild(inputCell);
 
 		container.querySelector('#toti-form-inputs-' + formUnique).appendChild(row);
 	},
-	addOptionRow: function(formUnique, container, name, originType, label, options) {
+	addOptionRow: function(formUnique, container, name, originType, label, options, val) {
 		var row = document.createElement("tr");
 
 		var labelCell = document.createElement('td');
@@ -94,8 +100,9 @@ var totiFormDefaultTemplate = {
 			var optionCell = document.createElement("div");
 			optionCell.setAttribute("value", option.value);
 			optionCell.innerText = option.title;
-			optionCell.style.display = "none";
-
+			if (val === null || val !== option.value) {
+				optionCell.style.display = "none";
+			}
 			inputCell.appendChild(optionCell);
 		});
 		inputCell.bind = function(value) {

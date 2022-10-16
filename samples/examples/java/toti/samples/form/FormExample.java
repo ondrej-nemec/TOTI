@@ -336,11 +336,32 @@ public class FormExample implements Module {
 	 */
 	@Action("template")
 	public Response template() {
-		Form form = new Form(Link.get().create(getClass(), c->c.templateSave(null)), true);
+		return templateResponse("Editable", true);
+	}
+	
+	/**
+	 * Form printed with template - detail mode
+	 * @return http://localhost:8080/examples-form/form/template-detail
+	 */
+	@Action("template-detail")
+	public Response templateDetail() {
+		return templateResponse("Detail", false);
+	}
+	
+	private Response templateResponse(String title, boolean editable) {
+		Form form = new Form(Link.get().create(getClass(), c->c.templateSave(null)), editable);
 		form.setFormMethod("post");
+		
+		form.setBindUrl(Link.get().create(getClass(), c->c.templateData()));
 		
 		form.addInput(Text.input("textInput", true).setTitle("Text"));
 		form.addInput(Number.input("numberInput", false).setTitle("Number"));
+		form.addInput(Select.input("selectInput", true, Arrays.asList(
+			Option.create("a", "A"),
+			Option.create("b", "B"),
+			Option.create("c", "C")
+		)).setTitle("Selectbox"));
+		form.addInput(Checkbox.input("checkboxInput", false).setTitle("Checbox"));
 		form.addInput(Text.input("notExpected", false).setTitle("Validator not expect this parameter"));
 		
 		form.addInput(Submit.create("Submit", "submit1"));
@@ -348,8 +369,25 @@ public class FormExample implements Module {
 		
 		Map<String, Object> params = new HashMap<>();
 		params.put("form", form);
-		params.put("title", "Form template");
+		params.put("title", "Form template " + title);
 		return Response.getTemplate("template.jsp", params);
+	}
+
+	/**
+	 * Data for template
+	 * @return http://localhost:8080/examples-form/form/template-data
+	 */
+	@Action("template-data")
+	public Response templateData() {
+		return Response.getJson(
+			new MapInit<String, Object>()
+			.append("textInput", "Some text")
+			.append("numberInput", 42)
+			.append("selectInput", "b")
+			.append("checkboxInput", true)
+			.append("notExpected", "Not expected")
+			.toMap()
+		);
 	}
 	
 	/**
@@ -398,11 +436,11 @@ public class FormExample implements Module {
 			.setTitle("Load with empty option")
 			.setLoadData(Link.get().create(getClass(), c->c.loadToSelect()), "get")
 		);
-		// TODO tohle nejde
 		form.addInput(
 			Select.input("load-with-def", false, defOptions)
 			.setTitle("Load with default options")
 			.setLoadData(Link.get().create(getClass(), c->c.loadToSelect()), "get")
+			.setDefaultValue("3")
 		);
 		
 		form.addInput(
@@ -451,55 +489,11 @@ public class FormExample implements Module {
 			.setDefaultValue(5)
 		);
 		
-		
-		
-		
-		// TODO podle select.html
-		/*form.addInput(
-			Select.input("load", false, Arrays.asList(Option.create("", "-- Select --").setDisabled(true)))
-			.setLoadData(Link.get().create(getClass(), c->c.loadToSelect()), "get")
-			.setTitle("Load data")
-		);
-		form.addInput(
-			Select.input("load-with", false, Arrays.asList(
-				Option.create("", "-- Select --").setDisabled(true),
-				Option.create("some-option", "Some option").setOptGroup("Default"),
-				Option.create("another", "Another").setOptGroup("Default")
-			))
-			.setLoadData(Link.get().create(getClass(), c->c.loadGroup()), "get")
-			.setTitle("Load data with optgroup and disabled")
-		);
-		
-		form.addInput(
-			Select.input("groups", false, Arrays.asList(
-				Option.create("", "-- Select --").setDisabled(true),
-				Option.create("", "No group"),
-				Option.create("G0", "Group 0"),
-				Option.create("G1", "Group 1"),
-				Option.create("G2", "Group 2"),
-				Option.create("G3", "Group 3")
-			))
-			.setTitle("Groups")
-		);
-		form.addInput(
-			Select.input("depends-on", false, Arrays.asList(
-				Option.create("", "-- Select --").setDisabled(true),
-				Option.create("v1", "No group 1"),
-				Option.create("v2", "No group 2"),
-				Option.create("v0.1", "G0-O1").setOptGroup("G0"),
-				Option.create("v0.2", "G0-O2").setOptGroup("G0"),
-				Option.create("v0.3", "G0-O3").setOptGroup("G0")
-			))
-			.setDepends("groups")
-			.setLoadData(Link.get().create(getClass(), c->c.loadGroup()), "get")
-			.setTitle("Depends on previous input")
-		);*/
-		
 		form.addInput(Submit.create("Submit", "submit"));
 		
 		Map<String, Object> params = new HashMap<>();
 		params.put("form", form);
-		params.put("title", "Sync and async send");
+		params.put("title", "Usage of select option loading");
 		return Response.getTemplate("inputs.jsp", params);
 	}
 
@@ -907,9 +901,11 @@ public class FormExample implements Module {
 	@Action("callbacks")
 	public Response callbacks() {
 		Form form = new Form(Link.get().addUrlParam(10).create(getClass(), c->c.allInputs(0, null)), true);
-		form.setAfterBind("afterBindCallback");
-		form.setAfterRender("afterPrintCallback");
+		form.setBeforeRender("beforeRenderCallback");
+		form.setAfterRender("afterRenderCallback");
+		
 		form.setBeforeBind("beforeBindCallback");
+		form.setAfterBind("afterBindCallback");
 		
 		form.addInput(Text.input("text", true).setTitle("Text input"));
 		form.setBindUrl(Link.get().addUrlParam(10).create(getClass(), c->c.allInputsGet(0)));
@@ -1135,6 +1131,111 @@ public class FormExample implements Module {
 		params.put("form", form);
 		params.put("title", "DynamicList with custom buttons");
 		return Response.getTemplate("inputs.jsp", params);
+	}
+
+	/**
+	 * Using dynamic input list with custom template
+	 * @return http://localhost:8080/examples-form/form/dynamiclist-loaded
+	 */
+	@Action("dynamiclist-loaded")
+	public Response dynamicLoaded() {
+		Form form = new Form(Link.get().create(getClass(), c->c.save(null)), true);
+		form.setFormMethod("post");
+
+		form.addInput(
+			DynamicList.input("simple-list")
+			.setLoadData(Link.get().create(getClass(), c->c.dynamicListLoad()), "get")
+			.addInput(
+				Select.input("", false, Arrays.asList())
+				.setLoadData(Link.get().create(getClass(), c->c.dynamicListLoadSelect()), "get")
+			)
+		);
+		
+		form.addInput(Submit.create("Submit", "submit"));
+		
+		form.setBindUrl(Link.get().create(getClass(), c->c.dynamicListData()));
+		
+		Map<String, Object> params = new HashMap<>();
+		params.put("form", form);
+		params.put("title", "Dynamic list loaded");
+		return Response.getTemplate("inputs.jsp", params);
+	}
+
+	/**
+	 * Data for loaded dynamic list
+	 * @return http://localhost:8080/examples-form/form/dynamiclist-load
+	 */
+	@Action("dynamiclist-load")
+	public Response dynamicListLoad() {
+		return Response.getJson(
+			new MapInit<String, Object>()
+			.append("group1", "Group 1")
+			.append("group2", "Group 2")
+			.append("group3", "Group 3")
+			.toMap()
+		);
+	}
+
+	/**
+	 * Data for select in loaded dynamic list
+	 * @return http://localhost:8080/examples-form/form/dynamiclist-load-select
+	 */
+	@Action("dynamiclist-load-select")
+	public Response dynamicListLoadSelect() {
+		return Response.getJson(
+			Arrays.asList(
+				new MapInit<String, Object>()
+					.append("value", "a1")
+					.append("title", "A1")
+					.append("optgroup", "group1")
+					.toMap(),
+				new MapInit<String, Object>()
+					.append("value", "a2")
+					.append("title", "A2")
+					.append("optgroup", "group1")
+					.toMap(),
+				new MapInit<String, Object>()
+					.append("value", "b1")
+					.append("title", "B1")
+					.append("optgroup", "group2")
+					.toMap(),
+				new MapInit<String, Object>()
+					.append("value", "b2")
+					.append("title", "b2")
+					.append("optgroup", "group2")
+					.toMap(),
+				new MapInit<String, Object>()
+					.append("value", "c1")
+					.append("title", "C1")
+					.append("optgroup", "group3")
+					.toMap(),
+				new MapInit<String, Object>()
+					.append("value", "c2")
+					.append("title", "C2")
+					.append("optgroup", "group3")
+					.toMap()
+			)
+		);
+	}
+
+	/**
+	 * Data for input list
+	 * @return http://localhost:8080/examples-form/form/dynamiclist-loaded-data
+	 */
+	@Action("dynamiclist-data")
+	public Response dynamicListLoadedData() {
+		return Response.getJson(
+			new MapInit<String, Object>()
+			.append("simple-list", Arrays.asList("value-01", "value-02", "value-02"))
+			.append(
+				"simple-map", 
+				new MapInit<String, Object>()
+				.append("item_1", "value11")
+				.append("item_2", "value12")
+				.toMap()
+			)
+			.toMap()
+		);
 	}
 	
 	/************************/

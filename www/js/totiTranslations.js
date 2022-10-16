@@ -23,8 +23,10 @@ var totiTranslations = {
 		"actionFailure": "Action fails"
 	},
 	"formMessages": {
-		"saveError": /* "<t:trans message='common.form.saving-problem' />", /*/ "Problem with form saving", //*/
-		"bindError": /* "<t:trans message='common.form.binding-problem' />" /*/ "Loading data failure" //*/
+		"submitError": /* "<t:trans message='common.form.saving-problem' />", /*/ "Problem with form submit", //*/
+		"submitErrorForbidden": /* "<t:trans message='common.form.saving-problem' />", /*/ "You are not allowed to submit form", //*/
+		"bindError": /* "<t:trans message='common.form.binding-problem' />" /*/ "Loading data failure", //*/
+		"sendSuccess": /* "<t:trans message='common.form.binding-problem' />" /*/ "Form saved" //*/
 	},
 //	"formButtons": {
 //		"add": /* "<t:trans message='common.form.add-variant' />", /*/ "Add Variant", //*/

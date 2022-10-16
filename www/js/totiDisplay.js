@@ -11,7 +11,7 @@ var totiDisplay = {
 	},
 	/**********/
 	flashTimeout: 0,
-	flash: function(severity, message) {
+	flash: function(severity, message, error = null) {
 		var div = document.createElement("div");
 
 		var img = document.createElement("img");
@@ -40,14 +40,23 @@ var totiDisplay = {
 		}
 		switch(severity.toLowerCase()) {
 			case "error":
-				console.error("Flash " + severity + ":" + message);
+				console.error("Flash " + severity + ": " + message);
+				if (error !== null) {
+					console.error(error);
+				}
 				break;
 			case "warn":
 			case "warning":
-				console.warn("Flash " + severity + ":" + message);
+				console.warn("Flash " + severity + ": " + message);
+				if (error !== null) {
+					console.warn(error);
+				}
 				break;
 			default:
-				console.log("Flash " + severity + ":" + message);
+				console.log("Flash " + severity + ": " + message);
+				if (error !== null) {
+					console.log(error);
+				}
 		}
 	},
 	storedFlash: function(severity, message) {

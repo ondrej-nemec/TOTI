@@ -3,6 +3,7 @@
 	<title>Grid example</title>
 <%--	<link rel="stylesheet" href="/toti/totiStyle.css" />
 	 <script src="/toti/totiJs.js" nonce="${nonce}"></script> --%>
+	 <!-- TODO -->
 	<script src="/js/totiImages.js" ></script>
 	<script src="/js/totiUtils.js" ></script>
 	<script src="/js/totiSortedMap.js" ></script>
@@ -12,6 +13,7 @@
 	<script src="/js/totiLoad.js" ></script>
 	<script src="/js/totiAuth.js" ></script> 
 	<script src="/js/totiGridDefaultTemplate.js" ></script>
+	<script src="/js/totiFormDefaultTemplate.js" ></script>
 	<script src="/js/totiDisplay.js" ></script>
 	<script src="/js/totiControl.js" ></script>
 	

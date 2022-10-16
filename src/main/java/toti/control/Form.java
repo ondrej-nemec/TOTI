@@ -20,8 +20,8 @@ public class Form implements Control {
 	private String afterBind;
 	private String beforeRender;
 	private String afterRender;
-	private String beforeSubmit;
-	private String afterSubmit;
+//	private String beforeSubmit;
+//	private String afterSubmit;
 	
 	private final String formAction;
 	private String formMethod = "get";
