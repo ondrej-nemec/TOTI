@@ -256,6 +256,7 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 			// TODO authorize and bad request response order
 			if (!errors.isEmpty()) {
 				// check errors after authrization
+				// https://stackoverflow.com/a/6123801/8240462
 				return Response.getJson(StatusCode.BAD_REQUEST, errors)
 						.getResponse(request.getProtocol(), responseHeaders, charset);
 			}
