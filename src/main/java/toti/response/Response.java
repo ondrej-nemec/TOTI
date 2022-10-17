@@ -225,7 +225,10 @@ public interface Response {
 			case "csv": return "text/csv; charset=" + charset;
 			case "js": return "text/javascript; charset=" + charset;
 			case "txt": return "text/plain; charset=" + charset;
+			
 			case "json": return "application/json; charset=" + charset;
+			case "pdf": return "application/pdf";
+			
 			case "ico": return "image/ico";
 			case "jpeg":
 			case "jpg": return "image/jpeg";
