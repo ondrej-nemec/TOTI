@@ -271,9 +271,11 @@ public class TemplateFactory {
 		tags.add(new BlockTag());
 		tags.add(new IncludeTag());
 		tags.add(new ControlTag());
-		tags.add(new FormError());
-		tags.add(new FormInput());
-		tags.add(new FormLabel());
+	//	tags.add(new FormError());
+	//	tags.add(new FormInput());
+	//	tags.add(new FormLabel());
+		tags.add(new FormTag());
+		tags.add(new GridTag());
 		tags.add(new PermissionsTag());
 		tags.add(new LinkTag());
 		tags.add(new IfCurrentTag());
