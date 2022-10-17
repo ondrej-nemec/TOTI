@@ -27,7 +27,7 @@ public class TemplateDiagnostic extends Writer implements DiagnosticListener<Jav
 	public void report(Diagnostic<? extends JavaFileObject> diagnostic) {
 		if (diagnostic.getKind() == Kind.ERROR) {
 			builder.append(String.format(
-				"%s.%s Compilation error: %s",
+				"%s.%s Compilation error: %s ",
 				namespace, file,
 				diagnostic.getMessage(null)
 			));
