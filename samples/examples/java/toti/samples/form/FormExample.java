@@ -206,6 +206,49 @@ public class FormExample implements Module {
 		return Response.getTemplate("inputs.jsp", params);
 	}
 	
+	/*******/
+	
+	/**
+	 * Submit returns 400 with errors
+	 * @return http://localhost:8080/examples-form/form/validated
+	 */
+	@Action("validated")
+	public Response validated() {
+		Form form = new Form(Link.get().create(getClass(), c->c.validateSave()), true);
+		form.addInput(
+			Text.input("text", true).setTitle("Text input")
+			.setDefaultValue("Some text to submit")
+		);
+
+		form.addInput(
+			Text.input("not-expected", true).setTitle("Not expected Text input")
+			.setDefaultValue("Not expected")
+		);
+		form.addInput(
+			Submit.create("Save", "save")
+			.setRedirect(Link.get().create(getClass(), c->c.validated()))
+		);
+		Map<String, Object> params = new HashMap<>();
+		params.put("form", form);
+		params.put("title", "With validator");
+		return Response.getTemplate("inputs.jsp", params);
+	}
+	
+	public Validator validateForm() {
+		return new Validator(true)
+			.addRule(ItemRules.forName("text", true).setMaxLength(10).setMinLength(5))
+			.addRule(ItemRules.forName("missing-text", true));
+	}
+	
+	/**
+	 * Save data from validated form
+	 * @return http://localhost:8080/examples-form/form/validate-save/{0-100}
+	 */
+	@Action(value = "validate-save", validator = "validateForm")
+	public Response validateSave() {
+		return Response.getText("NOK - this could not happends");
+	}
+	
 	/******/
 	
 	/**

@@ -26,40 +26,40 @@
 	
 	<t:control name="form">
 		<!-- error container for global errors -->
-		<t:error name="form" />
+		<t:form error="form" />
 		<div>
-			<t:label name="textInput" class="custom-class" id="some-id" />
-			<t:input name="textInput" class="custom-class" id="some-id" />
-			<t:error name="textInput" class="custom-class" id="some-id" />
+			<t:form label="textInput" class="custom-class" id="some-id" />
+			<t:form input="textInput" class="custom-class" id="some-id" />
+			<t:form error="textInput" class="custom-class" id="some-id" />
 		</div>
 		<hr>
 		<div>
-			<t:label name="numberInput" />
-			<t:input name="numberInput" />
-			<t:error name="numberInput" />
+			<t:form label="numberInput" />
+			<t:form input="numberInput" />
+			<t:form error="numberInput" />
 		</div>
 		<hr>
 		<div>
-			<t:label name="selectInput" />
-			<t:input name="selectInput" />
-			<t:error name="selectInput" />
+			<t:form label="selectInput" />
+			<t:form input="selectInput" />
+			<t:form error="selectInput" />
 		</div>
 		<hr>
 		<div>
-			<t:label name="checkboxInput" />
-			<t:input name="checkboxInput" />
-			<t:error name="checkboxInput" />
+			<t:form label="checkboxInput" />
+			<t:form input="checkboxInput" />
+			<t:form error="checkboxInput" />
 		</div>
 		<hr>
 		<div>
-			<t:label name="notExpected" />
-			<t:input name="notExpected" />
-			<t:error name="notExpected" />
+			<t:form label="notExpected" />
+			<t:form input="notExpected" />
+			<t:form error="notExpected" />
 		</div>
 		<hr>
 		<div>
-			<t:input name="submit1" />
-			<t:input name="submit2" />
+			<t:form input="submit1" />
+			<t:form input="submit2" />
 		</div>
 	</t:control>
 

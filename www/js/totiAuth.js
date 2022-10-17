@@ -60,7 +60,7 @@ var totiAuth = {
              console.log("No saved config");
              return false;
         }
-        refresh(config.url, config.method, token.expires_in);
+        totiAuth.refresh(config.url, config.method, token.expires_in);
         return true;
     },
     customRefreshHandler: function () {}

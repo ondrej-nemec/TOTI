@@ -15,45 +15,22 @@ var totiFormCustomTemplate = {
 	addInput: function(formUnique, container, name, label, input) {
 		var labelCell = document.createElement('label');
 		labelCell.innerText = label;
-		totiUtils.replaceElement(container, '[toti-label="' + name + '"]', labelCell, ['toti-label']);
+		totiUtils.replaceElement(container, '[toti-form-label="' + name + '"]', labelCell, ['toti-form-label']);
 
-		totiUtils.replaceElement(container, '[toti-input="' + name + '"]', input, ['toti-input']);
-		// TODO errors
-		// TODO grid - ne toti tagy, ale t:tagy
-
-		// replaceElement: function(container, selector, newElement, excludeAttributes = []) {
-		/*var row = document.createElement("tr");
-
-		var labelCell = document.createElement('td');
-		var labelContainer = document.createElement('label');
-		labelContainer.innerText = label;
-		labelCell.appendChild(labelContainer);
-
-		var inputCell = document.createElement('td');
-		inputCell.appendChild(input);
-
-		var errorCell = document.createElement('td');
-		errorCell.setAttribute("id", name);
-		errorCell.setAttribute("class", "toti-form-errors");
-
-		row.appendChild(labelCell);
-		row.appendChild(inputCell);
-		row.appendChild(errorCell);
-
-		container.querySelector('#toti-form-inputs-' + formUnique).appendChild(row);*/
+		totiUtils.replaceElement(container, '[toti-form-input="' + name + '"]', input, ['toti-form-input']);
 	},
 	addHidden: function(formUnique, container, input) {
 		container.appendChild(input);
 	},
 	addControl: function(formUnique, container, name, button) {
-		totiUtils.replaceElement(container, '[toti-input="' + name + '"]', button, ['toti-input']);
+		totiUtils.replaceElement(container, '[toti-form-input="' + name + '"]', button, ['toti-form-input']);
 	},
 	addRow: function(formUnique, container, name, originType, label, value) {
 		var labelCell = document.createElement('label');
 		labelCell.innerText = label;
-		totiUtils.replaceElement(container, '[toti-label="' + name + '"]', labelCell, ['toti-label']);
+		totiUtils.replaceElement(container, '[toti-form-label="' + name + '"]', labelCell, ['toti-form-label']);
 
-		var inputCell = container.querySelector('[toti-input="' + name + '"]');
+		var inputCell = container.querySelector('[toti-form-input="' + name + '"]');
 		if (inputCell !== null) {
 			inputCell.setAttribute('name', name);
 			inputCell.setAttribute('originType', originType);
@@ -71,9 +48,9 @@ var totiFormCustomTemplate = {
 	addOptionRow: function(formUnique, container, name, originType, label, options, val) {
 		var labelCell = document.createElement('label');
 		labelCell.innerText = label;
-		totiUtils.replaceElement(container, '[toti-label="' + name + '"]', labelCell, ['toti-label']);
+		totiUtils.replaceElement(container, '[toti-form-label="' + name + '"]', labelCell, ['toti-form-label']);
 
-		var inputCell = container.querySelector('[toti-input="' + name + '"]');
+		var inputCell = container.querySelector('[toti-form-input="' + name + '"]');
 		if (inputCell !== null) {
 			Object.values(options).forEach(function(option) {
 				var optionCell = document.createElement("div");
@@ -100,9 +77,9 @@ var totiFormCustomTemplate = {
 	addPromisedRow: function(formUnique, container, name, originType, label, promise) {
 		var labelCell = document.createElement('label');
 		labelCell.innerText = label;
-		totiUtils.replaceElement(container, '[toti-label="' + name + '"]', labelCell, ['toti-label']);
+		totiUtils.replaceElement(container, '[toti-form-label="' + name + '"]', labelCell, ['toti-form-label']);
 
-		var inputCell = container.querySelector('[toti-input="' + name + '"]');
+		var inputCell = container.querySelector('[toti-form-input="' + name + '"]');
 		if (inputCell !== null) {
 			var afterLoadOptions = promise.then(function(options) {
 				var result = {};

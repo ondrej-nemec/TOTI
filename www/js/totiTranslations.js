@@ -28,10 +28,10 @@ var totiTranslations = {
 		"bindError": /* "<t:trans message='common.form.binding-problem' />" /*/ "Loading data failure", //*/
 		"sendSuccess": /* "<t:trans message='common.form.binding-problem' />" /*/ "Form saved" //*/
 	},
-//	"formButtons": {
-//		"add": /* "<t:trans message='common.form.add-variant' />", /*/ "Add Variant", //*/
-//		"remove": /* "<t:trans message='common.form.remove-variant' />" /*/ "Remove Variant" //*/
-//	},
+	"dynamicList": {
+		"add": /* "<t:trans message='common.form.add-variant' />", /*/ "Add Variant", //*/
+		"remove": /* "<t:trans message='common.form.remove-variant' />" /*/ "Remove Variant" //*/
+	},
 	/* TODO use translations with JSON.parse() ??? */
 	"timestamp": {
 		dateString: {

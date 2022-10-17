@@ -14,10 +14,16 @@ var totiLoad = {
 			var xhr = new XMLHttpRequest();
 			/* sending body is not supported for GET and HEAD */
 			if (method.toLowerCase() === "get" || method.toLowerCase() === "head") {
-				urlData = {
-					...urlData,
-					...bodyData
-				};
+				if (bodyData instanceof FormData) {
+					for (const[name, value] of bodyData.entries()) {
+						urlData[name] = value;
+					}
+				} else {
+					urlData = {
+						...urlData,
+						...bodyData
+					};
+				}
 			}
 			if (urlData !== null && urlData !== {}) {
 				url = url + "?" + ((bodyData instanceof URLSearchParams) ? bodyData : new URLSearchParams(urlData)).toString();

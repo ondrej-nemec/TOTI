@@ -20,7 +20,7 @@ var totiGridCustomTemplate = {
 		});
 	},
 	addFilter: function(gridUnique, container, name, grid, input) {
-		var placeholder = container.querySelector('toti[filter="' + name + '"]');
+		var placeholder = container.querySelector('[toti-grid-filter="' + name + '"]');
 		if (placeholder !== null && input !== null) {
 			var atts = placeholder.attributes;
 			for (var i = 0; i < atts.length; i++){
@@ -32,7 +32,7 @@ var totiGridCustomTemplate = {
 		}
 	},
 	addCheckbox: function(gridUnique, container, checkbox) {
-		var placeholders = container.querySelectorAll('toti[checkbox]');
+		var placeholders = container.querySelectorAll('[toti-grid-checkbox]');
 		placeholders.forEach(function(placeholder) {
 			var atts = placeholder.attributes;
 			for (var i = 0; i < atts.length; i++){
@@ -44,7 +44,7 @@ var totiGridCustomTemplate = {
 		});
 	},
 	addButtons: function(gridUnique, container, name, buttons) {
-		var placeholder = container.querySelector('toti[buttons="' + name + '"]');
+		var placeholder = container.querySelector('[toti-grid-buttons="' + name + '"]');
 		if (placeholder !== null) {
 			placeholder.parentNode.append(...buttons);
 			placeholder.remove();

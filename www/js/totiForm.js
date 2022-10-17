@@ -82,7 +82,10 @@ class TotiForm {
 	addInput(field, parent = null) {
 		var editable = field.hasOwnProperty("editable") ? field.editable : this.config.editable;
 		var form = this;
+		var container = this.container;
+		var removeFunc = null;
 		if (parent !== null) {
+			// TODO vyresit problem s jmeny - a[b] xkrat, a[][b], a[b][] 
 			var fieldName = parent.name;
             if (parent.position !== false) {
                	fieldName += "[" + (field.hasOwnProperty("name") ? field.name : "") + "]";
@@ -92,39 +95,40 @@ class TotiForm {
 			if (parent.position !== false && field.hasOwnProperty("title")) {
 				field.title = field.title.replace('{i}', parent.position);
 			}
+			container = parent.container;
+			removeFunc = parent.remove;
 		}
 
 		if (field.type === "dynamic") {
-			// TODO implement
-			console.log(field);
 			var addItem = function() {
-				// TODO pouzit jiny container
-				field.fields.forEach(function(f) {
-					form.addInput(f);
+				// TODO  dostat index a position do inputu - k mazani a bindu
+				var position = ++form.dynamic[field.name].position;
+				field.fields.forEach(function(f, index) {
+					form.addInput(totiUtils.clone(f), {
+						name: field.name,
+						position: position,
+						container: form.dynamic[field.name].container,
+						remove: function(element) {
+							element.remove();
+						}
+					});
 				});
 			};
-			var removeItem = function(identifier) {
-				// TODO
-			};
-			var dynamicContainer = form.template.getDynamicContainer(form.formUnique, form.container, field.name, addItem);
-			addItem();
-			/*
-			do formu pridat container pro inputy a s add tlacitekm
-			na add tlacitko navazat funkci
-			pridat prvni item
-
-			pri pridani itemu
-				iterovat fields touto metodou
-				najit remove a navazat funkci
-			*/
+			var dynamicContainer = form.template.getDynamicContainer(form.formUnique, form.container, field.name, addItem, removeFunc);
 			this.dynamic[field.name] = {
-				add: addItem
+				add: addItem,
+				position: 0,
+				container: dynamicContainer,
+				elements: {}
 			};
+			addItem();
 		} else if (field.type === "list") {
 			field.fields.forEach(function(subField, index) {
 				form.addInput(subField, {
 					name: field.name,
-					position: index
+					position: index,
+					container: container,
+					remove: removeFunc
 				});
 			});
 		} else if (!editable) {
@@ -142,27 +146,27 @@ class TotiForm {
 					break;
 				case "button":
 					var input = totiControl.button(field);
-					this.template.addControl(this.formUnique, this.container, field.name, input);
+					this.template.addControl(this.formUnique, container, field.name, input);
 					break;
 				case "checkbox":
-					this.template.addOptionRow(this.formUnique, this.container, field.name, field.type, field.title, field.values, field.value);
+					this.template.addOptionRow(this.formUnique, container, field.name, field.type, field.title, field.values, field.value);
 					break;
 				case "radiolist":
-					this.template.addOptionRow(this.formUnique, this.container, field.name, field.type, field.title, field.radios, field.value);
+					this.template.addOptionRow(this.formUnique, container, field.name, field.type, field.title, field.radios, field.value);
 					break;
 				case "select":
 					var select = totiControl.input(field);
-					this.template.addPromisedRow(this.formUnique, this.container, field.name, field.type, field.title, select.setOptions);
+					this.template.addPromisedRow(this.formUnique, container, field.name, field.type, field.title, select.setOptions);
 					break;
 				default:
-					this.template.addRow(this.formUnique, this.container, field.name, field.type, field.title, field.value);
+					this.template.addRow(this.formUnique, container, field.name, field.type, field.title, field.value);
 					break;
 			}
 		} else {
 			var input = totiControl.input(field);
 			switch(field.originType) {
 				case "hidden":
-					this.template.addHidden(this.formUnique, this.container, input);
+					this.template.addHidden(this.formUnique, container, input, removeFunc);
 					break;
 				case "submit":
 				case "image":
@@ -171,24 +175,32 @@ class TotiForm {
 						e.preventDefault();
 						return form.submit(input);
 					});
-					this.template.addControl(this.formUnique, this.container, field.name, input);
+					this.template.addControl(this.formUnique, container, field.name, input);
 					break;
 				case "button":
-					this.template.addControl(this.formUnique, this.container, field.name, input);
+					this.template.addControl(this.formUnique, container, field.name, input, removeFunc);
 					break;
 				case "file":
-					this.template.setFormAttribute(this.formUnique, this.container, "enctype", "multipart/form-data");
+					this.template.setFormAttribute(this.formUnique, container, "enctype", "multipart/form-data");
 					/* no break */
 				default:
-					this.template.addInput(this.formUnique, this.container, field.name, field.title, input);
+					this.template.addInput(this.formUnique, container, field.name, field.title, input, removeFunc);
 					break;
 			}
 		}
 	}
 
-	addDynamicField(name) {}
+	addDynamicField(name) {
+		if (form.dynamic.hasOwnProperty(name)) {
+			form.dynamic[name].add();
+		}
+	}
 
-	removeDynamicField(name, index) {}
+	/*removeDynamicField(name, index) {
+		if (form.dynamic.hasOwnProperty(name)) {
+			form.dynamic[name].remove(index);
+		}
+	}*/
 
 	submit(srcElement) {
 		/* IMPROVE: before and after submit callbacks ? */
@@ -270,9 +282,9 @@ class TotiForm {
 				{},
 				data
 			).then(function(result) {
-				if (submit.getAttribute("onSuccess") != null) {
-					window[submit.getAttribute("onSuccess")](result, srcElement, form);
-				} else if (submit.getAttribute("redirect") === null) {
+				if (srcElement.getAttribute("onSuccess") != null) {
+					window[srcElement.getAttribute("onSuccess")](result, srcElement, form);
+				} else if (srcElement.getAttribute("redirect") === null) {
 					totiDisplay.flash('success', totiTranslations.formMessages.sendSuccess);
 				} else {
 					totiDisplay.storedFlash('success', totiTranslations.formMessages.sendSuccess);
@@ -286,6 +298,9 @@ class TotiForm {
 				}
 			}).catch(function(error) {
 				if (error.hasOwnProperty('status') && error.status === 400) {
+					form.querySelectorAll('[toti-form-error]').forEach(function(errContainer) {
+						errContainer.innerHTML = "";
+					});
 					for (const[key, list] of Object.entries(JSON.parse(error.responseText))) {
 						var ol = document.createElement("ul");
 						ol.setAttribute("class", "error-list");
@@ -299,19 +314,19 @@ class TotiForm {
 
 						if (elementIdentifiers.length > 1) {
 							elementId = elementId.replace(elementIdentifiers[0] + ":", "");
-							var inputErrors = form.querySelectorAll('[toti-error="' + elementId + '"]');
+							var inputErrors = form.querySelectorAll('[toti-form-error="' + elementId + '"]');
 							if (inputErrors.length > 0) {
 								inputErrors[elementIdentifiers[0]].appendChild(ol);
 							}
 						} else {
-							var inputError = form.querySelector('[toti-error="' + elementId + '"]');
+							var inputError = form.querySelector('[toti-form-error="' + elementId + '"]');
 							if (inputError !== null) {
 								inputError.appendChild(ol);
 							}
 						}
 					}
-				} else if (submit.getAttribute("onFailure") != null) {
-					window[submit.getAttribute("onFailure")](err, srcElement, form);
+				} else if (srcElement.getAttribute("onFailure") != null) {
+					window[srcElement.getAttribute("onFailure")](err, srcElement, form);
 				} else if (error.hasOwnProperty('status') && error.status === 403) {
 					totiDisplay.flash('error', totiTranslations.formMessages.submitErrorForbidden);
 				} else {
@@ -341,6 +356,7 @@ class TotiForm {
 	}
 
 	bind(bindConfig, formUnique, container) {
+		var form = this;
 		function bindElement(name, value, position = 0) {
 			if (Array.isArray(value)) {
 				value.forEach(function(val, index) {
@@ -358,6 +374,7 @@ class TotiForm {
 				return;
 			}
 			var element = elements[position];
+			// TODO bind dynamic console.log(name, value, position, elements, form.dynamic);
 			switch(element.type) {
 				case undefined:
 					/* not editable */

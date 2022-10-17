@@ -35,7 +35,7 @@
 					<div>
 						<div style="display:inline-block;" toti-grid-title="main"><!-- title --></div>
 					</div>
-					<div><toti checkbox="main"></div>
+					<div><t:grid checkbox="main"></div>
 				</div>
 
 				<div style="display:inline-block; width: 3.5%">
@@ -44,7 +44,7 @@
 						<div style="color: red; display:inline-block;" toti-grid-sort="onSort" name="id" class="up"><strong>U</strong></div>
 						<div style="color: blue; display:inline-block;" toti-grid-sort="onSort" name="id" class="down"><strong>D</strong></div>
 					</div>
-					<div><toti filter="id" /></div>
+					<div><t:grid filter="id" /></div>
 				</div>
 
 				<div style="display:inline-block; width: 7%">
@@ -53,7 +53,7 @@
 						<div style="color: red; display:inline-block;" toti-grid-sort="onSort" name="text" class="up"><strong>U</strong></div>
 						<div style="color: blue; display:inline-block;" toti-grid-sort="onSort" name="text" class="down"><strong>D</strong></div>
 					</div>
-					<div><toti filter="text" /></div>
+					<div><t:grid filter="text" /></div>
 				</div>
 
 				<div style="display:inline-block; width: 7%">
@@ -62,7 +62,7 @@
 						<div style="color: red; display:inline-block;" toti-grid-sort="onSort" name="number" class="up"><strong>U</strong></div>
 						<div style="color: blue; display:inline-block;" toti-grid-sort="onSort" name="number" class="down"><strong>D</strong></div>
 					</div>
-					<div><toti filter="number" class="someClass" /></div>
+					<div><t:grid filter="number" class="someClass" /></div>
 				</div>
 
 				<div style="display:inline-block; width: 16%">
@@ -71,7 +71,7 @@
 						<div style="color: red; display:inline-block;" toti-grid-sort="onSort" name="range" class="up"><strong>U</strong></div>
 						<div style="color: blue; display:inline-block;" toti-grid-sort="onSort" name="range" class="down"><strong>D</strong></div>
 					</div>
-					<div><toti filter="range" /></div>
+					<div><t:grid filter="range" /></div>
 				</div>
 
 				<div style="display:inline-block; width: 5%">
@@ -80,7 +80,7 @@
 						<div style="color: red; display:inline-block;" toti-grid-sort="onSort" name="select_col" class="up"><strong>U</strong></div>
 						<div style="color: blue; display:inline-block;" toti-grid-sort="onSort" name="select_col" class="down"><strong>D</strong></div>
 					</div>
-					<div><toti filter="select_col" /></div>
+					<div><t:grid filter="select_col" /></div>
 				</div>
 
 				<div style="display:inline-block; width: 12%">
@@ -89,7 +89,7 @@
 						<div style="color: red; display:inline-block;" toti-grid-sort="onSort" name="datetime_col" class="up"><strong>U</strong></div>
 						<div style="color: blue; display:inline-block;" toti-grid-sort="onSort" name="datetime_col" class="down"><strong>D</strong></div>
 					</div>
-					<div><toti filter="datetime_col" /></div>
+					<div><t:grid filter="datetime_col" /></div>
 				</div>
 
 				<div style="display:inline-block; width: 9%">
@@ -98,7 +98,7 @@
 						<div style="color: red; display:inline-block;" toti-grid-sort="onSort" name="date_col" class="up"><strong>U</strong></div>
 						<div style="color: blue; display:inline-block;" toti-grid-sort="onSort" name="date_col" class="down"><strong>D</strong></div>
 					</div>
-					<div><toti filter="date_col" /></div>
+					<div><t:grid filter="date_col" /></div>
 				</div>
 
 				<div style="display:inline-block; width: 9%">
@@ -107,7 +107,7 @@
 						<div style="color: red; display:inline-block;" toti-grid-sort="onSort" name="time_col" class="up"><strong>U</strong></div>
 						<div style="color: blue; display:inline-block;" toti-grid-sort="onSort" name="time_col" class="down"><strong>D</strong></div>
 					</div>
-					<div><toti filter="time_col" /></div>
+					<div><t:grid filter="time_col" /></div>
 				</div>
 
 				<div style="display:inline-block; width: 9%">
@@ -116,14 +116,14 @@
 						<div style="color: red; display:inline-block;" toti-grid-sort="onSort" name="month" class="up"><strong>U</strong></div>
 						<div style="color: blue; display:inline-block;" toti-grid-sort="onSort" name="month" class="down"><strong>D</strong></div>
 					</div>
-					<div><toti filter="month" /></div>
+					<div><t:grid filter="month" /></div>
 				</div>
 
 				<div style="display:inline-block; width: 8.3%">
 					<div>
 						<div style="display:inline-block;" toti-grid-title="buttons"><!-- title --></div>
 					</div>
-					<div><toti buttons="buttons"></div>
+					<div><t:grid buttons="buttons"></div>
 				</div>
 			</div>
 			<div toti-grid="rows">
@@ -131,7 +131,7 @@
 				<template>
 					<div style="width: 100%">
 						<span toti-grid-cell="main" style="display: inline-block; width: 4.5%">
-							<toti checkbox="main">
+							<t:grid checkbox="main">
 						</span>
 						<span toti-grid-cell="id" style="display: inline-block; width: 3.5%"></span>
 						<span toti-grid-cell="text" style="display: inline-block; width: 7%"></span>

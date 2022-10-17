@@ -7,8 +7,7 @@ var totiFormDefaultTemplate = {
 
 		if (editable) {
 			var errors = document.createElement("div");
-			errors.setAttribute("id", "toti-form-errors");
-			errors.setAttribute("class", "toti-form-errors");
+			errors.setAttribute("toti-form-error", "form");
 			form.appendChild(errors);
 
 			var hiddens = document.createElement("div");
@@ -34,7 +33,7 @@ var totiFormDefaultTemplate = {
 	setFormAttribute: function(formUnique, container, name, value) {
 		container.setAttribute(name, value);
 	},
-	addInput: function(formUnique, container, name, label, input) {
+	addInput: function(formUnique, container, name, label, input, removeFunc) {
 		var row = document.createElement("tr");
 
 		var labelCell = document.createElement('td');
@@ -46,19 +45,54 @@ var totiFormDefaultTemplate = {
 		inputCell.appendChild(input);
 
 		var errorCell = document.createElement('td');
-		errorCell.setAttribute("id", name);
-		errorCell.setAttribute("class", "toti-form-errors");
+		errorCell.setAttribute("toti-form-error", name);
 
 		row.appendChild(labelCell);
 		row.appendChild(inputCell);
+		if (removeFunc !== null) {
+			var removeCell = document.createElement("td");
+			var removeButton = document.createElement("button");
+			removeButton.addEventListener("click", function(e) {
+				e.preventDefault();
+				removeFunc(row);
+			});
+			removeButton.innerText = totiTranslations.dynamicList.remove;
+			removeCell.appendChild(removeButton);
+			row.appendChild(removeCell);
+		}
 		row.appendChild(errorCell);
 
-		container.querySelector('#toti-form-inputs-' + formUnique).appendChild(row);
+
+		totiFormDefaultTemplate.addToContainer(formUnique, container, row);
 	},
-	addHidden: function(formUnique, container, input) {
+	addHidden: function(formUnique, container, input, removeFunc) {
 		container.querySelector('#toti-form-hiddens').appendChild(input);
 	},
-	addControl: function(formUnique, container, name, button) {
+	getDynamicContainer: function(formUnique, container, name, addItem, removeFunc) {
+		var dynamic = document.createElement("tr");
+		totiFormDefaultTemplate.addToContainer(formUnique, container, dynamic);
+		
+		var cell = document.createElement('td');
+		cell.setAttribute("colspan", 4);
+		dynamic.appendChild(cell);
+
+		var table = document.createElement("fieldset");
+		cell.appendChild(table);
+
+		var legend = document.createElement("legend");
+		table.appendChild(legend);
+
+		var addButton = document.createElement("button");
+		addButton.addEventListener("click", function(e) {
+			e.preventDefault();
+			addItem();
+		});
+		addButton.innerText = totiTranslations.dynamicList.add;
+		legend.appendChild(addButton);
+		
+		return table;
+	},
+	addControl: function(formUnique, container, name, button, removeFunc) {
 		container.querySelector("#toti-form-buttons-" + formUnique).appendChild(button);
 	},
 	addRow: function(formUnique, container, name, originType, label, value) {
@@ -84,7 +118,7 @@ var totiFormDefaultTemplate = {
 		row.appendChild(labelCell);
 		row.appendChild(inputCell);
 
-		container.querySelector('#toti-form-inputs-' + formUnique).appendChild(row);
+		totiFormDefaultTemplate.addToContainer(formUnique, container, row);
 	},
 	addOptionRow: function(formUnique, container, name, originType, label, options, val) {
 		var row = document.createElement("tr");
@@ -115,7 +149,7 @@ var totiFormDefaultTemplate = {
 		row.appendChild(labelCell);
 		row.appendChild(inputCell);
 
-		container.querySelector('#toti-form-inputs-' + formUnique).appendChild(row);
+		totiFormDefaultTemplate.addToContainer(formUnique, container, row);
 	},
 	addPromisedRow: function(formUnique, container, name, originType, label, promise) {
 		var row = document.createElement("tr");
@@ -153,7 +187,15 @@ var totiFormDefaultTemplate = {
 		row.appendChild(labelCell);
 		row.appendChild(inputCell);
 
-		container.querySelector('#toti-form-inputs-' + formUnique).appendChild(row);
+		totiFormDefaultTemplate.addToContainer(formUnique, container, row);
+	},
+	addToContainer: function(formUnique, container, element) {
+		var target = container.querySelector('#toti-form-inputs-' + formUnique);
+		if (target === null) {
+			container.appendChild(element);
+		} else {
+			target.appendChild(element);
+		}
 	}
 	
 };
