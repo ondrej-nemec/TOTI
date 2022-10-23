@@ -7,7 +7,6 @@ public class Wrapper {
 	
 	// both
 	private final String name;
-	private final String id;
 	private final String type;
 	private final Map<String, String> params = new HashMap<>();
 	
@@ -26,7 +25,6 @@ public class Wrapper {
 	
 	public Wrapper(String type, String name, boolean required) {
 		this.name = name;
-		this.id = "id-" + name;
 		this.required = required;
 		this.type = type;
 	}
@@ -35,7 +33,6 @@ public class Wrapper {
 
 	public Map<String, Object> getFilterSettings() {
 		Map<String, Object> set = new HashMap<>();
-		set.put("id", id);
 		set.putAll(params);
 		set.put("type", type);
 		if (value != null) {

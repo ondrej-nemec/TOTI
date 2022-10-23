@@ -9,7 +9,6 @@ public class InputList implements Input {
 
 	private final String type;
 	private final String name;
-	private final String id;
 	private final List<Input> fields;
 	
 	public static InputList input(String name) {
@@ -22,7 +21,6 @@ public class InputList implements Input {
 */
 	private InputList(String name) {
 		this.name = name;
-		this.id = "id-" + name;
 		this.type = "list";
 		this.fields = new LinkedList<>();
 	}
@@ -38,7 +36,6 @@ public class InputList implements Input {
 		if (name != null) {
 			json.put("name", name);
 		}
-		json.put("id", id);
 		json.put("type", type);
 		json.put("fields", fields);
 		return json;

@@ -19,7 +19,6 @@ public class RadioList implements Input {
 		this.radios = new LinkedList<>();
 		radios.forEach((value, title)->{
 			Map<String, String> radio = new HashMap<>();
-			radio.put("id", "id-" + value);
 			radio.put("value", value);
 			radio.put("title", title);
 			this.radios.add(radio);

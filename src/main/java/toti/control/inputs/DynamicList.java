@@ -9,7 +9,6 @@ public class DynamicList implements Input {
 
 	private final String type = "dynamic";
 	private final String name;
-	private final String id;
 	private final List<Input> fields;
 	private Map<String, Object> load;
 	
@@ -24,7 +23,6 @@ public class DynamicList implements Input {
 	private DynamicList(String name) {
 		this.name = name;
 		this.fields = new LinkedList<>();
-		this.id = "id-" + name;
 	}
 	
 	public DynamicList addInput(Input input) {
@@ -75,7 +73,6 @@ public class DynamicList implements Input {
 	public Map<String, Object> getInputSettings() {
 		Map<String, Object> json = new HashMap<>();
 		json.put("name", name);
-		json.put("id", id);
 		json.put("type", type);
 		json.put("fields", fields);
 		if (title != null) {

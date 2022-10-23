@@ -128,7 +128,6 @@ public class Button implements Input {
 		
 		Map<String, Object> json = new HashMap<>();
 		json.put("type", "button");
-		json.put("id", name);
 		json.put("name", name);
 		json.put("action", action);
 		json.put("class", classes);
