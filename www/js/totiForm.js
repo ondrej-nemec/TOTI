@@ -146,6 +146,7 @@ class TotiForm {
 					break;
 				case "button":
 					var input = totiControl.button(field);
+					input.setAttribute("form", this.formUnique);
 					this.template.addControl(this.formUnique, container, field.name, input);
 					break;
 				case "checkbox":
@@ -164,6 +165,7 @@ class TotiForm {
 			}
 		} else {
 			var input = totiControl.input(field);
+			input.setAttribute("form", this.formUnique);
 			switch(field.originType) {
 				case "hidden":
 					this.template.addHidden(this.formUnique, container, input, removeFunc);
@@ -261,97 +263,101 @@ class TotiForm {
 				data.append(name, input.value);
 			}
 		});
-		var submitConfirmation = function() {
+		function submitConfirmation() {
 			if (srcElement.getAttribute("confirmation") !== null) {
 				return totiDisplay.confirm(srcElement.getAttribute("confirmation"));
 			}
-			return true;
+			return new Promise((response)=>{
+				resolve(true);
+			});
 		};
-		if (!submitConfirmation(data)) {
-			return false;
-		}
-		if (srcElement.getAttribute("async") === 'true') {
-			var headers = {};
-			if (form.getAttribute("enctype") !== null) {
-				headers.enctype = form.getAttribute("enctype");
+		submitConfirmation().then(function(submitAllowed) {
+			if (!submitAllowed) {
+				return false;
 			}
-			totiLoad.load(
-				form.getAttribute("action"), 
-				form.getAttribute("method"), 
-				headers,
-				{},
-				data
-			).then(function(result) {
-				if (srcElement.getAttribute("onSuccess") != null) {
-					window[srcElement.getAttribute("onSuccess")](result, srcElement, form);
-				} else if (srcElement.getAttribute("redirect") === null) {
-					totiDisplay.flash('success', totiTranslations.formMessages.sendSuccess);
-				} else {
-					totiDisplay.storedFlash('success', totiTranslations.formMessages.sendSuccess);
+			if (srcElement.getAttribute("async") === 'true') {
+				var headers = {};
+				if (form.getAttribute("enctype") !== null) {
+					headers.enctype = form.getAttribute("enctype");
 				}
-				if (srcElement.getAttribute("redirect") !== null) {
-					var redirect = srcElement.getAttribute("redirect");
-					if (typeof result === 'object') {
-						redirect = totiUtils.parametrizedString(redirect, result);
+				totiLoad.load(
+					form.getAttribute("action"), 
+					form.getAttribute("method"), 
+					headers,
+					{},
+					data
+				).then(function(result) {
+					if (srcElement.getAttribute("onSuccess") != null) {
+						window[srcElement.getAttribute("onSuccess")](result, srcElement, form);
+					} else if (srcElement.getAttribute("redirect") === null) {
+						totiDisplay.flash('success', totiTranslations.formMessages.sendSuccess);
+					} else {
+						totiDisplay.storedFlash('success', totiTranslations.formMessages.sendSuccess);
 					}
-					window.location = redirect;
-				}
-			}).catch(function(error) {
-				if (error.hasOwnProperty('status') && error.status === 400) {
-					form.querySelectorAll('[toti-form-error]').forEach(function(errContainer) {
-						errContainer.innerHTML = "";
-					});
-					for (const[key, list] of Object.entries(JSON.parse(error.responseText))) {
-						var ol = document.createElement("ul");
-						ol.setAttribute("class", "error-list");
-						list.forEach(function(item) {
-							var li = document.createElement("li");
-							li.innerText = item;
-							ol.appendChild(li);
+					if (srcElement.getAttribute("redirect") !== null) {
+						var redirect = srcElement.getAttribute("redirect");
+						if (typeof result === 'object') {
+							redirect = totiUtils.parametrizedString(redirect, result);
+						}
+						window.location = redirect;
+					}
+				}).catch(function(error) {
+					if (error.hasOwnProperty('status') && error.status === 400) {
+						form.querySelectorAll('[toti-form-error]').forEach(function(errContainer) {
+							errContainer.innerHTML = "";
 						});
-						var elementId = key.replaceAll("[", "\\[").replaceAll("]", "\\]");
-						var elementIdentifiers = elementId.split(":");
+						for (const[key, list] of Object.entries(JSON.parse(error.responseText))) {
+							var ol = document.createElement("ul");
+							ol.setAttribute("class", "error-list");
+							list.forEach(function(item) {
+								var li = document.createElement("li");
+								li.innerText = item;
+								ol.appendChild(li);
+							});
+							var elementId = key.replaceAll("[", "\\[").replaceAll("]", "\\]");
+							var elementIdentifiers = elementId.split(":");
 
-						if (elementIdentifiers.length > 1) {
-							elementId = elementId.replace(elementIdentifiers[0] + ":", "");
-							var inputErrors = form.querySelectorAll('[toti-form-error="' + elementId + '"]');
-							if (inputErrors.length > 0) {
-								inputErrors[elementIdentifiers[0]].appendChild(ol);
-							}
-						} else {
-							var inputError = form.querySelector('[toti-form-error="' + elementId + '"]');
-							if (inputError !== null) {
-								inputError.appendChild(ol);
+							if (elementIdentifiers.length > 1) {
+								elementId = elementId.replace(elementIdentifiers[0] + ":", "");
+								var inputErrors = form.querySelectorAll('[toti-form-error="' + elementId + '"]');
+								if (inputErrors.length > 0) {
+									inputErrors[elementIdentifiers[0]].appendChild(ol);
+								}
+							} else {
+								var inputError = form.querySelector('[toti-form-error="' + elementId + '"]');
+								if (inputError !== null) {
+									inputError.appendChild(ol);
+								}
 							}
 						}
+					} else if (srcElement.getAttribute("onFailure") != null) {
+						window[srcElement.getAttribute("onFailure")](err, srcElement, form);
+					} else if (error.hasOwnProperty('status') && error.status === 403) {
+						totiDisplay.flash('error', totiTranslations.formMessages.submitErrorForbidden);
+					} else {
+						totiDisplay.flash('error', totiTranslations.formMessages.submitError);
 					}
-				} else if (srcElement.getAttribute("onFailure") != null) {
-					window[srcElement.getAttribute("onFailure")](err, srcElement, form);
-				} else if (error.hasOwnProperty('status') && error.status === 403) {
-					totiDisplay.flash('error', totiTranslations.formMessages.submitErrorForbidden);
-				} else {
-					totiDisplay.flash('error', totiTranslations.formMessages.submitError);
-				}
-			});
-			return false;
-		}
-		var formTosend = document.createElement("form");
-		formTosend.style.display = "none";
-		this.container.appendChild(formTosend);
+				});
+				return;
+			}
+			var formTosend = document.createElement("form");
+			formTosend.style.display = "none";
+			this.container.appendChild(formTosend);
 
-		formTosend.setAttribute("action", form.getAttribute("action"));
-		formTosend.setAttribute("method", form.getAttribute("method"));
-		if (form.getAttribute("enctype") !== null) {
-			formTosend.setAttribute("enctype", form.getAttribute("enctype"));
-		}
-		for (const[name, value] of data.entries()) {
-			var hidden = document.createElement("input");
-			hidden.name = name;
-			hidden.value = value;
-			formTosend.appendChild(hidden);
-		}
-		formTosend.submit();
-		formTosend.remove();
+			formTosend.setAttribute("action", form.getAttribute("action"));
+			formTosend.setAttribute("method", form.getAttribute("method"));
+			if (form.getAttribute("enctype") !== null) {
+				formTosend.setAttribute("enctype", form.getAttribute("enctype"));
+			}
+			for (const[name, value] of data.entries()) {
+				var hidden = document.createElement("input");
+				hidden.name = name;
+				hidden.value = value;
+				formTosend.appendChild(hidden);
+			}
+			formTosend.submit();
+			formTosend.remove();
+		});
 		return false;
 	}
 

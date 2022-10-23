@@ -1,13 +1,19 @@
 /* TOTI Display version 1.0.0 */
 var totiDisplay = {
 	prompt: function(message, defValue = "") {
-		return prompt(message, defValue);
+		return new Promise((resolve)=>{
+			resolve(prompt(message, defValue));
+		});
 	},
 	confirm: function(message) {
-		return confirm(message);
+		return new Promise((resolve)=>{
+			resolve(confirm(message));
+		});
 	},
 	alert: function(message) {
-		alert(message);
+		return new Promise((resolve)=>{
+			resolve(alert(message));
+		});
 	},
 	/**********/
 	flashTimeout: 0,

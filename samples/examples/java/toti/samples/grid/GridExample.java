@@ -187,7 +187,7 @@ public class GridExample implements Module {
 	/******/
 	
 	/**
-	 * Usage of reset button
+	 * Usage of global buttons
 	 * @return http://localhost:8080/examples-grid/grid/reset
 	 */
 	@Action("reset")
@@ -363,7 +363,6 @@ public class GridExample implements Module {
 	 * @return http://localhost:8080/examples-grid/grid/renderer
 	 */
 	@Action("renderer")
-	@Deprecated // override JS instead
 	public Response renderers() {
 		Grid grid = new Grid(Link.get().create(getClass(), c->c.allFilters(null)), "get");
 		
@@ -672,7 +671,7 @@ public class GridExample implements Module {
 	/*****/
 	
 	/**
-	 * Usage methods without GridDataSet and GridOptions
+	 * XSS check
 	 * @return http://localhost:8080/examples-grid/grid/xss
 	 */
 	@Action("xss")

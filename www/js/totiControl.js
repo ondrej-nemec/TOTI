@@ -216,7 +216,7 @@ var totiControl = {
 				if (option.hasOwnProperty('optgroup') && selectedGroup !== null && selectedGroup !== option.optgroup) {
 					return;
 				}
-				if (option.hasOwnProperty('optgroup') && selectedGroup === null) {
+				if (option.hasOwnProperty('optgroup') && option.optgroup !== null && selectedGroup === null) {
 					var group = title !== null ? title : option.optgroup;
 					var optGroup = container.querySelector('[label="' + group + '"]');
 				    if (optGroup === null) {
@@ -244,7 +244,6 @@ var totiControl = {
 				}
 
 				var onOptions = function(options) {
-					select.innerHTML = '';
 					var groupSubstitution = null;
 					options.forEach(function(option) {
 						if (depends !== null) {
@@ -260,6 +259,7 @@ var totiControl = {
 				};
 
 				return new Promise(function (resolve, reject) {
+					select.innerHTML = '';
 					resolve(params.options);
 				})
 				.then(onOptions)
@@ -273,7 +273,9 @@ var totiControl = {
 						if (!totiControl.inputs._selectCache.hasOwnProperty(cacheKey)) {
 							totiControl.inputs._selectCache[cacheKey] = totiLoad.load(params.load.url, params.load.method, {}, params.load.params);
 						}
-						return totiControl.inputs._selectCache[cacheKey].then(onOptions);
+						return totiControl.inputs._selectCache[cacheKey].then(onOptions).then((options)=>{
+                            return res.concat(options);
+						});
 					}
 					return res;
 				})
@@ -336,6 +338,10 @@ var totiControl = {
 			for ([key, value] of Object.entries(params)) {
 				if (key === "title") {
 					option.innerText = value;
+				} else if (key === "disabled") {
+                    if (value === true) {
+                        option.setAttribute("disabled", true);
+                    }
 				} else {
 					option.setAttribute(key, value);
 				}
@@ -457,45 +463,54 @@ var totiControl = {
 	getAction: function(clickSettings) {
 		return function(event) {
 			event.preventDefault();
+			var confirm = new Promise((resolve)=>{
+				resolve(true);
+			});
 			if (clickSettings.submitConfirmation !== null && clickSettings.submitConfirmation !== undefined ) {
 				var confirmMessage = clickSettings.submitConfirmation;
 				if (typeof confirmMessage === 'string') {
-					confirmMessage = function() {
-						return totiDisplay.confirm(clickSettings.submitConfirmation);
-					};
-				}
-				if (!confirmMessage()) {
-					return false;
+					confirm = totiDisplay.confirm(clickSettings.submitConfirmation);
+				} else if (typeof confirmMessage === 'function') {
+					confirm = new Promise((resolve)=>{
+						resolve(confirmMessage());
+					});
+				} else {
+					confirm = confirmMessage;
 				}
 			}
-			if (clickSettings.async) {
-				totiDisplay.fadeIn();
-				totiLoad.load(
-					clickSettings.href,
-					clickSettings.method,
-					{},
-					{},
-					clickSettings.params
-				).then(function(res) {
+			confirm.then((allowSend)=>{
+				if (!allowSend) {
+					return;
+				}
+				if (clickSettings.async) {
+					totiDisplay.fadeIn();
+					totiLoad.load(
+						clickSettings.href,
+						clickSettings.method,
+						{},
+						{},
+						clickSettings.params
+					).then(function(res) {
+						totiDisplay.fadeOut();
+						if (clickSettings.hasOwnProperty('onSuccess')) {
+							totiUtils.execute(clickSettings.onSuccess, [res]);
+						} else {
+							totiDisplay.flash("success", totiTranslations.buttons.actionSuccess);
+						}
+					}).catch(function(xhr) {
+						totiDisplay.fadeOut();
+						if (clickSettings.hasOwnProperty('onFailure')) {
+							totiUtils.execute(clickSettings.onFailure, [xhr]);
+						} else {
+							totiDisplay.flash("error", totiTranslations.buttons.actionFailure);
+						}
+					});
+				} else {
 					totiDisplay.fadeOut();
-					if (clickSettings.hasOwnProperty('onSuccess')) {
-						totiUtils.execute(clickSettings.onSuccess, [res]);
-					} else {
-						totiDisplay.flash("success", totiTranslations.buttons.actionSuccess);
-					}
-				}).catch(function(xhr) {
-					totiDisplay.fadeOut();
-					if (clickSettings.hasOwnProperty('onFailure')) {
-						totiUtils.execute(clickSettings.onFailure, [xhr]);
-					} else {
-						totiDisplay.flash("error", totiTranslations.buttons.actionFailure);
-					}
-				});
-			} else {
-				totiDisplay.fadeOut();
-				/* totiControl.load.link(href, method, {}, totiControl.getHeaders()); */
-				window.location = clickSettings.href;
-			}
+					/* totiControl.load.link(href, method, {}, totiControl.getHeaders()); */
+					window.location = clickSettings.href;
+				}
+			});
 		};
 	}
 };

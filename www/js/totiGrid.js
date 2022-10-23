@@ -67,7 +67,9 @@ class TotiGrid {
 					var buttons = [];
 					column.globalButtons.forEach(function(buttonConf) {
 						if (buttonConf.type === 'reset') {
+							// TODO nejde s datetime
 							var reset = totiControl.input(buttonConf);
+							reset.setAttribute("grid", grid.gridUnique);
 							buttons.push(reset);
 							reset.addEventListener('click', function() {
 								container.querySelectorAll(".toti-grid-filtering").forEach(function(input) {
@@ -78,6 +80,7 @@ class TotiGrid {
 							});
 						} else if (buttonConf.type === 'button') {
 							var button = totiControl.button(buttonConf);
+							button.setAttribute("grid", grid.gridUnique);
 							button.addEventListener("click", function() {
 								setTimeout(function(){
 									grid.refreshData(clearPrevious);
@@ -93,7 +96,7 @@ class TotiGrid {
 					if (column.hasOwnProperty("filter")) {
 						var defValue = null;
 						if (column.filter.hasOwnProperty('value')) {
-							defvalue = column.filter.value;
+							defValue = column.filter.value;
 						}
 						if (filters.exists(column.name)) {
 							defValue = filters.get(column.name);
@@ -104,6 +107,7 @@ class TotiGrid {
 						}
 
 						filter = totiControl.input(column.filter);
+						filter.setAttribute("grid", grid.gridUnique);
 						filter.classList.add("toti-grid-filtering");
 
 						filter.addEventListener('change', function() {
@@ -313,6 +317,9 @@ class TotiGrid {
 						grid.selectedRow = grid.template.setRowSelected(grid.gridUnique, grid.container, row);
 					}
 				});
+				if (response.data.length === 0) {
+                     totiDisplay.flash("warn", totiTranslations.gridMessages.noItemsFound);
+                }
 				grid.config.columns.forEach(function(column) {
 					var cellData = null;
 					var isElement = false;
@@ -377,7 +384,7 @@ class TotiGrid {
 		    
 		    grid.template.clearPageButtons(grid.gridUnique, grid.container);
 
-		    if (grid.config.paggingButtonsCount > 0)  {
+		    if (grid.config.paggingButtonsCount > 0 && response.data.length > 0)  {
 		    	var onClick = function(newIndex) {
 		    		return function() {
 		    			grid.setPageIndex(newIndex);
@@ -391,7 +398,7 @@ class TotiGrid {
 			    		grid.gridUnique, grid.container, totiTranslations.pages.previous, false, onClick(response.pageIndex - 1)
 			    	);
 			    }
-
+			    // TODO u malych datasetu zobrazuje zaporne hodnoty
 			    var lastPageIndex = Math.ceil(response.itemsCount/grid.pageSize);
 			    var lowerPage = response.pageIndex - Math.floor(grid.config.paggingButtonsCount / 2);
 			    if (lowerPage < 1) {

@@ -39,6 +39,7 @@ public class ResponsesExample implements Module {
 	public ResponsesExample() {};
 	
 	@Action("index")
+	@Deprecated // no more required
 	public Response getIndex() {
 		return Response.getFile("samples/examples/responses/index.html");
 	}

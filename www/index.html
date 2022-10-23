@@ -19,6 +19,246 @@
 	<script type="text/javascript">
 		var modules = [
 			{
+				name: 'Developer tools',
+				description: '',
+				links: [
+					{
+						name: 'Profiler',
+						description: 'Page shows Profiler bar',
+						link: '/examples/develop-tools/index'
+					}
+				]
+			},
+			{
+				name: 'Exceptions',
+				description: '',
+				links: [
+					{
+						name: 'LogicException',
+						description: 'Exception throwed inside method before Response is returned',
+						link: '/exception-example/exceptions/method'
+					},
+					{
+						name: 'ServerException 401 Unauthorized',
+						description: 'Exception is throwed by TOTI before method is called. Caused: user is not logged',
+						link: '/exception-example/exceptions/secured'
+					},
+					{
+						name: 'erverException 404 Not found',
+						description: 'Exception is throwed by TOTI before method is called. Caused by wrong HTTP method',
+						link: '/exception-example/exceptions/post'
+					},
+					{
+						name: 'FileNotFoundException',
+						description: 'Exception throwed by TOTI after method is called. Caused by missing template',
+						link: '/exception-example/exceptions/notemplate'
+					},
+					{
+						name: 'NullPoinerException',
+						description: 'Exception throwed by TOTI after method is called during template rendering. Caused: template parameters are NULL, calling parameters in template',
+						link: '/exception-example/exceptions/intemplate'
+					},
+					{
+						name: 'TemplateException Unknown syntax error',
+						description: 'Exception throwed by TOTI after method is called during template parsing. Caused: wrong template syntax',
+						link: '/exception-example/exceptions/syntax'
+					},
+					{
+						name: 'Async version',
+						description: 'All previous method are requested async',
+						link: '/exception-example/exceptions/async'
+					}
+				]
+			},
+			{
+				name: 'Requests',
+				description: '',
+				links: [
+					{
+						name: '',
+						description: '',
+						link: ''
+					}
+				]
+			},
+			{
+				name: 'Responses',
+				description: '',
+				links: [
+					{
+						name: 'File',
+						description: 'Returns given file, file can be from any path from disk. Path can be relative or absolute. Path can be from directory tree or classpath.',
+						link: '/examples-responses/responses/file'
+					},
+					{
+						name: 'Generated file',
+						description: 'Returns new file generated inside method',
+						link: '/examples-responses/responses/generate'
+					},
+					{
+						name: 'JSON',
+						description: 'Returns data as JSON.',
+						link: '/examples-responses/responses/json'
+					},
+					{
+						name: 'Text',
+						description: 'Returns text as response',
+						link: '/examples-responses/responses/text'
+					},
+					{
+						name: 'Template',
+						description: 'Parse given template with paramters to HTML',
+						link: '/examples-responses/responses/template'
+					},
+					{
+						name: 'Redirect',
+						description: 'Redirect to given relative URL.',
+						link: '/examples-responses/responses/redirect'
+					},
+					{
+						name: 'Open redirect',
+						description: 'Redirect to given URL. <strong>Open redirection vulnerability</strong>',
+						link: '/examples-responses/responses/open-redirect'
+					},
+					{
+						name: 'Websocket',
+						description: 'Create websocket connection',
+						link: '/examples-responses/responses/websocket'
+					}
+				]
+			},
+			{
+				name: 'Routing',
+				description: '',
+				links: [
+					{
+						name: '',
+						description: '',
+						link: ''
+					}
+				]
+			},
+			{
+				name: 'Security',
+				description: '',
+				links: [
+					{
+						name: '',
+						description: '',
+						link: ''
+					}
+				]
+			},
+			{
+				name: 'Sign',
+				description: '',
+				links: [
+					{
+						name: '',
+						description: '',
+						link: ''
+					}
+				]
+			},
+			{
+				name: 'Template',
+				description: '',
+				links: [
+					{
+						name: '',
+						description: '',
+						link: ''
+					}
+				]
+			},
+			{
+				name: 'Validation',
+				description: '',
+				links: [
+					{
+						name: '',
+						description: '',
+						link: ''
+					}
+				]
+			},
+			{
+				name: "Grids",
+				description: '',
+				links: [
+					{
+						name: 'All filters',
+						description: 'Displays grid with all filters',
+						link: '/examples-grid/grid/all'
+					},
+					{
+						name: 'Global buttons',
+						description: 'Usage of global buttons',
+						link: '/examples-grid/grid/reset'
+					},
+					{
+						name: 'Row buttons',
+						description: 'Demonstrate grid buttons',
+						link: '/examples-grid/grid/buttons'
+					},
+					{
+						name: 'Grid control',
+						description: 'Demonstrate grid control - page sizes and paging buttons',
+						link: '/examples-grid/grid/control'
+					},
+					{
+						name: 'Grid control load',
+						description: 'Demonstrate grid load - add more results',
+						link: '/examples-grid/grid/load'
+					},
+					{
+						name: 'Grid without control',
+						description: 'Grid without control',
+						link: '/examples-grid/grid/empty'
+					},
+					{
+						name: 'Cell renderer',
+						description: 'Shows usage of custom cell renderer',
+						link: '/examples-grid/grid/renderer'
+					},
+					{
+						name: 'Row selection',
+						description: 'Shows behaviour of row selection',
+						link: '/examples-grid/grid/selection'
+					},
+					{
+						name: 'Group action',
+						description: 'Demonstrate group actions',
+						link: '/examples-grid/grid/actions'
+					},
+					{
+						name: 'Row unique',
+						description: 'Grid actions with another row unique',
+						link: '/examples-grid/grid/row-unique'
+					},
+					{
+						name: 'Filtering modes',
+						description: 'Ways of filtering, EQUALS is default',
+						link: '/examples-grid/grid/filtering'
+					},
+					{
+						name: 'Sorting substitution',
+						description: 'Shows sorting substitution',
+						link: '/examples-grid/grid/subst'
+					},
+					{
+						name: 'XSS check',
+						description: 'XSS check',
+						link: '/examples-grid/grid/xss'
+					},
+					{
+						name: 'Custom template',
+						description: 'Shows usage of custom template with all settings',
+						link: '/examples-grid/grid/custom-template'
+					}
+				]
+			},
+			{
 				name: 'Forms',
 				description: '',
 				links: [
@@ -48,6 +288,11 @@
 						link: '/examples-form/form/submit-modes'
 					},
 					{
+						name: 'Validated form',
+						description: 'Submit returns 400 with errors',
+						link: 'http://localhost:8080/examples-form/form/validated'
+					},
+					{
 						name: 'Buttons',
 						description: 'Example of buttons',
 						link: '/examples-form/form/buttons'
@@ -56,6 +301,11 @@
 						name: 'Custom template',
 						description: 'Form printed with template',
 						link: '/examples-form/form/template'
+					},
+					{
+						name: 'Custom template - not editable',
+						description: 'Form printed with template - not editable',
+						link: '/examples-form/form/template-detail'
 					},
 					{
 						name: 'Select',
@@ -131,6 +381,11 @@
 						name: 'Dynamic list and buttons',
 						description: 'Dynamic list with custom buttons',
 						link: '/examples-form/form/dynamiclist-buttons'
+					},
+					{
+						name: 'Loaded Dynamic list',
+						description: 'Dynamic list loaded',
+						link: '/examples-form/form/dynamiclist-loaded'
 					},
 					{
 						name: 'CSRF',
