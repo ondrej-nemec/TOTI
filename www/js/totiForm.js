@@ -1,32 +1,5 @@
 /* TOTI Form version 1.0.0 */
 class TotiForm {
-	/*
-	vykreslit
-	bind
-	editable vs not editable
-	API pro dynamic
-	callbacks:
-		before print
-		after print
-		before bind
-		after bind
-		? before submit ?
-		? after submit ?
-	inputs:
-		itemlist
-		dynamic list + using load
-		submit, hidden, reset, image ignorovat v detailu
-		v detailu spravně vykreslit select, checkbox, radolist, file
-		možnost poslat submit s hodnotami + přidat hodnotu
-	submit:
-		spravna reakce na failure - ne 400, nejak zobrazit validacni errory
-		spravna reakce na success + redirect -> nastavitelny parametr 'id' a message
-		v submitu : exclude, disabled, pamatovat na datetime-local (firefox) - fieldset
-		submit confirmation
-		after submit redirect - u submitu
-
-
-	*/
 
 	constructor(config) {
 		this.config = config;
@@ -99,6 +72,7 @@ class TotiForm {
 			removeFunc = parent.remove;
 		}
 
+		// TODO load dynamic
 		if (field.type === "dynamic") {
 			var addItem = function() {
 				// TODO  dostat index a position do inputu - k mazani a bindu
