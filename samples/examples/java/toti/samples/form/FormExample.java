@@ -1368,10 +1368,5 @@ public class FormExample implements Module {
 	public String getTemplatesPath() {
 		return "samples/examples/templates/form";
 	}
-	
-	@Override
-	public String getTranslationPath() {
-		return "toti/translations"; // TODO "samples/examples/form";
-	}
 
 }

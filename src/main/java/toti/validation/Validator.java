@@ -33,7 +33,7 @@ public class Validator {
 
 	public Validator(boolean strictList) {
 		this(strictList, (trans, params)->trans.translate(
-			"common.validation.not-expected-parameters",
+			"toti.validation.not-expected-parameters",
 			new MapInit<String, Object>().append("parameters", params).toMap()
 		)); // "Not expected parameters: " + params
 	}
@@ -44,7 +44,7 @@ public class Validator {
 	
 	public Validator(ItemRules defaultRule) {
 		this(false, Optional.of(defaultRule), (trans, params)->trans.translate(
-			"common.validation.parameters-not-match-default-rule",
+			"toti.validation.parameters-not-match-default-rule",
 			new MapInit<String, Object>().append("parameters", params).toMap()
 		)); // "Parameters not match default rule: " + params
 	}

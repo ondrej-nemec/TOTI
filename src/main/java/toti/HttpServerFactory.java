@@ -86,6 +86,7 @@ public class HttpServerFactory {
 		
 		Map<String, TemplateFactory> templateFactories = new HashMap<>();
 		Set<String> trans = new HashSet<>();
+		trans.add("toti/translations");
 		List<Task> tasks = new LinkedList<>();
 		if (translator == null) {
 			// this.translator = Translator.create(settings, trans, TotiLogger.getLogger("translator"));

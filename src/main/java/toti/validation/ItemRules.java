@@ -14,14 +14,14 @@ public class ItemRules {
 
 	public static ItemRules defaultRule() {
 		return new ItemRules("", false, (t, param)->t.translate(
-			"common.validation.default-rule-not-match",
+			"toti.validation.default-rule-not-match",
 			new MapInit<String, Object>().append("parameter", param).toMap()
 		));
 	}
 	
 	public static ItemRules forName(String name, boolean required) {
 		return new ItemRules(name, required, (t, param)->t.translate(
-			"common.validation.item-required", 
+			"toti.validation.item-required", 
 			new MapInit<String, Object>().append("parameter", param).toMap()
 		)); // "This item is required: " + param
 	}
@@ -77,7 +77,7 @@ public class ItemRules {
 	
 	public ItemRules setAllowedValues(Collection<Object> values) {
 		return setAllowedValues(values, (t)->t.translate(
-			"common.validation.value-must-be-one-of", 
+			"toti.validation.value-must-be-one-of", 
 			new MapInit<String, Object>().append("values", values).toMap()
 		)); // "Value must be one of: " + values
 	}
@@ -93,7 +93,7 @@ public class ItemRules {
 	
 	public ItemRules setMaxValue(Number maxValue) {
 		return setMaxValue(maxValue, (t)->t.translate(
-			"common.validation.value-must-be-less-or-equals", 
+			"toti.validation.value-must-be-less-or-equals", 
 			new MapInit<String, Object>().append("maxValue", maxValue).toMap()
 		)); // "Value must be less or equals " + maxValue
 	}
@@ -110,7 +110,7 @@ public class ItemRules {
 
 	public ItemRules setFileMaxSize(Integer fileMaxSize) {
 		return setFileMaxSize(fileMaxSize, (t)->t.translate(
-			"common.validation.file-size-can-be-max", 
+			"toti.validation.file-size-can-be-max", 
 			new MapInit<String, Object>().append("fileMaxSize", fileMaxSize).toMap()
 		)); // "File size can be max " + fileMaxSize + "b"
 	}
@@ -126,7 +126,7 @@ public class ItemRules {
 
 	public ItemRules setFileMinSize(Integer fileMinSize) {
 		return setFileMinSize(fileMinSize, (t)->t.translate(
-			"common.validation.file-size-must-be-at-least", 
+			"toti.validation.file-size-must-be-at-least", 
 			new MapInit<String, Object>().append("fileMinSize", fileMinSize).toMap()
 		)); // "File size must be at least " + fileMinSize + "b"
 	}
@@ -142,7 +142,7 @@ public class ItemRules {
 
 	public ItemRules setAllowedFileTypes(Collection<Object> allowedFileTypes) {
 		return setAllowedFileTypes(allowedFileTypes, (t)->t.translate(
-			"common.validation.file-type-is-not-allowed", 
+			"toti.validation.file-type-is-not-allowed", 
 			new MapInit<String, Object>().append("allowedFileTypes", allowedFileTypes).toMap()
 		)); // "File type is not allowed. Allowed: " + allowedFileTypes
 	}
@@ -158,7 +158,7 @@ public class ItemRules {
 	
 	public ItemRules setMinValue(Number minValue) {
 		return setMinValue(minValue, (t)->t.translate(
-			"common.validation.value-must-be-equals-or-higher", 
+			"toti.validation.value-must-be-equals-or-higher", 
 			new MapInit<String, Object>().append("minValue", minValue).toMap()
 		)); // "Value must be equals or higher " + minValue
 	}
@@ -175,7 +175,7 @@ public class ItemRules {
 	
 	public ItemRules setMinLength(int minLength) {
 		return setMinLength(minLength, (t)->t.translate(
-			"common.validation.length-must-be-at-least", 
+			"toti.validation.length-must-be-at-least", 
 			new MapInit<String, Object>().append("minLength", minLength).toMap()
 		)); // "Text length must be at least " + minLength
 	}
@@ -192,7 +192,7 @@ public class ItemRules {
 	
 	public ItemRules setMaxLength(int maxLength) {
 		return setMaxLength(maxLength, (t)->t.translate(
-			"common.validation.length-must-be-max", 
+			"toti.validation.length-must-be-max", 
 			new MapInit<String, Object>().append("maxLength", maxLength).toMap()
 		)); // "Text length must be maximal " + maxLength
 	}
@@ -209,7 +209,7 @@ public class ItemRules {
 	
 	public ItemRules setRegex(String regex) {
 		return setRegex(regex, (t)->t.translate(
-			"common.validation.text-not-match-pattern", 
+			"toti.validation.text-not-match-pattern", 
 			new MapInit<String, Object>().append("regex", regex.replace("\\", "\\\\")).toMap()
 		)); // "Text must looks like " + regex.replace("\\", "\\\\")
 	}
@@ -234,7 +234,7 @@ public class ItemRules {
 	
 	public ItemRules setType(Class<?> clazz, boolean changeValueByType) {
 		return setType(clazz, changeValueByType, (t)->t.translate(
-			"common.validation.value-type-must-be", 
+			"toti.validation.value-type-must-be", 
 			new MapInit<String, Object>().append("class", clazz).toMap()
 		)); // "Value must be " + clazz
 	}
