@@ -96,7 +96,7 @@ var totiDisplay = {
 		fade.onclick = function() {}; /* prevent click */
 
 		document.body.appendChild(fade);
-// TODO loading picture
+/* TODO loading picture */
 		totiDisplay.isFade = true;
 	},
 	fadeOut: function() {

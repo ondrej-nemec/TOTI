@@ -172,7 +172,7 @@ public class GridExample implements Module {
 	
 	public Validator allFilersValidator() {
 		return GridOptions.getValidator(Arrays.asList(
-			new GridColumn("text"),
+			new GridColumn("text").setFilterMode(FilterMode.LIKE),
 			new GridColumn("number", Double.class),
 			new GridColumn("range", Integer.class),
 			new GridColumn("select_col", Boolean.class),
@@ -214,7 +214,7 @@ public class GridExample implements Module {
 					Link.get().addUrlParam("123").addGetParam("name", "Grid button name")
 						.create(getClass(), c->c.asyncButtonLink(0, null)),
 					"global-button"
-				)
+				).setTitle("Global Button")
 			)
 		);
 		Map<String, Object> params = new HashMap<>();

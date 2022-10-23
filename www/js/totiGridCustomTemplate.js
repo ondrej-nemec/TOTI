@@ -55,9 +55,13 @@ var totiGridCustomTemplate = {
 		/* TODO z nejakeho duvodu jeste neexistuje */
 		if (element !== null) {
 			element.addEventListener("change", function() {
-				grid.setPageSize(select.value);
+				grid.setPageSize(element.value);
 			});
+			return (value)=>{
+				element.value = value;
+			};
 		}
+		return (value)=>{};
 	},	
 	setCaption: function(gridUnique, container, displayed, total, text) {
 		var element = container.querySelector('[toti-grid=caption]');

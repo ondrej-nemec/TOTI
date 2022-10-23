@@ -150,6 +150,9 @@ var totiGridDefaultTemplate = {
 		select.addEventListener("change", function() {
 			grid.setPageSize(select.value);
 		});
+		return (value)=>{
+			select.value = value;
+		};
 	},
 	setCaption: function(gridUnique, container, displayed, total, text) {
 		var caption = container.querySelector('#toti-grid-caption');

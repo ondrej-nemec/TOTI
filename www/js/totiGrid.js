@@ -10,6 +10,7 @@ class TotiGrid {
 		this.filtering = new SortedMap();
 		this.pageIndex = 1;
 		this.pageSize = 0;
+		this.pageSizeCallback = ()=>{};
 		this.selectedRow = null;
 	}
 
@@ -67,7 +68,6 @@ class TotiGrid {
 					var buttons = [];
 					column.globalButtons.forEach(function(buttonConf) {
 						if (buttonConf.type === 'reset') {
-							// TODO nejde s datetime
 							var reset = totiControl.input(buttonConf);
 							reset.setAttribute("grid", grid.gridUnique);
 							buttons.push(reset);
@@ -75,6 +75,7 @@ class TotiGrid {
 								container.querySelectorAll(".toti-grid-filtering").forEach(function(input) {
 									input.value = '';
 									grid.filterBy(input.getAttribute("name"), null, false);
+									console.log(input.getAttribute("name"));
 								});
 								grid.refreshData();
 							});
@@ -105,6 +106,7 @@ class TotiGrid {
 							column.filter.value = defValue;
 							grid.filterBy(column.name, defValue, false);
 						}
+						column.filter.name = column.name;
 
 						filter = totiControl.input(column.filter);
 						filter.setAttribute("grid", grid.gridUnique);
@@ -138,7 +140,7 @@ class TotiGrid {
 			});
 		}
 		if (this.config.hasOwnProperty('pagesSizes')) {
-			template.addPageSize(gridUnique, container, this.config.pagesSizes, this.config.pageSize, this);
+			this.pageSizeCallback = template.addPageSize(gridUnique, container, this.config.pagesSizes, this.config.pageSize, this);
 		}
 		this.setPageSize(this.config.pageSize, false);
 		if (search.hasOwnProperty('pageSize')) {
@@ -260,6 +262,7 @@ class TotiGrid {
 	setPageSize(pageSize, refresh = true) {
 		this.pageSize = pageSize;
 		this.pageIndex = 1;
+		this.pageSizeCallback(pageSize);
 		if (refresh) {
 			this.refreshData();
 		}
@@ -398,19 +401,22 @@ class TotiGrid {
 			    		grid.gridUnique, grid.container, totiTranslations.pages.previous, false, onClick(response.pageIndex - 1)
 			    	);
 			    }
-			    // TODO u malych datasetu zobrazuje zaporne hodnoty
 			    var lastPageIndex = Math.ceil(response.itemsCount/grid.pageSize);
 			    var lowerPage = response.pageIndex - Math.floor(grid.config.paggingButtonsCount / 2);
-			    if (lowerPage < 1) {
-					lowerPage = 1;
-				}
 				if (lowerPage > lastPageIndex - grid.config.paggingButtonsCount) {
 					lowerPage = lastPageIndex - grid.config.paggingButtonsCount;
 				}
+			    if (lowerPage < 1) {
+					lowerPage = 1;
+				}
+
 			    var upperPage = lowerPage + grid.config.paggingButtonsCount;
 			    if (lastPageIndex === upperPage) {
 			    	upperPage = lastPageIndex + 1;
+			    } else if (upperPage > lastPageIndex) {
+			    	upperPage = lastPageIndex + 1;
 			    }
+
 				for (var i = lowerPage; i < upperPage; i++) {
 					grid.template.addPageButton(grid.gridUnique, grid.container, i, i === response.pageIndex, onClick(i));
 				}

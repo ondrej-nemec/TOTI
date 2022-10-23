@@ -380,7 +380,10 @@ class TotiForm {
 				return;
 			}
 			var element = elements[position];
-			// TODO bind dynamic console.log(name, value, position, elements, form.dynamic);
+			if (element === undefined) {
+				/* bind - not added yet*/
+				// TODO bind dynamic console.log(name, value, position, elements, form.dynamic);
+			}
 			switch(element.type) {
 				case undefined:
 					/* not editable */

@@ -1071,7 +1071,7 @@ public class FormExample implements Module {
 	 */
 	@Action("dynamiclist")
 	public Response dynamicInputList() {
-		return dynamicListResponse("Dynamic list - default print", "inputs.jsp");
+		return dynamicListResponse("Dynamic list - default print", "inputs.jsp", true);
 	}
 
 	/**
@@ -1080,11 +1080,20 @@ public class FormExample implements Module {
 	 */
 	@Action("dynamiclist-template")
 	public Response dynamicListTemplate() {
-		return dynamicListResponse("Dynamic list - template", "dynamicListTemplate.jsp");
+		return dynamicListResponse("Dynamic list - template", "dynamicListTemplate.jsp", true);
 	}
 
-	private Response dynamicListResponse(String title, String template) {
-		Form form = new Form(Link.get().create(getClass(), c->c.save(null)), true);
+	/**
+	 * Using dynamic input list with custom template
+	 * @return http://localhost:8080/examples-form/form/dynamiclist-detail
+	 */
+	@Action("dynamiclist-detail")
+	public Response dynamicListDetail() {
+		return dynamicListResponse("Dynamic list - detail", "inputs.jsp", false);
+	}
+
+	private Response dynamicListResponse(String title, String template, boolean editable) {
+		Form form = new Form(Link.get().create(getClass(), c->c.save(null)), editable);
 		form.setFormMethod("post");
 
 		form.addInput(
@@ -1098,6 +1107,17 @@ public class FormExample implements Module {
 			DynamicList.input("simple-map")
 			.addInput(
 				Text.input("item", true).setTitle("Simple map {i}")
+			)
+		);
+		
+		// TODO map in list - see doc
+		form.addInput(
+			DynamicList.input("map-of-list")
+			.addInput(
+				Text.input("item1", true).setTitle("Simple item {i} A")
+			)
+			.addInput(
+				Text.input("item2", true).setTitle("Simple item {i} B")
 			)
 		);
 		
