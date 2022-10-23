@@ -267,7 +267,7 @@ class TotiForm {
 			if (srcElement.getAttribute("confirmation") !== null) {
 				return totiDisplay.confirm(srcElement.getAttribute("confirmation"));
 			}
-			return new Promise((response)=>{
+			return new Promise((resolve)=>{
 				resolve(true);
 			});
 		};
