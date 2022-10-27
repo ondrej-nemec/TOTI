@@ -11,14 +11,5 @@ var totiLang = {
 			return navigator.language.toLowerCase();
 		}
 		return lang;
-	},
-	getLangHeader: function() {
-		var lang = totiStorage.getVariable(totiLang.variableName);
-		if (lang === null) {
-			return {};
-		}
-		return {
-			"Accept-Language": lang
-		};
 	}
 };

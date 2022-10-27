@@ -1,6 +1,9 @@
-/* TOTI Utils version 0.1.4 */
+/* TOTI Utils version 1.0.0 */
 var totiUtils = {
 	/* TODO is used? */
+	sleep: function(ms) {
+		return new Promise(resolve => setTimeout(resolve, ms));
+	},
 	parseUrlToObject: function (data) {
 		return JSON.parse('{"' + data.replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
 	},
@@ -10,19 +13,8 @@ var totiUtils = {
 		}
 		return string;
 	},
-	forEach: function(array, callback) {
-		/*Array.prototype.forEach.call()*/
-		/*if (typeof array === 'object') {*/
-			for (const[key, item] of Object.entries(array)) {
-				callback(key, item);
-			}
-	/*	} else {
-			array.forEach(function(item, index) {
-				callback(index, item);
-			});
-		}*/
-	},
 	browser: function() {
+		console.warning("totiUtils.browser() is deprecated");
 		/* https://stackoverflow.com/a/9851769 */
 		/* Opera 8.0+ */
 		if ((!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0) {
@@ -90,5 +82,42 @@ var totiUtils = {
 	    }
 	  }
 	  return null;
+	},
+	setCookie: function(name, value, maxAge = null, path = '/') {
+		if (path === null) {
+			path = window.location.pathname;
+		}
+		var cookieString = name + "=" + value + ";SameSite=Strict;path=" + path;
+		if (maxAge !== null) {
+			cookieString += ";Max-Age=" + maxAge;
+		}
+		document.cookie = cookieString;
+	},
+	printStoredFlash: function() {
+		var name = 'flash';
+		var actual = totiStorage.getVariable(name);
+		if (actual !== null) {
+			for (const[severity, messages] of Object.entries(actual)) {
+				messages.forEach(function(message) {
+					totiDisplay.flash(severity, message);
+				});
+			}
+			totiStorage.removeVariable(name);
+		}
+	},
+	replaceElement: function(container, selector, newElement, excludeAttributes = []) {
+		var placeholder = container.querySelector(selector);
+		if (placeholder !== null && newElement !== null) {
+			var atts = placeholder.attributes;
+			for (var i = 0; i < atts.length; i++){
+				if (!excludeAttributes.includes(atts[i].nodeName)) {
+					newElement.setAttribute(atts[i].nodeName, atts[i].nodeValue);
+				}
+			}
+			placeholder.parentNode.replaceChild(newElement, placeholder);
+		}
 	}
 };
+document.addEventListener("DOMContentLoaded", function(event) { 
+	totiUtils.printStoredFlash();
+});

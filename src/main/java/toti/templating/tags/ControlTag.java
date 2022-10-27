@@ -23,7 +23,7 @@ public class ControlTag implements Tag {
 
 	@Override
 	public String getPairEndCode(Map<String, String> params) {
-		return "";
+		return "write(\"</div>\");";
 	}
 
 	@Override
@@ -38,13 +38,28 @@ public class ControlTag implements Tag {
 		} else if (params.containsKey("grid")) {
 			type = "Grid";
 		}
-		String code =
-				"{"
+		// TODO nebude uplne fungovat pri sdilenem tagu
+		StringBuilder code = new StringBuilder("write(\"<div id='control-:name:'");
+		params.forEach((k, v)->{
+			switch (k) {
+				case "optional":
+				case "form":
+				case "grid":
+				case "name":
+				case "id":
+					break;
+				default:
+					code.append(String.format(" %s='%s'", k, v));
+					break;
+			}
+		});
+		code.append(" >\");");
+		code.append(
+			"{"
 				+ "if(variables.get(\":name:\") == null && !%s) {throw new TemplateException(\"Tag Missing control variable: ':name:'\");}"
 				+ "if(variables.get(\":name:\") != null) {"
 					+ "toti.control.Control control=(toti.control.Control)(getVariable(\":name:\"));"
 					+ "if(\"%s\".isEmpty() || control.getType().equals(\"%s\")){"
-						+ "write(\"<div id='control-:name:' class='toti-control'>\");"
 						+ "write(\""
 						+ "<script> {"
 							+ "window.addEventListener('load', ()=> {"
@@ -57,12 +72,12 @@ public class ControlTag implements Tag {
 							+ "});"
 						+ "} </script>"
 						+ "\");"
-						+ "write(\"</div>\");"
 					+ "}"
 				+ "}"
-			+ "}";
+			+ "}"
+		);
 		return String.format(
-			code.replace(":name:", params.get("name")),
+			code.toString().replace(":name:", params.get("name")),
 			params.containsKey("optional"),
 			type,
 			type
