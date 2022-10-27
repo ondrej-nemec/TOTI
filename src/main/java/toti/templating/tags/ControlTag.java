@@ -23,7 +23,7 @@ public class ControlTag implements Tag {
 
 	@Override
 	public String getPairEndCode(Map<String, String> params) {
-		return "write(\"</div>\");";
+		return "";
 	}
 
 	@Override
@@ -32,74 +32,41 @@ public class ControlTag implements Tag {
 	}
 
 	private String getTagStart(Map<String, String> params, boolean useDefaultTemplate) {
-		// TODO rozlisit mezi form a grid - v pripade, ze bude custom templ
+		String type = "";
+		if (params.containsKey("form")) {
+			type = "Form";
+		} else if (params.containsKey("grid")) {
+			type = "Grid";
+		}
+		String code =
+				"{"
+				+ "if(variables.get(\":name:\") == null && !%s) {throw new TemplateException(\"Tag Missing control variable: ':name:'\");}"
+				+ "if(variables.get(\":name:\") != null) {"
+					+ "toti.control.Control control=(toti.control.Control)(getVariable(\":name:\"));"
+					+ "if(\"%s\".isEmpty() || control.getType().equals(\"%s\")){"
+						+ "write(\"<div id='control-:name:' class='toti-control'>\");"
+						+ "write(\""
+						+ "<script> {"
+							+ "window.addEventListener('load', ()=> {"
+								+ "try { "
+									+ "\"+control.toString()+\""
+									+ ".render('div#control-:name:', 'toti-\" + control.getType() + \"-:name:'"
+									+ (useDefaultTemplate ? "" : ", false")
+									+ ");"
+								+ " } catch(e) { console.error(e); }"
+							+ "});"
+						+ "} </script>"
+						+ "\");"
+						+ "write(\"</div>\");"
+					+ "}"
+				+ "}"
+			+ "}";
 		return String.format(
-				"write(\"<div id='%s' class='toti-control'>\");"
-				+ "{"
-				+ "if(variables.get(\"%s\") == null) {throw new TemplateException(\"Tag Missing control varialble: '%s'\");}"
-				+ "toti.control.Control control=(toti.control.Control)(getVariable(\"%s\"));"
-				+ "write(\""
-				+ "<script> {"
-					+ "window.addEventListener('load', ()=> {"
-						+ "try { "
-							+ "\"+control.toString()+\""
-							+ ".render('%s', 'toti-\" + control.getType() + \"-%s'"
-							+ (useDefaultTemplate ? "" : ", false")
-							+ ");"
-						+ " } catch(e) { console.error(e); }"
-					+ "});"
-				+ "} </script>"
-				+ "\");"
-				+ "}",
-				"control-" +params.get("name"),
-				params.get("name"),
-				params.get("name"),
-				params.get("name"),
-			//	"div#control-" + params.get("name"),
-				"div#control-" + params.get("name"),
-				params.get("name")
-		);}
-		/*return String.format(
-				"write(\"<div id='%s' class='toti-control'>\");"
-				+ "{"
-				+ "if(variables.get(\"%s\") == null) {throw new TemplateException(\"Tag Missing control varialble: '%s'\");}"
-				+ "toti.control.Control control=(toti.control.Control)(getVariable(\"%s\"));"
-				+ "write(\""
-				+ "<script> {"
-					// observer func start
-					+ "function handleControl() {"
-						+ "var controlContainer = document.querySelector('%s');"
-						+ "if (controlContainer === null) {"
-							+ "return false;"
-						+ "}"
-						+ "try { "
-						 	// init grid
-							+ "\"+control.toString()+\""
-							+ ".render('%s', 'toti-\" + control.getType() + \"-%s'"
-							+ (useDefaultTemplate ? "" : ", false")
-							+ ");" // control init end
-						+ " } catch(e) { console.error(e); }"
-						+ "return true;"
-					+ "}" // observer func end
-					// start observing
-					+ "const observer = new MutationObserver(function (mutations, mutationInstance) {"
-						+ "if (handleControl()) { "
-							+ "mutationInstance.disconnect();"
-						+ "}"
-					+ "});"
-				//	+ "if (!handleControl()) { "
-						+ "observer.observe(document, { childList: true, subtree: true }); "
-				//	+ "}"
-				+ "} </script>"
-				+ "\");"
-				+ "}",
-				"control-" +params.get("name"),
-				params.get("name"),
-				params.get("name"),
-				params.get("name"),
-				"div#control-" + params.get("name"),
-				"div#control-" + params.get("name"),
-				params.get("name")
-		);}*/
+			code.replace(":name:", params.get("name")),
+			params.containsKey("optional"),
+			type,
+			type
+		);
+	}
 	
 }
