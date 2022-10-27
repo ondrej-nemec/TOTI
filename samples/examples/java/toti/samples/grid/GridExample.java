@@ -208,7 +208,7 @@ public class GridExample implements Module {
 			);
 		grid.addColumn(
 			new ButtonsColumn("buttons")
-			.setResetFiltersButton(true) // disable reset-filter button
+			.setResetFiltersButton(Button.reset("reset").setTitle("Reset filter"))
 			.addGlobalButton(
 				Button.create(
 					Link.get().addUrlParam("123").addGetParam("name", "Grid button name")
@@ -235,7 +235,6 @@ public class GridExample implements Module {
 		grid.addColumn(new ValueColumn("text"));
 		grid.addColumn(
 			new ButtonsColumn("buttons")
-			.setResetFiltersButton(false) // disable reset-filter button
 			.addButton(
 				Button.create(
 					Link.get()
@@ -368,6 +367,8 @@ public class GridExample implements Module {
 		
 		grid.addColumn(new ValueColumn("id").setRenderer("onColumnRenderer"));
 		grid.addColumn(new ValueColumn("text"));
+		
+		grid.setRowRenderer("rowRenderer");
 		
 		Map<String, Object> params = new HashMap<>();
 		params.put("grid", grid);
@@ -832,7 +833,7 @@ public class GridExample implements Module {
 		grid.addColumn(
 			new ButtonsColumn("buttons")
 			.setTitle("Buttons")
-			.setResetFiltersButton(true) // disable reset-filter button
+			.setResetFiltersButton(Button.reset("reset"))
 			.addGlobalButton(Button.create(
 				Link.get().addUrlParam("123").addGetParam("name", "Grid button name")
 					.create(getClass(), c->c.asyncButtonLink(0, null)),

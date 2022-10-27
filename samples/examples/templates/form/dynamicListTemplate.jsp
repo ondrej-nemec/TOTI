@@ -26,32 +26,18 @@
 
 	<t:control name="form">
 		<h2>Simple list</h2>
-		<fieldset name="simple-list-container">
-			<template name="pattern">
-				<%-- %s is index, --%>
-				<t:label name="simple-list[%s]" />
-				<t:input name="simple-list[%s]" /> 
-				<t:error name="simple-list[%s]" />
+		<fieldset toti-form-dynamic-container="simple-list">
+			<legend><button toti-form-add-button="simple-list">Add</button></legend>
+			<template toti-form-dynamic-template="simple-list">
+				<t:form label="simple-list[]" />
+				<t:form input="simple-list[]" /> 
+				<t:form error="simple-list[]" />
 				
-				<span name="remove">Remove</span>
+				<button toti-form-remove-button="simple-list">Remove</button>
 			</template>
-			<span name="add">Add</span>
 		</fieldset>
 		
-		<h2>Simple map</h2>
-		<fieldset name="simple-map-container">
-			<template name="pattern">
-				<%-- %s is name, in this case 'item_x' (x = {1, 2}) --%>
-				<t:label name="simple-map[%s]" />
-				<t:input name="simple-map[%s]" /> 
-				<t:error name="simple-map[%s]" />
-				
-				<span name="remove">Remove</span>
-			</template>
-			<span name="add">Add</span>
-		</fieldset>
-		
-		<t:input name="submit" /> 
+		<t:form input="submit" /> 
 	</t:control>
 
 </body>

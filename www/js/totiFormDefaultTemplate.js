@@ -38,7 +38,9 @@ var totiFormDefaultTemplate = {
 
 		var labelCell = document.createElement('td');
 		var labelContainer = document.createElement('label');
-		labelContainer.innerText = label;
+		if (label !== undefined) {
+			labelContainer.innerText = label;
+		}
 		labelCell.appendChild(labelContainer);
 
 		var inputCell = document.createElement('td');
@@ -67,30 +69,6 @@ var totiFormDefaultTemplate = {
 	},
 	addHidden: function(formUnique, container, input, removeFunc) {
 		container.querySelector('#toti-form-hiddens').appendChild(input);
-	},
-	getDynamicContainer: function(formUnique, container, name, addItem, removeFunc) {
-		var dynamic = document.createElement("tr");
-		totiFormDefaultTemplate.addToContainer(formUnique, container, dynamic);
-		
-		var cell = document.createElement('td');
-		cell.setAttribute("colspan", 4);
-		dynamic.appendChild(cell);
-
-		var table = document.createElement("fieldset");
-		cell.appendChild(table);
-
-		var legend = document.createElement("legend");
-		table.appendChild(legend);
-
-		var addButton = document.createElement("button");
-		addButton.addEventListener("click", function(e) {
-			e.preventDefault();
-			addItem();
-		});
-		addButton.innerText = totiTranslations.dynamicList.add;
-		legend.appendChild(addButton);
-		
-		return table;
 	},
 	addControl: function(formUnique, container, name, button, removeFunc) {
 		container.querySelector("#toti-form-buttons-" + formUnique).appendChild(button);
@@ -196,6 +174,64 @@ var totiFormDefaultTemplate = {
 		} else {
 			target.appendChild(element);
 		}
+	},
+	getDynamicContainer: function(formUnique, container, name, addItem) {
+		var dynamic = document.createElement("tr");
+		totiFormDefaultTemplate.addToContainer(formUnique, container, dynamic);
+		
+		var cell = document.createElement('td');
+		cell.setAttribute("colspan", 4);
+		dynamic.appendChild(cell);
+
+		var table = document.createElement("fieldset");
+		cell.appendChild(table);
+
+		var legend = document.createElement("legend");
+		table.appendChild(legend);
+
+        if (addItem !== null) {
+			var addButton = document.createElement("button");
+			addButton.addEventListener("click", function(e) {
+				e.preventDefault();
+				addItem();
+			});
+			addButton.innerText = totiTranslations.dynamicList.add;
+			legend.appendChild(addButton);
+        }
+		
+		return table;
+	},
+	getDynamicRow: function(formUnique, container, dynamicContainer, name, remove) {
+		var container = document.createElement('table');
+		dynamicContainer.appendChild(container);
+
+        if (remove) {
+			var removeButton = document.createElement("button");
+			removeButton.addEventListener("click", function(e) {
+				e.preventDefault();
+				remove();
+			});
+			removeButton.innerText = totiTranslations.dynamicList.remove;
+
+			var cell1 = document.createElement('td');
+			cell1.setAttribute('colspan', 3);
+			var cell2 = document.createElement('td');
+			cell2.appendChild(removeButton);
+
+			var row = document.createElement('tr');
+			container.appendChild(cell1);
+			container.appendChild(cell2);
+			container.appendChild(row);
+        }
+		return container;
+	},
+	createErrorList: function(errors) {
+		var ol = document.createElement("ul");
+		errors.forEach(function(item) {
+			var li = document.createElement("li");
+			li.innerText = item;
+			ol.appendChild(li);
+		});
+		return ol;
 	}
-	
 };

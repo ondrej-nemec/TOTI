@@ -25,8 +25,7 @@ public class Grid implements Control {
 	private boolean useLoadButton = false;
 	
 	private Long refreshInterval = 0L; // in ms, 0 means no refresh
-	// TODO in next version - add refresh button
-	private boolean rowSelection = false;
+	private String rowRenderer = null;
 	
 	public Grid(String loadDataUrl, String loadDataMethod) {
 		this.loadDataMethod = loadDataMethod;
@@ -67,6 +66,11 @@ public class Grid implements Control {
 		return this;
 	}
 	
+	public Grid setRowRenderer(String rowRenderer) {
+		this.rowRenderer = rowRenderer;
+		return this;
+	}
+	
 	public Grid addColumn(Column column) {
 		columns.add(column);
 		return this;
@@ -92,10 +96,12 @@ public class Grid implements Control {
 		if (pagesSizes != null && !pagesSizes.isEmpty()) {
 			json.put("pagesSizes", pagesSizes);
 		}
+		if (rowRenderer != null) {
+            json.put("rowRenderer", rowRenderer);
+        }
 		json.put("paggingButtonsCount", pagesButtonCount);
 		json.put("useLoadButton", useLoadButton);
 		json.put("refresh", refreshInterval);
-		json.put("rowSelection", rowSelection);
 		
 		json.put("actions", actions);
 		return json;

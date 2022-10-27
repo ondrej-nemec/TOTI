@@ -58,10 +58,12 @@ class TotiForm {
 		var container = this.container;
 		var removeFunc = null;
 		if (parent !== null) {
-			// TODO vyresit problem s jmeny - a[b] xkrat, a[][b], a[b][] 
 			var fieldName = parent.name;
             if (parent.position !== false) {
-               	fieldName += "[" + (field.hasOwnProperty("name") ? field.name : "") + "]";
+               	fieldName += "[" + field.name + "]";
+            }
+            if (parent.group !== null) {
+                fieldName = fieldName.replace('{i}', parent.group);
             }
             field.name = fieldName;
 
@@ -69,28 +71,61 @@ class TotiForm {
 				field.title = field.title.replace('{i}', parent.position);
 			}
 			container = parent.container;
-			removeFunc = parent.remove;
 		}
 
-		// TODO load dynamic
-		if (field.type === "dynamic") {
+		
+		if (field.type === "dynamic" && field.hasOwnProperty('load')) {
+			var dynamicContainer = form.template.getDynamicContainer(form.formUnique, form.container, field.name, null);
+			totiLoad.load(field.load.url, field.load.method, {}, {}, field.load.params)
+			.then((loaded)=>{
+				loaded.forEach((group)=>{
+					field.fields.forEach(function(subField, index) {
+						var f = totiUtils.clone(subField);
+						f.optionGroup = group.value;
+						form.addInput(f, {
+							name: field.name,
+							group: group.value,
+							position: group.title,
+							container: dynamicContainer
+						});
+					});
+				});
+			}).catch((xhr)=>{
+				totiDisplay.flash('error', totiTranslations.formMessages.renderError);
+            });
+		} else if (field.type === "dynamic") {
+			var removeItem = function(position) {
+				if (form.dynamic[field.name].elements.hasOwnProperty(position)) {
+					form.dynamic[field.name].elements[position].remove();
+					delete form.dynamic[field.name].elements[position];
+				}
+			};
 			var addItem = function() {
-				// TODO  dostat index a position do inputu - k mazani a bindu
 				var position = ++form.dynamic[field.name].position;
+				var removeFunc = field.removeButton && editable ? ()=>{
+					removeItem(position);
+				} : null;
+				var rowContainer = form.template.getDynamicRow(form.formUnique, form.container, form.dynamic[field.name].container, field.name, removeFunc);
+				if (rowContainer === null) {
+					return;
+				}
+				form.dynamic[field.name].elements[position] = rowContainer;
 				field.fields.forEach(function(f, index) {
 					form.addInput(totiUtils.clone(f), {
 						name: field.name,
 						position: position,
-						container: form.dynamic[field.name].container,
-						remove: function(element) {
-							element.remove();
-						}
+						container: rowContainer,
+                        group: position
 					});
 				});
 			};
-			var dynamicContainer = form.template.getDynamicContainer(form.formUnique, form.container, field.name, addItem, removeFunc);
+			var dynamicContainer = form.template.getDynamicContainer(form.formUnique, form.container, field.name, field.addButton && editable ? addItem : null);
+			if (dynamicContainer === null) {
+				return;
+			}
 			this.dynamic[field.name] = {
 				add: addItem,
+				remove: removeItem,
 				position: 0,
 				container: dynamicContainer,
 				elements: {}
@@ -102,7 +137,7 @@ class TotiForm {
 					name: field.name,
 					position: index,
 					container: container,
-					remove: removeFunc
+                    group: null
 				});
 			});
 		} else if (!editable) {
@@ -172,15 +207,16 @@ class TotiForm {
 		}
 	}
 
-	/*removeDynamicField(name, index) {
+	removeDynamicField(name, index) {
 		if (form.dynamic.hasOwnProperty(name)) {
 			form.dynamic[name].remove(index);
 		}
-	}*/
+	}
 
 	submit(srcElement) {
 		/* IMPROVE: before and after submit callbacks ? */
 		var form = this.container;
+		var template = this.template;
 		if (this.container.tagName !== 'FORM') {
 			form = this.container.querySelector('form');
 		}
@@ -281,13 +317,7 @@ class TotiForm {
 							errContainer.innerHTML = "";
 						});
 						for (const[key, list] of Object.entries(JSON.parse(error.responseText))) {
-							var ol = document.createElement("ul");
-							ol.setAttribute("class", "error-list");
-							list.forEach(function(item) {
-								var li = document.createElement("li");
-								li.innerText = item;
-								ol.appendChild(li);
-							});
+							var errorsInElement = template.createErrorList(list);
 							var elementId = key.replaceAll("[", "\\[").replaceAll("]", "\\]");
 							var elementIdentifiers = elementId.split(":");
 
@@ -295,12 +325,12 @@ class TotiForm {
 								elementId = elementId.replace(elementIdentifiers[0] + ":", "");
 								var inputErrors = form.querySelectorAll('[toti-form-error="' + elementId + '"]');
 								if (inputErrors.length > 0) {
-									inputErrors[elementIdentifiers[0]].appendChild(ol);
+									inputErrors[elementIdentifiers[0]].appendChild(errorsInElement);
 								}
 							} else {
 								var inputError = form.querySelector('[toti-form-error="' + elementId + '"]');
 								if (inputError !== null) {
-									inputError.appendChild(ol);
+									inputError.appendChild(errorsInElement);
 								}
 							}
 						}
@@ -316,7 +346,7 @@ class TotiForm {
 			}
 			var formTosend = document.createElement("form");
 			formTosend.style.display = "none";
-			this.container.appendChild(formTosend);
+			document.body.appendChild(formTosend);
 
 			formTosend.setAttribute("action", form.getAttribute("action"));
 			formTosend.setAttribute("method", form.getAttribute("method"));
@@ -337,8 +367,30 @@ class TotiForm {
 
 	bind(bindConfig, formUnique, container) {
 		var form = this;
+		totiLoad.load(bindConfig.url, bindConfig.method).then(function(values) {
+			if (bindConfig.hasOwnProperty("beforeBind") && bindConfig.beforeBind !== null) {
+				totiUtils.execute(bindConfig.beforeBind, [values]);
+			}
+			form._bind(values);
+			if (bindConfig.hasOwnProperty("afterBind") && bindConfig.afterBind !== null) {
+				totiUtils.execute(bindConfig.afterBind, [values]);
+			}
+		}).catch(function(error) {
+			if (bindConfig.onFailure === null) {
+				totiDisplay.flash("error", totiTranslations.formMessages.bindError, error);
+			} else {
+				totiUtils.execute(bindConfig.onFailure, [error]);
+			}
+		});
+	}
+
+	_bind(values) {
+		var form = this;
+        var container = this.container;
 		function bindElement(name, value, position = 0) {
-			if (Array.isArray(value)) {
+			if (value === null) {
+				/* ignore */
+            } else if (Array.isArray(value)) {
 				value.forEach(function(val, index) {
 					bindElement(name + "[]", val, index);
 				});
@@ -349,14 +401,24 @@ class TotiForm {
 				}
 				return;
 			}
-			var elements = container.querySelectorAll("[name='" + name + "']");
-			if (elements.length === 0) {
-				return;
+			function getElement() {
+				var elements = container.querySelectorAll("[name='" + name + "']");
+				if (elements.length === 0) {
+					return;
+				}
+				return elements[position];
 			}
-			var element = elements[position];
+			var element = getElement();
+			if (element === undefined) { /* bind - not added yet*/
+				/* IMPROVE: dynamic in dynamic not supported yet */
+				var dynamic = form.dynamic[name.substring(0, name.indexOf('['))];
+				if (dynamic) {
+					dynamic.add();
+					element = getElement();
+				}
+			}
 			if (element === undefined) {
-				/* bind - not added yet*/
-				// TODO bind dynamic console.log(name, value, position, elements, form.dynamic);
+				return;
 			}
 			switch(element.type) {
 				case undefined:
@@ -386,23 +448,9 @@ class TotiForm {
 					element.value = value;
 			}
 		}
-		totiLoad.load(bindConfig.url, bindConfig.method).then(function(values) {
-			if (bindConfig.hasOwnProperty("beforeBind") && bindConfig.beforeBind !== null) {
-				totiUtils.execute(bindConfig.beforeBind, [values]);
-			}
-			for (const[name, value] of Object.entries(values)) {
-				bindElement(name, value);
-			}
-			if (bindConfig.hasOwnProperty("afterBind") && bindConfig.afterBind !== null) {
-				totiUtils.execute(bindConfig.afterBind, [values]);
-			}
-		}).catch(function(error) {
-			if (bindConfig.onFailure === null) {
-				totiDisplay.flash("error", totiTranslations.formMessages.bindError, error);
-			} else {
-				totiUtils.execute(bindConfig.onFailure, [error]);
-			}
-		});
+		for (const[name, value] of Object.entries(values)) {
+			bindElement(name, value);
+		}
 	}
 
 }

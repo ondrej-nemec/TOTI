@@ -10,6 +10,7 @@ var totiAuth = {
 	        totiStorage.removeVariable(totiAuth.variableConfig);
 	        totiStorage.removeVariable(totiAuth.variableToken);
     	};
+        totiAuth.isRefreshActive = false;
     	if (url === null) {
     		onLogout();
     	} else {
@@ -32,16 +33,17 @@ var totiAuth = {
     refresh: function(url, method, expiredIn) {
         totiAuth.isRefreshActive = true;
     	totiLoad.load(url, method)
-        .then(totiAuth.customRefreshHandler)
-        .then(totiUtils.sleep(expiredIn * 2 / 3))
+        .then((response)=>{
+            totiAuth.customRefreshHandler(response);
+            return response;
+        })
         .then(function(response) {
-        	totiAuth.isRefreshActive = false;
-        	return response;
+            return totiUtils.sleep(expiredIn * 2 / 3);
         })
         .then(function() {
-        	if (totiAuth.isRefreshActive) {
-        		totiAuth.refresh(url, method, expiredIn);
-        	}
+            if (totiAuth.isRefreshActive) {
+                  totiAuth.refresh(url, method, expiredIn);
+            }
         })
         .catch(function() {
             totiAuth.isRefreshActive = false;

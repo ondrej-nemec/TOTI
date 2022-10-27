@@ -6,15 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import toti.control.inputs.Button;
-import toti.control.inputs.Reset;
 
 public class ButtonsColumn implements Column {
 	
 	private final String name;
 	private String title;
 	
-	private boolean useResetButton = true;
-	// TODO add refresh button
 	private final List<Map<String, Object>> buttons = new LinkedList<>();
 	private final List<Map<String, Object>> globalButtons = new LinkedList<>();
 	
@@ -33,15 +30,18 @@ public class ButtonsColumn implements Column {
 		return this;
 	}
 	
-	public ButtonsColumn setResetFiltersButton(boolean useResetButton) {
-		this.useResetButton = useResetButton;
-		return this;
-	}
-	
 	public ButtonsColumn setTitle(String title) {
 		this.title = title;
 		return this;
 	}
+
+	// TODO add refresh button
+	public ButtonsColumn setResetFiltersButton(Button button) {
+        Map<String, Object> settings = button.getInputSettings();
+        settings.put("is_reset", true);
+        globalButtons.add(settings);
+        return this;
+    }
 
 	@Override
 	public Map<String, Object> getGridSettings() {
@@ -49,15 +49,9 @@ public class ButtonsColumn implements Column {
 		json.put("name", name);
 		json.put("type", "buttons");
 		json.put("title", title);
-	//	json.put("useResetButton", useResetButton);
 		json.put("sorting", false);
 		json.put("buttons", buttons);
-
-		List<Object> mains = new LinkedList<>(globalButtons);
-		if (useResetButton) {
-			mains.add(Reset.create("").getInputSettings());
-		}
-		json.put("globalButtons", mains);
+		json.put("globalButtons", globalButtons);
 		return json;
 	}
 	

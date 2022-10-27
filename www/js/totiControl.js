@@ -213,7 +213,7 @@ var totiControl = {
 		},
 		select: function (params) {
 			function addOption(container, option, selectedGroup, title) {
-				if (option.hasOwnProperty('optgroup') && selectedGroup !== null && selectedGroup !== option.optgroup) {
+				if (option.hasOwnProperty('optgroup') && selectedGroup !== null && selectedGroup != option.optgroup) {
 					return;
 				}
 				if (option.hasOwnProperty('optgroup') && option.optgroup !== null && selectedGroup === null) {
@@ -351,9 +351,7 @@ var totiControl = {
 		},
 		datetime: function(attributes) {
 			var dateAttr = {};
-			if (attributes.id.endsWith("-")) {
-				attributes.id += Math.floor(Math.random() * 1000);
-			}
+			attributes.id = "id-" + attributes.name + "-" + Math.floor(Math.random() * 1000);
 			dateAttr.id = attributes.id + "-date";
 		    if (attributes.hasOwnProperty('required')) {
 		        dateAttr.required = attributes.required;

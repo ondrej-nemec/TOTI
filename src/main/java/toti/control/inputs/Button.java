@@ -31,12 +31,16 @@ public class Button implements Input {
 		return new Button(url, name, false);
 	}
 
+	public static Button reset(String name) {
+		return new Button(null, name, false);
+	}
+
 	public static Button create(String url, String name, boolean allowOutOfAppLink) {
 		return new Button(url, name, allowOutOfAppLink);
 	}
 	
 	private Button(String url, String name, boolean outOfAppLink) {
-		if (!outOfAppLink && !Link.isRelative(url)) {
+		if (url != null && !outOfAppLink && !Link.isRelative(url)) {
 			throw new RuntimeException("Open redirection is not allowed");
 		}
 		this.url = url;
@@ -135,7 +139,7 @@ public class Button implements Input {
 			json.put("value", title);
 		}
 		if (tooltip != null) {
-            json.put("title", tooltip);
+            json.put("tooltip", tooltip);
         }
         if (icon != null) {
             json.put("icon", icon);

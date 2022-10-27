@@ -27,7 +27,9 @@ var totiFormCustomTemplate = {
 	},
 	addRow: function(formUnique, container, name, originType, label, value) {
 		var labelCell = document.createElement('label');
-		labelCell.innerText = label;
+		if (label !== undefined) {
+			labelCell.innerText = label;
+		}
 		totiUtils.replaceElement(container, '[toti-form-label="' + name + '"]', labelCell, ['toti-form-label']);
 
 		var inputCell = container.querySelector('[toti-form-input="' + name + '"]');
@@ -108,6 +110,46 @@ var totiFormCustomTemplate = {
 				inputCell.bind(value);
 			}
 		}
+	},
+	getDynamicContainer: function(formUnique, container, name, addItem) {
+		var dynamicContainer = container.querySelector('[toti-form-dynamic-container="' + name + '"]');
+		var addButton = container.querySelector('[toti-form-add-button="' + name + '"]');
+        if (addItem !== null && addButton !== null) {
+			addButton.addEventListener("click", function(e) {
+				e.preventDefault();
+				addItem();
+			});
+        } else if (addButton !== null) {
+        	addButton.remove();
+        }
+        return dynamicContainer;
+	},
+	getDynamicRow: function(formUnique, container, dynamicContainer, name, remove) {
+		var template = container.querySelector('[toti-form-dynamic-template="' + name + '"]').cloneNode(true).content;
+
+		var dynamic = document.createElement('div');
+		dynamic.append(...template.childNodes);
+		dynamicContainer.appendChild(dynamic);
+
+		var removeButton = dynamic.querySelector('[toti-form-remove-button="' + name + '"]');
+		if (remove !== null && removeButton !== null) {
+			removeButton.addEventListener("click", function(e) {
+				e.preventDefault();
+				remove();
+			});
+		} else if (removeButton !== null) {
+			removeButton.remove();
+		}
+		return dynamic;
+	},
+	createErrorList: function(errors) {
+		var ol = document.createElement("ul");
+		errors.forEach(function(item) {
+			var li = document.createElement("li");
+			li.innerText = item;
+			ol.appendChild(li);
+		});
+		return ol;
 	}
 	
 };

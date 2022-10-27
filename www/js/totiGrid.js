@@ -38,6 +38,7 @@ class TotiGrid {
 		}
 
 		var grid = this;
+        var promises = [];
 		this.config.columns.forEach(function(column) {
 			template.setTitle(gridUnique, container, column.name, column.hasOwnProperty('title') ? column.title : column.name);
 			if (column.useSorting) {
@@ -67,7 +68,7 @@ class TotiGrid {
 				case "buttons":
 					var buttons = [];
 					column.globalButtons.forEach(function(buttonConf) {
-						if (buttonConf.type === 'reset') {
+						/*if (buttonConf.type === 'reset') {
 							var reset = totiControl.input(buttonConf);
 							reset.setAttribute("grid", grid.gridUnique);
 							buttons.push(reset);
@@ -79,6 +80,20 @@ class TotiGrid {
 								});
 								grid.refreshData();
 							});
+
+						} else */if (buttonConf.type === 'button' && buttonConf.hasOwnProperty('is_reset') && buttonConf.is_reset) {
+							/* IPRROVEMENT refresh button */
+							var button = totiControl.button(buttonConf);
+                            button.setAttribute("grid", grid.gridUnique);
+                            button.onclick = function(e) {
+                                e.preventDefault();
+                                container.querySelectorAll(".toti-grid-filtering").forEach(function(input) {
+                                    input.value = '';
+                                    grid.filterBy(input.getAttribute("name"), null, false);
+                                });
+                                grid.refreshData();
+                             };
+                             buttons.push(button);
 						} else if (buttonConf.type === 'button') {
 							var button = totiControl.button(buttonConf);
 							button.setAttribute("grid", grid.gridUnique);
@@ -109,6 +124,9 @@ class TotiGrid {
 						column.filter.name = column.name;
 
 						filter = totiControl.input(column.filter);
+						if (column.filter.originType === 'select') {
+                            promises.push(filter.setOptions);
+                        }
 						filter.setAttribute("grid", grid.gridUnique);
 						filter.classList.add("toti-grid-filtering");
 
@@ -150,10 +168,12 @@ class TotiGrid {
 			this.setPageIndex(search.pageIndex, false);
 		}
 
-		this.refreshData();
-		if (this.config.refresh > 0) {
-			this.startRefresh();
-		}
+        Promise.all(promises).then((values)=>{
+			this.refreshData();
+			if (this.config.refresh > 0) {
+				this.startRefresh();
+			}
+        });
 	}
 
 	getTemplate(parentSelector, template) {
@@ -315,6 +335,9 @@ class TotiGrid {
 			}
 			response.data.forEach(function(rowData) {
 				var row = grid.template.addRow(grid.gridUnique, grid.container);
+                if (grid.config.hasOwnProperty("rowRenderer")) {
+                    totiUtils.execute(grid.config.rowRenderer, [row, rowData]);
+                }
 				row.addEventListener("click", function() {
 					if (grid.config.useRowSelection) {
 						grid.selectedRow = grid.template.setRowSelected(grid.gridUnique, grid.container, row);

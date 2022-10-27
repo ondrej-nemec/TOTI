@@ -48,6 +48,9 @@
 		function onColumnRenderer(value, values) {
 			return value + " - " + values.month;
 		}
+		function rowRenderer(container, data) {
+			container.style['background-color'] = "lightgreen";
+		}
 	</script>
 
 </body>

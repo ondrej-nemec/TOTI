@@ -1104,20 +1104,43 @@ public class FormExample implements Module {
 		);
 		
 		form.addInput(
-			DynamicList.input("simple-map")
+			DynamicList.input("map-of-map")
 			.addInput(
-				Text.input("item", true).setTitle("Simple map {i}")
+				InputList.input("{i}")
+				.addInput(
+					Text.input("a", true).setTitle(" {i} - A")
+				)
+				.addInput(
+					Text.input("b", true).setTitle(" {i} - B")
+				)
+				.addInput(
+					Text.input("c", true).setTitle(" {i} - C")
+				)
 			)
 		);
 		
-		// TODO map in list - see doc
 		form.addInput(
 			DynamicList.input("map-of-list")
 			.addInput(
-				Text.input("item1", true).setTitle("Simple item {i} A")
+				InputList.input("{i}")
+				.addInput(
+					Text.input("", true).setTitle(" {i} - 1")
+				)
+				.addInput(
+					Text.input("", true).setTitle(" {i} - 2")
+				)
+				.addInput(
+					Text.input("", true).setTitle(" {i} - 3")
+				)
 			)
+		);
+		
+		form.addInput(
+			DynamicList.input("with-select")
 			.addInput(
-				Text.input("item2", true).setTitle("Simple item {i} B")
+				Select.input("{i}", false, Arrays.asList())
+				.setTitle("{i}")
+				.setLoadData(Link.get().create(getClass(), c->c.dynamicListLoadGroupsSelectOptions()), "get")
 			)
 		);
 		
@@ -1139,12 +1162,33 @@ public class FormExample implements Module {
 	public Response dynamicListData() {
 		return Response.getJson(
 			new MapInit<String, Object>()
-			.append("simple-list", Arrays.asList("value-01", "value-02", "value-02"))
+			.append("simple-list", Arrays.asList("value-01", "value-02", "value-03"))
 			.append(
-				"simple-map", 
+				"map-of-map", 
 				new MapInit<String, Object>()
-				.append("item_1", "value11")
-				.append("item_2", "value12")
+				.append(
+					"1",
+					new MapInit<String, Object>()
+						.append("a", "A 1")
+						.append("b", "B 1")
+						.append("c", "C 1")
+						.toMap()
+				)
+				.append(
+					"2",
+					new MapInit<String, Object>()
+						.append("a", "A 2")
+						.append("b", "B 2")
+						.append("c", "C 2")
+						.toMap()
+				)
+				.toMap()
+			)
+			.append(
+				"map-of-list", 
+				new MapInit<String, Object>()
+				.append("1", Arrays.asList("Item 1 A", "Item 1 B", "Item 1 C"))
+				.append("2", Arrays.asList("Item 2 A", "Item 2 B", "Item 2 C"))
 				.toMap()
 			)
 			.toMap()
@@ -1198,25 +1242,27 @@ public class FormExample implements Module {
 
 	/**
 	 * Using dynamic input list with custom template
-	 * @return http://localhost:8080/examples-form/form/dynamiclist-loaded
+	 * @return http://localhost:8080/examples-form/form/dynamiclist-load
 	 */
-	@Action("dynamiclist-loaded")
+	@Action("dynamiclist-load")
 	public Response dynamicLoaded() {
 		Form form = new Form(Link.get().create(getClass(), c->c.save(null)), true);
 		form.setFormMethod("post");
 
 		form.addInput(
-			DynamicList.input("simple-list")
-			.setLoadData(Link.get().create(getClass(), c->c.dynamicListLoad()), "get")
+			DynamicList.input("dynamic-load")
+			.setLoadData(Link.get().create(getClass(), c->c.dynamicListLoadGroups()), "get")
 			.addInput(
-				Select.input("", false, Arrays.asList())
-				.setLoadData(Link.get().create(getClass(), c->c.dynamicListLoadSelect()), "get")
+				Select.input("{i}", false, Arrays.asList())
+				.setTitle("{i}")
+				.setLoadData(Link.get().create(getClass(), c->c.dynamicListLoadGroupsSelectOptions()), "get")
 			)
 		);
+		// TODO improve - add text inputs
 		
 		form.addInput(Submit.create("Submit", "submit"));
 		
-		form.setBindUrl(Link.get().create(getClass(), c->c.dynamicListData()));
+		form.setBindUrl(Link.get().create(getClass(), c->c.dynamicListLoadData()));
 		
 		Map<String, Object> params = new HashMap<>();
 		params.put("form", form);
@@ -1226,15 +1272,44 @@ public class FormExample implements Module {
 
 	/**
 	 * Data for loaded dynamic list
-	 * @return http://localhost:8080/examples-form/form/dynamiclist-load
+	 * @return http://localhost:8080/examples-form/form/dynamiclist-load-groups
 	 */
-	@Action("dynamiclist-load")
-	public Response dynamicListLoad() {
+	@Action("dynamiclist-load-groups")
+	public Response dynamicListLoadGroups() {
+		return Response.getJson(
+			Arrays.asList(
+				new MapInit<String, Object>()
+					.append("value", "group1")
+					.append("title", "Group 1")
+					.toMap(),
+				new MapInit<String, Object>()
+					.append("value", "group2")
+					.append("title", "Group 2")
+					.toMap(),
+				new MapInit<String, Object>()
+					.append("value", "group3")
+					.append("title", "Group 3")
+					.toMap()
+			)
+		);
+	}
+
+	/**
+	 * Data for loaded dynamic input list
+	 * @return http://localhost:8080/examples-form/form/dynamiclist-load-bind
+	 */
+	@Action("dynamiclist-load-bind")
+	public Response dynamicListLoadData() {
 		return Response.getJson(
 			new MapInit<String, Object>()
-			.append("group1", "Group 1")
-			.append("group2", "Group 2")
-			.append("group3", "Group 3")
+			.append(
+				"dynamic-load",
+				new MapInit<String, Object>()
+				.append("group1", "a1")
+				.append("group2", "b2")
+				.append("group3", "c2")
+				.toMap()
+			)
 			.toMap()
 		);
 	}
@@ -1244,7 +1319,7 @@ public class FormExample implements Module {
 	 * @return http://localhost:8080/examples-form/form/dynamiclist-load-select
 	 */
 	@Action("dynamiclist-load-select")
-	public Response dynamicListLoadSelect() {
+	public Response dynamicListLoadGroupsSelectOptions() {
 		return Response.getJson(
 			Arrays.asList(
 				new MapInit<String, Object>()
@@ -1264,7 +1339,7 @@ public class FormExample implements Module {
 					.toMap(),
 				new MapInit<String, Object>()
 					.append("value", "b2")
-					.append("title", "b2")
+					.append("title", "B2")
 					.append("optgroup", "group2")
 					.toMap(),
 				new MapInit<String, Object>()
@@ -1283,10 +1358,10 @@ public class FormExample implements Module {
 
 	/**
 	 * Data for input list
-	 * @return http://localhost:8080/examples-form/form/dynamiclist-loaded-data
+	 * @return http://localhost:8080/examples-form/form/dynamiclist-data
 	 */
-	@Action("dynamiclist-data")
-	public Response dynamicListLoadedData() {
+	/*@Action("dynamiclist-data")
+	public Response dynamicListData() {
 		return Response.getJson(
 			new MapInit<String, Object>()
 			.append("simple-list", Arrays.asList("value-01", "value-02", "value-02"))
@@ -1299,7 +1374,7 @@ public class FormExample implements Module {
 			)
 			.toMap()
 		);
-	}
+	}*/
 	
 	/************************/
 	
