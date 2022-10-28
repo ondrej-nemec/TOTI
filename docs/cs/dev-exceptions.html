@@ -1,0 +1,79 @@
+<h1>Zachytávání výjimek</h1>
+
+<p>
+	Článek popisuje, jak jsou zachychovány výjimky. Parametr <i>logs-dir</i> odkazuje na <code>http.logs-path</code> připadně <code>setLogsPath</code>.
+</p>
+
+<p>
+	<ul>
+		<li>Všechny výjimky jsou logovány pomocí výchozího <code>Logger</code> (jméno: <code>toti</code>)</li>
+		<li>
+			Pokud je nastaven vlasní Exception handler (více dále)
+			<ul>
+				<li>Je poslána vlastní erorová odpověď.</li>
+			</ul>
+		</li>
+		<li>
+			Pokud vlastní Exception handler není nastaven, nebo hodil výjimku
+			<ul>
+				<li>
+					Pokud je požadavek asynchronní
+					<ul>
+						<li>Detail výjimky je uloženo jako HTML stránka do <i>logs-dir</i> (podud není null)</li>
+						<li>
+							Pokud je požadavek z develop IP adresy
+							<ul>
+								<li>Odpověď má formát <i>exceptionClass: exceptionMessage</i></li>
+							</ul>
+						</li>
+						<li>
+							Pokud požadavek není z develop IP adresy
+							<ul>
+								<li>Odpověď obsahuje pouze odpovídající text chyby podle návratového kódu</li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+				<li>
+					Pokud je požadavek synchronní
+					<ul>
+						<li>
+							Pokud je požadavek z develop IP adresy
+							<ul>
+								<li>Odpověď obsahuje detail chyby (v HTML)</li>
+							</ul>
+						</li>
+						<li>
+							Pokud požadavek není z develop IP adresy
+							<ul>
+								<li>Detail chyby je jako HTML uložen do <i>logs-dir</i> (pokud není null)</li>
+								<li>Odpověďí je HTML stránka bez detailních informací</li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+	</ul>
+</p>
+
+<p class="alert alert-info">
+	Full working exception example is <a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/exceptions">here</a>.
+</p>
+
+<h2>Custom exception handler</h2>
+
+<p>
+	If you wish make your own error pages, you need implement <code>CustomExceptionResponse</code>. The interface define <code>catchException</code>. Result of the method will be used as error page. If the method throws exception, default exception handling will be used.
+</p>
+
+<p>
+	As the second step, you must set instance of the interface to router.
+</p>
+
+<pre><code class="language-java">
+@Override
+public void addRoutes(Router router) {
+	router.setCustomExceptionResponse(myCustomExceptionResponse);
+}
+</code></pre>

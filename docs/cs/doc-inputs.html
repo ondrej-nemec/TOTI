@@ -1,0 +1,621 @@
+<h1>Formulářové vstupy a filtry tabulek</h1>
+
+<p class="alert alert-success">
+	Ukázky použití formuláře a vstupů je v <a href="https://github.com/ondrej-nemec/TOTI/tree/dev/samples/examples">Examples</a> v části <i>form</i>
+</p>
+
+<p class="alert alert-success">
+	Ukázky použití tabulek a filtrů je v <a href="https://github.com/ondrej-nemec/TOTI/tree/dev/samples/examples">Examples</a> v části <i>grid</i>
+</p>
+
+<p>
+	Filtry a vstupy (controls) reprezentují HTML inputs. Mají některé předpřipravené parametry. Pokud potřebujete použít jiný, zavolejte metodu <code>addParam</code> (je možné ji volat vícekrát zasebou).
+</p>
+
+<p>
+	Standartní HTML5 formulář ignoruje neaktivní vstupy (disabled inputs). TOTI naopak umožňuje odeslat neaktivní vstupy a naopak ignorovat aktivní. Většina TOTI controls obsahuje parametry: <i>disabled</i> (<code>setDisabled</code>), <i>exclude</i> (<code>setExclude</code>, default false) a <i>editable</i> (<code>setEditable</code>, výchozí hodnota je stejná s formulářem).
+</p>
+
+<p>
+	Jak to funguje:
+
+	<ul>
+		<li><i>disabled == true</i>: pokud <i>exclude</i> není nastaveno, <i>exclude</i> je TRUE a vstup nebude odeslán</li>
+		<li><i>disabled == true</i> a zároveň <i>exclude == true</i>: vstup nebude odeslán</li>
+		<li><i>disabled == true</i> a zároveň  <i>exclude == false</i>: vstup bude odeslán</li>
+		<li><i>exclude == false</i> a <i>disabled</i> není nastaven: vstup bude odeslán</li>
+		<li>pokud formulář není editovatelný a <i>editable == false</i> nebo není nastaven: formulář nelze odeslat, vstup se zobrazí jako obyčejný text (Tlačítko na odeslání formuláře se nezobrazí).</li>
+		<li>pokud formulář není editovatelný a <i>editable == true</i>: formulář nelze odeslat a vstup se zobrazí normálně</li>
+	</ul>
+</p>
+
+<h2>Textové a číselné</h2>
+
+<h3>Text</h3>
+
+<p>
+	Textový vstup
+</p>
+
+<p>
+	<strong>Vytvoření filtru:</strong> <code>Text.filter()</code> <br>
+	<strong>Vytvoření vstupu:</strong> <code>Text.input(String name, boolean required)</code> <br>
+</p>
+
+<strong>Volitelné parametry</strong>
+
+<p>
+	<ul>
+		<li>Size <code>setSize</code>: default text size</li>
+		<li>Maximal length <code>setMaxLength</code>: maximální povolená délka textu</li>
+		<li>Minimal length <code>setMinLength</code>: minimální požadovaná délka textu</li>
+
+		<li>Přidání libovolného parametru: <code>addParam</code></li>
+		<li>Nastavení popisu: <code>setTitle</code></li>
+		<li>Váchozí hodnota: <code>setDefaultValue</code></li>
+		<li>Neaktivní vstup: <code>setDisabled</code></li>
+		<li>Neodesílat: <code>setExclude</code></li>
+		<li>Needitovatelný vstup: <code>setEditable</code></li>
+		<li>Nastavení placeholderu: <code>setPlaceholder</code></li>
+	</ul>
+</p>
+
+<h3>Textarea</h3>
+
+<p>
+	Pro dlouhé texty. Jen jako vstup
+</p>
+
+<p>
+	<strong>Vytvoření vstupu:</strong> <code>Textarea.input(String name, boolean required)</code> <br>
+</p>
+
+<strong>Volitelné parametry</strong>
+
+<p>
+	<ul>
+		<li>Maximální délka <code>setMaxLength</code>: maximální povolená délka textu</li>
+		<li>Počet sloupců <code>setCols</code></li>
+		<li>Počet řádků <code>setRows</code></li>
+
+		<li>Přidání libovolného parametru: <code>addParam</code></li>
+		<li>Nastavení popisu: <code>setTitle</code></li>
+		<li>Váchozí hodnota: <code>setDefaultValue</code></li>
+		<li>Neaktivní vstup: <code>setDisabled</code></li>
+		<li>Neodesílat: <code>setExclude</code></li>
+		<li>Needitovatelný vstup: <code>setEditable</code></li>
+		<li>Nastavení placeholderu: <code>setPlaceholder</code></li>
+	</ul>
+</p>
+
+<h3>Email</h3>
+
+<p>
+	Textový vstup s kontrolou správného tvaru emailu. Jen jako vstup.
+</p>
+
+<p>
+	<strong>Vytvoření vstupu:</strong> <code>Email.input(String name, boolean required)</code> <br>
+</p>
+
+<p>
+	<ul>
+		<li>Přidání libovolného parametru: <code>addParam</code></li>
+		<li>Nastavení popisu: <code>setTitle</code></li>
+		<li>Váchozí hodnota: <code>setDefaultValue</code></li>
+		<li>Neaktivní vstup: <code>setDisabled</code></li>
+		<li>Neodesílat: <code>setExclude</code></li>
+		<li>Needitovatelný vstup: <code>setEditable</code></li>
+		<li>Nastavení placeholderu: <code>setPlaceholder</code></li>
+	</ul>
+</p>
+
+<h3>Password</h3>
+
+<p>
+	Textový vstup, kde není možné číst zapsaná písmena. Jen jako vstup.
+</p>
+
+<p>
+	<strong>Vytvoření vstupu:</strong> <code>Password.input(String name, boolean required)</code> <br>
+</p>
+
+<strong>Volitelné parametry</strong>
+
+<p>
+	<ul>
+		<li>Size <code>setSize</code>: default text size</li>
+		<li>Maximal length <code>setMaxLength</code>: maximální povolená délka textu</li>
+		<li>Minimal length <code>setMinLength</code>: minimální požadovaná délka textu</li>
+
+		<li>Přidání libovolného parametru: <code>addParam</code></li>
+		<li>Nastavení popisu: <code>setTitle</code></li>
+		<li>Váchozí hodnota: <code>setDefaultValue</code></li>
+		<li>Neaktivní vstup: <code>setDisabled</code></li>
+		<li>Neodesílat: <code>setExclude</code></li>
+		<li>Needitovatelný vstup: <code>setEditable</code></li>
+		<li>Nastavení placeholderu: <code>setPlaceholder</code></li>
+	</ul>
+</p>
+
+<h3>Number</h3>
+
+<p>
+	Vstup umožňuje zadat jen číslice.
+</p>
+
+<p>
+	<strong>Vytvoření filtru:</strong> <code>Number.filter()</code> <br>
+	<strong>Vytvoření vstupu:</strong> <code>Number.input(String name, boolean required)</code> <br>
+</p>
+
+<strong>Volitelné parametry</strong>
+
+<p>
+	<ul>
+		<li>Step <code>setStep</code>: citlivost čísla</li>
+		<li>Minimální hodnota <code>setMin</code>: minimální povolená hodnota</li>
+		<li>Maximální hodnota <code>setMax</code>: maximální povolená hodnota</li>
+
+		<li>Přidání libovolného parametru: <code>addParam</code></li>
+		<li>Nastavení popisu: <code>setTitle</code></li>
+		<li>Váchozí hodnota: <code>setDefaultValue</code></li>
+		<li>Neaktivní vstup: <code>setDisabled</code></li>
+		<li>Neodesílat: <code>setExclude</code></li>
+		<li>Needitovatelný vstup: <code>setEditable</code></li>
+		<li>Nastavení placeholderu: <code>setPlaceholder</code></li>
+	</ul>
+</p>
+
+<h3>Range - rozmezí</h3>
+
+<p>
+	Číselný vstup.
+</p>
+
+<p>
+	<strong>Vytvoření filtru:</strong> <code>Range.filter()</code> <br>
+	<strong>Vytvoření vstupu:</strong> <code>Range.input(String name, boolean required)</code> <br>
+</p>
+
+<strong>Volitelné parametry</strong>
+
+<p>
+	<ul>
+		<li>Step <code>setStep</code>: citlivost čísla</li>
+		<li>Minimální hodnota <code>setMin</code>: minimální povolená hodnota</li>
+		<li>Maximální hodnota <code>setMax</code>: maximální povolená hodnota</li>
+
+		<li>Přidání libovolného parametru: <code>addParam</code></li>
+		<li>Nastavení popisu: <code>setTitle</code></li>
+		<li>Váchozí hodnota: <code>setDefaultValue</code></li>
+		<li>Neaktivní vstup: <code>setDisabled</code></li>
+		<li>Neodesílat: <code>setExclude</code></li>
+		<li>Needitovatelný vstup: <code>setEditable</code></li>
+	</ul>
+</p>
+
+<strong>Poznámka:</strong>
+<p>
+	HTML Range neumožňuje prázdnou hodnotu. Proto pokud <code>required</code> je nastaveno na FALSE, TOTI zobrazí Range spolu s checkboxem. Pokud je checkbox zaškrtnut, TOTI hodnotu Range pošle. V opačném případě se hodnota nepošle a Range je disabled.
+</p>
+
+<h2>Určení času</h2>
+
+<h3>Date</h3>
+
+<p>
+	Výběr data.
+</p>
+
+<p>
+	<strong>Vytvoření filtru:</strong> <code>Date.filter()</code> <br>
+	<strong>Vytvoření vstupu:</strong> <code>Date.filter(String name, boolean required)</code> <br>
+</p>
+
+<strong>Volitelné parametry</strong>
+
+<p>
+	<ul>
+		<li>Přidání libovolného parametru: <code>addParam</code></li>
+		<li>Nastavení popisu: <code>setTitle</code></li>
+		<li>Váchozí hodnota: <code>setDefaultValue</code></li>
+		<li>Neaktivní vstup: <code>setDisabled</code></li>
+		<li>Neodesílat: <code>setExclude</code></li>
+		<li>Needitovatelný vstup: <code>setEditable</code></li>
+	</ul>
+</p>
+
+<h3>Time</h3>
+
+<p>
+	Výběr času
+</p>
+
+<p>
+	<strong>Vytvoření filtru:</strong> <code>Time.filter()</code> <br>
+	<strong>Vytvoření vstupu:</strong> <code>Time.filter(String name, boolean required)</code> <br>
+</p>
+
+<strong>Volitelné parametry</strong>
+
+<p>
+	<ul>
+		<li>Citlivost <code>setStep</code>: "1" znamená sekundy, "60" znamená minuty a "3600" hodiny.</li>
+
+		<li>Přidání libovolného parametru: <code>addParam</code></li>
+		<li>Nastavení popisu: <code>setTitle</code></li>
+		<li>Váchozí hodnota: <code>setDefaultValue</code></li>
+		<li>Neaktivní vstup: <code>setDisabled</code></li>
+		<li>Neodesílat: <code>setExclude</code></li>
+		<li>Needitovatelný vstup: <code>setEditable</code></li>
+	</ul>
+</p>
+
+<h3>Datetime</h3>
+
+<p>
+	Výběr data a času.
+</p>
+
+<p>
+	<strong>Vytvoření filtru:</strong> <code>Datetime.filter()</code> <br>
+	<strong>Vytvoření vstupu:</strong> <code>Datetime.input(String name, boolean required)</code> <br>
+</p>
+
+<strong>Volitelné parametry</strong>
+
+<p>
+	<ul>
+		<li>Citlivost <code>setStep</code>: "1" znamená sekundy, "60" znamená minuty a "3600" hodiny.</li>
+		<li>Striktní hodnota <code>setStrict</code>: pokud je FALSE, input povoluje poslat jen datum nebo jen čas - automaticky použito v tabulkách.</li>
+
+		<li>Přidání libovolného parametru: <code>addParam</code></li>
+		<li>Nastavení popisu: <code>setTitle</code></li>
+		<li>Váchozí hodnota: <code>setDefaultValue</code></li>
+		<li>Neaktivní vstup: <code>setDisabled</code></li>
+		<li>Neodesílat: <code>setExclude</code></li>
+		<li>Needitovatelný vstup: <code>setEditable</code></li>
+	</ul>
+</p>
+
+<h3>Month</h3>
+
+<p>
+	Výběr měsíce.
+</p>
+
+<p>
+	<strong>Vytvoření filtru:</strong> <code>Month.filter()</code> <br>
+	<strong>Vytvoření vstupu:</strong> <code>Month.filter(String name, boolean required)</code> <br>
+</p>
+
+<h3>Week</h3>
+
+<p>
+	Picker for selecting week with localized messages. HTML standard tag
+</p>
+
+<p>
+	<strong>Vytvoření filtru:</strong> <code>Week.filter()</code> <br>
+	<strong>Vytvoření vstupu:</strong> <code>Week.filter(String name, boolean required)</code> <br>
+</p>
+
+<strong>Volitelné parametry</strong>
+
+<p>
+	<ul>
+		<li>Přidání libovolného parametru: <code>addParam</code></li>
+		<li>Nastavení popisu: <code>setTitle</code></li>
+		<li>Váchozí hodnota: <code>setDefaultValue</code></li>
+		<li>Neaktivní vstup: <code>setDisabled</code></li>
+		<li>Neodesílat: <code>setExclude</code></li>
+		<li>Needitovatelný vstup: <code>setEditable</code></li>
+	</ul>
+</p>
+
+
+<h2>Akce</h2>
+
+<h3>Submit</h3>
+
+<p>
+	Odesílací tlačítko
+</p>
+
+<p>
+	<strong>Vytvoření vstupu:</strong> <code>Submit.create(String title, String name)</code> <br>
+</p>
+
+<strong>Volitelné parametry</strong>
+
+<p>
+	<ul>
+		<li>Submit asynchroniously <code>setAsync</code></li>
+	</ul>
+
+	<strong>Only for asynchronious</strong>
+	<ul>
+		<li>Redirect after success <code>setRedirect</code>: URL redirect to. If URL contains<code>{id}</code> and submit response is object containing 'id' parameter, '{id}' is it replaced with <code>response.id</code>.</li>
+		<li>Do after success <code>setOnSuccess</code>: name of JS function. As parameters are used (in order) response, submit and form.</li>
+		<li>Do after failure <code>setOnFailure</code>: name of JS function. As parameters are used (in order) response, submit and form.</li>
+		<li>Confirmation before <code>setConfirmation</code>: text of confirmation. If no text set, no confirmation appear.</li>
+	</ul>
+</p>
+
+<strong>Async submit response</strong>
+
+<p>
+	If response is object, TOTI expects two attributes: <code>message</code> (is used as flash message to users) and <code>id</code> (used for replacing <code>{id}</code> in redirect message if exists).
+	Otherwise, TOTI use response as flash message for users.
+</p>
+
+<h3>Button</h3>
+
+<p>
+	Navigate from form but not submit values. If used in grid, you can parametrize URL with '<i>{*name-of-parameter*}</i>'. F.e. '<i>/{name}/edit/{id}</i>' will be '<i>/cars/edit/2</i>'. HTML standard tag
+</p>
+
+<p>
+	<strong>Create:</strong> <code>Button.create(String url, String name)</code> <br>
+</p>
+
+<strong>Volitelné parametry</strong>
+
+<p>
+	<ul>
+		<li>Title <code>setTitle</code>: text of button</li>
+		<li>Asynchronious request <code>setAsync</code>: if send request synchroniously (redirect) or not</li>
+		<li>Icon <code>setIcon</code>: TOTI add <code>&lt;i&gt;</code> with given class to button</li>
+		<li>Tooltip <code>setTooltip</code></li>
+		<li>Add class <code>addClass</code>: add given class to button, can be called more times</li>
+	</ul>
+
+	<strong>Only for asynchronious</strong>
+	<ul>
+		<li>Request method <code>setMethod</code>: GET, POST,...</li>
+		<li>Do after success response <code>setOnSuccess</code>: name of JS function called after success response. Response is used as parameter</li>
+		<li>Do after failure response <code>setOnFailure</code>: name of JS function called after failure response. Response is used as parameter</li>
+		<li>Confirmation before <code>setConfirmation</code>: text of confirmation. If no text set, no confirmation appear. If used in grid, you can parametrize URL with '<i>{*name-of-parameter*}</i>'.</li>
+		<li>Request parameters <code>addRequestParam</code>: add new request parameter (can be called more times)</li>
+		<li>Print condition (grid only): <code>setCondition(jsCode, evaluate)</code> - during print, TOTI execute JS code. If result is true, display button. The second parameter says if <code>jsCode</code> is parametrized with {*name-of-row-property*}</li>
+	</ul>
+</p>
+
+<h3>Reset</h3>
+
+<p>
+	Vratí formulářové vstupy do výchozího nastavení
+</p>
+
+<p>
+	<strong>Vytvoření vstupu:</strong> <code>Reset.create(String name)</code> <br>
+</p>
+
+<strong>Volitelné parametry</strong>
+
+<p>
+	<ul>
+		<li>Přidání libovolného parametru: <code>addParam</code></li>
+	</ul>
+</p>
+
+
+<h2>Výběr</h2>
+
+<h3>Checkbox</h3>
+
+<p>
+	Pro výběr Ano/Ne. Jen pro vstup
+</p>
+
+<p>
+	<strong>Vytvoření vstupu:</strong> <code>Checkbox.input(String name, boolea required)</code> <br>
+</p>
+
+<strong>Volitelné parametry</strong>
+
+<p>
+	<ul>
+		<li>Vykreslení hodnot <code>setValuesRender(String checked, String notChecked)</code>: definuje, jak se zobrazí hodnota při needitovalném vstupu. Výchozí nastavení <i>Yes</i> and <i>No</i></li>
+
+		<li>Přidání libovolného parametru: <code>addParam</code></li>
+		<li>Nastavení popisu: <code>setTitle</code></li>
+		<li>Váchozí hodnota: <code>setDefaultValue</code></li>
+		<li>Neaktivní vstup: <code>setDisabled</code></li>
+		<li>Neodesílat: <code>setExclude</code></li>
+		<li>Needitovatelný vstup: <code>setEditable</code></li>
+	</ul>
+</p>
+
+<h3>Radiolist</h3>
+
+<p>
+	Zobrazí seznam HTML Radio. Jen pro input
+</p>
+
+<p>
+	<strong>Vytvoření vstupu:</strong> <code>RadioList.input(String name, boolean required, Map&lt;String, String&gt; radios)</code>. Radios are value-title map<br>
+</p>
+
+<strong>Volitelné parametry</strong>
+
+<p>
+	<ul>
+		<li>Přidání libovolného parametru: <code>addParam</code></li>
+		<li>Nastavení popisu: <code>setTitle</code></li>
+		<li>Váchozí hodnota: <code>setDefaultValue</code></li>
+		<li>Neaktivní vstup: <code>setDisabled</code></li>
+		<li>Neodesílat: <code>setExclude</code></li>
+		<li>Needitovatelný vstup: <code>setEditable</code></li>
+	</ul>
+</p>
+
+<h3>Select</h3>
+
+<p>
+	Výběr hodnoty ze seznamu. Jednotlivé možnosti (option) do selectu mohou být automaticky načteny z URL.
+</p>
+
+<p>
+	<strong>Vytvoření filtru:</strong> <code>Select.filter(List&lt;Option&gt; options)</code> <br>
+	<strong>Vytvoření vstupu:</strong> <code>Select.input(String name, boolean required, List&lt;Option&gt; options)</code> <br>
+</p>
+
+<strong>Volitelné parametry</strong>
+
+<p>
+	<ul>
+		<li>Načtení možností z URL:</li>
+<pre><code class="language-java">
+select.setLoadData(String url, String method);
+// or with request parameters
+select.setLoadData(String url, String method, Map&lt;String, String&gt; params);
+</code></pre>
+
+		<li>Pokud jsou možnosti řazeny do skupin, lze nastavit, která skupina se má zobrazit:</li>
+<pre><code class="language-java">
+select.setShowedOptionGroup(String optionGroup);
+</code></pre>
+
+		<li>Závislost <code>setDepends</code>: viz níže</li>
+
+
+		<li>Přidání libovolného parametru: <code>addParam</code></li>
+		<li>Nastavení popisu: <code>setTitle</code></li>
+		<li>Váchozí hodnota: <code>setDefaultValue</code></li>
+		<li>Neaktivní vstup: <code>setDisabled</code></li>
+		<li>Neodesílat: <code>setExclude</code></li>
+		<li>Needitovatelný vstup: <code>setEditable</code></li>
+	</ul>
+</p>
+
+<h4>Load data to select</h4>
+<p>
+	For dynamic load data to select, TOTI expects this format of result:
+</p>
+
+<pre><code>
+[
+	{
+		value: '-value-',
+		title: '-title-',
+		optgroup: '-opt-group-', // optional
+		disabled: true/false // optional
+	},
+	...
+]
+</code></pre>
+
+<p>
+	<strong>This result can be created using <code>List</code> of <code>Help</code>.</strong>
+</p>
+
+<h4>Depends</h4>
+
+<p>
+	If <code>Select</code> ('Target') contains optgroups, it can depends on another <code>Select</code> ('Source'). 
+	If source has no selected value, target display normally (but optgroups in target are replaced with source options title: target.optgroup = sourceOption.id => target display sourceOption.title as optgroup)
+	If source contais value, target display only options without optgroup or with optgroup same as source value.
+</p>
+
+<h3>Option</h3>
+
+<p>
+	Child element of select. HTML standard tag
+</p>
+
+<p>
+	<strong>Create:</strong> <code>Option.create(String value, String title)</code> <br>
+</p>
+
+<strong>Volitelné parametry</strong>
+
+<p>
+	<ul>
+		<li>Option Group <code>setOptGroup</code>: name of Option Group this option belong</li>
+		<li>Disabled <code>setDisabled</code>: change disabled</li>
+	</ul>
+</p>
+
+
+<h2>Special</h2>
+
+<h3>Hidden</h3>
+
+<p>
+	Value is hidden. Input only. HTML standard tag
+</p>
+
+<p>
+	<strong>Vytvoření vstupu:</strong> <code>Hidden.input(String name)</code> <br>
+</p>
+
+<h3>Color</h3>
+
+<p>
+	Show color picker. Input only. HTML standard tag
+</p>
+
+
+<p>
+	<strong>Vytvoření vstupu:</strong> <code>Color.input(String name, boolean required)</code> <br>
+</p>
+
+<strong>NOTE:</strong>
+<p>
+	This tag not support empty value by default. If <code>required</code> is set to FALSE, TOTI display checkbox with. Checked means send input value, not checked means not send (if checkbox is not checked, input is disabled).
+</p>
+
+<h3>File</h3>
+
+<p>
+	For uploading file. Input only. HTML standard tag
+</p>
+
+<p>
+	<strong>Vytvoření vstupu:</strong> <code>File.input(String name, boolean required)</code> <br>
+</p>
+
+
+<h2>TOTI specific</h2>
+
+<h3>InputList</h3>
+
+<p>
+	<code>InputList</code> is container for other inputs. These inputs are available on page with name <code>InputListName[nameOfList][inputName]</code> (in TOTI called Map) or <code>InputListName[][inputName]</code> (in TOTI called List). Input only
+</p>
+
+<p>
+	<strong>Vytvoření vstupu:</strong> <code>InputList.input(String name)</code>. If you wish use list let name empty string (<strong>not null</strong>).<br>
+	Add input to list: <code>inputList.addInput(Input input)</code>
+</p>
+
+<p>
+	Example of usage is <a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/form">here</a> (including form bind).
+</p>
+
+<h3>DynamicList</h3>
+
+<p>
+	In <code>DynamicList</code> you define input. This input appears on page n-times depends on Add/Remove buttons and binding. The inputs are available on page with name <code>DynamicListName[index][inputName]</code>. If you wish bind values to <code>DynamicList</code>, in values is required List on DynamicListName key. Input only
+</p>
+
+<p>
+	<strong>Vytvoření vstupu:</strong> <code>DynamicList.input(String name)</code> <br>
+	Add input to list: `dynamicList.addInput(Input input);`
+</p>
+
+<strong>Volitelné parametry</strong>
+
+<p>
+	<ul>
+		<li>Title <code>setTitle</code>: label of input</li>
+		<li>Use Add Button <code>useAddButton</code>: if user can add input</li>
+		<li>Use Remote Button <code>useRemoteButton</code>: if user can remove input</li>
+	</ul>
+</p>
+
+<p>
+	Example of usage is <a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/form">here</a> (including form bind).
+</p>
