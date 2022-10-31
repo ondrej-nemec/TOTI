@@ -206,7 +206,7 @@ var totiFormDefaultTemplate = {
 		
 		return table;
 	},
-	getDynamicRow: function(formUnique, container, dynamicContainer, name, remove) {
+	getDynamicRow: function(formUnique, container, dynamicContainer, name, remove, position) {
 		var container = document.createElement('table');
 		dynamicContainer.appendChild(container);
 

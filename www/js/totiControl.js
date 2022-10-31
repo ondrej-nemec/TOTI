@@ -319,6 +319,17 @@ var totiControl = {
 	            		} else {
 	            			resolve(dependElement);
 	            		}
+	            	} else {
+	            		/*new MutationObserver((mutationList, observer) => {
+	            			for (const mutation of mutationList) {
+	            				if (mutation.type === 'childList') {
+		            			   console.log(mutation.target);
+		            			   console.log(mutation.addedNodes);
+		            			   console.log(mutation.target.querySelector(params.depends));
+	            				}
+		            		}
+		            		observer.disconnect();
+		            	}).observe(document.body, { attributes: true, childList: true, subtree: true });*/
 	            	}
 	            } else {
 	            	resolve(null); /* no element depends */

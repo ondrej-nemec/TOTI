@@ -78,11 +78,8 @@ var totiDisplay = {
 		totiStorage.saveVariable(name, actual);
 	},
 	/**********/
-	isFade: false,
+	isFade: 0,
 	fadeIn: function() {
-		if (totiDisplay.isFade) {
-			return;
-		}
 		var fade = document.createElement('div');
 		fade.style.position = "absolute";
 		fade.style.top = 0;
@@ -96,15 +93,14 @@ var totiDisplay = {
 		fade.onclick = function() {}; /* prevent click */
 
 		document.body.appendChild(fade);
+		totiDisplay.isFade++;
 /* TODO loading picture */
-		totiDisplay.isFade = true;
 	},
 	fadeOut: function() {
-		if (!totiDisplay.isFade) {
-			return;
+		totiDisplay.isFade--;
+		if (totiDisplay.isFade === 0) {
+			document.querySelector("#toti-fade-in").remove();
 		}
-		document.querySelector("#toti-fade-in").remove();
-		totiDisplay.isFade = false;
 	},
 	/*********************/
 	gridTemplate: totiGridDefaultTemplate,

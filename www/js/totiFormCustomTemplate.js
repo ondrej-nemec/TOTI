@@ -128,13 +128,21 @@ var totiFormCustomTemplate = {
         }
         return dynamicContainer;
 	},
-	getDynamicRow: function(formUnique, container, dynamicContainer, name, remove) {
+	getDynamicRow: function(formUnique, container, dynamicContainer, name, remove, position) {
 		var template = container.querySelector('[toti-form-dynamic-template="' + name + '"]').cloneNode(true).content;
 
 		var dynamic = document.createElement('div');
+		function setName(selector) {
+			dynamic.querySelectorAll('[' + selector + ']').forEach((el)=>{
+				el.setAttribute(selector, name + (position === null ? "" : "[" + position + "]") + "[" + el.getAttribute(selector) + "]");
+			});
+		}
 		dynamic.append(...template.childNodes);
-		dynamicContainer.appendChild(dynamic);
-
+		setName('toti-form-input');
+		setName('toti-form-label');
+		setName('toti-form-error');
+		dynamicContainer.appendChild(dynamic);		
+		
 		var removeButton = dynamic.querySelector('[toti-form-remove-button="' + name + '"]');
 		if (remove !== null && removeButton !== null) {
 			removeButton.addEventListener("click", function(e) {
