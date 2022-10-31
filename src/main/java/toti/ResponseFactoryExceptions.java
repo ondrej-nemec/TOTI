@@ -97,7 +97,7 @@ public class ResponseFactoryExceptions {
 	}
 	
 	private String saveToFile(TemplateResponse response) {
-		if (logsPath == null) {
+		if (logsPath == null || logsPath.isEmpty()) {
 			return "-- log exception detail is disabled --";
 		}	
 		try {
