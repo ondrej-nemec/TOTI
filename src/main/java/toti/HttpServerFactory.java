@@ -65,7 +65,7 @@ public class HttpServerFactory {
 	private String dirDefaultFile = "index.html";
 	private boolean minimalize = true;
 	private List<String> developIps = Arrays.asList("/127.0.0.1", "/0:0:0:0:0:0:0:1");
-	private Integer maxUploadFileSize = null;
+	private Integer maxRequestBodySize = null;
 	private long tokenExpirationTime = 1000 * 60 * 10;
 	private String tokenCustomSalt = "";
 	private boolean useProfiler = false;
@@ -151,7 +151,7 @@ public class HttpServerFactory {
 				readTimeout,
 				response,
 				certs,
-				maxUploadFileSize,
+				maxRequestBodySize,
 				charset,
 				logger
 		);
@@ -182,8 +182,8 @@ public class HttpServerFactory {
 		return this;
 	}
 
-	public HttpServerFactory setMaxRequestBodySize(int maxUploadFileSize) {
-		this.maxUploadFileSize = maxUploadFileSize;
+	public HttpServerFactory setMaxRequestBodySize(int maxRequestBodySize) {
+		this.maxRequestBodySize = maxRequestBodySize;
 		return this;
 	}
 
