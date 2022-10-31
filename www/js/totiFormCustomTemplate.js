@@ -111,9 +111,13 @@ var totiFormCustomTemplate = {
 			}
 		}
 	},
-	getDynamicContainer: function(formUnique, container, name, addItem) {
+	getDynamicContainer: function(formUnique, container, name, title, addItem) {
 		var dynamicContainer = container.querySelector('[toti-form-dynamic-container="' + name + '"]');
 		var addButton = container.querySelector('[toti-form-add-button="' + name + '"]');
+		var titleCell = container.querySelector('[toti-form-dynamic-name="' + name + '"]');
+		if (title !== undefined  && titleCell !== null) {
+			titleCell.innerText = title;
+		}
         if (addItem !== null && addButton !== null) {
 			addButton.addEventListener("click", function(e) {
 				e.preventDefault();

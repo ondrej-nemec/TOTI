@@ -12,7 +12,10 @@
 	<t:control name="form">
 		<h2>Simple list</h2>
 		<fieldset toti-form-dynamic-container="simple-list">
-			<legend><button toti-form-add-button="simple-list">Add</button></legend>
+			<legend>
+				<span toti-form-dynamic-name="simple-list"></span>
+				<button toti-form-add-button="simple-list">Add</button>
+			</legend>
 			<template toti-form-dynamic-template="simple-list">
 				<t:form label="simple-list[]" />
 				<t:form input="simple-list[]" /> 

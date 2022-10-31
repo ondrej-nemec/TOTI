@@ -175,7 +175,7 @@ var totiFormDefaultTemplate = {
 			target.appendChild(element);
 		}
 	},
-	getDynamicContainer: function(formUnique, container, name, addItem) {
+	getDynamicContainer: function(formUnique, container, name, title, addItem) {
 		var dynamic = document.createElement("tr");
 		totiFormDefaultTemplate.addToContainer(formUnique, container, dynamic);
 		
@@ -189,6 +189,11 @@ var totiFormDefaultTemplate = {
 		var legend = document.createElement("legend");
 		table.appendChild(legend);
 
+		if (title !== undefined) {
+			var titleCell = document.createElement('span');
+			titleCell.innerText = title;
+			legend.appendChild(titleCell);
+		}
         if (addItem !== null) {
 			var addButton = document.createElement("button");
 			addButton.addEventListener("click", function(e) {

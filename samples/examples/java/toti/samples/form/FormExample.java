@@ -1101,6 +1101,7 @@ public class FormExample implements Module {
 			.addInput(
 				Text.input("", true).setTitle("Simple list {i}")
 			)
+			.setTitle("Simple list")
 		);
 		
 		form.addInput(

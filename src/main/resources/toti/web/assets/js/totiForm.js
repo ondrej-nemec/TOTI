@@ -75,7 +75,7 @@ class TotiForm {
 
 		
 		if (field.type === "dynamic" && field.hasOwnProperty('load')) {
-			var dynamicContainer = form.template.getDynamicContainer(form.formUnique, form.container, field.name, null);
+			var dynamicContainer = form.template.getDynamicContainer(form.formUnique, form.container, field.name, field.title, null);
 			totiLoad.load(field.load.url, field.load.method, {}, {}, field.load.params)
 			.then((loaded)=>{
 				loaded.forEach((group)=>{
@@ -119,7 +119,7 @@ class TotiForm {
 					});
 				});
 			};
-			var dynamicContainer = form.template.getDynamicContainer(form.formUnique, form.container, field.name, field.addButton && editable ? addItem : null);
+			var dynamicContainer = form.template.getDynamicContainer(form.formUnique, form.container, field.name, field.title, field.addButton && editable ? addItem : null);
 			if (dynamicContainer === null) {
 				return;
 			}
