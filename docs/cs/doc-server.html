@@ -1,0 +1,356 @@
+<h1>Nastavení serveru</h1>
+
+<h2>Server</h2>
+
+<h3>URL</h3>
+
+<p>
+	Jak budou vypadat URL adresy.
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <code>/[module]&lt;/[path]&gt;/[controller]/[method]&lt;/[param]&gt;</code> <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>http.url-pattern</code> <br>
+	<strong>Metoda:</strong> <code>setUrlPattern</code>
+</p>
+
+<h3>Port</h3>
+
+<p>
+	Na jakém portu bude TOTI naslouchat.
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <code>80</code> <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>http.port</code> <br>
+	<strong>Metoda:</strong> <code>setPort</code>
+</p>
+
+<h3>Thread pool</h3>
+
+<p>
+	Maximální počet klientů připojených naráz - počet vláken.
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <code>5</code> <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>http.thread-pool</code> <br>
+	<strong>Metoda:</strong> <code>setThreadPool</code>
+</p>
+
+<h3>Reading timeout</h3>
+
+<p>
+	Timeout v milisekundách. Pokud po tuto dobu nedojde ke komunikaci, spojení bude zrušeno.
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <code>60000 ms (= 60s = 1 min)</code> <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>http.read-timeout</code> <br>
+	<strong>Metoda:</strong> <code>setReadTimeout</code>
+</p>
+
+<h3>Hlavičky odpovědi</h3>
+
+<p>
+	Hlavičky, které budou poslány spolu s odpovědí.
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <code>Arrays.of(Access-Control-Allow-Origin: *)</code> <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>http.headers</code> (oddělené <i>|</i>)<br>
+	<strong>Metoda:</strong> <code>setHeaders</code>
+</p>
+
+<h3>Charset</h3>
+
+<p>
+	Znaková sada požadavků a odpovědí.
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <code>UTF-8</code> <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>http.charset</code> <br>
+	<strong>Metoda:</strong> <code>setCharset</code>
+</p>
+
+<h3>Složka dočasných souborů</h3>
+
+<p>
+	Cesta ke složce s dočasnými soubory (může být relativní i absolutní).
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <code>temp</code> (v kořenovém adresáři aplikace)<br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>http.temp</code> <br>
+	<strong>Metoda:</strong> <code>setTempPath</code>
+</p>
+
+<h3>Složka se zdroji</h3>
+
+<p>
+	Cesta ke složce jejíž obsah bude dostupný z prohlížeče. Obvykle obsahuje CSS, JS a HMTL soubory, obrázky apod.
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <code>www</code> (v kořenovém adresáři aplikace)<br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>http.resource-path</code> <br>
+	<strong>Metoda:</strong> <code>setResourcesPath</code>
+</p>
+
+<h3>Složka s logy</h3>
+
+<p>
+	Složka, kam TOTI ukládá soubory s detaily chyb. Pokud není nastavena (je null nebo prázdný řetězec), logy chyb nejsou ukládány.
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <code>logs</code> (v kořenovém adresáři aplikace)<br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>http.logs-path</code> <br>
+	<strong>Metoda:</strong> <code>setLogsPath</code>
+</p>
+
+<h3>Minimalizace šablon</h3>
+
+<p>
+	Pokud je tato možnost zapnuta, TOTI odstraní z vygenerovaných souborů většinu mezer, tabulátorů a nových řádků. Může to způsobit chybu v JS, pokud JavaScript obsahuje řádkový komentář <code>//</code>. Netýká se souborů ve složce zdrojů.
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <code>true</code> <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>http.minimalize-templates</code> <br>
+	<strong>Metoda:</strong> <code>setMinimalize</code>
+</p>
+
+<!-- delete temp dirs -->
+
+<h3>Výpis složky</h3>
+
+<p>
+	Pokud požadovaná URL ukazuje na složku v složce zdrojů, TOTI může vypsat obsah složky nebo vrátit 404.
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <code>false</code> <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>http.dir-allowed</code> <br>
+	<strong>Metoda:</strong> <code>setDirResponseAllowed</code>
+</p>
+
+<h3>Výchozí soubor složky</h3>
+
+<p>
+	Pokud požadovaná URL ukazuje na složku a výpis složky je vypnutý, TOTI zkusí otevřit soubor s daným jménem (v rámci této složky). NULL nebo prázdný řetězec znamenají nepoužívat výchozí soubor.
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <code>index.html</code> <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>http.dir-default-file</code> (pokud klíč chybí: Výchozí hodnota, prázdná hodnota klíče: nepoužívat)<br>
+	<strong>Metoda:</strong> <code>setDirDefaultFile</code>
+</p>
+
+<h3>Nastavení jazyků</h3>
+
+<p>
+	Nastaví cestu k JSON souboru s jazykovým nastavením.
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <code>System default</code> <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>http.locale-settings</code> <br>
+	<strong>Metoda:</strong> <code>setLanguageSettings</code>
+</p>
+
+<h3>Expirace security tokenu</h3>
+
+<p>
+	Jak dlouho (v milisekundách) má být security token aktivní.
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <code>600000ms (= 600s = 10min)</code> <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>http.token-expired</code> <br>
+	<strong>Metoda:</strong> <code>setTokenExpirationTime</code>
+</p>
+
+<h3>Sůl secutiry tokenu</h3>
+
+<p>
+	Vlastní sůl přidaná k tokenu.
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <code>''</code> (prázdný řetězec) <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>http.token-expired</code> <br>
+	<strong>Metoda:</strong> <code>setTokenExpirationTime</code>
+</p>
+
+<h3>Certifikáty serveru</h3>
+
+<p>
+	Cesta k java keytool souboru s certifikátem a heslo pro keytool soubor.
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> bez certifikátu <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>http.key-store</code> a <code>http.key-store-password</code> <br>
+	<strong>Metoda:</strong> <code>setCertificateStore</code>
+</p>
+
+<h3>Důveryhodná připojení</h3>
+
+<p>
+	Cesta k java keytool souboru s certifikáty klentů a heslo pro keytool soubor.
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> všechna připojení jsou důvěryhodná <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>http.trust-store</code> a <code>http.trust-store-password</code><br>
+	<strong>Metoda:</strong> <code>setTrustedClientsStore</code>
+</p>
+
+<h3>Develop IP adresy</h3>
+
+<p>
+	Seznam develop IP adres.
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <code>Arrays.asList("/127.0.0.1", "/0:0:0:0:0:0:0:1")</code> <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>http.ip</code> (oddělené <code>|</code>) <br>
+	<strong>Metoda:</strong> <code>setDevelopIpAdresses</code>
+</p>
+
+<h3>Maximální velikost požadavku</h3>
+
+<p>
+	Maximální povolená velikost těla požadavku. NULL nebo prázdná hodnota znamenají bez omezení.
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <code>null</code> <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>http.max-request-size</code> <br>
+	<strong>Metoda:</strong> <code>setMaxRequestBodySize</code>
+</p>
+
+<h3>Profiler</h3>
+
+<p>
+	Zapne/vypne použití profileru. <strong>Může způsobit velký bezpečnostní problém, pokud je zapnut v produkční aplikaci.</strong>
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <code>false</code> <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>http.use-profiler</code> <br>
+	<strong>Metoda:</strong> <code>setUseProfiler</code>
+</p>
+
+<!-- database -->
+
+<h3>Database</h3>
+
+<p>TOTI využívá JI Database (viz <a href="/JI?file=database-about.html">zde</a>). Pokud nejsou definovány klíče <code>database.*</code>, objekt <code>database</code> je NULL.</p>
+
+<h3>Typ databáze</h3>
+
+<p>
+	Definuje typ databáze
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <i>---</i> <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>database.type</code>
+</p>
+
+<h3>Cesa k DB</h3>
+
+<p>
+	URL nebo fyzická cesta k databázi.
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <i>---</i>  <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>database.url</code>
+</p>
+
+<h3>Externí</h3>
+
+<p>
+	Zda je spuštění a vypínání databáze v pravomocích někoho jiného.
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <i>true</i>  <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>database.external</code>
+</p>
+
+<h3>Jméno databáze</h3>
+
+<p>
+	
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <i>---</i>  <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>database.schema-name</code>
+</p>
+
+<h3>Uživatelské jméno</h3>
+
+<p>
+	
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <i>---</i>  <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>database.login</code>
+</p>
+
+<h3>Heslo</h3>
+
+<p>
+	
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <i>---</i>  <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>database.password</code>
+</p>
+
+<h3>Velikost Connection poolu</h3>
+
+<p>
+	
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <i>---</i>  <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>database.pool-size</code>
+</p>
+
+<!-- language settings -->
+
+<h2>JSON jazykového nastavení</h2>
+
+<p>
+	Soubor očekává klíč <code>locales</code>. Hodnotou je JSOU objekt: jména jsou identifikátory jazyků a hodnoty jsou nastavení pro jednotlivé jazyky (zda se jazyk čte zleva doprava či obráceně a substituce). Druhým klíčem v rootu je <code>default</code> - definuje výchozí jazyk. Pokud není nastaven, použije se první jazyk z <code>locales</code>.
+</p>
+
+<pre><code>
+{
+	"default": "en",
+	"locales": {
+		"en": {
+			"isLeftToRight": true,
+			"substitutions": ["en_GB", "en_US"]
+		},
+		"cs": {
+			"isLeftToRight": true,
+			"substitutions": ["cs_CZ", "cs-CZ"]
+		},
+		"es": {
+			"isLeftToRight": true,
+			"substitutions": ["es_ES", "es_MX"]
+		}
+	}
+}
+</code></pre>

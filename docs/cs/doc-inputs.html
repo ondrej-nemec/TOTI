@@ -331,54 +331,58 @@
 
 <p>
 	<ul>
-		<li>Submit asynchroniously <code>setAsync</code></li>
+		<li>Asynchronní odeslání <code>setAsync</code> - výchozí hodnota je <code>true</code></li>
+		<li>Nastavení popisu: <code>setTitle</code></li>
+		<li>Potvrzení odeslání: <code>setConfirmation</code>: žádost o potvrzení odeslání formuláře</li>
+		<li>Neaktivní vstup: <code>setDisabled</code></li>
+		<li>Odesílat Submit: <code>setSubmitPolicy</code>: povolené hodnoty <code>EXCLUDE</code> (neodesílat), <code>INCLUDE</code> (odeslat), <code>INCLUDE_ON_CLICK</code> (odeslat jen pokud na něj bylo kliknuto)</li>
+		<li>Hodnota <code>setValue</code>: hodnota, která se pošle, pokud se Submit odesílá. <strong>Nejedná se text tlačítka</strong></li>
 	</ul>
 
-	<strong>Only for asynchronious</strong>
+	<strong>Jen při asychnroním odeslání</strong>
 	<ul>
-		<li>Redirect after success <code>setRedirect</code>: URL redirect to. If URL contains<code>{id}</code> and submit response is object containing 'id' parameter, '{id}' is it replaced with <code>response.id</code>.</li>
-		<li>Do after success <code>setOnSuccess</code>: name of JS function. As parameters are used (in order) response, submit and form.</li>
-		<li>Do after failure <code>setOnFailure</code>: name of JS function. As parameters are used (in order) response, submit and form.</li>
-		<li>Confirmation before <code>setConfirmation</code>: text of confirmation. If no text set, no confirmation appear.</li>
+		<li>Přesměrování po úspěšném odeslání <code>setRedirect</code>: URL cesta. Pokud odeslání vrátilo JSON, TOTI projde všechny jeho parametry a v URL nahradí <code>{--jmeno-parametru}</code> danou hodnotou.</li>
+		<li>Provést po úspěšném odeslání <code>setOnSuccess</code>: název JS funkce. Vstupní parametry jsou: výsledek odeslání, Submit a formulář.</li>
+		<li>Provést při chybě <code>setOnFailure</code>: název JS funkce. Vstupní parametry jsou: errror, Submit, formulář. Neprovede se při chybě 400 - ta je rezervovaná pro validační hlášky</li>
 	</ul>
 </p>
 
-<strong>Async submit response</strong>
+<strong>Chyba 400</strong>
 
 <p>
-	If response is object, TOTI expects two attributes: <code>message</code> (is used as flash message to users) and <code>id</code> (used for replacing <code>{id}</code> in redirect message if exists).
-	Otherwise, TOTI use response as flash message for users.
+	Chya 400 je rezervovaná pro situace, kdy data ve formuláři nejsou validní. Tato odpověď pak obsahuje detail chyb.
 </p>
 
 <h3>Button</h3>
 
 <p>
-	Navigate from form but not submit values. If used in grid, you can parametrize URL with '<i>{*name-of-parameter*}</i>'. F.e. '<i>/{name}/edit/{id}</i>' will be '<i>/cars/edit/2</i>'. HTML standard tag
+	Tlačtko ve formuláři, které neodešle data, nebo tlačítko v tabulce, které provede akci. Pokud je Button přidán jako tlačítko k řádku tabulky a URL obsahuje '<i>{*name-of-parameter*}</i>', je tato část nahrazena odpovídající hodnotou z dat řádku. Například: '<i>/{name}/edit/{id}</i>' a id řádku je 2, pak URL bude '<i>/cars/edit/2</i>'
 </p>
 
 <p>
-	<strong>Create:</strong> <code>Button.create(String url, String name)</code> <br>
+	<strong>Vytvoření:</strong> <code>Button.create(String url, String name)</code> <br>
 </p>
 
 <strong>Volitelné parametry</strong>
 
 <p>
 	<ul>
-		<li>Title <code>setTitle</code>: text of button</li>
-		<li>Asynchronious request <code>setAsync</code>: if send request synchroniously (redirect) or not</li>
-		<li>Icon <code>setIcon</code>: TOTI add <code>&lt;i&gt;</code> with given class to button</li>
-		<li>Tooltip <code>setTooltip</code></li>
-		<li>Add class <code>addClass</code>: add given class to button, can be called more times</li>
+		<li>Popisek <code>setTitle</code></li>
+		<li>Asynhronní odeslání <code>setAsync</code>: určuje, zda provést asynchronní akci, nebo přesměrovat. Výchozí je <code>true</code></li>
+		<li>Ikona <code>setIcon</code>: TOTI přídá k popisku <code>&lt;i&gt;</code> s dannou třídou. Vhodné při použití FontAwesome nebo Bootstrap icons</li>
+		<li>Nápověda <code>setTooltip</code></li>
+		<li>Přidat třídu <code>addClass</code>: lze volat vícekrát</li>
+
+		<li>Vykreslovací podmínka (jen u tabulek): <code>setCondition(jsCode, evaluate)</code> - při vykresolování, TOTI provede zadaný JS kód. Pokud je výsledek <code>true</code>, tlačítko se zobrazí. Druhý parametr určuje, zda JS kód obsahuje zástupné znaky pro data řádku <i>{*name-of-row-property*}</i></li>
+		<li>Potvrzení odeslání <code>setConfirmation</code>: žádost o potvrzení provedení akce. Text může obsahovat zástupné znaky pro data řádku '<i>{*name-of-parameter*}</i>'.</li>
 	</ul>
 
-	<strong>Only for asynchronious</strong>
+	<strong>Jen při asynchroním odeslání</strong>
 	<ul>
-		<li>Request method <code>setMethod</code>: GET, POST,...</li>
-		<li>Do after success response <code>setOnSuccess</code>: name of JS function called after success response. Response is used as parameter</li>
-		<li>Do after failure response <code>setOnFailure</code>: name of JS function called after failure response. Response is used as parameter</li>
-		<li>Confirmation before <code>setConfirmation</code>: text of confirmation. If no text set, no confirmation appear. If used in grid, you can parametrize URL with '<i>{*name-of-parameter*}</i>'.</li>
-		<li>Request parameters <code>addRequestParam</code>: add new request parameter (can be called more times)</li>
-		<li>Print condition (grid only): <code>setCondition(jsCode, evaluate)</code> - during print, TOTI execute JS code. If result is true, display button. The second parameter says if <code>jsCode</code> is parametrized with {*name-of-row-property*}</li>
+		<li>Metoda <code>setMethod</code>: GET, POST,...</li>
+		<li>Provést při úspěšném odeslání <code>setOnSuccess</code>: název JS funkce. Vstupním parametrem je výsledek požadavku.</li>
+		<li>Provést při chybě odeslání <code>setOnFailure</code>: název JS funkce. Vstupním parametrem je výsledek error.</li>
+		<li>Přidání URL parametru <code>addRequestParam</code>: může být voláno vícekrát</li>
 	</ul>
 </p>
 
@@ -480,7 +484,6 @@ select.setShowedOptionGroup(String optionGroup);
 
 		<li>Závislost <code>setDepends</code>: viz níže</li>
 
-
 		<li>Přidání libovolného parametru: <code>addParam</code></li>
 		<li>Nastavení popisu: <code>setTitle</code></li>
 		<li>Váchozí hodnota: <code>setDefaultValue</code></li>
@@ -490,9 +493,9 @@ select.setShowedOptionGroup(String optionGroup);
 	</ul>
 </p>
 
-<h4>Load data to select</h4>
+<h4>Načtení dat z URL</h4>
 <p>
-	For dynamic load data to select, TOTI expects this format of result:
+	Pro načtení možností do selectu je vyžadován následujíc formát dat:
 </p>
 
 <pre><code>
@@ -508,53 +511,63 @@ select.setShowedOptionGroup(String optionGroup);
 </code></pre>
 
 <p>
-	<strong>This result can be created using <code>List</code> of <code>Help</code>.</strong>
+	<strong>Tento výsledek poskytne <code>List</code> of <code>Help</code>.</strong>
 </p>
 
 <h4>Depends</h4>
 
 <p>
-	If <code>Select</code> ('Target') contains optgroups, it can depends on another <code>Select</code> ('Source'). 
-	If source has no selected value, target display normally (but optgroups in target are replaced with source options title: target.optgroup = sourceOption.id => target display sourceOption.title as optgroup)
-	If source contais value, target display only options without optgroup or with optgroup same as source value.
+	Pokud <code>Select</code> ('Cíl') obsahuje optgroupy, může záviset na jiném <code>Select</code> ('Zdroj'). Možnosti Zdroje odpovídají skupinám možností v Cíli. Podud Zdroj nemá vybranou žádnou hodnotu, možnosti v Cíli se zobrazí rozdělené do skupin, přičemž názvy skupin jsou nahrazeny popisy možností ze Zdroje. Pokud je ve Zdroji vybraná možnost, v cíli se zobrazí možnosti s odpovídající skupinou a ty bez skupiny.
 </p>
 
 <h3>Option</h3>
 
 <p>
-	Child element of select. HTML standard tag
+	Možnost v Selectu
 </p>
 
 <p>
-	<strong>Create:</strong> <code>Option.create(String value, String title)</code> <br>
+	<strong>Vytvoření:</strong> <code>Option.create(String value, String title)</code> <br>
 </p>
 
 <strong>Volitelné parametry</strong>
 
 <p>
 	<ul>
-		<li>Option Group <code>setOptGroup</code>: name of Option Group this option belong</li>
-		<li>Disabled <code>setDisabled</code>: change disabled</li>
+		<li>Skupina <code>setOptGroup</code>: název skupiny</li>
+		<li>Neaktivní <code>setDisabled</code></li>
 	</ul>
 </p>
 
 
-<h2>Special</h2>
+<h2>Speciální</h2>
 
 <h3>Hidden</h3>
 
 <p>
-	Value is hidden. Input only. HTML standard tag
+	Skrytá hodnota. Jen pro vstupy
 </p>
 
 <p>
 	<strong>Vytvoření vstupu:</strong> <code>Hidden.input(String name)</code> <br>
 </p>
 
+<strong>Volitelné parametry</strong>
+
+<p>
+	<ul>
+		<li>Přidání libovolného parametru: <code>addParam</code></li>
+		<li>Váchozí hodnota: <code>setDefaultValue</code></li>
+		<li>Neodesílat: <code>setExclude</code></li>
+		<li>Needitovatelný vstup: <code>setEditable</code></li>
+	</ul>
+</p>
+
+
 <h3>Color</h3>
 
 <p>
-	Show color picker. Input only. HTML standard tag
+	Výběr barvy. Jen pro vstupy
 </p>
 
 
@@ -562,60 +575,99 @@ select.setShowedOptionGroup(String optionGroup);
 	<strong>Vytvoření vstupu:</strong> <code>Color.input(String name, boolean required)</code> <br>
 </p>
 
-<strong>NOTE:</strong>
+<strong>Volitelné parametry</strong>
+
 <p>
-	This tag not support empty value by default. If <code>required</code> is set to FALSE, TOTI display checkbox with. Checked means send input value, not checked means not send (if checkbox is not checked, input is disabled).
+	<ul>
+		<li>Přidání libovolného parametru: <code>addParam</code></li>
+		<li>Nastavení popisu: <code>setTitle</code></li>
+		<li>Váchozí hodnota: <code>setDefaultValue</code></li>
+		<li>Neaktivní vstup: <code>setDisabled</code></li>
+		<li>Neodesílat: <code>setExclude</code></li>
+		<li>Needitovatelný vstup: <code>setEditable</code></li>
+	</ul>
+</p>
+
+<strong>Poznámka:</strong>
+<p>
+	HTML Range neumožňuje prázdnou hodnotu. Proto pokud <code>required</code> je nastaveno na FALSE, TOTI zobrazí Color spolu s checkboxem. Pokud je checkbox zaškrtnut, TOTI hodnotu Range pošle. V opačném případě se hodnota nepošle a Range je disabled.
 </p>
 
 <h3>File</h3>
 
 <p>
-	For uploading file. Input only. HTML standard tag
+	Pro nahrávání souborů. Jen pro vstup.
 </p>
 
 <p>
 	<strong>Vytvoření vstupu:</strong> <code>File.input(String name, boolean required)</code> <br>
 </p>
 
+<strong>Volitelné parametry</strong>
 
-<h2>TOTI specific</h2>
+<p>
+	<ul>
+		<li>Přidání libovolného parametru: <code>addParam</code></li>
+		<li>Nastavení popisu: <code>setTitle</code></li>
+		<li>Váchozí hodnota: <code>setDefaultValue</code></li>
+		<li>Neaktivní vstup: <code>setDisabled</code></li>
+		<li>Neodesílat: <code>setExclude</code></li>
+		<li>Needitovatelný vstup: <code>setEditable</code></li>
+	</ul>
+</p>
+
+
+<h2>Speciálně v TOTI</h2>
 
 <h3>InputList</h3>
 
 <p>
-	<code>InputList</code> is container for other inputs. These inputs are available on page with name <code>InputListName[nameOfList][inputName]</code> (in TOTI called Map) or <code>InputListName[][inputName]</code> (in TOTI called List). Input only
+	<code>InputList</code> je kontejner pro jiné vstupy. Tyto vstupy jaou pak na stránce pojmenované <code>InputListName[inputName]</code> (mapa) nebo <code>InputListName[]</code> (list). Jen pro vstupy
 </p>
 
 <p>
-	<strong>Vytvoření vstupu:</strong> <code>InputList.input(String name)</code>. If you wish use list let name empty string (<strong>not null</strong>).<br>
-	Add input to list: <code>inputList.addInput(Input input)</code>
+	<strong>Vytvoření vstupu:</strong> <code>InputList.input(String name)</code>. Pokud chcete použít list, nechte jméno prázdné (<strong>ne null</strong>).<br>
+	<strong>Přidání vstupu:</strong> <code>inputList.addInput(Input input)</code>
 </p>
 
 <p>
-	Example of usage is <a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/form">here</a> (including form bind).
+	Ukázka použití je v příkladech.
 </p>
 
 <h3>DynamicList</h3>
 
 <p>
-	In <code>DynamicList</code> you define input. This input appears on page n-times depends on Add/Remove buttons and binding. The inputs are available on page with name <code>DynamicListName[index][inputName]</code>. If you wish bind values to <code>DynamicList</code>, in values is required List on DynamicListName key. Input only
+	<code>DynamicList</code> je také kontejner na vstupy. Rozdíl oproti <code>InputList</code> je v tom, že DynamicList umožňuje přidat definované vstupy n-krát přímo na stránce. Uživatel ovládá DynamicList pomocí tlačítek Přidat a Odebrat. Pro jména vstupů platí stejná pravidla jako u InputListu. Pokud popis přidaného vstupu obsahuje <i>{i}</i>, je tato část nahrazena indexem v rámci DynamicList (číslováno od 1). Jen pro vstupy
 </p>
 
 <p>
 	<strong>Vytvoření vstupu:</strong> <code>DynamicList.input(String name)</code> <br>
-	Add input to list: `dynamicList.addInput(Input input);`
+	<strong>Přidání vstupu:</strong> <code>dynamicList.addInput(Input input);<code>
 </p>
 
 <strong>Volitelné parametry</strong>
 
 <p>
 	<ul>
-		<li>Title <code>setTitle</code>: label of input</li>
-		<li>Use Add Button <code>useAddButton</code>: if user can add input</li>
-		<li>Use Remote Button <code>useRemoteButton</code>: if user can remove input</li>
+		<li>Popis <code>setTitle</code>: label of input</li>
+		<li>Zobrazit tlačítko Přidat: <code>useAddButton</code></li>
+		<li>Zobrazit tlačítko Odebrat: <code>useRemoteButton</code></li>
+		<li>Načtení vstupů na základě URL: 
+<pre><code>
+setLoadDat(String url, String method);
+// OR with parameters
+setLoadData(String url, String method, Map&lt;String, String&gt; params);
+</code></pre>
+		 viz níže</li>
 	</ul>
 </p>
 
+<strong>Načtení vstupů podle URL</strong>
+
 <p>
-	Example of usage is <a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/form">here</a> (including form bind).
+	TOTI udělá požadavek na danou URL. Očekávaný formát je stejný jako u Selectu. Kolik je položek v načtených datech, tolikrát se provede přidání vstupů. Pokud jméno přidaného vstupu obsahuje <i>{i}</i>, je tato část nahrazena <code>title</code> parametrem z dat.
+</p>
+
+<p>
+	Ukázka použití je v příkladech.
 </p>

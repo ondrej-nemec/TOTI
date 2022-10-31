@@ -1,14 +1,14 @@
-<h1>Template tags</h1>
+<h1>Tagy v šablonách</h1>
 
-<h2>Variables</h2>
+<h2>Proměnné</h2>
 
-<h3>Define new variable</h3>
+<h3>Deklarace nové proměnné</h3>
 
-<strong>Unpaired</strong>
+<strong>Nepárový</strong>
 
-<p>Create new variable with given type (type is optionall, default <code>Object</code>), name and optionally value. Can be final, too. Value is available in JSP variables ('${...}').</p>
+<p>Vytvoří proměnnou s daným typem (typ je volitelný, výchozí je <code>Object</code>), jménem a připadně hodnotou. Může být nastavena jako <code>final</code>. Deklarovaná proměnná je také dostupná jako JSP proměnná ('${...}').</p>
 
-<p>If you wish set string or character (directly, not by variable), add quotes.</p>
+<p>Pokud do proměnné chcete uložit string nebo char, přidejte uvozovky.</p>
 
 <pre><code>
 // only required parameters
@@ -23,13 +23,13 @@
 &lt;t:var type="char" name="variableName" value="'a'" /&gt;
 </code></pre>
 
-<h3>Set variable value</h3>
+<h3>Nastavení hodnoty proměnné</h3>
 
-<strong>Unpair</strong>
+<strong>Nepárový</strong>
 
-<p>Set value to variable.</p>
+<p>Nastavý proměnné hodnotu</p>
 
-<p>If you wish set string or character (directly, not by variable), add quotes.</p>
+<p>Pokud do proměnné chcete uložit string nebo char, přidejte uvozovky.</p>
 
 <pre><code>
 &lt;t:set name="" value="" /&gt; <br>
@@ -41,11 +41,15 @@
 &lt;t:set name="variableName" value="'b'" /&gt;
 </code></pre>
 
-<h3>Print variable</h3>
+<h3>Vypsání proměnné</h3>
 
-<strong>Unpair</strong>
+<strong>Nepárový</strong>
 
-<p>Print variable on page. Variable is escaped unless you use <code>nonescape</code> parameter</p>
+<p>Vypíše proměnno na obrazovku. Při výpisu jsou nebezpečné znaky nahrazeny bezpečnými (ochrana proti XSS apod.). Nahrazení lze zrušit pomocí parametru <code>nonescape</code>.</p>
+
+<p>
+	Funkcionalita odpovídá <code>${--name--}</code> a <code>${--name--|noescape}</code>.
+</p>
 
 <pre><code>
 &lt;t:out name="" /&gt;
@@ -56,11 +60,11 @@
 &lt;t:out name="variableName" /&gt;
 </code></pre>
 
-<h3>Console print</h3>
+<h3>Výpis do konzole</h3>
 
-<strong>Unpair</strong>
+<strong>Nepárový</strong>
 
-<p>Print variable or text into std out.</p>
+<p>Vypíše proměnnou jako text do standartního výstupu aplikace (<code>System.out.println()</code>).</p>
 
 <pre><code>
 // print text
@@ -72,13 +76,13 @@
 </code></pre>
 
 
-<h2>Condition</h2>
+<h2>Podmínky</h2>
 
 <h3>Switch</h3>
 
-<strong>Paired</strong>
+<strong>Párový</strong>
 
-<p>Java <i>switch</i>. <code>object</code> has to be tag-defined variable or JSP variable.</p>
+<p>Java <i>switch</i>.</p>
 
 <pre><code>
 &lt;t:switch object="" &gt;
@@ -93,11 +97,17 @@
 
 <h3>Case</h3>
 
-<strong>Unpaired or paired</strong>
+<strong>Nepárový nebo Párový</strong>
 
-<p>Java <i>case</i>. Have to be inside <code>switch</code> tag. The unpaired <code>case</code> block works like <i>case</i> <b>without</b> <i>break</i>. The paired <code>case</code> works like <i>case</i> <b>with</b> <i>break</i>. In both cases (unpaired / paired) if value in <code>cond</code> is string, write it: <code>cond='"--value--"'</code> or <code>cond="\"--value--\"</code>.</p>
+<p>
+	Java <i>case</i>. Vždy musí být uvnitř tagu <code>switch</code>. Nepároý <code>case</code> funguje jako <i>case</i> <b>bez</b> <i>break</i>. Párový <code>case</code> je <i>case</i> <b>s</b> <i>break</i>.
+</p>
 
-<strong>Not use <code>break</code> tag for finishing <code>case</code></strong>
+<p>
+	Pokud hodnota v <code>cond</code> je string nebo char, přidejte uvozovky: <code>cond='"--value--"'</code> or <code>cond="\"--value--\"</code>.
+</p>
+
+<strong>Nepoužívejte tag <code>break</code> pro ukončení <code>case</code></strong>
 
 <pre><code>
 // unpaired
@@ -117,9 +127,9 @@
 
 <h3>Default</h3>
 
-<strong>Unpaired or paired</strong>
+<strong>Nepárový nebo Párový</strong>
 
-<p>Java <i>default</i>. Always inside <code>switch</code>. If unpaired, block will be finished by <code>/switch</code>.</p>
+<p>Java <i>default</i>. Vždy musí být uvntř tagu <code>switch</code>. Pokud je nepárový, Default blok je ukončen <code>/switch</code>.</p>
 
 <pre><code>
 // unpaired
@@ -133,9 +143,9 @@
 
 <h3>If</h3>
 
-<strong>Paired</strong>
+<strong>Párový</strong>
 
-<p>Java <i>if</i>. Text in <code>cond</code> parameter is standart Java code.</p>
+<p>Java <i>if</i>. Text v parametru <code>cond</code> je standartní Java kód.</p>
 
 <pre><code>
 &lt;t:if cond="" &gt;
@@ -150,9 +160,9 @@
 
 <h3>Else if</h3>
 
-<strong>Unpaired</strong>
+<strong>Nepárový</strong>
 
-<p>Java <i>else-if</i>. Inside <code>if</code>. Text in <code>cond</code> parameter is standart Java code.</p>
+<p>Java <i>else-if</i>. Vždy v <code>if</code>. Text v parametru <code>cond</code> je standartní Java kód.</p>
 
 <pre><code>
 &lt;t:elseif cond="" /&gt;
@@ -164,9 +174,9 @@
 
 <h3>Else</h3>
 
-<strong>Unpaired</strong>
+<strong>Nepárový</strong>
 
-<p>Java <i>else</i>. Inside <code>if</code>, after <code>elseif</code>.</p>
+<p>Java <i>else</i>. Vždy uvnitř <code>if</code>, za <code>elseif</code>.</p>
 
 <pre><code>
 &lt;t:else /&gt;
@@ -176,13 +186,13 @@
 	// your code
 </code></pre>
 
-<h2>Loops</h2>
+<h2>Cykly</h2>
 
 <h3>While</h3>
 
-<strong>Paired</strong>
+<strong>Párový</strong>
 
-<p>Java <i>while</i>. Text in <code>cond</code> parameter is standart Java code.</p>
+<p>Java <i>while</i>. Text v parametru <code>cond</code> je standartní Java kód.</p>
 
 <pre><code>
 &lt;t:while cond="" &gt;
@@ -197,9 +207,9 @@
 
 <h3>Do while</h3>
 
-<strong>Paired</strong>
+<strong>Párový</strong>
 
-<p>Java <i>do-while</i>. Text in <code>cond</code> parameter is standart Java code.</p>
+<p>Java <i>do-while</i>. Text v parametru <code>cond</code> je standartní Java kód.</p>
 
 <pre><code>
 &lt;t:dowhile &gt;
@@ -213,9 +223,9 @@
 
 <h3>For each</h3>
 
-<strong>Paired</strong>
+<strong>Párový</strong>
 
-<p>Java <i>foreach</i>. Can be used for <code>Map</code> or <code>Iterable</code>. Variables defined in params (like <code>item, key, value</code>) are available as JSP variable.</p>
+<p>Java <i>foreach</i>. Může být použit pro <code>Map</code> nebo <code>Iterable</code>. Proměnné definované v parametrech (<code>item, key, value</code>) jsou dostupné jako JSP proměnné.</p>
 
 <pre><code>
 // iterate collection
@@ -241,9 +251,9 @@
 
 <h3>For</h3>
 
-<strong>Paired</strong>
+<strong>Párový</strong>
 
-<p>Java <i>for</i>. Variable defined in <code>from</code> is available as JSP variable, too.</p>
+<p>Java <i>for</i>. Proměnná definovaná v <code>from</code> je dostupná jako JSP proměnná.</p>
 
 <pre><code>
 &lt;t:for from="" to="" change="" &gt; <br>
@@ -258,9 +268,9 @@
 
 <h3>Continue</h3>
 
-<strong>Unpaired</strong>
+<strong>Nepárový</strong>
 
-<p>Java <i>continue</i>. Inside loops.</p>
+<p>Java <i>continue</i>. Vždy uvnitř cyklu.</p>
 
 <pre><code>
 &lt;t:continue /&gt;
@@ -268,11 +278,11 @@
 
 <h3>Break</h3>
 
-<strong>Unpaired</strong>
+<strong>Nepárový</strong>
 
-<p>Java <i>break</i>. Inside loops.</p>
+<p>Java <i>break</i>. Vždy uvnitř cyklu.</p>
 
-<strong>Not use <code>break</code> tag for finishing <code>case</code></strong>
+<strong>Nepoužívejte pro ukončení <code>case</code> tagu.</strong>
 
 <pre><code>
 &lt;t:break /&gt; <br>
@@ -282,9 +292,9 @@
 
 <h3>Try</h3>
 
-<strong>Paired</strong>
+<strong>Párový</strong>
 
-<p>Java <i>try</i>. Requires <code>catch</code> or <code>finally</code> tag inside.</p>
+<p>Java <i>try</i>. Vyžaduje <code>catch</code> nebo <code>finally</code>.</p>
 
 <pre><code>
 &lt;t:try &gt;
@@ -294,9 +304,11 @@
 
 <h3>Catch</h3>
 
-<strong>Unpaired</strong>
+<strong>Nepárový</strong>
 
-<p>Java <i>catch</i>. Inside <code>try</code>. Allows two parameters: <code>name</code> and <code>exception</code>. The second one is optional, if not defined, <code>Exception</code> is used. Exception is available in JSP variables</p>
+<p>
+	Java <i>catch</i>. Vždy uvnitř tagu <code>try</code>. Má dva parametry: <code>name</code> (název výjimky, je dostupná v JSP proměnných) a  volitelně <code>exception</code> (třída/typ výjimky. Pokud není definována, použije se <code>Exception</code>). 
+</p>
 
 <pre><code>
 &lt;t:catch exception="" name="" /&gt;
@@ -310,21 +322,21 @@
 
 <h3>Finally</h3>
 
-<strong>Unpaired</strong>
+<strong>Nepárový</strong>
 
-<p>Java <i>finally</i>. Inside <code>try</code>, after <code>catch</code>.</p>
+<p>Java <i>finally</i>. Vždy uvnitř <code>try</code>, za <code>catch</code>.</p>
 
 <pre><code>
 &lt;t:finally /&gt;
 </code></pre>
 
-<h2>Templating</h2>
+<h2>Šablonovací nástroje</h2>
 
 <h3>Block</h3>
 
-<strong>Paired</strong>
+<strong>Párový</strong>
 
-<p>Define block for future use. The block <code>name</code> is required parameter.</p>
+<p>Definuje blok pro pozdější použití. Vyžaduje parametr <code>name</code>.</p>
 
 <pre><code>
 &lt;t:block name="" &gt;
@@ -339,9 +351,11 @@
 
 <h3>Include</h3>
 
-<strong>Unpaired</strong>
+<strong>Nepárový</strong>
 
-<p>Print defined block or another template file. The block can be optional (print block only if defined). If you are including block, all other parameters are variables. The file path is absolute from template root (defined in <code>Module</code>). The module is module name from <code>Module</code>.</p>
+<p>
+	Vypíše dříve definovaný blok nebo jinou šablonu. Blok může být volitelný - je vypsán jen pokud existuje. Pokud tag obsahuje neznámé parametry, jsou použité jako proměnné pro šablonu/blok.
+</p>
 
 <pre><code>
 // include block
@@ -353,7 +367,7 @@
 // example 3 - parameters =&gt; variables
 &lt;t:include block="content" var1="value1"  var2="value2" /&gt;
 
-// include file
+// include file - file path is absolute from template root
 &lt;t:include file="" /&gt;
 // include file from another module
 &lt;t:include file="" module="" /&gt;
@@ -365,12 +379,14 @@
 
 <h3>Layout</h3>
 
-<strong>Unpaired</strong>
+<strong>Nepárový</strong>
 
-<p>Define layout for template. The path is absolute from template root (defined in <code>Module</code>). The module is module name from <code>Module</code>.</p>
+<p>
+	Definuje layout šablony.
+</p>
 
 <pre><code>
-// layout from curent module
+// layout from curent module - path is absolute from template root
 &lt;t:layout path="" /&gt;
 // example
 &lt;t:layout path="/layout.jsp" /&gt;
@@ -381,17 +397,17 @@
 &lt;t:layout path="/layout.jsp" module="common" /&gt;
 </code></pre>
 
-<h2>Control</h2>
+<h2>Formuláře a tabulky</h2>
 
 <h3>Control</h3>
 
-<strong>Paired or unpaired</strong>
+<strong>Párový nebo Nepárový</strong>
 
 <p>
-	Print TOTI control - grid or form. Parameter <code>name</code> is name of JSP variable. If tag contains parameter <code>optional</code>, control is printed only if variable is defined.
+	Vykreslí TOTI control - tabulku nebo formulář. Parametr <code>name</code> je název JSP proměnné. Pokud tag obsahuje parametr <code>optional</code>, control je vykreslen jen, pokud je definován.
 </p>
 <p>
-	If tag is paired, content between start and close tag is used as template. If tag contains parameter <code>form</code>, tag is used only for form print. If tag contains parameter <code>grid</code>, tag is used only for grid print.
+	Pokud je párový, obsah je použit jako šablona pro vykreslení. V případě, že tag obsahuje parametr <code>form</code>, je tag použit pouze pro vykreslení formuláře. Pokud tag obsahuje parametr <code>grid</code>, je tag použit pouze pro vykreslení tabulky.
 </p>
 
 <pre><code>
@@ -408,10 +424,10 @@
 
 <h3>Form</h3>
 
-<strong>Unpaired</strong>
+<strong>Nepárový</strong>
 
 <p>
-	Only for printing custom form template. It is placeholder for input/label/error list. All not reserved parameters are added to target HMTL element.
+	Při použití vlastní šablony pro formulář. Rezervuje místo pro vstup/popis vstupu/výpis chyb. Všechny nerezrované parametry jsou přidány výslednému HTML elemenut.
 </p>
 
 <pre><code>
@@ -431,10 +447,10 @@
 
 <h3>Grid</h3>
 
-<strong>Unpaired</strong>
+<strong>Nepárový</strong>
 
 <p>
-	Only for printing custom grid template. It is placeholder for filter/checkbox/button. All not reserved parameters are added to target HMTL element.
+	Při použití vlastní šablony pro tabulku. Rezervuje místo pro filtr/checkbox/tlačítko. Všechny nerezrované parametry jsou přidány výslednému HTML elemenut.
 </p>
 
 <pre><code>
@@ -455,9 +471,10 @@
 
 <h3>Translate</h3>
 
-<strong>Unpaired</strong>
+<strong>Nepárový</strong>
 
-<p>Translate text. For translation use default TOTI translator. Text for translation is in <code>message</code> parameter. Other parameters will be used as variables.</p>
+<p>
+	Přeloží daný text. Pro překládání je použit TOTI translator. Překládaný text je v parametru <code>message</code>. Ostatní parametry jsou použity jako proměnné.
 
 <pre><code>
 &lt;t:trans message="" /&gt;
@@ -472,9 +489,11 @@
 
 <h3>Permissions</h3>
 
-<strong>Paired</strong>
+<strong>Párový</strong>
 
-<p>Print text inside this tag if user is allowed for given domain and action. You can use <code>else</code> inside this tag. The parameter <code>not</code> indicate opposition.</p>
+<p>
+	Vypíše obsah tagu, jen pokud má uživatel přístup na danou domému a akci. Uvnitř tagu lze použít tag <code>else</code>. Parametr <code>not</code> indikuje negaci.
+</p>
 
 <pre><code>
 &lt;t:allowed domain="" action="" &gt;
@@ -503,12 +522,14 @@
 
 <h3>If current</h3>
 
-<strong>Paired</strong>
-
-<p>Print text inside this tag if given attributes (module OR controller OR method OR any combination) match URL. The module is string from <code>getName()</code> method from <code>Module</code>. The controller is full class path. The method is name of method.</p>
+<strong>Párový</strong>
 
 <p>
-	The parameter <code>not</code> indicate opposition. You can use <code>else</code> inside this tag.
+	Vypíše obsah tagu, pokud URI splňuje dané požadavky (na modul, controller, metodu nebo libovolnou kombinaci). <code>module</code> je jméno modulu, <code>controller</code> je celý název třídy a <code>method</code> je jméno metody.
+</p>
+
+<p>
+	Uvnitř tagu lze použít tag <code>else</code>. Parametr <code>not</code> indikuje negaci.
 </p>
 
 <pre><code>
@@ -541,9 +562,11 @@
 
 <h3>Link</h3>
 
-<strong>Unpaired</strong>
+<strong>Nepárový</strong>
 
-<p>Create link. You need method name and controller. The controller is optional. If not filled, the current controller is used. The controller is full class path. The method is name of method. URL parameters are in method parameter splited with <code>:</code>. All parameters except <code>controller</code> and <code>method</code> are GET parameters.</p>
+<p>
+	Vytvoří odkaz. Je vyžadován controller a metoda. Controller je volitelný, pokud není použit, použije se aktuální. Controller je celé jméno třídy. URI parametry jsou součástí jména metody a jsou odděleny <code>:</code>. Ostatní parametry tagu jsou použity jako GET parametry.
+</p>
 
 <pre><code>
 &lt;t:link controller="" method="" /&gt;

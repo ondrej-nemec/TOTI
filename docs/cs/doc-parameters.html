@@ -1,0 +1,51 @@
+<h1>Parametry v šablonách</h1>
+
+<h2>HREF</h2>
+
+<p>
+	Vytvoří odkaz na daný controller a metodu. Controller musí být celé jméno třídy. Metodou se myslí jméno funkce. Controller a metoda jsou odděleny <code>:</code>. Parametry jsou za jménem metody a jsou opět odděleny <code>:</code>. Pokud parametr neobsahuje <code>=</code>, je použit jako součást URI, Jinak je to GET parametr.
+</p>
+
+<pre><code class="language-html">
+&lt;a t:href="" /&gt;
+&lt;!-- example - approximate result: /modulename/my-controler/action --&gt;
+&lt;a t:href="org.example.app.controllers.MyController:myAction" /&gt;
+&lt;!-- example with URL parameter - approximate result: /modulename/my-controler/action/123 --&gt;
+&lt;a t:href="org.example.app.controllers.MyController:myAction:123" /&gt;
+&lt;!-- example with more URL parameters - approximate result: /modulename/my-controler/action/123/a --&gt;
+&lt;a t:href="org.example.app.controllers.MyController:myAction:123:a" /&gt;
+&lt;!-- example with URL parameter and GET parameter - approximate result: /modulename/my-controler/action/123?foo=bar--&gt;
+&lt;a t:href="org.example.app.controllers.MyController:myAction:123:foo=bar" /&gt;
+</code></pre>
+
+<p>
+	Pro vytvoření odkazu mimo aplikaci, použijte prefix <code>A</code>.
+</p>
+
+<pre><code class="language-html">
+&lt;a t:href="A:https://example.com:org.example.app.controllers.MyController:myAction" /&gt;
+</code></pre>
+
+<h2>Title</h2>
+
+<p>
+	Vypíše přeložený text jako parametr title.
+</p>
+
+<pre><code class="language-html">
+&lt;div t:title="" /&gt;
+&lt;!-- example --&gt;
+&lt;div t:title="messages.tooltips.div-title" /&gt;
+</code></pre>
+
+<h2>Placeholder</h2>
+
+<p>
+	Vypíše přeložený text jako parametr placeholder.
+</p>
+
+<pre><code class="language-html">
+&lt;input t:placeholder="" /&gt;
+&lt;!-- example --&gt;
+&lt;input t:placeholder="messages.placeholders.input-help" /&gt;
+</code></pre>
