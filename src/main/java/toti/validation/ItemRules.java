@@ -269,8 +269,8 @@ public class ItemRules {
 		return this;
 	}
 	
-	public ItemRules setCustomValidation(Optional<BiFunction<Object, Translator, Set<String>>> customValidation) {
-		this.customValidation = customValidation;
+	public ItemRules setCustomValidation(BiFunction<Object, Translator, Set<String>> customValidation) {
+		this.customValidation = Optional.of(customValidation);
 		return this;
 	}
 	
