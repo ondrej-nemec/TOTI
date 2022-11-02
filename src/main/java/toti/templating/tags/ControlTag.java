@@ -23,7 +23,8 @@ public class ControlTag implements Tag {
 
 	@Override
 	public String getPairEndCode(Map<String, String> params) {
-		StringBuilder code = new StringBuilder("flushNode();});");
+		StringBuilder code = new StringBuilder("write(\"</div>\");");
+		code.append("flushNode();});");
 		code.append("getBlock(\"totiLastControl\", false)");
 		code.append(".accept(new MapInit<String, Object>()");
 		params.forEach((name, value)->{
