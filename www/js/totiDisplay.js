@@ -80,26 +80,35 @@ var totiDisplay = {
 	/**********/
 	isFade: 0,
 	fadeIn: function() {
-		var fade = document.createElement('div');
-		fade.style.position = "absolute";
-		fade.style.top = 0;
-		fade.style.left = 0;
-		fade.style.width = "100%";
-		fade.style.height = "100%";
-		fade.style['z-index'] = 2000;
-		fade.style['background-color'] = "rgba(255,255,255,0.5)";
+		var fadeElement = document.querySelector("#toti-fade-in");
+		if (fadeElement === null) {
+			var fade = document.createElement('div');
+			fade.style.position = "absolute";
+			fade.style.top = 0;
+			fade.style.left = 0;
+			fade.style.width = "100%";
+			fade.style.height = "100%";
+			fade.style['z-index'] = 2000;
+			fade.style['background-color'] = "rgba(255,255,255,0.5)";
 
-		fade.setAttribute("id", "toti-fade-in");
-		fade.onclick = function() {}; /* prevent click */
+			fade.setAttribute("id", "toti-fade-in");
+			fade.onclick = function() {}; /* prevent click */
 
-		document.body.appendChild(fade);
+			document.body.appendChild(fade);
+			/* TODO loading picture */
+		}
 		totiDisplay.isFade++;
-/* TODO loading picture */
 	},
 	fadeOut: function() {
 		totiDisplay.isFade--;
-		if (totiDisplay.isFade === 0) {
-			document.querySelector("#toti-fade-in").remove();
+		if (totiDisplay.isFade < 1) {
+			var fadeElement = document.querySelector("#toti-fade-in");
+			if (fadeElement !== null) {
+				fadeElement.remove();
+			}
+		}
+		if (totiDisplay.isFade < 0) {
+			totiDisplay.isFade = 0;
 		}
 	},
 	/*********************/

@@ -96,7 +96,7 @@ class TotiGrid {
                              };
                              buttons.push(button);
 						} else if (buttonConf.type === 'button') {
-							var button = totiControl.button(buttonConf);
+							var button = totiControl.button(buttonConf, buttonConf.action.async);
 							button.setAttribute("grid", grid.gridUnique);
 							button.addEventListener("click", function() {
 								setTimeout(function(){

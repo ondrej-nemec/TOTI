@@ -71,9 +71,6 @@ var totiFormCustomTemplate = {
 					subElement.style.display = "inline-block";
 				}
 			};
-			if (value !== null && value !== undefined) {
-				inputCell.bind(value);
-			}
 		}
 	},
 	addPromisedRow: function(formUnique, container, name, originType, label, promise) {
@@ -111,8 +108,8 @@ var totiFormCustomTemplate = {
 			}
 		}
 	},
-	getDynamicContainer: function(formUnique, container, name, title, addItem) {
-		var dynamicContainer = container.querySelector('[toti-form-dynamic-container="' + name + '"]');
+	getDynamicContainer: function(formUnique, container, name, title, addItem, templatePosition) {
+		var dynamicContainer = container.querySelectorAll('[toti-form-dynamic-container="' + name + '"]')[templatePosition];
 		var addButton = container.querySelector('[toti-form-add-button="' + name + '"]');
 		var titleCell = container.querySelector('[toti-form-dynamic-name="' + name + '"]');
 		if (title !== undefined  && titleCell !== null) {
@@ -128,16 +125,18 @@ var totiFormCustomTemplate = {
         }
         return dynamicContainer;
 	},
-	getDynamicRow: function(formUnique, container, dynamicContainer, name, remove, position) {
-		var template = container.querySelector('[toti-form-dynamic-template="' + name + '"]').cloneNode(true).content;
+	getDynamicRow: function(formUnique, container, dynamicContainer, name, remove, position, templateName) {
+		var template = container.querySelector('[toti-form-dynamic-template="' + templateName + '"]').cloneNode(true).content;
 
-		var dynamic = document.createElement('div');
 		function setName(selector) {
 			dynamic.querySelectorAll('[' + selector + ']').forEach((el)=>{
 				el.setAttribute(selector, name + (position === null ? "" : "[" + position + "]") + "[" + el.getAttribute(selector) + "]");
 			});
 		}
-		dynamic.append(...template.childNodes);
+		if (template.children.length !== 1) {
+			throw new Exception("Dynamic row template can contains only one subelement");
+		}
+		var dynamic = template.children[0];
 		setName('toti-form-input');
 		setName('toti-form-label');
 		setName('toti-form-error');
