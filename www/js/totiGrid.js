@@ -69,20 +69,7 @@ class TotiGrid {
 				case "buttons":
 					var buttons = [];
 					column.globalButtons.forEach(function(buttonConf) {
-						/*if (buttonConf.type === 'reset') {
-							var reset = totiControl.input(buttonConf);
-							reset.setAttribute("grid", grid.gridUnique);
-							buttons.push(reset);
-							reset.addEventListener('click', function() {
-								container.querySelectorAll(".toti-grid-filtering").forEach(function(input) {
-									input.value = '';
-									grid.filterBy(input.getAttribute("name"), null, false);
-									console.log(input.getAttribute("name"));
-								});
-								grid.refreshData();
-							});
-
-						} else */if (buttonConf.type === 'button' && buttonConf.hasOwnProperty('is_reset') && buttonConf.is_reset) {
+						if (buttonConf.type === 'button' && buttonConf.hasOwnProperty('is_reset') && buttonConf.is_reset) {
 							/* IPRROVEMENT refresh button */
 							var button = totiControl.button(buttonConf);
                             button.setAttribute("grid", grid.gridUnique);
@@ -383,7 +370,7 @@ class TotiGrid {
 							if (btnConf.action.hasOwnProperty('submitConfirmation')) {
 								btnConf.action.submitConfirmation = totiUtils.parametrizedString(btnConf.action.submitConfirmation, rowData);
 							}
-							var button = totiControl.button(btnConf);
+							var button = totiControl.button(btnConf, btnConf.action.async);
 							buttons.push(button);
 							button.addEventListener("click", function() {
 								setTimeout(function(){

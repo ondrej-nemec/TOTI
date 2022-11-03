@@ -118,6 +118,9 @@ var totiFormDefaultTemplate = {
 			inputCell.appendChild(optionCell);
 		});
 		inputCell.bind = function(value) {
+			inputCell.querySelectorAll('[value]').forEach((c)=>{
+				c.style.display = "none";
+			});
 			var subElement = inputCell.querySelector('[value="' + value + '"]');
 			if (subElement !== null) {
 				subElement.style.display = "inline-block";
@@ -175,7 +178,7 @@ var totiFormDefaultTemplate = {
 			target.appendChild(element);
 		}
 	},
-	getDynamicContainer: function(formUnique, container, name, title, addItem, templatePosition) {
+	getDynamicContainer: function(formUnique, container, name, title, addItem) {
 		var dynamic = document.createElement("tr");
 		totiFormDefaultTemplate.addToContainer(formUnique, container, dynamic);
 		

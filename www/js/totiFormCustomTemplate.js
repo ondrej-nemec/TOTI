@@ -65,8 +65,11 @@ var totiFormCustomTemplate = {
 			});
 			inputCell.setAttribute('name', name);
 			inputCell.setAttribute('originType', originType);
-			inputCell.bind = function(val) {
-			var subElement = inputCell.querySelector('[value="' + val + '"]');
+			inputCell.bind = function(value) {
+				inputCell.querySelectorAll('[value]').forEach((c)=>{
+					c.style.display = "none";
+				});
+				var subElement = inputCell.querySelector('[value="' + value + '"]');
 				if (subElement !== null) {
 					subElement.style.display = "inline-block";
 				}
@@ -108,8 +111,12 @@ var totiFormCustomTemplate = {
 			}
 		}
 	},
-	getDynamicContainer: function(formUnique, container, name, title, addItem, templatePosition) {
-		var dynamicContainer = container.querySelectorAll('[toti-form-dynamic-container="' + name + '"]')[templatePosition];
+	getDynamicContainer: function(formUnique, container, name, title, addItem) {
+		var list = container.querySelectorAll('[toti-form-dynamic-container="' + name + '"]');
+		if (list.length === 0) {
+			return null;
+		}
+		var dynamicContainer = list[list.length-1];
 		var addButton = container.querySelector('[toti-form-add-button="' + name + '"]');
 		var titleCell = container.querySelector('[toti-form-dynamic-name="' + name + '"]');
 		if (title !== undefined  && titleCell !== null) {

@@ -87,11 +87,15 @@ class TotiForm {
 			totiLoad.load(field.load.url, field.load.method, {}, {}, field.load.params)
 			.then((loaded)=>{
 				loaded.forEach((group)=>{
+					var parentName = field.name;
+					if (field.fields.length > 1 || (field.fields.lenght == 1 && (field.fields[0].name.length > 1 || !field.fields[0].name.lenght === '{i}') )) {
+						parentName += "[" + group.value + "]";
+					}
 					field.fields.forEach(function(subField, index) {
 						var f = totiUtils.clone(subField);
 						f.optionGroup = group.value;
 						form.addInput(f, {
-							name: field.name,
+							name: parentName, //field.name,
 							group: group.value,
 							position: group.title,
 							container: dynamicContainer
@@ -102,11 +106,8 @@ class TotiForm {
 				totiDisplay.flash('error', totiTranslations.formMessages.renderError, xhr);
             });
 		} else if (field.type === "dynamic") {
-			var templatePosition = 0;
 			var dynamicCache = this.dynamic;
 			if (parent !== null) {
-				templatePosition = parent.position-1;
-				
 				if (parent.hasOwnProperty('dynamic')) {
 					parent.dynamic['dynamic'] = {};
 					dynamicCache = parent.dynamic['dynamic'];
@@ -143,8 +144,9 @@ class TotiForm {
                         dynamic: dynamicCache[field.name]
 					});
 				});
+				return position;
 			};
-			var dynamicContainer = form.template.getDynamicContainer(form.formUnique, form.container, originName, field.title, field.addButton && editable ? addItem : null, templatePosition);
+			var dynamicContainer = form.template.getDynamicContainer(form.formUnique, form.container, originName, field.title, field.addButton && editable ? addItem : null);
 			if (dynamicContainer === null) {
 				return;
 			}
@@ -228,15 +230,16 @@ class TotiForm {
 
 	addDynamicField(name) {
 		if (this.dynamic.hasOwnProperty(name)) {
-			this.dynamic[name].add();
+			return this.dynamic[name].add();
 		}
+		return null;
 	}
 
 	removeDynamicField(name, index) {
 		if (this.dynamic.hasOwnProperty(name)) {
 			this.dynamic[name].remove(index);
-			console.log(this.dynamic[name]);
 		}
+		
 	}
 
 	submit(srcElement) {
