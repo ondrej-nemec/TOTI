@@ -95,7 +95,7 @@ class TotiForm {
 						var f = totiUtils.clone(subField);
 						f.optionGroup = group.value;
 						form.addInput(f, {
-							name: parentName, //field.name,
+							name: parentName,
 							group: group.value,
 							position: group.title,
 							container: dynamicContainer
@@ -459,15 +459,7 @@ class TotiForm {
 				return elements[position];
 			}
 			var element = getElement();
-		//	if (element === undefined) { /* bind - not added yet*/
-		//		/* IMPROVE: dynamic in dynamic not supported yet */
-		//		var dynamic = form.dynamic[name.substring(0, name.indexOf('['))];
-		//		if (dynamic) {
-		//			console.log(name, dynamic.position, dynamic.elements[dynamic.position]);
-		//			dynamic.add();
-		//			element = getElement();
-		//		}
-		//	}
+			
 			if (element === undefined) {
 				return;
 			}

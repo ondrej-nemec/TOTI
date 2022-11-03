@@ -15,6 +15,7 @@ class TotiGrid {
 	}
 
 	render(selector, gridUnique, customTemplate = null) {
+		totiDisplay.fadeIn();
 		var template = this.template = this.getTemplate(selector, customTemplate);
 		var container = this.container = template.getContainer(selector, gridUnique);
 		this.gridUnique = gridUnique;
@@ -68,20 +69,7 @@ class TotiGrid {
 				case "buttons":
 					var buttons = [];
 					column.globalButtons.forEach(function(buttonConf) {
-						/*if (buttonConf.type === 'reset') {
-							var reset = totiControl.input(buttonConf);
-							reset.setAttribute("grid", grid.gridUnique);
-							buttons.push(reset);
-							reset.addEventListener('click', function() {
-								container.querySelectorAll(".toti-grid-filtering").forEach(function(input) {
-									input.value = '';
-									grid.filterBy(input.getAttribute("name"), null, false);
-									console.log(input.getAttribute("name"));
-								});
-								grid.refreshData();
-							});
-
-						} else */if (buttonConf.type === 'button' && buttonConf.hasOwnProperty('is_reset') && buttonConf.is_reset) {
+						if (buttonConf.type === 'button' && buttonConf.hasOwnProperty('is_reset') && buttonConf.is_reset) {
 							/* IPRROVEMENT refresh button */
 							var button = totiControl.button(buttonConf);
                             button.setAttribute("grid", grid.gridUnique);
@@ -95,7 +83,7 @@ class TotiGrid {
                              };
                              buttons.push(button);
 						} else if (buttonConf.type === 'button') {
-							var button = totiControl.button(buttonConf);
+							var button = totiControl.button(buttonConf, buttonConf.action.async);
 							button.setAttribute("grid", grid.gridUnique);
 							button.addEventListener("click", function() {
 								setTimeout(function(){
@@ -169,10 +157,14 @@ class TotiGrid {
 		}
 
         Promise.all(promises).then((values)=>{
+			totiDisplay.fadeOut();
 			this.refreshData();
 			if (this.config.refresh > 0) {
 				this.startRefresh();
 			}
+        }).catch(function(e) {
+			totiDisplay.fadeOut();
+        	console.error(e);
         });
 	}
 
@@ -319,6 +311,10 @@ class TotiGrid {
 		var grid = this;
 		totiLoad.load(this.config.dataLoadUrl, this.config.dataLoadMethod, {}, {}, selectionParameters)
 		.then(function(response) {
+			if (grid.pageIndex != response.pageIndex) {
+				totiDisplay.fadeOut();
+				return;
+			}
 			/* save state */
 			window.history.pushState({"html":window.location.href},"", "?" + new URLSearchParams(selectionParameters).toString());
 			totiUtils.setCookie(grid.cookieName, JSON.stringify(selectionParameters), grid.cookieAge, null);
@@ -374,7 +370,7 @@ class TotiGrid {
 							if (btnConf.action.hasOwnProperty('submitConfirmation')) {
 								btnConf.action.submitConfirmation = totiUtils.parametrizedString(btnConf.action.submitConfirmation, rowData);
 							}
-							var button = totiControl.button(btnConf);
+							var button = totiControl.button(btnConf, btnConf.action.async);
 							buttons.push(button);
 							button.addEventListener("click", function() {
 								setTimeout(function(){

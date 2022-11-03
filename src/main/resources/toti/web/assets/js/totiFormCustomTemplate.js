@@ -65,15 +65,15 @@ var totiFormCustomTemplate = {
 			});
 			inputCell.setAttribute('name', name);
 			inputCell.setAttribute('originType', originType);
-			inputCell.bind = function(val) {
-			var subElement = inputCell.querySelector('[value="' + val + '"]');
+			inputCell.bind = function(value) {
+				inputCell.querySelectorAll('[value]').forEach((c)=>{
+					c.style.display = "none";
+				});
+				var subElement = inputCell.querySelector('[value="' + value + '"]');
 				if (subElement !== null) {
 					subElement.style.display = "inline-block";
 				}
 			};
-			if (value !== null && value !== undefined) {
-				inputCell.bind(value);
-			}
 		}
 	},
 	addPromisedRow: function(formUnique, container, name, originType, label, promise) {
@@ -112,7 +112,11 @@ var totiFormCustomTemplate = {
 		}
 	},
 	getDynamicContainer: function(formUnique, container, name, title, addItem) {
-		var dynamicContainer = container.querySelector('[toti-form-dynamic-container="' + name + '"]');
+		var list = container.querySelectorAll('[toti-form-dynamic-container="' + name + '"]');
+		if (list.length === 0) {
+			return null;
+		}
+		var dynamicContainer = list[list.length-1];
 		var addButton = container.querySelector('[toti-form-add-button="' + name + '"]');
 		var titleCell = container.querySelector('[toti-form-dynamic-name="' + name + '"]');
 		if (title !== undefined  && titleCell !== null) {
@@ -128,13 +132,23 @@ var totiFormCustomTemplate = {
         }
         return dynamicContainer;
 	},
-	getDynamicRow: function(formUnique, container, dynamicContainer, name, remove) {
-		var template = container.querySelector('[toti-form-dynamic-template="' + name + '"]').cloneNode(true).content;
+	getDynamicRow: function(formUnique, container, dynamicContainer, name, remove, position, templateName) {
+		var template = container.querySelector('[toti-form-dynamic-template="' + templateName + '"]').cloneNode(true).content;
 
-		var dynamic = document.createElement('div');
-		dynamic.append(...template.childNodes);
-		dynamicContainer.appendChild(dynamic);
-
+		function setName(selector) {
+			dynamic.querySelectorAll('[' + selector + ']').forEach((el)=>{
+				el.setAttribute(selector, name + (position === null ? "" : "[" + position + "]") + "[" + el.getAttribute(selector) + "]");
+			});
+		}
+		if (template.children.length !== 1) {
+			throw new Exception("Dynamic row template can contains only one subelement");
+		}
+		var dynamic = template.children[0];
+		setName('toti-form-input');
+		setName('toti-form-label');
+		setName('toti-form-error');
+		dynamicContainer.appendChild(dynamic);		
+		
 		var removeButton = dynamic.querySelector('[toti-form-remove-button="' + name + '"]');
 		if (remove !== null && removeButton !== null) {
 			removeButton.addEventListener("click", function(e) {

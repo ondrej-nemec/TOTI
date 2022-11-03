@@ -136,7 +136,14 @@ var totiControl = {
 						break;
 					case "action":
 						if (typeof attributes[key] === "object") {
-							button.onclick = totiControl.getAction(attributes[key]);
+							if (!attributes[key].async && attributes[key].method === 'get' && button.tagName === 'A') {
+								button.setAttribute(
+									"href",
+									attributes[key].href + "?" + new URLSearchParams(attributes[key].params).toString()
+								);
+							} else {
+								button.onclick = totiControl.getAction(attributes[key]);
+							}
 						} else if (typeof attributes[key] === 'function') {
 							button.addEventListener('click', attributes[key]);
 						} else {
@@ -319,6 +326,17 @@ var totiControl = {
 	            		} else {
 	            			resolve(dependElement);
 	            		}
+	            	} else {
+	            		/*new MutationObserver((mutationList, observer) => {
+	            			for (const mutation of mutationList) {
+	            				if (mutation.type === 'childList') {
+		            			   console.log(mutation.target);
+		            			   console.log(mutation.addedNodes);
+		            			   console.log(mutation.target.querySelector(params.depends));
+	            				}
+		            		}
+		            		observer.disconnect();
+		            	}).observe(document.body, { attributes: true, childList: true, subtree: true });*/
 	            	}
 	            } else {
 	            	resolve(null); /* no element depends */

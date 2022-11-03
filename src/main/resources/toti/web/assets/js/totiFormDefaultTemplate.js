@@ -118,6 +118,9 @@ var totiFormDefaultTemplate = {
 			inputCell.appendChild(optionCell);
 		});
 		inputCell.bind = function(value) {
+			inputCell.querySelectorAll('[value]').forEach((c)=>{
+				c.style.display = "none";
+			});
 			var subElement = inputCell.querySelector('[value="' + value + '"]');
 			if (subElement !== null) {
 				subElement.style.display = "inline-block";
@@ -206,7 +209,7 @@ var totiFormDefaultTemplate = {
 		
 		return table;
 	},
-	getDynamicRow: function(formUnique, container, dynamicContainer, name, remove) {
+	getDynamicRow: function(formUnique, container, dynamicContainer, name, remove, position, templateName) {
 		var container = document.createElement('table');
 		dynamicContainer.appendChild(container);
 
