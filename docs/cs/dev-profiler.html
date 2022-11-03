@@ -1,0 +1,71 @@
+<h1>Profiler</h1>
+
+<p>
+	For debugging, TOTI can store requests (and some other actions, like SQL queries) and display them in Profiler. There are two parts: Profiler (separate page) and Profiler bar (displayed on page).
+</p>
+
+<p class="alert alert-info">
+	Full working example is <a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/developtools">here</a>.
+</p>
+
+<h2>Enable</h2>
+
+<p class="alert alert-danger">
+	Enabled Profiler on production can cause security issue or memory leak.
+</p>
+
+<p>
+	Profiler turns on with <code>setUseProfiler(true)</code> or <code>http.use-profiler</code>. By default is off.
+</p>
+
+<p>
+	For using Profiler bar, page must contains <code>totiJs.js</code>. The page will be excluded from profiling and profiler bar will not appear is page JS contains <code>totiSettings.showProfiler = false;</code>
+</p>
+
+<h2>Security</h2>
+
+<p>
+	Profiler has no login or authentication. There is only one rule: profiler and profiler bar can be showed on computers that IP is in developers IPs only.
+</p>
+
+<h2>Usage</h2>
+
+<h3>Profiler bar</h3>
+
+<p>
+	Profiler bar is small bar on the bottom of page. Shows information about that request.
+</p>
+
+<p>
+	<img src="https://raw.githubusercontent.com/ondrej-nemec/TOTI/master/docs/images/profiler-bar_v1.PNG" width="100%"> <br>
+	From left to right:
+	<ul>
+		<li>Close buttton</li>
+		<li>Name and link to Profiler tooo. The Profiler will open in new window.</li>
+		<li>Count of request. Contains intial synchronious GET (page loading) and asynchronious request made by JS (using <code>totiLoad.js</code> only).</li>
+		<li>Expand button. Shows asynchroninous reqeusts</li>
+		<li>Server processing time</li>
+		<li>Request info: method and URL</li>
+		<li>Selected language and direction (LTR/RTL)</li>
+		<li>Security mode</li>
+		<li>Identity. In example: no logged user</li>
+		<li>Count of dababase queries (using <code>Database</code> only)</li>
+	</ul>
+	<strong>Example of expanded</strong>
+	<img src="https://raw.githubusercontent.com/ondrej-nemec/TOTI/master/docs/images/profiler-bar-expanded_v1.PNG" width="100%"> <br>
+</p>
+
+<h3>Profiler</h3>
+
+<img src="https://raw.githubusercontent.com/ondrej-nemec/TOTI/master/docs/images/profiler_v1.PNG" width="100%">
+
+<p>
+	The grey menu shows all logs. There are two types: Page logs and Not page logs (task f.e.). One page can have more requests. Requests can be hided/showed by clicking on Page.
+</p>
+
+<p>
+	<strong>Clear All</strong> button delete all logs <br>
+	<strong>Clear</strong> button delete one page / not page log <br>
+	<strong>Log page request</strong> checkbox disable/enable creating new logs
+</p>
+	

@@ -1,0 +1,234 @@
+<h1>Controllery</h1>
+
+<p>
+	Controllery přijímají požadavky od klientů a vrací odpovědi. Třída se stane controllerem přidáním anotace <code>Controller</code>. Anotace vyžaduje textový parametr - URL. Tento text je pak použit k routování. Může být prázný, ale nesmí být NULL.
+</p>
+
+<strong>Přiklad</strong>
+
+<pre><code class="language-java">
+@Controller("my-controller")
+public class MyController {
+	...
+}
+</code></pre>
+
+<h2>Registrace</h2>
+
+<p>
+	Každý controller je potřeba zaregistrovat do <code>Register</code>. Pro přidání controlleru použijte metodu <code>addFactory</code> (volá se v metodě Modulu <code>initInstance</code>). Při každném požadavku je vytvořena nová instance controlleru.
+</p>
+
+<strong>Příklad</strong>
+
+<pre><code class="language-java">
+public List&lt;Task&gt; initInstances(Env env, Translator translator, Register register, Database database, Logger logger)
+	// ...
+	register.addFactory(MyController.class, ()->new MyController());
+	// ...
+}
+</code></pre>
+
+<strong>Parametrizovaný konstruktor</strong>
+
+<pre><code class="language-java">
+public List&lt;Task&gt; initInstances(Env env, Translator translator, Register register, Database database, Logger logger)
+	// ...
+	MyClassDao myClassDao = new MyClassDao(database);
+	register.addFactory(MyController.class, ()->new MyController(myClassDao));
+	// ...
+}
+</code></pre>
+
+<h3>Injection</h3>
+
+<p>
+	Metoda <code>addFactory</code> umožňuje controlleru předat následující třídy: <code>Translator</code> (nastavený podle klientského požadavku), <code>Identity</code>, <code>Authorizator</code> a <code>Authenticator</code>. Poslední tři budou popsány v dalších kapitolách.
+</p>
+
+<strong>Příklad</strong>
+
+<pre><code class="language-java">
+public List&lt;Task&gt; initInstances(Env env, Translator translator, Register register, Database database, Logger logger)
+	// ...
+	MyClassDao myClassDao = new MyClassDao(database);
+	register.addFactory(MyController.class, (translator, identity, authorizator, authenticator)->new MyController(myClassDao, translaor, identity));
+	// ...
+}
+</code></pre>
+
+<h2>Akce</h2>
+
+<p>
+	Akce je public java metoda s <code>Action</code> anotací. Tato metoda musí vrátit instanci <code>Response</code>. Anotace <code>Action</code> vyžaduje textový parametr, který je použit pro routování. Může být prázný řetězec, ale nesmí být NULL.
+</p>
+
+<p>
+	Volitelně může mít akce anotaci <code>Method</code>. Tato anotace vyžaduje pole <code>HttpMethod</code>. Akce se poté provede pouze, pokud požadavek je poslán jednou z vyjmenovaných HTTP metod. Pokud anotace není, jsou povolené všechny metody.
+</p>
+
+<p>
+	Jeden controller může obsahovat více akcí. Platí pravidlo, že <code>Action</code> spolu s <code>HttpMethod</code> musí být unikátní.
+</p>
+
+<strong>Příklad</strong>
+
+<pre><code class="language-java">
+@Action("actionUrl")
+@Method({HttpMethod.GET, HttpMethod.POST}) // optional
+public Response myAction() {
+	// ...
+	return ...;
+}
+</code></pre>
+
+<h2>Parametry požadavku</h2>
+
+<p>
+	Akce může přijímat parametry. Parametr může být GET parametr (např. <code>?myParam=value&amp;second=val2</code>), součást URI (např.  <code>/myModule/myController/myAction/12</code>) nebo v těle požadavku (POST požadavky, soubory,....). Validace těchto parametrů je zmíněná v dalších kapitolách.
+</p>
+
+<p>
+	Všechny parametry v definici akce musí být anotované (kromě parametru typu <code>WebSocket</code> a <code>byte[]</code>). Podporované anotace:
+
+	<ul>
+		<li><code>Param</code>: definuje jeden parametr. Vyžaduje název parametru.</li>
+		<li><code>Params</code>: všechny získané parametry. <code>RequestParameters</code> nebo se TOTI pokusí přetypovat/namapovat na požadovanou třídu.</li>
+		<li><code>ParamUrl</code>: definuje jeden parametr z konce URI. Vyžaduje název.</li>
+		<li><code>ParamValidator</code>: definuje jeden parametr z validátoru (vysvětleno v dalších kapitolách). Vyžaduje název.</li>
+		<li><code>ParamsValidator</code>: všechny parametry validáturu (vysvětleno v dalších kapitolách). <code>RequestParameters</code> nebo se TOTI pokusí přetypovat/namapovat na požadovanou třídu.</li>
+	</ul>
+</p>
+
+<p class="alert alert-info">
+	TOTI mapuje <code>RequestParameters</code> na požadovanou třídu pomocí <code>Mapper</code> (viz <a href="https://ondrej-nemec.github.io/JI/?file=common-functions.html">JI Common</a>).
+</p>
+
+<p>
+	Povolené typy parametrů
+	<ul>
+		<li>Primitivní proměnné a objekty z nich odvozené: boolean, int, float, Integer, String, Double, ....</li>
+		<li><code>RequestParameters</code>: drží více parametru. Viz <a href="https://ondrej-nemec.github.io/JI/?file=communication-server.html">JI Communication</a></li>
+		<li><code>List</code></li>
+		<li><code>Map</code></li>
+		<li><code>UploadedFile</code>: allow upload file. Viz <a href="https://ondrej-nemec.github.io/JI/?file=communication-server.html">JI Communication</a></li>
+		<li><code>WebSocket</code></li>
+		<li><code>byte[]</code> nestrukturované tělo požadavku</li>
+		<li>Libovolná třída</li>
+	</ul>
+</p>
+
+<strong>Příklad</strong>
+
+<P>Očekávaná URL: <code>/myModule/myController/myAction/12?first=value1&amp;second=false</code></P>
+
+<pre><code class="language-java">
+@Action("myAction")
+public Response myAction(@Param("first") String first, @Param("second") Boolean second) {
+	// ...
+}
+</code></pre>
+
+<p class="alert alert-success">
+	Ukázky použití požadavků jsou v <a href="https://github.com/ondrej-nemec/TOTI/tree/dev/samples/examples">Examples</a> v části <i>requests</i>
+</p>
+
+<h2>Odpovědi</h2>
+
+<p>
+	Instance interfacue <code>Response</code> se vytváří pomocí faktory metod na něm samém. Většina faktory metod má jako volitelný parametr návratový kód.
+</p>
+
+<p class="alert alert-success">
+	Ukázky použití odpovědí jsou v <a href="https://github.com/ondrej-nemec/TOTI/tree/dev/samples/examples">Examples</a> v části <i>responses</i>
+</p>
+
+<h3>Soubor</h3>
+
+<p>
+	Jako odpověď vrátí soubor. Hlavička <code>Content-Type</code> je přidána automaticky. Výchozí návratový kód je 200 OK.
+</p>
+
+<h4>Soubor z disku</h4>
+
+<p>
+	Metody <code>Response.getFileDownload(pathToFile, downloadedFileName)</code> a <code>Response.getFileDownload(statusCode, pathToFile, downloadedFileName)</code> vrátí soubor z kteréhokoli mísna na disku. <code>downloadedFileName</code> definuje, pod jakým jménem se bude soubor stahovat.
+</p>
+
+<h4>Vygenerované soubory</h4>
+
+<p>
+	Metody <code>Response.getFileDownload(downloadedFileName, (bufferedOutputStream)->{/* ... */})</code> a <code>Response.getFileDownload(statusCode, downloadedFileName, (bufferedOutputStream)->{/* ... */})</code> umožňují soubor vytvořit (a odeslat) za běhu programu bez uložení na disk. <code>downloadedFileName</code> definuje, pod jakým jménem se bude soubor stahovat.
+</p>
+
+<h4>Textové soubory</h4>
+
+<p>
+	Metody <code>Response.getFile(pathToFile)</code> a <code>Response.getFile(statusCode, pathToFile)</code> jsou pro jednoduché textové soubory. <code>pathToFile</code> definuje cestu k souboru kdekoli na disku. Jméno stahovaného soubour je poslední čáast URI. Vhodné pro HTML/CSS/JS odpovědi.
+</p>
+
+<h3>JSON</h3>
+
+<p>
+	Metody <code>Response.getJson(json)</code> a <code>Response.getJson(statusCode, json)</code> odešlou daný objekt jako JSON. TOTI využívá JI Common <code>Mapper</code>. Výchozí návratový kód je 202 ACCEPTED.
+</p>
+
+<h3>Text</h3>
+
+<p>
+	Metody <code>Response.getText(text)</code> a <code>Response.getText(statusCode, text)</code> vrátí jako odpověď daný text. Výchozí návratový kód je 200 OK.
+</p>
+
+<h3>Přesměrování</h3>
+
+<p>
+	Přesměrování v rámci akce se provede metodami <code>Response.getRedirect(url)</code> nebo <code>Response.getRedirect(statusCode, url)</code>. Výchozí návratový kód je 307 TEMPORARY REDIRECT. TOTI povoluje přesměrovat jen v rámci aplikace (ochrana proti útoku Open redirection). Pokud chcete přesměrovat mimo aplikaci, přidejte do <code>getRedirect</code> <code>true</code> jako poslední parametr.
+</p>
+
+<h3>Šablona</h3>
+
+<p>
+	TOTI poskytuje šablonovací systém (vysvětlený dále). Metody <code>Response.getTemplate(file, params)</code> a <code>Response.getTemplate(statusCode, file, params)</code> zparsují šablonu a vrátí odpověď obsahující výsledek. <code>file</code> je cesta k souboru šablony. Cesta je absolutní, přičemž kořen je složka šablon definovaná v modulu. <code>params</code> je <code>Map</code>a parametrů poslaných do šablony. Výchozí návratový kód je 200 OK.
+</p>
+
+<h3>Websocket</h3>
+
+<p>
+	Pro využití websocketu použijte metodu <code>Response.getWebsocket(websocket, onMessage, onError)</code>. První parametr je <code>WebSocket</code> získaný jako parametr akce, druhý je listener zpráv (zavolá se, pokud je přijata zpráva od klienta) a třetí je listener chyb (zavolá se, pokud se objeví chyba při komunikaci).
+</p>
+
+<strong>Příklad websocketu</strong>
+
+<pre><code>
+@Action("websocket")
+public Response getWebsocket(WebSocket websocket) {
+	 // websocket can be null - means this request is not valid websocket request
+	if (websocket != null) {
+		return Response.getWebsocket(websocket, (message)->{
+			// ...
+		}, (exception)->{
+			// ...
+		});
+	}
+	return Response.getText(StatusCode.BAD_REQUEST, "");
+}
+</code></pre>
+
+<p class="alert alert-warning">
+	Pokud chcete do websocketu zapisovat a ne jen čekat na zprávy, předejte websocket jinému vláknu.
+</p>
+
+<h3>Bitové tělo požadavku</h3>
+
+<p>
+	Pokud požadavek není <code>form</code> nebo <code>urlendoded</code>, tělo požadavku je možné získat jako pole bytů <code>byte[]</code>
+</p>
+
+<strong>Příklad</strong>
+
+<pre><code>
+@Action("json-request")
+public Response jsonBodyRequest(byte[] body) {
+	// ...
+}
+</code></pre>

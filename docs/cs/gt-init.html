@@ -1,21 +1,21 @@
-<h1>Initialization</h1>
+<h1>Inicializace</h1>
 
 <p class="introduction">
-	There are two ways how init TOTI in your app: quick init and custom init. <strong>Quick init</strong> makes lot of work for you. On the other hand, <strong>custom init</strong> is more flexible.
+	TOTI lze spustit dvěma způsoby: jednoduše a vlastním způsobem. <strong>Jednoduché spuštění</strong> udělá hodně prázce za vás. Na druhou stranu, <strong>Vlastní spuštění</strong> je mnohem flexibilnější.
 </p>
 
-<h2>Quick init</h2>
+<h2>Jednoduché spuštění</h2>
 
 <p>
-	<strong>Quick init</strong> loads configuration from file, automatically create <code>Database</code> (see <a href="https://ondrej-nemec.github.io/JI/?file=database-db.html">JI Database</a>) and <code>Env</code> (see <a href="https://ondrej-nemec.github.io/JI/?file=common-functions.html">JI Common</a>) objects.
+	<strong>Jednoduché spuštění</strong> načte konfigurační soubor, automaticky vytvoří objekty <code>Database</code> (viz <a href="https://ondrej-nemec.github.io/JI/?file=database-db.html">JI Database</a>) a <code>Env</code> (see <a href="https://ondrej-nemec.github.io/JI/?file=common-functions.html">JI Common</a>) objects.
 </p>
 
 <p class="alert alert-info">
-	If configuration for <code>Database</code> is not specified, <code>Database</code> instance will be <strong>NULL</strong>.
+	Pokud konfigurace pro <code>Database</code> chybí, reference na <code>Database</code>  je NULL.
 </p>
 
 <p>
-	For quick init, you need instance of <code>Application</code> class. Constructor requires list of <code>Module</code> (see in next chapter).
+	Nejprave potřebujete instanci třídy <code>Application</code>. Konstruktor vyžaduje seznam <code>Module</code> (více v dalších kapitolách).
 </p>
 
 <pre><code class="language-java">
@@ -25,35 +25,35 @@ Application application = new Application(Arrays.asList(
 </code></pre>
 
 <p>
-	Configuration of <code>Application</code> is in <code>.properties</code> file. The file can be specified <code>Application.APP_CONFIG_FILE = ...</code>. It must be called before constructor. Default is <code>conf/app.properties</code>. Can be in or outside classpath. The list of configurations is <a href="?file=doc-server.html">Server configuration</a>. If you wish not use configuration file and let everything default, set <code>Application.APP_CONFIG_FILE = null;</code>
+	<code>Application</code> se konfiguruje pomocí souburu <code>.properties</code>. Cesta k souboru se nastavuje pomocí  <code>Application.APP_CONFIG_FILE = ...</code>. Tento statický parametr musí být nastaven <strong>před</strong> konstruktorem. Výchozí hodnota je <code>conf/app.properties</code>. Soubor může být mezi souboury aplikace nebo i mimo. Seznam možné konfigurace je: <a href="?file=doc-server.html">Nastavení serveru</a>. Pokud nechcete použít konfigurační soubor a nechat vše ve výchozích hodnotách, nastavte <code>Application.APP_CONFIG_FILE = null;</code>
 </p>
 
-<h3>Control</h3>
+<h3>Ovládání</h3>
 
 <p>
-	<code>start</code> method does:
+	<code>start</code> methoda provede:
 	<ol>
-		<li>Create and migrate database (if database and migrations are used). <a href="https://ondrej-nemec.github.io/JI/?file=database-migrations.html">See about migrations</a></li>
-		<li>Run all tasks from modules (see in next chapter)</li>
-		<li>Start HTTP server</li>
+		<li>Vytvoří a odmigruje databázi (pokud jsou databáze a migrace použity). <a href="https://ondrej-nemec.github.io/JI/?file=database-migrations.html">Více o migracích</a></li>
+		<li>Spustí všechny úlohy z modulů (více v dalších kapitolách)</li>
+		<li>Spustí HTTP server</li>
 	</ol>
-	If <code>start</code> fails, no exception is throwed but <code>System.exit</code> is called.
+	Pokud <code>start</code> selže, není vyhozena žádná výjimka (jen je zalogovaná) a zavolá se <code>System.exit</code>.
 </p>
 
 <p>
-	<code>stop</code> method does:
+	<code>stop</code> methoda dělá:
 	<ol>
-		<li>Stop HTTP server</li>
-		<li>Stop all tasks from modules</li>
+		<li>Zastaví HTTP server</li>
+		<li>Zastaví všechny úlohy z modulů</li>
 	</ol>
-	If <code>stop</code> fails. no exception is throwed but <code>System.exit</code> is called.
+	Pokud <code>stop</code> selže, není vyhozena žádná výjimka (jen je zalogovaná) a zavolá se <code>System.exit</code>.
 </p>
 
 <p class="alert alert-warning">
-	<code>Application</code> not throws exceptions. All action including exceptions are logged.
+	<code>Application</code> neháže výjimky. Vše je logováno.
 </p>
 
-<h2>Custom init</h2>
+<h2>Vlastní spuštění</h2>
 
 <p>
 	For custom init, let start with <code>HttpServerFactory</code>. This class holds configuration for <code>HttpServer</code>. The list of configurations is <a href="?file=doc-server.html">Server Configuration</a>.
@@ -92,7 +92,7 @@ HttpServer server = new HttpServerFactory()
 <h2>Examples</h2>
 
 <p class="alert alert-success">
-	Both run ways are in <a href="https://github.com/ondrej-nemec/TOTI/tree/dev/samples/examples">Examples</a>, directly in main class.
+	<a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/init" target=_blank>Here</a> can you find working samples. Running application can be checked <a href="http://localhost:8080/toti">http://localhost:8080/toti</a>.
 </p>
 
 <p>

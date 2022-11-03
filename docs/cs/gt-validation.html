@@ -1,0 +1,146 @@
+<h1>Request validation</h1>
+
+<p>
+	All request parameters is most appropriate validate.
+</p>
+
+<p class="alert alert-success">
+	Validators full working example is <a target=_blank href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/validation">here</a>.
+</p>
+
+<h2>Basic validation</h2>
+
+<p>
+	If action requires spefic paramters and not requires <code>RequestParameters</code>, the parameters are validated in very simply way. See example below. The action needs two parameters - username and age. First one can be any valid <code>String</code>: null, empty, very long etc. The second can be only integer. If value of age parameter cannot be casted to int, the 500 is returned.
+</p>
+
+<pre><code>
+@Action("noValidator")
+public Response noValidator(@Param("username") String username, @Param("age") int age) {
+	// ...
+}
+</code></pre>
+
+<p class="alert alert-info">
+	The <code>Entity</code> works same as specified parameters.
+</p>
+
+<p class="alert alert-danger">
+	Basic validation not works for <code>RequestParameters</code>.
+</p>
+
+<h2>Validator</h2>
+
+<p>
+	For more complex validation use <code>Validator</code> class. 
+</p>
+
+<h3>Construct</h3>
+
+<p>
+	Validator can be created <code>new Validator(scrict)</code>. If <code>scrict</code> is true, validator will not accept request containings parameters that are not specified. Optionally use <code>new Validator(scrict, (translator, listOfNotSpecifiedParameters)->...)</code> constructor. This allow define error message. Default is <code>common.validation.not-expected-parameters</code> with parameter <code>params</code>
+</p>
+
+<p>
+	Other way is <code>new Validator(itemRule)</code> (and <code>new Validator(itemRule, (translator, listOfNotMatchedParameters)->...)</code>). This constructor specify default <code>ItemRules</code> for not specified parameters. Usually used for validation of lists. Default message is <code>common.validation.parameters-not-match-default-rule</code> with parameter <code>params</code>.
+</p>
+
+<h3>ItemRules</h3>
+
+<p>
+	Rules for one item. <code>ItemRules</code> instance is created with factory methods. First one - <code>ItemRules.defaultRule()</code> - is used only if instance will be default rule. Second and third - <code>ItemRules.forName(name, required)</code> and <code>ItemRules.forName(name, required, (translator, paramName)->...)</code> - are for specific parameter.	<code>name</code> define parameter name, <code>required</code> says if parameter is required. The third parameter allows define error message. Default is <code>common.validation.item-required</code> and parameter is <code>param</code> (request parameter name).
+</p>
+
+<p>
+	Add <code>ItemRules</code> to <code>Validator</code> with <code>addRule</code> method.
+</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-java">
+new Validator(true)
+	.addRule(
+		ItemRules.forName("username", true)
+			.setMinLength(3)
+			.setMaxLength(15)
+	)
+	.addRule(
+		ItemRules.forName("age", false)
+			.setType(Integer.class)
+			.setMinValue(0)
+	);
+</code></pre>
+
+<p class="alert alert-info">
+	List of all <code>ItemRules</code> options is <a href="?file=doc-validator.html">here</a>.
+</p>
+
+<h3>ParamsValidator and ParamValidator</h3>
+
+<p>
+	<code>Validator</code> contains method <code>setGlobalFunction</code>. This method allows works with parameters after validation but before calling action. Can be use fe. for comparing parameters.
+</p>
+
+<pre><code class="language-java">
+new Validator(false)
+	// ...
+	.setGlobalFunction((requestParameters, validatorParameters, translator)->{
+		Set&lt;String&gt; errors = ...;
+		// ...
+		return errors;
+	});
+</code></pre>
+
+<p>
+	The method <code>setGlobalFunction</code> always returns <code>Set</code>. Result cannot be null. If is empty, that means no errors.
+</p>
+
+<p>
+	The method receive validated <code>RequestParameters requestParameters</code> as first parameter. The second is <code>RequestParamters validatorParameters</code> - empty structure. This or part of this can be used in action. It is accessible with <code>ParamsValidator</code> and <code>ParamValidator</code> annotations. The third is <code>Translator</code>.
+</p>
+
+<h3>Add validator to action</h3>
+
+<p>
+	The <code>Validator</code> can be added to action in two ways: as reference to <code>Register</code> and as method name.
+</p>
+
+<h4>Reference to Register</h4>
+
+<p>
+	Add the <code>Validator</code> instance to <code>Register</code> as service. Rememeber, key must be unique. Then add same key to <code>Action</code> annotation.
+</p>
+<strong>Add service</strong>
+<pre><code class="language-java">
+register.addService(VALIDATOR_SERVICE_KEY, validatorInstance);
+</code></pre>
+
+<strong>Action annotation</strong>
+<pre><code class="language-java">
+@Action(value = "--URL--", validator = VALIDATOR_SERVICE_KEY)
+public Response myAction() {
+	// ...
+}
+</code></pre>
+
+<h4>Method name</h4>
+
+<p>
+	Create method inside your controller. Method can not hava parameters and must returns <code>Validator</code>. Then add method name to <code>Action</code> annotation.
+</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-java">
+public Validator validatorMethod() {
+	Validator validator = ...;
+
+	return validator;
+}
+
+@Action(value = "--URL--", validator = "validatorMethod")
+public Response myAction() {
+	// ...
+}
+
+</code></pre>
