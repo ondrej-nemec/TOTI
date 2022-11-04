@@ -1,17 +1,17 @@
-<h1>Request validation</h1>
+<h1>Validace požadavků</h1>
 
 <p>
-	All request parameters is most appropriate validate.
+	Všechny parametry, které přijdou s požadavkem je nejlepší ověřit.
 </p>
 
 <p class="alert alert-success">
-	Validators full working example is <a target=_blank href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/validation">here</a>.
+	Ukázky použití validace jsou v <a href="https://github.com/ondrej-nemec/TOTI/tree/dev/samples/examples">Examples</a> v části <i>validation</i>
 </p>
 
-<h2>Basic validation</h2>
+<h2>Základní validace</h2>
 
 <p>
-	If action requires spefic paramters and not requires <code>RequestParameters</code>, the parameters are validated in very simply way. See example below. The action needs two parameters - username and age. First one can be any valid <code>String</code>: null, empty, very long etc. The second can be only integer. If value of age parameter cannot be casted to int, the 500 is returned.
+	Pokud akce vyžaduje parametry jiného typu než <code>RequestParameters</code>, tyto parametry jsou velmi jednoduchým způsobem validovány. Například: Akce vyžaduje dva parametry - username (<code>String</code>) a věk(<code>int</code>). Prvním parametrem může být jakýkoli text. Ale druhý může být jen a pouze int. Pokud se vstupní hodnota nedá převést na int, vrátí se odpověď 500.
 </p>
 
 <pre><code>
@@ -22,20 +22,20 @@ public Response noValidator(@Param("username") String username, @Param("age") in
 </code></pre>
 
 <p class="alert alert-info">
-	The <code>Entity</code> works same as specified parameters.
+	Třída s vyjmenovanými parametry funguje podobně.
 </p>
 
 <p class="alert alert-danger">
-	Basic validation not works for <code>RequestParameters</code>.
+	Tento způsob nevaliduje celé <code>RequestParameters</code>.
 </p>
 
 <h2>Validator</h2>
 
 <p>
-	For more complex validation use <code>Validator</code> class. 
+	Pro přesnější validaci využijte třídu <code>Validator</code>. 
 </p>
 
-<h3>Construct</h3>
+<h3>Konstruktor</h3>
 
 <p>
 	Validator can be created <code>new Validator(scrict)</code>. If <code>scrict</code> is true, validator will not accept request containings parameters that are not specified. Optionally use <code>new Validator(scrict, (translator, listOfNotSpecifiedParameters)->...)</code> constructor. This allow define error message. Default is <code>common.validation.not-expected-parameters</code> with parameter <code>params</code>

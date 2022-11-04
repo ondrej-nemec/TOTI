@@ -69,6 +69,7 @@
 	<li><code>getOwnerColumnName()</code>: returns <code>Optional</code> of string. Define column name that will be used as owner column (see bellow). Default <code>Optional.empty</code> and means not use owner filtering.</li>
 
 	<li><code>getHelp(Collection&lt;Object&gt; forOwners)</code>: returns list of <code>Help</code>. That are data for <code>Select</code> input (Rest API load).</li>
+	<li><code>getHelp(Database database, Function&lt;QueryBuilder, SelectBuilder&gt; selectFactory, Collection&lt;Object&gt; forOwners, Optional&lt;String&gt; ownerColumnName, String titleColName)</code>: returns list of <code>Help</code>. That are data for <code>Select</code> input (Rest API load).</li>
 	<li><code>getHelpTable()</code>: define source table for help. Default returns <code>getTableName()</code></li>
 	<li><code>getHelpKey()</code>: define column name for HTML option value.</li>
 	<li><code>getHelpDisplayValue()</code>: define column name for HTML option text</li>

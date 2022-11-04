@@ -1,7 +1,7 @@
 <h1>Forms</h1>
 
 <p class="alert alert-success">
-	Full form example is <a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/form">here</a>.
+	Samples of form are in <a href="https://github.com/ondrej-nemec/TOTI/tree/dev/samples/examples">Examples</a> in part <i>form</i>.
 </p>
 
 <p>
@@ -32,9 +32,10 @@ Form grid = new Form("/save/form/url", true);
 	Methods:
 	<ul>
 		<li>Form method: <code>setFormMethod(method)</code> - HTTP method for form submit. Default is <code>GET</code></li>
-		<li>After print: <code>setAfterPrint(methodName)</code> - name of JS function called after form is printed. Default is null and means no call.</li>
-		<li>Before bind: <code>setBeforeBind(methodName)</code> - name of JS function called before data bind (only if bind URL is set). Default is null and means no call.</li>
-		<li>After bind: <code>setAfterBind(methodName)</code> - name of JS function called after data bind (only if bind URL is set). Default is null and means no call.</li>
+		<li>Before render: <code>setBeforeRender(methodName)</code> - name of JS function called before form is printed (with instance of JS class TotiForm as parameter). Default is null and means no call.</li>
+		<li>After render: <code>setAfterRender(methodName)</code> - name of JS function called after form is printed(with instance of JS class TotiForm as parameter). Default is null and means no call.</li>
+		<li>Before bind: <code>setBeforeBind(methodName)</code> - name of JS function called (with binding values and instance of JS class TotiForm as parameters) before data bind (only if bind URL is set). Default is null and means no call.</li>
+		<li>After bind: <code>setAfterBind(methodName)</code> - name of JS function called (with binding values and instance of JS class TotiForm as parameters) after data bind (only if bind URL is set). Default is null and means no call.</li>
 		<li>Bind URL: <code>setBindUrl(url)</code> - URL for async data binding. Default is null and means no binding.</li>
 		<li>Bind method: <code>setBindMethod(method)</code> - HTTP method for async data binding. Default is <code>GET</code>.</li>
 		<li>On bind failure: <code>setOnBindFailure(methodName)</code> - name of JS function called if bind fail. Default is null and means no call.</li>
@@ -81,17 +82,17 @@ return Response.getTemplate("...", params);
 </p>
 
 <p>
-	In template, use paired <code>control</code> tag for print form. Use variable name as control name. For print each input, use <code>label</code>(print input label), <code>input</code>(print HTML input) and <code>error</code>(print container for input errors) tags. This tags require <code>name</code> parameter, so use input name. See <a href="?file=doc-tags.html">here</a> for more about tags.
+	In template, use paired <code>control</code> tag for print form. Use variable name as control name. For print each input, use <code>form</code> with attribute <code>label</code> (print input label), <code>form</code> with attribute <code>input</code> (print HTML input) and <code>form</code> with attribute <code>error</code> (print container for input errors) tags. Value for given paramets is input name. See <a href="?file=doc-tags.html">here</a> for more about tags.
 </p>
 
 <pre><code>
 &lt;t:control name="formInstance" &gt;
 &lt;%-- container for global errors --%&gt;
-&lt;t:error name="form" /&gt;
+&lt;t:form error="form" /&gt;
 
-&lt;t:label name="firstInput" /&gt;
-&lt;t:input name="firstInput" /&gt;
-&lt;t:error name="firstInput" /&gt;
+&lt;t:form label="firstInput" /&gt;
+&lt;t:form input="firstInput" /&gt;
+&lt;t:form error="firstInput" /&gt;
 ...
 
 &lt;/t:control &gt;
@@ -100,7 +101,7 @@ return Response.getTemplate("...", params);
 <h4>Using in JS</h4>
 
 <p class="alert alert-info">
-	You can get JS class instance of form calling <code>${--variable-name--}</code> in JS.
+	You can get JS class instance of form calling <code>${--variable-name--|noescape}</code> in JS.
 </p>
 
 <pre><code class="language-javascript">
@@ -117,5 +118,5 @@ var formObject = ${formInstance|noescape};
 </p>
 
 <p>
-	Form action is standart controller method. <strong>Allways remember validate inputs before processing.</strong>
+	Form action is standart controller method. <strong>Always remember validate inputs before processing.</strong>
 </p>

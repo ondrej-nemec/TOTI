@@ -15,7 +15,7 @@
 </p>
 
 <p>
-	Nejprave potřebujete instanci třídy <code>Application</code>. Konstruktor vyžaduje seznam <code>Module</code> (více v dalších kapitolách).
+	Pro jednoduché potřebujete instanci třídy <code>Application</code>. Konstruktor vyžaduje seznam <code>Module</code> (více v dalších kapitolách).
 </p>
 
 <pre><code class="language-java">
@@ -56,11 +56,11 @@ Application application = new Application(Arrays.asList(
 <h2>Vlastní spuštění</h2>
 
 <p>
-	For custom init, let start with <code>HttpServerFactory</code>. This class holds configuration for <code>HttpServer</code>. The list of configurations is <a href="?file=doc-server.html">Server Configuration</a>.
+	Nejprve potřebujete třídu <code>HttpServerFactory</code>. Tato třída drží konfiguraci pro <code>HttpServer</code>. Všechna konfigurace je dostupná <a href="?file=doc-server.html">zde</a>.
 </p>
 
 <p>
-	For creating <code>HttpServe</code> there are required two classes: <code>Database</code> (see <a href="https://ondrej-nemec.github.io/JI/?file=database-db.html">JI Database</a>) and <code>Env</code> (see <a href="https://ondrej-nemec.github.io/JI/?file=common-functions.html">JI Common</a>). Both can be null.
+	Instace <code>HttpServer</code>u se získá pomocí metody <code>get</code>. Ta vyžaduje tři parametry: seznam modulů (více o modulech v dalších kapitolách) - seznam může být prázdný, ale nesmí být NULL; <code>Database</code> (viz <a href="https://ondrej-nemec.github.io/JI/?file=database-db.html">JI Database</a>) a <code>Env</code> (viz <a href="https://ondrej-nemec.github.io/JI/?file=common-functions.html">JI Common</a>). <code>Env</code> a <code>Database</code> mohou být null.
 </p>
 
 
@@ -74,41 +74,41 @@ HttpServer server = new HttpServerFactory()
 </code></pre>
 
 <p>
-	<code>start</code> method does:
+	Metoda <code>start</code> provede:
 	<ol>
-		<li>Run all tasks from modules (see in next chapter)</li>
-		<li>Start HTTP server</li>
+		<li>Spustí všechny úlohy (viz další kapitoly)</li>
+		<li>Spustí HTTP server</li>
 	</ol>
 </p>
 
 <p>
-	<code>stop</code> method does:
+	Metoda <code>stop</code> provede:
 	<ol>
-		<li>Stop HTTP server</li>
-		<li>Stop all tasks from modules</li>
+		<li>Zastaví HTTP server</li>
+		<li>Zastaví všechny úlohy</li>
 	</ol>
 </p>
 
-<h2>Examples</h2>
+<h2>Příklad</h2>
 
 <p class="alert alert-success">
-	<a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/init" target=_blank>Here</a> can you find working samples. Running application can be checked <a href="http://localhost:8080/toti">http://localhost:8080/toti</a>.
+	Oba způsoby spuštění jsou v <a href="https://github.com/ondrej-nemec/TOTI/tree/dev/samples/examples">Examples</a>, přímo ve spuštěcí třídě.
 </p>
 
 <p>
-	If you wish access some files from browser (typically css and js), place them in <code>www</code> folder in root of project.
+	Pokud chcete mít některé soubory dostupné ze prohlížeče (například HTML, CSS a JS), dejte do <code>www</code> složky přímo v kořenu aplikace.
 </p>
 
-<h5>Note</h5>
+<h5>Poznámka</h5>
 
 <p>
-	Both <code>Application</code> and <code>HttpServer</code> contains methods <code>getTranslator</code> (<a href="https://ondrej-nemec.github.io/JI/?file=translate.html">JI Translator</a>) and <code>getRegister</code> (see in next chapter).
+	Jak <code>Application</code> tak <code>HttpServer</code> obsahují metodu <code>getTranslator</code> (<a href="https://ondrej-nemec.github.io/JI/?file=translate.html">JI Translator</a>) a <code>getRegister</code> (<code>Register</code>, více v dalších kapitolách).
 </p>
 
-<h2>Logging</h2>
+<h2>Logování</h2>
 
 <p>
-	TOTI uses <a href="https://logging.apache.org/log4j/2.x/">Log4j 2 API</a>. By default, TOTI contains simple console logger. For using your own: <br>
+	TOTI využívá <a href="https://logging.apache.org/log4j/2.x/">Log4j 2 API</a>. Ve výchozím nastavení TOTI používá jednoduchou konsolovou implementaci. Přiřazení vlastního loggeru:<br>
 
 	<strong>Application</strong>
 	<pre><code class="language-java">
@@ -137,5 +137,5 @@ HttpServer server = new HttpServerFactory()
 </p>
 
 <p>
-	There are names of logger required in TOTI: <code>toti</code>, <code>translator</code>, <code>database</code> (with using <code>Application</code> only) and name of each module.
+	TOTI využívá následující jména loggerů: <code>toti</code>, <code>translator</code>, <code>database</code> (jen při použití <code>Application</code>) a jeden logger pro každý modul s jeho jménem.
 </p>

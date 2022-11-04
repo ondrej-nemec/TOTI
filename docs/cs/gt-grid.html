@@ -1,7 +1,7 @@
 <h1>Grids</h1>
 
 <p class="alert alert-success">
-	Full grid example is <a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/grid">here</a>.
+	Samples of grid are in <a href="https://github.com/ondrej-nemec/TOTI/tree/dev/samples/examples">Examples</a> in part <i>grid</i>.
 </p>
 
 <p>
@@ -32,8 +32,10 @@ Grid grid = new Grid("/load/data/url", "get");
 <p>
 	Methods:
 	<ul>
+		<li>Page size: <code>setPageSize(size)</code> - how many items will be on page. Negative number means all items.</li>
 		<li>Page size select: <code>setPagesSizes(listOfSizes)</code> and <code>setPagesSizes(listOfSizes, defautlSelectedSize)</code> - display select box with page sizes. If list of sizes is null, no paging used. Default is: [10, 20, 50, 100].</li>
-		<li>Count of paging buttons <code>setPagesButtonCount(buttonsCount)</code>. Default is 5.</li>
+		<li>Count of paging buttons <code>setPagesButtonCount(buttonsCount)</code>. Default is 5. Zero means no buttons.</li>
+		<li>Loading button: <code>setUseLoadButton(use)</code> - if use loading button. Default false. Loading button add more items on page, but not remove previous.</li>
 		<li>Row renderer: <code>setOnRowRenderer(rowRenderer)</code> - name of JS function. If specified, call custom JS function. To function are passed two parameters: row container and object of all values.</li>
 		<li>Row selection: <code>useRowSelection(true|false)</code> - if use can select row. Selected row contains class 'row-selected'.</li>
 	</ul>
@@ -137,7 +139,7 @@ public Validator exampleMethodValidator() {
 	));
 }
 </code></pre>
-
+<!--
 <strong>Raw</strong>
 
 <pre><code class="language-java">
@@ -153,7 +155,7 @@ new Validator(true)
 		.addRule(ItemRules.forName("name", false).setAllowedValues(Arrays.asList("ASC", "DESC")))
 	));
 </code></pre>
-
+-->
 <h2>Grid columns</h2>
 
 <p>
@@ -188,8 +190,9 @@ new Validator(true)
 	<ul>
 		<li>Constructor: <code>new ButtonsColumn(name)</code></li>
 		<li>Set title: <code>setTitle(title)</code> - title of column, default is same as name</li>
-		<li>Reset filter button: <code>setResetFiltersButton(true|false)</code> - show reset button. Default is true.</li>
+		<li>Reset filter button: <code>setResetFiltersButton(button)</code> - show button as reset button with reset func.</li>
 		<li>Buttons: <code>addButton(button)</code> - add button to list, can be called more times.</li>
+		<li>Global button: <code>addGlobalButton(button)</code> - add button to filter part of column. Usualy Add button.</li>
 	</ul>
 </p>
 
