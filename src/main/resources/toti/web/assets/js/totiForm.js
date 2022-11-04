@@ -182,7 +182,7 @@ class TotiForm {
 					break;
 				case "button":
 					var input = totiControl.button(field, field.action.async);
-					input.setAttribute("form", this.formUnique);
+					input.setAttribute("toti-form", this.formUnique);
 					this.template.addControl(this.formUnique, container, field.name, input);
 					break;
 				case "checkbox":
@@ -201,7 +201,7 @@ class TotiForm {
 			}
 		} else {
 			var input = totiControl.input(field);
-			input.setAttribute("form", this.formUnique);
+			input.setAttribute("toti-form", this.formUnique);
 			switch(field.originType) {
 				case "hidden":
 					this.template.addHidden(this.formUnique, container, input, removeFunc);
@@ -357,11 +357,15 @@ class TotiForm {
 								var inputErrors = form.querySelectorAll('[toti-form-error="' + elementId + '"]');
 								if (inputErrors.length > 0) {
 									inputErrors[elementIdentifiers[0]].appendChild(errorsInElement);
+								} else {
+									console.error(key + ": " + list);
 								}
 							} else {
 								var inputError = form.querySelector('[toti-form-error="' + elementId + '"]');
 								if (inputError !== null) {
 									inputError.appendChild(errorsInElement);
+								} else {
+									console.error(key + ": " + list);
 								}
 							}
 						}
@@ -489,6 +493,10 @@ class TotiForm {
 					break;
 				default:
 					element.value = value;
+			}
+			/* optional inputs: range, color,... */
+			if (element.hasOwnProperty('set')) {
+				element.set();
 			}
 		}
 		for (const[name, value] of Object.entries(values)) {
