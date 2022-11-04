@@ -502,6 +502,10 @@ class TotiForm {
 				default:
 					element.value = value;
 			}
+			/* optional inputs: range, color,... */
+			if (element.hasOwnProperty('set')) {
+				element.set();
+			}
 		}
 		for (const[name, value] of Object.entries(values)) {
 			bindElement(this.dynamic, name, name, value);
