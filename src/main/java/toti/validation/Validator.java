@@ -139,6 +139,7 @@ public class Validator {
 					rule.getOnRequiredError().apply(translator, propertyName)
 			);
 		} else {
+			// TODO not use object? use prop.get(ruleName) instead? prop contains object in required type....
 			Object o = prop.get(ruleName);
 			if (o == null && !rule.getRequired()) {
 				return;
@@ -160,6 +161,20 @@ public class Validator {
 					propertyName,
 					rule.getOnExpectedTypeError().apply(translator)
 			);
+			// check required again - after change value, empty string can became null
+			// emptry string is valid value for string, not for fe.number -> must be here
+			checkRule(
+				Optional.of(rule.getRequired()),
+				(required)->required && prop.get(ruleName) == null,
+				errors,
+				propertyName,
+				rule.getOnRequiredError().apply(translator, propertyName)
+			);
+			// null check again
+			if (prop.get(ruleName) == null && !rule.getRequired()) {
+				return;
+			}
+			/****/
 			checkRule(
 					rule.getAllowedValues(),
 					(allowedList)->!allowedList.contains(prop.get(ruleName)),
