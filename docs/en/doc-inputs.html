@@ -1,43 +1,40 @@
-<h1>Form inputs and grid filters</h1>
+<h1>Form inputs and Grid filters</h1>
 
 <p class="alert alert-success">
-	Examples of using inputs in form are <a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/form">here</a>.
+	Samples of forms and inputs are in <a href="https://github.com/ondrej-nemec/TOTI/tree/dev/samples/examples">Examples</a> in part <i>form</i>
 </p>
 
 <p class="alert alert-success">
-	Examples of using inputs as grid filters are <a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/grid">here</a>.
+	Samples of grids and filters are in <a href="https://github.com/ondrej-nemec/TOTI/tree/dev/samples/examples">Examples</a> in part <i>grid</i>
 </p>
 
 <p>
-	The filters and inputs (controls) have some predefined parameters. If you need some other, you can use <code>addParam</code> method (more times for one control).
+	Filters and inputs (controls) represent HTML inputs. Some parameters are predefined. If you need add another parameter, call <code>addParam</code> method (you can call moretimes).
 </p>
 
 <p>
-	Inputs title can be set by <code>setTitle</code> (except <i>Hidden</i>).
-</p>
-
-<p>
-	HTML5 forms ignore disabled inputs. On the other hand, TOTI inputs contains parameters: <i>disabled</i> (<code>setDisabled</code>), <i>exclude</i> (<code>setExclude</code>, default false) and <i>editable</i> (<code>setEditable</code>, default inherit from form).
+	Standart HTML5 form ignores disabled inputs. TOTI allows submit disabled inputs and ignore active ones. Most of TOTI controls contains parameters: <i>disabled</i> (<code>setDisabled</code>), <i>exclude</i> (<code>setExclude</code>, default false) a <i>editable</i> (<code>setEditable</code>, default value is same as in form).
 </p>
 
 <p>
 	How it works:
 
 	<ul>
-		<li><i>disabled == true</i>: if <i>exclude</i> not set, <i>exclude</i> become TRUE and input will be ignored</li>
-		<li><i>disabled == true</i> and <i>exclude == true</i>: input ignored</li>
-		<li><i>disabled == true</i> and <i>exclude == false</i>: input NOT ignored</li>
-		<li>form is editable and <i>editable == false</i>: input ignored, <i>exclude</i> and <i>disabled</i> ignored. Input NOT displayed as input but like simple text</li>
-		<li>form is not editable and <i>editable == true</i>: input displayed as input</li>
+		<li><i>disabled == true</i>: if <i>exclude</i> not specified, <i>exclude</i> is TRUE and input will not be submitted</li>
+		<li><i>disabled == true</i> and <i>exclude == true</i>: input will not be submirted</li>
+		<li><i>disabled == true</i> and  <i>exclude == false</i>: input will be submitted</li>
+		<li><i>exclude == false</i> and if <i>disabled</i> not specified: input will be submitted</li>
+		<li>if form is not editable and <i>editable == false</i> or not specified: form cannot be submitted, input will appears as plain text. Buttons and submits not appear.</li>
+		<li>if form is not editable and <i>editable == true</i>: form cannot be submitted and input displays as input</li>
 	</ul>
 </p>
 
-<h2>Textual and numeric</h2>
+<h2>Text and numeric</h2>
 
 <h3>Text</h3>
 
 <p>
-	Simple text input. HMTL standard tag
+	Text input
 </p>
 
 <p>
@@ -50,15 +47,23 @@
 <p>
 	<ul>
 		<li>Size <code>setSize</code>: default text size</li>
-		<li>Maximal length <code>setMaxLength</code>: maximal allowed text length</li>
-		<li>Minimal length <code>setMinLength</code>: minimal required text length</li>
+		<li>Maximal length <code>setMaxLength</code>: maximal allowed length</li>
+		<li>Minimal length <code>setMinLength</code>: minimal required length</li>
+
+		<li>Add own parameter: <code>addParam</code></li>
+		<li>Set title: <code>setTitle</code></li>
+		<li>Default value: <code>setDefaultValue</code></li>
+		<li>Disable input: <code>setDisabled</code></li>
+		<li>Exclude input from submit: <code>setExclude</code></li>
+		<li>Not editable input: <code>setEditable</code></li>
+		<li>Set placeholder: <code>setPlaceholder</code></li>
 	</ul>
 </p>
 
 <h3>Textarea</h3>
 
 <p>
-	For large texts. Input only. HTML standard tag
+	For long text inputs. Input only
 </p>
 
 <p>
@@ -69,26 +74,46 @@
 
 <p>
 	<ul>
-		<li>Maximal length <code>setMaxLength</code>: maximal allowed text length</li>
-		<li>Count of columns <code>setCols</code></li>
-		<li>Count of rows <code>setRows</code></li>
+		<li>Maximal length <code>setMaxLength</code>: maximal allowed length</li>
+		<li>Column count <code>setCols</code></li>
+		<li>Row count <code>setRows</code></li>
+
+		<li>Add own parameter: <code>addParam</code></li>
+		<li>Set title: <code>setTitle</code></li>
+		<li>Default value: <code>setDefaultValue</code></li>
+		<li>Disable input: <code>setDisabled</code></li>
+		<li>Exclude input from submit: <code>setExclude</code></li>
+		<li>Not editable input: <code>setEditable</code></li>
+		<li>Set placeholder: <code>setPlaceholder</code></li>
 	</ul>
 </p>
 
 <h3>Email</h3>
 
 <p>
-	Text input with check if contains '@'. Input only. HTML standard tag
+	Text input with email check. Input only.
 </p>
 
 <p>
 	<strong>Create input:</strong> <code>Email.input(String name, boolean required)</code> <br>
 </p>
 
+<p>
+	<ul>
+		<li>Add own parameter: <code>addParam</code></li>
+		<li>Set title: <code>setTitle</code></li>
+		<li>Default value: <code>setDefaultValue</code></li>
+		<li>Disable input: <code>setDisabled</code></li>
+		<li>Exclude input from submit: <code>setExclude</code></li>
+		<li>Not editable input: <code>setEditable</code></li>
+		<li>Set placeholder: <code>setPlaceholder</code></li>
+	</ul>
+</p>
+
 <h3>Password</h3>
 
 <p>
-	Text input where all letters are hidden. Input only. HTML standard tag
+	Text input with hidden letters. Input only.
 </p>
 
 <p>
@@ -100,15 +125,23 @@
 <p>
 	<ul>
 		<li>Size <code>setSize</code>: default text size</li>
-		<li>Maximal length <code>setMaxLength</code>: maximal allowed text length</li>
-		<li>Minimal length <code>setMinLength</code>: minimal required text length</li>
+		<li>Maximal length <code>setMaxLength</code>: maximal allowed length</li>
+		<li>Minimal length <code>setMinLength</code>: minimal required length</li>
+
+		<li>Add own parameter: <code>addParam</code></li>
+		<li>Set title: <code>setTitle</code></li>
+		<li>Default value: <code>setDefaultValue</code></li>
+		<li>Disable input: <code>setDisabled</code></li>
+		<li>Exclude input from submit: <code>setExclude</code></li>
+		<li>Not editable input: <code>setEditable</code></li>
+		<li>Set placeholder: <code>setPlaceholder</code></li>
 	</ul>
 </p>
 
 <h3>Number</h3>
 
 <p>
-	Allow fill only numbers. HTML standard tag
+	Input for numbers
 </p>
 
 <p>
@@ -120,16 +153,24 @@
 
 <p>
 	<ul>
-		<li>Step <code>setStep</code>: tehl legal number intervals</li>
-		<li>Minimal value <code>setMin</code>: the minimal required value</li>
-		<li>Maximal value <code>setMax</code>: the maximal allowed value</li>
+		<li>Step <code>setStep</code>: number interval</li>
+		<li>Minimal value <code>setMin</code>: minimal required value</li>
+		<li>Maximal value <code>setMax</code>: maximal allowed value</li>
+
+		<li>Add own parameter: <code>addParam</code></li>
+		<li>Set title: <code>setTitle</code></li>
+		<li>Default value: <code>setDefaultValue</code></li>
+		<li>Disable input: <code>setDisabled</code></li>
+		<li>Exclude input from submit: <code>setExclude</code></li>
+		<li>Not editable input: <code>setEditable</code></li>
+		<li>Set placeholder: <code>setPlaceholder</code></li>
 	</ul>
 </p>
 
 <h3>Range</h3>
 
 <p>
-	Allow fill only numbers. HTML standard tag
+	Input for numbers
 </p>
 
 <p>
@@ -141,23 +182,30 @@
 
 <p>
 	<ul>
-		<li>Step <code>setStep</code>: tehl legal number intervals</li>
-		<li>Minimal value <code>setMin</code>: the minimal required value</li>
-		<li>Maximal value <code>setMax</code>: the maximal allowed value</li>
+		<li>Step <code>setStep</code>: number interval</li>
+		<li>Minimal value <code>setMin</code>: minimal required value</li>
+		<li>Maximal value <code>setMax</code>: maximal allowed value</li>
+
+		<li>Add own parameter: <code>addParam</code></li>
+		<li>Set title: <code>setTitle</code></li>
+		<li>Default value: <code>setDefaultValue</code></li>
+		<li>Disable input: <code>setDisabled</code></li>
+		<li>Exclude input from submit: <code>setExclude</code></li>
+		<li>Not editable input: <code>setEditable</code></li>
 	</ul>
 </p>
 
-<strong>NOTE:</strong>
+<strong>Note:</strong>
 <p>
-	This tag not support empty value by default. If <code>required</code> is set to FALSE, TOTI display checkbox with. Checked means send input value, not checked means not send (if checkbox is not checked, input is disabled).
+	HTML Range not allows empty value. So if parameter <code>required</code> is set to FALSE, TOTI shows Range with checkbox. If checkbox is checked, TOTI Range value send. Otherwise value is not submitted and Range is disabled.
 </p>
 
-<h2>Determination of time</h2>
+<h2>Date and time</h2>
 
 <h3>Date</h3>
 
 <p>
-	Picker for date with localized messages. HTML standard tag
+	Date picker
 </p>
 
 <p>
@@ -165,10 +213,23 @@
 	<strong>Create input:</strong> <code>Date.filter(String name, boolean required)</code> <br>
 </p>
 
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li>Add own parameter: <code>addParam</code></li>
+		<li>Set title: <code>setTitle</code></li>
+		<li>Default value: <code>setDefaultValue</code></li>
+		<li>Disable input: <code>setDisabled</code></li>
+		<li>Exclude input from submit: <code>setExclude</code></li>
+		<li>Not editable input: <code>setEditable</code></li>
+	</ul>
+</p>
+
 <h3>Time</h3>
 
 <p>
-	Picker for time with localized messages. HTML standard tag
+	Time picker
 </p>
 
 <p>
@@ -180,14 +241,21 @@
 
 <p>
 	<ul>
-		<li>Time deep <code>setStep</code>: "1" means use hours, minutes and hours, "60" means use hours and minutes, "3600" means use only hours</li>
+		<li>Interval <code>setStep</code>: "1" means seconds, "60" means minutes and "3600" hours.</li>
+
+		<li>Add own parameter: <code>addParam</code></li>
+		<li>Set title: <code>setTitle</code></li>
+		<li>Default value: <code>setDefaultValue</code></li>
+		<li>Disable input: <code>setDisabled</code></li>
+		<li>Exclude input from submit: <code>setExclude</code></li>
+		<li>Not editable input: <code>setEditable</code></li>
 	</ul>
 </p>
 
 <h3>Datetime</h3>
 
 <p>
-	Picker for date and time with localized messages. Some browsers like Firefox not support <code>datetime-local</code> so for Firefox is used little TOTI modification.
+	Datetime picker
 </p>
 
 <p>
@@ -199,15 +267,22 @@
 
 <p>
 	<ul>
-		<li>Time deep <code>setStep</code>: "1" means use hours, minutes and hours, "60" means use hours and minutes, "3600" means use only hours</li>
-		<li>Use full value <code>setStrict</code>: if false, it allows to use only date or only time. Effect datetime in filter and not required datetime in form</li>
+		<li>Interval <code>setStep</code>: "1" means seconds, "60" means minutes and "3600" hours.</li>
+		<li>Strick value <code>setStrict</code>: if value is FALSE, input allows send only date or only time. Automatically used in grids.</li>
+
+		<li>Add own parameter: <code>addParam</code></li>
+		<li>Set title: <code>setTitle</code></li>
+		<li>Default value: <code>setDefaultValue</code></li>
+		<li>Disable input: <code>setDisabled</code></li>
+		<li>Exclude input from submit: <code>setExclude</code></li>
+		<li>Not editable input: <code>setEditable</code></li>
 	</ul>
 </p>
 
 <h3>Month</h3>
 
 <p>
-	Picker for selecting month with localized messages. HTML standard tag. Not supported by some browsers like Firefox.
+	Month picker
 </p>
 
 <p>
@@ -226,13 +301,26 @@
 	<strong>Create input:</strong> <code>Week.filter(String name, boolean required)</code> <br>
 </p>
 
+<strong>Optional parameters</strong>
 
-<h2>Action</h2>
+<p>
+	<ul>
+		<li>Add own parameter: <code>addParam</code></li>
+		<li>Set title: <code>setTitle</code></li>
+		<li>Default value: <code>setDefaultValue</code></li>
+		<li>Disable input: <code>setDisabled</code></li>
+		<li>Exclude input from submit: <code>setExclude</code></li>
+		<li>Not editable input: <code>setEditable</code></li>
+	</ul>
+</p>
+
+
+<h2>Actions</h2>
 
 <h3>Submit</h3>
 
 <p>
-	Submit form. Input only. HTML standard tag
+	Submit button
 </p>
 
 <p>
@@ -243,29 +331,33 @@
 
 <p>
 	<ul>
-		<li>Submit asynchroniously <code>setAsync</code></li>
+		<li>Asynchronious submit <code>setAsync</code> - default value <code>true</code></li>
+		<li>Set title: <code>setTitle</code></li>
+		<li>Submit confirmation: <code>setConfirmation</code>: request for submit confirmation</li>
+		<li>Disable input: <code>setDisabled</code></li>
+		<li>Submit policy: <code>setSubmitPolicy</code>: allowed values <code>EXCLUDE</code> (neodesílat), <code>INCLUDE</code> (odeslat), <code>INCLUDE_ON_CLICK</code> (submit Submit only if user click on it)</li>
+		<li>Value <code>setValue</code>: this value is send if submit is in submittingg data. <strong>Not Submit text</strong></li>
 	</ul>
 
-	<strong>Only for asynchronious</strong>
+	<strong>Only asynchronious submit</strong>
 	<ul>
-		<li>Redirect after success <code>setRedirect</code>: URL redirect to. If URL contains<code>{id}</code> and submit response is object containing 'id' parameter, '{id}' is it replaced with <code>response.id</code>.</li>
-		<li>Do after success <code>setOnSuccess</code>: name of JS function. As parameters are used (in order) response, submit and form.</li>
-		<li>Do after failure <code>setOnFailure</code>: name of JS function. As parameters are used (in order) response, submit and form.</li>
-		<li>Confirmation before <code>setConfirmation</code>: text of confirmation. If no text set, no confirmation appear.</li>
+		<li>Redirect on success submit <code>setRedirect</code>: URL path. If submit returns JSON, TOTI iterates parameters and and in URL replace <code>{--param-name--}</code> given value.</li>
+		<li>Execute after success submit <code>setOnSuccess</code>: name of JS function. Input parameters are: submit response, Submit and form.</li>
+		<li>Execute after submit failure <code>setOnFailure</code>. name of JS function. Input parameters are: error, Submit, form. Not execute if response code is 400 - it is reserved for validation messages.</li>
 	</ul>
 </p>
 
-<strong>Async submit response</strong>
+<strong>Response code 400</strong>
 
 <p>
-	If response is object, TOTI expects two attributes: <code>message</code> (is used as flash message to users) and <code>id</code> (used for replacing <code>{id}</code> in redirect message if exists).
-	Otherwise, TOTI use response as flash message for users.
+	Response code 400 is reserved for validation message in response.
 </p>
 
 <h3>Button</h3>
 
 <p>
-	Navigate from form but not submit values. If used in grid, you can parametrize URL with '<i>{*name-of-parameter*}</i>'. F.e. '<i>/{name}/edit/{id}</i>' will be '<i>/cars/edit/2</i>'. HTML standard tag
+	Button in form that not submit data or button in grid with action.
+	In grid, if URL contains '<i>{*name-of-parameter*}</i>', this part is replaced with correct value from row data. For example: '<i>/{name}/edit/{id}</i>' and row id is 2, so URL will be '<i>/cars/edit/2</i>'
 </p>
 
 <p>
@@ -276,32 +368,41 @@
 
 <p>
 	<ul>
-		<li>Title <code>setTitle</code>: text of button</li>
-		<li>Asynchronious request <code>setAsync</code>: if send request synchroniously (redirect) or not</li>
-		<li>Icon <code>setIcon</code>: TOTI add <code>&lt;i&gt;</code> with given class to button</li>
+		<li>Title <code>setTitle</code></li>
+		<li>Asynchronious request <code>setAsync</code>: make async request or redirect to URL. Default value is <code>true</code></li>
+		<li>Icon <code>setIcon</code>: TOTI add to title <code>&lt;i&gt;</code> with given class. Usuall used with FontAwesome or Bootstrap cons</li>
 		<li>Tooltip <code>setTooltip</code></li>
-		<li>Add class <code>addClass</code>: add given class to button, can be called more times</li>
+		<li>Add class <code>addClass</code>: can be called moretimes</li>
+
+		<li>Print condition (grids only): <code>setCondition(jsCode, evaluate)</code> during printing, TOTI executed given JS code. If result is <code>true</code>, button will appears. If second parameter is defined and is <code>true</code>, TOTI replace <i>{*name-of-row-property*}</i> with given row value
+		<li>Submit confirmation <code>setConfirmation</code>: request for confirming submit or grid action. Text can contains parameters '<i>{*name-of-parameter*}</i>' (grid only).</li>
 	</ul>
 
-	<strong>Only for asynchronious</strong>
+	<strong>Asynchronious request only</strong>
 	<ul>
-		<li>Request method <code>setMethod</code>: GET, POST,...</li>
-		<li>Do after success response <code>setOnSuccess</code>: name of JS function called after success response. Response is used as parameter</li>
-		<li>Do after failure response <code>setOnFailure</code>: name of JS function called after failure response. Response is used as parameter</li>
-		<li>Confirmation before <code>setConfirmation</code>: text of confirmation. If no text set, no confirmation appear. If used in grid, you can parametrize URL with '<i>{*name-of-parameter*}</i>'.</li>
-		<li>Request parameters <code>addRequestParam</code>: add new request parameter (can be called more times)</li>
-		<li>Print condition (grid only): <code>setCondition(jsCode, evaluate)</code> - during print, TOTI execute JS code. If result is true, display button. The second parameter says if <code>jsCode</code> is parametrized with {*name-of-row-property*}</li>
+		<li>Method <code>setMethod</code>: GET, POST,...</li>
+		<li>Execute on action success<code>setOnSuccess</code>: name of JS function. Input parameter is request result.</li>
+		<li>Execute on failure <code>setOnFailure</code>: name of JS function. Input parameter is error.</li>
+		<li>Add URL parameter <code>addRequestParam</code>: can be called moretimes</li>
 	</ul>
 </p>
 
 <h3>Reset</h3>
 
 <p>
-	Return form state to default values. Input only. HTML standard tag
+	Returns inputs to defaults.
 </p>
 
 <p>
 	<strong>Create input:</strong> <code>Reset.create(String name)</code> <br>
+</p>
+
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li>Add own parameter: <code>addParam</code></li>
+	</ul>
 </p>
 
 
@@ -310,7 +411,7 @@
 <h3>Checkbox</h3>
 
 <p>
-	For Yes/No selection. Input only. HTML standard tag
+	Yes/No selection. Input only
 </p>
 
 <p>
@@ -321,24 +422,44 @@
 
 <p>
 	<ul>
-		<li>Values render <code>setValuesRender(String checked, String notChecked)</code>: how will be displayed in not-editable form. Default <i>Yes</i> and <i>No</i></li>
+		<li>Render values <code>setValuesRender(String checked, String notChecked)</code>: how will be values printed if checkbox is not editable. Default valuesa are <i>Yes</i> and <i>No</i></li>
+
+		<li>Add own parameter: <code>addParam</code></li>
+		<li>Set title: <code>setTitle</code></li>
+		<li>Default value: <code>setDefaultValue</code></li>
+		<li>Disable input: <code>setDisabled</code></li>
+		<li>Exclude input from submit: <code>setExclude</code></li>
+		<li>Not editable input: <code>setEditable</code></li>
 	</ul>
 </p>
 
 <h3>Radiolist</h3>
 
 <p>
-	Show list of radio. Input only. HTML standard tag
+	Shows list of Radis. Input only
 </p>
 
 <p>
 	<strong>Create input:</strong> <code>RadioList.input(String name, boolean required, Map&lt;String, String&gt; radios)</code>. Radios are value-title map<br>
 </p>
 
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li>Add own parameter: <code>addParam</code></li>
+		<li>Set title: <code>setTitle</code></li>
+		<li>Default value: <code>setDefaultValue</code></li>
+		<li>Disable input: <code>setDisabled</code></li>
+		<li>Exclude input from submit: <code>setExclude</code></li>
+		<li>Not editable input: <code>setEditable</code></li>
+	</ul>
+</p>
+
 <h3>Select</h3>
 
 <p>
-	Select from list of values. Options into select can be loaded from URL. HTML standard tag
+	Select value from list. Options can be loaded to select from URL.
 </p>
 
 <p>
@@ -350,24 +471,32 @@
 
 <p>
 	<ul>
-		<li>Load data from URL:</li>
+		<li>Loading from URL:</li>
 <pre><code class="language-java">
 select.setLoadData(String url, String method);
 // or with request parameters
 select.setLoadData(String url, String method, Map&lt;String, String&gt; params);
 </code></pre>
 
-		<li>If you load data from URL, you can specify which Option Group have to be showed in this select:</li>
+		<li>Options can be sorted to optgroups. Shows options from only one group is possible:</li>
 <pre><code class="language-java">
 select.setShowedOptionGroup(String optionGroup);
 </code></pre>
 
+		<li>Dependency <code>setDepends</code>: see below</li>
+
+		<li>Add own parameter: <code>addParam</code></li>
+		<li>Set title: <code>setTitle</code></li>
+		<li>Default value: <code>setDefaultValue</code></li>
+		<li>Disable input: <code>setDisabled</code></li>
+		<li>Exclude input from submit: <code>setExclude</code></li>
+		<li>Not editable input: <code>setEditable</code></li>
 	</ul>
 </p>
 
-<h4>Load data to select</h4>
+<h4>Load data from URL</h4>
 <p>
-	For dynamic load data to select, TOTI expects this format of result:
+	Loading data from URL required following response format:
 </p>
 
 <pre><code>
@@ -383,21 +512,19 @@ select.setShowedOptionGroup(String optionGroup);
 </code></pre>
 
 <p>
-	<strong>This result can be created using <code>List</code> of <code>Help</code>.</strong>
+	<strong>This result can be created using  <code>List</code> of <code>Help</code>.</strong>
 </p>
 
 <h4>Depends</h4>
 
 <p>
-	If <code>Select</code> ('Target') contains optgroups, it can depends on another <code>Select</code> ('Source'). 
-	If source has no selected value, target display normally (but optgroups in target are replaced with source options title: target.optgroup = sourceOption.id => target display sourceOption.title as optgroup)
-	If source contais value, target display only options without optgroup or with optgroup same as source value.
+	If <code>Select</code> ('Target') contains optgroups, it can depends on another <code>Select</code> ('Source'). If source has no selected value, target display normally (but optgroups in target are replaced with source options title: target.optgroup = sourceOption.id => target display sourceOption.title as optgroup) If source contais value, target display only options without optgroup or with optgroup same as source value.
 </p>
 
 <h3>Option</h3>
 
 <p>
-	Child element of select. HTML standard tag
+	Options in select
 </p>
 
 <p>
@@ -408,8 +535,8 @@ select.setShowedOptionGroup(String optionGroup);
 
 <p>
 	<ul>
-		<li>Option Group <code>setOptGroup</code>: name of Option Group this option belong</li>
-		<li>Disabled <code>setDisabled</code>: change disabled</li>
+		<li>Skupina <code>setOptGroup</code>: název skupiny</li>
+		<li>Neaktivní <code>setDisabled</code></li>
 	</ul>
 </p>
 
@@ -419,17 +546,29 @@ select.setShowedOptionGroup(String optionGroup);
 <h3>Hidden</h3>
 
 <p>
-	Value is hidden. Input only. HTML standard tag
+	Input only
 </p>
 
 <p>
 	<strong>Create input:</strong> <code>Hidden.input(String name)</code> <br>
 </p>
 
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li>Add own parameter: <code>addParam</code></li>
+		<li>Default value: <code>setDefaultValue</code></li>
+		<li>Exclude input from submit: <code>setExclude</code></li>
+		<li>Not editable input: <code>setEditable</code></li>
+	</ul>
+</p>
+
+
 <h3>Color</h3>
 
 <p>
-	Show color picker. Input only. HTML standard tag
+	Color picker. Input only
 </p>
 
 
@@ -437,19 +576,45 @@ select.setShowedOptionGroup(String optionGroup);
 	<strong>Create input:</strong> <code>Color.input(String name, boolean required)</code> <br>
 </p>
 
-<strong>NOTE:</strong>
+<strong>Optional parameters</strong>
+
 <p>
-	This tag not support empty value by default. If <code>required</code> is set to FALSE, TOTI display checkbox with. Checked means send input value, not checked means not send (if checkbox is not checked, input is disabled).
+	<ul>
+		<li>Add own parameter: <code>addParam</code></li>
+		<li>Set title: <code>setTitle</code></li>
+		<li>Default value: <code>setDefaultValue</code></li>
+		<li>Disable input: <code>setDisabled</code></li>
+		<li>Exclude input from submit: <code>setExclude</code></li>
+		<li>Not editable input: <code>setEditable</code></li>
+	</ul>
+</p>
+
+<strong>Note:</strong>
+<p>
+	HTML Color not allows empty value. So if parameter <code>required</code> is set to FALSE, TOTI shows Color with checkbox. If checkbox is checked, TOTI Color value send. Otherwise value is not submitted and Color is disabled.
 </p>
 
 <h3>File</h3>
 
 <p>
-	For uploading file. Input only. HTML standard tag
+	File uploading. Input only
 </p>
 
 <p>
 	<strong>Create input:</strong> <code>File.input(String name, boolean required)</code> <br>
+</p>
+
+<strong>Optional parameters</strong>
+
+<p>
+	<ul>
+		<li>Add own parameter: <code>addParam</code></li>
+		<li>Set title: <code>setTitle</code></li>
+		<li>Default value: <code>setDefaultValue</code></li>
+		<li>Disable input: <code>setDisabled</code></li>
+		<li>Exclude input from submit: <code>setExclude</code></li>
+		<li>Not editable input: <code>setEditable</code></li>
+	</ul>
 </p>
 
 
@@ -458,27 +623,27 @@ select.setShowedOptionGroup(String optionGroup);
 <h3>InputList</h3>
 
 <p>
-	<code>InputList</code> is container for other inputs. These inputs are available on page with name <code>InputListName[nameOfList][inputName]</code> (in TOTI called Map) or <code>InputListName[][inputName]</code> (in TOTI called List). Input only
+	<code>InputList</code> is container for another inputs. These inputs are available on page with name <code>InputListName[inputName]</code> (in TOTI called Map) or <code>InputListName[]</code> (in TOTI called List). Input only
 </p>
 
 <p>
 	<strong>Create input:</strong> <code>InputList.input(String name)</code>. If you wish use list let name empty string (<strong>not null</strong>).<br>
-	Add input to list: <code>inputList.addInput(Input input)</code>
+	<strong>Add input:</strong> <code>inputList.addInput(Input input)</code>
 </p>
 
 <p>
-	Example of usage is <a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/form">here</a> (including form bind).
+	Example is in samples
 </p>
 
 <h3>DynamicList</h3>
 
 <p>
-	In <code>DynamicList</code> you define input. This input appears on page n-times depends on Add/Remove buttons and binding. The inputs are available on page with name <code>DynamicListName[index][inputName]</code>. If you wish bind values to <code>DynamicList</code>, in values is required List on DynamicListName key. Input only
+	<code>DynamicList</code> is also input container. But <code>DynamicList</code> allow add definde input more times at runtime. User control DynamicList with Add and Remove button. If sub-input title contains <i>{i}</i>, this string is replaced with input index in DynamicList context. Input only
 </p>
 
 <p>
 	<strong>Create input:</strong> <code>DynamicList.input(String name)</code> <br>
-	Add input to list: `dynamicList.addInput(Input input);`
+	<strong>Přidání vstupu:</strong> <code>dynamicList.addInput(Input input);<code>
 </p>
 
 <strong>Optional parameters</strong>
@@ -486,11 +651,24 @@ select.setShowedOptionGroup(String optionGroup);
 <p>
 	<ul>
 		<li>Title <code>setTitle</code>: label of input</li>
-		<li>Use Add Button <code>useAddButton</code>: if user can add input</li>
-		<li>Use Remote Button <code>useRemoteButton</code>: if user can remove input</li>
+		<li>Show Add button: <code>useAddButton</code></li>
+		<li>Show Remove button: <code>useRemoteButton</code></li>
+		<li>Load inputs from URL: 
+<pre><code>
+setLoadDat(String url, String method);
+// OR with parameters
+setLoadData(String url, String method, Map&lt;String, String&gt; params);
+</code></pre>
+		 see bellow</li>
 	</ul>
 </p>
 
+<strong>Load input from URL</strong>
+
 <p>
-	Example of usage is <a href="https://github.com/ondrej-nemec/TOTI/tree/master/src/test/java/samples/examples/form">here</a> (including form bind).
+	TOTI makes request on URL. Expected result is in same formaa like Select:load. How many items in resposne, so may inputs on page. If name of input contains <i>{i}</i>, this part is replaced with item parameter <code>title</code>.
+</p>
+
+<p>
+	Example of usage in in samples
 </p>

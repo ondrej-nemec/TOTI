@@ -1,0 +1,222 @@
+<h1>Documenatation of totiJs.js</h1>
+
+<h2>totiTranslations</h2>
+
+<p>List of translated messages. Messages are translated in Java using <code>Translator</code>.</p>
+
+<h2>totiImages</h2>
+
+<p>List of images used in TOTI JS.</p>
+
+<h2>SortedMap</h2>
+<p>Class sorted map acts like list and map at same time. Elements are accessible by key.</p>
+
+<ul>
+	<li><code>put(key, value)</code>: Add value (or rewrite if exits) on given key</li>
+	<li><code>get(key)</code>: Get value by key</li>
+	<li><code>remove(key)</code>: Remove value on given key</li>
+	<li><code>exists(key)</code>: Check if key exists in map</li>
+	<li><code>forEach(callback)</code>: Iterate over all values using given function</li>
+	<li><code>serialize()</code></li>
+	<li><code>SortedMap.deserialze(string)</code>: Create <code>SortedMap</code> from string</li>
+</ul>
+
+<h2>totiUtils</h2>
+
+<ul>
+	<li><code>sleep(ms): Promise</code></li>
+	<li><code>parseUrlToObject(String url): object</code>: get params from url</li>
+	<li><code>parametrizedString(String string, Object params): String</code>: replace variables in string with values '{}'</li>
+	<li><code>execute(function|string callback, array args = [], boolean evaluate = false): Object|void</code>: run callback with given args. Callback can be function, name of JS function or JS code (with eval === true)</li>
+	<li><code>clone(Object object): Object</code></li>
+	<li><code>setCookie: function(name, value, maxAge = null, path = '/') | null</code>: if path is null, current url is used</li>
+	<li><code>printStoredFlash(): void</code>: called after DOMContentLoaded</li>
+	<li><code>replaceElement: function(container, selector, newElement, excludeAttributes = [])</code>: replace element in DOM, old element params are copied to new one</li>
+</ul>
+
+<p>It print all stored flashes on document load</p>
+
+<h2>totiStorage</h2>
+
+<p>Save data in browser <code>localStorage</code></p>
+
+<ul>
+	<li><code>saveVariable(name, value): void</code></li>
+	<li><code>getVariable(String name): Object</code></li>
+	<li><code>removeVariable(String name): void</code></li>
+</ul>
+
+<h2>totiLang</h2>
+
+<p>Requres: totiStorage</p>
+
+<ul>
+	<li><code>changeLanguage(String language): void</code></li>
+	<li><code>getLang(): String</code></li>
+</ul>
+
+<h2>totiAuth</h2>
+
+<p>Requres: totiStorage, totiLoad</p>
+
+<ul>
+	<li><code>getToken(): String|null</code>: returns security token</li>
+	<li><code>logout(String url = null, String method = "post"): void</code>: remove token from memory. If url specified, make request on given URL</li>
+	<li><code>login(String token, Object config = null): void</code>: save security token. Config contains url and method for token refreshing</li>
+	<li><code>startTokenRefresh(): boolean</code>: true started, false not start</li>
+	<li><code>refresh(String url, String method, int expredIn): void</code>: expired is in ms, do not call manualy</li>
+	<li><code>customRefreshHandler</code>: parameter. Expected type is function. It is called after refresh request with response as parameter.</li>
+</ul>
+
+<p>Starts token refreshing</p>
+
+<h2>totiLoad</h2>
+
+<p>Requres: totiStorage, totiLang, totiAuth</p>
+<ul>
+	<li><code>anonymous(url, method, headers = {}, urlData = {}, bodyData = {}): Promise</code>: make request without TOTI request headers</li>
+	<li><code>load(url, method, headers = {}, urlData = {}, bodyData = {}): Promise</code>: make request with TOTI headesr - security token and selected language</li>
+</ul>
+
+<h2>totiDisplay</h2>
+
+<p>Functions in this object can be overrided.</p>
+
+<ul>
+	<li><code>prompt(String message, String defValue = ""): Promise(String)</code></li>
+	<li><code>confirm(String message): Promise(boolean)</code></li>
+	<li><code>alert(String message): void</code></li>
+	<li><code>flash(severity, message, error = null): void</code>: display flash message</li>
+	<li><code>fadeIn(): void</code></li>
+	<li><code>fadeOut(): void</code></li>
+	<li><code>gridTemplate</code>: see Grid section</li>
+	<li><code>formTemplate</code>: see Form section</li>
+</ul>
+
+<h2>totiControl</h2>
+
+<ul>
+	<li><code>label(String forInput, String tille, object params = {}): Element (&lt;label&gt;)</code>: params - all added to label</li>
+	<li><code>button(object attributes, async = true): Element (&lt;button&gt;|&lt;a&gt;)</code>: see inputs.button</li>
+	<li><code>input(object attributes): Element|null</code>: require attribute istype (String,  fe. 'select', 'text', 'number') others are optional - added to input</li>
+	<li><code>inputs: object</code>: internal</li>
+<!--
+_createInput(String object, object attributes): Element
+	_createOptionalInput(String object, object attributes): Element
+	radioList(object attributes): Element (<div>)
+	textarea(object attributes): Element
+	datetime(object attributes): Element - jen pokud datetime-local není podporován nebo u gridu
+
+	/* attributes (all optional):
+	* value|title: String - inner text
+	* tooltip: String - hover text
+	* action: String|object|function - onClick
+		* string - call function
+		* function - see getAction
+		* object - see getAction
+	* class: String|list
+	* icon: String (create <i> and set class)
+	* other added
+	*/
+	button(Element button, object attributes): Element (button)
+
+	/*
+	* list of:
+		* value: String
+		* title: String
+		* disabled (optional): boolean
+		* optgroup (optional): String
+	*/
+	option(object attributes): Element(<option>)
+
+	/*
+	* opions: List of object, see option
+	* load (optional): List of 
+		* url: String
+		* method: String
+		* params: object
+	* depends
+	* optionGroup (optional): String
+	*/
+	select(object attributes): Element (<select>)
+-->
+	<li><code>parseValue(String type, String value): String</code>: display date and time to local string</li>
+	<li>
+		<code>getAction(object settings): function</code>
+		<ul>
+			<li><code>submitConfirmation: function|string</code>: optional</li>
+			<li><code>href: String</code></li>
+			<li><code>method: String</code></li>
+			<li><code>params: object</code></li>
+			<li><code>onSuccess: function|string </code>: optional</li>
+			<li><code>onFailure: function|string</code>: optional</li>
+		</ul>
+	</li>
+</ul>
+
+<h2>Form</h2>
+
+<ul>
+	<li><code>construct(config)</code>: config comes from TOTI Form object</li>
+	<li><code>render(selector, formUnique, customTemplate = null): void</code>: selector point to existing HTML element, formUnique is string and customTemplate contains some or all methods from template</li>
+	<li><code>addInput(field, parent = null): void</code></li>
+	<li><code>addDynamicField(name): void</code></li>
+	<li><code>removeDynamicField(name, index): void</code></li>
+	<li><code>submit(srcElement): false</code></li>
+	<li><code>bind(bindConfig, formUnique, container): void</code></li>
+	<li><code>_bind(values): void</code></li>
+</ul>
+
+<h3>Form template</h3>
+
+<ul>
+	<li><code>getContainer(selector, formUnique, editable): Element</code></li>
+	<li><code>setFormAttribute(formUnique, container, name, value): void</code></li>
+	<li><code>addInput(formUnique, container, name, label, input, removeFunc): void</code></li>
+	<li><code>addHidden(formUnique, container, input, removeFunc): void</code></li>
+	<li><code>addControl(formUnique, container, name, button, removeFunc): void</code></li>
+	<li><code>addRow(formUnique, container, name, originType, label, value): void</code></li>
+	<li><code>addOptionRow(formUnique, container, name, originType, label, options, val): void</code></li>
+	<li><code>addPromisedRow(formUnique, container, name, originType, label, promise): void</code></li>
+	<li><code>addToContainer(formUnique, container, element): void</code></li>
+	<li><code>getDynamicContainer(formUnique, container, name, title, addItem): Element</code></li>
+	<li><code>getDynamicRow(formUnique, container, dynamicContainer, name, remove, position, templateName): Element</code></li>
+	<li><code>createErrorList(errors): Element</code></li>
+</ul>
+
+<h2>Grid</h2>
+
+<ul>
+	<li><code>construct(config)</code>: config comes from TOTI Grid object</li>
+	<li><code>render(selector, gridUnique, customTemplate = null): void</code>: selector point to existing HTML element, gridUnique is string and customTemplate contains some or all methods from template</li>
+	<li><code>sortBy(name, direction, refresh = true): void</code></li>
+	<li><code>nextSort(name, refresh = true): void</code></li>
+	<li><code>filterBy(name, value, refresh = true): void</code></li>
+	<li><code>setPageIndex(pageIndex, refresh = true): void</code></li>
+	<li><code>addNextPage(refresh = true): void</code></li>
+	<li><code>setPageSize(pageSize, refresh = true): void</code></li>
+	<li><code>startRefresh(): void</code></li>
+	<li><code>stopRefresh(): void</code></li>
+	<li><code>getSelectedRow(): Element</code></li>
+	<li><code>refreshData(clearPrevious = true)</code></li>
+</ul>
+
+<h3>Grid template</h3>
+
+<ul>
+	<li><code>getContainer(parentSelector, gridUnique): Element</code></li>
+	<li><code>setTitle(gridUnique, container, name, title): void</code></li>
+	<li><code>addSorting(gridUnique, container, name, grid, defautlValue): void</code></li>
+	<li><code>addFilter(gridUnique, container, name, grid, input): void</code></li>
+	<li><code>addCheckbox(gridUnique, container, checkbox): void</code></li>
+	<li><code>addButtons(gridUnique, container, name, buttons): void</code></li>
+	<li><code>addPageSize(gridUnique, container, sizes, selectedSize, grid): void</code></li>
+	<li><code>setCaption(gridUnique, container, displayed, total, text): void</code></li>
+	<li><code>clearBody(gridUnique, container): void</code></li>
+	<li><code>addRow(gridUnique, container): void</code></li>
+	<li><code>setRowSelected(gridUnique, container, row, values): values|null</code></li>
+	<li><code>addCell(gridUnique, container, rowContainer, name, value, mode): void</code> Mode: 0-value, 1-checkbox, 2-list of buttons</li>
+	<li><code>addActions(gridUnique, container, actions, onSelect): void</code></li>
+	<li><code>addPageButton(gridUnique, container, title, isActual, onClick): void</code></li>
+	<li><code>clearPageButtons(gridUnique, container): void</code></li>
+</ul>

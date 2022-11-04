@@ -20,7 +20,7 @@ class SortedMap {
 	}
 
 	/**
-	* Remove value by key
+	* Get value by key
 	* @param key mixed
 	* @return value on given key or null if not exists
 	*/
