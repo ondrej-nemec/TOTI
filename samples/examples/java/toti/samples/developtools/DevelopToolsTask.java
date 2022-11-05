@@ -1,4 +1,4 @@
-package toti.samples.develptools;
+package toti.samples.developtools;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

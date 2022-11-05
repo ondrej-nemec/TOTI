@@ -1,6 +1,5 @@
-package toti.samples.develptools;
+package toti.samples.developtools;
 
-import static org.mockito.Mockito.mock;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -12,11 +11,8 @@ import org.apache.logging.log4j.Logger;
 import ji.common.functions.Env;
 import ji.common.structures.MapInit;
 import ji.database.Database;
-import ji.database.DatabaseConfig;
 import ji.querybuilder.enums.Join;
 import ji.translator.Translator;
-import toti.HttpServer;
-import toti.HttpServerFactory;
 import toti.Module;
 import toti.annotations.Action;
 import toti.annotations.Controller;
@@ -104,61 +100,19 @@ public class DevelopToolsExample implements Module {
 		return Arrays.asList(new DevelopToolsTask(translator, database));
 	}
 
-	public static void main(String[] args) {
-		List<Module> modules = Arrays.asList(new DevelopToolsExample());
-		try {
-			Env env = new Env("samples/examples/app.properties");
-			HttpServer server = new HttpServerFactory()
-				.setPort(8080)
-				// uncomment for test response with disabled develop view
-				//.setDevelopIpAdresses(Arrays.asList()) // no develop ips
-				.setUseProfiler(true)
-				.get(modules, env, new Database(
-					new DatabaseConfig(
-						env.getString("db.type"),
-						env.getString("db.url"), 
-						false, 
-						env.getString("db.schema"), 
-						env.getString("db.username"), 
-						env.getString("db.password"),
-						Arrays.asList(),
-						1
-					),
-					mock(Logger.class) // real logger is not required
-				));
-			
-			/* start */
-			server.start();
-	
-			// sleep for 30min before automatic close
-			try { Thread.sleep(30 * 60 * 1000); } catch (InterruptedException e) { e.printStackTrace(); }
-			
-			/* stop */
-			server.stop();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		System.exit(0);
-	}
-
 	@Override
 	public String getName() {
-		return "examples";
+		return "tools-examples";
 	}
 
 	@Override
-	public String getTemplatesPath() {
-		return "samples/examples/developtools";
-	}
-	
-	@Override
 	public String getControllersPath() {
-		return "samples/examples/developtools";
+		return "toti/samples/developtools";
 	}
 	
 	@Override
-	public String getTranslationPath() {
-		return "samples/examples/developtools";
+	public String getTemplatesPath() {
+		return "samples/examples/templates/developtools";
 	}
 
 }
