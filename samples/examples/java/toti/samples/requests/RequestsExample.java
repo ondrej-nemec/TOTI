@@ -84,10 +84,10 @@ public class RequestsExample implements Module  {
 	 * <strong>THIS IS NOT WORKING CORRECTLY</strong>
 	 * @return http://localhost:8080/examples-requests/requests/mapInList?list[][name]=smith.john&list[][name]=doe.jane&list[][name]=my.name
 	 */
-	@Action("mapInList")
+	/*@Action("mapInList")
 	public Response mapInList(@Param("list") List<Object> mapInList) {
 		return Response.getTemplate("/response.jsp", new MapInit<String, Object>("params", mapInList).toMap());
-	}
+	}*/
 	
 	/**
 	 * Receive URL list in map
