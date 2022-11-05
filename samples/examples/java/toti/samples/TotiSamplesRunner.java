@@ -19,6 +19,7 @@ import toti.Application;
 import toti.HttpServer;
 import toti.HttpServerFactory;
 import toti.Module;
+import toti.samples.developtools.DevelopToolsExample;
 import toti.samples.exceptions.ExceptionsExample;
 import toti.samples.form.FormExample;
 import toti.samples.grid.GridExample;
@@ -42,6 +43,7 @@ public class TotiSamplesRunner {
 			return null;
 		};
 		TotiSamplesRunner runner = new TotiSamplesRunner(Arrays.asList(
+			new DevelopToolsExample(),
 			new ExceptionsExample(),
 			new FormExample(),
 			new GridExample(),
