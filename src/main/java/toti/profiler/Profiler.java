@@ -19,9 +19,10 @@ import ji.socketCommunication.http.profiler.HttpServerProfiler;
 import ji.socketCommunication.http.profiler.HttpServerProfilerEvent;
 import toti.response.Response;
 import toti.security.Identity;
+import toti.templating.TemplateProfiler;
 import toti.url.MappedUrl;
 
-public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProfiler,  Jsonable {
+public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProfiler, TemplateProfiler, Jsonable {
 
 	private final Map<Object, ProfilerLog> logByThread = new HashMap<>();
 	// private final List<Object> notPageIds = new LinkedList<>();
@@ -111,6 +112,15 @@ public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProf
 	public void missingLocale(String locale) {
 		log((log)->{
 			log.missingLocale(locale);
+		});
+	}
+	
+	/*******************************/
+
+	@Override
+	public void logGetTemplate(String module, String filename) {
+		log((log)->{
+			log.logTemplate(module, filename);
 		});
 	}
 	

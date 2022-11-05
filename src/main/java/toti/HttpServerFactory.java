@@ -166,6 +166,7 @@ public class HttpServerFactory {
 			Database.PROFILER = profiler;
 			RestApiServer.PROFILER = profiler;
 			LanguageSettings.PROFILER = profiler;
+			TemplateFactory.PROFILER = profiler;
 		}
 		return profiler;
 	}

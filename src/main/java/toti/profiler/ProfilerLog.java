@@ -38,6 +38,8 @@ public class ProfilerLog implements Jsonable{
 	
 	private List<TransLog> transLog = new LinkedList<>();
 	
+	private List<Tuple2<String, String>> templates = new LinkedList<>();
+	
 	public ProfilerLog(long threadId, String threadName) {
 		this.threadId = threadId;
 		this.threadName = threadName;
@@ -112,6 +114,10 @@ public class ProfilerLog implements Jsonable{
 		return threadId;
 	}
 	
+	public void logTemplate(String module, String template) {
+		templates.add(new Tuple2<>(module, template));
+	}
+	
 	@Override
 	public Object toJson() {
 		Map<String, Object> requestInfo = new HashMap<>();
@@ -126,6 +132,7 @@ public class ProfilerLog implements Jsonable{
 			requestInfo.put("BodyParams", request.getBodyInParameters());
 			requestInfo.put("UrlParams", request.getUrlParameters());
 			requestInfo.put("Body", request.getBody());
+			requestInfo.put("templates", templates);
 			/********/
 			if (mapped != null) {
 				Map<String, Object> controller = new HashMap<>();
