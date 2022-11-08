@@ -31,11 +31,11 @@ sourceSets {
     test {
         java {
             srcDir 'src/test/java'
-            srcDir 'samples/examples/java'
+            srcDir 'examples/samples/java'
         }
         resources {
             srcDir 'src/test/resources'
-            srcDir 'samples/examples/resources'
+            srcDir 'examples/samples/resources'
         }
     }
 }
