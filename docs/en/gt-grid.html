@@ -236,3 +236,179 @@ new Validator(true)
 		<li>On failure: <code>setOnFailure(methodName)</code> - name of JS function called on failure.</li>
 	</ul>
 </p>
+
+<h2>Custom display</h2>
+
+<p>
+	Custom display allow change HTML inside grid. In template, use paired <code>control</code> tag for print grid. Use variable name as control name.
+</p>
+
+<p>
+	Custom HTML has to contains and can contains elements for controlling render: TOTI tag <code>grid</code> and elements with special attributes.
+</p>
+
+<h3>Grid caption</h3>
+
+<strong>Optional</strong>
+
+<p>Element with <code>toti-grid="caption"</code> attribute.</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-html">
+&lt;div toti-grid="caption"&gt;&lt;/div&gt;
+</code></pre>
+
+<h3>Pagging buttons</h3>
+
+<strong>Optional</strong>
+
+<p>Where the pagging buttons will be. Element with <code>toti-grid="page-buttons"</code> attribute.</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-html">
+&lt;div toti-grid="page-buttons"&gt;&lt;/&gt;
+</code></pre>
+
+<h4>Button template</h4>
+
+<p>Pagging button required child element template. Template contains one button. Place for button text is element with <code>toti-grid-page-button="title"</code> attribute.</p>
+
+<p>
+	Template is required, title element is optional.
+</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-html">
+&lt;div toti-grid="page-buttons"&gt;
+	&lt;template&gt;
+		&lt;button toti-grid-page-button="title"&gt;&lt;/button&gt;
+	&lt;/template&gt;
+&lt;/div&gt;
+</code></pre>
+
+<h3>Page size</h3>
+
+<strong>Optional</strong>
+
+<p>Select with <code>toti-grid="page-size"</code> attribute. Options are available page sizes.</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-html">
+&lt;select toti-grid="page-size"&gt;&lt;/select&gt;
+</code></pre>
+
+<h3>Selected row background color</h3>
+
+<strong>Optional</strong>
+
+<p>
+	You can set selected row background color by adding <code>toti-selected-row-color</code> parameter to <code>control</code> tag. Value of parameter is CSS color definition (<code>red</code>, <code>#12F4DA</code>).
+</p>
+
+<h3>Column title</h3>
+
+<strong>Optional</strong>
+
+<p>Element with <code>toti-grid-title</code> attribute. Value is name of column</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-html">
+&lt;div toti-grid-title="username"&gt;&lt;/div&gt;
+</code></pre>
+
+<h3>Sorting</h3>
+
+<strong>Optional</strong>
+
+<p>Element with <code>toti-grid-sort</code> attribute. Value is name of JS function. Input parameters are: source element, sort order (null: no sort, false: asc, true: desc).</p>
+<p>Also <code>name</code> parameter is required. Value is column name.</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-html">
+&lt;div toti-grid-sort="changeSortMark" name="username"&gt;&lt;/div&gt;
+</code></pre>
+
+<strong>And later (or early)</strong>
+<pre><code class="language-html">
+&lt;script&gt;
+function changeSortMark(srcElement, sortOrder) {
+	// fe. change sorting icons
+}
+&lt;/script&gt;
+</code></pre>
+
+<h3>Place for rows</h3>
+
+<strong>Required</strong>
+
+<p>Place where rows will be rendered. Element with <code>toti-grid="rows"</code> attribute.</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-html">
+&lt;div toti-grid="rows" &gt;&lt;/div&gt;
+</code></pre>
+
+<h4>Row template</h4>
+
+<p>
+	Row template is required. The template is child of rows place element. Can contains elements with <code>toti-grid-cell</code> where value is column name. The elements are placeholders for row values. Placeholder for row buttons is also with attribute <code>toti-grid-cell</code>.
+</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-html">
+&lt;div toti-grid="rows"&gt;
+	&lt;template&gt;
+		&lt;div toti-grid-cell="username"&gt;&lt;/div&gt;
+	&lt;/template&gt;
+&lt;/div&gt;
+</code></pre>
+
+<h3>Filter</h3>
+
+<strong>Optional</strong>
+
+<p>
+	TOTI <code>grid</code> tag with <code>filter</code> attribute where value is column name. All other attributes will be give to final HTML element.
+</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-html">
+&lt;grid filter="username" /&gt;
+</code></pre>
+
+<h3>Global buttons</h3>
+
+<strong>Optional</strong>
+
+<p>
+	TOTI <code>grid</code> tag with <code>buttons</code> attribute where value is column name. All other attributes will be give to final HTML element.
+</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-html">
+&lt;grid buttons="username" /&gt;
+</code></pre>
+
+<h3>Checkbox</h3>
+
+<strong>Optional</strong>
+
+<p>
+	TOTI <code>grid</code> tag with <code>checkbox</code> attribute where value is column name. All other attributes will be give to final HTML element. For main checkbox in filters and also for row checkbox.
+</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-html">
+&lt;grid checkbox="username" /&gt;
+</code></pre>
