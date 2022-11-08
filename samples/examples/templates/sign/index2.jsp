@@ -7,7 +7,7 @@
 
 	<h1>Default redirect for sync login if no other option</h1>
 	
-	<a t:href="samples.examples.sign.SignExample:index">Index</a>
+	<a t:href="toti.samples.sign.SignExample:index">Index</a>
 
 </body>
 </html>

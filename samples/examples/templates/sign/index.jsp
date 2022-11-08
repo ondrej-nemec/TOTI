@@ -7,8 +7,8 @@
 
 	<h1>Just check if user is logged</h1>
 	
-	<button id="asyncLogout" t:href='samples.examples.sign.SignExample:asyncLogout'>Logout async</button> <br>
-	<a t:href="samples.examples.sign.SignExample:syncLogout"><button>Logout sync</button></a>
+	<button id="asyncLogout" t:href='toti.samples.sign.SignExample:asyncLogout'>Logout async</button> <br>
+	<a t:href="toti.samples.sign.SignExample:syncLogout"><button>Logout sync</button></a>
 
 	<p>Identity variable: ${totiIdentity.isPresent()}</p>
 	
