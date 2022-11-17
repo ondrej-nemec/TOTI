@@ -12,7 +12,7 @@ public class EdgeDevicesControl {
 		List<Module> modules = Arrays.asList(
 			new EdgeControlModule()
 		);
-		Application.APP_CONFIG_FILE = "samples/tutorial1/app.properties";
+		Application.APP_CONFIG_FILE = "examples/tutorial1/resources/conf/app.properties";
 		try {
 			Application app = new Application(modules);
 			app.start();

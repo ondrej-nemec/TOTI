@@ -38,14 +38,14 @@ public class SignPageController {
 		});
 		form.addInput(
 			Select.input("username", true, userOptions)
-			.setTitle(translator.translate("mesasges.sign.username"))
+			.setTitle(translator.translate("messages.sign.username"))
 		);
 		form.addInput(
 			Password.input("password", true)
-			.setTitle(translator.translate("mesasges.sign.password"))
+			.setTitle(translator.translate("messages.sign.password"))
 		);
 		form.addInput(
-			Submit.create(translator.translate("mesasges.sign.login"), "login")
+			Submit.create(translator.translate("messages.sign.login"), "login")
 			.setOnSuccess("setLogin")
 			.setRedirect(
 				backlink == null ? Link.get().create(WelcomePageController.class, c->c.welcomePage()) : backlink

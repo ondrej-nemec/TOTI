@@ -1,5 +1,6 @@
 package toti.tutorial1.web.api;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import ji.common.structures.MapInit;
@@ -43,7 +44,7 @@ public class SignApiController {
 				return Response.getJson(
 					StatusCode.BAD_REQUEST, 
 					new MapInit<>()
-					.append("form", translator.translate("messages.sign.invalid-credentials"))
+					.append("form", Arrays.asList(translator.translate("messages.sign.invalid-credentials")))
 					.toMap()
 				);
 			}

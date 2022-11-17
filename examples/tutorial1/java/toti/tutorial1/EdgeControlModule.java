@@ -42,22 +42,22 @@ public class EdgeControlModule implements Module {
 	
 	@Override
 	public String getName() {
-		return "main";
+		return "";
 	}
 
 	@Override
 	public String getControllersPath() {
-		return "samples/tutorial1/web";
+		return "toti/tutorial1/web";
 	}
 	
 	@Override
 	public String getTemplatesPath() {
-		return "samples/tutorial1/resources/jsp";
+		return "examples/tutorial1/templates/jsp";
 	}
 	
 	@Override
 	public String getTranslationPath() {
-		return "samples/tutorial1/resources";
+		return "translations";
 	}
 
 }
