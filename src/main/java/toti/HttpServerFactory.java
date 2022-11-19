@@ -115,7 +115,8 @@ public class HttpServerFactory {
 			LoadUrls.loadUrlMap(mapping, module, router, register);
 			module.addRoutes(router);
 		};
-		AuthenticationCache sessionCache = new AuthenticationCache(tempPath, true, logger);
+		// file session save is disabled - maybe enable hibrid saving - user in memory, some user data on disk
+		AuthenticationCache sessionCache = new AuthenticationCache(tempPath, false, logger);
 		ResponseFactory response = new ResponseFactory(
 				responseHeaders,
 				resourcesPath,

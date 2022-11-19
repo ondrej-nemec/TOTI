@@ -23,11 +23,13 @@ public class AuthenticationCache {
 	class Token {
 		long expired;
 		String csrfToken;
+		User user;
 		
 		public Token() {}
-		public Token(long expired, String csrf) {
+		public Token(long expired, String csrf, User user) {
 			this.expired = expired;
 			this.csrfToken = csrf;
+			this.user = user;
 		}
 		@Override
 		public String toString() {
@@ -94,6 +96,9 @@ public class AuthenticationCache {
 
 	public void delete(String id) {
 		activeTokens.remove(id);
+		if (!useCache) {
+			return;
+		}
 		try {
 			File file = new File(getFileName(id));
 			if (file.exists()) {
@@ -121,7 +126,7 @@ public class AuthenticationCache {
 	
 	public void save(String id, Long expirated, User user, String csrfToken) throws IOException {
 	//	refresh(id, expirated);
-		activeTokens.put(id, new Token(expirated, csrfToken));
+		activeTokens.put(id, new Token(expirated, csrfToken, user));
 		refresh(id, user);
 	}
 	
@@ -150,14 +155,14 @@ public class AuthenticationCache {
 		if (!activeTokens.containsKey(id)) {
 			return null;
 		}
-		if (!useCache) {
-			return null;
+		if (useCache) {
+			try (FileInputStream fileInputStream = new FileInputStream(getFileName(id));
+					ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+					) {
+				return (User) objectInputStream.readObject();
+			}
 		}
-		try (FileInputStream fileInputStream = new FileInputStream(getFileName(id));
-				ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-				) {
-			return (User) objectInputStream.readObject();
-		}
+		return activeTokens.get(id).user;
 	}
 	
 	private String getFileName(String id) {
