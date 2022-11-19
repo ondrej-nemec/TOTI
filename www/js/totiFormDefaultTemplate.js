@@ -241,5 +241,8 @@ var totiFormDefaultTemplate = {
 			ol.appendChild(li);
 		});
 		return ol;
-	}
+	},
+	removeUnusedElement: function(formUnique, container, name) {
+        /* not used */
+    }
 };

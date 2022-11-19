@@ -176,6 +176,7 @@ class TotiForm {
 				case "reset":
 				case "password":
 					/* ignored */
+					this.template.removeUnusedElement(this.formUnique, container, field.name);
 					break;
 				case "file":
 					/* IMPROVE: display value */

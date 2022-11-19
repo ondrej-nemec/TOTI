@@ -168,6 +168,16 @@ var totiFormCustomTemplate = {
 			ol.appendChild(li);
 		});
 		return ol;
-	}
-	
+	},
+	removeUnusedElement: function(formUnique, container, name) {
+         function removeElement(id) {
+              var element = container.querySelector('[toti-form-' + id + '="' + name + '"]');
+              if (element !== null) {
+                  element.remove();
+              }
+         }
+         removeElement('input');
+         removeElement('label');
+         removeElement('error');
+     }
 };
