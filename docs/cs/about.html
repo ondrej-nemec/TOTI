@@ -70,7 +70,7 @@ dependencies {
 </code></pre>
 
 <p>
-	Pokud chcete použít šablonovací system v produkci, je nutné přidat <code>tools.jar</code> do buildpath. V Javě 8 se to dělá:
+	Pokud chcete použít šablonovací system v produkci, je nutné přidat compilovací nástroj. V Java 9 a víc potřebujete modul <code>java.compiler</code>. V Javě 8 potřebujete přidat <code>tools.jar</code> do buildpath:
 </p>
 
 <pre><code>
