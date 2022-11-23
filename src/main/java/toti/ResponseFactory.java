@@ -222,6 +222,17 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 		}
 		// files
 		File file = new File(resourcesDir + url);
+		try {
+			File resDir = new File(resourcesDir);
+			if (!file.getCanonicalFile().toString().startsWith(resDir.getCanonicalFile().toString())) {
+				throw new ServerException(StatusCode.NOT_FOUND, String.format("URL not fouded: %s (%s)", url, request.getMethod()));
+			}
+		} catch (IOException e) {
+			logger.warn("Cannot validate URL: " + url, e);
+			throw new ServerException(StatusCode.NOT_FOUND, String.format("URL not fouded: %s (%s)", url, request.getMethod()));
+		}
+		
+		
 		if (!file.exists() || (file.isDirectory() && !dirResponseAllowed)) {
 			if (file.isDirectory() && dirDefaultFile != null && new File(resourcesDir + url + "/" + dirDefaultFile).exists()) {
                 return Response.getFile(resourcesDir + url + "/" + dirDefaultFile)
