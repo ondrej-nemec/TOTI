@@ -191,7 +191,7 @@ public class RequestsExample implements Module  {
 
 	@Override
 	public String getName() {
-		return "examples";
+		return "examples-requests";
 	}
 
 	@Override
