@@ -8,6 +8,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
@@ -46,6 +47,7 @@ public class TagsEndToEndTest {
 			@Override public void setLocale(Locale locale) {}
 			@Override public Locale getLocale(String locale) { return mock(Locale.class); }
 			@Override public Locale getLocale() { return mock(Locale.class); }
+			@Override public Set<String> getSupportedLocales() { return null; }
 		};
 		Map<String, Object> variables = new MapInit<String, Object>()
 				.append("totiIdentity", identity)

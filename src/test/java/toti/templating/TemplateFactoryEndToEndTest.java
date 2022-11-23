@@ -2,6 +2,7 @@ package toti.templating;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import ji.files.text.Text;
 import ji.files.text.basic.WriteText;
@@ -54,6 +55,7 @@ public class TemplateFactoryEndToEndTest {
 				// TODO Auto-generated method stub
 				return null;
 			}
+			@Override public Set<String> getSupportedLocales() { return null; }
 		};
 		Authorizator authorizator = new Authorizator(TotiLoggerFactory.get().apply("temlateTest"));
 		String html = template.create(factory, variables, translator, authorizator, null);

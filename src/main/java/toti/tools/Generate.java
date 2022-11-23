@@ -29,7 +29,7 @@ import toti.validation.Validator;
 public class Generate {
 	
 	public Response getPage() {
-		Form form = new Form("/toti/generate/do", true).setAfterPrint("initControl")
+		Form form = new Form("/toti/generate/do", true).setAfterRender("initControl")
 		.setFormMethod("post")
 		.addInput(
 			InputList.input("api").addInput(
@@ -273,6 +273,7 @@ public class Generate {
 			@Override public void setLocale(Locale locale) {}
 			@Override public Locale getLocale(String locale) { return null; }
 			@Override public Locale getLocale() { return null; }
+			@Override public Set<String> getSupportedLocales() { return null; }
 		};
 	}
 	
