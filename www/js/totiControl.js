@@ -1,4 +1,4 @@
-/* TOTI Control version 1.0.0 */
+/* TOTI Control version 1.0.1 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -98,6 +98,7 @@ var totiControl = {
 			container.set = function() {
 				checkbox.checked = true;
 				input.removeAttribute("disabled");
+				input.removeAttribute("exclude");
 				input.value = container.value;
 			};
 			input.onchange = function() {
