@@ -14,7 +14,7 @@ public class ItemRules {
 
 	public static ItemRules defaultRule() {
 		return new ItemRules("", false, (t, param)->t.translate(
-			"toti.validation.default-rule-not-match",
+			"toti.validation.parameter-not-match-default-rule",
 			new MapInit<String, Object>().append("parameter", param).toMap()
 		));
 	}

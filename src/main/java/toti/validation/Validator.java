@@ -44,8 +44,8 @@ public class Validator {
 	
 	public Validator(ItemRules defaultRule) {
 		this(false, Optional.of(defaultRule), (trans, params)->trans.translate(
-			"toti.validation.parameters-not-match-default-rule",
-			new MapInit<String, Object>().append("parameters", params).toMap()
+			"toti.validation.parameter-not-match-default-rule",
+			new MapInit<String, Object>().append("parameter", params).toMap()
 		)); // "Parameters not match default rule: " + params
 	}
 	
