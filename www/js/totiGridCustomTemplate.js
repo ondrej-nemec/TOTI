@@ -81,7 +81,6 @@ var totiGridCustomTemplate = {
 		if (color === null) {
 			return null;
 		}
-		console.log(container);
 		if (row.classList.contains('toti-grid-selected')) {
 			row.style['background-color'] = null;
 			row.classList.remove('toti-grid-selected');
