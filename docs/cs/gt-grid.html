@@ -38,6 +38,7 @@ Grid grid = new Grid("/load/data/url", "get");
 		<li>Loading button: <code>setUseLoadButton(use)</code> - if use loading button. Default false. Loading button add more items on page, but not remove previous.</li>
 		<li>Row renderer: <code>setOnRowRenderer(rowRenderer)</code> - name of JS function. If specified, call custom JS function. To function are passed two parameters: row container and object of all values.</li>
 		<li>Row selection: <code>useRowSelection(true|false)</code> - if use can select row. Selected row contains class 'row-selected'.</li>
+		<li>Refresh interval: <code>setRefreshInterval(long refreshInterval)</code> - start refreshing data in given interval. 0 or less means no interval. Default is 0.</li>
 	</ul>
 </p>
 

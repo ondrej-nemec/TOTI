@@ -24,7 +24,7 @@ public class Grid implements Control {
 	private int pagesButtonCount = 5; // required, 0 means no buttons
 	private boolean useLoadButton = false;
 	
-	private Long refreshInterval = 0L; // in ms, 0 means no refresh
+	private long refreshInterval = 0L; // in ms, 0 means no refresh
 	private String rowRenderer = null;
 	
 	public Grid(String loadDataUrl, String loadDataMethod) {
@@ -80,6 +80,11 @@ public class Grid implements Control {
 		actions.add(action);
 		return this;
 	}
+	
+	public Grid setRefreshInterval(long refreshInterval) {
+        this.refreshInterval = refreshInterval;
+        return this;
+    }
 
 	@Override
 	public Map<String, Object> toJson() {
