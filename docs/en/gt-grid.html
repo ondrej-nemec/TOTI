@@ -39,6 +39,10 @@ Grid grid = new Grid("/load/data/url", "get");
 		<li>Row renderer: <code>setOnRowRenderer(rowRenderer)</code> - name of JS function. If specified, call custom JS function. To function are passed two parameters: row container and object of all values.</li>
 		<li>Row selection: <code>useRowSelection(true|false)</code> - if use can select row. Selected row contains class 'row-selected'.</li>
 		<li>Refresh interval: <code>setRefreshInterval(long refreshInterval)</code> - start refreshing data in given interval. 0 or less means no interval. Default is 0.</li>
+		<li>Before render: <code>setBeforeRender(methodName)</code> - name of JS function called before grid is printed (with instance of JS class TotiGrid as parameter). Default is null and means no call.</li>
+		<li>After render: <code>setAfterRender(methodName)</code> - name of JS function called after grid is printed(with instance of JS class TotiGrid as parameter). Default is null and means no call.</li>
+		<li>Before bind: <code>setBeforeBind(methodName)</code> - name of JS function called (with binding values and instance of JS class TotiGrid as parameters) before data bind (called repeatedly with every data refresh). Default is null and means no call.</li>
+		<li>After bind: <code>setAfterBind(methodName)</code> - name of JS function called (with binding values and instance of JS class TotiGrid as parameters) after data bind (called repeatedly with every data refresh). Default is null and means no call.</li>
 	</ul>
 </p>
 

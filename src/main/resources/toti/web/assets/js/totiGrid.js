@@ -1,4 +1,4 @@
-/* TOTI Grid version 1.0.0 */
+/* TOTI Grid version 1.0.1 */
 class TotiGrid {
 
 	cookieName = "grid-cache";
@@ -19,6 +19,10 @@ class TotiGrid {
 		var template = this.template = this.getTemplate(selector, customTemplate);
 		var container = this.container = template.getContainer(selector, gridUnique);
 		this.gridUnique = gridUnique;
+
+		if (grid.config.hasOwnProperty("beforeRender")) {
+            totiUtils.execute(grid.config.beforeRender, [this]);
+        }
 
 		/* get grid selection from url and cookie */
 		var urlCache = decodeURIComponent(window.location.search.substring(1));
@@ -156,6 +160,9 @@ class TotiGrid {
 			this.setPageIndex(search.pageIndex, false);
 		}
 
+		if (grid.config.hasOwnProperty("afterRender")) {
+            totiUtils.execute(grid.config.afterRender, [this]);
+        }
         Promise.all(promises).then((values)=>{
 			totiDisplay.fadeOut();
 			this.refreshData();
@@ -315,6 +322,9 @@ class TotiGrid {
 				totiDisplay.fadeOut();
 				return;
 			}
+			if (grid.config.hasOwnProperty("beforeBind")) {
+	            totiUtils.execute(grid.config.beforeBind, [response.data, grid]);
+	        }
 			/* save state */
 			window.history.pushState({"html":window.location.href},"", "?" + new URLSearchParams(selectionParameters).toString());
 			totiUtils.setCookie(grid.cookieName, JSON.stringify(selectionParameters), grid.cookieAge, null);
@@ -454,6 +464,9 @@ class TotiGrid {
 		    		grid.addNextPage();
 		    	});
 		    }
+			if (grid.config.hasOwnProperty("beforeBind")) {
+	            totiUtils.execute(grid.config.beforeBind, [response.data, grid]);
+	        }
 			totiDisplay.fadeOut();
 		})
 		.catch(function(xhr) {

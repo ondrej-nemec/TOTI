@@ -27,6 +27,11 @@ public class Grid implements Control {
 	private long refreshInterval = 0L; // in ms, 0 means no refresh
 	private String rowRenderer = null;
 	
+	private String beforeRender = null;
+	private String afterRender = null;
+	private String beforeBind = null;
+	private String afterBind = null;
+	
 	public Grid(String loadDataUrl, String loadDataMethod) {
 		this.loadDataMethod = loadDataMethod;
 		this.loadDataUrl = loadDataUrl;
@@ -85,6 +90,26 @@ public class Grid implements Control {
         this.refreshInterval = refreshInterval;
         return this;
     }
+	
+	public Grid setBeforeRender(String beforeRender) {
+		this.beforeRender = beforeRender;
+        return this;
+	}
+	
+	public Grid setAfterRender(String afterRender) {
+		this.afterRender = afterRender;
+        return this;
+	}
+	
+	public Grid setBeforeBind(String beforeBind) {
+		this.beforeBind = beforeBind;
+        return this;
+	}
+	
+	public Grid setAfterBind(String afterBind) {
+		this.afterBind = afterBind;
+        return this;
+	}
 
 	@Override
 	public Map<String, Object> toJson() {
@@ -107,6 +132,19 @@ public class Grid implements Control {
 		json.put("paggingButtonsCount", pagesButtonCount);
 		json.put("useLoadButton", useLoadButton);
 		json.put("refresh", refreshInterval);
+		
+		if (beforeRender != null) {
+			json.put("beforeRender", beforeRender);
+		}
+		if (afterRender != null) {
+			json.put("afterRender", afterRender);
+		}
+		if (beforeBind != null) {
+			json.put("beforeBind", beforeBind);
+		}
+		if (afterBind != null) {
+			json.put("afterBind", afterBind);
+		}
 		
 		json.put("actions", actions);
 		return json;
