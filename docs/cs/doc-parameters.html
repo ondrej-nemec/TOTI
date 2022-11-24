@@ -1,6 +1,9 @@
 <h1>Parametry v šablonách</h1>
 
-<h2>HREF</h2>
+<h2>Vytvoření odkazu</h2>
+
+<h3>HREF</h3>
+<h3>SRC</h3>
 
 <p>
 	Vytvoří odkaz na daný controller a metodu. Controller musí být celé jméno třídy. Metodou se myslí jméno funkce. Controller a metoda jsou odděleny <code>:</code>. Parametry jsou za jménem metody a jsou opět odděleny <code>:</code>. Pokud parametr neobsahuje <code>=</code>, je použit jako součást URI, Jinak je to GET parametr.
@@ -8,6 +11,9 @@
 
 <pre><code class="language-html">
 &lt;a t:href="" /&gt;
+&lt;img t:src="" /&gt;
+
+
 &lt;!-- example - approximate result: /modulename/my-controler/action --&gt;
 &lt;a t:href="org.example.app.controllers.MyController:myAction" /&gt;
 &lt;!-- example with URL parameter - approximate result: /modulename/my-controler/action/123 --&gt;
@@ -26,17 +32,13 @@
 &lt;a t:href="A:https://example.com:org.example.app.controllers.MyController:myAction" /&gt;
 </code></pre>
 
-<h2>Title</h2>
+<h2>Překlady</h2>
+
+<h3>Title</h3>
 
 <p>
 	Vypíše přeložený text jako parametr title.
 </p>
-
-<pre><code class="language-html">
-&lt;div t:title="" /&gt;
-&lt;!-- example --&gt;
-&lt;div t:title="messages.tooltips.div-title" /&gt;
-</code></pre>
 
 <h2>Placeholder</h2>
 
@@ -44,8 +46,17 @@
 	Vypíše přeložený text jako parametr placeholder.
 </p>
 
+<h2>Alt</h2>
+
+<p>
+	Vypíše přeložený text jako alt parametr obrázku.
+</p>
+
 <pre><code class="language-html">
+&lt;div t:title="" /&gt;
 &lt;input t:placeholder="" /&gt;
+&lt;img t:alt="" /&gt;
+
 &lt;!-- example --&gt;
-&lt;input t:placeholder="messages.placeholders.input-help" /&gt;
+&lt;div t:title="messages.tooltips.div-title" /&gt;
 </code></pre>

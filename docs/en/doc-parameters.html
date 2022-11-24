@@ -1,13 +1,20 @@
 <h1>Template parameters</h1>
 
-<h2>HREF</h2>
+<h2>Create link</h2>
 
 <p>
 	Create link to given controller and method. Controller must be full class name. Method is name of function. Controller and method are splited by <code>:</code>.Parameters are after method name and splited by <code>:</code>. If parameter not contains <code>=</code>, the parameter is used as URL parameter, otherwise is used as GET parameter
 </p>
 
+<h3>HREF</h3>
+<h3>SRC</h3>
+
+<h3>Examples</h3>
+
 <pre><code class="language-html">
 &lt;a t:href="" /&gt;
+&lt;img t:src="" /&gt;
+
 &lt;!-- example - approximate result: /modulename/my-controler/action --&gt;
 &lt;a t:href="org.example.app.controllers.MyController:myAction" /&gt;
 &lt;!-- example with URL parameter - approximate result: /modulename/my-controler/action/123 --&gt;
@@ -26,26 +33,33 @@
 &lt;a t:href="A:https://example.com:org.example.app.controllers.MyController:myAction" /&gt;
 </code></pre>
 
-<h2>Title</h2>
+<h2>Translations</h2>
+
+<h3>Title</h3>
 
 <p>
 	Print translated message as title parameter.
 </p>
 
-<pre><code class="language-html">
-&lt;div t:title="" /&gt;
-&lt;!-- example --&gt;
-&lt;div t:title="messages.tooltips.div-title" /&gt;
-</code></pre>
-
-<h2>Placeholder</h2>
+<h3>Placeholder</h3>
 
 <p>
 	Print translated message as input placeholder.
 </p>
 
+<h3>Alt</h3>
+
+<p>
+	Print translated message as img alternative text.
+</p>
+
+<h3>Examples</h3>
+
 <pre><code class="language-html">
+&lt;div t:title="" /&gt;
 &lt;input t:placeholder="" /&gt;
+&lt;img t:alt="" /&gt;
+
 &lt;!-- example --&gt;
-&lt;input t:placeholder="messages.placeholders.input-help" /&gt;
+&lt;div t:title="messages.tooltips.div-title" /&gt;
 </code></pre>
