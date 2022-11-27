@@ -230,7 +230,9 @@ public class Link {
 		}
 		pattern = pattern.replaceAll("<[^<>\\(]*\\[([^<>]*)\\][^<>]*>", "") //replace missing optional characters
 				.replace("<", "")
-				.replace(">", "");
+				.replace(">", "")
+				.replace("getVariable(()-{", "getVariable(()->{") // TODO fix
+				;
 		return pattern + (get.toString().length() > 1 ? "?" + get.toString() : "");
 	}
 	
