@@ -276,7 +276,7 @@ public class Validator {
 					rule.getAllowedFileTypes(),
 					(type)->{
 						UploadedFile file = (UploadedFile)o;
-						return !type.contains(file.getContentType());
+						return !type.contains(file.getFileBom());
 					},
 					errors,
 					propertyName,
