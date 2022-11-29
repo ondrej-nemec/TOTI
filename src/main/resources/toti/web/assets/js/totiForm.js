@@ -1,4 +1,4 @@
-/* TOTI Form version 1.0.0 */
+/* TOTI Form version 1.0.1 */
 class TotiForm {
 
 	constructor(config) {
@@ -248,6 +248,7 @@ class TotiForm {
 		totiDisplay.fadeIn();
 		var form = this.container;
 		var template = this.template;
+		var object = this;
 		if (this.container.tagName !== 'FORM') {
 			form = this.container.querySelector('form');
 		}
@@ -317,6 +318,9 @@ class TotiForm {
 			if (!submitAllowed) {
 				return false;
 			}
+			if (this.config.hasOwnProperty("beforeSubmit") && this.config.beforeSubmit !== null) {
+				totiUtils.execute(this.config.beforeSubmit, [object, data, srcElement]);
+			}
 			if (srcElement.getAttribute("async") === 'true') {
 				var headers = {};
 				if (form.getAttribute("enctype") !== null) {
@@ -329,6 +333,9 @@ class TotiForm {
 					{},
 					data
 				).then(function(result) {
+					if (this.config.hasOwnProperty("afterSubmit") && this.config.afterSubmit !== null) {
+						totiUtils.execute(this.config.afterSubmit, [object, result, srcElement]);
+					}
 					if (srcElement.getAttribute("onSuccess") != null) {
 						window[srcElement.getAttribute("onSuccess")](result, srcElement, form);
 					} else if (srcElement.getAttribute("redirect") === null) {

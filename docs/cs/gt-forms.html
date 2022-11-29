@@ -36,6 +36,10 @@ Form grid = new Form("/save/form/url", true);
 		<li>After render: <code>setAfterRender(methodName)</code> - name of JS function called after form is printed(with instance of JS class TotiForm as parameter). Default is null and means no call.</li>
 		<li>Before bind: <code>setBeforeBind(methodName)</code> - name of JS function called (with binding values and instance of JS class TotiForm as parameters) before data bind (only if bind URL is set). Default is null and means no call.</li>
 		<li>After bind: <code>setAfterBind(methodName)</code> - name of JS function called (with binding values and instance of JS class TotiForm as parameters) after data bind (only if bind URL is set). Default is null and means no call.</li>
+		
+		<li>Before submit: <code>setBeforeSubmit(methodName)</code> - name of JS function called (with instance of JS class TotiForm, values and source element as parameters) before data submit. Default is null and means no call.</li>
+		<li>After submit: <code>setAfterSubmit(methodName)</code> - name of JS function called (with nstance of JS class TotiForm, submit result and source element as parameters) after data bind. Default is null and means no call.</li>
+		
 		<li>Bind URL: <code>setBindUrl(url)</code> - URL for async data binding. Default is null and means no binding.</li>
 		<li>Bind method: <code>setBindMethod(method)</code> - HTTP method for async data binding. Default is <code>GET</code>.</li>
 		<li>On bind failure: <code>setOnBindFailure(methodName)</code> - name of JS function called if bind fail. Default is null and means no call.</li>

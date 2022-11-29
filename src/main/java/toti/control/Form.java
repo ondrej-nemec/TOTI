@@ -20,8 +20,8 @@ public class Form implements Control {
 	private String afterBind;
 	private String beforeRender;
 	private String afterRender;
-//	private String beforeSubmit;
-//	private String afterSubmit;
+	private String beforeSubmit;
+	private String afterSubmit;
 	
 	private final String formAction;
 	private String formMethod = "get";
@@ -87,6 +87,16 @@ public class Form implements Control {
 		return this;
 	}
 
+	public Form setAfterSubmit(String afterSubmit) {
+		this.afterSubmit = afterSubmit;
+		return this;
+	}
+	
+	public Form setBeforeSubmit(String beforeSubmit) {
+		this.beforeSubmit = beforeSubmit;
+		return this;
+	}
+	
 	@Override
 	public Map<String, Object> toJson() {
 		Map<String, Object> json = new HashMap<>();
@@ -99,6 +109,12 @@ public class Form implements Control {
 		}
 		if (beforeRender != null) {
 			json.put("beforeRender", beforeRender);
+		}
+		if (beforeSubmit != null) {
+			json.put("beforeSubmit", beforeSubmit);
+		}
+		if (afterSubmit != null) {
+			json.put("afterSubmit", afterSubmit);
 		}
 		if (bindUrl != null) {
 			Map<String, Object> bind = new HashMap<>();
