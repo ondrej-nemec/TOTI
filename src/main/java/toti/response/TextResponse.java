@@ -30,6 +30,9 @@ public class TextResponse implements Response {
 		ji.socketCommunication.http.structures.Response response = new ji.socketCommunication.http.structures.Response(code, protocol);
 		response.setHeaders(header.getHeaders());
 		response.setBody(text.getBytes());
+		if (!response.containsHeader("Content-Type")) {
+            response.addHeader("Content-Type", "text/plain");
+        }
 		return response;
 	}
 
