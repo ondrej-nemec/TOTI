@@ -61,12 +61,10 @@ public interface GridEntityDao<T extends Entity>{
 	}
 	
 	default List<Help> getHelp(Collection<Object> forOwners) throws SQLException {
-		return getDatabase().applyBuilder((builder)->{
-			return getHelp(
-				getDatabase(), getHelpTable(), forOwners, getOwnerColumnName(),
-				getHelpKey(), getHelpDisplayValue(), getHelpDisabled(), getHelpOptgroup()
-			);
-		});
+		return getHelp(
+			getDatabase(), getHelpTable(), forOwners, getOwnerColumnName(),
+			getHelpKey(), getHelpDisplayValue(), getHelpDisabled(), getHelpOptgroup()
+		);
 	}
 	
 	
