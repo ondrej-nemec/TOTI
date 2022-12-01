@@ -250,6 +250,10 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 			Headers responseHeaders, MappedUrl mapped, Request request,
 			Identity identity, Optional<WebSocket> websocket) throws ServerException {
 		try {
+			logger.debug(
+				"Request servant: {} {} {}",
+				mapped.getModuleName(), mapped.getClassName(), mapped.getMethodName()
+			);
 			RequestParameters params = new RequestParameters();
 			params.putAll(request.getBodyInParameters().toMap());
 			params.putAll(request.getUrlParameters().toMap());
