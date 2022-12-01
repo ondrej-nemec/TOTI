@@ -1,4 +1,4 @@
-/* TOTI Form version 1.0.1 */
+/* TOTI Form version 1.0.2 */
 class TotiForm {
 
 	constructor(config) {
@@ -499,6 +499,12 @@ class TotiForm {
 						select.value = val;
 					});
 					break;
+                case "datetime-local":
+                    if (value !== null && value.length > 19) {
+                        /* FIX for Java 9 and above. LocalDateTime contains 6 digits in microseconds*/
+                        element.value = value.substring(0, 19);
+                        break;
+                    }
 				default:
 					element.value = value;
 			}
