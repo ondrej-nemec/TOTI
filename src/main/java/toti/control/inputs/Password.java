@@ -7,6 +7,7 @@ public class Password implements Input {
 	private Integer size = null;
 	private Integer maxLength = null;
 	private Integer minLength = null;
+	private boolean isOptional = false;
 	
 	private final Wrapper wrapper;
 	
@@ -30,6 +31,11 @@ public class Password implements Input {
 
 	public Password setMinLength(Integer minLength) {
 		this.minLength = minLength;
+		return this;
+	}
+	
+	public Password setOptional(boolean isOptional) {
+		this.isOptional = isOptional;
 		return this;
 	}
 	
@@ -73,6 +79,7 @@ public class Password implements Input {
 	@Override
 	public Map<String, Object> getInputSettings() {
 		Map<String, Object> json = wrapper.getInputSettings();
+		json.put("optional", isOptional);
 		if (size != null) {
 			json.put("size", size);
 		}

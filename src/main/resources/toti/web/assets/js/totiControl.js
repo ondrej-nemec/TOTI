@@ -1,4 +1,4 @@
-/* TOTI Control version 1.0.1 */
+/* TOTI Control version 1.0.2 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -62,6 +62,8 @@ var totiControl = {
 			return totiControl.inputs._createOptionalInput("range", attributes);
 		} else if (type === 'color') {
 			return totiControl.inputs._createOptionalInput("color", attributes);
+		} else if (type === 'password' && attributes.hasOwnProperty('optional') && attributes.optional === true) {
+			return totiControl.inputs._createOptionalInput("password", attributes);
 		} else {
 			return totiControl.inputs._createInput(type, attributes);
 		}
