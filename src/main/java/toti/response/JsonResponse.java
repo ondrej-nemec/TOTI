@@ -33,9 +33,9 @@ public class JsonResponse implements Response {
 			Authorizator authorizator,
 			Identity identity, MappedUrl current,
 			String charset) {
-		header.addHeader("Content-Type", "application/json; charset=" + charset);
 		ji.socketCommunication.http.structures.Response response = new ji.socketCommunication.http.structures.Response(code, protocol);
 		response.setHeaders(header.getHeaders());
+		response.addHeader("Content-Type", "application/json; charset=" + charset);
 		response.setBody(createResponse().getBytes());
 		return response;
 	}

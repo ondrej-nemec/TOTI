@@ -1,6 +1,5 @@
 package toti.response;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -40,7 +39,7 @@ public class TemplateResponse implements Response {
 		params.put("nonce", nonce);
 		params.put("totiIdentity", identity);
 		
-		Headers resHeaders = new Headers(new HashMap<>());
+		/* Headers resHeaders = new Headers(new HashMap<>());
 		header.getHeaders().forEach((n, l)->{
 			l.forEach(v->{
 				if (v != null && v instanceof String) {
@@ -50,9 +49,22 @@ public class TemplateResponse implements Response {
 				}
 			});
 		});
-		setContentType(fileName, charset, header);
+		setContentType(fileName, charset, resHeaders);*/
 		ji.socketCommunication.http.structures.Response response = new ji.socketCommunication.http.structures.Response(code, protocol);
-		response.setHeaders(resHeaders.getHeaders());
+		
+		// response.setHeaders(resHeaders.getHeaders());
+		header.getHeaders().forEach((n, l)->{
+			l.forEach(v->{
+				if (v != null && v instanceof String) {
+					response.addHeader(n, v.toString().replace("{nonce}", nonce));
+				} else {
+					response.addHeader(n, v);
+				}
+			});
+		});
+		response.addHeader("Content-Type", getContentType(fileName, charset));
+		
+		
 		response.setBody(createResponse(templateFactory, translator, authorizator, current).getBytes());
 		return response;
 	}
