@@ -74,9 +74,10 @@
 		};
 		var logoutButton = document.getElementById("logout");
 		logoutButton.onclick = function () {
-			totiAuth.logout(logoutButton.getAttribute("href"), "post");
-			document.getElementById("not-logged").style.display = "block";
-			document.getElementById("logged").style.display = "none";
+			totiAuth.logout(logoutButton.getAttribute("href"), "post", ()=>{
+				document.getElementById("not-logged").style.display = "block";
+				document.getElementById("logged").style.display = "none";
+			});
 		};
 		
 		/* tests with auth header */

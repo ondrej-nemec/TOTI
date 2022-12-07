@@ -61,7 +61,7 @@
 
 <ul>
 	<li><code>getToken(): String|null</code>: returns security token</li>
-	<li><code>logout(String url = null, String method = "post"): void</code>: remove token from memory. If url specified, make request on given URL</li>
+	<li><code>logout(String url = null, String method = "post", then = null): void</code>: remove token from memory. If url specified, make request on given URL. <code>then</code> parameter is callback called after logout (if specified)</li>
 	<li><code>login(String token, Object config = null): void</code>: save security token. Config contains url and method for token refreshing</li>
 	<li><code>startTokenRefresh(): boolean</code>: true started, false not start</li>
 	<li><code>refresh(String url, String method, int expredIn): void</code>: expired is in ms, do not call manualy</li>

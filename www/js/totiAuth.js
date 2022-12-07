@@ -1,14 +1,17 @@
-/* TOTI Auth version 2.0.0 */
+/* TOTI Auth version 2.0.1 */
 var totiAuth = {
 	variableToken: "authenticationToken",
     variableConfig: "authenticationConfig",
     getToken: function() {
         return totiStorage.getVariable(totiAuth.variableToken);
     },
-    logout: function(url = null, method = "post") {
+    logout: function(url = null, method = "post", then = null) {
     	var onLogout = function() {
 	        totiStorage.removeVariable(totiAuth.variableConfig);
 	        totiStorage.removeVariable(totiAuth.variableToken);
+	        if (then !== null) {
+				then();
+			}
     	};
         totiAuth.isRefreshActive = false;
     	if (url === null) {

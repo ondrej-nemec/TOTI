@@ -22,8 +22,9 @@
 		document.getElementById("loginCheck").innerText = totiAuth.getToken !== null;
 		var asyncLogoutButton = document.getElementById("asyncLogout");
 		asyncLogoutButton.onclick = function() {
-			totiAuth.logout(asyncLogoutButton.getAttribute('href'), "post");
-			location.reload();
+			totiAuth.logout(asyncLogoutButton.getAttribute('href'), "post", ()=>{
+				location.reload();
+			});
 		};
 	</script>
 
