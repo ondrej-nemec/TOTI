@@ -1,9 +1,0 @@
-{
-	"default": "en",
-	"locales": {
-		"en": {
-			"isLeftToRight": true,
-			"substitutions": ["en_GB", "en_US"]
-		}
-	}
-}

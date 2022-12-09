@@ -98,12 +98,12 @@ public class TotiSamplesRunner {
 			// database can be null
 			Database database = new Database(
 				new DatabaseConfig(
-					env.getString("db.type"),
-					env.getString("db.url"), 
+					env.getString("database.type"),
+					env.getString("database.url"), 
 					false, 
-					env.getString("db.schema"), 
-					env.getString("db.username"), 
-					env.getString("db.password"),
+					env.getString("database.schema"), 
+					env.getString("database.login"), 
+					env.getString("database.password"),
 					migrations,
 					1 // thread pool, 1 is enought in example
 				),

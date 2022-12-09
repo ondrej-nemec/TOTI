@@ -1,18 +1,14 @@
 package toti;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 
 import org.apache.logging.log4j.Logger;
 import ji.common.functions.Env;
-import ji.common.functions.InputStreamLoader;
-import ji.common.structures.DictionaryValue;
-import ji.common.structures.MapDictionary;
 import ji.database.Database;
 import ji.database.DatabaseConfig;
-import ji.files.text.Text;
-import ji.files.text.basic.ReadText;
 import ji.socketCommunication.SslCredentials;
 import toti.logging.TotiLoggerFactory;
 import toti.register.Register;
@@ -156,26 +152,22 @@ public class Application {
 			if (env.getString("http.dir-default-file") != null) {
 				factory.setDirDefaultFile(env.getString("http.dir-default-file").isEmpty() ? null : env.getString("http.dir-default-file"));
 			}
-			if (env.getString("http.locale-settings") != null) {
-				MapDictionary<String, Object> config = new DictionaryValue(
-					Text.get().read((br)->{
-						return ReadText.get().asString(br);
-					}, 
-					InputStreamLoader.createInputStream(getClass(), env.getString("http.locale-settings"))
-				)).getDictionaryMap();
+			if (env.getString("lang.locales") != null) {
 				List<Locale> locales = new LinkedList<>();
-				config.getDictionaryMap("locales").forEach((locale, setting)->{
+				for (String l : env.getString("lang.locales").split(",")) {
+					String locale = l.trim();
+					Boolean ltr = env.getBoolean("lang.locale." + locale + ".ltr");
+					String substitutions = env.getString("lang.locale." + locale + ".substitutions");
 					locales.add(new Locale(
-						locale.toString(), 
-						setting.getDictionaryMap().getBoolean("isLeftToRight"),
-						setting.getDictionaryMap().getList("substitutions")
+						locale,
+						ltr == null ? true : ltr,
+						substitutions == null ? Arrays.asList() : Arrays.asList(substitutions.split(",")) 
 					));
-				});
+				}
 				factory.setLanguageSettings(new LanguageSettings(
-					config.getString("default"),
+					env.getString("lang.default"),
 					locales
 				));
-				//factory.setDefLang(env.getString("http.locale"));
 			}
 			if (env.getString("http.token-expired") != null) {
 				factory.setTokenExpirationTime(env.getLong("http.token-expired"));
