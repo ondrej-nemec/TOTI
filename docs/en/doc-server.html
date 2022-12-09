@@ -148,18 +148,6 @@
 	<strong>Method:</strong> <code>setDirDefaultFile</code>
 </p>
 
-<h3>Language settings</h3>
-
-<p>
-	Define path to JSON with language settings.
-</p>
-
-<p>
-	<strong>Default value:</strong> <code>System default</code> <br>
-	<strong>Properties file key:</strong> <code>http.locale-settings</code> <br>
-	<strong>Method:</strong> <code>setLanguageSettings</code>
-</p>
-
 <h3>Security token expiration</h3>
 
 <p>
@@ -329,28 +317,52 @@
 
 <!-- language settings -->
 
-<h2>Language JSON</h2>
+<h2>Language</h2>
 
 <p>
-	Language JSON expects <code>locales</code> key. The value is JSON object: names are language identifier and values are each language settings (if language is readed from left to right or not and substitutions). The second key is <code>default</code>: define default language. If not specified, the first from <code>locales</code> is used.
+	Language settings is applied if configuration file contains <code>lang.locales</code>.
 </p>
 
-<pre><code>
-{
-	"default": "en",
-	"locales": {
-		"en": {
-			"isLeftToRight": true,
-			"substitutions": ["en_GB", "en_US"]
-		},
-		"cs": {
-			"isLeftToRight": true,
-			"substitutions": ["cs_CZ", "cs-CZ"]
-		},
-		"es": {
-			"isLeftToRight": true,
-			"substitutions": ["es_ES", "es_MX"]
-		}
-	}
-}
-</code></pre>
+<h3>Available languages</h3>
+
+<p>
+	List of available languages.
+</p>
+
+<p>
+	<strong>Default value:</strong> <i>System defautl language</i>  <br>
+	<strong>Properties file key:</strong> <code>lang.locales</code> separated by comma
+</p>
+
+<h3>Default language</h3>
+
+<p>
+	Optional
+</p>
+
+<p>
+	<strong>Default value:</strong> <i>First from availables</i>  <br>
+	<strong>Properties file key:</strong> <code>lang.default</code>
+</p>
+
+<h3>Language direction</h3>
+
+<p>
+	Specify if language reading direction is left-to-right(<code>true</code> value) or right-to-left (<code>false</code> value).
+</p>
+
+<p>
+	<strong>Default value:</strong> <i>true</i>  <br>
+	<strong>Properties file key:</strong> <code>lang.locale.<i>LANG</i>.ltr</code> where <i>LANG</i> is one of availables. Need to repeat for each language,
+</p>
+
+<h3>Language substitutions</h3>
+
+<p>
+	List of substitutions for language. FE: for English <code>en</code> it could be <code>en_GB</code> and <code>en_US</code>
+</p>
+
+<p>
+	<strong>Default value:</strong> <i>Empty list</i>  <br>
+	<strong>Properties file key:</strong> <code>lang.locale.<i>LANG</i>.substitutions</code> where <i>LANG</i> is one of availables. Need to repeat for each language. List is separated by comma.
+</p>

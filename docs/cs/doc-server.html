@@ -148,18 +148,6 @@
 	<strong>Metoda:</strong> <code>setDirDefaultFile</code>
 </p>
 
-<h3>Nastavení jazyků</h3>
-
-<p>
-	Nastaví cestu k JSON souboru s jazykovým nastavením.
-</p>
-
-<p>
-	<strong>Výchozí hodnota:</strong> <code>System default</code> <br>
-	<strong>Klíč v konfiguračním souboru:</strong> <code>http.locale-settings</code> <br>
-	<strong>Metoda:</strong> <code>setLanguageSettings</code>
-</p>
-
 <h3>Expirace security tokenu</h3>
 
 <p>
@@ -329,28 +317,52 @@
 
 <!-- language settings -->
 
-<h2>JSON jazykového nastavení</h2>
+<h2>Nastavení jazyků</h2>
 
 <p>
-	Soubor očekává klíč <code>locales</code>. Hodnotou je JSOU objekt: jména jsou identifikátory jazyků a hodnoty jsou nastavení pro jednotlivé jazyky (zda se jazyk čte zleva doprava či obráceně a substituce). Druhým klíčem v rootu je <code>default</code> - definuje výchozí jazyk. Pokud není nastaven, použije se první jazyk z <code>locales</code>.
+	Jazykové nastavení se aplikuje, pokud soubor obsahuje klíč <code>lang.locales</code>.
 </p>
 
-<pre><code>
-{
-	"default": "en",
-	"locales": {
-		"en": {
-			"isLeftToRight": true,
-			"substitutions": ["en_GB", "en_US"]
-		},
-		"cs": {
-			"isLeftToRight": true,
-			"substitutions": ["cs_CZ", "cs-CZ"]
-		},
-		"es": {
-			"isLeftToRight": true,
-			"substitutions": ["es_ES", "es_MX"]
-		}
-	}
-}
-</code></pre>
+<h3>Podporované jazyky</h3>
+
+<p>
+	Seznam podporovaných jazyků.
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <i>System defautl language</i>  <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>lang.locales</code> oddělené čárkou
+</p>
+
+<h3>Výchozí jazyk</h3>
+
+<p>
+	Volitelné
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <i>První z podporovaných</i>  <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>lang.default</code>
+</p>
+
+<h3>Směr čtení písma</h3>
+
+<p>
+	Zda se písmo čte zleva doprava (hodnota <code>true</code>) nebo zprava doleva (hodnota <code>false</code>).
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <i>true</i>  <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>lang.locale.<i>LANG</i>.ltr</code> kde <i>LANG</i> je jeden z poporovaných jazyků. Potřeba nastavit pro každý jazyk.
+</p>
+
+<h3>Substituce jazyka</h3>
+
+<p>
+	Substituce jazyka. Například pro češtinu <code>cs</code> to může být <code>cs_CZ</code>.
+</p>
+
+<p>
+	<strong>Výchozí hodnota:</strong> <i>Empty list</i>  <br>
+	<strong>Klíč v konfiguračním souboru:</strong> <code>lang.locale.<i>LANG</i>.substitutions</code> kde <i>LANG</i> je jeden z poporovaných jazyků. Potřeba nastavit pro každý jazyk. Seznam je oddělen čárkou
+</p>
