@@ -18,6 +18,7 @@ import toti.control.inputs.Checkbox;
 import toti.control.inputs.Hidden;
 import toti.control.inputs.Option;
 import toti.control.inputs.Select;
+import toti.control.inputs.Submit;
 import toti.control.inputs.Text;
 import toti.response.Response;
 import toti.security.AuthMode;
@@ -58,10 +59,11 @@ public class DevicePageController {
 		);
 		
 		ButtonsColumn buttons = new ButtonsColumn("buttons");
+		grid.addColumn(buttons);
 		buttons.setTitle(translator.translate("messages.devices.buttons"));
 		buttons.setResetFiltersButton(
 			Button.reset("reset")
-			.setTitle("messages.reset-filter")
+			.setTitle(translator.translate("messages.reset-filter"))
 		);
 		buttons.addGlobalButton(
 			Button.create(Link.get().create(getClass(), c->c.add()), "add")
@@ -90,7 +92,7 @@ public class DevicePageController {
 		
 		Map<String, Object> params = new HashMap<>();
 		params.put("control", grid);
-		params.put("title", translator.translate("messages.devices.list"));
+		params.put("title", translator.translate("messages.devices.title-list"));
 		return Response.getTemplate("/device.jsp", params);
 	}
 	
@@ -139,6 +141,11 @@ public class DevicePageController {
 			form.setBindUrl(Link.get().addUrlParam(id).create(DeviceApiController.class, c->c.get(null)));
 			form.setBindMethod("get");
 		}
+		
+		form.addInput(
+			Submit.create(translator.translate("mesasges.devices.save"), "submit")
+			.setRedirect(Link.get().addUrlParam("{id}").create(getClass(), c->c.edit(null)))
+		);
 		
 		Map<String, Object> params = new HashMap<>();
 		params.put("control", form);

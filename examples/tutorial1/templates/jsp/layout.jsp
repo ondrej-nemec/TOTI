@@ -14,6 +14,8 @@
 			<t:if cond="${totiIdentity.isPresent()}">
 				<span>${totiIdentity.getUser().getProperty("name")}</span>
 				<button onclick="logout()"><t:trans message="messages.sign.out"></button>
+				<a t:href="toti.tutorial1.web.StatePageController:index"><t:trans message="messages.menu.state"></a>
+				<a t:href="toti.tutorial1.web.DevicePageController:getList"><t:trans message="messages.menu.devices"></a>
 			<t:else>
 				<a t:href="toti.tutorial1.web.SignPageController:loginPage">
 					<t:trans message="messages.sign.in">

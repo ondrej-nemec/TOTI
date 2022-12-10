@@ -38,15 +38,7 @@ public class DeviceApiController {
 		this.dao = dao;
 	}
 	
-	public Validator validateList() {
-		return GridOptions.getValidator(Arrays.asList(
-			new GridColumn("name").setFilterMode(FilterMode.LIKE),
-			new GridColumn("ip"),
-			new GridColumn("is_running", Boolean.class)
-		));
-	}
-	
-	@Action("")
+	@Action()
 	@Method({HttpMethod.OPTIONS})
 	@Secured
 	public Response getHelp() {
@@ -58,7 +50,15 @@ public class DeviceApiController {
 		}
 	}
 	
-	@Action("")
+	public Validator validateList() {
+		return GridOptions.getValidator(Arrays.asList(
+			new GridColumn("name").setFilterMode(FilterMode.LIKE),
+			new GridColumn("ip"),
+			new GridColumn("is_running", Boolean.class)
+		));
+	}
+	
+	@Action(validator = "validateList")
 	@Method({HttpMethod.GET})
 	@Secured
 	public Response getAll(@Params GridOptions options) {
@@ -70,7 +70,7 @@ public class DeviceApiController {
 		}
 	}
 	
-	@Action("get")
+	@Action()
 	@Method({HttpMethod.GET})
 	@Secured
 	public Response get(@ParamUrl("id") Object id) {
@@ -91,7 +91,7 @@ public class DeviceApiController {
 			;
 	}
 	
-	@Action(value="", validator = "validateForm")
+	@Action(validator = "validateForm")
 	@Method({HttpMethod.PUT})
 	@Secured
 	public Response insert(@Params Device device) {
@@ -106,7 +106,7 @@ public class DeviceApiController {
 		}
 	}
 	
-	@Action(value="", validator = "validateForm")
+	@Action(validator = "validateForm")
 	@Method({HttpMethod.PUT})
 	@Secured
 	public Response update(@ParamUrl("id") Object id, @Params Device device) {
@@ -121,7 +121,7 @@ public class DeviceApiController {
 		}
 	}
 	
-	@Action("")
+	@Action()
 	@Method({HttpMethod.DELETE})
 	@Secured
 	public Response delete(@ParamUrl("id") Object id) {

@@ -37,7 +37,7 @@ public class StateApiController {
 		));
 	}
 	
-	@Action("")
+	@Action(validator = "validateList")
 	@Method({HttpMethod.GET})
 	@Secured
 	public Response getAll(@Params GridOptions options) {

@@ -28,10 +28,12 @@ public class StatePageController {
 		this.translator = translator;
 	}
 	
-	@Action("")
+	@Action()
 	@Secured(mode = AuthMode.COOKIE)
 	public Response index() {
 		Grid grid = new Grid(Link.get().create(StateApiController.class, c->c.getAll(null)), "get");
+		
+		grid.setRefreshInterval(15000);
 		
 		grid.addColumn(
 			new ValueColumn("device_id")
