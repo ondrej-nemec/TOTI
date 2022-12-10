@@ -921,6 +921,7 @@ public class GridExample implements Module {
 	public List<Task> initInstances(Env env, Translator translator, Register register, Database database, Logger logger)
 			throws Exception {
 		GridExampleDao dao = new GridExampleDao(database);
+		dao.initDb();
 		register.addFactory(GridExample.class, ()->new GridExample(dao, logger));
 		return new LinkedList<>();
 	}

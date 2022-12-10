@@ -101,7 +101,7 @@ public class TotiSamplesRunner {
 					env.getString("database.type"),
 					env.getString("database.url"), 
 					false, 
-					env.getString("database.schema"), 
+					env.getString("database.schema-name"), 
 					env.getString("database.login"), 
 					env.getString("database.password"),
 					migrations,
