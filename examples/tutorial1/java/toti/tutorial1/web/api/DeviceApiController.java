@@ -46,7 +46,20 @@ public class DeviceApiController {
 		));
 	}
 	
-	@Action("list")
+	@Action("")
+	@Method({HttpMethod.OPTIONS})
+	@Secured
+	public Response getHelp() {
+		try {
+			return Response.getJson(dao.getHelp(null));
+		} catch (Exception e) {
+			logger.error("Device: Get Help", e);
+			return Response.getText(StatusCode.INTERNAL_SERVER_ERROR, "");
+		}
+	}
+	
+	@Action("")
+	@Method({HttpMethod.GET})
 	@Secured
 	public Response getAll(@Params GridOptions options) {
 		try {
@@ -58,6 +71,7 @@ public class DeviceApiController {
 	}
 	
 	@Action("get")
+	@Method({HttpMethod.GET})
 	@Secured
 	public Response get(@ParamUrl("id") Object id) {
 		try {
@@ -77,7 +91,7 @@ public class DeviceApiController {
 			;
 	}
 	
-	@Action(value="insert", validator = "validateForm")
+	@Action(value="", validator = "validateForm")
 	@Method({HttpMethod.PUT})
 	@Secured
 	public Response insert(@Params Device device) {
@@ -92,7 +106,7 @@ public class DeviceApiController {
 		}
 	}
 	
-	@Action(value="update", validator = "validateForm")
+	@Action(value="", validator = "validateForm")
 	@Method({HttpMethod.PUT})
 	@Secured
 	public Response update(@ParamUrl("id") Object id, @Params Device device) {
@@ -107,7 +121,7 @@ public class DeviceApiController {
 		}
 	}
 	
-	@Action("delete")
+	@Action("")
 	@Method({HttpMethod.DELETE})
 	@Secured
 	public Response delete(@ParamUrl("id") Object id) {

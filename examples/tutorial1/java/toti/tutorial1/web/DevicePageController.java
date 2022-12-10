@@ -1,5 +1,6 @@
 package toti.tutorial1.web;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +16,8 @@ import toti.control.columns.ValueColumn;
 import toti.control.inputs.Button;
 import toti.control.inputs.Checkbox;
 import toti.control.inputs.Hidden;
+import toti.control.inputs.Option;
+import toti.control.inputs.Select;
 import toti.control.inputs.Text;
 import toti.response.Response;
 import toti.security.AuthMode;
@@ -36,14 +39,21 @@ public class DevicePageController {
 		Grid grid = new Grid(Link.get().create(DeviceApiController.class, c->c.getAll(null)), "get");
 		grid.addColumn(
 			new ValueColumn("name")
+			.setFilter(Text.filter())
 			.setTitle(translator.translate("messages.devices.name"))
 		);
 		grid.addColumn(
 			new ValueColumn("ip")
+			.setFilter(Text.filter())
 			.setTitle(translator.translate("messages.devices.ip"))
 		);
 		grid.addColumn(
 			new ValueColumn("is_running")
+			.setFilter(Select.filter(Arrays.asList(
+				Option.create("", "---"),
+				Option.create(true, translator.translate("messages.no")),
+				Option.create(false, translator.translate("messages.no"))
+			)))
 			.setTitle(translator.translate("messages.devices.is-running"))
 		);
 		
@@ -107,6 +117,8 @@ public class DevicePageController {
 			Link.get().create(DeviceApiController.class, id == null ? c->c.insert(null) : c->c.update(null, null)),
 			editable
 		);
+		form.setFormMethod("put");
+		
 		form.addInput(Hidden.input("id"));
 		form.addInput(
 			Text.input("name", true)
@@ -122,6 +134,12 @@ public class DevicePageController {
 			Checkbox.input("is_running", false)
 			.setTitle(translator.translate("messages.devices.is-running"))
 		);
+		
+		if (id != null) {
+			form.setBindUrl(Link.get().addUrlParam(id).create(DeviceApiController.class, c->c.get(null)));
+			form.setBindMethod("get");
+		}
+		
 		Map<String, Object> params = new HashMap<>();
 		params.put("control", form);
 		params.put("title", translator.translate(

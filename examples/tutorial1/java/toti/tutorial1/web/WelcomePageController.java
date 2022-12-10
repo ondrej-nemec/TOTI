@@ -6,7 +6,7 @@ import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.response.Response;
 
-@Controller("dashboar")
+@Controller("dashboard")
 public class WelcomePageController {
 
 	@Action("welcome")

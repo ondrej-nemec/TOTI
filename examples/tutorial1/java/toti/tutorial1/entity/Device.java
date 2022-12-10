@@ -16,4 +16,12 @@ public class Device implements Entity {
 	@MapperParameter(@MapperType("is_running"))
 	private boolean isRunning;
 	
+	public Integer getId() {
+		return id;
+	}
+	
+	public boolean isRunning() {
+		return isRunning;
+	}
+	
 }

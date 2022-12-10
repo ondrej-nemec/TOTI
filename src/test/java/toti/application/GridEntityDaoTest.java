@@ -11,13 +11,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import ji.common.structures.MapInit;
-import ji.common.structures.ObjectBuilder;
 import ji.common.structures.SortedMap;
 import ji.database.Database;
 import ji.querybuilder.QueryBuilder;
 import ji.querybuilder.builders.SelectBuilder;
 import ji.querybuilder.mysql.MySqlFunctions;
-import ji.querybuilder.mysql.MySqlQueryBuilder;
 import ji.querybuilder.mysql.MySqlSelectBuilder;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;

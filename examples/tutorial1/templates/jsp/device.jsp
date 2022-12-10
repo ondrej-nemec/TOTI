@@ -2,7 +2,7 @@
 
 <t:block name="title">${title}</t:block>
 
-<t:block name="">
+<t:block name="content">
 
 	<h1>${title}</h1>
 

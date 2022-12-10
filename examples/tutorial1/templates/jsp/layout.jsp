@@ -32,9 +32,11 @@
 		function logout() {
 			totiAuth.logout(
 				'<t:link module="main" controller="toti.tutorial1.web.api.SignApiController" method="logout">',
-				'post'
+				'post',
+				()=>{
+					window.location.reload();
+				}
 			);
-			window.location.reload();
 		}
 	</script>
 

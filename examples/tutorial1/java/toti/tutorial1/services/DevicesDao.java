@@ -1,5 +1,8 @@
 package toti.tutorial1.services;
 
+import java.sql.SQLException;
+import java.util.List;
+
 import ji.database.Database;
 import ji.database.support.DatabaseRow;
 import ji.querybuilder.QueryBuilder;
@@ -22,7 +25,14 @@ public class DevicesDao implements EntityDao<Device>, GridEntityDao<Device> {
 	public SelectBuilder _getGrid(String select, QueryBuilder builder) {
 		return builder._getAll(builder, getTableName(), select);
 	}
-
+	
+	@Override
+	public List<Device> getAll() throws SQLException {
+		return database.applyBuilder((builder)->{
+			return builder.getAllBy(builder, TABLE, "is_running", true, r->r.parse(Device.class));
+		});
+	}
+	
 	@Override
 	public Database getDatabase() {
 		return database;
@@ -36,6 +46,16 @@ public class DevicesDao implements EntityDao<Device>, GridEntityDao<Device> {
 	@Override
 	public Device createEntity(DatabaseRow row) {
 		return row.parse(Device.class);
+	}
+	
+	@Override
+	public String getHelpKey() {
+		return "id";
+	}
+	
+	@Override
+	public String getHelpDisplayValue() {
+		return "name";
 	}
 
 }
