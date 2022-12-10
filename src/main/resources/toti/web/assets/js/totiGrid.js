@@ -1,4 +1,4 @@
-/* TOTI Grid version 1.0.1 */
+/* TOTI Grid version 1.0.2 */
 class TotiGrid {
 
 	cookieName = "grid-cache";
@@ -20,8 +20,8 @@ class TotiGrid {
 		var container = this.container = template.getContainer(selector, gridUnique);
 		this.gridUnique = gridUnique;
 
-		if (grid.config.hasOwnProperty("beforeRender")) {
-            totiUtils.execute(grid.config.beforeRender, [this]);
+		if (this.config.hasOwnProperty("beforeRender")) {
+            totiUtils.execute(this.config.beforeRender, [this]);
         }
 
 		/* get grid selection from url and cookie */
@@ -160,8 +160,8 @@ class TotiGrid {
 			this.setPageIndex(search.pageIndex, false);
 		}
 
-		if (grid.config.hasOwnProperty("afterRender")) {
-            totiUtils.execute(grid.config.afterRender, [this]);
+		if (this.config.hasOwnProperty("afterRender")) {
+            totiUtils.execute(this.config.afterRender, [this]);
         }
         Promise.all(promises).then((values)=>{
 			totiDisplay.fadeOut();

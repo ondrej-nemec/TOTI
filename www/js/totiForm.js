@@ -1,4 +1,4 @@
-/* TOTI Form version 1.0.2 */
+/* TOTI Form version 1.0.3 */
 class TotiForm {
 
 	constructor(config) {
@@ -318,8 +318,8 @@ class TotiForm {
 			if (!submitAllowed) {
 				return false;
 			}
-			if (this.config.hasOwnProperty("beforeSubmit") && this.config.beforeSubmit !== null) {
-				totiUtils.execute(this.config.beforeSubmit, [object, data, srcElement]);
+			if (object.config.hasOwnProperty("beforeSubmit") && object.config.beforeSubmit !== null) {
+				totiUtils.execute(object.config.beforeSubmit, [object, data, srcElement]);
 			}
 			if (srcElement.getAttribute("async") === 'true') {
 				var headers = {};
@@ -333,7 +333,7 @@ class TotiForm {
 					{},
 					data
 				).then(function(result) {
-					if (this.config.hasOwnProperty("afterSubmit") && this.config.afterSubmit !== null) {
+					if (object.config.hasOwnProperty("afterSubmit") && object.config.afterSubmit !== null) {
 						totiUtils.execute(this.config.afterSubmit, [object, result, srcElement]);
 					}
 					if (srcElement.getAttribute("onSuccess") != null) {
