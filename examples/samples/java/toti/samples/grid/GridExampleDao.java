@@ -35,7 +35,7 @@ public class GridExampleDao implements EntityDao<GridExampleEntity>, GridEntityD
 
 	@Override
 	public SelectBuilder _getGrid(String select, QueryBuilder builder) {
-		return builder._getAll(builder, getTableName(), select);
+		return builder._getAll(getTableName(), select);
 	}
 
 	@Override
@@ -43,7 +43,6 @@ public class GridExampleDao implements EntityDao<GridExampleEntity>, GridEntityD
 		if (row == null) {
 			return null;
 		}
-		System.out.println(row);
 		return new GridExampleEntity(
 			row.getInteger("id"), 
 			row.getString("text"),

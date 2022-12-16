@@ -23,13 +23,13 @@ public class DevicesDao implements EntityDao<Device>, GridEntityDao<Device> {
 
 	@Override
 	public SelectBuilder _getGrid(String select, QueryBuilder builder) {
-		return builder._getAll(builder, getTableName(), select);
+		return builder._getAll(getTableName(), select);
 	}
 	
 	@Override
 	public List<Device> getAll() throws SQLException {
 		return database.applyBuilder((builder)->{
-			return builder.getAllBy(builder, TABLE, "is_running", true, r->r.parse(Device.class));
+			return builder.getAllBy(TABLE, "is_running", true, r->r.parse(Device.class));
 		});
 	}
 	

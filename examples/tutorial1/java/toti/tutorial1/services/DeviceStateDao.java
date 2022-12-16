@@ -32,10 +32,10 @@ public class DeviceStateDao implements GridEntityDao<State> {
 	
 	public void saveState(int deviceId, State state) throws SQLException {
 		database.applyBuilder((builder)->{
-			if (builder.get(builder, TABLE, "device_id", deviceId) == null) { // insert
-				builder.insert(builder, TABLE, state.toMap());
+			if (builder.get(TABLE, "device_id", deviceId) == null) { // insert
+				builder.insert(TABLE, state.toMap());
 			} else { // update
-				builder.update(builder, TABLE, "device_id", deviceId, state.toMap());
+				builder.update(TABLE, "device_id", deviceId, state.toMap());
 			}
 			return null;
 		});

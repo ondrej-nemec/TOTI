@@ -61,39 +61,39 @@ public interface EntityDao<T extends Entity> {
 
 	default <S extends Entity> List<S> getAll(Database database, String table, ThrowingFunction<DatabaseRow, S, SQLException> create) throws SQLException {
 		return database.applyBuilder((builder)->{
-			return builder.getAll(builder, table, create);
+			return builder.getAll(table, create);
 		});
 	}
 
 	default <S extends Entity> S get(Database database, String table, String idName, Object id, ThrowingFunction<DatabaseRow, S, SQLException> create) throws SQLException {
 		return database.applyBuilder((builder)->{
-			return create.apply(builder.get(builder, table, idName, id));
+			return create.apply(builder.get(table, idName, id));
 		});
 	}
 	
 	default <S extends Entity> S delete(Database database, String table, String idName, Object id, ThrowingFunction<DatabaseRow, S, SQLException> create) throws SQLException {
 		return database.applyBuilder((builder)->{
 			S item = get(database, table, idName, id, create);
-			builder.delete(builder, table, idName, id);
+			builder.delete(table, idName, id);
 			return item;
 		});
 	}
 	
 	default int delete(Database database, String table, String idName, Object id) throws SQLException {
 		return database.applyBuilder((builder)->{
-			return builder.delete(builder, table, idName, id);
+			return builder.delete(table, idName, id);
 		});
 	}
 
 	default <S extends Entity> int update(Database database, String table, String idName, Object id, S entity) throws SQLException {
 		return database.applyBuilder((builder)->{
-			return builder.update(builder, table, idName, id, entity.toMap());
+			return builder.update(table, idName, id, entity.toMap());
 		});
 	}
 
 	default <S extends Entity> DictionaryValue insert(Database database, String table, S entity) throws SQLException {
 		return database.applyBuilder((builder)->{
-			return builder.insert(builder, table, entity.toMap());
+			return builder.insert(table, entity.toMap());
 		});
 	}
 	
