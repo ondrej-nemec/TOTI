@@ -67,15 +67,22 @@ public interface EntityDao<T extends Entity> {
 
 	default <S extends Entity> S get(Database database, String table, String idName, Object id, ThrowingFunction<DatabaseRow, S, SQLException> create) throws SQLException {
 		return database.applyBuilder((builder)->{
-			return create.apply(builder.get(table, idName, id));
+			DatabaseRow data = builder.get(table, idName, id);
+			if (data == null) {
+				 return null;
+			}
+			return create.apply(data);
 		});
 	}
 	
 	default <S extends Entity> S delete(Database database, String table, String idName, Object id, ThrowingFunction<DatabaseRow, S, SQLException> create) throws SQLException {
 		return database.applyBuilder((builder)->{
-			S item = get(database, table, idName, id, create);
-			builder.delete(table, idName, id);
-			return item;
+            DatabaseRow data = builder.get(table, idName, id);
+            builder.delete(table, idName, id);
+            if (data == null) {
+                return null;
+            }
+            return create.apply(data);
 		});
 	}
 	
