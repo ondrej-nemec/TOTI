@@ -281,6 +281,7 @@ public class TemplateFactory {
 		tags.add(new PermissionsTag());
 		tags.add(new LinkTag());
 		tags.add(new IfCurrentTag());
+		tags.add(new CallbackTag());
 		return tags;
 	}
 	

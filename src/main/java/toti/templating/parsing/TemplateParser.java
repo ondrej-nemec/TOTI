@@ -22,6 +22,7 @@ import toti.templating.Tag;
 import toti.templating.Template;
 import toti.templating.TemplateException;
 import toti.templating.TemplateFactory;
+import toti.templating.TemplateParameters;
 import toti.templating.parsing.enums.ParserType;
 import toti.templating.parsing.structures.TagNode;
 import toti.url.Link;
@@ -69,12 +70,14 @@ public class TemplateParser {
 				+ String.format("import %s;", TagNode.class.getCanonicalName())
 				+ String.format("import %s;", TemplateException.class.getCanonicalName())
 				+ String.format("import %s;", Link.class.getCanonicalName())
-				+ "public class %s implements Template{"
+				+ String.format("import %s;", TemplateParameters.class.getCanonicalName())
+				
+				+ "public class %s implements Template, TemplateParameters{"
 					+ "private LinkedList<TagNode> nodes = new LinkedList<>();"
 				
 				+ "private void write(Object data) {nodes.getLast().getBuilder().append(data);}"
-				+ "private void addVariable(String name, Object value) {nodes.getLast().getVariables().put(name, value);}"
-				+ "private Object getVariable(String name) {return nodes.getLast().getVariables().get(name);}"
+				+ "public void addVariable(String name, Object value) {nodes.getLast().getVariables().put(name, value);}"
+				+ "public Object getVariable(String name) {return nodes.getLast().getVariables().get(name);}"
 				+ "private Object getVariable(ThrowingSupplier<Object, Exception> supplier) throws Exception {return supplier.get();}"
 			    + "private ThrowingConsumer<Map<String, Object>,Exception> getBlock(String name,boolean required){ThrowingConsumer<Map<String,Object>,Exception> myBlock=nodes.getLast().getBlocks().get(name);if(myBlock==null&&required){throw new TemplateException(\"Missing block: \"+name);}else if(myBlock!=null){return myBlock;}else{return (p)->{};}}"
                 + "private void addBlock(String name, ThrowingConsumer<Map<String, Object>, Exception> value) {nodes.getLast().getBlocks().put(name, value);}"
