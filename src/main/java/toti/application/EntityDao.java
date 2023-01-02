@@ -33,6 +33,10 @@ public interface EntityDao<T extends Entity> {
 			return createEntity(builder.get(builder, getTableName(), getIdName(), id));
 		});*/
 	}
+
+	default boolean exists(Object id) throws SQLException {
+		return exists(getDatabase(), getTableName(), getIdName(), id);
+	}
 	
 	default T delete(Object id) throws SQLException {
 		return delete(getDatabase(), getTableName(), getIdName(), id, row->createEntity(row));
@@ -72,6 +76,12 @@ public interface EntityDao<T extends Entity> {
 				 return null;
 			}
 			return create.apply(data);
+		});
+	}
+
+	default boolean exists(Database database, String table, String idName, Object id) throws SQLException {
+		return database.applyBuilder((builder)->{
+			return builder.get(table, idName, id, idName) != null; // select only name of id
 		});
 	}
 	
