@@ -1,4 +1,4 @@
-/* TOTI Form custom template version 0.0.0 */
+/* TOTI Form custom template version 0.0.1 */
 var totiFormCustomTemplate = {
 	getContainer: function(selector, formUnique, editable) {
 		var form = document.createElement(editable ? "form" : "div");
@@ -141,7 +141,7 @@ var totiFormCustomTemplate = {
 			});
 		}
 		if (template.children.length !== 1) {
-			throw new Exception("Dynamic row template can contains only one subelement");
+			throw new Error("Dynamic row template can contains only one subelement");
 		}
 		var dynamic = template.children[0];
 		setName('toti-form-input');

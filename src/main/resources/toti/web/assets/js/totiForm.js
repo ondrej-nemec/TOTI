@@ -1,4 +1,4 @@
-/* TOTI Form version 1.0.3 */
+/* TOTI Form version 1.0.4 */
 class TotiForm {
 
 	constructor(config) {
@@ -113,14 +113,15 @@ class TotiForm {
 					dynamicCache = parent.dynamic['dynamic'];
 				}
 			}
+			var realName = fieldName === undefined ? originName : fieldName;
 			var removeItem = function(position) {
-				if (dynamicCache[originName].elements.hasOwnProperty(position)) {
-					dynamicCache[originName].elements[position].remove();
-					delete dynamicCache[originName].elements[position];
+				if (dynamicCache[realName].elements.hasOwnProperty(position)) {
+					dynamicCache[realName].elements[position].remove();
+					delete dynamicCache[realName].elements[position];
 				}
 			};
 			var addItem = function() {
-				var position = ++dynamicCache[originName].position;
+				var position = ++dynamicCache[realName].position;
 				var pos = null;
 				var parentName = field.name;
 				if (field.fields.length > 1 || (field.fields.lenght == 1 && (field.fields[0].name.length > 1 || !field.fields[0].name.lenght === '{i}') )) {
@@ -130,11 +131,14 @@ class TotiForm {
 				var removeFunc = field.removeButton && editable ? ()=>{
 					removeItem(position);
 				} : null;
-				var rowContainer = form.template.getDynamicRow(form.formUnique, form.container, dynamicCache[originName].container, field.name, removeFunc, pos, originName);
+				var rowContainer = form.template.getDynamicRow(
+					form.formUnique, form.container, dynamicCache[realName].container,
+					field.name, removeFunc, pos, realName
+				);
 				if (rowContainer === null) {
 					return;
 				}
-				dynamicCache[originName].elements[position] = rowContainer;
+				dynamicCache[realName].elements[position] = rowContainer;
 				field.fields.forEach(function(f, index) {
 					form.addInput(totiUtils.clone(f), {
 						name: parentName,
@@ -146,11 +150,14 @@ class TotiForm {
 				});
 				return position;
 			};
-			var dynamicContainer = form.template.getDynamicContainer(form.formUnique, form.container, originName, field.title, field.addButton && editable ? addItem : null);
+			var dynamicContainer = form.template.getDynamicContainer(
+				form.formUnique, form.container, realName,
+				field.title, field.addButton && editable ? addItem : null
+			);
 			if (dynamicContainer === null) {
 				return;
 			}
-			dynamicCache[originName] = {
+			dynamicCache[realName] = {
 				add: addItem,
 				remove: removeItem,
 				position: -1,
