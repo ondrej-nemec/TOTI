@@ -52,10 +52,10 @@ public class ControlTag implements Tag {
 		code.append("addBlock(\"totiLastControl\", (%sParams)->{");
 		code.append("initNode(%sParams);");
 		code.append(
-			"if(variables.get(\":name:\") == null && !%s) {"
+			"if(getVariable(\":name:\") == null && !%s) {"
 					+ "throw new TemplateException(\"Tag Missing control variable: ':name:'\");"
 			+ "}"
-			+ "if(variables.get(\":name:\") == null) {"
+			+ "if(getVariable(\":name:\") == null) {"
 				+ "flushNode();"
 				+ "return;"
 			+ "}"
