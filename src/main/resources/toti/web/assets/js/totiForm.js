@@ -1,4 +1,4 @@
-/* TOTI Form version 1.0.4 */
+/* TOTI Form version 1.0.5 */
 class TotiForm {
 
 	constructor(config) {
@@ -164,7 +164,9 @@ class TotiForm {
 				container: dynamicContainer,
 				elements: {}
 			};
-			addItem();
+			if (field.addFirstBlank) {
+				addItem();
+			}
 		} else if (field.type === "list") {
 			field.fields.forEach(function(subField, index) {
 				form.addInput(subField, {
@@ -439,7 +441,7 @@ class TotiForm {
 		var form = this;
         var container = this.container;
 		function bindElement(dynamicCache, originName, name, value, position = 0) {
-			var dynamic = dynamicCache[originName];
+			var dynamic = dynamicCache[name]; /*dynamicCache[originName];*/
 			if (value === null) {
 				/* ignore */
             } else if (Array.isArray(value)) {

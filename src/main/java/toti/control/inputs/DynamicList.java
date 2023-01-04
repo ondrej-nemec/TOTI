@@ -16,6 +16,8 @@ public class DynamicList implements Input {
 	private boolean useAddButton = true;
 	private boolean useRemoveButton = true;
 	
+	private boolean addFirstBlank = true;
+	
 	public static DynamicList input(String name) {
 		return new DynamicList(name);
 	}
@@ -58,6 +60,11 @@ public class DynamicList implements Input {
 	public DynamicList setLoadData(String url, String method) {
         return setLoadData(url, method, new HashMap<>());
     }
+	
+	public DynamicList setAddFirstBlank(boolean addFirstBlank) {
+		this.addFirstBlank = addFirstBlank;
+		return this;
+	}
 
     public DynamicList setLoadData(String url, String method, Map<String, String> params) {
         this.load = new HashMap<>();
@@ -83,6 +90,7 @@ public class DynamicList implements Input {
         }
 		json.put("addButton", useAddButton);
 		json.put("removeButton", useRemoveButton);
+		json.put("addFirrstBlank", addFirstBlank);
 		return json;
 	}
 
