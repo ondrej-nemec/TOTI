@@ -1,4 +1,4 @@
-/* TOTI Form version 1.0.5 */
+/* TOTI Form version 1.0.6 */
 class TotiForm {
 
 	constructor(config) {
@@ -113,7 +113,7 @@ class TotiForm {
 					dynamicCache = parent.dynamic['dynamic'];
 				}
 			}
-			var realName = fieldName === undefined ? originName : fieldName;
+			var realName = fieldName === undefined || parent.hasOwnProperty('dynamic') ? originName : fieldName;
 			var removeItem = function(position) {
 				if (dynamicCache[realName].elements.hasOwnProperty(position)) {
 					dynamicCache[realName].elements[position].remove();
@@ -440,8 +440,11 @@ class TotiForm {
 	_bind(values) {
 		var form = this;
         var container = this.container;
-		function bindElement(dynamicCache, originName, name, value, position = 0) {
+        function bindElement(dynamicCache, originName, name, value, position = 0) {
 			var dynamic = dynamicCache[name]; /*dynamicCache[originName];*/
+			if (!dynamic) {
+				dynamic = dynamicCache[originName];
+			}
 			if (value === null) {
 				/* ignore */
             } else if (Array.isArray(value)) {
