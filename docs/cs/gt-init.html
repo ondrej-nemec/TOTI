@@ -1,34 +1,42 @@
 <h1>Inicializace</h1>
 
 <p class="introduction">
-	TOTI lze spustit dvěma způsoby: jednoduše a vlastním způsobem. <strong>Jednoduché spuštění</strong> udělá hodně prázce za vás. Na druhou stranu, <strong>Vlastní spuštění</strong> je mnohem flexibilnější.
-</p>
-
-<h2>Jednoduché spuštění</h2>
-
-<p>
-	<strong>Jednoduché spuštění</strong> načte konfigurační soubor, automaticky vytvoří objekty <code>Database</code> (viz <a href="https://ondrej-nemec.github.io/JI/?file=database-db.html">JI Database</a>) a <code>Env</code> (see <a href="https://ondrej-nemec.github.io/JI/?file=common-functions.html">JI Common</a>) objects.
-</p>
-
-<p class="alert alert-info">
-	Pokud konfigurace pro <code>Database</code> chybí, reference na <code>Database</code>  je NULL.
+	TOTI lze nastavit jak programově, tak pomocí konfiguračního souboru. Případně lze obě metody zkombinovat. Priorita použití vlastností (od nejvyšší): programové nastavení, konfigurační soubor, výchozí hodnota.
 </p>
 
 <p>
-	Pro jednoduché potřebujete instanci třídy <code>Application</code>. Konstruktor vyžaduje seznam <code>Module</code> (více v dalších kapitolách).
+	Pro spuštění TOTI je třeba nejprve vytvořit <code>HttpServerFactory</code>. V konstruktoru lze specifikovat cestu ke konfiguračnímu souboru. Tato třída také obsahuje konfigurační metody. Samotný <code>HttpServer</code> se vytvoří metodou <code>create</code>.
 </p>
+
+<p>
+	<code>HttpServer</code> obsahuje metody <code>start</code> a <code>stop</code> (více níže). Do <code>HttpServer</code> se přidávají jednotlivé aplikace <code>addApplication</code> a to i po spuštění serveru. Parametry této metody jsou: hostname (String) a callback, který vytvoří <code>Application</code>. Callback dostane instanci <code>Env</code> (vytovořenou za pomoci konfiguračního souboru z <code>HttpServerFactory</code>) a <code>ApplicationFactory</code> - funguje podobně jako <code>HttpServerFactory</code>. Výsledná <code>Application</code> se vytvoří <code>create</code>. Tato metoda vyžaduje list <code>Module</code> (více v dalších kapitolách).
+</p>
+
+<p>
+	Metoda <code>addApplication</code> vrátí <code>Application</code>. Tato instance je <strong>automaticky</strong> přidána do TOTI. Tak je možné dostat se k vytvořeným instancím <code>Translator</code>, <code>Database</code>, <code>Link</code>, <code>Register</code> a seznamu migrací (<code>List&lt;String&gt;</code>);
+</p>
+
 
 <pre><code class="language-java">
-Application application = new Application(Arrays.asList(
-	// modules
-));
+	HttpServerFactory serverFactory = new HttpServerFactory(confFilePath);
+	// do programaticall settings
+	HttpServer server = serverFactory.create();
+	server.addApplication(hostname, (env, factory)->{
+		// set application programatically
+		return factory.create(modules);
+	});
 </code></pre>
 
-<p>
-	<code>Application</code> se konfiguruje pomocí souburu <code>.properties</code>. Cesta k souboru se nastavuje pomocí  <code>Application.APP_CONFIG_FILE = ...</code>. Tento statický parametr musí být nastaven <strong>před</strong> konstruktorem. Výchozí hodnota je <code>conf/app.properties</code>. Soubor může být mezi souboury aplikace nebo i mimo. Seznam možné konfigurace je: <a href="?file=doc-server.html">Nastavení serveru</a>. Pokud nechcete použít konfigurační soubor a nechat vše ve výchozích hodnotách, nastavte <code>Application.APP_CONFIG_FILE = null;</code>
+
+<p class="alert-info">
+	Kompletní seznam konfigurace <a href="?file=doc-server.html">Nastavení serveru</a>.
 </p>
 
-<h3>Ovládání</h3>
+<p class="alert alert-success">
+	Oba způsoby nastavení jsou v <a href="https://github.com/ondrej-nemec/TOTI/tree/master/examples/samples">Examples</a>, přímo ve spuštěcí třídě.
+</p>
+
+<h2>Ovládání</h2>
 
 <p>
 	<code>start</code> methoda provede:
@@ -37,7 +45,6 @@ Application application = new Application(Arrays.asList(
 		<li>Spustí všechny úlohy z modulů (více v dalších kapitolách)</li>
 		<li>Spustí HTTP server</li>
 	</ol>
-	Pokud <code>start</code> selže, není vyhozena žádná výjimka (jen je zalogovaná) a zavolá se <code>System.exit</code>.
 </p>
 
 <p>
@@ -46,96 +53,19 @@ Application application = new Application(Arrays.asList(
 		<li>Zastaví HTTP server</li>
 		<li>Zastaví všechny úlohy z modulů</li>
 	</ol>
-	Pokud <code>stop</code> selže, není vyhozena žádná výjimka (jen je zalogovaná) a zavolá se <code>System.exit</code>.
-</p>
-
-<p class="alert alert-warning">
-	<code>Application</code> neháže výjimky. Vše je logováno.
-</p>
-
-<h2>Vlastní spuštění</h2>
-
-<p>
-	Nejprve potřebujete třídu <code>HttpServerFactory</code>. Tato třída drží konfiguraci pro <code>HttpServer</code>. Všechna konfigurace je dostupná <a href="?file=doc-server.html">zde</a>.
-</p>
-
-<p>
-	Instace <code>HttpServer</code>u se získá pomocí metody <code>get</code>. Ta vyžaduje tři parametry: seznam modulů (více o modulech v dalších kapitolách) - seznam může být prázdný, ale nesmí být NULL; <code>Database</code> (viz <a href="https://ondrej-nemec.github.io/JI/?file=database-db.html">JI Database</a>) a <code>Env</code> (viz <a href="https://ondrej-nemec.github.io/JI/?file=common-functions.html">JI Common</a>). <code>Env</code> a <code>Database</code> mohou být null.
 </p>
 
 
-<pre><code class="language-java">
-Database database = ...; // can be null
-Env env = ...; // can be null
-HttpServer server = new HttpServerFactory()
-	// calling settings
-	// ...
-	.get(modules, env, database);
-</code></pre>
-
-<p>
-	Metoda <code>start</code> provede:
-	<ol>
-		<li>Spustí všechny úlohy (viz další kapitoly)</li>
-		<li>Spustí HTTP server</li>
-	</ol>
-</p>
-
-<p>
-	Metoda <code>stop</code> provede:
-	<ol>
-		<li>Zastaví HTTP server</li>
-		<li>Zastaví všechny úlohy</li>
-	</ol>
-</p>
-
-<h2>Příklad</h2>
-
-<p class="alert alert-success">
-	Oba způsoby spuštění jsou v <a href="https://github.com/ondrej-nemec/TOTI/tree/master/examples/samples">Examples</a>, přímo ve spuštěcí třídě.
-</p>
-
-<p>
-	Pokud chcete mít některé soubory dostupné ze prohlížeče (například HTML, CSS a JS), dejte do <code>www</code> složky přímo v kořenu aplikace.
-</p>
-
-<h5>Poznámka</h5>
-
-<p>
-	Jak <code>Application</code> tak <code>HttpServer</code> obsahují metodu <code>getTranslator</code> (<a href="https://ondrej-nemec.github.io/JI/?file=translate.html">JI Translator</a>) a <code>getRegister</code> (<code>Register</code>, více v dalších kapitolách).
-</p>
 
 <h2>Logování</h2>
 
 <p>
 	TOTI využívá <a href="https://logging.apache.org/log4j/2.x/">Log4j 2 API</a>. Ve výchozím nastavení TOTI používá jednoduchou konsolovou implementaci. Přiřazení vlastního loggeru:<br>
 
-	<strong>Application</strong>
 	<pre><code class="language-java">
-	Application application = new Application(Arrays.asList(
-		// modules
-	), (loggerName)->{
-		// TODO return logger
+	serverFactory.setLoggerFactory((loggerName)->{
+		// TODO return new logger
 		// fe: return LogManager.getLogger(loggerName);
 	});
 	</code></pre>
-
-	<strong>HttpServerFactory</strong>
-	<pre><code class="language-java">
-	Database database = ...; // can be null
-	Env env = ...; // can be null
-	HttpServer server = new HttpServerFactory()
-		.setLoggerFactory((loggerName)->{
-			// TODO return logger
-			// fe: return LogManager.getLogger(loggerName);
-		})
-		// calling settings
-		// ...
-		.get(modules, env, database);
-	</code></pre>
-
-</p>
-
-<p>
-	TOTI využívá následující jména loggerů: <code>toti</code>, <code>translator</code>, <code>database</code> (jen při použití <code>Application</code>) a jeden logger pro každý modul s jeho jménem.
 </p>

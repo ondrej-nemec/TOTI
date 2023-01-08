@@ -1,54 +1,103 @@
 package toti;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
-import java.util.List;
+import org.apache.logging.log4j.Logger;
 
+import ji.common.functions.Env;
+import ji.common.structures.ThrowingBiFunction;
 import ji.socketCommunication.Server;
-import toti.application.Task;
-import toti.register.Register;
-import toti.security.AuthenticationCache;
-import ji.translator.Translator;
 
 public class HttpServer {
 	
 	private final Server server;
-	private final List<Task> tasks;
-	private final Translator translator;
-	private final Register register;
-	private final AuthenticationCache sessionCache;
+	private final Env env;
+	private final BiConsumer<ResponseFactory, String> addApplication;
+	private final Consumer<String> removeApplication;
+	
+	private final Function<String, Logger> loggerFactory;
+	private final Logger logger;
+	private final String charset;
+	
+	private final Map<String, Application> applications = new HashMap<>();
 	
 	protected  HttpServer(
-			Server server, List<Task> tasks,
-			Translator translator, Register register,
-			AuthenticationCache sessionCache) {
-		this.register = register;
+			Server server, Env env, String charset,
+			BiConsumer<ResponseFactory, String> addApplication,
+			Consumer<String> removeApplication,
+			Function<String, Logger> loggerFactory, Logger logger) {
 		this.server = server;
-		this.translator = translator;
-		this.tasks = tasks;
-		this.sessionCache = sessionCache;
+		this.env = env;
+		this.addApplication = addApplication;
+		this.removeApplication = removeApplication;
+		this.loggerFactory = loggerFactory;
+		this.logger = logger;
+		this.charset = charset;
 	}
 	
-	public Register getRegister() {
-		return register;
+	public Application addApplication(
+			String hostname,
+			ThrowingBiFunction<Env, ApplicationFactory, Application, Exception> init) throws Exception {
+		ApplicationFactory applicationFactory = new ApplicationFactory(hostname, env, charset, loggerFactory);
+		Application application = init.apply(env, applicationFactory);
+		addApplication.accept(application.getResponseFactory(), hostname);
+		applications.put(hostname, application);
+		startApplication(hostname, application);
+		return application;
 	}
 	
-	public Translator getTranslator() {
-		return translator;
-	}
-	
-	public void start() throws Exception {
-		for (Task task : tasks) {
-			task.start();
+	public boolean removeApplication(String hostname) {
+		if (applications.containsKey(hostname)) {
+			if (!stopApplication(hostname, applications.get(hostname))) {
+				return false;
+			}
+			removeApplication.accept(hostname);
+			applications.remove(hostname);
 		}
+		return true;
+	}
+
+	public void start() throws Exception {
+		logger.info("Server is starting");
 		server.start();
-		sessionCache.start();
+		applications.forEach((host, application)->{
+			startApplication(host, application);
+		});
+		logger.info("Server is running");
 	}
 	
 	public void stop() throws Exception {
+		logger.info("Server is stoping");
+		applications.forEach((host, application)->{
+			stopApplication(host, application);
+		});
 		server.stop();
-		sessionCache.stop();
-		for (Task task : tasks) {
-			task.stop();
+		logger.info("Server stopped");
+	}
+	
+	private void startApplication(String host, Application application) {
+		try {
+			logger.info("Application is starting: " + host);
+			application.start();
+			logger.info("Application is running: " + host);
+		} catch (Exception e) {
+			logger.error("Application start fail: " + host, e);
+		}
+	}
+	
+	private boolean stopApplication(String host, Application application) {
+		try {
+			logger.info("Application is stopping: " + host);
+			application.stop();
+			logger.info("Application is stopped: " + host);
+			return true;
+		} catch (Exception e) {
+			logger.error("Application stop fail: " + host, e);
+			return false;
 		}
 	}
 	

@@ -580,7 +580,34 @@
 &lt;t:link controller="org.example.main.controllers.FirstController" method="index" id="123" /&gt;
 </code></pre>
 
+<h3>Java callback</h3>
 
+<strong>Nepárový</strong>
+
+<p>
+	Zavolá Java třídu. Třída musí implementovat interface <code>TemplateCallback</code>.
+</p>
+
+<pre><code class="language-java">
+package org.example.callbacks;
+
+public class CustomTemplateCallback implements TemplateCallback {
+
+	public void call(TemplateParameters parameters, Identity identty, Translator translator, Authorizator authorizator, MappedUrl current) throws Exception {
+		// do what you wish
+		// for example: add or get variable:
+		parameters.addVariable("newVariable", "some value");
+		Object variable = parameters.getVariable("newVariable");
+	}
+
+}
+</code></pre>
+
+<pre><code>
+&lt;t:callback name="" /&gt;
+// example
+&lt;t:callback name="org.example.callbacks.CustomTemplateCallback" /&gt;
+</code></pre>
 <!--
 <h3></h3>
 

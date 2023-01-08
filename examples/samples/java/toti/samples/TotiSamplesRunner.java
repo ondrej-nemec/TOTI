@@ -3,7 +3,6 @@ package toti.samples;
 import static org.mockito.Mockito.mock;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -15,7 +14,6 @@ import ji.database.Database;
 import ji.database.DatabaseConfig;
 import ji.translator.LanguageSettings;
 import ji.translator.Locale;
-import toti.Application;
 import toti.HttpServer;
 import toti.HttpServerFactory;
 import toti.Module;
@@ -55,9 +53,14 @@ public class TotiSamplesRunner {
 			new TemplateExample(),
 			new ValidationExample()
 		), "toti/samples/app.properties");
-		// select one of the runs, then http://localhost:8080/toti
-		runner.customRun(wait);
-		// runner.quickRun(wait);
+
+		try {
+			// select one of the runs, then http://localhost:8080/toti
+			runner.setProgramatically(wait);
+			// runner.configFromFile(wait);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private final List<Module> modules;
@@ -68,77 +71,68 @@ public class TotiSamplesRunner {
 		this.confFilePath = confFilePath;
 	}
 	
-	public void quickRun(Supplier<Void> wait) {
-		Application.APP_CONFIG_FILE = confFilePath;
-		Application application = new Application(modules);
+	public void configFromFile(Supplier<Void> wait) throws Exception {
+		HttpServerFactory serverFactory = new HttpServerFactory(confFilePath);
+		HttpServer server = serverFactory.create();
+		server.addApplication("localhost", (evn, factory)->{
+			return factory.create(modules);
+		});
 		
-		// if start fail, System.exit is called
 		// start() IS NOT BLOCKING
-		application.start();
+		server.start();
 
 		// wait on stop signal
 		wait.get();
 		
 		// if stop fail, System.exit is called
-		application.stop();
+		server.stop();
 	}
 	
-	public void customRun(Supplier<Void> wait) {
-		// if you wish use migrations
-		List<String> migrations = new LinkedList<>();
-		modules.forEach((config)->{
-			if (config.getMigrationsPath() != null) {
-				migrations.add(config.getMigrationsPath());
-			}
-		});
+	public void setProgramatically(Supplier<Void> wait) throws Exception {
+		// env can be null
+		Env dbEnv = new Env(confFilePath); // config with db credentials
 		
-		try {
-			// env can be null
-			Env env = new Env("toti/samples/app.properties");
-			// database can be null
-			Database database = new Database(
-				new DatabaseConfig(
-					env.getString("database.type"),
-					env.getString("database.url"), 
-					false, 
-					env.getString("database.schema-name"), 
-					env.getString("database.login"), 
-					env.getString("database.password"),
-					migrations,
-					1 // thread pool, 1 is enought in example
-				),
-				mock(Logger.class) // real logger is not required
-			);
-			HttpServer server = new HttpServerFactory()
-					// calling settings...
-					.setPort(8080)
-					
-					.setTokenExpirationTime(30 * 1000) // 30s
-					.setMaxRequestBodySize(1024 * 10) // 10 kB - !! for all body
-					.setLanguageSettings(new LanguageSettings(Arrays.asList(new Locale("en", true, Arrays.asList()))))
-					// try with or without following line
-					// .setDevelopIpAdresses(Arrays.asList()) // no develop ips
-					// try change URL pattern
-					// .setUrlPattern("/api/[controller]/[method]</[param]></[param]>")
-					.setUseProfiler(true)
-					.get(modules, env, database);
-			
-			/* start */
-			// if you wish use migrations
-			if (database != null) {
-				database.createDbAndMigrate();
-			}
-			
-			server.start();// start IS NOT BLOCKING
+		HttpServerFactory serverFactory = new HttpServerFactory()
+			// calling settings...
+			.setPort(8080)
+			.setMaxRequestBodySize(1024 * 10); // 10 kB - !! for all body;
+		HttpServer server = serverFactory.create();
+		server.addApplication("localhost", (evn, factory)->{
+			return factory
+				.setTokenExpirationTime(30 * 1000) // 30s
+				.setLanguageSettings(new LanguageSettings(Arrays.asList(new Locale("en", true, Arrays.asList()))))
+				// try with or without following line
+				// .setDevelopIpAdresses(Arrays.asList()) // no develop ips
+				// try change URL pattern
+				// .setUrlPattern("/api/[controller]/[method]</[param]></[param]>")
+				.setUseProfiler(true)
+				
+				.setDatabase((migrations, env)->{
+					return new Database(
+						new DatabaseConfig(
+							dbEnv.getString("database.type"),
+							dbEnv.getString("database.url"), 
+							false, 
+							dbEnv.getString("database.schema-name"), 
+							dbEnv.getString("database.login"), 
+							dbEnv.getString("database.password"),
+							migrations,
+							1 // thread pool, 1 is enought in example
+						),
+						mock(Logger.class) // real logger is not required
+					);
+				})
+				
+				.create(modules);
+		});
+				
+		server.start();// start IS NOT BLOCKING
 
-			// wait on stop signal
-			wait.get();
+		// wait on stop signal
+		wait.get();
 			
-			/* stop */
-			server.stop();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		/* stop */
+		server.stop();
 	}
 	
 }

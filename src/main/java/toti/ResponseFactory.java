@@ -136,12 +136,6 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 		}
 	}
 	
-	@Override
-	public void catchException(Exception e) throws IOException {
-		logger.fatal("Uncaught exception", e);
-		ji.socketCommunication.http.ResponseFactory.super.catchException(e);
-	}
-	
 	private ji.socketCommunication.http.structures.Response getNormalizedResponse(
 			String url,
 			Request request,

@@ -44,15 +44,18 @@ public class AuthenticationCache {
 	
 	private final boolean useCache;
 	
-	private final ScheduledExecutorService scheduledPool = Executors.newSingleThreadScheduledExecutor(new NamedThredFactory("authentication-cache"));
+	private final ScheduledExecutorService scheduledPool;
 	private final Map<String, Token> activeTokens = new HashMap<>();
 	private final Logger logger;
 	
 	private ScheduledFuture<?> future;
 	
-	public AuthenticationCache(String tempPath, boolean useCache, Logger logger) {
+	public AuthenticationCache(String hostname, String tempPath, boolean useCache, Logger logger) {
 		// TODO load active from files
 		this.logger = logger;
+		this.scheduledPool = Executors.newSingleThreadScheduledExecutor(new NamedThredFactory(
+			hostname + "-authentication-cache"
+		));
 		this.cachePath = tempPath + "/" + "sessions";
 		this.useCache = useCache;
 		if (useCache) {
