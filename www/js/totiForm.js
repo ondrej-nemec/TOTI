@@ -1,4 +1,4 @@
-/* TOTI Form version 1.0.6 */
+/* TOTI Form version 1.0.7 */
 class TotiForm {
 
 	constructor(config) {
@@ -430,7 +430,13 @@ class TotiForm {
 			}
 		}).catch(function(error) {
 			if (bindConfig.onFailure === null) {
-				totiDisplay.flash("error", totiTranslations.formMessages.bindError, error);
+				switch(error.status) {
+					case 403:
+						totiDisplay.flash("error", totiTranslations.formMessages.bindErrorForbidden, error);
+						break;
+					default:
+						totiDisplay.flash("error", totiTranslations.formMessages.bindError, error);
+				}
 			} else {
 				totiUtils.execute(bindConfig.onFailure, [error]);
 			}

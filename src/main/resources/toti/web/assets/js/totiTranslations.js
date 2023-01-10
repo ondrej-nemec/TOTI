@@ -25,12 +25,13 @@ var totiTranslations = {
 		"submitError": "<t:trans message='toti.form.saving-problem' />",
 		"submitErrorForbidden": "<t:trans message='toti.form.saving-forbidden' />",
 		"bindError": "<t:trans message='toti.form.binding-problem' />",
+		"bindErrorForbidden": "<t:trans message='toti.form.binding-forbidden' />",
 		"sendSuccess": "<t:trans message='toti.form.submit-success' />",
 		"renderError": "<t:trans message='toti.form.render-error' />"
 	},
 	"dynamicList": {
-		"add": "<t:trans message='toti.form.add-variant' />", /*/ "Add Variant", //*/
-		"remove": "<t:trans message='toti.form.remove-variant' />" /*/ "Remove Variant" //*/
+		"add": "<t:trans message='toti.form.add-variant' />",
+		"remove": "<t:trans message='toti.form.remove-variant' />"
 	},
 	/* TODO use translations with JSON.parse() ??? */
 	"timestamp": {
