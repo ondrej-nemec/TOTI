@@ -25,6 +25,8 @@ public class HttpServer {
 	
 	private final Map<String, Application> applications = new HashMap<>();
 	
+	private boolean isRunning = false;
+	
 	protected  HttpServer(
 			Server server, Env env, String charset,
 			BiConsumer<ResponseFactory, String> addApplication,
@@ -46,7 +48,9 @@ public class HttpServer {
 		Application application = init.apply(env, applicationFactory);
 		addApplication.accept(application.getResponseFactory(), hostname);
 		applications.put(hostname, application);
-		startApplication(hostname, application);
+		if (isRunning) {
+			startApplication(hostname, application);
+		}
 		return application;
 	}
 	
@@ -68,9 +72,11 @@ public class HttpServer {
 			startApplication(host, application);
 		});
 		logger.info("Server is running");
+		isRunning = true;
 	}
 	
 	public void stop() throws Exception {
+		isRunning = false;
 		logger.info("Server is stoping");
 		applications.forEach((host, application)->{
 			stopApplication(host, application);

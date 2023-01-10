@@ -85,13 +85,14 @@ public class ApplicationFactory {
 				migrations.add(config.getMigrationsPath());
 			}
 		});
+		Env env = this.env.getModule("applications").getModule(hostname);
+		
 		Database database = getDatabase(env.getModule("database"), migrations, loggerFactory.apply(hostname + "-database"));
 		if (database == null) {
 			logger.info("No database specified");
 		}
 		Profiler profiler = initProfiler(logger);
 		
-		Env env = this.env.getModule("applications").getModule(hostname);
 		
 		Register register = new Register();
 		Link.init(getUrlPattern(env), register); // TODO not static, send hostname

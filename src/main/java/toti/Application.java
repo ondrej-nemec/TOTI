@@ -23,6 +23,8 @@ public class Application {
 	// Map<String, TemplateFactory> templateFactories
 	private final ResponseFactory responseFactory;
 	
+	private boolean isRunning = false;
+	
 	public Application(
 			List<Task> tasks, AuthenticationCache sessionCache, Translator translator, Database database,
 			Link link, Register register, List<String> migrations, ResponseFactory responseFactory) {
@@ -74,6 +76,9 @@ public class Application {
 	
 	
 	public void start() throws Exception {
+		if (isRunning) {
+			return;
+		}
 		if (database != null) {
 			database.createDbIfNotExists();
 			database.migrate();
@@ -82,9 +87,11 @@ public class Application {
 			task.start();
 		}
 		sessionCache.start();
+		isRunning = true;
 	}
 	
 	public void stop() throws Exception {
+		isRunning = false;
 		for (Task task : tasks) {
 			task.stop();
 		}
