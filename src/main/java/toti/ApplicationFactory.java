@@ -183,7 +183,7 @@ public class ApplicationFactory {
 			return createDatabase.apply(migrations, env);
 		}
 		if (env != null && env.getString("type") != null) {
-			DatabaseConfig config = new DatabaseConfig(
+			return new Database(new DatabaseConfig(
 				env.getString("type"),
 				env.getString("url"),
 				env.getBoolean("external") == null ? true : env.getBoolean("external"),
@@ -192,8 +192,7 @@ public class ApplicationFactory {
 				env.getString("password"),
 				migrations,
 				env.getInteger("pool-size")
-			);
-			return new Database(config, logger);
+			), logger);
 		}
 		return null;
 	}
@@ -271,7 +270,7 @@ public class ApplicationFactory {
 					substitutions == null ? Arrays.asList() : Arrays.asList(substitutions.split(",")) 
 				));
 			}
-			new LanguageSettings(env.getString("default"), locales);
+			return new LanguageSettings(env.getString("default"), locales);
 		}
 		return new LanguageSettings(java.util.Locale.getDefault().toString(), Arrays.asList());
 	}
