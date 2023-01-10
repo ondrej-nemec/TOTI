@@ -65,19 +65,19 @@ public class ApplicationFactory {
 	private Translator translator = null;
 	
 	private final Env env;
-	private final Function<String, Logger> loggerFactory;
+	private BiFunction<String, String, Logger> loggerFactory;
 	private final String hostname;
 	private final String charset;
 	
 	public ApplicationFactory(String hostname, Env env, String charset, Function<String, Logger> loggerFactory) {
 		this.env = env;
-		this.loggerFactory = loggerFactory;
+		this.loggerFactory = (hostName, loggerName)->loggerFactory.apply(hostname+ "_" + loggerName);
 		this.hostname = hostname;
 		this.charset = charset;
 	}
 
 	public Application create(List<Module> modules) throws Exception {
-		Logger logger = loggerFactory.apply(hostname + "-toti");
+		Logger logger = loggerFactory.apply(hostname, "toti");
 		
 		List<String> migrations = new LinkedList<>();
 		modules.forEach((config)->{
@@ -87,7 +87,7 @@ public class ApplicationFactory {
 		});
 		Env env = this.env.getModule("applications").getModule(hostname);
 		
-		Database database = getDatabase(env.getModule("database"), migrations, loggerFactory.apply(hostname + "-database"));
+		Database database = getDatabase(env.getModule("database"), migrations, loggerFactory.apply(hostname, "database"));
 		if (database == null) {
 			logger.info("No database specified");
 		}
@@ -104,7 +104,7 @@ public class ApplicationFactory {
 		trans.add("toti/translations");
 		List<Task> tasks = new LinkedList<>();
 		if (translator == null) {
-			this.translator = Translator.create(getLangSettings(env), trans, loggerFactory.apply(hostname + "-translator"));
+			this.translator = Translator.create(getLangSettings(env), trans, loggerFactory.apply(hostname, "translator"));
 		}
 		MapDictionary<UrlPart, Object> mapping = MapDictionary.hashMap();
 		for (Module module : modules) {
@@ -124,7 +124,7 @@ public class ApplicationFactory {
 				trans.add(module.getPath() + "/" + module.getTranslationPath());
 			}
 			tasks.addAll(
-				module.initInstances(env, translator, register, database, loggerFactory.apply(module.getName()))
+				module.initInstances(env, translator, register, database, loggerFactory.apply(hostname, module.getName()))
 			);
 			LoadUrls.loadUrlMap(mapping, module, router, register);
 			module.addRoutes(router);
@@ -382,6 +382,11 @@ public class ApplicationFactory {
 	
 	public ApplicationFactory setTranslator(Translator translator) {
 		this.translator = translator;
+		return this;
+	}
+	
+	public ApplicationFactory setLoggerFactory(BiFunction<String, String, Logger> loggerFactory) {
+		this.loggerFactory = loggerFactory;
 		return this;
 	}
 	
