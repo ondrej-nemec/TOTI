@@ -222,7 +222,7 @@ public class ApplicationFactory {
 	}
 	
 	private Boolean getMinimalize(Env env) {
-		return getProperty(minimalize, "minimalize-templates", true, null, env);
+		return getProperty(minimalize, "minimalize-templates", true, Boolean.class, env);
 	}
 	
 	private List<String> getDevelopIps(Env env) {
