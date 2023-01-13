@@ -1,4 +1,4 @@
-/* TOTI Grid version 1.0.2 */
+/* TOTI Grid version 1.0.3 */
 class TotiGrid {
 
 	cookieName = "grid-cache";
@@ -382,11 +382,15 @@ class TotiGrid {
 							}
 							var button = totiControl.button(btnConf, btnConf.action.async);
 							buttons.push(button);
-							button.addEventListener("click", function() {
-								setTimeout(function(){
-									grid.refreshData(clearPrevious);
-								}, 500);
-							});
+							var originClick = button.onclick;
+							button.onclick = function(e) {
+								originClick(e).then(function(res) {
+									console.log("here", res);
+									if (res) {
+										grid.refreshData(clearPrevious);
+									}
+								});
+							};
 						});
 						grid.template.addCell(grid.gridUnique, grid.container, row, column.name, buttons, 2);
 					} else if (column.hasOwnProperty("renderer")) {
@@ -464,8 +468,8 @@ class TotiGrid {
 		    		grid.addNextPage();
 		    	});
 		    }
-			if (grid.config.hasOwnProperty("beforeBind")) {
-	            totiUtils.execute(grid.config.beforeBind, [response.data, grid]);
+			if (grid.config.hasOwnProperty("afterBind")) {
+	            totiUtils.execute(grid.config.afterBind, [response.data, grid]);
 	        }
 			totiDisplay.fadeOut();
 		})

@@ -1,4 +1,4 @@
-/* TOTI Control version 1.0.2 */
+/* TOTI Control version 1.0.3 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -497,13 +497,15 @@ var totiControl = {
 					confirm = confirmMessage;
 				}
 			}
-			confirm.then((allowSend)=>{
+			return confirm.then((allowSend)=>{
 				if (!allowSend) {
-					return;
+					return new Promise((resolve)=>{
+						resolve(false);
+					});
 				}
 				if (clickSettings.async) {
 					totiDisplay.fadeIn();
-					totiLoad.load(
+					return totiLoad.load(
 						clickSettings.href,
 						clickSettings.method,
 						{},
@@ -516,6 +518,7 @@ var totiControl = {
 						} else {
 							totiDisplay.flash("success", totiTranslations.buttons.actionSuccess);
 						}
+						return true;
 					}).catch(function(xhr) {
 						totiDisplay.fadeOut();
 						if (clickSettings.hasOwnProperty('onFailure')) {
@@ -523,6 +526,7 @@ var totiControl = {
 						} else {
 							totiDisplay.flash("error", totiTranslations.buttons.actionFailure);
 						}
+						return false;
 					});
 				} else {
 					totiDisplay.fadeOut();
