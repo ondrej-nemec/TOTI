@@ -42,6 +42,10 @@ public class User implements Serializable {
 		return id;
 	}
 	
+	public User clone() {
+		return new User(id, permissions);
+	}
+	
 	/**
 	 * Returns user ID as DictionaryValue
 	 * @return ID
