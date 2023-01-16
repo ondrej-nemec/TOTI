@@ -1,4 +1,4 @@
-/* TOTI Translations version 0.2.2 */
+/* TOTI Translations version 0.2.3 */
 var totiTranslations = {
 	"pages": {
 //		"title": /* "<t:trans message='toti.grid.paging.pages'/>", /*/ "Pages:", //*/
@@ -19,8 +19,8 @@ var totiTranslations = {
 		"tableCaption": /* "<t:trans message='toti.grid.table-caption' />" /*/ "Showed {onPage}/{total} on page {pageIndex}" //*/
 	},
 	"buttons": {
-		"actionSuccess": "Action successfully done",
-		"actionFailure": "Action fails"
+		"actionSuccess": /* "<t:trans message='toti.grid.action-success' />", /*/ "Action successfully done", //*/
+		"actionFailure": /* "<t:trans message='toti.grid.action-failure' />" /*/ "Action fails" //*/
 	},
 	"formMessages": {
 		"submitError": /* "<t:trans message='toti.form.saving-problem' />", /*/ "Problem with form submit", //*/
