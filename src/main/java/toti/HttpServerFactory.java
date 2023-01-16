@@ -52,8 +52,7 @@ public class HttpServerFactory {
 			),
 			env,
 			charset,
-			(responseFactory, hostName)->server.addApplication(responseFactory, hostName),
-			(hostName)->server.removeApplication(hostName),
+			new ServerConsumer(server),
 			loggerFactory,
 			logger
 		);

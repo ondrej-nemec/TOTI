@@ -2,8 +2,6 @@ package toti;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.apache.logging.log4j.Logger;
@@ -16,8 +14,7 @@ public class HttpServer {
 	
 	private final Server server;
 	private final Env env;
-	private final BiConsumer<ResponseFactory, String> addApplication;
-	private final Consumer<String> removeApplication;
+	private final ServerConsumer consumer;
 	
 	private final Function<String, Logger> loggerFactory;
 	private final Logger logger;
@@ -29,13 +26,11 @@ public class HttpServer {
 	
 	protected  HttpServer(
 			Server server, Env env, String charset,
-			BiConsumer<ResponseFactory, String> addApplication,
-			Consumer<String> removeApplication,
+			ServerConsumer consumer,
 			Function<String, Logger> loggerFactory, Logger logger) {
 		this.server = server;
 		this.env = env;
-		this.addApplication = addApplication;
-		this.removeApplication = removeApplication;
+		this.consumer = consumer;
 		this.loggerFactory = loggerFactory;
 		this.logger = logger;
 		this.charset = charset;
@@ -43,10 +38,11 @@ public class HttpServer {
 	
 	public Application addApplication(
 			String hostname,
-			ThrowingBiFunction<Env, ApplicationFactory, Application, Exception> init) throws Exception {
+			ThrowingBiFunction<Env, ApplicationFactory, Application, Exception> init,
+			String... alias) throws Exception {
 		ApplicationFactory applicationFactory = new ApplicationFactory(hostname, env, charset, loggerFactory);
 		Application application = init.apply(env, applicationFactory);
-		addApplication.accept(application.getResponseFactory(), hostname);
+		consumer.addApplication(application.getResponseFactory(), hostname, alias);
 		applications.put(hostname, application);
 		if (isRunning) {
 			startApplication(hostname, application);
@@ -59,7 +55,7 @@ public class HttpServer {
 			if (!stopApplication(hostname, applications.get(hostname))) {
 				return false;
 			}
-			removeApplication.accept(hostname);
+			consumer.removeApplication(hostname);
 			applications.remove(hostname);
 		}
 		return true;
