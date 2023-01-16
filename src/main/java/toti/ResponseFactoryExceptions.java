@@ -113,7 +113,10 @@ public class ResponseFactoryExceptions {
 					response.createResponse(templateFactory, translator, null, null)
 				);
 			}, fileName,  charset, false);
-			new File(fileName).setExecutable(true);
+			File file = new File(fileName);
+			file.setExecutable(true, false);
+			file.setReadable(true, false);
+			file.setWritable(true, false);
 			return fileName;
 		} catch (Exception e) {
 			e.printStackTrace();

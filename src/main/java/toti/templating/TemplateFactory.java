@@ -63,8 +63,8 @@ public class TemplateFactory {
 		if (!cacheDir.exists() && !cacheDir.mkdirs()) {
 			logger.warn("Temp cache dir cannot be created: " + cachePath);
 		}
-		if (!cacheDir.setExecutable(true)) {
-			logger.warn("Temp cache dir cannot be set as executable: " + cachePath);
+		if (!cacheDir.setExecutable(true, false) || !cacheDir.setWritable(true, false) || !cacheDir.setReadable(true, false)) {
+			logger.warn("Temp cache dir cannot be set permissions: " + cachePath);
 		}
 		this.tempPath = cachePath;
 		this.templatePath = templatePath;
@@ -180,7 +180,9 @@ public class TemplateFactory {
 	private void compileNewCache(String templateFile, String namespace, String className, long modificationTime, String module) throws Exception {
 		File dir = new File(tempPath + "/" + namespace);
 		dir.mkdirs();
-		dir.setExecutable(true);
+		dir.setExecutable(true, false);
+		dir.setReadable(true, false);
+		dir.setWritable(true, false);
 		
 		List<Tag> tags = initTags();
 		tags.addAll(CUSTOM_TAG_PROVIDERS);
@@ -194,7 +196,9 @@ public class TemplateFactory {
 		);
 		String javaTempFile = parser.createTempCache(namespace, className, templateFile, tempPath, module, modificationTime);
 		File file = new File(javaTempFile);
-		file.setExecutable(true);
+		file.setExecutable(true, false);
+		file.setReadable(true, false);
+		file.setWritable(true, false);
 		
 		/*
 		
@@ -215,7 +219,10 @@ public class TemplateFactory {
 		}
 		
 		//*/
-		new File(javaTempFile.replace("java", "class")).setExecutable(true);
+		File auxFile = new File(javaTempFile.replace("java", "class"));
+		auxFile.setExecutable(true, false);
+		auxFile.setReadable(true, false);
+		auxFile.setWritable(true, false);
 		if (deleteAuxJavaClass) {
 			file.delete();
 		}
