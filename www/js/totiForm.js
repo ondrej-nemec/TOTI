@@ -1,4 +1,4 @@
-/* TOTI Form version 1.0.7 */
+/* TOTI Form version 1.0.8 */
 class TotiForm {
 
 	constructor(config) {
@@ -328,7 +328,10 @@ class TotiForm {
 				return false;
 			}
 			if (object.config.hasOwnProperty("beforeSubmit") && object.config.beforeSubmit !== null) {
-				totiUtils.execute(object.config.beforeSubmit, [object, data, srcElement]);
+				var customHandler = totiUtils.execute(object.config.beforeSubmit, [object, data, srcElement]);
+				if (customHandler === false) {
+					return false;
+				}
 			}
 			if (srcElement.getAttribute("async") === 'true') {
 				var headers = {};
@@ -387,7 +390,7 @@ class TotiForm {
 							}
 						}
 					} else if (srcElement.getAttribute("onFailure") != null) {
-						window[srcElement.getAttribute("onFailure")](err, srcElement, form);
+						window[srcElement.getAttribute("onFailure")](error, srcElement, form);
 					} else if (error.hasOwnProperty('status') && error.status === 403) {
 						totiDisplay.flash('error', totiTranslations.formMessages.submitErrorForbidden, error);
 					} else {
