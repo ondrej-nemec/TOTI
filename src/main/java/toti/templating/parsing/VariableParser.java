@@ -102,7 +102,12 @@ public class VariableParser implements Parser {
 		String last = "o" + position + "_" + (level-1);
 		cache = cache.trim();
 		
-		if (level == 0) {
+		if (level == 0 && cache.isEmpty() && params.size() == 1) { // variable in variable: ${${name}}
+			declare.append(String.format(
+				"Object o%s_%s=getVariable(%s.toString());",
+				position, level, params.get(0)
+			));
+		} else if (level == 0) {
 			declare.append(String.format(
 				"Object o%s_%s=getVariable(\"%s\");",
 				position, level, cache

@@ -196,6 +196,21 @@ public class TemplateParserTest {
 					+ "));"
 					+ "write(\"\");"
 				},
+			new Object[] {
+					true,
+					"texts are ${${second}}",
+					"write(\"texts are \");write(Template.escapeHtml("
+						+"getVariable(()->{"
+						+ "Object o1_0_aux=getVariable(()->{"
+								+ "Object o1_0=getVariable(\"second\");"
+								+ "return o1_0;"
+							+ "});"
+						+ "Object o0_0=getVariable(o1_0_aux.toString());"
+						+ "return o0_0;"
+						+ "})"
+					+ "));"
+					+ "write(\"\");"
+				},
 			// variable in returning
 			new Object[] {
 				true,
