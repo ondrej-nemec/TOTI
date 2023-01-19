@@ -119,7 +119,7 @@ public class Button implements Input {
 		action.put("href", url);
 		action.put("async", async);
 		action.put("method", method);
-		action.put("requestParams", requestParams);
+		action.put("params", requestParams);
 		if (confirmation != null) {
 			action.put("submitConfirmation", confirmation);
 		}
