@@ -385,7 +385,6 @@ class TotiGrid {
 							var originClick = button.onclick;
 							button.onclick = function(e) {
 								originClick(e).then(function(res) {
-									console.log("here", res);
 									if (res) {
 										grid.refreshData(clearPrevious);
 									}
