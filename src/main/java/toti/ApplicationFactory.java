@@ -134,7 +134,10 @@ public class ApplicationFactory {
 				trans.add(module.getPath() + "/" + module.getTranslationPath());
 			}
 			tasks.addAll(
-				module.initInstances(env, translator, register, database, loggerFactory.apply(hostname, module.getName()))
+				module.initInstances(
+					env, translator, register, link, database,
+					loggerFactory.apply(hostname, module.getName())
+				)
 			);
 			LoadUrls.loadUrlMap(mapping, module, router, register);
 			module.addRoutes(router);

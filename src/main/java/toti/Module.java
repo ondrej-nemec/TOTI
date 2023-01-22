@@ -7,6 +7,7 @@ import ji.common.functions.Env;
 import ji.database.Database;
 import toti.application.Task;
 import toti.register.Register;
+import toti.url.Link;
 import ji.translator.Translator;
 
 public interface Module {
@@ -19,7 +20,15 @@ public interface Module {
 	
 	String getControllersPath();
 
+	@Deprecated
 	List<Task> initInstances(Env env, Translator translator, Register register, Database database, Logger logger) throws Exception;
+	
+	default List<Task> initInstances(
+		Env env, Translator translator, Register register,
+		Link link, Database database, Logger logger
+	) throws Exception {
+		return initInstances(env, translator, register, database, logger);
+	}
 	
 	default void addRoutes(Router router) {}
 	
