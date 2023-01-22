@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.function.Consumer;
 
 import ji.common.structures.MapInit;
@@ -144,25 +143,28 @@ public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProf
 	/**********/
 	
 	@Override
-	public void log(HttpServerProfilerEvent event) {
+	public void log(Map<HttpServerProfilerEvent, Long> events) {
 		if (!enable) {
 			return;
 		}
 		long threadId = Thread.currentThread().getId();
 		notPageLog.remove(threadId);
 		ProfilerLog log = logByThread.get(threadId);
-		if (log != null && event == HttpServerProfilerEvent.REQUEST_ACCEPT) {
+		/*if (log != null && event == HttpServerProfilerEvent.REQUEST_ACCEPT) {
 			logByThread.put(
 				threadId + "_" + new Random().nextDouble(),
 				logByThread.remove(threadId)
 			);
 			log = null;
-		}
+		}*/
 		if (log == null) {
 			log = new ProfilerLog(threadId, Thread.currentThread().getName());
 			logByThread.put(threadId, log);
 		}
-		log.addServerEvent(System.currentTimeMillis(), event);
+		for (HttpServerProfilerEvent event : HttpServerProfilerEvent.values()) {
+			log.addServerEvent(events.get(event), event);
+		}
+		
 	}
 
 	@Override

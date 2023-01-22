@@ -30,7 +30,7 @@ import toti.templating.tags.*;
 
 public class TemplateFactory {
 	
-	public static TemplateProfiler PROFILER = null;
+	private TemplateProfiler profiler = null;
 	
 	private static final List<Tag> CUSTOM_TAG_PROVIDERS = new LinkedList<>();
 	private static final List<Parameter> CUSTOM_PARAMETERS_PROVIDERS = new LinkedList<>();
@@ -94,6 +94,11 @@ public class TemplateFactory {
 		}
 		return modulePath;
 	}
+	
+	public TemplateFactory setProfiler(TemplateProfiler profiler) {
+		this.profiler = profiler;
+		return this;
+	}
 
 /*
 	public String getModuleName1() {
@@ -124,8 +129,8 @@ public class TemplateFactory {
 			String templateFile,
 			ThrowingFunction<File, Tuple2<String, String>, IOException> getClassNameAndNamespace,
 			String module) throws Exception {
-		if (PROFILER != null) {
-			PROFILER.logGetTemplate(module, templateFile);
+		if (profiler != null) {
+			profiler.logGetTemplate(module, templateFile);
 		}
 		if (templatePath == null) {
 			throw new LogicException("No template path set for this module: '" + this.module + "' (" + module + ")");

@@ -17,9 +17,12 @@ import ji.common.functions.Hash;
 import ji.common.structures.MapDictionary;
 import ji.database.Database;
 import ji.database.DatabaseConfig;
+import ji.database.support.SqlQueryProfiler;
 import ji.socketCommunication.http.RestApiServer;
+import ji.socketCommunication.http.profiler.HttpServerProfiler;
 import ji.translator.LanguageSettings;
 import ji.translator.Locale;
+import ji.translator.TransProfiler;
 import ji.translator.Translator;
 import toti.application.Task;
 import toti.profiler.Profiler;
@@ -29,6 +32,7 @@ import toti.security.Authenticator;
 import toti.security.Authorizator;
 import toti.security.IdentityFactory;
 import toti.templating.TemplateFactory;
+import toti.templating.TemplateProfiler;
 import toti.url.Link;
 import toti.url.LoadUrls;
 import toti.url.UrlPart;
@@ -79,6 +83,8 @@ public class ApplicationFactory {
 	public Application create(List<Module> modules) throws Exception {
 		Logger logger = loggerFactory.apply(hostname, "toti");
 		
+		Profiler profiler = initProfiler(logger);
+		
 		List<String> migrations = new LinkedList<>();
 		modules.forEach((config)->{
 			if (config.getMigrationsPath() != null) {
@@ -87,11 +93,12 @@ public class ApplicationFactory {
 		});
 		Env env = this.env.getModule("applications").getModule(hostname);
 		
-		Database database = getDatabase(env.getModule("database"), migrations, loggerFactory.apply(hostname, "database"));
+		Database database = getDatabase(
+			env.getModule("database"), migrations, profiler, loggerFactory.apply(hostname, "database")
+		);
 		if (database == null) {
 			logger.info("No database specified");
 		}
-		Profiler profiler = initProfiler(logger);
 		
 		
 		Register register = new Register();
@@ -104,7 +111,9 @@ public class ApplicationFactory {
 		trans.add("toti/translations");
 		List<Task> tasks = new LinkedList<>();
 		if (translator == null) {
-			this.translator = Translator.create(getLangSettings(env), trans, loggerFactory.apply(hostname, "translator"));
+			LanguageSettings langSettings = getLangSettings(env);
+			langSettings.setProfiler(profiler);
+			this.translator = Translator.create(langSettings, trans, loggerFactory.apply(hostname, "translator"));
 		}
 		MapDictionary<UrlPart, Object> mapping = MapDictionary.hashMap();
 		for (Module module : modules) {
@@ -118,6 +127,7 @@ public class ApplicationFactory {
 					getMinimalize(env),
 					logger
 			);
+			templateFactory.setProfiler(profiler);
 			templateFactories.put(module.getName(), templateFactory);
 			if (module.getTranslationPath() != null) {
 				trans.add(module.getTranslationPath());
@@ -140,7 +150,7 @@ public class ApplicationFactory {
 					getTempPath(env), "toti/web", "", "", templateFactories,
 					getDeleteTempJavaFiles(env), getMinimalize(env),
 					logger
-				),
+				).setProfiler(profiler),
 				translator,
 				new IdentityFactory(translator, translator.getLocale().getLang()),
 				new Authenticator(
@@ -164,21 +174,18 @@ public class ApplicationFactory {
 	}
 
 	private Profiler initProfiler(Logger logger) {
-		Profiler profiler = new Profiler();
-		profiler.setUse(getUseProfiler(env));
-		if (profiler.isUse()) {
+		if (getUseProfiler(env)) {
 			logger.warn("Profiler is enabled");
-			Database.PROFILER = profiler;
-			RestApiServer.PROFILER = profiler;
-			LanguageSettings.PROFILER = profiler;
-			TemplateFactory.PROFILER = profiler;
+			Profiler profiler = new Profiler();
+			profiler.setUse(getUseProfiler(env));
+			return profiler;
 		}
-		return profiler;
+		return null;
 	}
 		
 	/*************************/
 	
-	private Database getDatabase(Env env, List<String> migrations, Logger logger) {
+	private Database getDatabase(Env env, List<String> migrations, SqlQueryProfiler profiler, Logger logger) {
 		if (createDatabase != null) {
 			return createDatabase.apply(migrations, env);
 		}
@@ -192,7 +199,7 @@ public class ApplicationFactory {
 				env.getString("password"),
 				migrations,
 				env.getInteger("pool-size")
-			), logger);
+			), profiler, logger);
 		}
 		return null;
 	}

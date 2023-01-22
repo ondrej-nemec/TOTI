@@ -18,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 import ji.common.structures.DictionaryValue;
 import ji.common.structures.MapDictionary;
 import ji.socketCommunication.http.StatusCode;
+import ji.socketCommunication.http.profiler.HttpServerProfiler;
 import ji.socketCommunication.http.structures.RequestParameters;
 import ji.socketCommunication.http.structures.WebSocket;
 import ji.socketCommunication.http.structures.Request;
@@ -109,8 +110,13 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 	}
 	
 	@Override
+	public HttpServerProfiler getProfiler() {
+		return profiler;
+	}
+	
+	@Override
 	public ji.socketCommunication.http.structures.Response accept(Request request, String ip, Optional<WebSocket> websocket) throws IOException {
-		Identity identity = identityFactory.createIdentity(request.getHeaders(), ip, profiler.isUse());
+		Identity identity = identityFactory.createIdentity(request.getHeaders(), ip, profiler != null);
 		return getCatchedResponse(request, identity, websocket);
 	}
 
