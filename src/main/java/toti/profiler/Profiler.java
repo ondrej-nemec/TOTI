@@ -1,13 +1,17 @@
 package toti.profiler;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import ji.common.structures.MapInit;
 import ji.database.support.SqlQueryProfiler;
+import ji.files.text.Text;
 import ji.translator.TransProfiler;
 import ji.json.Jsonable;
 import ji.socketCommunication.http.HttpMethod;
@@ -34,6 +38,7 @@ public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProf
 	/****************/
 	
 	public void setPageId(String id) {
+		/*
 		if (!enable) {
 			return;
 		}
@@ -43,84 +48,164 @@ public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProf
 			logByPage.put(id, logs);
 		}
 		logs.add(logByThread.get(Thread.currentThread().getId()));
+		/*/
+		log("PAGE: " + id);
+		//*/
 	}
 	
 	/****************/
 	
 	@Override
 	public void execute(String identifier, String sql) {
+		/*
 		log((log)->{
 			log.addSql(identifier, sql);
 			log.executeSql(identifier);
 		});
+		/*/
+		log("SQL " + identifier + " EXECUTE: " + sql);
+		//*/
 	}
 
 	@Override
 	public void execute(String identifier) {
+		/*
 		log((log)->{
 			log.executeSql(identifier);
 		});
+		/*/
+		log("SQL " + identifier + " EXECUTE");
+		//*/
 	}
 	@Override
 	public void prepare(String identifier, String sql) {
+		/*
 		log((log)->{
 			log.addSql(identifier, sql);
 		});
+		/*/
+		log("SQL " + identifier + " PREPARE: " + sql);
+		//*/
 	}
 
 	@Override
 	public void addParam(String identifier, Object param) {
+		/*
 		log((log)->{
 			log.addSqlParam(identifier, param);
 		});
+		/*/
+		log("SQL " + identifier + " ADD PARAM: " + param);
+		//*/
 	}
 
 	@Override
 	public void builderQuery(String identifier, String query, String sql, Map<String, String> params) {
+		/*
 		log((log)->{
 			log.setBuilder(identifier, query, sql, params);
 		});
+		/*/
+		log("SQL " + identifier +  " QUERY BUILDER: " + query + " " + sql + " " + params);
+		//*/
 	}
 
 	@Override
 	public void executed(String identifier, Object res) {
+		/*
 		log((log)->{
 			log.executeSql(identifier, res);
 		});
+		/*/
+		log("SQL " + identifier + " EXECUTED: " + res);
+		//*/
 	}
 
 	
 	/***********/
 	
 	public void logRequest(Identity identity, Request request, MappedUrl mapped) {
+		/*
 		log((log)->{
 			log.setRequestInfo(identity, request, mapped);
 		});
+		/*/
+		log("REQUEST IDENTITY: " + identity);
+		log("REQUEST REQUEST: " + request);
+		log("REQUEST MAPPED: " + mapped);
+		//*/
 	}
 	
 	/***********/
 
 	@Override
 	public void missingParameter(String module, String key, Map<String, Object> variables, String locale) {
+		/*
 		log((log)->{
 			log.missingParameter(module, key, variables, locale);
 		});
+		/*/
+		log("TRANS MISSING PARAMETER: " + module + " " + locale + " " + variables);
+		//*/
 	}
 
 	@Override
 	public void missingLocale(String locale) {
+		/*
 		log((log)->{
 			log.missingLocale(locale);
 		});
+		/*/
+		log("TRANS MISSING LOCALE: " + locale);
+		//*/
 	}
 	
 	/*******************************/
 
 	@Override
 	public void logGetTemplate(String module, String filename) {
+		/*
 		log((log)->{
 			log.logTemplate(module, filename);
 		});
+		/*/
+		log("TEMPLATE: " + module + " " + filename);
+		//*/
+	}
+	
+	@Override
+	public void log(Map<HttpServerProfilerEvent, Long> events) {
+		/*
+		if (!enable) {
+			return;
+		}
+		long threadId = Thread.currentThread().getId();
+		notPageLog.remove(threadId);
+		ProfilerLog log = logByThread.get(threadId);
+		if (log == null) {
+			log = new ProfilerLog(threadId, Thread.currentThread().getName());
+			logByThread.put(threadId, log);
+		}
+		for (HttpServerProfilerEvent event : HttpServerProfilerEvent.values()) {
+			log.addServerEvent(events.get(event), event);
+		}
+		/*/
+		log("SERVER EVENTS: " + events);
+		//*/
+	}
+	
+	
+	private void log(String text) {
+		try {
+			String filename = "profiler/" + Thread.currentThread().getId() + ".log";
+			// new File(filename).createNewFile();
+			Text.get().write((br)->{
+				br.write(text);
+				br.newLine();
+			}, filename, true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**************/
@@ -141,31 +226,6 @@ public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProf
 	}
 	
 	/**********/
-	
-	@Override
-	public void log(Map<HttpServerProfilerEvent, Long> events) {
-		if (!enable) {
-			return;
-		}
-		long threadId = Thread.currentThread().getId();
-		notPageLog.remove(threadId);
-		ProfilerLog log = logByThread.get(threadId);
-		/*if (log != null && event == HttpServerProfilerEvent.REQUEST_ACCEPT) {
-			logByThread.put(
-				threadId + "_" + new Random().nextDouble(),
-				logByThread.remove(threadId)
-			);
-			log = null;
-		}*/
-		if (log == null) {
-			log = new ProfilerLog(threadId, Thread.currentThread().getName());
-			logByThread.put(threadId, log);
-		}
-		for (HttpServerProfilerEvent event : HttpServerProfilerEvent.values()) {
-			log.addServerEvent(events.get(event), event);
-		}
-		
-	}
 
 	@Override
 	public Object toJson() {
@@ -222,11 +282,11 @@ public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProf
 				return Response.getText(StatusCode.NOT_FOUND, "");
 		}
 	}
-
+/*
 	public boolean isUse() {
 		return use;
 	}
-
+*/
 	public void setUse(boolean use) {
 		this.use = use;
 		this.enable = use;

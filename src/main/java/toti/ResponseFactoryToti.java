@@ -67,7 +67,7 @@ public class ResponseFactoryToti {
 	}
 	
 	private Response getProfiler(HttpMethod method, RequestParameters params, Identity identity) {
-		if (profiler.isUse() && developIps.contains(identity.getIP())) {
+		if (profiler != null && developIps.contains(identity.getIP())) {
 			return profiler.getResponse(method, params);
 		}
 		return Response.getText(StatusCode.FORBIDDEN, "");
