@@ -46,8 +46,28 @@ public class LoadUrls {
 	}
 	
 	private static void map(MapDictionary<UrlPart, Object> mapped, List<String> files, Module module, Register register) throws Exception {
+		map((mappedUrl, url, methods)->{
+			String[] urls = url.substring(1).split("/");
+			MapDictionary<UrlPart, Object> last = mapped;
+			for (int i = 0; i < urls.length; i++) {
+				boolean isRegex = urls[i].equals(UrlParam.PARAM_REGEX); // TODO another regex check
+				Object o = last.get(new UrlPart(urls[i], isRegex));
+				if (o == null) {
+					o = MapDictionary.hashMap();
+					last.put(new UrlPart(urls[i], isRegex), o);
+				}
+				last = new DictionaryValue(o).getDictionaryMap();
+			}
+			for (HttpMethod httpMethod : methods) {
+				last.put(new UrlPart(httpMethod), mappedUrl);
+			}
+		}, Link.get(), module, register);
+	}
+	
+	public static void map(MappingConsumer consumer, Link link, Module module, Register register) throws Exception {
 		String moduleName = module.getName();
 		String folder = module.getControllersPath();
+		List<String> files = FilesList.get(module.getControllersPath(), true).getFiles();
 		for (String file : files) {
 			if (!file.endsWith(".class")) {
 				continue;
@@ -123,9 +143,10 @@ public class LoadUrls {
 		    					);
 		    				}
 		    			}		    			
-		    			String url = Link.get().create(moduleName, path, controllerUrl, methodUrl, linkParams);
+		    			String url = link.create(moduleName, path, controllerUrl, methodUrl, linkParams);
+		    			consumer.accept(mappedUrl, url, methods);
+		    			/*
 		    			String[] urls = url.substring(1).split("/");
-		    			
 		    			MapDictionary<UrlPart, Object> last = mapped;
 		    			for (int i = 0; i < urls.length; i++) {
 		    				boolean isRegex = urls[i].equals(UrlParam.PARAM_REGEX); // TODO another regex check
@@ -139,6 +160,7 @@ public class LoadUrls {
 		    			for (HttpMethod httpMethod : methods) {
 		    				last.put(new UrlPart(httpMethod), mappedUrl);
 		    			}
+		    			*/
 		    		}
 		    	}
 	    	}

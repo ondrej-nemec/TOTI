@@ -54,6 +54,10 @@ public class MappedUrl implements Jsonable{
 		this.securityMode = securityMode;
 		this.validator = validator;
 	}
+	
+	public String getPathUrl() {
+		return pathUrl;
+	}
 
 	public String getClassName() {
 		return className;
@@ -95,6 +99,10 @@ public class MappedUrl implements Jsonable{
 	
 	public Domain[] getSecured() {
 		return domains;
+	}
+	
+	public List<Tuple3<Class<?>, String, Boolean>> getParams() {
+		return params;
 	}
 	
 	public boolean isValidatorPresent() {
