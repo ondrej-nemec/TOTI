@@ -27,7 +27,7 @@ import toti.url.Link;
 public class EdgeControlModule implements Module {
 
 	@Override
-	public List<Task> initInstances(Env env, Translator translator, Register register, Database database, Logger logger)
+	public List<Task> initInstances(Env env, Translator translator, Register register, Link link, Database database, Logger logger)
 			throws Exception {
 		DevicesDao deviceDao = new DevicesDao(database);
 		DeviceStateDao stateDao = new DeviceStateDao(database);
@@ -66,8 +66,8 @@ public class EdgeControlModule implements Module {
 
 	@Override
 	public void addRoutes(Router router) {
-		router.addUrl("/", Link.get().create(WelcomePageController.class, c->c.welcomePage()));
-		router.setRedirectOnNotLoggedInUser(Link.get().create(SignPageController.class, c->c.loginPage(null)));
+		router.addUrl("/", router.getLink().create(WelcomePageController.class, c->c.welcomePage()));
+		router.setRedirectOnNotLoggedInUser(router.getLink().create(SignPageController.class, c->c.loginPage(null)));
 	}
 	
 	@Override

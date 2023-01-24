@@ -125,7 +125,7 @@ public class MappedUrl implements Jsonable{
 		List<UrlParam> regexParams = new ArrayList<>();
 		paramNames.forEach(n->regexParams.add(new UrlParam(true)));
 		
-		return Link.get().create(
+		return Link.get().parse(
 			moduleName, pathUrl, controllerUrl, methodUrl, regexParams
 		);
 	}

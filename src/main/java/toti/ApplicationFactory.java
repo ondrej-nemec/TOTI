@@ -18,11 +18,8 @@ import ji.common.structures.MapDictionary;
 import ji.database.Database;
 import ji.database.DatabaseConfig;
 import ji.database.support.SqlQueryProfiler;
-import ji.socketCommunication.http.RestApiServer;
-import ji.socketCommunication.http.profiler.HttpServerProfiler;
 import ji.translator.LanguageSettings;
 import ji.translator.Locale;
-import ji.translator.TransProfiler;
 import ji.translator.Translator;
 import toti.application.Task;
 import toti.profiler.Profiler;
@@ -32,7 +29,6 @@ import toti.security.Authenticator;
 import toti.security.Authorizator;
 import toti.security.IdentityFactory;
 import toti.templating.TemplateFactory;
-import toti.templating.TemplateProfiler;
 import toti.url.Link;
 import toti.url.LoadUrls;
 import toti.url.UrlPart;
@@ -102,9 +98,8 @@ public class ApplicationFactory {
 		
 		
 		Register register = new Register();
-		Link.init(getUrlPattern(env), register); // TODO not static, send hostname
-		Link link = Link.get();
-		Router router = new Router();
+		Link link = new Link(getUrlPattern(env), register);
+		Router router = new Router(link);
 		
 		Map<String, TemplateFactory> templateFactories = new HashMap<>();
 		Set<String> trans = new HashSet<>();

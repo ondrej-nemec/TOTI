@@ -143,7 +143,7 @@ public class LoadUrls {
 		    					);
 		    				}
 		    			}		    			
-		    			String url = link.create(moduleName, path, controllerUrl, methodUrl, linkParams);
+		    			String url = link.parse(moduleName, path, controllerUrl, methodUrl, linkParams);
 		    			consumer.accept(mappedUrl, url, methods);
 		    			/*
 		    			String[] urls = url.substring(1).split("/");

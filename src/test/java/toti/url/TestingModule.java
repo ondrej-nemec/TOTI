@@ -14,7 +14,7 @@ public class TestingModule implements Module {
 	
 	@Override
 	public String getName() {
-		return "core";
+		return "toti";
 	}
 
 	@Override
