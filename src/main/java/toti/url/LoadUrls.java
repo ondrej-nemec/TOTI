@@ -65,7 +65,7 @@ public class LoadUrls {
 		    		if (m.isAnnotationPresent(Action.class)) {
 		    			HttpMethod[] methods = m.isAnnotationPresent(Method.class)
 		    							? m.getAnnotation(Method.class).value()
-		    							: HttpMethod.values();
+		    							: new HttpMethod[] {HttpMethod.GET}; // HttpMethod.values();
 		    			/*Optional<Validator> validator = m.getAnnotation(Action.class).validator().isEmpty()
 		    					? Optional.empty()
 		    					: Optional.of(Registr.get().getService(m.getAnnotation(Action.class).validator(), Validator.class));
