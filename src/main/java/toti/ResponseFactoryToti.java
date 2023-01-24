@@ -77,7 +77,7 @@ public class ResponseFactoryToti {
 		return Response.getTemplate(
 			"/assets" + url, 
 			new MapInit<String, Object>()
-			.append("useProfiler", profiler.isUse() && developIps.contains(identity.getIP()))
+			.append("useProfiler", profiler != null && developIps.contains(identity.getIP()))
 			.toMap()
 		);
 	}

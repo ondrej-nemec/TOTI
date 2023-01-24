@@ -21,6 +21,7 @@ import toti.annotations.Controller;
 import toti.application.Task;
 import toti.register.Register;
 import toti.response.Response;
+import toti.url.Link;
 
 /**
  * This example shows various responses and their usage
@@ -168,7 +169,7 @@ public class ResponsesExample implements Module {
 	}
 
 	@Override
-	public List<Task> initInstances(Env env, Translator translator, Register register, Database database, Logger logger)
+	public List<Task> initInstances(Env env, Translator translator, Register register, Link link, Database database, Logger logger)
 			throws Exception {
 		TaskExample task = new TaskExample(logger);
 		register.addFactory(ResponsesExample.class, ()->new ResponsesExample(task));

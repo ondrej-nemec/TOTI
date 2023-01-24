@@ -23,6 +23,7 @@ import toti.application.Task;
 import toti.register.Register;
 import toti.response.Response;
 import toti.security.Identity;
+import toti.url.Link;
 import toti.url.MappedUrl;
 
 /**
@@ -152,7 +153,7 @@ public class ExceptionsExample implements Module {
 	}
 
 	@Override
-	public List<Task> initInstances(Env env, Translator translator, Register registr, Database database, Logger logger)
+	public List<Task> initInstances(Env env, Translator translator, Register registr, Link link, Database database, Logger logger)
 			throws Exception {
 		registr.addFactory(ExceptionsExample.class, ()->new ExceptionsExample());
 		return Arrays.asList();

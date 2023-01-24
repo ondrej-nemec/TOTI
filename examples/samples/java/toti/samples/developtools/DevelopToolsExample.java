@@ -19,6 +19,7 @@ import toti.annotations.Controller;
 import toti.application.Task;
 import toti.register.Register;
 import toti.response.Response;
+import toti.url.Link;
 
 /**
  * Class shows available developers tools
@@ -94,7 +95,7 @@ public class DevelopToolsExample implements Module {
 	}
 
 	@Override
-	public List<Task> initInstances(Env env, Translator translator, Register register, Database database, Logger logger)
+	public List<Task> initInstances(Env env, Translator translator, Register register, Link link, Database database, Logger logger)
 			throws Exception {
 		register.addFactory(DevelopToolsExample.class, (t, i, au, ar)->new DevelopToolsExample(t, database));
 		return Arrays.asList(new DevelopToolsTask(translator, database));

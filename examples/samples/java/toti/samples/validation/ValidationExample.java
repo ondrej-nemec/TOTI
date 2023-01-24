@@ -19,6 +19,7 @@ import toti.annotations.ParamsValidator;
 import toti.application.Task;
 import toti.register.Register;
 import toti.response.Response;
+import toti.url.Link;
 import toti.validation.ItemRules;
 import toti.validation.Validator;
 
@@ -101,7 +102,7 @@ public class ValidationExample implements Module {
 	}
 
 	@Override
-	public List<Task> initInstances(Env env, Translator translator, Register register, Database database, Logger logger)
+	public List<Task> initInstances(Env env, Translator translator, Register register, Link link, Database database, Logger logger)
 			throws Exception {
 		register.addService(VALIDATOR_SERVICE_KEY, getServiceValidator());
 		register.addFactory(ValidationExample.class, ()->new ValidationExample());

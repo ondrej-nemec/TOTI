@@ -1420,7 +1420,7 @@ public class FormExample implements Module {
 	/**************/
 
 	@Override
-	public List<Task> initInstances(Env env, Translator translator, Register register, Database database, Logger logger)
+	public List<Task> initInstances(Env env, Translator translator, Register register, Link link, Database database, Logger logger)
 			throws Exception {
 		FormExampleDao dao = new FormExampleDao();
 		register.addFactory(

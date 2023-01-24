@@ -41,7 +41,8 @@ public class ParametersEndToEndTest {
 		when(identity.getUser()).thenReturn(user);
 		
 		Register register = new Register();
-		new Controller().initInstances(null, null, register, null, null);
+		Link link = Link.get();
+		new Controller().initInstances(null, null, register, link, null, null);
 		Link.init("/[module]/[controller]/[method]</[param]>", register);
 		
 		Translator trans = new Translator() {

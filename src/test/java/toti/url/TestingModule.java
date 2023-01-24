@@ -23,7 +23,7 @@ public class TestingModule implements Module {
 	}
 
 	@Override
-	public List<Task> initInstances(Env env, Translator translator, Register registr, Database database, Logger logger) throws Exception {
+	public List<Task> initInstances(Env env, Translator translator, Register registr, Link link, Database database, Logger logger) throws Exception {
 		registr.addFactory(TestingController.class, (a, b, c, d)->new TestingController());
 		return null;
 	}

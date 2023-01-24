@@ -23,6 +23,7 @@ import toti.annotations.Params;
 import toti.application.Task;
 import toti.register.Register;
 import toti.response.Response;
+import toti.url.Link;
 
 /**
  * This controller shows various ways of receiving parameters.
@@ -205,7 +206,7 @@ public class RequestsExample implements Module  {
 	}
 
 	@Override
-	public List<Task> initInstances(Env env, Translator translator, Register register, Database database, Logger logger)
+	public List<Task> initInstances(Env env, Translator translator, Register register, Link link, Database database, Logger logger)
 			throws Exception {
 		register.addFactory(RequestsExample.class, ()->new RequestsExample());
 		return Arrays.asList();
