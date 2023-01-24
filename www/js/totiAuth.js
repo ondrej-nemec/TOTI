@@ -1,4 +1,4 @@
-/* TOTI Auth version 2.0.1 */
+/* TOTI Auth version 2.0.2 */
 var totiAuth = {
 	variableToken: "authenticationToken",
     variableConfig: "authenticationConfig",
@@ -19,7 +19,7 @@ var totiAuth = {
     	} else {
     		totiLoad.load(url, method)
     		.then(onLogout)
-    		.catch(function() {
+    		.catch(function(err) {
     			/* TODO display error */
     			console.error('Augh, there was an error!', err);
     		});
