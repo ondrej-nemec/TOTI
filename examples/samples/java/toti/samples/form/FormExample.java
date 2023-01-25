@@ -68,11 +68,13 @@ public class FormExample implements Module {
 	private FormExampleDao dao;
 	private Identity identity;
 	private Authenticator authenticator;
+	private Link link;
 	
 	public FormExample() {}
 	
-	public FormExample(FormExampleDao dao, Identity identity, Authenticator authenticator) {
+	public FormExample(FormExampleDao dao, Link link, Identity identity, Authenticator authenticator) {
 		this.dao = dao;
+		this.link = link;
 		this.identity = identity;
 		this.authenticator = authenticator;
 	}
@@ -124,7 +126,7 @@ public class FormExample implements Module {
 	}
 	
 	private Response getInputs(Integer i, boolean editable, String title) {
-		Form form = new Form(Link.get().addUrlParam(i).create(getClass(), c->c.allInputs(0, null)), editable);
+		Form form = new Form(link.create(getClass(), c->c.allInputs(0, null), i), editable);
 		form.addInput(
 			Hidden.input("hidden").setDefaultValue(i)
 		);
@@ -194,10 +196,10 @@ public class FormExample implements Module {
 		);
 		form.addInput(
 			Submit.create("Save", "save")
-			.setRedirect(Link.get().addUrlParam(i).create(getClass(), c->c.inputsForm(0)))
+			.setRedirect(link.create(getClass(), c->c.inputsForm(0), i))
 		);
 		if (i != null) {
-			form.setBindUrl(Link.get().addUrlParam(i).create(getClass(), c->c.allInputsGet(0)));
+			form.setBindUrl(link.create(getClass(), c->c.allInputsGet(0), i));
 			form.setBindMethod("get");
 		}
 		Map<String, Object> params = new HashMap<>();
@@ -214,7 +216,7 @@ public class FormExample implements Module {
 	 */
 	@Action("validated")
 	public Response validated() {
-		Form form = new Form(Link.get().create(getClass(), c->c.validateSave()), true);
+		Form form = new Form(link.create(getClass(), c->c.validateSave()), true);
 		form.addInput(
 			Text.input("text", true).setTitle("Text input")
 			.setDefaultValue("Some text to submit")
@@ -226,7 +228,7 @@ public class FormExample implements Module {
 		);
 		form.addInput(
 			Submit.create("Save", "save")
-			.setRedirect(Link.get().create(getClass(), c->c.validated()))
+			.setRedirect(link.create(getClass(), c->c.validated()))
 		);
 		Map<String, Object> params = new HashMap<>();
 		params.put("form", form);
@@ -258,7 +260,7 @@ public class FormExample implements Module {
 	@Action("async")
 	@Method(HttpMethod.GET)
 	public Response asyncForm() {
-		Form form = new Form(Link.get().create(getClass(), c->c.save(null)), true);
+		Form form = new Form(link.create(getClass(), c->c.save(null)), true);
 		form.setFormMethod("post");
 		
 		form.addInput(Text.input("textInput", true).setTitle("Text"));
@@ -279,7 +281,7 @@ public class FormExample implements Module {
 	@Action("submit-modes")
 	@Method(HttpMethod.GET)
 	public Response submitModes() {
-		Form form = new Form(Link.get().create(getClass(), c->c.save(null)), true);
+		Form form = new Form(link.create(getClass(), c->c.save(null)), true);
 		form.setFormMethod("post");
 		
 		form.addInput(Text.input("textInput", true).setTitle("Text"));
@@ -314,12 +316,16 @@ public class FormExample implements Module {
 	 */
 	@Action("buttons")
 	public Response buttons() {
-		Form form = new Form(Link.get().create(getClass(), c->c.save(null)), true);
+		Form form = new Form(link.create(getClass(), c->c.save(null)), true);
 		form.setFormMethod("post");
 		// setCondition is not supported for button in form
 		form.addInput(
 			Button.create(
-				Link.get().addGetParam("urlParam", "URL param").create(getClass(), c->c.notSave(null)), 
+				link.create(
+					getClass(),
+					c->c.notSave(null),
+					MapInit.create().append("urlParam", "URL param").toMap()
+				), 
 				"async-button"
 			)
 			.addRequestParam("buttonParam", "Button param") // async only
@@ -331,7 +337,11 @@ public class FormExample implements Module {
 		);
 		form.addInput(
 			Button.create(
-				Link.get().addGetParam("urlParam", "URL param").create(getClass(), c->c.notSave(null)),
+				link.create(
+					getClass(),
+					c->c.notSave(null),
+					MapInit.create().append("urlParam", "URL param").toMap()
+				),
 				"sync-button"
 			)
 			.setAsync(false)
@@ -344,7 +354,10 @@ public class FormExample implements Module {
 			Submit.create("Send with redirect", "save-and-redirect")
 			.setConfirmation("Send: Really?")
 			.setOnFailure("submitOnFailure").setOnSuccess("submitOnSuccess")
-			.setRedirect(Link.get().addGetParam("redirected", true).create(getClass(), c->c.notSave(null)))
+			.setRedirect(link.create(
+				getClass(), c->c.notSave(null),
+				MapInit.create().append("redirected", true).toMap()
+			))
 			.setAsync(true)
 		);
 		
@@ -392,10 +405,10 @@ public class FormExample implements Module {
 	}
 	
 	private Response templateResponse(String title, boolean editable) {
-		Form form = new Form(Link.get().create(getClass(), c->c.templateSave(null)), editable);
+		Form form = new Form(link.create(getClass(), c->c.templateSave(null)), editable);
 		form.setFormMethod("post");
 		
-		form.setBindUrl(Link.get().create(getClass(), c->c.templateData()));
+		form.setBindUrl(link.create(getClass(), c->c.templateData()));
 		
 		form.addInput(Text.input("textInput", true).setTitle("Text"));
 		form.addInput(Number.input("numberInput", false).setTitle("Number"));
@@ -459,7 +472,7 @@ public class FormExample implements Module {
 	@Action("select")
 	@Method(HttpMethod.GET)
 	public Response select() {
-		Form form = new Form(Link.get().create(getClass(), c->c.save(null)), true);
+		Form form = new Form(link.create(getClass(), c->c.save(null)), true);
 		form.setFormMethod("post");
 		
 		List<Option> defOptions = Arrays.asList(
@@ -477,12 +490,12 @@ public class FormExample implements Module {
 		form.addInput(
 			Select.input("load-only", false, Arrays.asList(Option.create("", "---")))
 			.setTitle("Load with empty option")
-			.setLoadData(Link.get().create(getClass(), c->c.loadToSelect()), "get")
+			.setLoadData(link.create(getClass(), c->c.loadToSelect()), "get")
 		);
 		form.addInput(
 			Select.input("load-with-def", false, defOptions)
 			.setTitle("Load with default options")
-			.setLoadData(Link.get().create(getClass(), c->c.loadToSelect()), "get")
+			.setLoadData(link.create(getClass(), c->c.loadToSelect()), "get")
 			.setDefaultValue("3")
 		);
 		
@@ -496,7 +509,7 @@ public class FormExample implements Module {
 		);
 		form.addInput(
 			Select.input("depends", false, defOptions)
-			.setLoadData(Link.get().create(getClass(), c->c.loadToSelect()), "get")
+			.setLoadData(link.create(getClass(), c->c.loadToSelect()), "get")
 			.setTitle("Depends on previous input")
 			.setDepends("[name=groups]")
 		);
@@ -504,7 +517,7 @@ public class FormExample implements Module {
 
 		form.addInput(
 			Select.input("selected-group", false, defOptions)
-			.setLoadData(Link.get().create(getClass(), c->c.loadToSelect()), "get")
+			.setLoadData(link.create(getClass(), c->c.loadToSelect()), "get")
 			.setTitle("Selected Group 1")
 			.setShowedOptionGroup("group1")
 		);
@@ -520,7 +533,7 @@ public class FormExample implements Module {
 		);
 		form.addInput(
 			Select.input("depends-on-selected", false, defOptions)
-			.setLoadData(Link.get().create(getClass(), c->c.loadToSelect()), "get")
+			.setLoadData(link.create(getClass(), c->c.loadToSelect()), "get")
 			.setTitle("Depends on previous input - selected value")
 			.setDepends("[name=groupsSelected]")
 		);
@@ -528,7 +541,7 @@ public class FormExample implements Module {
 		form.addInput(
 			Select.input("load-with-def-value", false, defOptions)
 			.setTitle("Load with default options and default value")
-			.setLoadData(Link.get().create(getClass(), c->c.loadToSelect()), "get")
+			.setLoadData(link.create(getClass(), c->c.loadToSelect()), "get")
 			.setDefaultValue(5)
 		);
 		
@@ -623,7 +636,7 @@ public class FormExample implements Module {
 	 */
 	@Action("datetime")
 	public Response dateTimeStrict() {
-		Form form = new Form(Link.get().create(getClass(), c->c.save(null)), true);
+		Form form = new Form(link.create(getClass(), c->c.save(null)), true);
 		form.setFormMethod("post");
 		
 		form.addInput(
@@ -662,7 +675,7 @@ public class FormExample implements Module {
 	 */
 	@Action("optional")
 	public Response optionalInputs() {
-		Form form = new Form(Link.get().create(getClass(), c->c.save(null)), true);
+		Form form = new Form(link.create(getClass(), c->c.save(null)), true);
 		form.setFormMethod("post");
 		
 		form.addInput(
@@ -700,7 +713,7 @@ public class FormExample implements Module {
 	@Action("checkbox")
 	public Response checkbox() {
 		// checkbox renderer works only if form or input is not editable
-		Form form = new Form(Link.get().create(getClass(), c->c.save(null)), false);
+		Form form = new Form(link.create(getClass(), c->c.save(null)), false);
 		form.setFormMethod("post");
 		
 		form.addInput(
@@ -752,7 +765,7 @@ public class FormExample implements Module {
 	 */
 	@Action("exclude")
 	public Response exclude() {
-		Form form = new Form(Link.get().create(getClass(), c->c.save(null)), true);
+		Form form = new Form(link.create(getClass(), c->c.save(null)), true);
 		form.setFormMethod("post");
 		
 		form.addInput(
@@ -800,7 +813,7 @@ public class FormExample implements Module {
 	 */
 	@Action("not-editable")
 	public Response notEditable() {
-		Form form = new Form(Link.get().create(getClass(), c->c.save(null)), false);
+		Form form = new Form(link.create(getClass(), c->c.save(null)), false);
 		form.setFormMethod("post");
 		
 		form.addInput(
@@ -829,7 +842,7 @@ public class FormExample implements Module {
 	 */
 	@Action("editable")
 	public Response editable() {
-		Form form = new Form(Link.get().create(getClass(), c->c.save(null)), true);
+		Form form = new Form(link.create(getClass(), c->c.save(null)), true);
 		form.setFormMethod("post");
 		
 		form.addInput(
@@ -860,7 +873,7 @@ public class FormExample implements Module {
 	 */
 	@Action("redirect")
 	public Response submitWithRedirect() {
-		Form form = new Form(Link.get().create(getClass(), c->c.formRedirectSave(null)), true);
+		Form form = new Form(link.create(getClass(), c->c.formRedirectSave(null)), true);
 		form.setFormMethod("post");
 
 		form.addInput(
@@ -870,8 +883,10 @@ public class FormExample implements Module {
 		form.addInput(
 			Submit.create("Submit", "submit")
 			.setRedirect(
-				Link.get().addGetParam("someParam", "{id}")
-				.create(getClass(), c->c.afterRedirect(null))
+				link.create(
+					getClass(), c->c.afterRedirect(null),
+					MapInit.create().append("someParam", "{id}").toMap()
+				)
 			)
 		);
 		
@@ -910,7 +925,7 @@ public class FormExample implements Module {
 	 */
 	@Action("file")
 	public Response file() {
-		Form form = new Form(Link.get().create(getClass(), c->c.fileSave(null)), true);
+		Form form = new Form(link.create(getClass(), c->c.fileSave(null)), true);
 		form.setFormMethod("post");
 
 		form.addInput(Hidden.input("some"));
@@ -943,7 +958,7 @@ public class FormExample implements Module {
 	 */
 	@Action("callbacks")
 	public Response callbacks() {
-		Form form = new Form(Link.get().addUrlParam(10).create(getClass(), c->c.allInputs(0, null)), true);
+		Form form = new Form(link.create(getClass(), c->c.allInputs(0, null), 10), true);
 		form.setBeforeRender("beforeRenderCallback");
 		form.setAfterRender("afterRenderCallback");
 		
@@ -951,7 +966,7 @@ public class FormExample implements Module {
 		form.setAfterBind("afterBindCallback");
 		
 		form.addInput(Text.input("text", true).setTitle("Text input"));
-		form.setBindUrl(Link.get().addUrlParam(10).create(getClass(), c->c.allInputsGet(0)));
+		form.setBindUrl(link.create(getClass(), c->c.allInputsGet(0), 10));
 		form.setBindMethod("get");
 		
 		Map<String, Object> params = new HashMap<>();
@@ -981,7 +996,7 @@ public class FormExample implements Module {
 	}
 	
 	private Response inputListResponse(String title, String template) {
-		Form form = new Form(Link.get().create(getClass(), c->c.save(null)), true);
+		Form form = new Form(link.create(getClass(), c->c.save(null)), true);
 		form.setFormMethod("post");
 		
 		form.addInput(
@@ -1028,7 +1043,7 @@ public class FormExample implements Module {
 		
 		form.addInput(Submit.create("Submit", "submit"));
 		
-		form.setBindUrl(Link.get().create(getClass(), c->c.inputListData()));
+		form.setBindUrl(link.create(getClass(), c->c.inputListData()));
 		
 		Map<String, Object> params = new HashMap<>();
 		params.put("form", form);
@@ -1093,7 +1108,7 @@ public class FormExample implements Module {
 	}
 
 	private Response dynamicListResponse(String title, String template, boolean editable) {
-		Form form = new Form(Link.get().create(getClass(), c->c.save(null)), editable);
+		Form form = new Form(link.create(getClass(), c->c.save(null)), editable);
 		form.setFormMethod("post");
 
 		form.addInput(
@@ -1141,13 +1156,13 @@ public class FormExample implements Module {
 			.addInput(
 				Select.input("{i}", false, Arrays.asList())
 				.setTitle("{i}")
-				.setLoadData(Link.get().create(getClass(), c->c.dynamicListLoadGroupsSelectOptions()), "get")
+				.setLoadData(link.create(getClass(), c->c.dynamicListLoadGroupsSelectOptions()), "get")
 			)
 		);
 		
 		form.addInput(Submit.create("Submit", "submit"));
 		
-		form.setBindUrl(Link.get().create(getClass(), c->c.dynamicListData()));
+		form.setBindUrl(link.create(getClass(), c->c.dynamicListData()));
 		
 		Map<String, Object> params = new HashMap<>();
 		params.put("form", form);
@@ -1202,7 +1217,7 @@ public class FormExample implements Module {
 	 */
 	@Action("dynamiclist-buttons")
 	public Response dynamicInputListButtons() {
-		Form form = new Form(Link.get().create(getClass(), c->c.save(null)), true);
+		Form form = new Form(link.create(getClass(), c->c.save(null)), true);
 		form.setFormMethod("post");
 
 		form.addInput(
@@ -1233,7 +1248,7 @@ public class FormExample implements Module {
 		
 		form.addInput(Submit.create("Submit", "submit"));
 		
-		form.setBindUrl(Link.get().create(getClass(), c->c.dynamicListData()));
+		form.setBindUrl(link.create(getClass(), c->c.dynamicListData()));
 		
 		Map<String, Object> params = new HashMap<>();
 		params.put("form", form);
@@ -1247,23 +1262,23 @@ public class FormExample implements Module {
 	 */
 	@Action("dynamiclist-load")
 	public Response dynamicLoaded() {
-		Form form = new Form(Link.get().create(getClass(), c->c.save(null)), true);
+		Form form = new Form(link.create(getClass(), c->c.save(null)), true);
 		form.setFormMethod("post");
 
 		form.addInput(
 			DynamicList.input("dynamic-load")
-			.setLoadData(Link.get().create(getClass(), c->c.dynamicListLoadGroups()), "get")
+			.setLoadData(link.create(getClass(), c->c.dynamicListLoadGroups()), "get")
 			.addInput(
 				Select.input("{i}", false, Arrays.asList())
 				.setTitle("{i}")
-				.setLoadData(Link.get().create(getClass(), c->c.dynamicListLoadGroupsSelectOptions()), "get")
+				.setLoadData(link.create(getClass(), c->c.dynamicListLoadGroupsSelectOptions()), "get")
 			)
 		);
 		// TODO improve - add text inputs
 		
 		form.addInput(Submit.create("Submit", "submit"));
 		
-		form.setBindUrl(Link.get().create(getClass(), c->c.dynamicListLoadData()));
+		form.setBindUrl(link.create(getClass(), c->c.dynamicListLoadData()));
 		
 		Map<String, Object> params = new HashMap<>();
 		params.put("form", form);
@@ -1391,7 +1406,7 @@ public class FormExample implements Module {
 			authenticator.login(new User("someuser", new FormPermissions()), identity);
 		}
 		
-		Form form = new Form(Link.get().create(getClass(), c->c.saveCsrf(null)), true);
+		Form form = new Form(link.create(getClass(), c->c.saveCsrf(null)), true);
 		form.setCsrfSecured(identity);
 		form.setFormMethod("post");
 		
@@ -1425,7 +1440,7 @@ public class FormExample implements Module {
 		FormExampleDao dao = new FormExampleDao();
 		register.addFactory(
 			FormExample.class,
-			(t, identity, auth, authenticator)->new FormExample(dao, identity, authenticator)
+			(t, identity, auth, authenticator)->new FormExample(dao, link, identity, authenticator)
 		);
 		return Arrays.asList();
 	}

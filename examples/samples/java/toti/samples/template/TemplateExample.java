@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 import ji.common.functions.Env;
+import ji.common.structures.MapInit;
 import ji.database.Database;
 import ji.translator.Translator;
 import toti.Module;
@@ -25,6 +26,14 @@ import toti.url.Link;
  */
 @Controller("template")
 public class TemplateExample implements Module {
+	
+	private Link link;
+	
+	public TemplateExample() {}
+	
+	public TemplateExample(Link link) {
+		this.link = link;
+	}
 	
 	/**
 	 * Basics of templating
@@ -47,10 +56,10 @@ public class TemplateExample implements Module {
 		params.put("title", "Some text");
 		params.put(
 			"url", 
-			Link.get()
-				.addGetParam("foo", "dump")
-				.addGetParam("foo2", "dump2")
-				.create(TemplateExample.class, c->c.variableOptions())
+			link.create(
+				TemplateExample.class, c->c.variableOptions(),
+				MapInit.create().append("foo", "dump").append("foo2", "dump2").toMap()
+			)
 		);
 		params.put("color", "#ff45ee");
 		params.put("age", "42");
@@ -75,7 +84,7 @@ public class TemplateExample implements Module {
 	@Action("owasp-form")
 	public Response owaspForm() {
 		Map<String, Object> params = new HashMap<>();
-		params.put("action", Link.get().create(getClass(), c->c.owaspTest(null, null)));
+		params.put("action", link.create(getClass(), c->c.owaspTest(null, null)));
 		return Response.getTemplate("owaspForm.jsp", params);
 	}
 	
@@ -98,7 +107,7 @@ public class TemplateExample implements Module {
 			throws Exception {
 		register.addFactory(
 			TemplateExample.class, 
-			(trans, identity, authorizator, authenticator)->new TemplateExample()
+			(trans, identity, authorizator, authenticator)->new TemplateExample(link)
 		);
 		return Arrays.asList();
 	}

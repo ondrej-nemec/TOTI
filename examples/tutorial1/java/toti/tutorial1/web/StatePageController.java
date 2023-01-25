@@ -23,15 +23,17 @@ import toti.url.Link;
 public class StatePageController {
 
 	private final Translator translator;
+	private final Link link;
 	
-	public StatePageController(Translator translator) {
+	public StatePageController(Translator translator, Link link) {
 		this.translator = translator;
+		this.link = link;
 	}
 	
 	@Action()
 	@Secured(mode = AuthMode.COOKIE)
 	public Response index() {
-		Grid grid = new Grid(Link.get().create(StateApiController.class, c->c.getAll(null)), "get");
+		Grid grid = new Grid(link.create(StateApiController.class, c->c.getAll(null)), "get");
 		
 		grid.setRefreshInterval(15000);
 		
@@ -39,7 +41,7 @@ public class StatePageController {
 			new ValueColumn("device_id")
 			.setFilter(
 				Select.filter(Arrays.asList(Option.create("", "---")))
-				.setLoadData(Link.get().create(DeviceApiController.class, c->c.getHelp()), "options")
+				.setLoadData(link.create(DeviceApiController.class, c->c.getHelp()), "options")
 			)
 			.setTitle(translator.translate("messages.devices.name"))
 		);

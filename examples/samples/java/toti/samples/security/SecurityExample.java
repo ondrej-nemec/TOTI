@@ -45,13 +45,15 @@ public class SecurityExample implements Module {
 	private Identity identity;
 	private Authorizator authorizator;
 	private Authenticator authenticator;
+	private Link link;
 	
 	// module constructor
 	public SecurityExample() {}
 	
 	// controller constructor
-	public SecurityExample(Identity identity, Authorizator authorizator, Authenticator authenticator) {
+	public SecurityExample(Identity identity, Link link, Authorizator authorizator, Authenticator authenticator) {
 		this.identity = identity;
+		this.link = link;
 		this.authorizator = authorizator;
 		this.authenticator = authenticator;
 	}
@@ -66,16 +68,16 @@ public class SecurityExample implements Module {
 	public Response index() {
 		List<Tuple2<String, String>> links = new LinkedList<>();
 		
-		links.add(new Tuple2<>("Not secured", Link.get().create(SecurityExample.class, c->c.notSecured())));
-		links.add(new Tuple2<>("Secured", Link.get().create(SecurityExample.class, c->c.secured())));
-		links.add(new Tuple2<>("Secured with CSRF", Link.get().create(SecurityExample.class, c->c.securedCsrf())));
-		links.add(new Tuple2<>("Super secured", Link.get().create(SecurityExample.class, c->c.superSecured())));
-		links.add(new Tuple2<>("Domain READ", Link.get().create(SecurityExample.class, c->c.domaiRead())));
-		links.add(new Tuple2<>("Domain DELETE", Link.get().create(SecurityExample.class, c->c.domainDelete())));
-		links.add(new Tuple2<>("Multiple domains", Link.get().create(SecurityExample.class, c->c.domainMultiple())));
-		links.add(new Tuple2<>("Owner", Link.get().create(SecurityExample.class, c->c.owner())));
-		links.add(new Tuple2<>("Owner IDs", Link.get().create(SecurityExample.class, c->c.ownerIds())));
-		links.add(new Tuple2<>("In method calling", Link.get().create(SecurityExample.class, c->c.inMethod())));
+		links.add(new Tuple2<>("Not secured", link.create(SecurityExample.class, c->c.notSecured())));
+		links.add(new Tuple2<>("Secured", link.create(SecurityExample.class, c->c.secured())));
+		links.add(new Tuple2<>("Secured with CSRF", link.create(SecurityExample.class, c->c.securedCsrf())));
+		links.add(new Tuple2<>("Super secured", link.create(SecurityExample.class, c->c.superSecured())));
+		links.add(new Tuple2<>("Domain READ", link.create(SecurityExample.class, c->c.domaiRead())));
+		links.add(new Tuple2<>("Domain DELETE", link.create(SecurityExample.class, c->c.domainDelete())));
+		links.add(new Tuple2<>("Multiple domains", link.create(SecurityExample.class, c->c.domainMultiple())));
+		links.add(new Tuple2<>("Owner", link.create(SecurityExample.class, c->c.owner())));
+		links.add(new Tuple2<>("Owner IDs", link.create(SecurityExample.class, c->c.ownerIds())));
+		links.add(new Tuple2<>("In method calling", link.create(SecurityExample.class, c->c.inMethod())));
 		
 		Map<String, Object> params = new HashMap<>();
 		params.put("links", links);
@@ -226,7 +228,7 @@ public class SecurityExample implements Module {
 			throws Exception {
 		register.addFactory(
 				SecurityExample.class, 
-			(trans, identity, authorizator, authenticator)->new SecurityExample(identity, authorizator, authenticator)
+			(trans, identity, authorizator, authenticator)->new SecurityExample(identity, link, authorizator, authenticator)
 		);
 		return Arrays.asList();
 	}

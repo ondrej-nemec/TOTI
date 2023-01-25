@@ -22,14 +22,16 @@ import toti.url.Link;
 public class SignPageController {
 	
 	private final Translator translator;
+	private final Link link;
 	
-	public SignPageController(Translator translator) {
+	public SignPageController(Translator translator, Link link) {
 		this.translator = translator;
+		this.link = link;
 	}
 
 	@Action("in")
 	public Response loginPage(@Param("backlink") String backlink) {
-		Form form = new Form(Link.get().create(SignApiController.class, c->c.login(null, null)), true);
+		Form form = new Form(link.create(SignApiController.class, c->c.login(null, null)), true);
 		form.setFormMethod("post");
 		
 		List<Option> userOptions = new LinkedList<>();
@@ -48,12 +50,12 @@ public class SignPageController {
 			Submit.create(translator.translate("messages.sign.login"), "login")
 			.setOnSuccess("setLogin")
 			.setRedirect(
-				backlink == null ? Link.get().create(WelcomePageController.class, c->c.welcomePage()) : backlink
+				backlink == null ? link.create(WelcomePageController.class, c->c.welcomePage()) : backlink
 			)
 		);
 		Map<String, Object> params = new HashMap<>();
 		params.put("loginForm", form);
-		params.put("refreshLink", Link.get().create(SignApiController.class, c->c.refresh()));
+		params.put("refreshLink", link.create(SignApiController.class, c->c.refresh()));
 		return Response.getTemplate("login.jsp", params);
 	}
 	

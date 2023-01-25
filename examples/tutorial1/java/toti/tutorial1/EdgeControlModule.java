@@ -35,7 +35,7 @@ public class EdgeControlModule implements Module {
 		register.addFactory(WelcomePageController.class, ()->new WelcomePageController());
 		register.addFactory(
 			SignPageController.class, 
-			(transl, identity, authorizator, authenticator)->new SignPageController(transl)
+			(transl, identity, authorizator, authenticator)->new SignPageController(transl, link)
 		);
 		register.addFactory(
 			SignApiController.class,
@@ -43,7 +43,7 @@ public class EdgeControlModule implements Module {
 		);
 		register.addFactory(
 			DevicePageController.class,
-			(transl, identity, authorizator, authenticator)->new DevicePageController(translator)
+			(transl, identity, authorizator, authenticator)->new DevicePageController(translator, link)
 		);
 		register.addFactory(
 			DeviceApiController.class,
@@ -52,7 +52,7 @@ public class EdgeControlModule implements Module {
 
 		register.addFactory(
 			StatePageController.class,
-			(transl, identity, authorizator, authenticator)->new StatePageController(translator)
+			(transl, identity, authorizator, authenticator)->new StatePageController(translator, link)
 		);
 		register.addFactory(
 			StateApiController.class,

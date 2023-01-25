@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 import ji.common.functions.Env;
+import ji.common.structures.MapInit;
 import ji.database.Database;
 import ji.translator.Translator;
 import toti.Module;
@@ -29,7 +30,15 @@ import toti.url.Link;
  */
 @Controller("routing")
 public class RoutingExample implements Module {
+	
+	private Link link;
+	
+	public RoutingExample(Link link) {
+		this.link = link;
+	}
 
+	public RoutingExample() {}
+	
 	/**
 	 * Secured route
 	 * Never show, always redirect
@@ -95,68 +104,28 @@ public class RoutingExample implements Module {
 	public Response links() {
 		Map<String, Object> params = new HashMap<>();
 		
-		// method
-		params.put(
-			"method",
-			Link.get()
-				.setMethod("accessibleMethod")
-				.create()
-		);
-		// method, parameter
-		params.put(
-			"methodParam",
-			Link.get()
-				.setMethod("unsecured")
-				.addGetParam("backlink", "/back/link")
-				.create()
-		);
-		// method, url parameter
-		params.put(
-			"methodUrlParam",
-			Link.get()
-				.setMethod("linksDestination")
-				.addUrlParam(42)
-				.addUrlParam("john-smith")
-				.create()
-		);
-		// method and controller
-		params.put(
-			"methodController",
-			Link.get()
-				.setController(RoutingExample.class)
-				.setMethod("accessibleMethod")
-				.create()
-		);
-		// method, controller, module
-		params.put(
-			"methodControllerModule",
-			Link.get()
-				.setModule(RoutingExample.class)
-				.setController(RoutingExample.class)
-				.setMethod("accessibleMethod")
-				.create()
-		);
 		// method calling
 		params.put(
 			"calling",
-			Link.get()
+			link
 				.create(RoutingExample.class, c->c.accessibleMethod())
 		);
 		// method calling parameters
 		params.put(
 			"callingParameter",
-			Link.get()
-				.addGetParam("backlink", "/back/link")
-				.create(RoutingExample.class, c->c.unsecured(null))
+			link.create(
+				RoutingExample.class, c->c.unsecured(null),
+				MapInit.create().append("backlink", "/back/link").toMap()
+			)
 		);
 		// method calling url parameters
 		params.put(
 			"callingUrlParameter",
-			Link.get()
-				.addGetParam("get", "getParam")
-				.addUrlParam(42)
-				.addUrlParam("john-smith")
-				.create(RoutingExample.class, c->c.linksDestination(null, null))
+			link.create(
+				RoutingExample.class, c->c.linksDestination(null, null),
+				MapInit.create().append("get", "getParam").toMap(),
+				42, "john-smith"
+			)
 		);
 		
 		return Response.getTemplate(
@@ -177,15 +146,15 @@ public class RoutingExample implements Module {
 	@Override
 	public void addRoutes(Router router) {
 		// set URL for redirect if not logged in user try access secured route
-		router.setRedirectOnNotLoggedInUser(Link.get().create(RoutingExample.class, c->c.unsecured(null)));
+		router.setRedirectOnNotLoggedInUser(router.getLink().create(RoutingExample.class, c->c.unsecured(null)));
 		
 		// replace empty route with 'accessible'
-		router.addUrl("", Link.get().create(RoutingExample.class, c->c.accessibleMethod()));
+		router.addUrl("", router.getLink().create(RoutingExample.class, c->c.accessibleMethod()));
 
 		// replace 'notAccessible' route with 'accessible'
 		router.addUrl(
-			Link.get().create(RoutingExample.class, c->c.notAccessibleMethod()), 
-			Link.get().create(RoutingExample.class, c->c.accessibleMethod())
+			router.getLink().create(RoutingExample.class, c->c.notAccessibleMethod()), 
+			router.getLink().create(RoutingExample.class, c->c.accessibleMethod())
 		);
 	}
 
@@ -207,7 +176,7 @@ public class RoutingExample implements Module {
 	@Override
 	public List<Task> initInstances(Env env, Translator translator, Register registr, Link link, Database database, Logger logger)
 			throws Exception {
-		registr.addFactory(RoutingExample.class, ()->new RoutingExample());
+		registr.addFactory(RoutingExample.class, ()->new RoutingExample(link));
 		return Arrays.asList();
 	}
 }

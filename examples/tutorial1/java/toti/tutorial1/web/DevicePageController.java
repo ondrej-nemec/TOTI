@@ -29,15 +29,17 @@ import toti.url.Link;
 public class DevicePageController {
 
 	private final Translator translator;
+	private final Link link;
 	
-	public DevicePageController(Translator translator) {
+	public DevicePageController(Translator translator, Link link) {
 		this.translator = translator;
+		this.link = link;
 	}
 	
 	@Action("list")
 	@Secured(mode = AuthMode.COOKIE)
 	public Response getList() {
-		Grid grid = new Grid(Link.get().create(DeviceApiController.class, c->c.getAll(null)), "get");
+		Grid grid = new Grid(link.create(DeviceApiController.class, c->c.getAll(null)), "get");
 		grid.addColumn(
 			new ValueColumn("name")
 			.setFilter(Text.filter())
@@ -66,24 +68,24 @@ public class DevicePageController {
 			.setTitle(translator.translate("messages.reset-filter"))
 		);
 		buttons.addGlobalButton(
-			Button.create(Link.get().create(getClass(), c->c.add()), "add")
+			Button.create(link.create(getClass(), c->c.add()), "add")
 			.setTitle(translator.translate("messages.devices.add"))
 		);
 		
 		
 		buttons.addButton(
-			Button.create(Link.get().addUrlParam("{id}").create(getClass(), c->c.detail(null)), "detail")
+			Button.create(link.create(getClass(), c->c.detail(null), "{id}"), "detail")
 			.setTitle(translator.translate("messages.devices.detail"))
 		);
 		
 		buttons.addButton(
-			Button.create(Link.get().addUrlParam("{id}").create(getClass(), c->c.edit(null)), "edit")
+			Button.create(link.create(getClass(), c->c.edit(null), "{id}"), "edit")
 			.setTitle(translator.translate("messages.devices.edit"))
 		);
 		
 		buttons.addButton(
 			Button.create(
-				Link.get().addUrlParam("{id}").create(DeviceApiController.class, c->c.delete(null)),
+				link.create(DeviceApiController.class, c->c.delete(null), "{id}"),
 				"delete"
 			)
 			.setTitle(translator.translate("messages.devices.delete"))
@@ -116,7 +118,7 @@ public class DevicePageController {
 	
 	private Response getOne(Integer id, boolean editable) {
 		Form form = new Form(
-			Link.get().create(DeviceApiController.class, id == null ? c->c.insert(null) : c->c.update(null, null)),
+			link.create(DeviceApiController.class, id == null ? c->c.insert(null) : c->c.update(null, null)),
 			editable
 		);
 		form.setFormMethod("put");
@@ -138,13 +140,13 @@ public class DevicePageController {
 		);
 		
 		if (id != null) {
-			form.setBindUrl(Link.get().addUrlParam(id).create(DeviceApiController.class, c->c.get(null)));
+			form.setBindUrl(link.create(DeviceApiController.class, c->c.get(null), id));
 			form.setBindMethod("get");
 		}
 		
 		form.addInput(
 			Submit.create(translator.translate("mesasges.devices.save"), "submit")
-			.setRedirect(Link.get().addUrlParam("{id}").create(getClass(), c->c.edit(null)))
+			.setRedirect(link.create(getClass(), c->c.edit(null), "{id}"))
 		);
 		
 		Map<String, Object> params = new HashMap<>();

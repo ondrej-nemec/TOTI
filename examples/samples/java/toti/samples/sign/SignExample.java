@@ -43,24 +43,26 @@ public class SignExample implements Module {
 
 	private Identity identity;
 	private Authenticator authenticator;
+	private Link link;
 	
 	// module constructor
 	public SignExample() {}
 	
 	// controller constructor
-	public SignExample(Identity identity, Authenticator authenticator) {
+	public SignExample(Identity identity, Authenticator authenticator, Link link) {
 		this.identity = identity;
 		this.authenticator = authenticator;
+		this.link = link;
 	}
 	
 	@Override
 	public void addRoutes(Router router) {
 		//*
 		// redirect to async login
-		router.setRedirectOnNotLoggedInUser(Link.get().create(SignExample.class, c->c.asyncLoginPage(null)));
+		router.setRedirectOnNotLoggedInUser(router.getLink().create(SignExample.class, c->c.asyncLoginPage(null)));
 		/*/
 		// redirect to sync login
-		router.setRedirectOnNotLoggedInUser(Link.get().create(SignExample.class, c->c.syncLoginPage(null)));
+		router.setRedirectOnNotLoggedInUser(router.getLink().create(SignExample.class, c->c.syncLoginPage(null)));
 		//*/
 	}
 	
@@ -70,7 +72,7 @@ public class SignExample implements Module {
 	 */
 	@Action("async-page")
 	public Response asyncLoginPage(@Param("backlink") String backlink) {
-		Form form = new Form(Link.get().create(SignExample.class, c->c.asyncLogin(null, null)), true);
+		Form form = new Form(link.create(SignExample.class, c->c.asyncLogin(null, null)), true);
 		form.setFormMethod("post");
 		form.addInput(Text.input("username", true).setTitle("Username"));
 		form.addInput(Password.input("password", true).setTitle("Password"));
@@ -148,7 +150,7 @@ public class SignExample implements Module {
 			if (backlink != null) {
 				return Response.getRedirect(backlink);
 			}
-			return Response.getRedirect(Link.get().create(SignExample.class, c->c.index2()));
+			return Response.getRedirect(link.create(SignExample.class, c->c.index2()));
 		} catch (AuthentizationException e) {
 			e.printStackTrace();
 			return getSyncPageResponse(backlink, "Sync login failed");
@@ -156,7 +158,7 @@ public class SignExample implements Module {
 	}
 	
 	private Response getSyncPageResponse(String backlink, String errorMessage) {
-		Form form = new Form(Link.get().create(SignExample.class, c->c.syncLogin(null, null, null)), true);
+		Form form = new Form(link.create(SignExample.class, c->c.syncLogin(null, null, null)), true);
 		form.setFormMethod("post");
 		form.addInput(Text.input("username", true).setTitle("Username"));
 		form.addInput(Password.input("password", true).setTitle("Password"));
@@ -179,7 +181,7 @@ public class SignExample implements Module {
 	@Secured(mode = AuthMode.COOKIE)
 	public Response syncLogout() {
 		authenticator.logout(identity);
-		return Response.getRedirect(Link.get().create(SignExample.class, c->c.syncLoginPage(null)));
+		return Response.getRedirect(link.create(SignExample.class, c->c.syncLoginPage(null)));
 	}
 	
 	/*********************/
@@ -234,7 +236,7 @@ public class SignExample implements Module {
 			throws Exception {
 		register.addFactory(
 			SignExample.class, 
-			(trans, identity, authorizator, authenticator)->new SignExample(identity, authenticator)
+			(trans, identity, authorizator, authenticator)->new SignExample(identity, authenticator, link)
 		);
 		return Arrays.asList();
 	}

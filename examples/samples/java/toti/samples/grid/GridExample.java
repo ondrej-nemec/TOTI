@@ -57,11 +57,13 @@ public class GridExample implements Module {
 	
 	private GridExampleDao dao;
 	private Logger logger;
+	private Link link;	
 	
 	public GridExample() {}
 	
-	public GridExample(GridExampleDao dao, Logger logger) {
+	public GridExample(GridExampleDao dao, Link link, Logger logger) {
 		this.dao = dao;
+		this.link = link;
 		this.logger = logger;
 	}
 	
@@ -71,7 +73,7 @@ public class GridExample implements Module {
 	 */
 	@Action("all")
 	public Response allFilters() {
-		Grid grid = new Grid(Link.get().create(getClass(), c->c.allFilters(null)), "get");
+		Grid grid = new Grid(link.create(getClass(), c->c.allFilters(null)), "get");
 		grid.addColumn(new ValueColumn("id").setTitle("ID"));
 		grid.addColumn(
 			new ValueColumn("text")
@@ -192,7 +194,7 @@ public class GridExample implements Module {
 	 */
 	@Action("reset")
 	public Response reset() {
-		Grid grid = new Grid(Link.get().create(getClass(), c->c.allFilters(null)), "get");
+		Grid grid = new Grid(link.create(getClass(), c->c.allFilters(null)), "get");
 		grid.addColumn(new ValueColumn("id"));
 		grid.addColumn(
 				new ValueColumn("text")
@@ -211,8 +213,11 @@ public class GridExample implements Module {
 			.setResetFiltersButton(Button.reset("reset").setTitle("Reset filter"))
 			.addGlobalButton(
 				Button.create(
-					Link.get().addUrlParam("123").addGetParam("name", "Grid button name")
-						.create(getClass(), c->c.asyncButtonLink(0, null)),
+					link.create(
+						getClass(), c->c.asyncButtonLink(0, null),
+						MapInit.create().append("name", "Grid button name").toMap(),
+						"123"
+					),
 					"global-button"
 				).setTitle("Global Button")
 			)
@@ -230,27 +235,29 @@ public class GridExample implements Module {
 	 */
 	@Action("buttons")
 	public Response buttons() {
-		Grid grid = new Grid(Link.get().create(getClass(), c->c.allFilters(null)), "get");
+		Grid grid = new Grid(link.create(getClass(), c->c.allFilters(null)), "get");
 		grid.addColumn(new ValueColumn("id"));
 		grid.addColumn(new ValueColumn("text"));
 		grid.addColumn(
 			new ButtonsColumn("buttons")
 			.addButton(
 				Button.create(
-					Link.get()
-					.addUrlParam("{id}")
-					.addGetParam("name", "{text}")
-					.create(getClass(), c->c.syncButtonLink(0, null)),
+					link.create(
+						getClass(), c->c.syncButtonLink(0, null),
+						MapInit.create().append("name", "{text}").toMap(),
+						"{id}"
+					),
 					"sync"
 				)
 				.setMethod("get").setAsync(false).setTitle("Sync")
 			)
 			.addButton(
 				Button.create(
-					Link.get()
-					.addUrlParam("{id}")
-					.addGetParam("name", "{text}")
-					.create(getClass(), c->c.asyncButtonLink(0, null)),
+					link.create(
+						getClass(), c->c.asyncButtonLink(0, null),
+						MapInit.create().append("name", "{text}").toMap(),
+						"{id}"
+					),
 					"async"
 				)
 				.setMethod("post").setAsync(true).setTitle("Async")
@@ -260,10 +267,11 @@ public class GridExample implements Module {
 			)
 			.addButton(
 				Button.create(
-					Link.get()
-					.addUrlParam("{id}")
-					.addGetParam("name", "{text}")
-					.create(getClass(), c->c.syncButtonPost(0, null, null)),
+					link.create(
+						getClass(), c->c.syncButtonPost(0, null, null),
+						MapInit.create().append("name", "{text}").toMap(),
+						"{id}"
+					),
 					"cond"
 				)
 				.setMethod("post").setAsync(true).setTitle("Cond")
@@ -300,7 +308,7 @@ public class GridExample implements Module {
 	 */
 	@Action("control")
 	public Response gridControl() {
-		Grid grid = new Grid(Link.get().create(getClass(), c->c.allFilters(null)), "get");
+		Grid grid = new Grid(link.create(getClass(), c->c.allFilters(null)), "get");
 		
 		grid.setPagesSizes(Arrays.asList(7, 14, 28, 35, 42), 14);
 		grid.setPagesButtonCount(3);
@@ -320,7 +328,7 @@ public class GridExample implements Module {
 	 */
 	@Action("load")
 	public Response gridLoad() {
-		Grid grid = new Grid(Link.get().create(getClass(), c->c.allFilters(null)), "get");
+		Grid grid = new Grid(link.create(getClass(), c->c.allFilters(null)), "get");
 		
 		grid.setPagesSizes(Arrays.asList(7, 14, 28, 35, 42), 14);
 		grid.setPagesButtonCount(0);
@@ -342,7 +350,7 @@ public class GridExample implements Module {
 	 */
 	@Action("empty")
 	public Response empty() {
-		Grid grid = new Grid(Link.get().create(getClass(), c->c.allFilters(null)), "get");
+		Grid grid = new Grid(link.create(getClass(), c->c.allFilters(null)), "get");
 		
 		grid.setPagesSizes(null);
 		grid.setPagesButtonCount(0);
@@ -363,7 +371,7 @@ public class GridExample implements Module {
 	 */
 	@Action("renderer")
 	public Response renderers() {
-		Grid grid = new Grid(Link.get().create(getClass(), c->c.allFilters(null)), "get");
+		Grid grid = new Grid(link.create(getClass(), c->c.allFilters(null)), "get");
 		
 		grid.addColumn(new ValueColumn("id").setRenderer("onColumnRenderer"));
 		grid.addColumn(new ValueColumn("text"));
@@ -381,7 +389,7 @@ public class GridExample implements Module {
 	 */
 	@Action("selection")
 	public Response selection() {
-		Grid grid = new Grid(Link.get().create(getClass(), c->c.allFilters(null)), "get");
+		Grid grid = new Grid(link.create(getClass(), c->c.allFilters(null)), "get");
 		
 		grid.addColumn(new ValueColumn("id"));
 		grid.addColumn(new ValueColumn("text"));
@@ -402,19 +410,19 @@ public class GridExample implements Module {
 	 */
 	@Action("actions")
 	public Response actions() {
-		Grid grid = new Grid(Link.get().create(getClass(), c->c.allFilters(null)), "get");
+		Grid grid = new Grid(link.create(getClass(), c->c.allFilters(null)), "get");
 		
 		grid.addAction(
-			new GroupAction("Async action", Link.get().create(getClass(), c->c.asyncActionLink(null)))
+			new GroupAction("Async action", link.create(getClass(), c->c.asyncActionLink(null)))
 			.setOnFailure("actionOnFailure").setOnSuccess("actionOnSuccess")
 			.setConfirmation("Really?")
 		);
 		grid.addAction(
-			new GroupAction("Sync action", Link.get().create(getClass(), c->c.syncActionLink(null)))
+			new GroupAction("Sync action", link.create(getClass(), c->c.syncActionLink(null)))
 			.setAsync(false)
 		);
 		grid.addAction(
-			new GroupAction("Post action", Link.get().create(getClass(), c->c.postActionLink(null)))
+			new GroupAction("Post action", link.create(getClass(), c->c.postActionLink(null)))
 			.setOnFailure("actionOnFailure").setOnSuccess("actionOnSuccess")
 			.setMethod("post")
 		);
@@ -452,10 +460,10 @@ public class GridExample implements Module {
 	 */
 	@Action("row-unique")
 	public Response rowUnique() {
-		Grid grid = new Grid(Link.get().create(getClass(), c->c.allFilters(null)), "get");
+		Grid grid = new Grid(link.create(getClass(), c->c.allFilters(null)), "get");
 		
 		grid.addAction(
-			new GroupAction("Async action", Link.get().create(getClass(), c->c.asyncActionLinkText(null)))
+			new GroupAction("Async action", link.create(getClass(), c->c.asyncActionLinkText(null)))
 			.setOnFailure("actionOnFailure").setOnSuccess("actionOnSuccess")
 		);
 		
@@ -482,7 +490,7 @@ public class GridExample implements Module {
 	 */
 	@Action("filtering")
 	public Response filtering() {
-		Grid grid = new Grid(Link.get().create(getClass(), c->c.filtering(null)), "get");
+		Grid grid = new Grid(link.create(getClass(), c->c.filtering(null)), "get");
 		grid.addColumn(new ValueColumn("id").setTitle("ID"));
 		// like, startswith, endswith, equasl
 		// LIKE
@@ -558,7 +566,7 @@ public class GridExample implements Module {
 	 */
 	@Action("subst")
 	public Response sortingSubst() {
-		Grid grid = new Grid(Link.get().create(getClass(), c->c.substitution(null)), "get");
+		Grid grid = new Grid(link.create(getClass(), c->c.substitution(null)), "get");
 		
 		grid.addColumn(new ValueColumn("id").setTitle("ID"));
 		grid.addColumn(
@@ -602,7 +610,7 @@ public class GridExample implements Module {
 	@Action("raw")
 	@Deprecated
 	public Response raw() {
-		Grid grid = new Grid(Link.get().create(getClass(), c->c.raw(0, 0, null, null)), "get");
+		Grid grid = new Grid(link.create(getClass(), c->c.raw(0, 0, null, null)), "get");
 		
 		grid.addColumn(
 			new ValueColumn("id").setTitle("ID")
@@ -677,7 +685,7 @@ public class GridExample implements Module {
 	 */
 	@Action("xss")
 	public Response xss() {
-		Grid grid = new Grid(Link.get().create(getClass(), c->c.xss(null)), "get");
+		Grid grid = new Grid(link.create(getClass(), c->c.xss(null)), "get");
 		
 		grid.addColumn(new ValueColumn("id"));
 		grid.addColumn(
@@ -690,7 +698,7 @@ public class GridExample implements Module {
 				Select.filter(Arrays.asList(
 					Option.create("", "---"),
 					Option.create("0", "<script>alert('select');</script>")
-				)).setLoadData(Link.get().create(getClass(), c->c.xssLoad()), "get")
+				)).setLoadData(link.create(getClass(), c->c.xssLoad()), "get")
 			)
 		);
 		grid.addColumn(
@@ -748,7 +756,7 @@ public class GridExample implements Module {
 	 */
 	@Action("custom-template")
 	public Response customTemplate() {
-		Grid grid = new Grid(Link.get().create(getClass(), c->c.allFilters(null)), "get");
+		Grid grid = new Grid(link.create(getClass(), c->c.allFilters(null)), "get");
 		
 		grid.addColumn(new ActionsColumn("main").setTitle("Group Actions"));
 		
@@ -835,26 +843,31 @@ public class GridExample implements Module {
 			.setTitle("Buttons")
 			.setResetFiltersButton(Button.reset("reset"))
 			.addGlobalButton(Button.create(
-				Link.get().addUrlParam("123").addGetParam("name", "Grid button name")
-					.create(getClass(), c->c.asyncButtonLink(0, null)),
+				link.create(
+					getClass(), c->c.asyncButtonLink(0, null),
+					MapInit.create().append("name", "Grid button name").toMap(),
+					"123"
+				),
 				"global-button"
 			).setTitle("Global"))
 			.addButton(
 				Button.create(
-					Link.get()
-					.addUrlParam("{id}")
-					.addGetParam("name", "{text}")
-					.create(getClass(), c->c.syncButtonLink(0, null)),
+					link.create(
+						getClass(), c->c.syncButtonLink(0, null),
+						MapInit.create().append("name", "{text}").toMap(),
+						"{id}"
+					),
 					"sync"
 				)
 				.setMethod("get").setAsync(false).setTitle("Sync")
 			)
 			.addButton(
 				Button.create(
-					Link.get()
-					.addUrlParam("{id}")
-					.addGetParam("name", "{text}")
-					.create(getClass(), c->c.asyncButtonLink(0, null)),
+					link.create(
+						getClass(), c->c.asyncButtonLink(0, null),
+						MapInit.create().append("name", "{text}").toMap(),
+						"{id}"
+					),
 					"async"
 				)
 				.setMethod("post").setAsync(true).setTitle("Async")
@@ -864,10 +877,11 @@ public class GridExample implements Module {
 			)
 			.addButton(
 				Button.create(
-					Link.get()
-					.addUrlParam("{id}")
-					.addGetParam("name", "{text}")
-					.create(getClass(), c->c.syncButtonPost(0, null, null)),
+					link.create(
+						getClass(), c->c.syncButtonPost(0, null, null),
+						MapInit.create().append("name", "{text}").toMap(),
+						"{id}"
+					),
 					"cond"
 				)
 				.setMethod("post").setAsync(true).setTitle("Cond")
@@ -878,16 +892,16 @@ public class GridExample implements Module {
 		
 		
 		grid.addAction(
-			new GroupAction("Async action", Link.get().create(getClass(), c->c.asyncActionLink(null)))
+			new GroupAction("Async action", link.create(getClass(), c->c.asyncActionLink(null)))
 			.setOnFailure("actionOnFailure").setOnSuccess("actionOnSuccess")
 			.setConfirmation("Really?")
 		);
 		grid.addAction(
-			new GroupAction("Sync action", Link.get().create(getClass(), c->c.syncActionLink(null)))
+			new GroupAction("Sync action", link.create(getClass(), c->c.syncActionLink(null)))
 			.setAsync(false)
 		);
 		grid.addAction(
-			new GroupAction("Post action", Link.get().create(getClass(), c->c.postActionLink(null)))
+			new GroupAction("Post action", link.create(getClass(), c->c.postActionLink(null)))
 			.setOnFailure("actionOnFailure").setOnSuccess("actionOnSuccess")
 			.setMethod("post")
 		);
@@ -922,7 +936,7 @@ public class GridExample implements Module {
 			throws Exception {
 		GridExampleDao dao = new GridExampleDao(database);
 		dao.initDb();
-		register.addFactory(GridExample.class, ()->new GridExample(dao, logger));
+		register.addFactory(GridExample.class, ()->new GridExample(dao, link, logger));
 		return new LinkedList<>();
 	}
 
