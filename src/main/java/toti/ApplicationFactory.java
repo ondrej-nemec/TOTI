@@ -113,7 +113,7 @@ public class ApplicationFactory {
 		MapDictionary<UrlPart, Object> mapping = MapDictionary.hashMap();
 		for (Module module : modules) {
 			TemplateFactory templateFactory = new TemplateFactory(
-					getTempPath(env),
+					getTempPath(env, hostname),
 					module.getTemplatesPath(),
 					module.getName(),
 					module.getPath(),
@@ -138,14 +138,14 @@ public class ApplicationFactory {
 			module.addRoutes(router);
 		};
 		// file session save is disabled - maybe enable hibrid saving - user in memory, some user data on disk
-		AuthenticationCache sessionCache = new AuthenticationCache(hostname, getTempPath(env), false, logger);
+		AuthenticationCache sessionCache = new AuthenticationCache(hostname, getTempPath(env, hostname), false, logger);
 		ResponseFactory response = new ResponseFactory(
 				getResponseHeaders(env),
 				getResourcesPath(env),
 				router,
 				templateFactories,
 				new TemplateFactory(
-					getTempPath(env), "toti/web", "", "", templateFactories,
+					getTempPath(env, hostname), "toti/web", "", "", templateFactories,
 					getDeleteTempJavaFiles(env), getMinimalize(env),
 					logger
 				).setProfiler(profiler),
@@ -206,8 +206,8 @@ public class ApplicationFactory {
 		return getProperty(urlPattern, "url-pattern", "/[module]</[path]>/[controller]/[method]</[param]>", String.class, env);
 	}
 	
-	private String getTempPath(Env env) {
-		return getProperty(tempPath, "temp", "temp", String.class, env);
+	private String getTempPath(Env env, String hostname) {
+		return getProperty(tempPath, "temp", "temp", String.class, env) + "/" + hostname;
 	}
 	
 	private String getResourcesPath(Env env) {
