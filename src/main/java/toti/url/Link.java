@@ -48,99 +48,11 @@ public class Link {
 
 	private final String pattern;
 	private final Register register;
-	
-	//private ThrowingFunction<Class<?>, Module, Exception> getModule;
-	/*private ThrowingSupplier<Class<?>, Exception> getController = ()->Class.forName(StackTrace.classParent(
-		ste->Class.forName(ste.getClassName()).isAnnotationPresent(Controller.class)
-	));*/
-	//private ThrowingFunction<Class<?>, Method, Exception> getMethod = null; // TODO set actual method?
-//	private List<UrlParam> params = new LinkedList<>();
-	
+		
 	public Link(String pattern, Register register) {
 		this.pattern = pattern;
 		this.register = register;
-		/*getModule = (controllerClass)->{
-			String moduleClass = register._getFactory(controllerClass.getName())._2();
-			return Module.class.cast(Class.forName(moduleClass).getDeclaredConstructor().newInstance());
-		};*/
 	}
-	
-	/*** module ***
-
-	@Deprecated
-	public Link setModule(Module module) {
-		getModule = (c)->module;
-		return this;
-	}
-
-	@Deprecated
-	public <M extends Module> Link setModule(Class<M> moduleClass) {
-		getModule = (c)->Module.class.cast(moduleClass.getDeclaredConstructor().newInstance());
-		return this;
-	}
-	
-	/*** controller ***
-
-	@Deprecated
-	public Link setController(Class<?> controllerClass) {
-		if (!controllerClass.isAnnotationPresent(Controller.class)) {
-			throw new LogicException("Class " + controllerClass + " is not TOTI controller");
-		}
-		getController = ()->controllerClass;
-		return this;
-	}
-
-	@Deprecated
-	public Link setController(String controllerClass) {
-		try {
-			return setController(Class.forName(controllerClass));
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException("Cannot create link - " + controllerClass + " not found", e);
-		}
-	}
-	
-	/*** method ***
-
-	@Deprecated
-	public Link setMethod(String methodName) {
-		getMethod = (clazz)->{
-			try {
-				Class<?> []classes = new Class[params.size()];
-				for (int i = 0; i < params.size(); i++) {
-					classes[i] = params.get(i).getClass(); // TODO can be null !!
-				}
-				Method method = clazz.getMethod(methodName, classes);
-				if (!method.isAnnotationPresent(Action.class)) {
-					throw new LogicException("Method " + method + " is not TOTI action");
-				}
-				return method;
-			} catch (NoSuchMethodException e) {
-				for (Method m : clazz.getMethods()) {
-					if (m.isAnnotationPresent(Action.class) && m.getName().equals(methodName)) {
-						return m;
-					}
-				}
-				throw e;
-			}
-		};
-		return this;
-	}
-	
-	/*** universal ***
-
-	@Deprecated
-	public Link addGetParam(String name, Object value) {
-		params.add(new UrlParam(name, value));
-		return this;
-	}
-
-	@Deprecated
-	public Link addUrlParam(Object value) {
-		params.add(new UrlParam(value));
-		return this;
-	}
-	
-	/******/
 	
 	private String getPath(Module module, Class<?> controller) {
 		return controller.getName()
@@ -148,29 +60,7 @@ public class Link {
 				.replace(module.getControllersPath(), "")
 				.replace(controller.getSimpleName(), "");
 	}
-	/*
-	@Deprecated
-	public String create() {
-		if (getMethod == null) {
-			throw new LogicException("Target method is missing");
-		}
-		try {
-			Class<?> controller = getController.get();
-			Module module = getModule.apply(controller);
-			Method method = getMethod.apply(controller);
-			return create(
-				module.getName(),
-				getPath(module, controller),
-				controller.getAnnotation(Controller.class).value(), 
-				method.getAnnotation(Action.class).value(),
-				params
-			);
-		} catch (Exception e) {
-			throw new RuntimeException("Cannot create link", e);
-		}
-	}
-	*/
-	
+		
 	/**
 	 * Parse string to link
 	 * Required format <[controller]>:[method]<:[parameter]>{n}
