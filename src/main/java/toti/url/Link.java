@@ -52,6 +52,9 @@ public class Link {
 	public Link(String pattern, Register register) {
 		this.pattern = pattern;
 		this.register = register;
+		if (patternCache == null) {
+			init(pattern, register);
+		}
 	}
 	
 	private String getPath(Module module, Class<?> controller) {
