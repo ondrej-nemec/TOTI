@@ -7,8 +7,7 @@ import java.util.Map;
 import ji.translator.Locale;
 import ji.translator.Translator;
 import toti.Headers;
-
-import java.util.Random;
+import toti.profiler.Profiler;
 
 import ji.common.structures.Tuple2;
 
@@ -18,8 +17,8 @@ public class IdentityFactory {
 	private final static String LOCALE_HEADER_NAME = "Accept-Language";
 	private final static String SESSION_COOKIE_NAME = "SessionID";
 	private final static String SESSION_HEADER_NAME = "Authorization";
-	private final static String PAGE_ID_HEADER_NAME = "PageId";
-	private final static String PAGE_ID_COOKIE_NAME = "PageId";
+//	private final static String PAGE_ID_HEADER_NAME = "PageId";
+//	private final static String PAGE_ID_COOKIE_NAME = "PageId";
 	
 	private final String defLang;
 	private final Translator translator;
@@ -79,43 +78,35 @@ public class IdentityFactory {
 					+ "; Max-Age=" + 0
 			);
 		}
-		if (identity.getPageId() != null) {
-			/*headers.add(
-				"Set-Cookie: "
-				+ PAGE_ID_COOKIE_NAME + "=" + identity.getPageId()
-				+ "; SameSite=Strict"
-			);*/
+		/*if (identity.getPageId() != null) {
 			responseHeaders.addHeader(
 				"Set-Cookie", PAGE_ID_COOKIE_NAME + "=" + identity.getPageId()
 				+ "; SameSite=Strict"
 			);
-		}
+		}*/
 		//headers.addAll(identity.getResponseHeaders());
 		////cache.save(identity.getId(), identity.getUser());
 		//return headers;
 	}
 	
-	public Identity createIdentity(Map<String, List<Object>> requestHeaders, String IP, boolean useProfiler) {
+	public Identity createIdentity(Map<String, List<Object>> requestHeaders, String IP, Profiler profiler) {
 		Headers headers = new Headers(requestHeaders);
 		Tuple2<String, AuthMode> token = getToken(headers);
 		Identity identity = new Identity(IP, getLocale(headers), headers, token._1(), token._2());
-		if (useProfiler) {
-			identity.setPageId(getPageId(headers));
+		if (profiler.isUse()) {
+			identity.setPageId(profiler.getCurrentPageId()); // getPageId(headers)
 		}
 		return identity;
 	}
-	
+/*
 	private String getPageId(Headers headers) {
 		Object pageHeader = headers.getHeader(PAGE_ID_HEADER_NAME);
-		/*if (pageHeader == null) {
-			pageHeader = Identity.getCookieValue(headers, PAGE_ID_COOKIE_NAME);
-		}*/
 		if (pageHeader == null) {
 			return ("Page_" + new Random().nextDouble()).replace(".", "");
 		}
 		return pageHeader.toString();
 	}
-
+*/
 	private Tuple2<String, AuthMode> getToken(Headers headers) {
 		String token = null;
 		AuthMode mode = AuthMode.NO_TOKEN;

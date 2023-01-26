@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import ji.common.functions.Mapper;
+import ji.common.structures.SortedMap;
 import ji.common.structures.Tuple2;
 import ji.json.Jsonable;
 import ji.socketCommunication.http.structures.Request;
@@ -17,33 +18,28 @@ import toti.url.MappedUrl;
 public class ProfilerLog implements Jsonable{
 
 	private  long threadId;
-	
-	private final String threadName;
-	
-	private long createdAt;
+	//private final String threadName;
+	//private long createdAt;
 		
 	/***************/
 	
 	private Identity identity;
-	
 	private Request request;
-	
 	private MappedUrl mapped;
 	
-	private final Map<String, SqlLog> sqlLogs = new HashMap<>();
-	
+	private final SortedMap<String, SqlLog> sqlLogs = new SortedMap<>();
+
 	private List<Tuple2<HttpServerProfilerEvent, Long>> serverEvents = new LinkedList<>();
 	
 	private List<String> missingLocales = new LinkedList<>();
-	
 	private List<TransLog> transLog = new LinkedList<>();
 	
 	private List<Tuple2<String, String>> templates = new LinkedList<>();
 	
 	public ProfilerLog(long threadId, String threadName) {
 		this.threadId = threadId;
-		this.threadName = threadName;
-		this.createdAt = System.currentTimeMillis();
+	//	this.threadName = threadName;
+	//	this.createdAt = System.currentTimeMillis();
 	}
 	
 	public void setRequestInfo(Identity identity, Request request, MappedUrl mapped) {
@@ -70,11 +66,11 @@ public class ProfilerLog implements Jsonable{
 	
 	public void executeSql(String id) {
 		logSql(id, (log)->{
-			log.setExecuted();
+			log.toExecute();
 		});
 	}
 	
-	public void executeSql(String id, Object res) {
+	public void setExecuted(String id, Object res) {
 		logSql(id, (log)->{
 			log.setExecuted(res);
 		});
@@ -87,7 +83,7 @@ public class ProfilerLog implements Jsonable{
 	}
 	
 	private void logSql(String id, Consumer<SqlLog> consumer) {
-		SqlLog log = sqlLogs.get(id);
+		SqlLog log = sqlLogs.getValue(id);
 		if (log == null) {
 			log = new SqlLog(id);
 			sqlLogs.put(id, log);
@@ -120,61 +116,38 @@ public class ProfilerLog implements Jsonable{
 	
 	@Override
 	public Object toJson() {
-		Map<String, Object> requestInfo = new HashMap<>();
-		Map<String, Object> iden = new HashMap<>();
-		Map<String, Object> rendering = new HashMap<>();
-		if (!serverEvents.isEmpty()) {
-			requestInfo.put("method", request.getMethod());
-			requestInfo.put("url", request.getPlainUri());
-			requestInfo.put("fullUrl", request.getUri());
-			requestInfo.put("protocol", request.getProtocol());
-			requestInfo.put("IP", identity.getIP());
-			requestInfo.put("BodyParams", request.getBodyInParameters());
-			requestInfo.put("UrlParams", request.getUrlParameters());
-			requestInfo.put("Body", request.getBody());
-			requestInfo.put("templates", templates);
-			/********/
-			if (mapped != null) {
-				Map<String, Object> controller = new HashMap<>();
-				controller.put("module", mapped.getModuleName());
-				controller.put("class", mapped.getClassName());
-				controller.put("method", mapped.getMethodName());
-				requestInfo.put("controller", controller);
-			}
-			/********/
-			Map<String, Object> user = new HashMap<>();
-			if (identity.isPresent()) {
-				user.put("id", identity.getUser().getId());
-				user.put("allowedIds", identity.getUser().getAllowedIds());
-				user.put("content", identity.getUser().getContent());
-			}
-			iden.put("loginMode", identity.getLoginMode());
-			if (identity.isPresent()) {
-				iden.put("user", user);
-			}
-			/********/
-			rendering.put("render", getRequestTime());
-			rendering.put("times", serverEvents);
-		}
+		Map<String, Object> controller = new HashMap<>();
+		controller.put("module", mapped.getModuleName());
+		controller.put("class", mapped.getClassName());
+		controller.put("method", mapped.getMethodName());
+		controller.put("authMode", mapped.getSecurityMode());
 		
+		Map<String, Object> requestInfo = new HashMap<>();
+		requestInfo.put("method", request.getMethod());
+		requestInfo.put("url", request.getPlainUri());
+		requestInfo.put("processTime", getRequestTime());
+		requestInfo.put("loginMode", identity.getLoginMode());
+		requestInfo.put("locale", Mapper.get().serialize(identity.getLocale()));
+
 		Map<String, Object> trans = new HashMap<>();
-		trans.put("locale", identity == null ? null : Mapper.get().serialize(identity.getLocale()));
 		trans.put("missingFiles", missingLocales);
 		trans.put("missingTranslations", transLog);
 		
-		Map<String, Object> queries = new HashMap<>();
-		queries.putAll(sqlLogs);
-		
 		Map<String, Object> json = new HashMap<>();
-		json.put("trans", trans);
-		json.put("queries", queries);
-		json.put("created", createdAt);
-		json.put("name", threadName);
+		json.put("controller", controller);
+		json.put("request", requestInfo);
+		json.put("translations", trans);
+		json.put("templates", templates);
+		json.put("queries", sqlLogs);
 		
-		json.put("requestInfo", requestInfo);
-		json.put("rendering", rendering);
-		json.put("identity", iden);
-		
+		Map<String, Object> user = new HashMap<>();
+		if (identity.isPresent()) {
+			user.put("id", identity.getUser().getId());
+			user.put("allowedIds", identity.getUser().getAllowedIds());
+			user.put("content", identity.getUser().getContent());
+
+			json.put("user", user);
+		}
 		return json;
 	}
 	

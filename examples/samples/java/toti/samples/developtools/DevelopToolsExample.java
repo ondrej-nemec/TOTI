@@ -50,6 +50,7 @@ public class DevelopToolsExample implements Module {
 			"path.to.another.translation",
 			new MapInit<String, Object>().append("param1", "value1").append("param2", "value2").toMap()
 		);
+	//	translator.translate("some.translation", "someLocale");
 
 		try {
 			// not executed, in profiler
@@ -61,7 +62,7 @@ public class DevelopToolsExample implements Module {
 			});
 			// executed, in profiler
 			database.applyQuery((con)->{
-				try (PreparedStatement stmt = con.prepareStatement("select * from Table where Name = ?")) {
+				try (PreparedStatement stmt = con.prepareStatement("select * from OneTable where Name = ?")) {
 					stmt.setString(1, "Name #3");
 					stmt.executeQuery();
 				}
@@ -81,7 +82,7 @@ public class DevelopToolsExample implements Module {
 			database.applyBuilder((builder)->{
 				builder.select("'Task - executed', *, :const")
 				.from("OneTable")
-				.join("JoinTable", Join.INNER_JOIN, "Table.id = JoinTable.FK_id")
+				.join("JoinTable", Join.INNER_JOIN, "OneTable.id = JoinTable.FK_id")
 				.where("Name like :value")
 				.addParameter(":const", 123)
 				.addParameter(":value", "%#1%")

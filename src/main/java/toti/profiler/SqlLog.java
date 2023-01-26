@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import ji.common.annotations.MapperIgnored;
+import ji.common.annotations.MapperParameter;
+import ji.common.annotations.MapperType;
 import ji.json.Jsonable;
 
 public class SqlLog implements Jsonable {
@@ -25,6 +27,12 @@ public class SqlLog implements Jsonable {
 	private Map<String, String> builderParams;
 	
 	private Object result;
+
+	@MapperIgnored
+	private long startTime;
+
+	@MapperParameter({@MapperType("executionTime")})
+	private long executionTime = -1;
 	
 	public SqlLog(String id) {
 		this.id = id;
@@ -70,12 +78,13 @@ public class SqlLog implements Jsonable {
 		this.params.add(param);
 	}
 
-	public void setExecuted() {
-		this.isExecuted = true;
+	public void toExecute() {
+		this.startTime = System.nanoTime();
 	}
 
 	public void setExecuted(Object result) {
 		this.isExecuted = true;
+		this.executionTime = System.nanoTime() - startTime;
 		this.result = result;
 	}
 

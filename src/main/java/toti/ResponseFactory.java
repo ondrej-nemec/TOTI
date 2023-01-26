@@ -116,7 +116,7 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 	
 	@Override
 	public ji.socketCommunication.http.structures.Response accept(Request request, String ip, Optional<WebSocket> websocket) throws IOException {
-		Identity identity = identityFactory.createIdentity(request.getHeaders(), ip, profiler.isUse());
+		Identity identity = identityFactory.createIdentity(request.getHeaders(), ip, profiler);
 		return getCatchedResponse(request, identity, websocket);
 	}
 
@@ -214,10 +214,11 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 		    		}
 		    	}
 			}
-			if (profiler.isUse()) {
-		   		profiler.setPageId(identity.getPageId());
-		   		profiler.logRequest(identity,request, mapped);
-		   	}
+			//if (profiler.isUse()) {
+		   	//	profiler.setPageId(identity.getPageId());
+			profiler.startProfilePage();
+			profiler.logRequest(identity,request, mapped);
+		   //	}
 		   	return getControllerResponse(responseHeaders, mapped, request, identity, websocket);
 		}
 		// files
