@@ -79,8 +79,6 @@ public class ApplicationFactory {
 	public Application create(List<Module> modules) throws Exception {
 		Logger logger = loggerFactory.apply(hostname, "toti");
 		
-		Profiler profiler = initProfiler(logger);
-		
 		List<String> migrations = new LinkedList<>();
 		modules.forEach((config)->{
 			if (config.getMigrationsPath() != null) {
@@ -88,9 +86,10 @@ public class ApplicationFactory {
 			}
 		});
 		Env env = this.env.getModule("applications").getModule(hostname);
+		Profiler profiler = initProfiler(env, logger);
 		
 		Database database = getDatabase(
-			env.getModule("database"), migrations, profiler, loggerFactory.apply(hostname, "database")
+			env.getModule("database"), migrations, profiler.used(), loggerFactory.apply(hostname, "database")
 		);
 		if (database == null) {
 			logger.info("No database specified");
@@ -107,7 +106,7 @@ public class ApplicationFactory {
 		List<Task> tasks = new LinkedList<>();
 		if (translator == null) {
 			LanguageSettings langSettings = getLangSettings(env);
-			langSettings.setProfiler(profiler);
+			langSettings.setProfiler(profiler.used());
 			this.translator = Translator.create(langSettings, trans, loggerFactory.apply(hostname, "translator"));
 		}
 		MapDictionary<UrlPart, Object> mapping = MapDictionary.hashMap();
@@ -122,7 +121,7 @@ public class ApplicationFactory {
 					getMinimalize(env),
 					logger
 			);
-			templateFactory.setProfiler(profiler);
+			templateFactory.setProfiler(profiler.used());
 			templateFactories.put(module.getName(), templateFactory);
 			if (module.getTranslationPath() != null) {
 				trans.add(module.getTranslationPath());
@@ -148,7 +147,7 @@ public class ApplicationFactory {
 					getTempPath(env, hostname), "toti/web", "", "", templateFactories,
 					getDeleteTempJavaFiles(env), getMinimalize(env),
 					logger
-				).setProfiler(profiler),
+				).setProfiler(profiler.used()),
 				translator,
 				new IdentityFactory(translator, translator.getLocale().getLang()),
 				new Authenticator(
@@ -171,14 +170,13 @@ public class ApplicationFactory {
 		return new Application(tasks, sessionCache, translator, database, link, register, migrations, response);
 	}
 
-	private Profiler initProfiler(Logger logger) {
-		if (getUseProfiler(env)) {
+	private Profiler initProfiler(Env env, Logger logger) {
+		Profiler profiler = new Profiler();
+		profiler.setUse(getUseProfiler(env));
+		if (profiler.isUse()) {
 			logger.warn("Profiler is enabled");
-			Profiler profiler = new Profiler();
-			profiler.setUse(getUseProfiler(env));
-			return profiler;
 		}
-		return null;
+		return profiler;
 	}
 		
 	/*************************/

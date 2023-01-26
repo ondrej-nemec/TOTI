@@ -67,7 +67,7 @@ public class ResponseFactoryToti {
 	}
 	
 	private Response getProfiler(HttpMethod method, RequestParameters params, Identity identity) {
-		if (profiler != null && developIps.contains(identity.getIP())) {
+		if (profiler.isUse() && developIps.contains(identity.getIP())) {
 			return profiler.getResponse(method, params);
 		}
 		return Response.getText(StatusCode.FORBIDDEN, "");
@@ -77,7 +77,7 @@ public class ResponseFactoryToti {
 		return Response.getTemplate(
 			"/assets" + url, 
 			new MapInit<String, Object>()
-			.append("useProfiler", profiler != null && developIps.contains(identity.getIP()))
+			.append("useProfiler", profiler.isUse() && developIps.contains(identity.getIP()))
 			.toMap()
 		);
 	}

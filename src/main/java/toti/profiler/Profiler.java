@@ -35,6 +35,9 @@ public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProf
 	private boolean use = false;
 	private boolean enable = false;
 	
+	private final Map<String, Object> a = new HashMap<>();
+	// k threadid - dany log
+	
 	/****************/
 	
 	public void setPageId(String id) {
@@ -282,11 +285,18 @@ public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProf
 				return Response.getText(StatusCode.NOT_FOUND, "");
 		}
 	}
-/*
+
 	public boolean isUse() {
 		return use;
 	}
-*/
+	
+	public Profiler used() {
+		if (use) {
+			return this;
+		}
+		return null;
+	}
+
 	public void setUse(boolean use) {
 		this.use = use;
 		this.enable = use;
