@@ -41,11 +41,13 @@ public class LoadUrls {
 	}
 */
 	
-	public static void loadUrlMap(MapDictionary<UrlPart, Object> mapped, Module module, Router router, Register register) throws Exception {
-		map(mapped, FilesList.get(module.getControllersPath(), true).getFiles(), module, register);
+	public static void loadUrlMap(MapDictionary<UrlPart, Object> mapped, Module module, Router router, Register register, Link link) throws Exception {
+		map(mapped, FilesList.get(module.getControllersPath(), true).getFiles(), module, register, link);
 	}
 	
-	private static void map(MapDictionary<UrlPart, Object> mapped, List<String> files, Module module, Register register) throws Exception {
+	private static void map(
+			MapDictionary<UrlPart, Object> mapped, List<String> files,
+			Module module, Register register, Link link) throws Exception {
 		map((mappedUrl, url, methods)->{
 			String[] urls = url.substring(1).split("/");
 			MapDictionary<UrlPart, Object> last = mapped;
@@ -61,7 +63,7 @@ public class LoadUrls {
 			for (HttpMethod httpMethod : methods) {
 				last.put(new UrlPart(httpMethod), mappedUrl);
 			}
-		}, Link.get(), module, register);
+		}, link, module, register);
 	}
 	
 	public static void map(MappingConsumer consumer, Link link, Module module, Register register) throws Exception {

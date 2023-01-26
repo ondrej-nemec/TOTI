@@ -134,7 +134,7 @@ public class ApplicationFactory {
 					loggerFactory.apply(hostname, module.getName())
 				)
 			);
-			LoadUrls.loadUrlMap(mapping, module, router, register);
+			LoadUrls.loadUrlMap(mapping, module, router, register, link);
 			module.addRoutes(router);
 		};
 		// file session save is disabled - maybe enable hibrid saving - user in memory, some user data on disk
