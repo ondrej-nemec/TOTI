@@ -49,7 +49,7 @@ public class ButtonsColumn implements Column {
 		json.put("name", name);
 		json.put("type", "buttons");
 		json.put("title", title);
-		json.put("sorting", false);
+		json.put("useSorting", false);
 		json.put("buttons", buttons);
 		json.put("globalButtons", globalButtons);
 		return json;

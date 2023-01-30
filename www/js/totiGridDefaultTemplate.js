@@ -1,4 +1,4 @@
-/* TOTI Grid default template version 0.0.0 */
+/* TOTI Grid default template version 0.1.0 */
 /* can be overriden */
 var totiGridDefaultTemplate = {
 	getContainer: function(parentSelector, gridUnique) {
@@ -204,6 +204,51 @@ var totiGridDefaultTemplate = {
 				break;
 		}
 		rowContainer.appendChild(cell);
+	},
+	addExpand: function(gridUnique, container, rowContainer, isExpanded, level, showElements, hideELements) {
+		var cell = document.createElement('td');
+		rowContainer.appendChild(cell);
+		
+		var div = document.createElement("div");
+		div.style['margin-left'] = (level * 0.9) + "em";
+		cell.appendChild(div);
+		
+		if (isExpanded === null) {
+			if (level > 0) {
+				var img = document.createElement("img");
+				img.src = totiImages.dot;
+				img.width = "10";
+				div.appendChild(img);
+			}
+			return;
+		}
+		cell.setAttribute("toti-expanded", !isExpanded);
+		
+		function show() {
+			if (cell.getAttribute("toti-expanded") === "true") {
+				cell.setAttribute("toti-expanded", "false");
+				hideELements();
+				cell.querySelector("#toti-expand").style.display = "none";
+				cell.querySelector("#toti-collapse").style.display = "inline";
+			} else {
+				cell.setAttribute("toti-expanded", "true");
+				showElements();
+				cell.querySelector("#toti-expand").style.display = "inline";
+				cell.querySelector("#toti-collapse").style.display = "none";
+			}
+		}
+		function createImage(src, id) {
+			var img = document.createElement("img");
+			img.src = src;
+			img.width = "25";
+			img.setAttribute("id", id);
+			div.appendChild(img);
+			img.onclick = show;
+			return img;
+		}
+		createImage(totiImages.arrowDown, "toti-expand");
+		createImage(totiImages.arrowRight, "toti-collapse");
+		show();
 	},
 	addActions: function(gridUnique, container, actions, onSelect) {
 		var options = [];

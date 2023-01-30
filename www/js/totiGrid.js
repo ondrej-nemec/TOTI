@@ -1,4 +1,4 @@
-/* TOTI Grid version 1.0.3 */
+/* TOTI Grid version 1.1.0 */
 class TotiGrid {
 
 	cookieName = "grid-cache";
@@ -127,6 +127,9 @@ class TotiGrid {
 						});
 					}
 					template.addFilter(gridUnique, container, column.name, grid, filter);
+					break;
+				case "tree":
+					template.addFilter(gridUnique, container, column.name, grid, null);
 					break;
 				default: 
 					break;
@@ -339,6 +342,31 @@ class TotiGrid {
 			if (clearPrevious) {
 				grid.template.clearBody(grid.gridUnique, grid.container);
 			}
+			if (response.data.length === 0) {
+                totiDisplay.flash("warn", totiTranslations.gridMessages.noItemsFound);
+            }
+            var family = {};
+            if (grid.config.treeColumnIndex > -1) {
+				var tree = grid.config.columns[grid.config.treeColumnIndex];
+	            var identifier = tree.identifier;
+	            var parent = tree.parent;
+	            /* data must be level sorted */
+	            response.data.forEach(function(rowData) {
+					family[rowData[identifier]] = {
+						childs: [],
+						parentLevel: 0,
+						parent: rowData[parent] !== null && rowData[parent] !== undefined ? rowData[parent] : null
+					};
+					if (rowData[parent] !== null) {
+						if (family.hasOwnProperty(rowData[parent])) {
+							family[rowData[parent]].childs.push(rowData[identifier]);
+							family[rowData[identifier]].parentLevel = family[rowData[parent]].parentLevel + 1;
+						}
+					}
+				});
+			}
+			
+			var toHide = [];
 			response.data.forEach(function(rowData) {
 				var row = grid.template.addRow(grid.gridUnique, grid.container);
                 if (grid.config.hasOwnProperty("rowRenderer")) {
@@ -349,14 +377,54 @@ class TotiGrid {
 						grid.selectedRow = grid.template.setRowSelected(grid.gridUnique, grid.container, row);
 					}
 				});
-				if (response.data.length === 0) {
-                     totiDisplay.flash("warn", totiTranslations.gridMessages.noItemsFound);
-                }
+                
 				grid.config.columns.forEach(function(column) {
-					var cellData = null;
-					var isElement = false;
-
-					if (column.type === 'actions') {
+					if (column.type === "tree") {
+						var identifier = rowData[column.identifier];
+						var expanded = null;
+						if (family[identifier].childs.length > 0) {
+							expanded = family[identifier].parentLevel < column.expandLevel;
+						}
+						var parentId = rowData[column.parent];
+						while(parentId !== null) {
+							if (family.hasOwnProperty(parentId)) {
+								if (family[parentId].childs.includes(identifier)) {
+									row.classList.add("toti-child-of-" + parentId);
+								}
+								row.classList.add("toti-child-of-" + parentId);
+								parentId = family[parentId].parent;
+							} else {
+								parentId = null;
+							}
+						}
+						function hideElements() {
+							grid.container.querySelectorAll(".toti-child-of-" + identifier).forEach((el)=>{
+								if (el.style.display !== "") {
+									el.setAttribute("display-cache", el.style.display);
+								}
+								el.style.display = "none";
+							});
+						}
+						if (expanded === false) {
+							toHide[identifier] = hideElements;
+						}
+		                grid.template.addExpand(
+							grid.gridUnique, grid.container, row, expanded,
+							family[identifier].parentLevel,
+							()=>{  /* show */
+								grid.container.querySelectorAll(".toti-child-of-" + identifier).forEach((el)=>{
+									var display = el.getAttribute("display-cache");
+									if (display !== null) {
+										el.style.display = display;
+										el.removeAttribute('display-cache');
+									} else {
+										el.style.removeProperty('display');
+									}
+								});
+							},
+							hideElements
+						);
+					} else if (column.type === 'actions') {
 						var checkbox = totiControl.input({
 							type: "checkbox",
 							unique: grid.gridUnique,
@@ -416,7 +484,9 @@ class TotiGrid {
 					}
 				});
 			});
-		    
+		    toHide.forEach((func)=>{
+				func();
+			});
 		    grid.template.clearPageButtons(grid.gridUnique, grid.container);
 
 		    if (grid.config.paggingButtonsCount > 0 && response.data.length > 0)  {

@@ -6,9 +6,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import ji.common.exceptions.LogicException;
 import ji.json.Jsonable;
 import toti.control.columns.Column;
 import toti.control.columns.GroupAction;
+import toti.control.columns.TreeColumn;
 
 public class Grid implements Control {
 
@@ -31,6 +33,8 @@ public class Grid implements Control {
 	private String afterRender = null;
 	private String beforeBind = null;
 	private String afterBind = null;
+	
+	private int treeColumnIndex = -1;
 	
 	public Grid(String loadDataUrl, String loadDataMethod) {
 		this.loadDataMethod = loadDataMethod;
@@ -81,6 +85,15 @@ public class Grid implements Control {
 		return this;
 	}
 	
+	public Grid addColumn(TreeColumn column) {
+		if (treeColumnIndex > 0) {
+			throw new LogicException("Grid can contains only one TreeColumn");
+		}
+		treeColumnIndex = columns.size();
+		columns.add(column);
+		return this;
+	}
+	
 	public Grid addAction(GroupAction action) {
 		actions.add(action);
 		return this;
@@ -118,6 +131,7 @@ public class Grid implements Control {
 		json.put("dataLoadMethod", loadDataMethod);
 		json.put("useRowSelection", useRowSelection);
 		json.put("columns", columns);
+		json.put("treeColumnIndex", treeColumnIndex);
 		
 		json.put("pageSize", pageSize);
 		

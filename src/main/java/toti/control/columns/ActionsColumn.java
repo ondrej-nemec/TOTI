@@ -33,7 +33,7 @@ public class ActionsColumn implements Column {
 		json.put("identifier", identifier);
 		json.put("type", type);
 		json.put("title", title);
-		json.put("sorting", false);
+		json.put("useSorting", false);
 		return json;
 	}
 	

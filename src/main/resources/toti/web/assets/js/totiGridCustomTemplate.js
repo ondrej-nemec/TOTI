@@ -1,4 +1,4 @@
-/* TOTI Grid custom template version 0.0.0 */
+/* TOTI Grid custom template version 0.1.0 */
 var totiGridCustomTemplate = {
 	getContainer: function(parentSelector, gridUnique) {
 		return document.querySelector(parentSelector);
@@ -111,6 +111,9 @@ var totiGridCustomTemplate = {
 				content.append(...value);
 				break;
 		}
+	},
+	addExpand: function(gridUnique, container, rowContainer, isExpanded, level, showElements, hideELements) {
+		// TODO
 	},
 	clearBody: function(gridUnique, container) {
 		var body = container.querySelector('[toti-grid="rows"]');
