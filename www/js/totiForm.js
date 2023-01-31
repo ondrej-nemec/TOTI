@@ -1,4 +1,4 @@
-/* TOTI Form version 1.0.8 */
+/* TOTI Form version 1.1.0 */
 class TotiForm {
 
 	constructor(config) {
@@ -27,6 +27,9 @@ class TotiForm {
 			});
 			if (this.config.hasOwnProperty("afterRender") && this.config.afterRender !== null) {
 				totiUtils.execute(this.config.afterRender, [this]);
+			}
+			if (this.config.hasOwnProperty("placeholder")) {
+				this.loadPlaceholders(this.config.placeholder, formUnique, container);
 			}
 			if (this.config.hasOwnProperty("bind")) {
 				this.bind(this.config.bind, formUnique, container);
@@ -422,17 +425,95 @@ class TotiForm {
 	}
 
 	bind(bindConfig, formUnique, container) {
+		this.setValues(bindConfig, formUnique, container, this.getBindSetValue);
+	}
+
+	_bind(values) {
+		this._setValues(values, this.getBindSetValue);
+	}
+
+	getBindSetValue(element, name, value) {
+		switch(element.type) {
+			case undefined:
+				/* not editable */
+				if (element.bind !== undefined) {
+					element.bind(totiControl.parseValue(element.getAttribute('origintype'), value));
+				}
+				break;
+			case "checkbox":
+				element.checked = value ? "checked" : false;
+				break;
+			case "radio":
+				var radiolist = container.querySelector("[name='" + name + "'][value='" + value + "']");
+				if (radiolist !== null) {
+					radiolist.checked = value ? "checked" : false;
+				}
+				break;
+			/* IMPROVE: realValue u selectu */
+			case "select-one":
+				var val = value;
+				var select = element;
+				element.setOptions.then(function() {
+					select.value = val;
+				});
+				break;
+            case "datetime-local":
+                if (value !== null && value.length > 19) {
+                    /* FIX for Java 9 and above. LocalDateTime contains 6 digits in microseconds*/
+                    element.value = value.substring(0, 19);
+                    break;
+                }
+			default:
+				element.value = value;
+		}
+	}
+
+	loadPlaceholders(placeholderConfig, formUnique, container) {
+		this.setValues(placeholderConfig, formUnique, container, this.getPlaceholderSetValue);
+	}
+
+	_loadPlaceholders(values) {
+		this._setValues(values, this.getPlaceholderSetValue);
+	}
+
+	getPlaceholderSetValue(element, name, value) {
+		switch(element.type) {
+			case undefined:
+				/* not editable */
+				if (element.bind !== undefined) {
+					element.bind(totiControl.parseValue(element.getAttribute('origintype'), value));
+				}
+				break;
+			case "checkbox":
+			case "radio":
+			case "select-one":
+				/* now ignored */
+				break;
+            case "datetime-local":
+                if (value !== null && value.length > 19) {
+                    /* FIX for Java 9 and above. LocalDateTime contains 6 digits in microseconds*/
+                    element.setAttribute("placeholder", value.substring(0, 19));
+                    break;
+                }
+			default:
+                if (value !== null && value.length > 0) {
+					element.setAttribute("placeholder", value);
+                }
+		}
+	}
+
+	setValues(loadConfig, formUnique, container, setValue) {
 		var form = this;
-		totiLoad.load(bindConfig.url, bindConfig.method).then(function(values) {
-			if (bindConfig.hasOwnProperty("beforeBind") && bindConfig.beforeBind !== null) {
-				totiUtils.execute(bindConfig.beforeBind, [values, form]);
+		totiLoad.load(loadConfig.url, loadConfig.method).then(function(values) {
+			if (loadConfig.hasOwnProperty("beforeBind") && loadConfig.beforeBind !== null) {
+				totiUtils.execute(loadConfig.beforeBind, [values, form]);
 			}
-			form._bind(values);
-			if (bindConfig.hasOwnProperty("afterBind") && bindConfig.afterBind !== null) {
-				totiUtils.execute(bindConfig.afterBind, [values, form]);
+			form._setValues(values, setValue);
+			if (loadConfig.hasOwnProperty("afterBind") && loadConfig.afterBind !== null) {
+				totiUtils.execute(loadConfig.afterBind, [values, form]);
 			}
 		}).catch(function(error) {
-			if (bindConfig.onFailure === null) {
+			if (loadConfig.onFailure === null) {
 				switch(error.status) {
 					case 403:
 						totiDisplay.flash("error", totiTranslations.formMessages.bindErrorForbidden, error);
@@ -441,12 +522,12 @@ class TotiForm {
 						totiDisplay.flash("error", totiTranslations.formMessages.bindError, error);
 				}
 			} else {
-				totiUtils.execute(bindConfig.onFailure, [error]);
+				totiUtils.execute(loadConfig.onFailure, [error]);
 			}
 		});
 	}
 
-	_bind(values) {
+	_setValues(values, setValue) {
 		var form = this;
         var container = this.container;
         function bindElement(dynamicCache, originName, name, value, position = 0) {
@@ -496,39 +577,7 @@ class TotiForm {
 			if (element === undefined) {
 				return;
 			}
-			switch(element.type) {
-				case undefined:
-					/* not editable */
-					if (element.bind !== undefined) {
-						element.bind(totiControl.parseValue(element.getAttribute('origintype'), value));
-					}
-					break;
-				case "checkbox":
-					element.checked = value ? "checked" : false;
-					break;
-				case "radio":
-					var radiolist = container.querySelector("[name='" + name + "'][value='" + value + "']");
-					if (radiolist !== null) {
-						radiolist.checked = value ? "checked" : false;
-					}
-					break;
-				/* IMPROVE: realValue u selectu */
-				case "select-one":
-					var val = value;
-					var select = element;
-					element.setOptions.then(function() {
-						select.value = val;
-					});
-					break;
-                case "datetime-local":
-                    if (value !== null && value.length > 19) {
-                        /* FIX for Java 9 and above. LocalDateTime contains 6 digits in microseconds*/
-                        element.value = value.substring(0, 19);
-                        break;
-                    }
-				default:
-					element.value = value;
-			}
+			setValue(element, name, value);
 			/* optional inputs: range, color,... */
 			if (element.hasOwnProperty('set')) {
 				element.set();

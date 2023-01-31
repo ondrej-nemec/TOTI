@@ -14,10 +14,17 @@ public class Form implements Control {
 
 	private String bindUrl = null;
 	private String bindMethod = "get";
+
+	private String placeholderUrl = null;
+	private String placeholderMethod = "get";
+	
 	private final boolean editable;
 	private String onBindFailure;
+	private String onPlaceholderLoadFailure;
 	private String beforeBind;
 	private String afterBind;
+	private String beforePlaceholderLoad;
+	private String afterPlaceholderLoad;
 	private String beforeRender;
 	private String afterRender;
 	private String beforeSubmit;
@@ -97,6 +104,31 @@ public class Form implements Control {
 		return this;
 	}
 	
+	public Form setPlaceholderUrl(String placeholderUrl) {
+		this.placeholderUrl = placeholderUrl;
+		return this;
+	}
+	
+	public Form setPlaceholderMethod(String placeholderMethod) {
+		this.placeholderMethod = placeholderMethod;
+		return this;
+	}
+	
+	public Form setOnPlaceholderLoadFailure(String onPlaceholderLoadFailure) {
+		this.onPlaceholderLoadFailure = onPlaceholderLoadFailure;
+		return this;
+	}
+	
+	public Form setAfterPlaceholderLoad(String afterPlaceholderLoad) {
+		this.afterPlaceholderLoad = afterPlaceholderLoad;
+		return this;
+	}
+	
+	public Form setBeforePlaceholderLoad(String beforePlaceholderLoad) {
+		this.beforePlaceholderLoad = beforePlaceholderLoad;
+		return this;
+	}
+	
 	@Override
 	public Map<String, Object> toJson() {
 		Map<String, Object> json = new HashMap<>();
@@ -127,6 +159,19 @@ public class Form implements Control {
 			}
 			if (afterBind != null) {
 				bind.put("afterBind", afterBind);
+			}
+		}
+		if (placeholderUrl != null) {
+			Map<String, Object> placeholder = new HashMap<>();
+			json.put("placeholder", placeholder);
+			placeholder.put("url", placeholderUrl);
+			placeholder.put("method", placeholderMethod);
+			placeholder.put("onFailure", onPlaceholderLoadFailure);
+			if (beforePlaceholderLoad != null) {
+				placeholder.put("beforeBind", beforePlaceholderLoad);
+			}
+			if (afterPlaceholderLoad != null) {
+				placeholder.put("afterBind", afterPlaceholderLoad);
 			}
 		}
 		return json;
