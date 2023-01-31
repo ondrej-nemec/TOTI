@@ -1,4 +1,4 @@
-/* TOTI Grid version 1.1.0 */
+/* TOTI Grid version 1.1.1 */
 class TotiGrid {
 
 	cookieName = "grid-cache";
@@ -346,28 +346,41 @@ class TotiGrid {
                 totiDisplay.flash("warn", totiTranslations.gridMessages.noItemsFound);
             }
             var family = {};
+            var sortedFamily = [];
             if (grid.config.treeColumnIndex > -1) {
 				var tree = grid.config.columns[grid.config.treeColumnIndex];
-	            var identifier = tree.identifier;
-	            var parent = tree.parent;
-	            /* data must be level sorted */
-	            response.data.forEach(function(rowData) {
-					family[rowData[identifier]] = {
+	            var missingParent = {};
+	            response.data.forEach(function(rowData, index) {
+		            var identifier = rowData[tree.identifier];
+		            var parent = rowData[tree.parent];
+		            sortedFamily[index] = identifier;
+					family[identifier] = {
 						childs: [],
-						parentLevel: 0,
-						parent: rowData[parent] !== null && rowData[parent] !== undefined ? rowData[parent] : null
+						parent: parent !== null && parent !== undefined ? parent : null,
+						data: rowData
 					};
-					if (rowData[parent] !== null) {
-						if (family.hasOwnProperty(rowData[parent])) {
-							family[rowData[parent]].childs.push(rowData[identifier]);
-							family[rowData[identifier]].parentLevel = family[rowData[parent]].parentLevel + 1;
+					if (missingParent.hasOwnProperty(identifier)) {
+						family[identifier].childs = missingParent[identifier];
+						delete missingParent[identifier];
+					}
+					if (parent !== null) {
+						if (family.hasOwnProperty(parent)) {
+							family[parent].childs.push(identifier);
+						} else {
+							if (!missingParent.hasOwnProperty(parent)) {
+								missingParent[parent] = [];
+							}
+							missingParent[parent].push(identifier);
 						}
 					}
+				});
+				Object.keys(missingParent).forEach((id)=>{
+					family[id].parent = null;
 				});
 			}
 			
 			var toHide = [];
-			response.data.forEach(function(rowData) {
+			function onRowItem(rowData) {
 				var row = grid.template.addRow(grid.gridUnique, grid.container);
                 if (grid.config.hasOwnProperty("rowRenderer")) {
                     totiUtils.execute(grid.config.rowRenderer, [row, rowData]);
@@ -483,7 +496,27 @@ class TotiGrid {
 						grid.template.addCell(grid.gridUnique, grid.container, row, column.name, rowData[column.name], 0);
 					}
 				});
-			});
+			}
+			if (family.length === 0) {
+				response.data.forEach(function(rowData) {
+					onRowItem(rowData);
+				});
+			} else {
+				sortedFamily.forEach((identifier)=>{
+					var mainItem = family[identifier];
+					if (mainItem.parent === null) {
+						function addChilds(id, item, level) {
+							family[id].parentLevel = level;
+							onRowItem(family[id].data);
+							item.childs.forEach((id)=>{
+								addChilds(id, family[id], level + 1);
+							});
+						}
+						addChilds(identifier, mainItem, 0);
+					}
+				});
+			}
+			
 		    toHide.forEach((func)=>{
 				func();
 			});
