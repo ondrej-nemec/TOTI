@@ -178,25 +178,31 @@ public interface GridEntityDao<T extends Entity>{
 		    selectQuery.append(", ");
 		    selectQuery.append(disabled);
 		    selectQuery.append(" AS ");
-		     selectQuery.append(HELP_DISABLED_NAME);
+		    selectQuery.append(HELP_DISABLED_NAME);
 		}
+		StringBuilder sorting = new StringBuilder();
 		if (optGroup != null) {
+			sorting.append(optGroup);
 		    selectQuery.append(", ");
 		    selectQuery.append(optGroup);
 		    selectQuery.append(" AS ");
-		     selectQuery.append(HELP_GROUP_NAME);
-		} 
+		    selectQuery.append(HELP_GROUP_NAME);
+		}
+		if (!sorting.toString().isEmpty()) {
+			sorting.append(",");
+		}
+		sorting.append(title);
 		return getHelp(
 			database, 
 			builder->builder.select(selectQuery.toString()).from(table), 
-			forOwners, ownerColumnName, title
+			forOwners, ownerColumnName, sorting.toString()
 		);
 	}
 	
 	default List<Help> getHelp(
 			Database database, Function<QueryBuilder, SelectBuilder> selectFactory,
 			Collection<Object> forOwners, Optional<String> ownerColumnName, 
-			String titleColName) throws SQLException {
+			String sortingColumn) throws SQLException {
 		return database.applyBuilder((builder)->{
 			List<Help>items = new LinkedList<>();
 		    SelectBuilder select = selectFactory.apply(builder);
@@ -207,7 +213,8 @@ public interface GridEntityDao<T extends Entity>{
 		             select.where("1=2"); // no results
 		        }
 		    }
-		    select.orderBy(titleColName);
+		    select.orderBy(sortingColumn);
+		    
 		    select.fetchAll().forEach((row)->{
 		        items.add(
 		             new Help(

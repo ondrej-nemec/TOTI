@@ -1,4 +1,4 @@
-/* TOTI Control version 1.0.3 */
+/* TOTI Control version 1.1.0 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -254,17 +254,58 @@ var totiControl = {
 				}
 
 				var onOptions = function(options) {
-					var groupSubstitution = null;
-					options.forEach(function(option) {
-						if (depends !== null) {
-							var optGroup = depends.querySelector('[value="' + option.optgroup + '"]');
-							if (optGroup !== null) {
-								groupSubstitution = optGroup.innerText;
+					if (params.selfReference) {
+						var sorted = [];
+						var missingParent = {};
+						var optCache = [];
+						options.forEach((option)=>{
+							if (option.optgroup === null) {
+								sorted.push(option.value);
+							} else if (optCache.hasOwnProperty(option.optgroup)) {
+								optCache[option.optgroup].childs.push(option.value);
+							} else  {
+								if (!missingParent.hasOwnProperty(option.optgroup)) {
+									missingParent[option.optgroup] = [];
+								}
+								missingParent[option.optgroup].push(option.value);
 							}
+							optCache[option.value] = {
+								data: option,
+								childs: []
+							};
+							if (missingParent.hasOwnProperty(option.value)) {
+								optCache[option.value].childs = missingParent[option.value];
+								delete missingParent[option.value];
+							}
+						});
+						function iterate(item, level, parentName) {
+							addOption(select, item.data, selectedGroup === '' ? null : selectedGroup, parentName);
+							var pre = '';
+							for (i = 0; i < level; i++) {
+								pre += "_  ";/* TODO '&nbsp;&nbsp;'; */
+							}
+							var title = pre + item.data.title;
+							item.childs.forEach((child)=>{
+								optCache[child].data.title = pre + optCache[child].data.title;
+								iterate(optCache[child], level + 1, title);
+							});
 						}
-						addOption(select, option, selectedGroup === '' ? null : selectedGroup, groupSubstitution);
-					/*	params.renderOptions[option.value] = option.title;*/
-					});
+						sorted.forEach((id)=>{
+							iterate(optCache[id], 0, null);
+						})
+					} else {
+						var groupSubstitution = null;
+						options.forEach(function(option) {
+							if (depends !== null) {
+								var optGroup = depends.querySelector('[value="' + option.optgroup + '"]');
+								if (optGroup !== null) {
+									groupSubstitution = optGroup.innerText;
+								}
+							}
+							addOption(select, option, selectedGroup === '' ? null : selectedGroup, groupSubstitution);
+						/*	params.renderOptions[option.value] = option.title;*/
+						});
+					}
 					return options;
 				};
 

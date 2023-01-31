@@ -12,6 +12,7 @@ public class Select implements Input, Filter {
 	private Map<String, Object> load;
 	private String optionGroup;
 	private String depends = null;
+	private boolean selfReference = false;
 	
 	private final Wrapper wrapper;
 
@@ -87,6 +88,11 @@ public class Select implements Input, Filter {
 		wrapper.setEditable(editable);
 		return this;
 	}
+	
+	public Select setSelfReference(boolean selfReference) {
+		this.selfReference = selfReference;
+		return this;
+	}
 
 	@Override
 	public Map<String, Object> getFilterSettings() {
@@ -101,6 +107,7 @@ public class Select implements Input, Filter {
 		if (depends != null) {
 			set.put("depends", depends);
 		}
+		set.put("selfReference", selfReference);
 		return set;
 	}
 	
