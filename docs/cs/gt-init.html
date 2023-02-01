@@ -16,6 +16,9 @@
 	Metoda <code>addApplication</code> vrátí <code>Application</code>. Tato instance je <strong>automaticky</strong> přidána do TOTI. Tak je možné dostat se k vytvořeným instancím <code>Translator</code>, <code>Database</code>, <code>Link</code>, <code>Register</code> a seznamu migrací (<code>List&lt;String&gt;</code>);
 </p>
 
+<p class="alert alert-info">
+	<code>ApplicationFactory</code> obsahuje také metodu <code>getTempPath</code>, která vrátí cestu k temp souborům aplikace.
+</p>
 
 <pre><code class="language-java">
 	HttpServerFactory serverFactory = new HttpServerFactory(confFilePath);

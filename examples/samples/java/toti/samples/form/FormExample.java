@@ -208,6 +208,94 @@ public class FormExample implements Module {
 		return Response.getTemplate("inputs.jsp", params);
 	}
 	
+	/**
+	 * Display inputs with placeholders
+	 * @return http://localhost:8080/examples-form/form/placeholders/{0-100}
+	 */
+	@Action("placeholders")
+	public Response placeholders(@ParamUrl("id") int i) {
+		Form form = new Form(link.create(getClass(), c->c.allInputs(0, null), i), true);
+		form.addInput(
+			Hidden.input("hidden").setDefaultValue(i)
+		);
+		form.addInput(
+			Text.input("text", true).setTitle("Text input")
+			.setMinLength(2).setMaxLength(10)
+			.setPlaceholder("Some text")
+		);
+		form.addInput(
+			TextArea.input("textarea", false).setTitle("Texarea")
+			.setCols(20).setRows(3).setPlaceholder("Some text")
+			.setMaxLength(255)
+		);
+		form.addInput(
+			Email.input("email", true).setTitle("Email")
+			.setPlaceholder("your.name@domain.tld")
+		);
+		form.addInput(
+			Color.input("color", true).setTitle("Color")
+		);
+		form.addInput(
+			Checkbox.input("checkbox", false).setTitle("Checkbox")
+		);
+		form.addInput(
+			Number.input("number", true).setStep(0.1).setTitle("Number (double)")
+			.setMin(0).setMax(10000).setPlaceholder("Number from 0 to 10000")
+		);
+		form.addInput(
+			Password.input("password", true).setTitle("Password")
+			.setPlaceholder("Password")
+		);
+		Map<String, String> radioListOptions = new HashMap<>();
+		for (FormEnum e : FormEnum.values()) {
+			radioListOptions.put(e.toString(), e.toString().replace("_", " "));
+		}
+		form.addInput(
+			RadioList.input("radiolist", true, radioListOptions)
+			.setTitle("Radio List")
+		);
+		form.addInput(
+			Range.input("range", true).setTitle("Range")
+			.setMin(0).setMax(100).setStep(1)
+		);
+		form.addInput(
+			Select.input("select", true, Arrays.asList(
+				Option.create("", "--Select--"),
+				Option.create(1, "First Option"),
+				Option.create(2, "Second Option"),
+				Option.create(3, "Third Option")
+			))
+			.setTitle("Select")
+		);
+		form.addInput(
+			Datetime.input("datetime", true).setTitle("Datetime")
+		);
+		form.addInput(
+			Date.input("date", true).setTitle("Date")
+		);
+		form.addInput(
+			Time.input("time", true).setTitle("Time")
+		);
+		form.addInput(
+			Month.input("month", true).setTitle("Month")
+		);
+		form.addInput(
+			Week.input("week", true).setTitle("Week")
+		);
+		form.addInput(
+			Submit.create("Save", "save")
+			.setRedirect(link.create(getClass(), c->c.inputsForm(0), i))
+		);
+		
+		form.setPlaceholderUrl(link.create(getClass(), c->c.allInputsGet(0), i));
+		form.setPlaceholderMethod("get");
+		
+		Map<String, Object> params = new HashMap<>();
+		params.put("form", form);
+		params.put("title", "Form - load placeholders");
+		return Response.getTemplate("inputs.jsp", params);
+	}
+	
 	/*******/
 	
 	/**

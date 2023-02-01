@@ -482,7 +482,8 @@ select.setLoadData(String url, String method, Map&lt;String, String&gt; params);
 select.setShowedOptionGroup(String optionGroup);
 </code></pre>
 
-		<li>Závislost <code>setDepends</code>: viz níže</li>
+		<li>Závislost <code>setDepends(target)</code>: viz níže</li>
+		<li>Závislost na sobě samém <code>setSelfReference(true/false)</code>: viz níže</li>
 
 		<li>Přidání libovolného parametru: <code>addParam</code></li>
 		<li>Nastavení popisu: <code>setTitle</code></li>
@@ -518,6 +519,14 @@ select.setShowedOptionGroup(String optionGroup);
 
 <p>
 	Pokud <code>Select</code> ('Cíl') obsahuje optgroupy, může záviset na jiném <code>Select</code> ('Zdroj'). Možnosti Zdroje odpovídají skupinám možností v Cíli. Podud Zdroj nemá vybranou žádnou hodnotu, možnosti v Cíli se zobrazí rozdělené do skupin, přičemž názvy skupin jsou nahrazeny popisy možností ze Zdroje. Pokud je ve Zdroji vybraná možnost, v cíli se zobrazí možnosti s odpovídající skupinou a ty bez skupiny.
+</p>
+
+<h4>Závislost na sobě samém</h4>
+
+<strong>Experimental</strong>
+
+<p>
+	Pokud je nastavena závislost na sobě samém, TOTI předpokládá, že hodnota v <code>optgroup</code> je cizí klíč odkazující na hodnotu <code>value</code> jiného řádku. Poté zobrazí jednotlivé možnosti ve stromové struktuře.
 </p>
 
 <h3>Option</h3>

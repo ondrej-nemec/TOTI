@@ -110,12 +110,12 @@ public class TotiSamplesRunner {
 				.setDatabase((migrations, env)->{
 					return new Database(
 						new DatabaseConfig(
-							dbEnv.getString("database.type"),
-							dbEnv.getString("database.url"), 
+							dbEnv.getString("applications.localhost.database.type"),
+							dbEnv.getString("applications.localhost.database.url"), 
 							false, 
-							dbEnv.getString("database.schema-name"), 
-							dbEnv.getString("database.login"), 
-							dbEnv.getString("database.password"),
+							dbEnv.getString("applications.localhost.database.schema-name"), 
+							dbEnv.getString("applications.localhost.database.login"), 
+							dbEnv.getString("applications.localhost.database.password"),
 							migrations,
 							1 // thread pool, 1 is enought in example
 						),

@@ -224,6 +224,21 @@ new Validator(true)
 	<strong>Can be used moretimes, but remember to have unique name.</strong>
 </p>
 
+<h3>TreeColumn</h3>
+
+<p>
+	Umožňuje zobrazit řádky ve stromové struktuře. Řádky je lze zobrazit/skrýt. Potomci řádku jsou vždy řazeny pod rodičovský řádek. <code>Grid</code> může mít pouze jeden <code>TreeColumn</code>.
+</p>
+
+<p>
+	Metody:
+	<ul>
+		<li>Konstruktor: <code>new TreeColumn(idName, parentName)</code></li>
+		<li>Nastavení titulku: <code>setTitle(title)</code> - titulek sloupce s řídícími prvky. Ve výchozím nastavení je prázdný.</li>
+		<li>Level rozbalení: <code>setExpandLevel(level)</code> - úroveň rozbalení řádků, kdy řádek bez rodiče je level 0. Potomci budou ve výchozím nastavení skryti, pokud jejich úroveň je rovna nebo větší danému levelu. Výchozí hodnota je 2.</li>
+	</ul>
+</p>
+
 <h2>Group actions</h2>
 
 <p>

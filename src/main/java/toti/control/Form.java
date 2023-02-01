@@ -155,10 +155,10 @@ public class Form implements Control {
 			bind.put("method", bindMethod);
 			bind.put("onFailure", onBindFailure);
 			if (beforeBind != null) {
-				bind.put("beforeBind", beforeBind);
+				bind.put("before", beforeBind);
 			}
 			if (afterBind != null) {
-				bind.put("afterBind", afterBind);
+				bind.put("after", afterBind);
 			}
 		}
 		if (placeholderUrl != null) {
@@ -168,10 +168,10 @@ public class Form implements Control {
 			placeholder.put("method", placeholderMethod);
 			placeholder.put("onFailure", onPlaceholderLoadFailure);
 			if (beforePlaceholderLoad != null) {
-				placeholder.put("beforeBind", beforePlaceholderLoad);
+				placeholder.put("before", beforePlaceholderLoad);
 			}
 			if (afterPlaceholderLoad != null) {
-				placeholder.put("afterBind", afterPlaceholderLoad);
+				placeholder.put("after", afterPlaceholderLoad);
 			}
 		}
 		return json;
