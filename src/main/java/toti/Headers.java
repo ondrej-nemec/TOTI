@@ -20,10 +20,11 @@ public class Headers {
 	}
 	
 	public Headers addHeader(String name, Object value) {
-		if (!headers.containsKey(name)) {
-			headers.put(name, new LinkedList<>());
+		String headerName = name.toLowerCase();
+		if (!headers.containsKey(headerName)) {
+			headers.put(headerName, new LinkedList<>());
 		}
-		headers.get(name).add(value);
+		headers.get(headerName).add(value);
 		return this;
 	}
 	
@@ -36,18 +37,20 @@ public class Headers {
 	}
 	
 	public List<Object> getHeaders(String name) {
-		return headers.get(name);
+		return headers.get(name.toLowerCase());
 	}
 	
 	public Object getHeader(String name)  {
-		if (headers.containsKey(name) && headers.get(name).size() > 0) {
-			return headers.get(name).get(0);
+		String headerName = name.toLowerCase();
+		if (headers.containsKey(headerName) && headers.get(headerName).size() > 0) {
+			return headers.get(headerName).get(0);
 		}
 		return null;
 	}
 	
 	public boolean containsHeader(String name) {
-		return headers.containsKey(name) && headers.get(name).size() > 0;
+		String headerName = name.toLowerCase();
+		return headers.containsKey(headerName) && headers.get(headerName).size() > 0;
 	}
 	
 	public <T> T getHeader(String name, Class<T> clazz) {
