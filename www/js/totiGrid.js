@@ -1,4 +1,4 @@
-/* TOTI Grid version 1.1.1 */
+/* TOTI Grid version 1.1.2 */
 class TotiGrid {
 
 	cookieName = "grid-cache";
@@ -497,7 +497,7 @@ class TotiGrid {
 					}
 				});
 			}
-			if (family.length === 0) {
+			if (sortedFamily.length === 0) {
 				response.data.forEach(function(rowData) {
 					onRowItem(rowData);
 				});
