@@ -87,13 +87,15 @@ public class HttpServerFactory {
 			if (env.getString("key-store") != null && env.getString("key-store-password") != null) {
 				cred.setCertificateStore(
 					env.getString("key-store"),
-					env.getString("key-store-password")
+					env.getString("key-store-password"),
+					env.getString("key-store-type")
 				);
 			}
 			if (env.getString("trust-store") != null && env.getString("trust-store-password") != null) {
 				cred.setTrustedClientsStore(
 					env.getString("trust-store"),
-					env.getString("trust-store-password")
+					env.getString("trust-store-password"),
+					env.getString("trust-store-type")
 				);
 			} else {
 				cred.setTrustAll(true);
