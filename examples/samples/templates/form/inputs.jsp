@@ -1,7 +1,24 @@
 <html>
 <head>
 	<title>Form - ${title}</title>
-	<script src="/toti/totiJs.js" nonce="${nonce}"></script>
+	
+	<script src="/js/totiSortedMap.js" nonce="${nonce}"></script>
+	<script src="/js/totiTranslations.js" nonce="${nonce}"></script>
+	<script src="/js/totiImages.js" nonce="${nonce}"></script>
+	<script src="/js/totiStorage.js" nonce="${nonce}"></script>
+	<script src="/js/totiUtils.js" nonce="${nonce}"></script>
+	<script src="/js/totiLang.js" nonce="${nonce}"></script>
+	<script src="/js/totiLoad.js" nonce="${nonce}"></script>
+	<script src="/js/totiAuth.js" nonce="${nonce}"></script>
+	<script src="/js/totiFormCustomTemplate.js" nonce="${nonce}"></script>
+	<script src="/js/totiFormDefaultTemplate.js" nonce="${nonce}"></script>
+	<script src="/js/totiGridCustomTemplate.js" nonce="${nonce}"></script>
+	<script src="/js/totiGridDefaultTemplate.js" nonce="${nonce}"></script>
+	<script src="/js/totiDisplay.js" nonce="${nonce}"></script>
+	<script src="/js/totiControl.js" nonce="${nonce}"></script>
+	<script src="/js/totiForm.js" nonce="${nonce}"></script>
+	<script src="/js/totiGrid.js" nonce="${nonce}"></script>
+	<!-- <script src="/toti/totiJs.js" nonce="${nonce}"></script> -->
 </head>
 <body>
 

@@ -1,4 +1,4 @@
-/* TOTI Control version 1.1.0 */
+/* TOTI Control version 1.1.1 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -259,7 +259,7 @@ var totiControl = {
 						var missingParent = {};
 						var optCache = [];
 						options.forEach((option)=>{
-							if (option.optgroup === null) {
+							if (option.optgroup === null || option.optgroup === undefined) {
 								sorted.push(option.value);
 							} else if (optCache.hasOwnProperty(option.optgroup)) {
 								optCache[option.optgroup].childs.push(option.value);

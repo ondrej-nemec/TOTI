@@ -633,6 +633,18 @@ public class FormExample implements Module {
 			.setDefaultValue(5)
 		);
 		
+		
+		form.addInput(
+			Select.input("tree-structure", false, Arrays.asList(
+				Option.create("0", "Option 0"),
+				Option.create("-1", "Option 0x1").setOptGroup("0"),
+				Option.create("-2", "Option 0x2").setOptGroup("0")
+			))
+			.setTitle("Options in tree structure")
+			.setLoadData(link.create(getClass(), c->c.loadTreeOptions()), "get")
+			.setSelfReference(true)
+		);
+		
 		form.addInput(Submit.create("Submit", "submit"));
 		
 		Map<String, Object> params = new HashMap<>();
@@ -682,6 +694,58 @@ public class FormExample implements Module {
 				.append("value", "6")
 				.append("title", "Item 3 in Group 3")
 				.append("optgroup", "group2")
+				.toMap()
+		));
+	}
+
+	/**
+	 * Tree options for select
+	 * @return http://localhost:8080/examples-form/form/load-tree-options
+	 */
+	@Action("load-tree-options")
+	public Response loadTreeOptions() {
+		return Response.getJson(Arrays.asList(
+			new MapInit<String, Object>()
+				.append("value", "1")
+				.append("title", "Option 1")
+				.toMap(),
+			new MapInit<String, Object>()
+				.append("value", "11")
+				.append("title", "Option 1x1")
+				.append("optgroup", "1")
+				.toMap(),
+			new MapInit<String, Object>()
+				.append("value", "12")
+				.append("title", "Option 1x2")
+				.append("optgroup", "1")
+				.toMap(),
+			new MapInit<String, Object>()
+				.append("value", "121")
+				.append("title", "Option 1x2x1")
+				.append("optgroup", "12")
+				.toMap(),
+			new MapInit<String, Object>()
+				.append("value", "122")
+				.append("title", "Option 1x3")
+				.append("optgroup", "12")
+				.toMap(),
+			new MapInit<String, Object>()
+				.append("value", "2")
+				.append("title", "Option 2")
+				.toMap(),
+			new MapInit<String, Object>()
+				.append("value", "3")
+				.append("title", "Option 3")
+				.toMap(),
+			new MapInit<String, Object>()
+				.append("value", "31")
+				.append("title", "Option 3x1")
+				.append("optgroup", "3")
+				.toMap(),
+			new MapInit<String, Object>()
+				.append("value", "32")
+				.append("title", "Option 3x2")
+				.append("optgroup", "3")
 				.toMap()
 		));
 	}
