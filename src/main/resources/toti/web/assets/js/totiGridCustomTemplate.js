@@ -113,7 +113,7 @@ var totiGridCustomTemplate = {
 		}
 	},
 	addExpand: function(gridUnique, container, rowContainer, isExpanded, level, showElements, hideELements) {
-		// TODO
+		
 	},
 	clearBody: function(gridUnique, container) {
 		var body = container.querySelector('[toti-grid="rows"]');

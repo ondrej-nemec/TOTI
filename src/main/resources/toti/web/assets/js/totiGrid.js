@@ -1,4 +1,4 @@
-/* TOTI Grid version 1.1.2 */
+/* TOTI Grid version 1.1.3 */
 class TotiGrid {
 
 	cookieName = "grid-cache";
@@ -375,7 +375,9 @@ class TotiGrid {
 					}
 				});
 				Object.keys(missingParent).forEach((id)=>{
-					family[id].parent = null;
+					if (family.hasOwnProperty(id)) {
+						family[id].parent = null;
+					}
 				});
 			}
 			
