@@ -9,7 +9,7 @@
 </p>
 
 <p>
-	<code>HttpServer</code> obsahuje metody <code>start</code> a <code>stop</code> (více níže). Do <code>HttpServer</code> se přidávají jednotlivé aplikace <code>addApplication</code> a to i po spuštění serveru. Parametry této metody jsou: hostname (String) a callback, který vytvoří <code>Application</code>. Callback dostane instanci <code>Env</code> (vytovořenou za pomoci konfiguračního souboru z <code>HttpServerFactory</code>) a <code>ApplicationFactory</code> - funguje podobně jako <code>HttpServerFactory</code>. Výsledná <code>Application</code> se vytvoří <code>create</code>. Tato metoda vyžaduje list <code>Module</code> (více v dalších kapitolách).
+	<code>HttpServer</code> obsahuje metody <code>start</code> (spustí server) a <code>stop</code> (vypne server). Do <code>HttpServer</code> se přidávají jednotlivé aplikace <code>addApplication</code> a to i po spuštění serveru. Parametry této metody jsou: hostname (String) a callback, který vytvoří <code>Application</code>. Callback dostane instanci <code>Env</code> (vytovořenou za pomoci konfiguračního souboru z <code>HttpServerFactory</code>) a <code>ApplicationFactory</code> - funguje podobně jako <code>HttpServerFactory</code>. Výsledná <code>Application</code> se vytvoří <code>create</code>. Tato metoda vyžaduje list <code>Module</code> (více v dalších kapitolách).
 </p>
 
 <p>
@@ -39,25 +39,26 @@
 	Oba způsoby nastavení jsou v <a href="https://github.com/ondrej-nemec/TOTI/tree/master/examples/samples">Examples</a>, přímo ve spuštěcí třídě.
 </p>
 
-<h2>Ovládání</h2>
+<h2>Application</h2>
+
+<p>
+	<code>Application</code> také obsahuje metody <code>start</code> a <code>stop</code>. Pokud není nastaveni jinak, <code>Application</code> je puštěna současně s <code>HttpServer</code>, nebo po přidání do již běžícího serveru.
+</p>
 
 <p>
 	<code>start</code> methoda provede:
 	<ol>
 		<li>Vytvoří a odmigruje databázi (pokud jsou databáze a migrace použity). <a href="https://ondrej-nemec.github.io/JI/?file=database-migrations.html">Více o migracích</a></li>
 		<li>Spustí všechny úlohy z modulů (více v dalších kapitolách)</li>
-		<li>Spustí HTTP server</li>
 	</ol>
 </p>
 
 <p>
 	<code>stop</code> methoda dělá:
 	<ol>
-		<li>Zastaví HTTP server</li>
 		<li>Zastaví všechny úlohy z modulů</li>
 	</ol>
 </p>
-
 
 
 <h2>Logování</h2>

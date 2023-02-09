@@ -57,6 +57,8 @@ public class ApplicationFactory {
 	private Boolean useProfiler = null;
 	private String urlPattern = null;
 	private String logsPath = null;
+	
+	private Boolean autoStart = null;
 
 	private Headers responseHeaders = null;
 	private LanguageSettings langSettings = null;
@@ -169,7 +171,7 @@ public class ApplicationFactory {
 				register,
 				mapping
 		);
-		return new Application(tasks, sessionCache, translator, database, link, register, migrations, response);
+		return new Application(tasks, sessionCache, translator, database, link, register, migrations, response, getAutoStart(env));
 	}
 
 	private Profiler initProfiler(Env env, Logger logger) {
@@ -302,6 +304,10 @@ public class ApplicationFactory {
 		return new Headers() .addHeader("Access-Control-Allow-Origin", "*");
 	}
 	
+	private boolean getAutoStart(Env env) {
+		return getProperty(autoStart, "autostart", true, Boolean.class, env);
+	}
+	
 	private <T> T getProperty(T value,String key, T defaultValue, Class<T> clazz, Env env) {
 		if (value != null) {
 			return value;
@@ -401,6 +407,11 @@ public class ApplicationFactory {
 	
 	public ApplicationFactory setDatabase(BiFunction<List<String>, Env, Database> createDatabase) {
 		this.createDatabase = createDatabase;
+		return this;
+	}
+	
+	public ApplicationFactory setAutoStart(boolean autoStart) {
+		this.autoStart = autoStart;
 		return this;
 	}
 	

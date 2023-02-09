@@ -44,7 +44,7 @@ public class HttpServer {
 		Application application = init.apply(env, applicationFactory);
 		consumer.addApplication(application.getResponseFactory(), hostname, alias);
 		applications.put(hostname, application);
-		if (isRunning) {
+		if (isRunning && application.isAutoStart()) {
 			startApplication(hostname, application);
 		}
 		return application;
@@ -65,7 +65,9 @@ public class HttpServer {
 		logger.info("Server is starting");
 		server.start();
 		applications.forEach((host, application)->{
-			startApplication(host, application);
+			if (application.isAutoStart()) {
+				startApplication(host, application);
+			}
 		});
 		logger.info("Server is running");
 		isRunning = true;

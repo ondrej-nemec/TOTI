@@ -23,11 +23,13 @@ public class Application {
 	// Map<String, TemplateFactory> templateFactories
 	private final ResponseFactory responseFactory;
 	
+	private final boolean autoStart;
 	private boolean isRunning = false;
 	
 	public Application(
 			List<Task> tasks, AuthenticationCache sessionCache, Translator translator, Database database,
-			Link link, Register register, List<String> migrations, ResponseFactory responseFactory) {
+			Link link, Register register, List<String> migrations, ResponseFactory responseFactory,
+			boolean autoStart) {
 		this.tasks = tasks;
 		this.sessionCache = sessionCache;
 		this.translator = translator;
@@ -36,6 +38,7 @@ public class Application {
 		this.register = register;
 		this.migrations = migrations;
 		this.responseFactory = responseFactory;
+		this.autoStart = autoStart;
 	}
 
 /*
@@ -72,6 +75,10 @@ public class Application {
 		return responseFactory;
 	}
 
+	public boolean isAutoStart() {
+		return autoStart;
+	}
+	
 	/************/
 	
 	
