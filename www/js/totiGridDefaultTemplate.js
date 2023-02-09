@@ -1,4 +1,4 @@
-/* TOTI Grid default template version 0.1.0 */
+/* TOTI Grid default template version 0.1.1 */
 /* can be overriden */
 var totiGridDefaultTemplate = {
 	getContainer: function(parentSelector, gridUnique) {
@@ -205,7 +205,7 @@ var totiGridDefaultTemplate = {
 		}
 		rowContainer.appendChild(cell);
 	},
-	addExpand: function(gridUnique, container, rowContainer, isExpanded, level, showElements, hideELements) {
+	addExpand: function(gridUnique, container, rowContainer, name, isExpanded, level, showElements, hideELements) {
 		var cell = document.createElement('td');
 		rowContainer.appendChild(cell);
 		

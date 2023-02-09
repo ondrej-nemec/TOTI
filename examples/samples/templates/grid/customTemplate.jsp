@@ -1,7 +1,7 @@
 <html>
 <head>
 	<title>Grid example</title>
-	 <script src="/toti/totiJs.js" nonce="${nonce}"></script>
+	<script src="/toti/totiJs.js" nonce="${nonce}"></script>
 	
 </head>
 <body>
@@ -15,7 +15,9 @@
 		<t:control name="grid" toti-selected-row-color="lightblue">
 			<h4 toti-grid="caption"></h4>
 			<div>
-				<div style="display:inline-block; width: 4.5%">
+				<div style="display:inline-block; width: 2%"></div>
+				
+				<div style="display:inline-block; width: 2.5%">
 					<div>
 						<div style="display:inline-block;" toti-grid-title="main"><!-- title --></div>
 					</div>
@@ -94,7 +96,7 @@
 					<div><t:grid filter="time_col" /></div>
 				</div>
 
-				<div style="display:inline-block; width: 9%">
+				<div style="display:inline-block; width: 11%">
 					<div>
 						<div style="display:inline-block;" toti-grid-title="month"><!-- title --></div>
 						<div style="color: red; display:inline-block;" toti-grid-sort="onSort" name="month" class="up"><strong>U</strong></div>
@@ -103,7 +105,7 @@
 					<div><t:grid filter="month" /></div>
 				</div>
 
-				<div style="display:inline-block; width: 8.3%">
+				<div style="display:inline-block; width: 14.3%">
 					<div>
 						<div style="display:inline-block;" toti-grid-title="buttons"><!-- title --></div>
 					</div>
@@ -114,7 +116,19 @@
 				<!-- rows -->
 				<template>
 					<div style="width: 100%">
-						<span toti-grid-cell="main" style="display: inline-block; width: 4.5%">
+						<span toti-grid-cell="id_parent" style="display: inline-block; width: 2%" toti-tree="moveChild">
+							<div style="color: red; display:inline-block;" toti-tree="expanded">
+								<strong>V</strong>
+							</div>
+							<div style="color: green; display:inline-block;" toti-tree="collapsed">
+								<strong>&gt;</strong>
+							</div>
+							<div style="color: orange; display:inline-block;" toti-tree="child">
+								<strong>=</strong>
+							</div>
+						</span>
+						
+						<span toti-grid-cell="main" style="display: inline-block; width: 2.5%">
 							<t:grid checkbox="main">
 						</span>
 						<span toti-grid-cell="id" style="display: inline-block; width: 3.5%"></span>
@@ -125,8 +139,8 @@
 						<span toti-grid-cell="datetime_cl" style="display: inline-block; width: 12%"></span>
 						<span toti-grid-cell="date_col" style="display: inline-block; width: 9%"></span>
 						<span toti-grid-cell="time_col" style="display: inline-block; width: 9%"></span>
-						<span toti-grid-cell="month" style="display: inline-block; width: 9%"></span>
-						<span toti-grid-cell="buttons" style="display: inline-block; width: 8.3%"></span>
+						<span toti-grid-cell="month" style="display: inline-block; width: 11%"></span>
+						<span toti-grid-cell="buttons" style="display: inline-block; width: 14.3%"></span>
 					</div>
 				</template>
 			</div>
@@ -149,6 +163,9 @@
 		</t:control>
 
 		<script type="text/javascript">
+			function moveChild(cell, row, level) {
+				row.style['margin-left'] = (level * 0.9) + "em";
+			}
 			function onSort(element, sortOrder) {
 				var parent = element.parentNode;
 				var imgUp = parent.querySelector('.up');

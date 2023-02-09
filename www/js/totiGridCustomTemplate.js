@@ -1,4 +1,4 @@
-/* TOTI Grid custom template version 0.1.0 */
+/* TOTI Grid custom template version 0.1.1 */
 var totiGridCustomTemplate = {
 	getContainer: function(parentSelector, gridUnique) {
 		return document.querySelector(parentSelector);
@@ -112,8 +112,43 @@ var totiGridCustomTemplate = {
 				break;
 		}
 	},
-	addExpand: function(gridUnique, container, rowContainer, isExpanded, level, showElements, hideELements) {
-		// TODO
+	addExpand: function(gridUnique, container, rowContainer, name, isExpanded, level, showElements, hideELements) {
+		var cell = rowContainer.querySelector('[toti-grid-cell="' + name + '"]');
+		if (cell === null) {
+			return;
+		}
+		var expanded = cell.querySelector("[toti-tree='expanded']");
+		var collapsed = cell.querySelector("[toti-tree='collapsed']");
+		var child = cell.querySelector("[toti-tree='child']");
+		if (cell.getAttribute('toti-tree') !== null) {
+			totiUtils.execute(cell.getAttribute('toti-tree'), [cell, rowContainer, level]);
+		}
+		if (isExpanded === null) {
+			if (level === 0) {
+				child.remove();
+			}
+			expanded.remove();
+			collapsed.remove();
+			return;
+		}
+		child.remove();
+		cell.setAttribute("toti-expanded", !isExpanded);		
+		function show() {
+			if (cell.getAttribute("toti-expanded") === "true") {
+				cell.setAttribute("toti-expanded", "false");
+				hideELements();
+				expanded.style.display = "none";
+				collapsed.style.display = "inline";
+			} else {
+				cell.setAttribute("toti-expanded", "true");
+				showElements();
+				expanded.style.display = "inline";
+				collapsed.style.display = "none";
+			}
+		}
+		expanded.onclick = show;
+		collapsed.onclick = show;
+		show();
 	},
 	clearBody: function(gridUnique, container) {
 		var body = container.querySelector('[toti-grid="rows"]');

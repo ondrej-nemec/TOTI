@@ -392,6 +392,28 @@ function changeSortMark(srcElement, sortOrder) {
 &lt;/div&gt;
 </code></pre>
 
+<h4>Ovládání stromové struktury</h4>
+
+<p>
+	Tlačítka pro sbalení nebo rozbalení řádků jsou standartní buňkou v řádku. Musí obsahovat tři elementy. Každý element musí mít atribut <code>toti-tree</code>: <code>expanded</code> (zobrazí se, když jsou potomci rozbaleni), <code>collapsed</code> (zobrazí se, když jsou potomci sbaleni) a <code>child</code> (zobrazí se u potomků).
+</p>
+
+<p>
+	Kromě toho může buňka obsahovat atribut <code>toti-tree</code>. Hodnotou je jméno JS funkce, která se zavolá s parametry: element buňky, element řádku, úroveň dědičnosti, kde 0 je první rodič. Tato metoda obvykle slouží k odsazení potomků / zvýraznění dědičnosti.
+</p>
+
+<strong>Příklad</strong>
+
+<pre><code class="language-html">
+	
+&lt;div toti-grid-cell="--column-name--" toti-tree="--func-name--"&gt;
+	&lt;div toti-tree="expanded"&gt;Custom button&lt;/div&gt;
+	&lt;div toti-tree="collapsed"&gt;Custom button&lt;/div&gt;
+	&lt;div toti-tree="child"&gt;Custom button&lt;/div&gt;
+&lt;/div&gt;
+
+</code></pre>
+
 <h3>Filter</h3>
 
 <strong>Optional</strong>

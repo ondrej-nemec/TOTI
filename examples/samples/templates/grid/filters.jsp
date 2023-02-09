@@ -1,7 +1,7 @@
 <html>
 <head>
 	<title>Grid example</title>
-	 <script src="/toti/totiJs.js" nonce="${nonce}"></script> 
+	<script src="/toti/totiJs.js" nonce="${nonce}"></script>
 	
 </head>
 <body>

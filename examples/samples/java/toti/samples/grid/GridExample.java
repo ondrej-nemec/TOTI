@@ -29,6 +29,7 @@ import toti.control.Grid;
 import toti.control.columns.ActionsColumn;
 import toti.control.columns.ButtonsColumn;
 import toti.control.columns.GroupAction;
+import toti.control.columns.TreeColumn;
 import toti.control.columns.ValueColumn;
 import toti.control.inputs.Button;
 import toti.control.inputs.Date;
@@ -174,6 +175,7 @@ public class GridExample implements Module {
 	
 	public Validator allFilersValidator() {
 		return GridOptions.getValidator(Arrays.asList(
+			new GridColumn("id"),
 			new GridColumn("text").setFilterMode(FilterMode.LIKE),
 			new GridColumn("number", Double.class),
 			new GridColumn("range", Integer.class),
@@ -182,7 +184,8 @@ public class GridExample implements Module {
 			new GridColumn("date_col"),
 			new GridColumn("time_col"),
 			new GridColumn("month"),
-			new GridColumn("week")
+			new GridColumn("week"),
+			new GridColumn("parent")
 		));
 	}
 	
@@ -485,6 +488,36 @@ public class GridExample implements Module {
 	/****/
 	
 	/**
+	 * Rows in grid with tree sorting
+	 * @return http://localhost:8080/examples-grid/grid/tree-structure
+	 */
+	@Action("tree-structure")
+	public Response treeStructure() {
+		Grid grid = new Grid(link.create(getClass(), c->c.allFilters(null)), "get");
+		grid.setPageSize(50);
+
+		grid.addColumn(new TreeColumn("id", "parent"));
+		grid.addColumn(
+			new ValueColumn("id").setTitle("ID")
+			.setUseSorting(true).setFilter(Number.filter())
+		);
+		grid.addColumn(
+			new ValueColumn("text").setTitle("Name")
+			.setUseSorting(true).setFilter(Text.filter())
+		);
+		grid.addColumn(
+			new ValueColumn("parent").setTitle("Parent")
+			.setUseSorting(true).setFilter(Number.filter())
+		);
+		
+		Map<String, Object> params = new HashMap<>();
+		params.put("grid", grid);
+		return Response.getTemplate("filters.jsp", params);
+	}
+		
+	/****/
+	
+	/**
 	 * Ways of filtering, EQUALS is default
 	 * @return http://localhost:8080/examples-grid/grid/filtering
 	 */
@@ -757,7 +790,9 @@ public class GridExample implements Module {
 	@Action("custom-template")
 	public Response customTemplate() {
 		Grid grid = new Grid(link.create(getClass(), c->c.allFilters(null)), "get");
+		grid.setPageSize(50);
 		
+		grid.addColumn(new TreeColumn("id", "parent"));
 		grid.addColumn(new ActionsColumn("main").setTitle("Group Actions"));
 		
 		grid.addColumn(new ValueColumn("id").setTitle("ID"));
@@ -770,6 +805,12 @@ public class GridExample implements Module {
 				.setPlaceholder("Filter for Text")
 				// .setDefaultValue(...)
 			)
+			.setUseSorting(true)
+		);
+
+		grid.addColumn(
+			new ValueColumn("parent")
+			.setTitle("ParentId")
 			.setUseSorting(true)
 		);
 		grid.addColumn(

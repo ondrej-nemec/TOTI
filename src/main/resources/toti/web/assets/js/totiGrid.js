@@ -1,4 +1,4 @@
-/* TOTI Grid version 1.1.3 */
+/* TOTI Grid version 1.1.4 */
 class TotiGrid {
 
 	cookieName = "grid-cache";
@@ -424,7 +424,7 @@ class TotiGrid {
 							toHide[identifier] = hideElements;
 						}
 		                grid.template.addExpand(
-							grid.gridUnique, grid.container, row, expanded,
+							grid.gridUnique, grid.container, row, column.name, expanded,
 							family[identifier].parentLevel,
 							()=>{  /* show */
 								grid.container.querySelectorAll(".toti-child-of-" + identifier).forEach((el)=>{

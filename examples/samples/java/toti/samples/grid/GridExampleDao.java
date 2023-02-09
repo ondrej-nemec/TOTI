@@ -78,6 +78,7 @@ public class GridExampleDao implements EntityDao<GridExampleEntity>, GridEntityD
 			.addColumn("time_col", ColumnType.string(9))
 			.addColumn("month", ColumnType.string(7))
 			.addColumn("week", ColumnType.string(8))
+			.addColumn("parent", ColumnType.integer())
 			.execute();
 			
 			BatchBuilder batch = builder.batch();
@@ -94,6 +95,7 @@ public class GridExampleDao implements EntityDao<GridExampleEntity>, GridEntityD
 					.addValue("time_col", getRandomLocal().toLocalTime())
 					.addValue("month", getRandomLocal().toLocalDate().toString().substring(0, 7))
 					.addValue("week", "2022-W" + String.format("%02d", getRandomLocal().getDayOfMonth()%7))
+					.addValue("parent", getParent(i))
 				);
 			}
 			batch.execute();
@@ -101,6 +103,20 @@ public class GridExampleDao implements EntityDao<GridExampleEntity>, GridEntityD
 		});
 	}
 	
+	private Integer getParent(int i) {
+		Random random = new Random();
+		int parent = random.nextInt(100);
+		if (parent == i || parent%3==0) {
+			return null;
+		}
+		/*for (int bound : new int[] {2, 3, 15}) {
+			if (i%bound == 0 && i > bound && i < bound*bound*bound+1) {
+				return i/bound;
+			}
+		}*/
+		return parent;
+	}
+
 	private LocalDateTime getRandomLocal() {
 		return LocalDateTime.of(
 			2022, getNextInt(12, 1), getNextInt(28, 1), 

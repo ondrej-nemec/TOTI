@@ -1,4 +1,4 @@
-/* TOTI Grid version 1.1.2 */
+/* TOTI Grid version 1.1.4 */
 class TotiGrid {
 
 	cookieName = "grid-cache";
@@ -375,7 +375,9 @@ class TotiGrid {
 					}
 				});
 				Object.keys(missingParent).forEach((id)=>{
-					family[id].parent = null;
+					if (family.hasOwnProperty(id)) {
+						family[id].parent = null;
+					}
 				});
 			}
 			
@@ -422,7 +424,7 @@ class TotiGrid {
 							toHide[identifier] = hideElements;
 						}
 		                grid.template.addExpand(
-							grid.gridUnique, grid.container, row, expanded,
+							grid.gridUnique, grid.container, row, column.name, expanded,
 							family[identifier].parentLevel,
 							()=>{  /* show */
 								grid.container.querySelectorAll(".toti-child-of-" + identifier).forEach((el)=>{
