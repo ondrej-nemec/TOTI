@@ -142,6 +142,14 @@ public class ApplicationFactory {
 		};
 		// file session save is disabled - maybe enable hibrid saving - user in memory, some user data on disk
 		AuthenticationCache sessionCache = new AuthenticationCache(hostname, getTempPath(env, hostname), false, logger);
+		Authenticator authenticator = new Authenticator(
+			getTokenExpirationTime(env), getTokenCustomSalt(env), 
+			sessionCache,
+			Hash.getSha256(),
+			logger
+		);
+		Authorizator authorizator = new Authorizator(logger);
+		
 		ResponseFactory response = new ResponseFactory(
 				getResponseHeaders(env),
 				getResourcesPath(env),
@@ -154,13 +162,8 @@ public class ApplicationFactory {
 				).setProfiler(profiler.used()),
 				translator,
 				new IdentityFactory(translator, translator.getLocale().getLang()),
-				new Authenticator(
-					getTokenExpirationTime(env), getTokenCustomSalt(env), 
-					sessionCache,
-					Hash.getSha256(),
-					logger
-				),
-				new Authorizator(logger),
+				authenticator,
+				authorizator,
 				charset,
 				getDirResponseAllowed(env),
 				getDirDefaultFile(env),
@@ -171,7 +174,10 @@ public class ApplicationFactory {
 				register,
 				mapping
 		);
-		return new Application(tasks, sessionCache, translator, database, link, register, migrations, response, getAutoStart(env));
+		return new Application(
+			tasks, sessionCache, translator, database, link, register, migrations,
+			response, authenticator, authorizator, getAutoStart(env)
+		);
 	}
 
 	private Profiler initProfiler(Env env, Logger logger) {

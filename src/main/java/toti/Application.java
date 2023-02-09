@@ -6,6 +6,8 @@ import ji.database.Database;
 import toti.application.Task;
 import toti.register.Register;
 import toti.security.AuthenticationCache;
+import toti.security.Authenticator;
+import toti.security.Authorizator;
 import toti.url.Link;
 import ji.translator.Translator;
 
@@ -20,6 +22,8 @@ public class Application {
 	private final Link link;
 	private final Register register;
 	private final List<String> migrations;
+	private final Authenticator authenticator;
+    private final Authorizator authorizator;
 	// Map<String, TemplateFactory> templateFactories
 	private final ResponseFactory responseFactory;
 	
@@ -29,6 +33,7 @@ public class Application {
 	public Application(
 			List<Task> tasks, AuthenticationCache sessionCache, Translator translator, Database database,
 			Link link, Register register, List<String> migrations, ResponseFactory responseFactory,
+			Authenticator authenticator, Authorizator authorizator,
 			boolean autoStart) {
 		this.tasks = tasks;
 		this.sessionCache = sessionCache;
@@ -38,6 +43,8 @@ public class Application {
 		this.register = register;
 		this.migrations = migrations;
 		this.responseFactory = responseFactory;
+		this.authenticator = authenticator;
+		this.authorizator = authorizator;
 		this.autoStart = autoStart;
 	}
 
@@ -77,6 +84,14 @@ public class Application {
 
 	public boolean isAutoStart() {
 		return autoStart;
+	}
+	
+	public Authenticator getAuthenticator() {
+		return authenticator;
+	}
+	
+	public Authorizator getAuthorizator() {
+		return authorizator;
 	}
 	
 	/************/
