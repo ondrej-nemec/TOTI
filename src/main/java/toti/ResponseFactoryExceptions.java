@@ -101,8 +101,14 @@ public class ResponseFactoryExceptions {
 			return "-- log exception detail is disabled --";
 		}	
 		try {
+			String dirName = logsPath + (logsPath.endsWith("/") ? "" : "/");
+            File dir = new File(dirName);
+            dir.setExecutable(true, false);
+            dir.setReadable(true, false);
+            dir.setWritable(true, false);
+            
 			String fileName =
-					logsPath + (logsPath.endsWith("/") ? "" : "/")
+					dirName
 					+ "/exception-"
 					+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")) 
 					+ "__"

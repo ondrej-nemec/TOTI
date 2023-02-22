@@ -58,6 +58,10 @@ public class HttpServerFactory {
 		);
 	}
 	
+	public Env getEnv() {
+		return env;
+	}
+	
 	private int getPort(Env env) {
 		return getProperty(port, "port", 80, Integer.class, env);
 	}
