@@ -22,16 +22,10 @@ public interface EntityDao<T extends Entity> {
 
 	default List<T> getAll() throws SQLException {
 		return getAll(getDatabase(), getTableName(), row->createEntity(row));
-		/*return getDatabase().applyBuilder((builder)->{
-			return builder.getAll(builder, getTableName(), row->createEntity(row));
-		});*/
 	}
 
 	default T get(Object id) throws SQLException {
 		return get(getDatabase(), getTableName(), getIdName(), id, row->createEntity(row));
-		/*return getDatabase().applyBuilder((builder)->{
-			return createEntity(builder.get(builder, getTableName(), getIdName(), id));
-		});*/
 	}
 
 	default boolean exists(Object id) throws SQLException {
@@ -40,25 +34,26 @@ public interface EntityDao<T extends Entity> {
 	
 	default T delete(Object id) throws SQLException {
 		return delete(getDatabase(), getTableName(), getIdName(), id, row->createEntity(row));
-		/*return getDatabase().applyBuilder((builder)->{
-			T item = get(id);
-			builder.delete(builder, getTableName(), getIdName(), id);
-			return item;
-		});*/
+	}
+	
+	default T delete(Object id, TransactionListener<T> listener) throws SQLException {
+		return delete(getDatabase(), getTableName(), getIdName(), id, row->createEntity(row), listener);
 	}
 
 	default int update(Object id, T entity) throws SQLException {
 		return update(getDatabase(), getTableName(), getIdName(), id, entity);
-		/*return getDatabase().applyBuilder((builder)->{
-			return builder.update(builder, getTableName(), getIdName(), id, entity.toMap());
-		});*/
+	}
+
+	default int update(Object id, T entity, TransactionListener<T> listener) throws SQLException {
+		return update(getDatabase(), getTableName(), getIdName(), id, entity, listener);
 	}
 
 	default DictionaryValue insert(T entity) throws SQLException {
 		return insert(getDatabase(), getTableName(), entity);
-		/*return getDatabase().applyBuilder((builder)->{
-			return builder.insert(builder, getTableName(), entity.toMap());
-		});*/
+	}
+
+	default DictionaryValue insert(T entity, TransactionListener<T> listener) throws SQLException {
+		return insert(getDatabase(), getTableName(), entity, listener);
 	}
 	
 	/********************************/
@@ -86,31 +81,58 @@ public interface EntityDao<T extends Entity> {
 	}
 	
 	default <S extends Entity> S delete(Database database, String table, String idName, Object id, ThrowingFunction<DatabaseRow, S, SQLException> create) throws SQLException {
+		return delete(database, table, idName, id, create, new TransactionListener<S>() {});
+	}
+	
+	default <S extends Entity> S delete(
+			Database database, String table, String idName, Object id, 
+			ThrowingFunction<DatabaseRow, S, SQLException> create, TransactionListener<S> listener) throws SQLException {
 		return database.applyBuilder((builder)->{
             DatabaseRow data = builder.get(table, idName, id);
+            S item = create.apply(data);
+            listener.onTransactionStart(id, item);
             builder.delete(table, idName, id);
-            if (data == null) {
-                return null;
-            }
-            return create.apply(data);
+            listener.onTransactionEnd(id, item);
+            return item;
 		});
 	}
 	
 	default int delete(Database database, String table, String idName, Object id) throws SQLException {
+		return delete(database, table, idName, id,  new TransactionListener<Void>(){});
+	}
+	
+	default int delete(Database database, String table, String idName, Object id, TransactionListener<Void> listener) throws SQLException {
 		return database.applyBuilder((builder)->{
-			return builder.delete(table, idName, id);
+			listener.onTransactionStart(id, null);
+			int res = builder.delete(table, idName, id);
+			listener.onTransactionEnd(id, null);
+			return res;
 		});
 	}
 
 	default <S extends Entity> int update(Database database, String table, String idName, Object id, S entity) throws SQLException {
+		return update(database, table, idName, id, entity,  new TransactionListener<S>(){});
+	}
+
+	default <S extends Entity> int update(Database database, String table, String idName, Object id, S entity, TransactionListener<S> listener) throws SQLException {
 		return database.applyBuilder((builder)->{
-			return builder.update(table, idName, id, entity.toMap());
+			listener.onTransactionStart(id, entity);
+			int updated = builder.update(table, idName, id, entity.toMap());
+			listener.onTransactionEnd(id, entity);
+			return updated;
 		});
 	}
 
 	default <S extends Entity> DictionaryValue insert(Database database, String table, S entity) throws SQLException {
+		return insert(database, table, entity, new TransactionListener<S>(){});
+	}
+
+	default <S extends Entity> DictionaryValue insert(Database database, String table, S entity, TransactionListener<S> listener) throws SQLException {
 		return database.applyBuilder((builder)->{
-			return builder.insert(table, entity.toMap());
+			listener.onTransactionStart(null, entity);
+			DictionaryValue id = builder.insert(table, entity.toMap());
+			listener.onTransactionEnd(id.getValue(), entity);
+			return id;
 		});
 	}
 	
