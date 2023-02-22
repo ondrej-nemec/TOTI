@@ -1,4 +1,4 @@
-/* TOTI Control version 1.1.1 */
+/* TOTI Control version 1.1.2 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -140,10 +140,15 @@ var totiControl = {
 					case "action":
 						if (typeof attributes[key] === "object") {
 							if (!attributes[key].async && attributes[key].method === 'get' && button.tagName === 'A') {
-								button.setAttribute(
-									"href",
-									attributes[key].href + "?" + new URLSearchParams(attributes[key].params).toString()
-								);
+								var href = attributes[key].href;
+								if (Object.keys(attributes[key].params).length > 0) {
+									var concat = '?';
+									if (attributes[key].href.includes('?')) {
+										concat = '&';
+									}
+									href += concat + new URLSearchParams(attributes[key].params).toString();
+								}
+								button.setAttribute("href", href);
 							} else {
 								button.onclick = totiControl.getAction(attributes[key]);
 							}
