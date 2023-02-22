@@ -1,4 +1,4 @@
-/* TOTI Grid version 1.1.4 */
+/* TOTI Grid version 1.1.5 */
 class TotiGrid {
 
 	cookieName = "grid-cache";
@@ -384,9 +384,6 @@ class TotiGrid {
 			var toHide = [];
 			function onRowItem(rowData) {
 				var row = grid.template.addRow(grid.gridUnique, grid.container);
-                if (grid.config.hasOwnProperty("rowRenderer")) {
-                    totiUtils.execute(grid.config.rowRenderer, [row, rowData]);
-                }
 				row.addEventListener("click", function() {
 					if (grid.config.useRowSelection) {
 						grid.selectedRow = grid.template.setRowSelected(grid.gridUnique, grid.container, row);
@@ -498,6 +495,9 @@ class TotiGrid {
 						grid.template.addCell(grid.gridUnique, grid.container, row, column.name, rowData[column.name], 0);
 					}
 				});
+                if (grid.config.hasOwnProperty("rowRenderer")) {
+                    totiUtils.execute(grid.config.rowRenderer, [row, rowData]);
+                }
 			}
 			if (sortedFamily.length === 0) {
 				response.data.forEach(function(rowData) {
