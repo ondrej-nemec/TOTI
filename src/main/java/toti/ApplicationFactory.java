@@ -266,7 +266,7 @@ public class ApplicationFactory {
 	}
 	
 	private String getLogsPath(Env env) {
-		return getProperty(logsPath, "logs-path", "logs",  String.class, env);
+		return getProperty(logsPath, "logs-path", "logs" + "/" + hostname,  String.class, env);
 	}
 	
 	private LanguageSettings getLangSettings(Env conf) {
