@@ -20,14 +20,17 @@ public interface Template {
 			Map<String, Object>variables, 
 			Translator translator, 
 			Authorizator authorizator, MappedUrl current) throws Exception {
-		return _create(templateFactory, variables, translator, authorizator, new LinkedList<>(), current);
+		return _create(templateFactory, variables, translator, authorizator, new LinkedList<>(), current, 0);
 	}
 	
 	String _create(
 			TemplateFactory templateFactory, 
 			Map<String, Object>variables, 
 			Translator translator, 
-			Authorizator authorizator, LinkedList<TagNode> nodes, MappedUrl current) throws Exception;
+			Authorizator authorizator, 
+			LinkedList<TagNode> nodes, 
+			MappedUrl current,
+			int parent) throws Exception;
 
 	//@Deprecated
 	static String escapeVariable(Object variable) {

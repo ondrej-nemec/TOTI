@@ -23,6 +23,7 @@ import toti.templating.Template;
 import toti.templating.TemplateException;
 import toti.templating.TemplateFactory;
 import toti.templating.TemplateParameters;
+import toti.templating.TemplateProfiler;
 import toti.templating.parsing.enums.ParserType;
 import toti.templating.parsing.structures.TagNode;
 import toti.url.Link;
@@ -52,7 +53,8 @@ public class TemplateParser {
 			String fileName, 
 			String tempPath,
 			String module,
-			long modificationTime) throws IOException {
+			long modificationTime,
+			String templatePath, String templateFile) throws IOException {
 		String preClass = namespace.length() == 0 ? "%s" : "package %s;";
 		String clazz1 = preClass
 				+ String.format("import %s;", Map.class.getCanonicalName())
@@ -71,9 +73,15 @@ public class TemplateParser {
 				+ String.format("import %s;", TemplateException.class.getCanonicalName())
 				+ String.format("import %s;", Link.class.getCanonicalName())
 				+ String.format("import %s;", TemplateParameters.class.getCanonicalName())
+				+ String.format("import %s;", TemplateProfiler.class.getCanonicalName())
 				
 				+ "public class %s implements Template, TemplateParameters{"
 					+ "private LinkedList<TagNode> nodes = new LinkedList<>();"
+				
+					+ "private final TemplateProfiler profiler;"
+					+ "public %s(TemplateProfiler profiler) {"
+						+ "this.profiler = profiler;"
+					+ "}"
 				
 				+ "private void write(Object data) {nodes.getLast().getBuilder().append(data);}"
 				+ "public void addVariable(String name, Object value) {nodes.getLast().getVariables().put(name, value);}"
@@ -92,17 +100,30 @@ public class TemplateParser {
 					+ "Translator translator,"
 					+ "Authorizator authorizator,"
 					+ "LinkedList<TagNode> nodes,"
-					+ "MappedUrl current"
+					+ "MappedUrl current,"
+					+ "int parent"
 			+ ")throws Exception{";
 		String clazz2 = "}}";
 		String tempFile = tempPath + "/" + namespace + "/" + className + ".java";
 		
 		Text.get().write((bw)->{
-			bw.write(String.format(clazz1, namespace.replaceAll("/", "."), className, modificationTime));
+			bw.write(String.format(
+				clazz1, 
+				namespace.replaceAll("/", "."), className, 
+				className, modificationTime
+			));
 			bw.write("Template layout=null;this.nodes = nodes;initNode(variables);");
+			bw.write(String.format(
+				"if(profiler!=null){"
+					+ "profiler.logGetTemplate("
+						+ "\"%s\", \"%s\",\"%s\",nodes.getLast().getVariables(),parent,this.hashCode()"
+					+ ");"
+				+ "}", 
+				module, templatePath, templateFile
+			));
 			loadFile(fileName, bw, module);
 			bw.write("if(layout!=null){"
-					+ "layout._create(templateFactory,variables,translator, authorizator, this.nodes,current);"
+					+ "layout._create(templateFactory,variables,translator, authorizator, this.nodes,current,this.hashCode());"
 					+ "}");
 			bw.write("return flushNode().getBuilder().toString();");
 			bw.write(clazz2);

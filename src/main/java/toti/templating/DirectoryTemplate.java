@@ -28,7 +28,7 @@ public class DirectoryTemplate implements Template {
 	@Override
 	public String _create(
 			TemplateFactory templateFactory, Map<String, Object> variables, 
-			Translator translator, Authorizator authorizator, LinkedList<TagNode> nodes, MappedUrl current)
+			Translator translator, Authorizator authorizator, LinkedList<TagNode> nodes, MappedUrl current, int level)
 			throws Exception {
 		StringBuilder builder = new StringBuilder();
 		

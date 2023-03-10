@@ -1,7 +1,9 @@
 package toti.templating;
 
-public interface TemplateProfiler {
+import java.util.Map;
 
-	void logGetTemplate(String module, String filename);
+public interface TemplateProfiler {
+	
+	void logGetTemplate(String module, String namespace, String filename, Map<String, Object> variables, int parent, int self);
 	
 }

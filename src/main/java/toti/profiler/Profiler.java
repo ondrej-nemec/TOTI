@@ -1,23 +1,24 @@
 package toti.profiler;
 
-import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
-import ji.common.functions.StackTrace;
-import ji.common.structures.MapInit;
 import ji.database.support.SqlQueryProfiler;
 import ji.files.text.Text;
 import ji.translator.TransProfiler;
+import ji.json.InputJsonStream;
+import ji.json.JsonReader;
+import ji.json.JsonStreamException;
 import ji.json.JsonWritter;
 import ji.json.Jsonable;
+import ji.json.providers.InputReaderProvider;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.Request;
@@ -69,7 +70,7 @@ public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProf
 					String filename = "profiler/" + pageId + ".log";
 					Text.get().write((br)->{
 						br.write(writter.write(last.toJson()));
-					}, filename, true);
+					}, filename, false);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -77,7 +78,7 @@ public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProf
 		}
 		
 		long threadId = Thread.currentThread().getId();
-		pages.put(threadId,  new ProfilerLog(threadId, Thread.currentThread().getName()));
+		pages.put(threadId, new ProfilerLog(threadId, Thread.currentThread().getName()));
 	}
 	/*
 	public void setPageId(String id) {
@@ -96,277 +97,132 @@ public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProf
 	
 	@Override
 	public void execute(String identifier, String sql) {
-		//*
+		if (!use) {
+			return;
+		}
 		log((log)->{
 			log.addSql(identifier, sql);
 			log.executeSql(identifier);
 		});
-		/*/
-		if (!use) {
-			return;
-		}
-		log("SQL " + identifier + " EXECUTE: " + sql);
-		//*/
 	}
 
 	@Override
 	public void execute(String identifier) {
-		//*
-		log((log)->{
-			log.executeSql(identifier);
-		});
-		/*/
 		if (!use) {
 			return;
 		}
-		log("SQL " + identifier + " EXECUTE");
-		//*/
+		log((log)->{
+			log.executeSql(identifier);
+		});
 	}
 
 	@Override
 	public void executed(String identifier, Object res) {
-		//*
+		if (!use) {
+			return;
+		}
 		log((log)->{
 			log.setExecuted(identifier, res);
 		});
-		/*/
-		if (!use) {
-			return;
-		}
-		log("SQL " + identifier + " EXECUTED: " + res);
-		//*/
 	}
 	@Override
 	public void prepare(String identifier, String sql) {
-		//*
-		log((log)->{
-			log.addSql(identifier, sql);
-		});
-		/*/
 		if (!use) {
 			return;
 		}
-		log("SQL " + identifier + " PREPARE: " + sql);
-		//*/
+		log((log)->{
+			log.addSql(identifier, sql);
+		});
 	}
 
 	@Override
 	public void addParam(String identifier, Object param) {
-		//*
-		log((log)->{
-			log.addSqlParam(identifier, param);
-		});
-		/*/
 		if (!use) {
 			return;
 		}
-		log("SQL " + identifier + " ADD PARAM: " + param);
-		//*/
+		log((log)->{
+			log.addSqlParam(identifier, param);
+		});
 	}
 
 	@Override
 	public void builderQuery(String identifier, String query, String sql, Map<String, String> params) {
-		//*
-		log((log)->{
-			log.setBuilder(identifier, query, sql, params);
-		});
-		/*/
 		if (!use) {
 			return;
 		}
-		log("SQL " + identifier +  " QUERY BUILDER: " + query + " " + sql + " " + params);
-		//*/
+		log((log)->{
+			log.setBuilder(identifier, query, sql, params);
+		});
 	}
 
 	
 	/***********/
 	
 	public void logRequest(Identity identity, Request request, MappedUrl mapped) {
-		//*
-		log((log)->{
-			log.setRequestInfo(identity, request, mapped);
-		});
-		/*/
 		if (!use) {
 			return;
 		}
-		log("REQUEST IDENTITY: " + identity);
-		log("REQUEST REQUEST: " + request);
-		log("REQUEST MAPPED: " + mapped);
-		//*/
+		log((log)->{
+			log.setRequestInfo(identity, request, mapped);
+		});
 	}
 	
 	/***********/
 
 	@Override
 	public void missingParameter(String module, String key, Map<String, Object> variables, String locale) {
-		//*
-		log((log)->{
-			log.missingParameter(module, key, variables, locale);
-		});
-		/*/
 		if (!use) {
 			return;
 		}
-		log("TRANS MISSING PARAMETER: " + module + " " + locale + " " + variables);
-		//*/
+		log((log)->{
+			log.missingParameter(module, key, variables, locale);
+		});
 	}
 
 	@Override
 	public void missingLocale(String locale) {
-		//*
-		log((log)->{
-			log.missingLocale(locale);
-		});
-		/*/
 		if (!use) {
 			return;
 		}
-		log("TRANS MISSING LOCALE: " + locale);
-		//*/
+		log((log)->{
+			log.missingLocale(locale);
+		});
+	}
+	
+	@Override
+	public void loadFile(String locale, String domain, String path, boolean success) {
+		if (!use) {
+			return;
+		}
+		log((log)->{
+			log.loadFile(locale, domain, path, success);
+		});
 	}
 	
 	/*******************************/
 
 	@Override
-	public void logGetTemplate(String module, String filename) {
-		//*
-		/*
-		System.err.println("LOG template " + module + " " + filename);
-		for (StackTraceElement el : Thread.currentThread().getStackTrace()) {
-			System.err.println(" -> " + el);
-		}
-		/*
-		LOG template tools-examples examples/samples/templates/developtools/index.jsp
- -> java.base/java.lang.Thread.getStackTrace(Thread.java:1602)
- -> toti.profiler.Profiler.logGetTemplate(Profiler.java:235)
- -> toti.templating.TemplateFactory.getTemplateWithAbsolutePath(TemplateFactory.java:133)
- -> toti.templating.TemplateFactory.getTemplate(TemplateFactory.java:112)
- -> toti.response.TemplateResponse.createResponse(TemplateResponse.java:78)
- -> toti.response.TemplateResponse.getResponse(TemplateResponse.java:68)
- -> toti.ResponseFactory.getControllerResponse(ResponseFactory.java:323)
- -> toti.ResponseFactory.getMappedResponse(ResponseFactory.java:222)
- -> toti.ResponseFactory.getRoutedResponse(ResponseFactory.java:176)
- -> toti.ResponseFactory.getTotiFilteredResponse(ResponseFactory.java:166)
- -> toti.ResponseFactory.getNormalizedResponse(ResponseFactory.java:150)
- -> toti.ResponseFactory.getCatchedResponse(ResponseFactory.java:126)
- -> toti.ResponseFactory.accept(ResponseFactory.java:120)
- -> ji.socketCommunication.http.RestApiServer.serve(RestApiServer.java:101)
- -> ji.socketCommunication.http.RestApiServer.serve(RestApiServer.java:42)
- -> ji.socketCommunication.Server.lambda$1(Server.java:192)
- -> java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
- -> java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
- -> java.base/java.lang.Thread.run(Thread.java:835)
-LOG template tools-examples examples/samples/templates/developtools/layout.jsp
- -> java.base/java.lang.Thread.getStackTrace(Thread.java:1602)
- -> toti.profiler.Profiler.logGetTemplate(Profiler.java:235)
- -> toti.templating.TemplateFactory.getTemplateWithAbsolutePath(TemplateFactory.java:133)
- -> toti.templating.TemplateFactory.getTemplate(TemplateFactory.java:112)
- -> examples_samples_templates_developtools.index._create(index.java:1)
- -> toti.templating.Template.create(Template.java:23)
- -> toti.response.TemplateResponse.createResponse(TemplateResponse.java:79)
- -> toti.response.TemplateResponse.getResponse(TemplateResponse.java:68)
- -> toti.ResponseFactory.getControllerResponse(ResponseFactory.java:323)
- -> toti.ResponseFactory.getMappedResponse(ResponseFactory.java:222)
- -> toti.ResponseFactory.getRoutedResponse(ResponseFactory.java:176)
- -> toti.ResponseFactory.getTotiFilteredResponse(ResponseFactory.java:166)
- -> toti.ResponseFactory.getNormalizedResponse(ResponseFactory.java:150)
- -> toti.ResponseFactory.getCatchedResponse(ResponseFactory.java:126)
- -> toti.ResponseFactory.accept(ResponseFactory.java:120)
- -> ji.socketCommunication.http.RestApiServer.serve(RestApiServer.java:101)
- -> ji.socketCommunication.http.RestApiServer.serve(RestApiServer.java:42)
- -> ji.socketCommunication.Server.lambda$1(Server.java:192)
- -> java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
- -> java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
- -> java.base/java.lang.Thread.run(Thread.java:835)
-LOG template tools-examples examples/samples/templates/developtools/included.jsp
- -> java.base/java.lang.Thread.getStackTrace(Thread.java:1602)
- -> toti.profiler.Profiler.logGetTemplate(Profiler.java:235)
- -> toti.templating.TemplateFactory.getTemplateWithAbsolutePath(TemplateFactory.java:133)
- -> toti.templating.TemplateFactory.getTemplate(TemplateFactory.java:112)
- -> examples_samples_templates_developtools.index.lambda$_create$1(index.java:1)
- -> examples_samples_templates_developtools.layout._create(layout.java:1)
- -> examples_samples_templates_developtools.index._create(index.java:1)
- -> toti.templating.Template.create(Template.java:23)
- -> toti.response.TemplateResponse.createResponse(TemplateResponse.java:79)
- -> toti.response.TemplateResponse.getResponse(TemplateResponse.java:68)
- -> toti.ResponseFactory.getControllerResponse(ResponseFactory.java:323)
- -> toti.ResponseFactory.getMappedResponse(ResponseFactory.java:222)
- -> toti.ResponseFactory.getRoutedResponse(ResponseFactory.java:176)
- -> toti.ResponseFactory.getTotiFilteredResponse(ResponseFactory.java:166)
- -> toti.ResponseFactory.getNormalizedResponse(ResponseFactory.java:150)
- -> toti.ResponseFactory.getCatchedResponse(ResponseFactory.java:126)
- -> toti.ResponseFactory.accept(ResponseFactory.java:120)
- -> ji.socketCommunication.http.RestApiServer.serve(RestApiServer.java:101)
- -> ji.socketCommunication.http.RestApiServer.serve(RestApiServer.java:42)
- -> ji.socketCommunication.Server.lambda$1(Server.java:192)
- -> java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
- -> java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
- -> java.base/java.lang.Thread.run(Thread.java:835)
-LOG template tools-examples examples/samples/templates/developtools/included.jsp
- -> java.base/java.lang.Thread.getStackTrace(Thread.java:1602)
- -> toti.profiler.Profiler.logGetTemplate(Profiler.java:235)
- -> toti.templating.TemplateFactory.getTemplateWithAbsolutePath(TemplateFactory.java:133)
- -> toti.templating.TemplateFactory.getTemplate(TemplateFactory.java:112)
- -> examples_samples_templates_developtools.index.lambda$_create$1(index.java:1)
- -> examples_samples_templates_developtools.layout._create(layout.java:1)
- -> examples_samples_templates_developtools.index._create(index.java:1)
- -> toti.templating.Template.create(Template.java:23)
- -> toti.response.TemplateResponse.createResponse(TemplateResponse.java:79)
- -> toti.response.TemplateResponse.getResponse(TemplateResponse.java:68)
- -> toti.ResponseFactory.getControllerResponse(ResponseFactory.java:323)
- -> toti.ResponseFactory.getMappedResponse(ResponseFactory.java:222)
- -> toti.ResponseFactory.getRoutedResponse(ResponseFactory.java:176)
- -> toti.ResponseFactory.getTotiFilteredResponse(ResponseFactory.java:166)
- -> toti.ResponseFactory.getNormalizedResponse(ResponseFactory.java:150)
- -> toti.ResponseFactory.getCatchedResponse(ResponseFactory.java:126)
- -> toti.ResponseFactory.accept(ResponseFactory.java:120)
- -> ji.socketCommunication.http.RestApiServer.serve(RestApiServer.java:101)
- -> ji.socketCommunication.http.RestApiServer.serve(RestApiServer.java:42)
- -> ji.socketCommunication.Server.lambda$1(Server.java:192)
- -> java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
- -> java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
- -> java.base/java.lang.Thread.run(Thread.java:835)
-		*/
-		log((log)->{
-			log.logTemplate(module, filename);
-		});
-		/*/
+	public void logGetTemplate(
+			String module, String namespace, String filename, Map<String, Object> variables,
+			int parent, int self) {
 		if (!use) {
 			return;
 		}
-		log("TEMPLATE: " + module + " " + filename);
-		//*/
+		log((log)->{
+			log.logTemplate(module, namespace, filename, variables, parent, self);
+		});
 	}
 	
 	@Override
 	public void log(Map<HttpServerProfilerEvent, Long> events) {
-		//*
+		if (!use) {
+			return;
+		}
 		log((log)->{
 			for (HttpServerProfilerEvent event : HttpServerProfilerEvent.values()) {
 				log.addServerEvent(events.get(event), event);
 			}
 		});
-		/*/
-		if (!use) {
-			return;
-		}
-		log("SERVER EVENTS: " + events);
-		//*/
-	}
-	
-	
-	private void log(String text) {
-		try {
-			String filename = "profiler/" + Thread.currentThread().getId() + ".log";
-			// new File(filename).createNewFile();
-			Text.get().write((br)->{
-				br.write(text);
-				br.newLine();
-			}, filename, true);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	/**************/
@@ -409,6 +265,26 @@ LOG template tools-examples examples/samples/templates/developtools/included.jsp
 
 	public Response getResponse(HttpMethod method, RequestParameters params) {
 		switch (method) {
+			case POST:
+		/*		List<Object> response = new LinkedList<>();
+			try {
+				pages.values();
+				Object o = new JsonReader()
+				.read(new InputJsonStream(new InputReaderProvider(new FileReader("profiler/18.log"))));
+				response.add(o);
+				response.add(o);
+				response.add(o);
+				response.add(o);
+				response.add(o);
+				response.add(o);
+				response.add(o);
+				response.add(o);
+			} catch (JsonStreamException | FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}*/
+			return Response.getJson(pages.values());
+			// return Response.getFile("profiler/18.log");
 			/*case GET: 
 				return Response.getTemplate(
 					"/profiler.jsp",

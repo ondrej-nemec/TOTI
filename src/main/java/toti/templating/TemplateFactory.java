@@ -109,7 +109,7 @@ public class TemplateFactory {
 		if (!templateFile.startsWith("/")) {
 			templateFile = "/" + templateFile;
 		}
-		return getTemplateWithAbsolutePath(templatePath + templateFile, (file)->{
+		return getTemplateWithAbsolutePath(templatePath, templateFile, (file)->{
 			return getClassName(file, templatePath);
 		}, modulePath);
 	}
@@ -118,23 +118,24 @@ public class TemplateFactory {
 		return modules.get(module).getTemplate(templateFile);
 	}
 
-	@Deprecated
+	/*@Deprecated
 	public Template getFrameworkTemplate(String templateFile) throws Exception {
 		return getTemplateWithAbsolutePath(templateFile, (file)->{
 			return new Tuple2<>("toti", new FileExtension(file.getName()).getName());
 		}, "");
-	}
+	}*/
 
 	private Template getTemplateWithAbsolutePath(
-			String templateFile,
+			String templatePath, String fileName,
 			ThrowingFunction<File, Tuple2<String, String>, IOException> getClassNameAndNamespace,
 			String module) throws Exception {
-		if (profiler != null) {
+		/*if (profiler != null) {
 			profiler.logGetTemplate(module, templateFile);
-		}
+		}*/
 		if (templatePath == null) {
 			throw new LogicException("No template path set for this module: '" + this.module + "' (" + module + ")");
 		}
+		String templateFile = templatePath + fileName;
 		long lastModifition = -1;
 		URL url = null;
 		if (url == null) {
@@ -165,24 +166,36 @@ public class TemplateFactory {
 				TemplateFactory.class.getClassLoader()
 		)) {
 			try {
-				Template template = (Template)loader.loadClass(className).getDeclaredConstructor().newInstance();
+				Template template = (Template)loader.loadClass(className)
+						.getDeclaredConstructor(TemplateProfiler.class).newInstance(profiler);
 				if (lastModifition != template.getLastModification()) {
 					logger.warn("Class "  + module + " " + className + " has change, compile " + lastModifition + " vs " + template.getLastModification());
-					compileNewCache(templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), lastModifition, module);
+					compileNewCache(
+						templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(),
+						lastModifition, module, templatePath, fileName
+					);
 				} else {
 					return template;
 				}
 			} catch (ClassNotFoundException e) {
 				logger.warn("Class "  + module + " " + className + " not found, compile");
-				compileNewCache(templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(), lastModifition, module);
+				compileNewCache(
+					templateFile, classNameAndNamespace._1(), classNameAndNamespace._2(),
+					lastModifition, module, templatePath, fileName
+				);
 			}
 		}
 		try (URLClassLoader loader = new URLClassLoader(new URL[] {cacheDir.toURI().toURL()});) {
-			return (Template)loader.loadClass(className).getDeclaredConstructor().newInstance();
+			return (Template)loader.loadClass(className)
+					.getDeclaredConstructor(TemplateProfiler.class).newInstance(profiler);
 		}
 	}
 	
-	private void compileNewCache(String templateFile, String namespace, String className, long modificationTime, String module) throws Exception {
+	private void compileNewCache(
+			String templateFile, String namespace, String className, 
+			long modificationTime, String module,
+			String templatePath, String fileName
+		) throws Exception {
 		File dir = new File(tempPath + "/" + namespace);
 		dir.mkdirs();
 		dir.setExecutable(true, false);
@@ -199,7 +212,10 @@ public class TemplateFactory {
 			parameters.stream().collect(Collectors.toMap(Parameter::getName, par->par)),
 			minimalize
 		);
-		String javaTempFile = parser.createTempCache(namespace, className, templateFile, tempPath, module, modificationTime);
+		String javaTempFile = parser.createTempCache(
+			namespace, className, templateFile, tempPath, module, modificationTime,
+			templatePath, fileName
+		);
 		File file = new File(javaTempFile);
 		file.setExecutable(true, false);
 		file.setReadable(true, false);

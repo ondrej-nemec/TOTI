@@ -71,8 +71,9 @@ public class TemplateImpl implements Template {
 		return 0;
 	}
 	
+	@Override
 	public String _create(TemplateFactory templateFactory, Map<String, Object> variables, Translator translator,
-			Authorizator authorizator, LinkedList<TagNode> nodes, MappedUrl current) throws Exception {
+			Authorizator authorizator, LinkedList<TagNode> nodes, MappedUrl current, int level) throws Exception {
 		TemplateImpl layout = null; // TODO template
 		this.nodes = nodes;
 		initNode(variables);
@@ -130,7 +131,7 @@ public class TemplateImpl implements Template {
 		}
 		
 		if (layout != null) {
-			return layout._create(templateFactory, variables, translator, authorizator, this.nodes, current);
+			return layout._create(templateFactory, variables, translator, authorizator, this.nodes, current, level+1);
 		}
 		return flushNode().getBuilder().toString();
 	}

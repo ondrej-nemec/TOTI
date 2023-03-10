@@ -34,7 +34,9 @@ public class ProfilerLog implements Jsonable{
 	private List<String> missingLocales = new LinkedList<>();
 	private List<TransLog> transLog = new LinkedList<>();
 	
-	private List<Tuple2<String, String>> templates = new LinkedList<>();
+	//private List<Tuple2<String, String>> templates = new LinkedList<>();
+	private TemplateLog template;
+	private final Map<Integer, TemplateLog> templateFamily = new HashMap<>();
 	
 	public ProfilerLog(long threadId, String threadName) {
 		this.threadId = threadId;
@@ -99,6 +101,10 @@ public class ProfilerLog implements Jsonable{
 		missingLocales.add(locale);
 	}
 
+	public void loadFile(String locale, String domain, String path, boolean success) {
+		// TODO resources are loaded only ones
+	}
+	
 	private long getRequestTime() {
 		if (serverEvents.size() != 4) {
 			return -1;
@@ -110,8 +116,17 @@ public class ProfilerLog implements Jsonable{
 		return threadId;
 	}
 	
-	public void logTemplate(String module, String template) {
-		templates.add(new Tuple2<>(module, template));
+	public void logTemplate(String module, String path, String filename, Map<String, Object> variables,
+			int parent, int self) {
+		TemplateLog log = new TemplateLog(module, path, filename, variables);
+		templateFamily.put(self, log);
+		if (template == null) {
+			this.template = log;
+		} else if (parent == 0) {
+			// ignore
+		} else {
+			templateFamily.get(parent).addChild(log);
+		}
 	}
 	
 	@Override
@@ -137,7 +152,7 @@ public class ProfilerLog implements Jsonable{
 		json.put("controller", controller);
 		json.put("request", requestInfo);
 		json.put("translations", trans);
-		json.put("templates", templates);
+		json.put("template", template);
 		json.put("queries", sqlLogs);
 		
 		Map<String, Object> user = new HashMap<>();
