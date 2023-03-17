@@ -1,0 +1,451 @@
+
+<h2>Motivace</h2>
+
+<p>
+	V tomto tutoriálu vytvoříme jednoduchou serverovou aplikaci s webovým rozhraním. Úkolem aplikace bude pravidelně komunikovat s Edge zařízeními a číst jejich stav. GUI bude (po přihlášení) poskytovat informace o tomto stavu. V rozhraní bude také možné spravovat všechna zařízení.
+</p>
+
+TODO odkaz na příklad - CESTY!!!
+TODO poznámka o přidání logeru
+
+<h2>Inicializace</h2>
+
+<p>
+	Po naimportování TOTI do našeho projektu si vytvoříme potřebnou adresářovou strukturu. V kořenu aplikace potřebujeme tři typy složek: <code>src</code> adresář (pro java soubory), <code>www</code> (obsahuje soubory dostupné z prohlížeče) a <code>templates</code> (obsahuje jsp soubory).
+</p>
+
+<h5>Příklad</h5>
+
+<pre><code>
+.
+└── Application root/
+    ├── src/
+    ├── resources/
+    ├── templates/
+    ├── wwww/
+    ├── .gitignore
+    ├── README.md
+    └── LICENCE.md
+</code></pre>
+
+<h5>Příklad s využitím obvyklé struktury Gradle projektu</h5>
+
+<pre><code>
+.
+└── Application root/
+    ├── src/
+    │   ├── main/
+    │   │   ├── java/
+    │   │   └── resources/
+    │   └── test/
+    │       ├── java/
+    │       └── resources/
+    ├── templates/
+    ├── wwww/
+    ├── build.gradle
+    ├── settings.gradle
+    ├── .gitignore
+    ├── README.md
+    └── LICENCE.md
+</code></pre>
+
+<h3>Spuštěcí třída</h3>
+
+<p>
+	Vytvoříme novou třídu <code>EdgeDeviceControl</code>. V ní přídáme <code>main</code> metodu. Odtud se bude celá aplikace spuštět.
+</p>
+
+<p>
+	V metodě <code>main</code> nejpre vytvoříme prázdný seznam modulů: <code class="language-java">List&lt;Module&gt; modules = Arrays.asList();</code>. Poté využijeme rychlé inicialize serveru: <code class="language-java">Application app = new Application(modules);</code>. Nyní je možné aplikaci pustit pomocí <code class="language-java">app.start();</code>
+</p>
+
+<p>Pokud třídu spustíte, tak na adrese <code>http://localhost/toti</code> na vas čeká uvítací stránka.</p>
+
+<h5>Příklad</h5>
+
+<pre><code class="language-java">
+import java.util.Arrays;
+import java.util.List;
+
+import toti.Application;
+import toti.Module;
+
+public class EdgeDevicesControl {
+	
+	public static void main(String[] args) {
+		List&lt;Module&gt; modules = Arrays.asList(
+			new EdgeControlModule()
+		);
+		try {
+			Application app = new Application(modules);
+			app.start();
+			
+			// for security reason - automatic stop after 2 hours
+			try { Thread.sleep(2 * 3600 * 1000); } catch (InterruptedException e) { e.printStackTrace(); }
+			app.stop();
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(0);
+		}
+	}
+
+}
+</code></pre>
+
+TODO separator?
+
+<h2>TODO</h2>
+
+<p>
+	J
+</p>
+
+
+
+init a welcome page
+
+EdgeDevicesControl
+<pre><code class="language-java">
+public static void main(String[] args) {
+	List<Module> modules = Arrays.asList();
+	Application.APP_CONFIG_FILE = "samples/tutorial1/app.properties";
+	try {
+		Application app = new Application(modules);
+		app.start();
+		
+		// for security reason - automatic stop after 2 hours
+		try { Thread.sleep(2 * 3600 * 1000); } catch (InterruptedException e) { e.printStackTrace(); }
+		app.stop();
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+	System.exit(0);
+}
+</code></pre>
+
+******************************
+first module and page
+
+EdgeControlModule
+<pre><code class="language-java">
+public class EdgeControlModule implements Module {
+
+	@Override
+	public List&lt;Task&gt; initInstances(Env env, Translator translator, Register register, Database database, Logger logger) throws Exception {
+		return Arrays.asList();
+	}
+
+	@Override
+	public void addRoutes(Router router) {
+		router.addUrl("", Link.get().create(WelcomePageController.class, c->c.welcomePage()));
+	}
+
+	@Override
+	public String getName() {
+		return "main";
+	}
+
+	@Override
+	public String getControllersPath() {
+		return "TODO";
+	}
+	
+	@Override
+	public String getTemplatesPath() {
+		return "TODO";
+	}
+	
+	@Override
+	public String getTranslationPath() {
+		return "TODO";
+	}
+
+}
+</code></pre>
+
+WelcomePageController
+<pre><code class="language-java">
+@Controller("dashboar")
+public class WelcomePageController {
+
+	@Action("welcome")
+	public Response welcomePage() {
+		return Response.getTemplate("welcome.jsp", new HashMap&lt;&gt;());
+	}
+	
+}
+</code></pre>
+
+layout.jsp
+<pre><code class="language-html">
+&lt;html&gt;
+&lt;head&gt;
+	&lt;title&gt;&lt;t:include block="title" optional&gt;&lt;/title&gt;
+	&lt;link rel="stylesheet" href="/toti/totiStyle.css" /&gt;
+	&lt;script src="/toti/totiJs.js" nonce="${nonce}">&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+	&lt;div class="body"&gt;
+		&lt;t:include block="content" &gt;
+	&lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+welcome.jsp
+<pre><code class="language-html">
+&lt;t:layout path="/layout.jsp"&gt;
+
+&lt;t:block name="title"&gt;
+	&lt;t:trans message="messages.dashboard.welcome-page"&gt;
+&lt;/t:block&gt;
+
+&lt;t:block name="content"&gt;
+	&lt;h1&gt;&lt;t:trans message="messages.dashboard.welcome-page"&gt;&lt;/h1&gt;
+	&lt;div&gt;
+		&lt;t:trans message="messages.dashboard.welcome-text"&gt;
+	&lt;/div&gt;
+&lt;/t:block>
+</code></pre>
+
+messages.en.properties
+<pre><code>
+dashboard.welcome-page=Welcome in Edge Devices Control
+dashboard.welcome-text=Enjoy the coding of this app
+</code></pre>
+
+upravit EdgeDevicesControl
+<pre><code class="language-java">
+List<Module> modules = Arrays.asList(
+	new EdgeControlModule()
+);
+</code></pre>
+
+*****************************
+
+login.jsp
+<pre><code class="language-html">
+&lt;t:layout path="/layout.jsp"&gt;
+
+&lt;t:block name="title"&gt;
+	&lt;t:trans message="messages.sign.login-page"&gt;
+&lt;/t:block&gt;
+
+&lt;t:block name="content"&gt;
+	&lt;h1&gt;&lt;t:trans message="messages.sign.login-page"&gt;&lt;/h1&gt;
+	&lt;div&gt;
+		&lt;t:control name="loginForm" /&gt;
+	&lt;/div&gt;
+	
+	&lt;script&gt;
+		function setLogin(response) {
+			totiAuth.login(response, {
+				"url": ${refreshLink},
+				"method": "post"
+			});
+		}
+	&lt;/script&gt;
+&lt;/t:block&gt;
+</code></pre>
+
+SignPageController
+<pre><code class="language-java">
+@Controller("sign")
+public class SignPageController {
+	
+	private final Translator translator;
+	
+	public SignPageController(Translator translator) {
+		this.translator = translator;
+	}
+
+	@Action("in")
+	public Response loginPage(@Param("backlink") String backlink) {
+		Form form = new Form(Link.get().create(SignApiController.class, c->c.login(null, null)), true);
+		form.setFormMethod("post");
+		
+		List&lt;Option&gt; userOptions = new LinkedList&lt;&gt;();
+		SignApiController.USERS.forEach((login, user)->{
+			userOptions.add(Option.create(login, user.getProperty("name").getString()));
+		});
+		form.addInput(
+			Select.input("username", true, userOptions)
+			.setTitle(translator.translate("mesasges.sign.username"))
+		);
+		form.addInput(
+			Password.input("password", true)
+			.setTitle(translator.translate("mesasges.sign.password"))
+		);
+		form.addInput(
+			Submit.create(translator.translate("mesasges.sign.login"), "login")
+			.setOnSuccess("setLogin")
+			.setRedirect(
+				backlink == null ? Link.get().create(WelcomePageController.class, c->c.welcomePage()) : backlink
+			)
+		);
+		Map&lt;String, Object&gt; params = new HashMap&lt;&gt;();
+		params.put("loginForm", form);
+		params.put("refreshLink", Link.get().create(SignApiController.class, c->c.refresh()));
+		return Response.getTemplate("login.jsp", params);
+	}
+	
+}
+</code></pre>
+
+SignApiController
+<pre><code class="language-html">
+@Controller("sign")
+public class SignApiController {
+	
+	public static final Map&lt;String, User&gt; USERS = new MapInit&lt;String, User&gt;()
+			.append("user1", new User("user1-id", new EdgeControlPermissions()).setProperty("name", "User 1"))
+			.toMap();
+	private final Authenticator authenticator;
+	private final Translator translator;
+	private final Identity identity;
+	
+	public SignApiController(Authenticator authenticator, Translator translator, Identity identity) {
+		this.authenticator = authenticator;
+		this.translator = translator;
+		this.identity = identity;
+	}
+
+	@Action("in")
+	@Method(HttpMethod.POST)
+	public Response login(@Param("username") String username, @Param("password") String password) {
+		try {
+			// simple user validation
+			if (!USERS.containsKey(username) || !"1234".equals(password)) {
+				return Response.getJson(
+					StatusCode.BAD_REQUEST, 
+					new MapInit&lt;&gt;()
+					.append("form", translator.translate("messages.sign.invalid-credentials"))
+					.toMap()
+				);
+			}
+			return Response.getJson(authenticator.login(USERS.get(username), identity));
+		} catch (AuthentizationException e) {
+			e.printStackTrace();
+			return Response.getText(StatusCode.INTERNAL_SERVER_ERROR, translator.translate("messages.sign.login-failed"));
+		}
+	}
+	
+	@Action("out")
+	@Method(HttpMethod.POST)
+	@Secured
+	public Response logout() {
+		authenticator.logout(identity);
+		return Response.getText(""); // 202 response
+	}
+	
+	@Action("refresh")
+	@Secured
+	public Response refresh() {
+		return Response.getText(""); // 202 response
+	}
+}
+</code></pre>
+
+upravit messages.en.properties
+<pre><code>
+sign.in=Sign in
+sign.out=Sign out
+sign.username=Username
+sign.password=Password
+sign.login=Login
+sign.login-page=Login page
+sign.invalid-credentials=User name or password is incorrect
+sign.login-failed=Login failed
+</code></pre>
+
+upravit layout.jsp
+<pre><code class="language-html">
+&lt;body&gt;
+
+	&lt;div class="menu"&gt;
+		&lt;div&gt;
+			&lt;t:if cond="${totiIdentity.isPresent()}"&gt;
+				&lt;span&gt;${totiIdentity.getUser().getProperty("name")}&lt;/span&gt;
+				&lt;button onclick="logout()"&gt;&lt;t:trans message="messages.sign.out"&gt;&lt;/button&gt;
+			&lt;t:else&gt;
+				&lt;a t:href="samples.tutorial1.web.SignPageController:loginPage"&gt;
+					&lt;t:trans message="messages.sign.in"&gt;
+				&lt;/a&gt;
+			&lt;/t:if&gt;
+		&lt;/div&gt;
+	&lt;/div&gt;
+
+	&lt;div id="flash"&gt;&lt;/div&gt;
+	
+	&lt;div class="body"&gt;
+		&lt;t:include block="content" &gt;
+	&lt;/div&gt;
+
+	&lt;script&gt;
+		function logout() {
+			totiAuth.logout(
+				'&lt;t:link module="main" controller="samples.tutorial1.web.api.SignApiController" method="logout"&gt;',
+				'post'
+			);
+			window.location.reload();
+		}
+	&lt;/script&gt;
+
+&lt;/body&gt;
+</code></pre>
+
+upravit EdgeControlModule:initInstances
+<pre><code class="language-java">
+register.addFactory(
+	SignPageController.class, 
+	(transl, identity, authorizator, authenticator)-&gt;new SignPageController(transl)
+);
+register.addFactory(
+	SignApiController.class,
+	(transl, identity, authorizator, authenticator)-&gt;new SignApiController(authenticator, transl, identity)
+);
+</code></pre>
+
+upravit EdgeControlModule:addRoutes
+<pre><code class="language-java">
+router.setRedirectOnNotLoggedInUser(Link.get().create(SignPageController.class, c-&gt;c.loginPage(null)));
+</code></pre>
+
+EdgeControlPermissions
+<pre><code class="language-java">
+public class EdgeControlPermissions implements Permissions {
+
+	private static final long serialVersionUID = 1L;
+
+	@Override
+	public Rules getRulesForDomain(String domain) {
+		return new Rules(null, Arrays.asList());
+	}
+
+}
+</code></pre>
+
+*****************************
+
+<pre><code class="language-java">
+</code></pre>
+
+<pre><code class="language-java">
+</code></pre>
+
+<pre><code class="language-java">
+</code></pre>
+
+<pre><code class="language-java">
+</code></pre>
+
+<pre><code class="language-java">
+</code></pre>
+
+<pre><code class="language-java">
+</code></pre>
+
+<pre><code class="language-java">
+</code></pre>
