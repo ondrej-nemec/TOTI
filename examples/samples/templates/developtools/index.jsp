@@ -10,10 +10,10 @@
 	
 	<script>
 		/* make request on self for more data in profiler*/
-		for (i = 0; i < 3; i++) {
+		for (i = 0; i < 10; i++) {
 			setTimeout(function() {
-				totiLoad.async("", "get", {}, {}, function(){}, function(){});
-			}, 1000 * i);	
+				totiLoad.load("", "get");
+			}, 2000);	
 		}
 	</script>
 </t:block>

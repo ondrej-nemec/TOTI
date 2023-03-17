@@ -17,22 +17,24 @@ public class SqlLog implements Jsonable {
 	private final String id;
 
 	private String sql;
+
+	@MapperParameter({@MapperType(value = "params", ignoreOnNull = true)})
+	private List<Object> params;
 	
-	private List<Object> params = new LinkedList<>();
+	//private String preparedSql;
+	private String replacedSql;
+	
+	@MapperParameter({@MapperType(value = "params", ignoreOnNull = true)})
+	private Map<String, String> builderParams;
 	
 	private boolean isExecuted;
 	
-	private String preparedSql;
-	private String replacedSql;
-	private Map<String, String> builderParams;
-	
 	private Object result;
+	@MapperParameter({@MapperType("executionTime")})
+	private long executionTime = -1;
 
 	@MapperIgnored
 	private long startTime;
-
-	@MapperParameter({@MapperType("executionTime")})
-	private long executionTime = -1;
 	
 	public SqlLog(String id) {
 		this.id = id;
@@ -50,13 +52,13 @@ public class SqlLog implements Jsonable {
 		return sql;
 	}
 
-	public List<Object> getParams() {
+	/*public List<Object> getParams() {
 		return params;
 	}
 
 	public String getPreparedSql() {
 		return preparedSql;
-	}
+	}*/
 
 	public String getReplacedSql() {
 		return replacedSql;
@@ -75,6 +77,9 @@ public class SqlLog implements Jsonable {
 	}
 
 	public void addParams(Object param) {
+		if (params == null) {
+			params = new LinkedList<>();
+		}
 		this.params.add(param);
 	}
 
@@ -89,7 +94,7 @@ public class SqlLog implements Jsonable {
 	}
 
 	public void setBuilder(String preparedSql, String replacedSql, Map<String, String> builderParams) {
-		this.preparedSql = preparedSql;
+		this.sql = preparedSql;
 		this.replacedSql = replacedSql;
 		this.builderParams = builderParams;
 	}

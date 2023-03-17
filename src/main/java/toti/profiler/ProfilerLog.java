@@ -18,7 +18,7 @@ import toti.url.MappedUrl;
 public class ProfilerLog implements Jsonable{
 
 	private  long threadId;
-	//private final String threadName;
+	private final String threadName;
 	//private long createdAt;
 		
 	/***************/
@@ -40,7 +40,7 @@ public class ProfilerLog implements Jsonable{
 	
 	public ProfilerLog(long threadId, String threadName) {
 		this.threadId = threadId;
-	//	this.threadName = threadName;
+		this.threadName = threadName;
 	//	this.createdAt = System.currentTimeMillis();
 	}
 	
@@ -131,32 +131,46 @@ public class ProfilerLog implements Jsonable{
 	
 	@Override
 	public Object toJson() {
-		Map<String, Object> controller = new HashMap<>();
-		controller.put("module", mapped.getModuleName());
-		controller.put("class", mapped.getClassName());
-		controller.put("method", mapped.getMethodName());
-		controller.put("authMode", mapped.getSecurityMode());
-		
-		Map<String, Object> requestInfo = new HashMap<>();
-		requestInfo.put("method", request.getMethod());
-		requestInfo.put("url", request.getPlainUri());
-		requestInfo.put("processTime", getRequestTime());
-		requestInfo.put("loginMode", identity.getLoginMode());
-		requestInfo.put("locale", Mapper.get().serialize(identity.getLocale()));
+		Map<String, Object> json = new HashMap<>();
+		if (mapped != null) {
+			Map<String, Object> controller = new HashMap<>();
+			controller.put("module", mapped.getModuleName());
+			controller.put("class", mapped.getClassName());
+			controller.put("method", mapped.getMethodName());
+			controller.put("authMode", mapped.getSecurityMode());
 
+			json.put("controller", controller);
+		}
+		if (request != null) {
+			Map<String, Object> requestInfo = new HashMap<>();
+			requestInfo.put("method", request.getMethod());
+			requestInfo.put("url", request.getPlainUri());
+			requestInfo.put("processTime", getRequestTime());
+			requestInfo.put("loginMode", identity.getLoginMode());
+			requestInfo.put("params", request.getUrlParameters());
+			requestInfo.put("locale", Mapper.get().serialize(identity.getLocale()));
+
+			json.put("request", requestInfo);
+			
+			json.put("title", request.getMethod() + " " + request.getPlainUri());
+		} else {
+			json.put("title", threadName + "(" + threadId + ")");
+		}
+		
+		if (template != null) {
+			json.put("template", template);
+		}
+		
 		Map<String, Object> trans = new HashMap<>();
 		trans.put("missingFiles", missingLocales);
 		trans.put("missingTranslations", transLog);
 		
-		Map<String, Object> json = new HashMap<>();
-		json.put("controller", controller);
-		json.put("request", requestInfo);
 		json.put("translations", trans);
-		json.put("template", template);
+		
 		json.put("queries", sqlLogs);
 		
 		Map<String, Object> user = new HashMap<>();
-		if (identity.isPresent()) {
+		if (identity != null && identity.isPresent()) {
 			user.put("id", identity.getUser().getId());
 			user.put("allowedIds", identity.getUser().getAllowedIds());
 			user.put("content", identity.getUser().getContent());
@@ -168,6 +182,6 @@ public class ProfilerLog implements Jsonable{
 	
 	@Override
 	public String toString() {
-		return toJson().toString();
+		return threadName + ": " + threadId;
 	}
 }

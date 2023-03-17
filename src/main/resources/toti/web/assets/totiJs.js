@@ -9,11 +9,9 @@
 <t:include file="assets/js/totiLang.js" />
 <t:include file="assets/js/totiLoad.js" />
 <t:include file="assets/js/totiAuth.js" />
-<%--
 <t:if cond="${useProfiler}" >
 	<t:include file="assets/js/totiProfiler.js" />
 </t:if>
---%>
 <t:include file="assets/js/totiFormCustomTemplate.js" />
 <t:include file="assets/js/totiFormDefaultTemplate.js" />
 <t:include file="assets/js/totiGridCustomTemplate.js" />

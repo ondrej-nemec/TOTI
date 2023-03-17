@@ -56,8 +56,8 @@ public class TotiSamplesRunner {
 
 		try {
 			// select one of the runs, then http://localhost:8080/toti
-			runner.setProgramatically(wait);
-			// runner.configFromFile(wait);
+			// runner.setProgramatically(wait);
+			runner.configFromFile(wait);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

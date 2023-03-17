@@ -1,97 +1,40 @@
 <html>
 <head>
 	<title>Profiler Bar</title>
+
+	<script src="js/totiSortedMap.js"></script>
+	<script src="js/totiImages.js" ></script>
+	<script src="js/totiUtils.js" ></script>
+	<script src="js/totiTranslations.js" ></script>
+	<script src="js/totiStorage.js" ></script>
+	<script src="js/totiProfiler.js" ></script>
+	<script src="js/totiLang.js" ></script>
+	<script src="js/totiLoad.js" ></script>
+	<script src="js/totiAuth.js" ></script>
+	<script src="js/totiFormDefaultTemplate.js" ></script>
+	<script src="js/totiGridDefaultTemplate.js" ></script>
+	<script src="js/totiFormCustomTemplate.js" ></script>
+	<script src="js/totiGridCustomTemplate.js" ></script>
+	<script src="js/totiDisplay.js" ></script>
+	<script src="js/totiControl.js" ></script>
+	<script src="js/totiForm.js" ></script>
+	<script src="js/totiGrid.js" ></script>
 </head>
 <body>
 
-<style type="text/css">
-	td {
-		font-size: 1.2em;
-		background-color: red;
-		padding-left: 0.5em;
-		padding-right: 0.5em;
-	}
-	td a {
-		color: black; 
-		text-decoration: none;
-	}
-	#profiler-detail {
-		background-color: black;
-		padding: 0.25em;
-		display: none;
-	}
-	#profiler-detail table {
-		background-color: white;
-		width: 100%;
-	}
-</style>
+	<div id="show-time"></div>
 
-<div id="profiler-detail">
-	<table>
-		<tr>
-			<td>GET</td>
-			<td>/exmap/adsf</td>
-			<td>username</td>
-			<td>6 ren</td>
-			<td>x</td>
-			<td>cs</td>
-		</tr>
-	</table>
-</div>
+	<script type="text/javascript">
+		for (const[name, source] of Object.entries(totiImages)) {
+			var img = document.createElement('img');
+			img.setAttribute("src", source);
+			img.setAttribute("width", 25);
+			img.setAttribute('style', 'margin: 1em');
+			img.setAttribute('title', name);
+			document.querySelector('#show-time').appendChild(img);
+		}
+	</script>
 
-<table style="height: 30px; width: 100%; position: fixed; bottom: 5px; background-color: green;">
-	<tr>
-		<td style="padding: 0px; width: 30px">
-			<img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDMyIDMyIiBoZWlnaHQ9IjMycHgiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAzMiAzMiIgd2lkdGg9IjMycHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxwYXRoIGQ9Ik0yMC4zNzcsMTYuNTE5bDYuNTY3LTYuNTY2YzAuOTYyLTAuOTYzLDAuOTYyLTIuNTM5LDAtMy41MDJsLTAuODc2LTAuODc1Yy0wLjk2My0wLjk2NC0yLjUzOS0wLjk2NC0zLjUwMSwwICBMMTYsMTIuMTQyTDkuNDMzLDUuNTc1Yy0wLjk2Mi0wLjk2My0yLjUzOC0wLjk2My0zLjUwMSwwTDUuMDU2LDYuNDVjLTAuOTYyLDAuOTYzLTAuOTYyLDIuNTM5LDAsMy41MDJsNi41NjYsNi41NjZsLTYuNTY2LDYuNTY3ICBjLTAuOTYyLDAuOTYzLTAuOTYyLDIuNTM4LDAsMy41MDFsMC44NzYsMC44NzZjMC45NjMsMC45NjMsMi41MzksMC45NjMsMy41MDEsMEwxNiwyMC44OTZsNi41NjcsNi41NjYgIGMwLjk2MiwwLjk2MywyLjUzOCwwLjk2MywzLjUwMSwwbDAuODc2LTAuODc2YzAuOTYyLTAuOTYzLDAuOTYyLTIuNTM4LDAtMy41MDFMMjAuMzc3LDE2LjUxOXoiIGZpbGw9IiM1MTUxNTEiLz48L3N2Zz4=" alt="" width="30">
-		</td>
-		<td>
-			<a href="/profiler.html#Page_09201107174853109" target="_blank" >
-				Profiler
-			</a>
-		</td>
-		<td style="padding: 0px; width: 15px">
-			<span style="display: inline-block">6</span>
-			<span style="display: inline-block">
-				<div id="profiler-show">
-					<img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDMyIDMyIiBoZWlnaHQ9IjMycHgiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAzMiAzMiIgd2lkdGg9IjMycHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxwYXRoIGQ9Ik0xOC4yMjEsNy4yMDZsOS41ODUsOS41ODVjMC44NzksMC44NzksMC44NzksMi4zMTcsMCwzLjE5NWwtMC44LDAuODAxYy0wLjg3NywwLjg3OC0yLjMxNiwwLjg3OC0zLjE5NCwwICBsLTcuMzE1LTcuMzE1bC03LjMxNSw3LjMxNWMtMC44NzgsMC44NzgtMi4zMTcsMC44NzgtMy4xOTQsMGwtMC44LTAuODAxYy0wLjg3OS0wLjg3OC0wLjg3OS0yLjMxNiwwLTMuMTk1bDkuNTg3LTkuNTg1ICBjMC40NzEtMC40NzIsMS4xMDMtMC42ODIsMS43MjMtMC42NDdDMTcuMTE1LDYuNTI0LDE3Ljc0OCw2LjczNCwxOC4yMjEsNy4yMDZ6IiBmaWxsPSIjNTE1MTUxIi8+PC9zdmc+" width="15">
-				</div>
-				<div id="profiler-hide" style="display: none">
-					<img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDMyIDMyIiBoZWlnaHQ9IjMycHgiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAzMiAzMiIgd2lkdGg9IjMycHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxwYXRoIGQ9Ik0xNC43NywyMy43OTVMNS4xODUsMTQuMjFjLTAuODc5LTAuODc5LTAuODc5LTIuMzE3LDAtMy4xOTVsMC44LTAuODAxYzAuODc3LTAuODc4LDIuMzE2LTAuODc4LDMuMTk0LDAgIGw3LjMxNSw3LjMxNWw3LjMxNi03LjMxNWMwLjg3OC0wLjg3OCwyLjMxNy0wLjg3OCwzLjE5NCwwbDAuOCwwLjgwMWMwLjg3OSwwLjg3OCwwLjg3OSwyLjMxNiwwLDMuMTk1bC05LjU4Nyw5LjU4NSAgYy0wLjQ3MSwwLjQ3Mi0xLjEwNCwwLjY4Mi0xLjcyMywwLjY0N0MxNS44NzUsMjQuNDc3LDE1LjI0MywyNC4yNjcsMTQuNzcsMjMuNzk1eiIgZmlsbD0iIzUxNTE1MSIvPjwvc3ZnPg==" width="15">
-				</div>
-			</span>
-		</td>
-		<td>GET</td>
-		<td>/exmap/adsf</td>
-		<td>username</td>
-		<td>6 ren</td>
-		<td>x</td>
-		<td>cs</td>
-	</tr>
-</table>
-
-<script type="text/javascript">
-	var showButton = document.getElementById("profiler-show");
-	var hideButton = document.getElementById("profiler-hide");
-	showButton.onclick = function() {
-		var detail = document.getElementById("profiler-detail");
-		detail.style.display = "block";
-		detail.style.position = "fixed";
-		detail.style.bottom = "32px";
-		detail.style.right = "0px";
-		detail.style.overflow = "auto";
-		detail.style["max-height"] = "50%";
-		detail.style.left = showButton.getBoundingClientRect().left + "px";
-
-		showButton.setAttribute("style", "display: none");
-		hideButton.setAttribute("style", "");
-	};
-
-	hideButton.onclick = function() {
-		showButton.setAttribute("style", "");
-		hideButton.setAttribute("style", "display: none");
-		document.getElementById("profiler-detail").remove();
-	};
-</script>
 
 </body>
 </html>

@@ -1,12 +1,14 @@
-<!-- TOTI Profiler version 0.1.0 -->
+<!-- TOTI Profiler version 1.0.0 -->
 <html>
 <head>
     <meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
+    
 	<title>Profiler</title>
 	<script src="/toti/totiJs.js"></script>
-	<script>totiSettings.showProfiler = false;</script>
+
+	<script>showTotiProfiler = false;</script>
 
 	<style type="text/css">
 		body {
@@ -21,17 +23,36 @@
 			color: #e3ffff; /*#86daff;*/
 			background-color: #017CA5;
 		}
-		h2, h3 {
-			display: inline-block;
+		h2 {
+			margin-top: 0.5em;
+			margin-bottom: 0.5em;
+			font-size: 1.55em;
+		}
+		h3 {
+			margin-top: 0.5em;
+			margin-bottom: 0.5em;
+			font-size: 1.45em;
+		}
+		h4 {
+			font-size: 1.25em;
+			margin-top: 0.5em;
+			margin-bottom: 0.5em;
+		}
+		h5 {
+			margin-block-end: 0;
+			margin-block-start: 0;
+			font-size: 1.05em;
+			margin-top: 0.5em;
+		}
+		.button {
+			cursor: pointer;
 		}
 		.hidden {
 			display: none;
 		}
-		ul {
+		#menu ul {
 			list-style-type: none;
 			font-size: 1.15em;
-		}
-		ul.main-list {
 		  padding: 0;
 		  margin: 0;
 		  padding-top: 0.5em;
@@ -39,21 +60,19 @@
 		  background-color: #595959;
 		  color: #d9d9d9;
 		}
-		ul a, ul a:hover {
+		#menu ul li {
 		  color: #d9d9d9;
 		  word-wrap: break-word;
+		  cursor: pointer;
+		  margin-bottom: 0.5em;
 		}
-		ul.main-list #title {
-		  font-weight: bold;
+		#menu ul li:hover {
+		  color: #d9ffd9;
 		  word-wrap: break-word;
 		}
-		ul.sub-list {
-		  padding: 0;
-		  margin: 0;
-		}
-		.sub-list li {
-			padding: 0.25em;
-			padding-left: 1em;
+		#menu ul #title {
+		  font-weight: bold;
+		  word-wrap: break-word;
 		}
 		#menu {
 			float: left;
@@ -64,30 +83,13 @@
 			margin-left: 25%;
 			padding-left: 1em;
 		}
-		.container {
+		.status {
+			padding-top: 0.5em;
+			padding-bottom: 0.5em;
+		}
+		.status span {
 			padding: 0.5em;
-			margin-bottom: 0.5em;
 		}
-		.container, .container table {
-			background-color: #0066cc;
-			color: #d9d9d9;
-		}
-		h3 {
-			margin-top: 0;
-		}
-		.clear  {
-			background-color: #ff3333;			
-			border-radius: 4px;
-			border: 3px solid #f5c6cb;
-			color: black;
-		}
-		dt {
-			font-weight: bold;
-		}
-		/*#tableInfoMenu li {
-			display: inline-block;
-			padding: 0.40em;
-		}*/
 	</style>
 </head>
 <body>
@@ -95,519 +97,420 @@
 		<h1>TOTI Profiler</h1>
 	</div>
 	<div id="menu">
-		<button class="clear">Clear All</button>
-		<ul class="main-list">
+		<ul></ul>
+	</div>
+	<div id="content"></div>
 
-		</ul>
-	</div>
-	<div>
+	<template id="request-template">
 		<div>
-			<label><input type="checkbox" id="chb-page-request" <%= ${enable|Boolean} ? "checked" : "" %>>Log page requests</label>
+			<h3>Request</h3>
+			<div>
+				<strong>Try authenticate with:</strong> <span id="auth"></span>
+			</div>
+			<div>
+				<strong>Process time:</strong> <span id="time"></span> ms
+			</div>
+			<div>
+				<strong>Selected locale:</strong> <span id="locale"></span>
+			</div>
+			<div id="parameters">
+				<h4>URL parameters</h4>
+				<table></table>
+			</div>
 		</div>
-		<div id="content"></div>
-	</div>
+	</template>
+
+	<template id="controller-template">
+		<div>
+			<h3>Controller</h3>
+			<div>
+				<strong>Module:</strong> <span id="module"></span>
+			</div>
+			<div>
+				<strong>Class:</strong> <span id="class"></span>
+			</div>
+			<div>
+				<strong>Method:</strong> <span id="method"></span>
+			</div>
+			<div>
+				<strong>Auth mode:</strong> <span id="auth"></span>
+			</div>
+		</div>
+	</template>
+
+	<template id="templates-template">
+			<div class="hidable">
+				<div class="colapse">
+					<h4>
+						<img class="button icon" id="arrowRight">
+						<span id="name-short"></span>
+					</h4>
+				</div>
+				<div class="expand">
+					<h4>
+						<img class="button icon" id="arrowDown">
+						<span id="name-full"></span>
+					</h4>
+					<div>
+						<strong>Module:</strong> <span id="module"></span>
+					</div>
+					<div>
+						<strong>Path:</strong> <span id="path"></span>
+					</div>
+					<div id="variables">
+						<h5>Variables</h5>
+						<table></table>
+					</div>
+				</div>
+			</div>
+	</template>
+
+	<template id="queries-template">
+			<div class="hidable">
+				<div class="colapse">
+					<h4>
+						<img class="button icon" id="arrowRight">
+						<span id="query-short"></span>
+					</h4>
+				</div>
+				<div class="expand">
+					<h4>
+						<img class="button icon" id="arrowDown">
+						<span id="query-full"></span>
+					</h4>
+					<div id="params-list">
+						<h5>Parameters</h5>
+						<ol></ol>
+					</div>
+					<div id="params-table">
+						<h5>Parameters</h5>
+						<table></table>
+					</div>
+					<div id="query-translated"></div>
+					<div class="status">
+						<span id="status"></span>
+						<span id="time">---</span>
+						ms
+					</div>
+					<div id="result">
+						<strong>Result: </strong> <span></span>
+					</div>
+				</div>
+			</div>
+	</template>
+
+	<template id="translations-template">
+		<div>
+			<h3>Translations</h3>
+
+			<h4>Missing locale</h4>
+			
+			<div>
+				<ul id="missing-locales"></ul>
+			</div>
+
+			<h4>Missing translations</h4>
+
+			<div>
+				<table id="missing-translations">
+					<tr>
+						<th>Locale</th>
+						<th>Module/Domain</th>
+						<th>Key</th>
+						<th>Parameters</th>
+					</tr>
+				</table>
+			</div>
+
+		</div>
+	</template>
+
+	<template id="trans-variable-template">
+		<tr>
+			<td id="locale"></td>
+			<td id="domain"></td>
+			<td id="key"></td>
+			<td id="params"></td>
+		</tr>
+	</template>
+
+	<template id="user-template">
+		<h3>User</h3>
+		<div>
+			<strong>ID:</strong> <span id="id"></span>
+		</div>
+		<div>
+			<strong>Allowed Ids:</strong> <span id="ids"></span>
+		</div>
+		<div id="content">
+			<h4>Content</h4>
+		</div>
+	</template>
 
 	<!-- menu templates -->
 
 	<template id="menu-item-template">
 		<li>
-			<span id="title"></span> <button class="clear">Clear</button>
-			<ul class="sub-list"></ul>
+			<span id="title"></span>
 		</li>
 	</template>
 
-	<template id="sub-menu-item-template">
-		<li><a href="" id="link"></a></li>
-	</template>
-
-	<!-- content templates -->
-
-	<template id="log-info-template">
-		<div class="section">
-			<div>
-				<span><img width="25px" class="block-icon" id="info" src=""></span>
-				<h2>Info</h2>
-				<img src="" class="block-show" width="20px">
-				<img src="" class="block-hide" width="20px">
-			</div>
-			<div class="block">
-				<table>
-					<tr>
-						<th>Identifier</th>
-						<td id="data-name"></td>
-					</tr>
-					<tr>
-						<th>Created at</th>
-						<td id="data-createdAt"></td>
-					</tr>
-				</table>
-			</div>
-		</div>
-	</template>
-
-	<template id="translations-template">
-		<div class="section">
-			<div>
-				<span><img width="25px" class="block-icon" id="lang" src=""></span>
-				<h2>Selected language: <span id="data-trans-locale"></span></h2>
-				<img src="" class="block-show" width="20px">
-				<img src="" class="block-hide" width="20px">
-			</div>
-			<div class="block">
-				<p>
-					<strong>Left To Right:</strong>&nbsp;<span id="data-trans-ltr"></span> <br>
-					<strong>Substitutions:</strong>&nbsp;<span id="data-trans-substitutions"></span>
-				</p>
-				<h3>Missing translations</h3>
-				<table id="data-trans-missingTranslations">
-				  	<tr>
-				  		<th>Locale</th>
-				  		<th>Module</th>
-						<th>Key</th>
-						<th>Parameters</th>
-					</tr>
-				</table>
-				<ul id="data-trans-missingFiles"></ul>
-			</div>
-		</div>
-	</template>
-
-	<template id="sql-template">
-		<div class="section">
-			<div>
-				<span><img width="25px" class="block-icon" id="database" src=""></span>
-				<h2>SQL Queries:</h2>
-				<img src="" class="block-show" width="20px">
-				<img src="" class="block-hide" width="20px">
-			</div>
-			<div class="block"></div>
-		</div>
-	</template>
-
-
-	<template id="sql-log-template">
-		<div class="section">
-			<div>
-				<h3>SQL</h3>
-				<img src="" class="block-show" width="20px">
-				<img src="" class="block-hide" width="20px">
-			</div>
-			<div class="block">
-				<dl>
-				  <dt>Prepared SQL</dt>
-				  <dd id="data-sql-prepared">---</dd>
-				  <dt>Replaced SQL</dt>
-				  <dd id="data-sql-builded">---</dd>
-				  <dt>Builder Parameters</dt>
-				  <dd>
-				  	<table id="data-sql-builderParams">
-				  		<tr>
-				  			<th>Name</th>
-				  			<th>Value</th>
-				  		</tr>
-				  	</table>
-				  </dd>
-				  
-				  <dt>Query</dt>
-				  <dd id="data-sql-sql">---</dd>
-				  <dt>Parameters</dt>
-				  <dd>
-				  	  <ol id="data-sql-params"></ol>
-				  </dd>
-				  <dt>Is Executed</dt>
-				  <dd id="data-sql-executed"></dd>
-				  <dt>Result</dt>
-				  <dd id="data-sql-result"></dd>
-				</dl>
-			</div>
-		</div>
-	</template>
-
-	<template id="request-template">
-		<div class="section">
-			<div>
-				<h2>
-					<span id="data-request-method"></span>: 
-					<span id="data-request-url"></span>
-				</h2>
-				<img src="" class="block-show" width="20px">
-				<img src="" class="block-hide" width="20px">
-			</div>
-			<div class="block">
-				<div><strong>Full URL:</strong>&nbsp;&nbsp;<span id="data-request-fullUrl"></span></div>
-				<div><strong>IP:</strong>&nbsp;&nbsp;<span id="data-request-ip"></span></div>
-				<div><strong>Protocol:</strong>&nbsp;&nbsp;<span id="data-request-protocol"></span></div>
-				<hr>
-				<div><strong>Module:</strong>&nbsp;&nbsp;<span id="data-request-controller-module">---</span></div>
-				<div><strong>Class:</strong>&nbsp;&nbsp;<span id="data-request-controller-class">---</span></div>
-				<div><strong>Method:</strong>&nbsp;&nbsp;<span id="data-request-controller-method">---</span></div>
-				
-			</div>
-		</div>
-	</template>
-
-	<template id="request-parameters-template">
-		<div class="section">
-			<div>
-				<span><img width="25px" class="block-icon" id="parameters" src=""></span>
-				<h2>Parameters</h2>
-				<img src="" class="block-show" width="20px">
-				<img src="" class="block-hide" width="20px">
-			</div>
-			<div class="block">
-				<h3>Url parameters</h3>
-				<table id="data-params-url">
-					<tr>
-						<th>Name</th>
-						<th>Value</th>
-					</tr>
-				</table>
-				<h3>Body parameters</h3>
-				<table id="data-params-body">
-					<tr>
-						<th>Name</th>
-						<th>Value</th>
-					</tr>
-				</table>
-				<h3>Body</h3>
-				<div id="data-body"></div>
-			</div>
-		</div>
-	</template>
-
-	<template id="identity-template">
-			<div class="section">
-				<div>
-					<span><img width="25px" class="block-icon" id="user" src=""></span>
-					<h2>Identity</h2>
-					<img src="" class="block-show" width="20px">
-					<img src="" class="block-hide" width="20px">
-				</div>
-				<div class="block">
-					<dl>
-					  <dt>Login mode</dt>
-					  <dd id="data-identity-loginMode"></dd>
-					  <dt>User</dt>
-					  <dd>
-					  	 <dl>
-							  <dt>ID</dt>
-							  <dd id="data-identity-user-id">---</dd>
-							  <dt>Allowed IDs</dt>
-							  <dd id="data-identity-user-ids">---</dd>
-							  <dt>Content</dt>
-							  <dd id="data-identity-content"></dd>
-					  	 </dl>
-					  </dd>
-					</dl>
-				</div>
-			</div>
-	 </template>
-
-	 <template id="rendering-template">
-			<div class="section">
-				<div>
-					<span><img width="25px" class="block-icon" id="time" src=""></span>
-					<h2>Server processing time</h2>
-					<img src="" class="block-show" width="20px">
-					<img src="" class="block-hide" width="20px">
-				</div>
-				<div class="block">
-					<h3>Total processing time: <span id="data-rendering-render"></span></h3>
-					<table id="data-rendering-times">
-						<tr>
-							<th>Name</th>
-							<th>Time</th>
-						</tr>
-					</table>
-				</div>
-			</div>
-	</template>
-
 	<script type="text/javascript">
-		function loadProfilerData(method, params, onSuccess) {
-			totiLoad.async(
-				"/toti/profiler", method, params, {},
-				function(res) { onSuccess(res); }, 
-				function(xhr) { console.log(xhr); },
-				false
-			);
-		}
 
-		function getTemplate(template) {
-			return template.content.cloneNode(true).querySelector(":first-child");
-		}
-
-		document.getElementById("chb-page-request").onchange = function() {
-			loadProfilerData("put", {}, function(res) {});
-		};
-
-		loadProfilerData("post", {}, function(res) {
-			printResult(res, window.location.hash.substring(1));
-		});
-
-		function printResult(res, hash) {
-			var clear = function(pageId) {
-				return function() {
-					var message = pageId === null ? "All logs " : "The log for page '" + pageId + "'";
-					var params = pageId === null ? {} : {id: pageId};
-					if (totiDisplay.confirm(message + " will be deleted. Continue?")) {
-						loadProfilerData("delete", params, function(res) {
-							window.location.reload();
-						});
-					};
-				};
-			};
-			var menu = document.getElementById("menu");
-			menu.querySelector(".clear").onclick = clear(null);
-
-			var menuItemTemplate = document.getElementById("menu-item-template");
-			var subMenuItemTemplate = document.getElementById("sub-menu-item-template");
-			for (const[pageId, logs] of Object.entries(res.logByPage)) {
-				addMenuItem(menu, pageId, logs, clear, menuItemTemplate, subMenuItemTemplate, hash, true);
-			}
-			for (const[pageId, log] of Object.entries(res.noPageLog)) {
-				addMenuItem(menu, pageId, [log], clear, menuItemTemplate, subMenuItemTemplate, hash, false);
-			}
-		}
-
-		function addMenuItem(menu, pageId, logs, clear, menuItemTemplate, subMenuItemTemplate, hash, isPage) {
-			var menuItem = menuItemTemplate.content.cloneNode(true).querySelector("li");
-			var title = menuItem.querySelector("#title");
-			title.innerText = isPage ? pageId : "Not Page " + pageId;
-
-			menuItem.querySelector(".clear").onclick = clear(pageId);
-
-			var subListElement = menuItem.querySelector("ul");
-			subListElement.setAttribute("id", pageId);
-			if (hash !== '' && hash !== pageId) {
-				subListElement.classList.add("hidden");
-			}
-			logs.forEach(function(log) {
-				var subMenuItem = subMenuItemTemplate.content.cloneNode(true).querySelector("li");
-				menuItem.querySelector(".sub-list").appendChild(subMenuItem);
-				var link = subMenuItem.querySelector("#link");
-				link.innerText = 
-					"[" 
-					+ new Date(log.created).toISOString().replace('T', " ").substring(0, 23)
-					+ "] "
-					+ (isPage ? log.requestInfo.method + ": " + log.requestInfo.url : "");
-				link.onclick = function(e) {
-					e.preventDefault();
-					document.getElementById("content").innerHTML = '';
-					fillContent(document.getElementById("content"), log, isPage);
-					return false;
-				};
-			});
-
-			title.onclick = function(event) {
-				var element = document.getElementById(pageId);
-				if (element.classList.contains("hidden")) {
-					element.classList.remove("hidden");
-				} else {
-					element.classList.add("hidden");
-				}
-				return true;
-			};
-			menu.querySelector(".main-list").appendChild(menuItem);
-		}
-
-		/***************************************/
-
-		function getRequestLog(request) {
-			var container = getTemplate(document.getElementById("request-template"));
-			container.querySelector("#data-request-method").innerText = request.method;
-			container.querySelector("#data-request-fullUrl").innerText = request.fullUrl;
-			container.querySelector("#data-request-url").innerText = request.url;
-			container.querySelector("#data-request-protocol").innerText = request.protocol;
-			container.querySelector("#data-request-ip").innerText = request.IP;
-			if (request.hasOwnProperty("controller")) {
-				container.querySelector("#data-request-controller-module").innerText = request.controller.module;
-				container.querySelector("#data-request-controller-class").innerText = request.controller.class;
-				container.querySelector("#data-request-controller-method").innerText = request.controller.method;
-			}
-			return container;
-		}
-
-		function getTranslationsLog(trans) {
-			var container = getTemplate(document.getElementById("translations-template"));
-			if (trans.locale !== null) {
-				container.querySelector("#data-trans-locale").innerText = trans.locale.lang;
-				container.querySelector("#data-trans-ltr").innerText = trans.locale.isLeftToRight;
-				container.querySelector("#data-trans-substitutions").innerText = JSON.stringify(trans.locale.substitution);
-			}
-			
-			var table = container.querySelector("#data-trans-missingTranslations");
-			if (trans.missingTranslations.length === 0) {
-				table.remove();
-			}
-			trans.missingTranslations.forEach(function(missing) {
-				var createTd = function(value) {
-					var td = document.createElement("td");
-					td.innerText = value;
-					return td;
-				};
-				var tr = document.createElement("tr");
-				tr.appendChild(createTd(missing.locale));
-				tr.appendChild(createTd(missing.module));
-				tr.appendChild(createTd(missing.key));
-				tr.appendChild(createTd(JSON.stringify(missing.params)));
-				table.appendChild(tr);
-			});
-
-			var ul = container.querySelector("#data-trans-missingFiles");
-			trans.missingFiles.forEach(function(item) {
-				var li = document.createElement("li");
-				li.innerText = item;
-				ul.appendChild(li);
-			});
-			return container;
-		}
-
-		function getSqlLog(queries) {
-			var parent = getTemplate(document.getElementById("sql-template"));
-			var template = document.getElementById("sql-log-template");
-			var block = parent.querySelector(".block");
-			for (const[logId, log] of Object.entries(queries)) {
-				var container = getTemplate(template);
-				container.querySelector("#data-sql-prepared").innerText = log.preparedSql;
-				container.querySelector("#data-sql-builded").innerText = log.replacedSql;
-				addParametersToTable(
-					container.querySelector("#data-sql-builderParams"),
-					log.builderParams
-				);
-
-				var ol = container.querySelector("#data-sql-params");
-				log.params.forEach(function(item) {
-					var li = document.createElement("li");
-					li.innerText = item;
-					ol.appendChild(li);
-				});
-				container.querySelector("#data-sql-sql").innerText = log.sql;
-				container.querySelector("#data-sql-executed").innerText = log.isExecuted;
-				container.querySelector("#data-sql-result").innerText = log.result;
-
-				block.appendChild(container);
-			}
-			return parent;
-		}
-
-		function getLogInfo(info) {
-			var container = getTemplate(document.getElementById("log-info-template"));
-			container.querySelector("#data-name").innerText = info.name;
-			container.querySelector("#data-createdAt").innerText = new Date(info.created);
-			return container;
-		}
-
-		function getIdentityLog(identity) {
-			var container = getTemplate(document.getElementById("identity-template"));
-			container.querySelector("#data-identity-loginMode").innerText = identity.loginMode;
-			if (identity.hasOwnProperty("user")) {
-				container.querySelector("#data-identity-content").innerText = identity.user.content;
-				container.querySelector("#data-identity-user-id").innerText = identity.user.id;
-				container.querySelector("#data-identity-user-ids").innerText = JSON.stringify(identity.user.allowedIds);
-			}
-			return container;
-		}
-
-		function getRequestParametersLog(urlParams, bodyParams, body) {
-			var container = getTemplate(document.getElementById("request-parameters-template"));
-			addParametersToTable(
-				container.querySelector("#data-params-url"),
-				urlParams
-			);
-			addParametersToTable(
-				container.querySelector("#data-params-body"),
-				bodyParams
-			);
-			container.querySelector('#data-body').innerText = JSON.stringify(body);
-			return container;
-		}
-
-		function getRenderingLog(rendering) {
-			var container = getTemplate(document.getElementById("rendering-template"));
-			container.querySelector("#data-rendering-render").innerText = rendering.render;
-			var times = {};
-			rendering.times.forEach(function(time) {
-				times[time['_1']] = time['_2'];
-			});
-			addParametersToTable(container.querySelector("#data-rendering-times"), times);
-			return container;
-		}
-
-		/******************/
-
-		function fillContent(target, log, isPage) {
-			var div = document.createElement("div");
-			if (isPage) {
-				div.appendChild(getRequestLog(log.requestInfo));
-				div.appendChild(getRequestParametersLog(
-					log.requestInfo.UrlParams,
-					log.requestInfo.BodyParams,
-					log.requestInfo.Body
-				));
-			}
-			div.appendChild(getLogInfo(log));
-			div.appendChild(getTranslationsLog(log.trans));
-			div.appendChild(getSqlLog(log.queries));
-			if (isPage) {
-				div.appendChild(getIdentityLog(log.identity));
-				div.appendChild(getRenderingLog(log.rendering));
-			}
-
-			target.appendChild(div);
-			addImages();
-			addListeners();
-		}
-		/***********************/
-
-		function addImages() {
-			document.querySelectorAll(".block-icon").forEach(function(img) {
+		function getTemplate(selector) {
+			var element = document.getElementById(selector).content.cloneNode(true).querySelector(":first-child");
+			element.querySelectorAll(".icon").forEach(function(img) {
 				img.setAttribute("src", totiImages[img.getAttribute("id")]);
 			});
+			var hidables = [];
+			document.querySelectorAll('.hidable').forEach((el)=>{hidables.push(el);});
+			if (element.classList.contains('hidable')) {
+				hidables.push(element);
+			} 
+			hidables.forEach((hidable)=>{
+				var colapse = hidable.querySelector('.colapse');
+				var expand =  hidable.querySelector('.expand');
+				colapse.style.display = "none";
+				colapse.querySelector('.button').addEventListener('click', ()=>{
+					colapse.style.display = "none";
+					expand.style.display = "block";
+				});
+				expand.querySelector('.button').addEventListener('click', ()=>{
+					expand.style.display = "none";
+					colapse.style.display = "block";
+				});
+			});
+			return element;
 		}
 
-		function addListeners() {
-			document.querySelectorAll(".section").forEach(function(section) {
-				var block = section.querySelector(".block");
-				var hide = section.querySelector(".block-hide");
-				var show = section.querySelector(".block-show");
+		function shortVersion(text) {
+			var maxLength = 50;
+			if (text.length <= maxLength) {
+				return text;
+			}
+			return text.substring(0, maxLength - 3) + "...";
+		}
 
-				show.setAttribute("src", totiImages.arrowDown);
-				hide.setAttribute("src", totiImages.arrowUp);
-				show.style.display = "none";
-				hide.onclick = function() {
-					show.style.display = "inline-block";
-					block.style.display = "none";
-					hide.style.display = "none";
+		function fillParameterTable(table, params) {
+			for (const[name, value] of Object.entries(params)) {
+				var nameContainer = document.createElement('th');
+				nameContainer.innerText = name;
+				var valueContainer = document.createElement('td');
+				valueContainer.innerText = value;
+
+				var item = document.createElement('tr');
+				item.appendChild(nameContainer);
+				item.appendChild(valueContainer);
+
+				table.appendChild(item);
+			}
+		}
+
+		/********************/
+		var pageId = new URL(window.location.href).searchParams.get("page");
+		var body = {};
+		if (pageId !== null) {
+			body = {
+				pageId: pageId
+			};
+		}
+		totiLoad.anonymous("/toti/profiler", "post", {}, {}, body).then((res)=>{
+			renderMenu(res);
+			render(res[0]);
+		}).catch((xhr)=>{
+			console.error(xhr);
+		});
+
+		/********************/
+
+		function renderMenu(res) {
+			var menu = document.querySelector("#menu ul");
+			res.forEach((row)=>{
+				var menuItem = getTemplate("menu-item-template");
+				menuItem.innerText = row.title;
+				menuItem.onclick = ()=>{
+					render(row);
 				};
-				show.onclick = function() {
-					show.style.display = "none";
-					block.style.display = "block";
-					hide.style.display = "inline-block";
-				};
+				menu.appendChild(menuItem);
 			});
 		}
-		/*************************/
-		function addParametersToTable(table, parameters, renderFunc = null) {
-			parameters = parameters === null ? {} : parameters;
-			var createTd = function(value) {
-				var td = document.createElement("td");
-				if (renderFunc !== null) {
-					td.innerHTML = renderFunc(value);
-				} else if (typeof value === 'object') {
-					td.innerHTML = "<i>"  + JSON.stringify(value) + "</i>";
+
+		function render(row) {
+			var content = document.getElementById("content");
+			content.innerHTML = "";
+			var title = document.createElement('h2');
+			title.innerText = row.title;
+			content.appendChild(title);
+
+			content.appendChild(renderRequest(row));
+			content.appendChild(renderUser(row));
+			content.appendChild(renderController(row));
+			content.appendChild(renderTemplates(row));
+			content.appendChild(renderQueries(row));
+			content.appendChild(renderTranslations(row));
+		}
+
+		function renderRequest(row) {
+			if (!row.hasOwnProperty('request')) {
+				return document.createElement('div');
+			}
+			var container = getTemplate('request-template');
+			container.querySelector('#time').innerText = row.request.processTime;
+			container.querySelector('#auth').innerText = row.request.loginMode;
+			container.querySelector('#locale').innerText = row.request.locale.lang;
+			var params = container.querySelector('#parameters');
+			if (Object.keys(row.request.params).length === 0) {
+				params.remove();
+			} else {
+				fillParameterTable(params.querySelector('table'), row.request.params);
+			}
+			return container;
+		}
+
+		function renderUser(row) {
+			if (!row.hasOwnProperty('user')) {
+				return document.createElement('div');
+			}
+			var container = getTemplate('user-template');
+			container.querySelector('#id').innerText = row.user.id;
+			container.querySelector('#ids').innerText = row.user.allowedIds.toString();
+			if (Object.keys(row.user.content).length === 0) {
+				container.querySelector('#content').remove();
+			} else {
+				fillParameterTable(container.querySelector('#content, table'), row.user.content);
+			}
+			return container;
+		}
+
+		function renderController(row) {
+			if (!row.hasOwnProperty('controller')) {
+				return document.createElement('div');
+			}
+			var container = getTemplate('controller-template');
+			container.querySelector('#module').innerText = row.controller.module;
+			container.querySelector('#class').innerText = row.controller.class;
+			container.querySelector('#method').innerText = row.controller.method;
+			container.querySelector('#auth').innerText = row.controller.authMode;
+			return container;
+		}
+
+		function renderTemplates(row) {
+			if (!row.hasOwnProperty('template') || row.template === null) {
+				return document.createElement('div');
+			}
+			var container = document.createElement('div');
+			var title = document.createElement('h3');
+			title.innerText = "Templates";
+			container.appendChild(title);
+			renderTemplate(container, row.template, 0);
+			return container;
+		}
+
+		function renderTemplate(container, template, level) {
+			var element = getTemplate('templates-template');
+			element.style['margin-left'] = (level * 1) + "em";
+			element.querySelector('#name-short').innerText = shortVersion(template.file);
+			element.querySelector('#name-full').innerText = template.file;
+			element.querySelector('#module').innerText = template.module;
+			element.querySelector('#path').innerText = template.path;
+			
+			delete template.variables.totiIdentity;
+			delete template.variables.nonce;
+			if (Object.keys(template.variables).length === 0) {
+				element.querySelector('#variables').remove();
+			} else {
+				fillParameterTable(element.querySelector('#variables table'), template.variables);
+			}
+			container.appendChild(element);
+			template.childs.forEach((child)=>{
+				renderTemplate(container, child, level+1);
+			});
+		}
+
+		function renderQueries(row) {
+			if (!row.hasOwnProperty('queries')) {
+				return document.createElement('div');
+			}
+			var container = document.createElement('div');
+			var title = document.createElement('h3');
+			title.innerText = "SQL Queries";
+			container.appendChild(title);
+			row.queries.forEach((query)=>{
+				var element = getTemplate('queries-template');
+				element.querySelector('#query-short').innerText = shortVersion(query.sql);
+				element.querySelector('#query-full').innerText = query.sql;
+				element.querySelector('#query-translated').innerText = query.replacedSql;
+				var status = element.querySelector('#status');
+				if (query.isExecuted) {
+					element.querySelector('#time').innerText = query.executionTime;
+					status.innerText = "Executed";
+					status.style['background-color'] = "green";
+					element.querySelector('#result span').innerText = query.result;
 				} else {
-					td.innerText = value;
+					status.innerText = "Not executed";
+					status.style['background-color'] = "red";
+					element.querySelector('#result').remove();
 				}
 				
-				return td;
-			};
-			for(const[name, value] of Object.entries(parameters)) {
-				var tr = document.createElement("tr");
-				tr.appendChild(createTd(name));
-				tr.appendChild(createTd(value));
-				table.appendChild(tr);
+				
+				var paramList = element.querySelector('#params-list');
+				var paramTable = element.querySelector('#params-table');
+				if (!query.hasOwnProperty('params')) {
+					paramList.remove();
+					paramTable.remove();
+				} else if (Array.isArray(query.params)) {
+					paramTable.remove();
+					query.params.forEach((param)=>{
+						var item = document.createElement('li');
+						item.innerText = param;
+						paramList.querySelector('ol').appendChild(item);
+					});
+				} else {
+					paramList.remove();
+					fillParameterTable(paramTable.querySelector('table'), query.params);
+				}
+				container.appendChild(element);
+			});
+			return container;
+
+		}
+
+		function renderTranslations(row) {
+			if (!row.hasOwnProperty('translations')) {
+				return document.createElement('div');
 			}
+			var container = getTemplate('translations-template');
+			row.translations.missingFiles.forEach((file)=>{
+				var element = document.createElement("li");
+				element.innerText = file;
+				container.querySelector('#missing-locales').appendChild(element);
+			});
+			row.translations.missingTranslations.forEach((trans)=>{
+				var mod = document.createElement('td');
+				mod.innerText = trans.module;
+				var locale = document.createElement('td');
+				locale.innerText = trans.locale;
+				var key = document.createElement('td');
+				key.innerText = trans.key;
+				var params = document.createElement('td');
+				for (const[name, value] of Object.entries(trans.params)) {
+					var nameContainer = document.createElement('strong');
+					nameContainer.innerText = name + ": ";
+					var valueContainer = document.createElement('span');
+					valueContainer.innerText = value;
+					params.appendChild(nameContainer);
+					params.appendChild(valueContainer);
+					params.appendChild(document.createElement('br'));
+				}
+
+				var item = document.createElement('tr');
+				item.appendChild(locale);
+				item.appendChild(mod);
+				item.appendChild(key);
+				item.appendChild(params);
+				container.querySelector('#missing-translations').appendChild(item);
+			});
+			return container;
 		}
 	</script>
 </body>

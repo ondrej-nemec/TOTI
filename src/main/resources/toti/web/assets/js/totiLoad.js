@@ -1,4 +1,4 @@
-/* TOTI Load version 1.0.0 */
+/* TOTI Load version 1.0.1 */
 var totiLoad = {
 	anonymous: function(url, method, headers = {}, urlData = {}, bodyData = {}) {
 		return totiLoad._load(url, method, headers, urlData, bodyData);
@@ -84,9 +84,6 @@ var totiLoad = {
 		var authToken = totiStorage.getVariable(totiAuth.variableToken);
         if (authToken !== null) {
            headers["Authorization"] = "bearer " + authToken.access_token;
-        }
-        if (typeof totiProfiler !== 'undefined' && totiProfiler.pageId !== null) {
-        	headers["PageId"] = totiProfiler.pageId;
         }
         return headers;
 	}

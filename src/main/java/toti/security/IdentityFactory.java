@@ -3,6 +3,7 @@ package toti.security;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import ji.translator.Locale;
 import ji.translator.Translator;
@@ -17,8 +18,8 @@ public class IdentityFactory {
 	private final static String LOCALE_HEADER_NAME = "Accept-Language";
 	private final static String SESSION_COOKIE_NAME = "SessionID";
 	private final static String SESSION_HEADER_NAME = "Authorization";
-//	private final static String PAGE_ID_HEADER_NAME = "PageId";
-//	private final static String PAGE_ID_COOKIE_NAME = "PageId";
+	private final static String PAGE_ID_HEADER_NAME = "PageId";
+	private final static String PAGE_ID_COOKIE_NAME = "PageId";
 	
 	private final String defLang;
 	private final Translator translator;
@@ -78,12 +79,12 @@ public class IdentityFactory {
 					+ "; Max-Age=" + 0
 			);
 		}
-		/*if (identity.getPageId() != null) {
+		if (identity.getPageId() != null) {
 			responseHeaders.addHeader(
 				"Set-Cookie", PAGE_ID_COOKIE_NAME + "=" + identity.getPageId()
 				+ "; SameSite=Strict"
 			);
-		}*/
+		}
 		//headers.addAll(identity.getResponseHeaders());
 		////cache.save(identity.getId(), identity.getUser());
 		//return headers;
@@ -94,11 +95,11 @@ public class IdentityFactory {
 		Tuple2<String, AuthMode> token = getToken(headers);
 		Identity identity = new Identity(IP, getLocale(headers), headers, token._1(), token._2());
 		if (profiler.isUse()) {
-			identity.setPageId(profiler.getCurrentPageId()); // getPageId(headers)
+			identity.setPageId(getPageId(headers)); // profiler.getCurrentPageId()
 		}
 		return identity;
 	}
-/*
+
 	private String getPageId(Headers headers) {
 		Object pageHeader = headers.getHeader(PAGE_ID_HEADER_NAME);
 		if (pageHeader == null) {
@@ -106,7 +107,7 @@ public class IdentityFactory {
 		}
 		return pageHeader.toString();
 	}
-*/
+
 	private Tuple2<String, AuthMode> getToken(Headers headers) {
 		String token = null;
 		AuthMode mode = AuthMode.NO_TOKEN;
