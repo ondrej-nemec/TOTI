@@ -608,6 +608,19 @@ public class CustomTemplateCallback implements TemplateCallback {
 // example
 &lt;t:callback name="org.example.callbacks.CustomTemplateCallback" /&gt;
 </code></pre>
+
+<h3>Datetime format</h3>
+
+<strong>Nepárový</strong>
+
+<p>Daný časový údaj zobrazí v požadovaném formátu. Formát je klíč pro překlad.</p>
+
+<pre><code>
+&lt;t:format value="" format="" &gt;
+// example
+&lt;t:format value="${now}" format="messages.time-format" &gt;
+</code></p>
+
 <!--
 <h3></h3>
 
