@@ -1,4 +1,4 @@
-/* TOTI Grid custom template version 0.1.1 */
+/* TOTI Grid custom template version 0.1.2 */
 var totiGridCustomTemplate = {
 	getContainer: function(parentSelector, gridUnique) {
 		return document.querySelector(parentSelector);
@@ -105,7 +105,18 @@ var totiGridCustomTemplate = {
 				content.innerText = value;
 				break;
 			case 1:
-				content.appendChild(value);
+				var placeholder = content.querySelector('[toti-grid-checkbox="' + name + '"]');
+                if (placeholder !== null) {
+                    var atts = placeholder.attributes;
+                    for (var i = 0; i < atts.length; i++){
+                        if (atts[i].nodeName !== 'checkbox') {
+                            value.setAttribute(atts[i].nodeName, atts[i].nodeValue);
+                        }
+                    }
+                    placeholder.parentNode.replaceChild(value, placeholder);
+                } else {
+                     content.appendChild(value);
+                }
 				break;
 			case 2:
 				content.append(...value);
