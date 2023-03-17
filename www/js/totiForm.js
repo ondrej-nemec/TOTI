@@ -86,7 +86,7 @@ class TotiForm {
 
 		
 		if (field.type === "dynamic" && field.hasOwnProperty('load')) {
-			var dynamicContainer = form.template.getDynamicContainer(form.formUnique, form.container, field.name, field.title, null);
+			var dynamicContainer = form.template.getDynamicContainer(form.formUnique, form.container, form.container, 0, field.name, field.title, null);
 			totiLoad.load(field.load.url, field.load.method, {}, {}, field.load.params)
 			.then((loaded)=>{
 				loaded.forEach((group)=>{
