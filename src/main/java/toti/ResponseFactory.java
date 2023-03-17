@@ -216,7 +216,7 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 			}
 			//if (profiler.isUse()) {
 		   	//	profiler.setPageId(identity.getPageId());
-			profiler.startProfilePage();
+			profiler.startProfilePage(identity.getPageId());
 			profiler.logRequest(identity,request, mapped);
 		   //	}
 		   	return getControllerResponse(responseHeaders, mapped, request, identity, websocket);
