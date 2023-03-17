@@ -1,4 +1,4 @@
-/* TOTI Grid version 1.1.5 */
+/* TOTI Grid version 1.1.6 */
 class TotiGrid {
 
 	cookieName = "grid-cache";
@@ -149,7 +149,9 @@ class TotiGrid {
 				}
 				var onClickSettings = totiUtils.clone(settings);
 				onClickSettings['params'] = params;
-				return totiControl.getAction(onClickSettings)(event);
+				var result = totiControl.getAction(onClickSettings)(event);
+                totiDisplay.fadeOut();
+                return result;
 			});
 		}
 		if (this.config.hasOwnProperty('pagesSizes')) {

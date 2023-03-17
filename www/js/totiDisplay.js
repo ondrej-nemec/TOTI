@@ -1,4 +1,4 @@
-/* TOTI Display version 1.0.0 */
+/* TOTI Display version 1.0.1 */
 var totiDisplay = {
 	prompt: function(message, defValue = "") {
 		return new Promise((resolve)=>{
@@ -83,7 +83,7 @@ var totiDisplay = {
 		var fadeElement = document.querySelector("#toti-fade-in");
 		if (fadeElement === null) {
 			var fade = document.createElement('div');
-			fade.style.position = "absolute";
+			fade.style.position = "fixed";
 			fade.style.top = 0;
 			fade.style.left = 0;
 			fade.style.width = "100%";
