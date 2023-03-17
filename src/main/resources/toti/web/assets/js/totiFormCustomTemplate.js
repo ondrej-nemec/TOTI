@@ -1,4 +1,4 @@
-/* TOTI Form custom template version 0.0.1 */
+/* TOTI Form custom template version 0.0.2 */
 var totiFormCustomTemplate = {
 	getContainer: function(selector, formUnique, editable) {
 		var form = document.createElement(editable ? "form" : "div");
@@ -111,7 +111,7 @@ var totiFormCustomTemplate = {
 			}
 		}
 	},
-	getDynamicContainer: function(formUnique, container, name, title, addItem) {
+	getDynamicContainer: function(formUnique, container, parentContainer, deep, name, title, addItem) {
 		var list = container.querySelectorAll('[toti-form-dynamic-container="' + name + '"]');
 		if (list.length === 0) {
 			return null;
@@ -180,5 +180,4 @@ var totiFormCustomTemplate = {
          removeElement('label');
          removeElement('error');
      }
-	
 };

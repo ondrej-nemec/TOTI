@@ -1,4 +1,4 @@
-/* TOTI Form version 1.1.1 */
+/* TOTI Form version 1.1.2 */
 class TotiForm {
 
 	constructor(config) {
@@ -110,10 +110,14 @@ class TotiForm {
             });
 		} else if (field.type === "dynamic") {
 			var dynamicCache = this.dynamic;
+            var parentContainer = form.container;
+            var deep = 0;
 			if (parent !== null) {
 				if (parent.hasOwnProperty('dynamic')) {
 					parent.dynamic['dynamic'] = {};
 					dynamicCache = parent.dynamic['dynamic'];
+                    parentContainer = parent.container;
+					deep = parent.deep + 1;
 				}
 			}
 			var realName = fieldName === undefined || parent.hasOwnProperty('dynamic') ? originName : fieldName;
@@ -148,13 +152,14 @@ class TotiForm {
 						position: position+1,
 						container: rowContainer,
                         group: position,
-                        dynamic: dynamicCache[field.name]
+                        dynamic: dynamicCache[field.name],
+                		deep: dynamicCache[realName].deep
 					});
 				});
 				return position;
 			};
 			var dynamicContainer = form.template.getDynamicContainer(
-				form.formUnique, form.container, realName,
+				form.formUnique, form.containerr, parentContainer, deep, realName,
 				field.title, field.addButton && editable ? addItem : null
 			);
 			if (dynamicContainer === null) {
@@ -165,7 +170,8 @@ class TotiForm {
 				remove: removeItem,
 				position: -1,
 				container: dynamicContainer,
-				elements: {}
+				elements: {},
+                deep: deep
 			};
 			if (field.addFirstBlank) {
 				addItem();

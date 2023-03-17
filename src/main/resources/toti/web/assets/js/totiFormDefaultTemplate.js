@@ -1,4 +1,4 @@
-/* TOTI Form default template version 0.0.0 */
+/* TOTI Form default template version 0.0.1 */
 /* can be overriden */
 var totiFormDefaultTemplate = {
 	getContainer: function(selector, formUnique, editable) {
@@ -178,7 +178,7 @@ var totiFormDefaultTemplate = {
 			target.appendChild(element);
 		}
 	},
-	getDynamicContainer: function(formUnique, container, name, title, addItem) {
+	getDynamicContainer: function(formUnique, container, parentContainer, deep, name, title, addItem) {
 		var dynamic = document.createElement("tr");
 		totiFormDefaultTemplate.addToContainer(formUnique, container, dynamic);
 		
