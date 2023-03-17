@@ -90,7 +90,7 @@ public class DynamicList implements Input {
         }
 		json.put("addButton", useAddButton);
 		json.put("removeButton", useRemoveButton);
-		json.put("addFirrstBlank", addFirstBlank);
+		json.put("addFirstBlank", addFirstBlank);
 		return json;
 	}
 
