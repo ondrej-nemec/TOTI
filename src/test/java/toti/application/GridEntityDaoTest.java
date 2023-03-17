@@ -72,7 +72,7 @@ public class GridEntityDaoTest implements Entity {
 					"no owner, no ids, like",
 				Optional.empty(), Arrays.asList(),
 				new MapInit<String, Filter>()
-					.append("likeColumn", new Filter("likeColumn", FilterMode.LIKE, "--value--"))
+					.append("likeColumn", new Filter("likeColumn", FilterMode.LIKE, "--value--", false, false))
 					.toSortedMap(),
 				"WHERE (1=1) AND (CONCAT('', likeColumn) LIKE '%--value--%')"
 			},
@@ -81,7 +81,7 @@ public class GridEntityDaoTest implements Entity {
 					"no owner, no ids, starts",
 				Optional.empty(), Arrays.asList(),
 				new MapInit<String, Filter>()
-					.append("startsColumn", new Filter("startsColumn", FilterMode.STARTS_WITH, "--value--"))
+					.append("startsColumn", new Filter("startsColumn", FilterMode.STARTS_WITH, "--value--", false, false))
 					.toSortedMap(),
 				"WHERE (1=1) AND (CONCAT('', startsColumn) LIKE '%--value--')"
 			},
@@ -90,7 +90,7 @@ public class GridEntityDaoTest implements Entity {
 					"no owner, no ids, ends",
 				Optional.empty(), Arrays.asList(),
 				new MapInit<String, Filter>()
-				.append("endsColumn", new Filter("endsColumn", FilterMode.ENDS_WITH, "--value--"))
+				.append("endsColumn", new Filter("endsColumn", FilterMode.ENDS_WITH, "--value--", false, false))
 				.toSortedMap(),
 				"WHERE (1=1) AND (CONCAT('', endsColumn) LIKE '--value--%')"
 			},
@@ -99,7 +99,7 @@ public class GridEntityDaoTest implements Entity {
 					"no owner, no ids, equas",
 				Optional.empty(), Arrays.asList(),
 				new MapInit<String, Filter>()
-				.append("equalsColumn", new Filter("equalsColumn", FilterMode.EQUALS, "--value--"))
+				.append("equalsColumn", new Filter("equalsColumn", FilterMode.EQUALS, "--value--", false, false))
 				.toSortedMap(),
 				"WHERE (1=1) AND (equalsColumn = '--value--')"
 			},
@@ -108,10 +108,10 @@ public class GridEntityDaoTest implements Entity {
 					"combined",
 				Optional.of("ownerId"), Arrays.asList(1, "--id--", false),
 				new MapInit<String, Filter>()
-				.append("likeColumn", new Filter("likeColumn", FilterMode.LIKE, "--value--"))
-				.append("startsColumn", new Filter("startsColumn", FilterMode.STARTS_WITH, "--value--"))
-				.append("endsColumn", new Filter("endsColumn", FilterMode.ENDS_WITH, "--value--"))
-				.append("equalsColumn", new Filter("equalsColumn", FilterMode.EQUALS, "--value--"))
+				.append("likeColumn", new Filter("likeColumn", FilterMode.LIKE, "--value--", false, false))
+				.append("startsColumn", new Filter("startsColumn", FilterMode.STARTS_WITH, "--value--", false, false))
+				.append("endsColumn", new Filter("endsColumn", FilterMode.ENDS_WITH, "--value--", false, false))
+				.append("equalsColumn", new Filter("equalsColumn", FilterMode.EQUALS, "--value--", false, false))
 				.toSortedMap(),
 				"WHERE (1=1) AND (ownerId in (1,'--id--',false))"
 				+ " AND (equalsColumn = '--value--')"

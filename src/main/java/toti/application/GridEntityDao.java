@@ -127,15 +127,14 @@ public interface GridEntityDao<T extends Entity>{
 		filters.forEach((filterName, filter)->{
 			String where = "";
 			if (filter.getValue() == null) {
-				where = filter.getName() + " is null";
-			} else if (filter.getMode() == FilterMode.EQUALS) {
-				where = filter.getName() + " = :" + filter.getName() + "Value";
-			// v2
-			} else {
-				where = builder.getSqlFunctions().concat(":empty", filter.getName())
-						+ " LIKE :" + filter.getName() + "Value";
-				select.addParameter(":empty", ""); // cast to string
-			}
+                where = filter.getName() + " is null";
+            } else if (filter.getMode() == FilterMode.EQUALS) {
+                where = compare(filter.getName(), filter) + " = " + compare(":" + filter.getName() + "Value", filter);
+            // v2
+            } else {
+                where = compare(builder.getSqlFunctions().concat(":empty", filter.getName()), filter)
+                         + " LIKE " + compare(":" + filter.getName() + "Value", filter);
+            }
 			// v1
 			/*else if (value.toString().length() > 20) {
 				where = builder.getSqlFunctions().concat(":empty", filter)
@@ -154,7 +153,25 @@ public interface GridEntityDao<T extends Entity>{
 			);
 		});
 	}
+	
+	default String compare(String value, Filter filter) {
+        // TODO use sql func. class
+        // TODO use sql func for collate latin
+        // WHERE Name COLLATE Latin1_general_CI_AI Like '%cafe%' COLLATE Latin1_general_CI_AI
+        // latin1_general_cs
+        /*if (filter.isCI() && filter.isIgnoreDiacritics()) {
+             return String.format("unacce", value);
+        }
+        if (filter.isIgnoreDiacritics()) {
+             return String.format("%s COLLATE latin1_general_cs", value);
+        }*/
 
+        if (filter.isCI()) {
+             return String.format("lower(%s)", value);
+        }
+        return value;
+
+    }
 
 	static final String HELP_KEY_NAME = "help_key";
 	static final String HELP_DISPLAY_VALUE_NAME = "help_display_";

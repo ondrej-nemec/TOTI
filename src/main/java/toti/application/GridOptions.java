@@ -1,5 +1,6 @@
 package toti.application;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import ji.common.annotations.MapperParameter;
@@ -51,8 +52,8 @@ public class GridOptions implements Entity {
 		return sorting.containsKey(name);
 	}
 	
-	public void addFilter(String name, FilterMode mode, Object value) {
-		filters.put(name, new Filter(name, mode, value));
+	public void addFilter(String name, FilterMode mode, Object value, boolean isCI, boolean isIgnoreDiactritics) {
+		filters.put(name, new Filter(name, mode, value, isCI, isIgnoreDiactritics));
 	}
 	
 	public void addSorting(String name, boolean isDesc) {
@@ -64,16 +65,27 @@ public class GridOptions implements Entity {
 		Validator sorting = new Validator(true);
 		gridColumns.forEach((column)->{
 			if (column.isUseInFilter()) {
-				filters.addRule(
-					ItemRules.forName(column.getName(), false).setType(column.getType())
-					.setChangeValue((v)->{
-						if (v == null) {
-							return null;
-						}
-						return new Filter(column.getName(), column.getFilterMode(), v);
-					})
-				);
-			}
+                Class<?> type = column.getType();
+                if (type.equals(LocalDateTime.class)) {
+                     type = String.class;
+                }
+                filters.addRule(
+                     ItemRules.forName(column.getName(), false).setType(type)
+                     .setChangeValue((v)->{
+                         if (v == null) {
+                              return null;
+                         }
+                         if (column.getType().equals(LocalDateTime.class)) {
+                              v = v.toString().replace("T", " ");
+                         }
+                         return new Filter(
+                              column.getName(), column.getFilterMode(), v,
+                              column.getType().equals(String.class) ? column.isCI() : false,
+                              column.getType().equals(String.class) ? column.isIgnoreDiacritics() : false
+                         );
+                     })
+                );
+            }
 			if (column.isUseInSorting()) {
 				sorting.addRule(
 					ItemRules.forName(column.getName(), false).setType(boolean.class)

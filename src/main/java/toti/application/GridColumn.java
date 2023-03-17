@@ -8,6 +8,8 @@ public class GridColumn {
 	private boolean useInSorting;
 	private final Class<?> clazz;
 	private String sortingName;
+    private boolean isCI;
+    private boolean ignoreDiacritics;
 	
 	public GridColumn(String name) {
 		this(name, String.class);
@@ -40,6 +42,16 @@ public class GridColumn {
 		this.useInFilter = useInFilter;
 		return this;
 	}
+	
+	public GridColumn setCI(boolean isCI) {
+		this.isCI = isCI;
+		return this;
+	}
+	
+	public GridColumn setIgnoreDiacritics(boolean ignoreDiacritics) {
+		this.ignoreDiacritics = ignoreDiacritics;
+		return this;
+	}
 
 	public String getName() {
 		return name;
@@ -65,6 +77,14 @@ public class GridColumn {
 		return clazz;
 	}
 
+	public boolean isCI() {
+		return isCI;
+	}
+	
+	public boolean isIgnoreDiacritics() {
+		return ignoreDiacritics;
+	}
+	
 	@Override
 	public String toString() {
 		return "GridColumn [name=" + name + ", useInFilter=" + useInFilter + ", useInSorting=" + useInSorting
