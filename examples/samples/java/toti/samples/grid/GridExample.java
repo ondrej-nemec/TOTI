@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.apache.logging.log4j.Logger;
 import ji.common.functions.Env;
@@ -632,6 +633,75 @@ public class GridExample implements Module {
 		return GridOptions.getValidator(Arrays.asList(
 			new GridColumn("number").setSortingName("id")
 		));
+	}
+	
+	/******************/
+	
+	/**
+	 * Usage of automatic refresh
+	 * @return http://localhost:8080/examples-grid/grid/refresh
+	 */
+	@Action("refresh")
+	public Response refresh() {
+		Grid grid = new Grid(link.create(getClass(), c->c.refreshRandomData(null)), "get");
+		grid.addColumn(new ValueColumn("id"));
+		grid.setRefreshInterval(30000); // 0.5 min
+		grid.addColumn(
+			new ValueColumn("text")
+			.setTitle("Text")
+				//.setFilter(Text.filter())
+				//.setUseSorting(true)
+		);
+		grid.addColumn(
+			new ValueColumn("number")
+			.setTitle("Number")
+			//	.setFilter(Number.filter())
+			//	.setUseSorting(true)
+		);
+		grid.addColumn(
+			new ButtonsColumn("buttons")
+			.addButton(
+				Button.create(
+					link.create(
+						getClass(), c->c.syncButtonLink(0, null),
+						MapInit.create().append("name", "{text}").toMap(),
+						"{id}"
+					),
+					"sync"
+				)
+				.setMethod("get").setAsync(false).setTitle("Sync")
+			)
+		);
+		Map<String, Object> params = new HashMap<>();
+		params.put("grid", grid);
+		return Response.getTemplate("filters.jsp", params);
+	}
+	
+	public Validator randomDataValidator() {
+		return GridOptions.getValidator(Arrays.asList());
+	}
+	
+	/**
+	 * Returns data for all filters grid
+	 * Called internally
+	 * @return http://localhost:8080/examples-grid/grid/random-data
+	 */
+	@Action(value="random-data", validator="randomDataValidator")
+	public Response refreshRandomData(@Params GridOptions options) {
+		List<Object> data = new LinkedList<>();
+		Random random = new Random();
+		for (int i = 0; i < 20; i++) {
+			Map<String, Object> row = new HashMap<>();
+			row.put("id", i);
+			row.put("text", "Row #" + i);
+			row.put("number", random.nextInt());
+			data.add(row);
+		}
+		return Response.getJson(MapInit.create()
+			.append("itemsCount", 20)
+			.append("pageIndex", 1)
+			.append("data", data)
+		.toMap());
 	}
 	
 	/*****/
