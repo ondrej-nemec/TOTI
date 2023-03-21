@@ -106,6 +106,7 @@ public class ResponseFactoryExceptions {
             dir.setExecutable(true, false);
             dir.setReadable(true, false);
             dir.setWritable(true, false);
+            dir.mkdirs();
             
 			String fileName =
 					dirName
