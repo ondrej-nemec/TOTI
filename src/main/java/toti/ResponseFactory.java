@@ -257,7 +257,7 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 			);
 			RequestParameters params = new RequestParameters();
 			params.putAll(request.getBodyInParameters().toMap());
-			params.putAll(request.getUrlParameters().toMap());
+			params.putAll(request.getQueryParameters().toMap());
 			
 			// create instance here - validator can be method of that object
 			Object o = register

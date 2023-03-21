@@ -144,7 +144,7 @@ public class ResponseFactoryExceptions {
 		variables.put("method", request.getMethod());
 		variables.put("protocol", request.getProtocol());
 		variables.put("headers", identity.getHeaders());
-		variables.put("urlParameters", request.getUrlParameters());
+		variables.put("urlParameters", request.getQueryParameters());
 		variables.put("bodyParameters", request.getBodyInParameters());
 		variables.put("body", request.getBody());
 		variables.put("identity", identity);

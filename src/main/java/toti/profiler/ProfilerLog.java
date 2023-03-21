@@ -147,7 +147,7 @@ public class ProfilerLog implements Jsonable{
 			requestInfo.put("url", request.getPlainUri());
 			requestInfo.put("processTime", getRequestTime());
 			requestInfo.put("loginMode", identity.getLoginMode());
-			requestInfo.put("params", request.getUrlParameters());
+			requestInfo.put("params", request.getQueryParameters());
 			requestInfo.put("locale", Mapper.get().serialize(identity.getLocale()));
 
 			json.put("request", requestInfo);
