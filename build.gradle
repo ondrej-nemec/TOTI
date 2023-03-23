@@ -32,17 +32,20 @@ sourceSets {
         java {
             srcDir 'src/test/java'
             srcDir 'examples/samples/java'
+            srcDir 'examples/tutorial1/java'
         }
         resources {
             srcDir 'src/test/resources'
             srcDir 'examples/samples/resources'
+            srcDir 'examples/tutorial1/resources'
         }
     }
 }
 //*/
 
 dependencies {
-	api 'com.github.ondrej-nemec.JI:JI:eb42ae3816'
+	api project('toti-templating')
+	api 'com.github.ondrej-nemec.JI:JI:b336cfc947'
 	
 	// compile files("${System.properties['java.home']}/../lib/tools.jar")
 	

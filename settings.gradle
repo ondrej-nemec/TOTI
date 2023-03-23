@@ -1,2 +1,4 @@
 
 rootProject.name = 'TOTI'
+
+include('toti-templating')
