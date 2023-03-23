@@ -161,6 +161,7 @@ public class ApplicationFactory {
 					logger
 				).setProfiler(profiler.used()),
 				translator,
+				link,
 				new IdentityFactory(translator, translator.getLocale().getLang()),
 				authenticator,
 				authorizator,

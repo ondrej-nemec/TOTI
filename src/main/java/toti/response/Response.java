@@ -8,27 +8,20 @@ import ji.common.functions.FileExtension;
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.WebSocket;
 import toti.Headers;
-import toti.security.Authorizator;
 import toti.security.Identity;
-import toti.templating.TemplateFactory;
-import toti.url.MappedUrl;
-import ji.translator.Translator;
 
 public interface Response {
 
 	ji.socketCommunication.http.structures.Response getResponse(
 			String protocol,
 			Headers responseHeaders,
-			TemplateFactory templateFactory,
-			Translator translator,
-			Authorizator authorizator,
 			Identity identity,
-			MappedUrl current,
+			ResponseContainer container,
 			String charset
 	);
 
 	default ji.socketCommunication.http.structures.Response getResponse(String protocol, Headers responseHeaders, String charset) {
-		return getResponse(protocol, responseHeaders, null, null, null, null, null, charset);
+		return getResponse(protocol, responseHeaders, null, null, charset);
 	}
 	
 	/***********/

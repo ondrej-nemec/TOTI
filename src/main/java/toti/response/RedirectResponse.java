@@ -2,12 +2,8 @@ package toti.response;
 
 import ji.socketCommunication.http.StatusCode;
 import toti.Headers;
-import toti.security.Authorizator;
 import toti.security.Identity;
-import toti.templating.TemplateFactory;
 import toti.url.Link;
-import toti.url.MappedUrl;
-import ji.translator.Translator;
 
 public class RedirectResponse implements Response {
 
@@ -26,10 +22,8 @@ public class RedirectResponse implements Response {
 	public ji.socketCommunication.http.structures.Response getResponse(
 			String protocol,
 			Headers header,
-			TemplateFactory templateFactory, 
-			Translator translator, 
-			Authorizator authorizator,
-			Identity identity, MappedUrl current,
+			Identity identity,
+			ResponseContainer container,
 			String charset) {
 		header.addHeader("Location", url);
 		ji.socketCommunication.http.structures.Response res = new ji.socketCommunication.http.structures.Response(code, protocol);

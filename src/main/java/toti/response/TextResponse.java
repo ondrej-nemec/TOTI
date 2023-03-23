@@ -2,11 +2,7 @@ package toti.response;
 
 import ji.socketCommunication.http.StatusCode;
 import toti.Headers;
-import toti.security.Authorizator;
 import toti.security.Identity;
-import toti.templating.TemplateFactory;
-import toti.url.MappedUrl;
-import ji.translator.Translator;
 
 public class TextResponse implements Response {
 
@@ -22,10 +18,8 @@ public class TextResponse implements Response {
 	public ji.socketCommunication.http.structures.Response getResponse(
 			String protocol,
 			Headers header,
-			TemplateFactory templateFactory, 
-			Translator translator, 
-			Authorizator authorizator,
-			Identity identity, MappedUrl current,
+			Identity identity,
+			ResponseContainer container,
 			String charset) {
 		ji.socketCommunication.http.structures.Response response = new ji.socketCommunication.http.structures.Response(code, protocol);
 		response.setHeaders(header.getHeaders());

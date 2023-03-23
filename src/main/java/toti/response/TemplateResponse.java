@@ -6,12 +6,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 import ji.socketCommunication.http.StatusCode;
 import toti.Headers;
-import toti.security.Authorizator;
 import toti.security.Identity;
 import toti.templating.Template;
-import toti.templating.TemplateFactory;
-import toti.url.MappedUrl;
-import ji.translator.Translator;
 
 public class TemplateResponse implements Response {
 	
@@ -29,11 +25,8 @@ public class TemplateResponse implements Response {
 	public ji.socketCommunication.http.structures.Response getResponse(
 			String protocol,
 			Headers header, 
-			TemplateFactory templateFactory, 
-			Translator translator,
-			Authorizator authorizator,
 			Identity identity, 
-			MappedUrl current,
+			ResponseContainer container,
 			String charset) {
 		String nonce = RandomStringUtils.randomAlphanumeric(50);
 		params.put("nonce", nonce);
@@ -65,22 +58,16 @@ public class TemplateResponse implements Response {
 		response.addHeader("Content-Type", getContentType(fileName, charset));
 		
 		
-		response.setBody(createResponse(templateFactory, translator, authorizator, current).getBytes());
+		response.setBody(createResponse(container).getBytes());
 		return response;
 	}
 	
-	public String createResponse(
-			TemplateFactory templateFactory,
-			Translator translator,
-			Authorizator authorizator,
-			MappedUrl current) {
+	public String createResponse(ResponseContainer container) {
 		try {
-			Template template = templateFactory.getTemplate(fileName);
-			return template.create(templateFactory, params, translator, authorizator, current);
+			Template template = container.getTemplateFactory().getTemplate(fileName);
+			return template.create(container.getTemplateFactory(), params, container);
 		} catch (Exception e) {
 			throw new ResponseException(e);
 		}
 	}
-
-
 }

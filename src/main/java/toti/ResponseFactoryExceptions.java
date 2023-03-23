@@ -14,6 +14,7 @@ import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.Request;
 import ji.translator.Translator;
 import toti.response.Response;
+import toti.response.ResponseContainer;
 import toti.response.TemplateResponse;
 import toti.security.Identity;
 import toti.templating.TemplateFactory;
@@ -53,8 +54,11 @@ public class ResponseFactoryExceptions {
 			Throwable t) {
 		return getException(responseCode, request, identity, mappedUrl, translator, t)
 			.getResponse(
-				request.getProtocol(), responseHeaders, templateFactory, translator.withLocale(identity.getLocale()),
-				null /*authorizator*/, identity, mappedUrl, charset
+				request.getProtocol(), responseHeaders, identity,
+				new ResponseContainer(
+					translator.withLocale(identity.getLocale()), null, mappedUrl, templateFactory, null
+				),
+				charset
 			);
 	}
 	
@@ -117,7 +121,7 @@ public class ResponseFactoryExceptions {
 					+ ".html";
 			Text.get().write((bw)->{
 				bw.write(
-					response.createResponse(templateFactory, translator, null, null)
+					response.createResponse(new ResponseContainer(translator, null, null, templateFactory, null))
 				);
 			}, fileName,  charset, false);
 			File file = new File(fileName);

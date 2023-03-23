@@ -26,6 +26,7 @@ import toti.annotations.Domain;
 import toti.profiler.Profiler;
 import toti.register.Register;
 import toti.response.Response;
+import toti.response.ResponseContainer;
 import toti.response.ResponseException;
 import toti.security.Authenticator;
 import toti.security.Authorizator;
@@ -38,6 +39,7 @@ import toti.security.exceptions.NotAllowedActionException;
 import toti.templating.DirectoryTemplate;
 import toti.templating.TemplateException;
 import toti.templating.TemplateFactory;
+import toti.url.Link;
 import toti.url.MappedUrl;
 import toti.url.UrlPart;
 import ji.translator.Translator;
@@ -57,6 +59,7 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 	
 	private final Map<String, TemplateFactory> modules;
 	private final Translator translator;
+	private final Link link;
 	
 	private final Authorizator authorizator;
 	private final Authenticator authenticator;
@@ -74,6 +77,7 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 			Map<String, TemplateFactory> modules,
 			TemplateFactory totiTemplateFactory,
 			Translator translator,
+			Link link,
 			IdentityFactory identityFactory,
 			Authenticator authenticator,
 			Authorizator authorizator,
@@ -101,6 +105,7 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 		this.dirDefaultFile = dirDefaultFile;
 		this.profiler = profiler;
 		this.mapping = mapping;
+		this.link = link;
 		
 		this.totiRes = new ResponseFactoryToti(profiler, developIps, translator, totiTemplateFactory, charset);
 		this.expRes = new ResponseFactoryExceptions(
@@ -320,11 +325,9 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 	    		logger.warn("Identity save fail", e);
 	    	}
 	    	
-			return response.getResponse(
-				request.getProtocol(), responseHeaders, templateFactory, 
-				translator.withLocale(identity.getLocale()), 
-				authorizator, identity, mapped, charset
-			);
+			return response.getResponse(request.getProtocol(), responseHeaders, identity, new ResponseContainer(
+				translator.withLocale(identity.getLocale()), authorizator, mapped, templateFactory, link
+			), charset);
 		} catch (ServerException e){
 			throw e;
 		} catch (NotAllowedActionException | AccessDeniedException e) {
@@ -416,11 +419,11 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 		);
 		response.setHeaders(responseHeaders.getHeaders());
 		try {
-			response.setBody(new DirectoryTemplate(files, path).create(null, null, null, null, null).getBytes());
+			response.setBody(new DirectoryTemplate(files, path).create(null, null, null).getBytes());
 		} catch (Exception e) {
 			throw new ServerException(StatusCode.INTERNAL_SERVER_ERROR, null, "Directory list fail: " + path);
 		}
 		return response;
 	}
-
+	
 }

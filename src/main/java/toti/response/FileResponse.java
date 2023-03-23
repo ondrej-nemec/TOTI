@@ -7,11 +7,7 @@ import java.io.InputStream;
 import ji.common.functions.InputStreamLoader;
 import ji.socketCommunication.http.StatusCode;
 import toti.Headers;
-import toti.security.Authorizator;
 import toti.security.Identity;
-import toti.templating.TemplateFactory;
-import toti.url.MappedUrl;
-import ji.translator.Translator;
 
 public class FileResponse implements Response {
 
@@ -43,10 +39,8 @@ public class FileResponse implements Response {
 	public ji.socketCommunication.http.structures.Response getResponse(
 			String protocol,
 			Headers responseHeader,
-			TemplateFactory templateFactory, 
-			Translator translator, 
-			Authorizator authorizator,
-			Identity identity, MappedUrl current,
+			Identity identity,
+			ResponseContainer container,
 			String charset) {
 		setContentType(fileName, charset, responseHeader);
 		if (download) {

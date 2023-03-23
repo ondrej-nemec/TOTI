@@ -14,6 +14,7 @@ import ji.socketCommunication.http.structures.WebSocket;
 import ji.translator.Translator;
 import toti.profiler.Profiler;
 import toti.response.Response;
+import toti.response.ResponseContainer;
 import toti.security.Identity;
 import toti.templating.TemplateFactory;
 import toti.tools.Generate;
@@ -45,8 +46,11 @@ public class ResponseFactoryToti {
 			Identity identity, Headers responseHeaders, Optional<WebSocket> websocket) {
 		return getResponse(request.getMethod(), url, request.getBodyInParameters(), identity, responseHeaders)
 			.getResponse(
-				request.getProtocol(), responseHeaders, templateFactory, translator.withLocale(identity.getLocale()),
-				null /*authorizator*/, identity, null /* mapped url */, charset
+				request.getProtocol(), responseHeaders, identity,
+				new ResponseContainer(
+					translator.withLocale(identity.getLocale()), null, null, templateFactory, null
+				), 
+				charset
 			);
 	}
 	
