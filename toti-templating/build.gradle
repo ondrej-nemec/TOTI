@@ -43,9 +43,8 @@ sourceSets {
 //*/
 
 dependencies {
-// TODO version from global config
-// TODO just: common
-	 api 'com.github.ondrej-nemec.JI:JI:b336cfc947'
+	 implementation 'com.github.ondrej-nemec.JI:ji-common:' + JI_version
+	 implementation 'com.github.ondrej-nemec.JI:ji-files:' + JI_version
 	
 	// compile files("${System.properties['java.home']}/../lib/tools.jar")
 	// TODO can be removed ?
@@ -59,15 +58,7 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
 	//implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
 	
-/*
-	// https://mvnrepository.com/artifact/com.itextpdf/itextpdf
-	implementation group: 'com.itextpdf', name: 'itextpdf', version: '5.5.13.1'
-	// https://mvnrepository.com/artifact/com.itextpdf.tool/xmlworker
-	implementation group: 'com.itextpdf.tool', name: 'xmlworker', version: '5.5.13.1'
-*/
-	
-	//testCompile fileTree(dir: "libs/derby", includes: ['*.jar'])
-	
+	testImplementation 'com.github.ondrej-nemec.JI:ji-translate:' + JI_version
 	// https://mvnrepository.com/artifact/junit/junit
 	testImplementation  group: 'junit', name: 'junit', version: '4.12'
 	// https://mvnrepository.com/artifact/org.mockito/mockito-core

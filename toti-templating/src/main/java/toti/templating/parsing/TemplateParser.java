@@ -15,7 +15,6 @@ import ji.common.structures.MapInit;
 import ji.common.structures.ThrowingConsumer;
 import ji.common.structures.ThrowingSupplier;
 import ji.files.text.Text;
-import ji.translator.Translator;
 import toti.templating.TemplateContainer;
 import toti.templating.Parameter;
 import toti.templating.Tag;
@@ -62,7 +61,7 @@ public class TemplateParser {
 				+ String.format("import %s;", ThrowingSupplier.class.getCanonicalName())
 				+ String.format("import %s;", DictionaryValue.class.getCanonicalName())
 				+ String.format("import %s;", MapInit.class.getCanonicalName())
-				+ String.format("import %s;", Translator.class.getCanonicalName())
+			//	+ String.format("import %s;", Translator.class.getCanonicalName())
 				+ String.format("import %s;", TemplateFactory.class.getCanonicalName())
 				+ String.format("import %s;", Template.class.getCanonicalName())
 				+ String.format("import %s;", TagNode.class.getCanonicalName())

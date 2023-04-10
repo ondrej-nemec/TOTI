@@ -3,5 +3,9 @@
 /.settings
 /.project
 /bin
+
 # gradle
 /build
+
+# test temp
+/test

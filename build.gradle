@@ -43,17 +43,21 @@ sourceSets {
 }
 //*/
 
+ext {
+  JI_version = '17cd78e852'
+}
+
 dependencies {
 	api project('toti-templating')
-	api 'com.github.ondrej-nemec.JI:JI:b336cfc947'
+	api 'com.github.ondrej-nemec.JI:JI:' + JI_version
 	
 	// compile files("${System.properties['java.home']}/../lib/tools.jar")
 	
 	implementation group: 'at.favre.lib', name: 'bcrypt', version: '0.9.0'
 	// TODO can be removed ?
-    implementation group:'org.objenesis',name:'objenesis',version:'2.4'
-    implementation group:'net.bytebuddy',name:'byte-buddy',version:'1.8.13'
-    implementation group:'net.bytebuddy',name:'byte-buddy-agent',version:'1.8.1'
+  //  implementation group:'org.objenesis',name:'objenesis',version:'2.4'
+  //  implementation group:'net.bytebuddy',name:'byte-buddy',version:'1.8.13'
+  //  implementation group:'net.bytebuddy',name:'byte-buddy-agent',version:'1.8.1'
     
 	// TODO temporary
 	// https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api
