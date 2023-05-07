@@ -53,7 +53,7 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 	private final String dirDefaultFile;
 	private final Logger logger;
 	
-	private final MapDictionary<UrlPart, Object> mapping;
+	private final MapDictionary<UrlPart> mapping;
 	private final String resourcesDir;
 	private final Router router;
 	
@@ -89,7 +89,7 @@ public class ResponseFactory implements ji.socketCommunication.http.ResponseFact
 			Logger logger,
 			Profiler profiler,
 			Register register,
-			MapDictionary<UrlPart, Object> mapping) throws Exception {
+			MapDictionary<UrlPart> mapping) throws Exception {
 		this.register = register;
 		this.resourcesDir = resourcesDir;
 		this.charset = charset;

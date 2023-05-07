@@ -113,7 +113,7 @@ public class ApplicationFactory {
 			langSettings.setProfiler(profiler.used());
 			this.translator = Translator.create(langSettings, trans, loggerFactory.apply(hostname, "translator"));
 		}
-		MapDictionary<UrlPart, Object> mapping = MapDictionary.hashMap();
+		MapDictionary<UrlPart> mapping = MapDictionary.hashMap();
 		for (Module module : modules) {
 			TemplateFactory templateFactory = new TemplateFactory(
 					getTempPath(env, hostname),

@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import ji.common.structures.DictionaryValue;
-import ji.common.structures.ListDictionary;
 import ji.common.structures.MapDictionary;
 import toti.templating.parsing.structures.TagNode;
 
@@ -205,9 +204,9 @@ public interface Template {
 	
 	@SuppressWarnings("unchecked")
 	static <T> Iterable<T> toIterable(Object o, Class<T> clazz) {
-		if (o instanceof ListDictionary) {
+		/*if (o instanceof ListDictionary) {
 			return ListDictionary.class.cast(o).toList();
-		}
+		}*/
 		if (o.getClass().isArray()) {
 			return java.util.Arrays.asList((T[])o);
 		}
