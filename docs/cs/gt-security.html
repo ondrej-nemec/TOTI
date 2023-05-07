@@ -145,6 +145,12 @@
 	</ul>
 </p>
 
+<h2>Přenačtení uživatelů</h2>
+
+<p>
+	Data uživatelů (vč. práv) jsou načtena při jejich přihlášení. TOTI umožňuje za pěhu aplikace přenačíst data uživatelů. <code>Atuhenticator</code> má metodu <code>forEach</code>. Tato metoda iteruje přes všechny přihlášené uživatele. Vstupním parametrem callbacku je přihlášený uživatel. Pokud je návratová hodnata <code>null</code>, dojde k odhlášení uživate, pokud je návratová hodnota stejná <strong>instance</strong>, nedojde ke změně, v opačném případě se data přepíšou.
+</p>
+
 <h2>Authorizing</h2>
 
 <p>

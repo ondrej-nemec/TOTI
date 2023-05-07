@@ -2,6 +2,7 @@ package toti.security;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.function.Function;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
@@ -118,6 +119,10 @@ public class Authenticator {
 	public long getExpirationTime() {
 		return expirationTime;
 	}
+	
+	public void forEach(Function<User, User> function) {
+        cache.forEach(function);
+    }
 	
 	/******** TOKEN *****/
 	

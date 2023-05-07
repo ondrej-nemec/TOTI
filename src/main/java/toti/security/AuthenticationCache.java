@@ -13,6 +13,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import org.apache.logging.log4j.Logger;
 import ji.common.functions.FileExtension;
@@ -171,5 +172,18 @@ public class AuthenticationCache {
 	private String getFileName(String id) {
 		return String.format("%s/%s.%s", cachePath, id, EXT);
 	}
+	
+	public void forEach(Function<User, User> function) {
+        activeTokens.forEach((id, token)->{
+             User u = function.apply(token.user);
+             if (u == null) {
+                 delete(id);
+             } else if (token.user == u) { // instance check
+                 // do nothing
+             } else {
+                 token.user = u;
+             }
+        });
+    }
 	
 }
