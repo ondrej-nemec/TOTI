@@ -66,7 +66,7 @@ public class ApplicationFactory {
 	private BiFunction<List<String>, Env, Database> createDatabase = null;
 	private Translator translator = null;
 	
-	private Env appEnv;
+	//private Env appEnv;
 	
 	private final Env env;
 	private BiFunction<String, String, Logger> loggerFactory;
@@ -89,7 +89,7 @@ public class ApplicationFactory {
 				migrations.add(config.getMigrationsPath());
 			}
 		});
-		Env env = appEnv = this.env.getModule("applications").getModule(hostname);
+	//	Env env = appEnv = this.env.getModule("applications").getModule(hostname);
 		Profiler profiler = initProfiler(env, logger);
 		
 		Database database = getDatabase(
@@ -220,7 +220,7 @@ public class ApplicationFactory {
 	}
 	
 	public String getTempPath() {
-		return getTempPath(appEnv, hostname);
+		return getTempPath(env.getModule("applications").getModule(hostname), hostname);
 	}
 	
 	private String getResourcesPath(Env env) {
