@@ -2,11 +2,13 @@ package toti.application;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import ji.common.structures.DictionaryValue;
 import ji.common.structures.ThrowingFunction;
 import ji.database.Database;
 import ji.database.support.DatabaseRow;
+import ji.querybuilder.builders.SelectBuilder;
 
 public interface EntityDao<T extends Entity> {
 	
@@ -31,6 +33,10 @@ public interface EntityDao<T extends Entity> {
 	default boolean exists(Object id) throws SQLException {
 		return exists(getDatabase(), getTableName(), getIdName(), id);
 	}
+	
+	default boolean exists(Object id, Map<String, Object> params) throws SQLException {
+        return exists(getDatabase(), getTableName(), getIdName(), id, params);
+    }
 	
 	default T delete(Object id) throws SQLException {
 		return delete(getDatabase(), getTableName(), getIdName(), id, row->createEntity(row));
@@ -79,6 +85,24 @@ public interface EntityDao<T extends Entity> {
 			return builder.get(table, idName, id, idName) != null; // select only name of id
 		});
 	}
+	
+	default boolean exists(Database database, String table, String idName, Object id, Map<String, Object> params) throws SQLException {
+        return database.applyBuilder((builder)->{
+             SelectBuilder select = builder.select(idName)
+                     .from(table);
+             if (id != null) {
+                 select.where(idName + " != :" + idName)
+                      .addParameter(":" + idName, id);
+             } else {
+                 select.where("1=1");
+             }   
+             params.forEach((name, value)->{
+                 select.andWhere(name + " = :" + name)
+                      .addParameter(":" + name, value);
+             });
+             return select.fetchRow() != null;
+         });
+    }
 	
 	default <S extends Entity> S delete(Database database, String table, String idName, Object id, ThrowingFunction<DatabaseRow, S, SQLException> create) throws SQLException {
 		return delete(database, table, idName, id, create, new TransactionListener<S>() {});
