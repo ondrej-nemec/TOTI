@@ -1,4 +1,4 @@
-/* TOTI Translations version 0.2.3 */
+/* TOTI Translations version 0.3.0 */
 var totiTranslations = {
 	"pages": {
 //		"title": /* "<t:trans message='toti.grid.paging.pages'/>", /*/ "Pages:", //*/
@@ -28,7 +28,8 @@ var totiTranslations = {
 		"bindError": /* "<t:trans message='toti.form.binding-problem' />" /*/ "Loading data failure", //*/
 		"bindErrorForbidden": /* "<t:trans message='toti.form.binding-problem' />" /*/ "You are not allowed to load data", //*/
 		"sendSuccess": /* "<t:trans message='toti.form.binding-problem' />" /*/ "Form saved", //*/
-		"renderError": /* "<t:trans message='toti.grid.loading-error' />", /*/ "Problem form rendering" //*/
+		"renderError": /* "<t:trans message='toti.grid.loading-error' />", /*/ "Problem form rendering", //*/
+		"required": /* "<t:trans message='toti.form.required' />" /*/ "Item is required" //*/
 	},
 	"dynamicList": {
 		"add": /* "<t:trans message='toti.form.add-variant' />", /*/ "Add Variant", //*/

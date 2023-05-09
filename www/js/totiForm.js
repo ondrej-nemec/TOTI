@@ -1,4 +1,4 @@
-/* TOTI Form version 1.1.2 */
+/* TOTI Form version 1.1.3 */
 class TotiForm {
 
 	constructor(config) {
@@ -241,7 +241,7 @@ class TotiForm {
 					this.template.setFormAttribute(this.formUnique, container, "enctype", "multipart/form-data");
 					/* no break */
 				default:
-					this.template.addInput(this.formUnique, container, field.name, field.title, input, removeFunc);
+					this.template.addInput(this.formUnique, container, field.name, field.title, input, field.required, removeFunc);
 					break;
 			}
 		}

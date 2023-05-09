@@ -1,4 +1,4 @@
-/* TOTI Form custom template version 0.0.2 */
+/* TOTI Form custom template version 1.0.0 */
 var totiFormCustomTemplate = {
 	getContainer: function(selector, formUnique, editable) {
 		var form = document.createElement(editable ? "form" : "div");
@@ -12,9 +12,17 @@ var totiFormCustomTemplate = {
 	setFormAttribute: function(formUnique, container, name, value) {
 		container.setAttribute(name, value);
 	},
-	addInput: function(formUnique, container, name, label, input) {
+	addInput: function(formUnique, container, name, label, isRequired, input) {
 		var labelCell = document.createElement('label');
 		labelCell.innerText = label;
+    if (isRequired === true) {
+        var required = document.createElement('code');
+        required.innerText = '*';
+        required.style['font-size'] = "1.2em";
+        required.style.cursor = "pointer";
+        required.setAttribute('title', totiTranslations.formMessages.required);
+        labelCell.appendChild(required);
+    }
 		totiUtils.replaceElement(container, '[toti-form-label="' + name + '"]', labelCell, ['toti-form-label']);
 
 		totiUtils.replaceElement(container, '[toti-form-input="' + name + '"]', input, ['toti-form-input']);

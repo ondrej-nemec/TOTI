@@ -1,4 +1,4 @@
-/* TOTI Form default template version 0.0.1 */
+/* TOTI Form default template version 0.1.0 */
 /* can be overriden */
 var totiFormDefaultTemplate = {
 	getContainer: function(selector, formUnique, editable) {
@@ -33,7 +33,7 @@ var totiFormDefaultTemplate = {
 	setFormAttribute: function(formUnique, container, name, value) {
 		container.setAttribute(name, value);
 	},
-	addInput: function(formUnique, container, name, label, input, removeFunc) {
+	addInput: function(formUnique, container, name, label, input, isRequired, removeFunc) {
 		var row = document.createElement("tr");
 
 		var labelCell = document.createElement('td');
@@ -42,6 +42,14 @@ var totiFormDefaultTemplate = {
 			labelContainer.innerText = label;
 		}
 		labelCell.appendChild(labelContainer);
+        if (isRequired === true) {
+            var required = document.createElement('code');
+            required.innerText = '*';
+            required.style['font-size'] = "1.2em";
+            required.style.cursor = "pointer";
+            required.setAttribute('title', totiTranslations.formMessages.required);
+            labelCell.appendChild(required);
+        }
 
 		var inputCell = document.createElement('td');
 		inputCell.appendChild(input);

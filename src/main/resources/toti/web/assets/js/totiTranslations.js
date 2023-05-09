@@ -1,4 +1,4 @@
-/* TOTI Translations version 0.2.3 */
+/* TOTI Translations version 0.3.0 */
 var totiTranslations = {
 	"pages": {
 		"first": "<t:trans message='toti.grid.paging.first' />",
@@ -27,7 +27,8 @@ var totiTranslations = {
 		"bindError": "<t:trans message='toti.form.binding-problem' />",
 		"bindErrorForbidden": "<t:trans message='toti.form.binding-forbidden' />",
 		"sendSuccess": "<t:trans message='toti.form.submit-success' />",
-		"renderError": "<t:trans message='toti.form.render-error' />"
+		"renderError": "<t:trans message='toti.form.render-error' />",
+		"required": "<t:trans message='toti.form.required' />"
 	},
 	"dynamicList": {
 		"add": "<t:trans message='toti.form.add-variant' />",
