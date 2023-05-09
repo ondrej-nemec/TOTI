@@ -1,4 +1,4 @@
-/* TOTI Grid version 1.1.6 */
+/* TOTI Grid version 1.1.7 */
 class TotiGrid {
 
 	cookieName = "grid-cache";
@@ -324,8 +324,7 @@ class TotiGrid {
 		totiLoad.load(this.config.dataLoadUrl, this.config.dataLoadMethod, {}, {}, selectionParameters)
 		.then(function(response) {
 			if (grid.pageIndex != response.pageIndex) {
-				totiDisplay.fadeOut();
-				return;
+				grid.setPageSize(response.pageIndex, false);
 			}
 			if (grid.config.hasOwnProperty("beforeBind")) {
 	            totiUtils.execute(grid.config.beforeBind, [response.data, grid]);
