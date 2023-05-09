@@ -528,7 +528,7 @@ class TotiForm {
 						totiDisplay.flash("error", totiTranslations.formMessages.bindError, error);
 				}
 			} else {
-				totiUtils.execute(loadConfig.onFailure, [error]);
+				totiUtils.execute(loadConfig.onFailure, [error, form]);
 			}
 		});
 	}

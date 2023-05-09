@@ -44,11 +44,11 @@ Form grid = new Form("/save/form/url", true);
 		
 		<li>Bind URL: <code>setBindUrl(url)</code> - URL for async data binding. Default is null and means no binding.</li>
 		<li>Bind method: <code>setBindMethod(method)</code> - HTTP method for async data binding. Default is <code>GET</code>.</li>
-		<li>On bind failure: <code>setOnBindFailure(methodName)</code> - name of JS function called if bind fail. Default is null and means no call.</li>
+		<li>On bind failure: <code>setOnBindFailure(methodName)</code> - name of JS function called if bind fail. Default is null and means no call. JS function is called with parameters: error, JS class TotiForm instance.</li>
 
 		<li>Placeholder URL: <code>setPlaceholderUrl(url)</code> - URL for async placeholders load. Default is null and means no load.</li>
 		<li>Placeholder method: <code>setPlaceholderMethod(method)</code> - HTTP method for async placeholders load. Default is <code>GET</code>.</li>
-		<li>On Placeholder failure: <code>setOnPlaceholderLoadFailure(methodName)</code> - name of JS function called if load placeholders fail. Default is null and means no call.</li>
+		<li>On Placeholder failure: <code>setOnPlaceholderLoadFailure(methodName)</code> - name of JS function called if load placeholders fail. Default is null and means no call. JS function is called with parameters: error, JS class TotiForm instance.</li>
 
 		<li>Add input: <code>addInput(input)</code> - add input to form. List of all inputs are <a href="?file=doc-inputs.html">here</a>.</li>
 		<li>Use CSRF token: setCsrfSecured(identity) - TOTI add hidden input <code>_csrf_token</code>.</li>
