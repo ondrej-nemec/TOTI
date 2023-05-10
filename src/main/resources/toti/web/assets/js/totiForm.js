@@ -1,4 +1,4 @@
-/* TOTI Form version 1.1.3 */
+/* TOTI Form version 1.1.4 */
 class TotiForm {
 
 	constructor(config) {
@@ -159,7 +159,7 @@ class TotiForm {
 				return position;
 			};
 			var dynamicContainer = form.template.getDynamicContainer(
-				form.formUnique, form.containerr, parentContainer, deep, realName,
+				form.formUnique, form.container, parentContainer, deep, realName,
 				field.title, field.addButton && editable ? addItem : null
 			);
 			if (dynamicContainer === null) {

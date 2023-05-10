@@ -1,4 +1,4 @@
-/* TOTI Form custom template version 1.0.0 */
+/* TOTI Form custom template version 1.0.1 */
 var totiFormCustomTemplate = {
 	getContainer: function(selector, formUnique, editable) {
 		var form = document.createElement(editable ? "form" : "div");
@@ -12,7 +12,7 @@ var totiFormCustomTemplate = {
 	setFormAttribute: function(formUnique, container, name, value) {
 		container.setAttribute(name, value);
 	},
-	addInput: function(formUnique, container, name, label, isRequired, input) {
+	addInput: function(formUnique, container, name, label, input, isRequired) {
 		var labelCell = document.createElement('label');
 		labelCell.innerText = label;
     if (isRequired === true) {
