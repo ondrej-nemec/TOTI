@@ -41,16 +41,16 @@ public class LoadUrls {
 	}
 */
 	
-	public static void loadUrlMap(MapDictionary<UrlPart, Object> mapped, Module module, Router router, Register register, Link link) throws Exception {
+	public static void loadUrlMap(MapDictionary<UrlPart> mapped, Module module, Router router, Register register, Link link) throws Exception {
 		map(mapped, FilesList.get(module.getControllersPath(), true).getFiles(), module, register, link);
 	}
 	
 	private static void map(
-			MapDictionary<UrlPart, Object> mapped, List<String> files,
+			MapDictionary<UrlPart> mapped, List<String> files,
 			Module module, Register register, Link link) throws Exception {
 		map((mappedUrl, url, methods)->{
 			String[] urls = url.substring(1).split("/");
-			MapDictionary<UrlPart, Object> last = mapped;
+			MapDictionary<UrlPart> last = mapped;
 			for (int i = 0; i < urls.length; i++) {
 				boolean isRegex = urls[i].equals(UrlParam.PARAM_REGEX); // TODO another regex check
 				Object o = last.get(new UrlPart(urls[i], isRegex));

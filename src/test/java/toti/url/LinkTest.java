@@ -143,7 +143,7 @@ public class LinkTest {
 	public void testCreateUrlFromClassUrlParam() {
 		assertEquals(
 			"/toti/test/url-param/42",
-			getLink().create(TestingController.class, c->c.methodUrlParam(null), "42")
+			getLink().create(TestingController.class, c->c.methodPathParam(null), "42")
 		);
 	}
 
@@ -153,7 +153,7 @@ public class LinkTest {
 		params.put("param", 27);
 		assertEquals(
 			"/toti/test/get-param?param=27",
-			getLink().create(TestingController.class, c->c.methodGetParam(null), params)
+			getLink().create(TestingController.class, c->c.methodQueryParam(null), params)
 		);
 	}
 	
@@ -163,7 +163,7 @@ public class LinkTest {
 		params.put("param", 27);
 		assertEquals(
 			"/toti/test/url-get-param/42?param=27",
-			getLink().create(TestingController.class, c->c.methodUrlAndGetParam(null, null), params, 42)
+			getLink().create(TestingController.class, c->c.methodPathAndQueryParam(null, null), params, 42)
 		);
 	}
 	

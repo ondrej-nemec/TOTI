@@ -216,7 +216,7 @@ public class Generate {
 		}
 	}
 	
-	private String getApiController(MapDictionary<String, Object> api, String name) throws IOException {
+	private String getApiController(MapDictionary<String> api, String name) throws IOException {
 		String template = getTemplate("api-controller.txt", name);
 		if (api.getBoolean("get-all")) {			
 			template = fillTemplate("// list", template, "api-all.txt", name, (t)->{

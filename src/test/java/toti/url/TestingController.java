@@ -17,20 +17,26 @@ public class TestingController {
 		return null;
 	}
 	
-	@Action("url-param")
-	public Response methodUrlParam(@ParamUrl("url") String url) {
+	@Action("path-param")
+	public Response methodPathParam(@ParamUrl("path") String path) {
 		fail("Method doInsert cannot be called");
 		return null;
 	}
 	
-	@Action("url-get-param")
-	public Response methodUrlAndGetParam(@ParamUrl("url") String url, @Param("param") String param2) {
+	@Action("path-query-param")
+	public Response methodPathAndQueryParam(@ParamUrl("path") String path, @Param("query") String query) {
 		fail("Method doInsert cannot be called");
 		return null;
 	}
 	
-	@Action("get-param")
-	public Response methodGetParam(@Param("param") String param2) {
+	@Action("query-param")
+	public Response methodQueryParam(@Param("query") String query) {
+		fail("Method doInsert cannot be called");
+		return null;
+	}
+	
+	@Action("")
+	public Response methodNoName(@ParamUrl("path") String path) {
 		fail("Method doInsert cannot be called");
 		return null;
 	}
