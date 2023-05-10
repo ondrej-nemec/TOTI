@@ -16,8 +16,7 @@ public class SrcParameter implements Parameter {
              prefix = value.substring(2, value.indexOf(":", 3));
              value = value.substring(value.indexOf(":", 3)+1);
         }
-        return String.format("\"%s\" + Link.get().create(\"%s\")", prefix, value);
-        // return "\"" + link.create() + "\"";
+        return String.format("\"%s\" + container.createLink(\"%s\")", prefix, value);
     }
 
 }

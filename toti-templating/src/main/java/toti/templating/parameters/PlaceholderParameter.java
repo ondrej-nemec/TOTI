@@ -11,7 +11,7 @@ public class PlaceholderParameter implements Parameter {
 
      @Override
      public String getCode(String value) {
-         return String.format("Template.escapeHtml(translator.translate(\"%s\"))", value);
+         return String.format("Template.escapeHtml(container.translate(\"%s\"))", value);
      }
 
 }

@@ -61,7 +61,7 @@ public class DatetimeFormatTag implements Tag {
 		return String.format(
 			"write(Template.escapeHtml(new DictionaryValue(%s)"
 			+ ".getValue(%s.class).format(%s.ofPattern("
-				+ "translator.translate(\"%s\")"
+				+ "container.translate(\"%s\")"
 			+ "))));",
 			params.get("value"),
 			ZonedDateTime.class.getName(), // getClassName(params.get("type")),
