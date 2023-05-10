@@ -74,7 +74,7 @@ public class ApplicationFactory {
 	private final String charset;
 	
 	public ApplicationFactory(String hostname, Env env, String charset, Function<String, Logger> loggerFactory) {
-		this.env = env;
+		this.env = env.getModule("applications").getModule(hostname);
 		this.loggerFactory = (hostName, loggerName)->loggerFactory.apply(hostname+ "_" + loggerName);
 		this.hostname = hostname;
 		this.charset = charset;
@@ -220,7 +220,7 @@ public class ApplicationFactory {
 	}
 	
 	public String getTempPath() {
-		return getTempPath(env.getModule("applications").getModule(hostname), hostname);
+		return getTempPath(env, hostname);
 	}
 	
 	private String getResourcesPath(Env env) {
