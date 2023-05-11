@@ -228,10 +228,10 @@ public class TemplateFactory {
 		/*/
 		
 		//System.err.println(System.getProperty("java.class.path"));
-		StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
+		TemplateDiagnostic diagnostic = new TemplateDiagnostic(namespace, templateFile);
+		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostic, null, null);
 		List<String> optionList = new ArrayList<String>();
 		optionList.addAll(Arrays.asList("-classpath", System.getProperty("java.class.path")));
-		TemplateDiagnostic diagnostic = new TemplateDiagnostic(namespace, templateFile);
 		compiler.getTask(diagnostic, null, diagnostic, optionList, null, fileManager.getJavaFileObjects(file)).call();
 		if (diagnostic.isError()) {
 			throw new TemplateException(diagnostic.getError());
