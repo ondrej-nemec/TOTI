@@ -1,4 +1,4 @@
-/* TOTI Grid version 1.1.9 */
+/* TOTI Grid version 1.1.10 */
 class TotiGrid {
 
 	cookieName = "grid-cache";
@@ -321,11 +321,17 @@ class TotiGrid {
 			pageIndex: this.pageIndex,
 			pageSize: this.pageSize
 		};
+		/* TODO maybe load previous pages in cycle*/
+        var loadParameters = totiUtils.clone(selectionParameters);
+        if (this.config.useLoadButton && this.loadNext_count === 0) {
+           loadParameters.pageSize = this.pageSize * this.pageIndex;
+           loadParameters.pageIndex = 1;
+        }
 		var grid = this;
-		totiLoad.load(this.config.dataLoadUrl, this.config.dataLoadMethod, {}, {}, selectionParameters)
+		totiLoad.load(this.config.dataLoadUrl, this.config.dataLoadMethod, {}, {}, loadParameters)
 		.then(function(response) {
 			grid.loadNext_count += response.data.length;
-			if (grid.pageIndex != response.pageIndex) {
+			if (grid.pageIndex != response.pageIndex && loadParameters === selectionParameters) {
 				grid.setPageIndex(response.pageIndex, false);
 			}
 			if (grid.config.hasOwnProperty("beforeBind")) {
