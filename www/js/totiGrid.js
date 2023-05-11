@@ -1,8 +1,9 @@
-/* TOTI Grid version 1.1.8 */
+/* TOTI Grid version 1.1.9 */
 class TotiGrid {
 
 	cookieName = "grid-cache";
 	cookieAge = 60*5; /* 5 min */
+	loadNext_count = 0;
 	
 	constructor(config) {
 		this.config = config;
@@ -323,6 +324,7 @@ class TotiGrid {
 		var grid = this;
 		totiLoad.load(this.config.dataLoadUrl, this.config.dataLoadMethod, {}, {}, selectionParameters)
 		.then(function(response) {
+			grid.loadNext_count += response.data.length;
 			if (grid.pageIndex != response.pageIndex) {
 				grid.setPageIndex(response.pageIndex, false);
 			}
@@ -568,7 +570,7 @@ class TotiGrid {
 			    	grid.template.addPageButton(grid.gridUnique, grid.container, totiTranslations.pages.last, false, onClick(lastPageIndex));
 				}
 		    }
-		    if (grid.config.useLoadButton) {
+		    if (grid.config.useLoadButton && grid.loadNext_count < response.itemsCount) {
 		    	grid.template.addPageButton(grid.gridUnique, grid.container, totiTranslations.pages.loadNext, false, function() {
 		    		grid.addNextPage();
 		    	});
