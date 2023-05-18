@@ -1,4 +1,4 @@
-/* TOTI Auth version 2.0.2 */
+/* TOTI Auth version 2.1.0 */
 var totiAuth = {
 	variableToken: "authenticationToken",
     variableConfig: "authenticationConfig",
@@ -27,10 +27,7 @@ var totiAuth = {
     },
     login: function(token, config = null) {
         totiStorage.saveVariable(totiAuth.variableToken, token);
-        if (config !== null) {
-            totiStorage.saveVariable(totiAuth.variableConfig, config);
-            totiAuth.startTokenRefresh();
-        }
+        totiAuth.setRefreshConfig(config);
     },
     isRefreshActive: false, /* internal */
     refresh: function(url, method, expiredIn) {
@@ -68,6 +65,12 @@ var totiAuth = {
         totiAuth.refresh(config.url, config.method, token.expires_in);
         return true;
     },
-    customRefreshHandler: function () {}
+    customRefreshHandler: function () {},
+    setRefreshConfig: function(config) {
+         if (config !== null) {
+            totiStorage.saveVariable(totiAuth.variableConfig, config);
+            totiAuth.startTokenRefresh();
+        }
+     }
 };
 totiAuth.startTokenRefresh();
