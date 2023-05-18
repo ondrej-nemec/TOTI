@@ -162,7 +162,7 @@ public interface Response {
 	 * @return
 	 */
 	static Response getRedirect(String url) {
-		return new RedirectResponse(StatusCode.TEMPORARY_REDIRECT, url, false);
+		return new RedirectResponse(StatusCode.SEE_OTHER, url, false);
 	}
 	
 	/**
