@@ -10,7 +10,15 @@ public class IncludeTag implements Tag {
 	
 	@Override
 	public TagVariableMode getMode(String name) {
-		return TagVariableMode.STRING;
+		switch (name) {
+	        case "file":
+	        case "block":
+	        case "optional":
+	        case "module":
+	            return TagVariableMode.STRING;
+	        default:
+	            return TagVariableMode.CODE;
+		}
 	}
 	
 	@Override
@@ -43,7 +51,7 @@ public class IncludeTag implements Tag {
 			code.append(".accept(new MapInit<String, Object>()");
 			params.forEach((name, value)->{
 				if (!name.equals("block") && !name.equals("optional")) {
-					code.append(String.format(".append(\"%s\", \"%s\")", name, value));
+					code.append(String.format(".append(\"%s\", %s)", name, value));
 				}
 			});
 			code.append(".toMap());");
