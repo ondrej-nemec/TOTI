@@ -1,7 +1,9 @@
 package toti.response;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import ji.common.functions.FileExtension;
@@ -193,8 +195,11 @@ public interface Response {
 	 * @param onError
 	 * @return
 	 */
-	static Response getWebsocket(WebSocket websocket, Consumer<String> onMessage, Consumer<IOException> onError) {
-		return new WebsocketResponse(websocket, onMessage, onError);
+	static Response getWebsocket(WebSocket websocket,
+			BiConsumer<Boolean, ByteArrayOutputStream> onMessage,
+			Consumer<IOException> onError,
+			Consumer<String> onClose) {
+		return new WebsocketResponse(websocket, onMessage, onError, onClose);
 	}
 	
 	default void setContentType(String fileName, String charset, Headers responseHeaders) {

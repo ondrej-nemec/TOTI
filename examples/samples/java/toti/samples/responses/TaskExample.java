@@ -1,10 +1,12 @@
 package toti.samples.responses;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import org.apache.logging.log4j.Logger;
@@ -30,14 +32,19 @@ public class TaskExample implements Task {
 		this.websocket = websocket;
 	}
 	
-	public Consumer<String> onMessage() {
-		return (message)->{
-			if ("end".equals(message)) {
+	public void removeWebsocket() {
+		this.websocket = null;
+	}
+	
+	public BiConsumer<Boolean, ByteArrayOutputStream> onMessage() {
+		return (isBinary, message)->{
+			String text = new String(message.toByteArray());
+			if ("end".equals(text)) {
 				websocket.close();
 				websocket = null;
 				return;
 			}
-			lastMesage = message;
+			lastMesage = text;
 			try {
 				websocket.send("Thank you");
 			} catch (IOException e) {
@@ -60,7 +67,11 @@ public class TaskExample implements Task {
 			}
 			if (websocket.isClosed()) {
 				websocket = null;
-				logger.info("Websocket closeb by client");
+				logger.info("Websocket closed by client");
+				return;
+			}
+			if (!websocket.isRunning()) {
+				logger.info("Websocket not start yet");
 				return;
 			}
 			try {

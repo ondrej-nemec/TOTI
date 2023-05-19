@@ -148,7 +148,7 @@ public class ResponsesExample implements Module {
 		 // websocket can be null - means this request is not valid websocket request
 		if (websocket != null) {
 			task.setWebsocket(websocket);
-			return Response.getWebsocket(websocket, task.onMessage(), task.onError());
+			return Response.getWebsocket(websocket, task.onMessage(), task.onError(), (x)->task.removeWebsocket());
 		}
 		return Response.getFile("samples/examples/responses/websockets.html");
 	}
