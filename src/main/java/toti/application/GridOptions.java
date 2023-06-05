@@ -100,8 +100,8 @@ public class GridOptions implements Entity {
 			}
 		});
 		return new Validator(true)
-			.addRule(ItemRules.forName("pageIndex", true))
-			.addRule(ItemRules.forName("pageSize", true))
+			.addRule(ItemRules.forName("pageIndex", true).setType(Integer.class))
+			.addRule(ItemRules.forName("pageSize", true).setType(Integer.class))
 			.addRule(ItemRules.forName("filters", true).setSortedMapSpecification(filters))
 			.addRule(ItemRules.forName("sorting", true).setSortedMapSpecification(sorting));
 	}
