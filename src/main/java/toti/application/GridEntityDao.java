@@ -128,6 +128,8 @@ public interface GridEntityDao<T extends Entity>{
 			String where = "";
 			if (filter.getValue() == null) {
                 where = filter.getName() + " is null";
+            } else if (filter.getMode().getOperand() != null) {
+                where = filter.getName() + " " + filter.getMode().getOperand() + " :" + filter.getName() + "Value";
             } else if (filter.getMode() == FilterMode.EQUALS) {
                 where = compare(filter.getName(), filter) + " = " + compare(":" + filter.getName() + "Value", filter);
             // v2
