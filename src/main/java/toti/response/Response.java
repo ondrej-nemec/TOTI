@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 
 import ji.common.functions.FileExtension;
 import ji.socketCommunication.http.StatusCode;
+import ji.socketCommunication.http.structures.Protocol;
 import ji.socketCommunication.http.structures.WebSocket;
 import toti.Headers;
 import toti.security.Identity;
@@ -15,14 +16,14 @@ import toti.security.Identity;
 public interface Response {
 
 	ji.socketCommunication.http.structures.Response getResponse(
-			String protocol,
+			Protocol protocol,
 			Headers responseHeaders,
 			Identity identity,
 			ResponseContainer container,
 			String charset
 	);
 
-	default ji.socketCommunication.http.structures.Response getResponse(String protocol, Headers responseHeaders, String charset) {
+	default ji.socketCommunication.http.structures.Response getResponse(Protocol protocol, Headers responseHeaders, String charset) {
 		return getResponse(protocol, responseHeaders, null, null, charset);
 	}
 	

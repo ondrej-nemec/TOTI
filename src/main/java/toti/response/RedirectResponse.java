@@ -1,6 +1,7 @@
 package toti.response;
 
 import ji.socketCommunication.http.StatusCode;
+import ji.socketCommunication.http.structures.Protocol;
 import toti.Headers;
 import toti.security.Identity;
 import toti.url.Link;
@@ -20,7 +21,7 @@ public class RedirectResponse implements Response {
 	
 	@Override
 	public ji.socketCommunication.http.structures.Response getResponse(
-			String protocol,
+			Protocol protocol,
 			Headers header,
 			Identity identity,
 			ResponseContainer container,

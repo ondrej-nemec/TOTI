@@ -6,6 +6,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import ji.socketCommunication.http.StatusCode;
+import ji.socketCommunication.http.structures.Protocol;
 import ji.socketCommunication.http.structures.WebSocket;
 import toti.Headers;
 import toti.security.Identity;
@@ -30,7 +31,7 @@ public class WebsocketResponse implements Response {
 
 	@Override
 	public ji.socketCommunication.http.structures.Response getResponse(
-			String protocol,
+			Protocol protocol,
 			Headers responseHeaders,
 			Identity identity,
 			ResponseContainer container,

@@ -5,6 +5,7 @@ import java.util.Map;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import ji.socketCommunication.http.StatusCode;
+import ji.socketCommunication.http.structures.Protocol;
 import toti.Headers;
 import toti.security.Identity;
 import toti.templating.Template;
@@ -23,7 +24,7 @@ public class TemplateResponse implements Response {
 
 	@Override
 	public ji.socketCommunication.http.structures.Response getResponse(
-			String protocol,
+			Protocol protocol,
 			Headers header, 
 			Identity identity, 
 			ResponseContainer container,

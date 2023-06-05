@@ -7,6 +7,7 @@ import ji.json.JsonStreamException;
 import ji.json.OutputJsonStream;
 import ji.json.JsonWritter;
 import ji.socketCommunication.http.StatusCode;
+import ji.socketCommunication.http.structures.Protocol;
 import toti.Headers;
 import toti.security.Identity;
 
@@ -22,7 +23,7 @@ public class JsonResponse implements Response {
 
 	@Override
 	public ji.socketCommunication.http.structures.Response getResponse(
-			String protocol,
+			Protocol protocol,
 			Headers header,
 			Identity identity,
 			ResponseContainer container,
