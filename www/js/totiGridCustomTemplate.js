@@ -1,4 +1,4 @@
-/* TOTI Grid custom template version 0.1.2 */
+/* TOTI Grid custom template version 0.1.3 */
 var totiGridCustomTemplate = {
 	getContainer: function(parentSelector, gridUnique) {
 		return document.querySelector(parentSelector);
@@ -102,7 +102,11 @@ var totiGridCustomTemplate = {
 		}
 		switch(mode) {
 			case 0:
-				content.innerText = value;
+				if (value instanceof Node || value instanceof HTMLElement) {
+					content.appendChild(value);
+                } else {
+                    content.innerText = value;
+                }
 				break;
 			case 1:
 				var placeholder = content.querySelector('[toti-grid-checkbox="' + name + '"]');

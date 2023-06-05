@@ -1,4 +1,4 @@
-/* TOTI Grid default template version 0.1.1 */
+/* TOTI Grid default template version 0.1.2 */
 /* can be overriden */
 var totiGridDefaultTemplate = {
 	getContainer: function(parentSelector, gridUnique) {
@@ -194,7 +194,11 @@ var totiGridDefaultTemplate = {
 		cell.setAttribute("style", "padding: 0.5em;");
 		switch(mode) {
 			case 0:
-				cell.innerText = value;
+				if (value instanceof Node || value instanceof HTMLElement) {
+					cell.appendChild(value);
+                } else {
+                    cell.innerText = value;
+                }
 				break;
 			case 1:
 				cell.appendChild(value);

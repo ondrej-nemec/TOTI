@@ -1,4 +1,4 @@
-/* TOTI Grid version 1.1.10 */
+/* TOTI Grid version 1.1.11 */
 class TotiGrid {
 
 	cookieName = "grid-cache";
@@ -335,7 +335,7 @@ class TotiGrid {
 				grid.setPageIndex(response.pageIndex, false);
 			}
 			if (grid.config.hasOwnProperty("beforeBind")) {
-	            totiUtils.execute(grid.config.beforeBind, [response.data, grid]);
+	            totiUtils.execute(grid.config.beforeBind, [response.data, grid, response]);
 	        }
 			/* save state */
 			window.history.pushState({"html":window.location.href},"", "?" + new URLSearchParams(selectionParameters).toString());
@@ -582,7 +582,7 @@ class TotiGrid {
 		    	});
 		    }
 			if (grid.config.hasOwnProperty("afterBind")) {
-	            totiUtils.execute(grid.config.afterBind, [response.data, grid]);
+	            totiUtils.execute(grid.config.afterBind, [response.data, grid, response]);
 	        }
 			totiDisplay.fadeOut();
 		})
