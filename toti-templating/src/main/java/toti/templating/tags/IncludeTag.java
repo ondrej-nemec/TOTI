@@ -61,7 +61,7 @@ public class IncludeTag implements Tag {
         code.append("initNode(new MapInit<String, Object>()");
         params.forEach((name, value)->{
              if (!name.equals("file") && !name.equals("module")) {
-                  code.append(String.format(".append(\"%s\", \"%s\")", name, value));
+                  code.append(String.format(".append(\"%s\", %s)", name, value));
              }
         });
         code.append(".toMap());");
