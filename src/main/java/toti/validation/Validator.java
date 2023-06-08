@@ -218,8 +218,8 @@ public class Validator {
 					rule.getMaxValue(),
 					(maxValue)->{
 						try {
-							Long value = new DictionaryValue(o).getLong();
-							return value == null || maxValue.longValue() < value;
+							Number value = new DictionaryValue(o).getNumber();
+							return value == null || maxValue.doubleValue() < value.doubleValue();
 						} catch (NullPointerException | ClassCastException | NumberFormatException e) {
 							return true;
 						}
@@ -232,8 +232,8 @@ public class Validator {
 					rule.getMinValue(),
 					(minValue)->{
 						try {
-							Long value = new DictionaryValue(o).getLong();
-							return value == null || minValue.longValue() > value.longValue();
+							Number value = new DictionaryValue(o).getNumber();
+							return value == null || minValue.doubleValue() > value.doubleValue();
 						} catch (NullPointerException | ClassCastException | NumberFormatException e) {
 							return true;
 						}
