@@ -1,4 +1,4 @@
-/* TOTI Control version 1.1.2 */
+/* TOTI Control version 1.1.3 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -229,7 +229,7 @@ var totiControl = {
 		select: function (params) {
 			function addOption(container, option, selectedGroup, title) {
 				if (option.hasOwnProperty('optgroup') && selectedGroup !== null && selectedGroup != option.optgroup) {
-					return;
+					return null;
 				}
 				if (option.hasOwnProperty('optgroup') && option.optgroup !== null && selectedGroup === null) {
 					var group = title !== null ? title : option.optgroup;
@@ -241,10 +241,12 @@ var totiControl = {
 					}
 					container = optGroup;
 				}
-				container.appendChild(totiControl.input({
+				var optionElement = totiControl.input({
 					type: 'option',
 					...option
-				}));
+				});
+				container.appendChild(optionElement);
+				return optionElement;
 			}
 			function addOptions(select, params, depends) {
 				var oldValue = select.value;
@@ -285,15 +287,22 @@ var totiControl = {
 						});
 						function iterate(item, level, parentName) {
 							addOption(select, item.data, selectedGroup === '' ? null : selectedGroup, parentName);
-							var pre = '';
-							for (i = 0; i < level; i++) {
-								pre += "_  ";/* TODO '&nbsp;&nbsp;'; */
-							}
-							var title = pre + item.data.title;
-							item.childs.forEach((child)=>{
-								optCache[child].data.title = pre + optCache[child].data.title;
-								iterate(optCache[child], level + 1, title);
-							});
+							if (option === null) {
+                                return;
+                            }
+                            var pre = document.createElement('span');
+                            for (i = 0; i < level; i++) {
+                                pre.innerHTML += '&nbsp;&nbsp;';
+                            }
+                            var title = document.createElement('span');
+                            title.innerText = option.innerText;
+                            option.innerHTML = "";
+                            option.appendChild(pre);
+                            option.appendChild(title);
+                            item.childs.forEach((child)=>{
+                                optCache[child].data.optgroup = null;
+                                iterate(optCache[child], level + 1, null);
+                            });
 						}
 						sorted.forEach((id)=>{
 							iterate(optCache[id], 0, null);
