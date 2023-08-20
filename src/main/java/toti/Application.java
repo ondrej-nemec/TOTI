@@ -30,11 +30,13 @@ public class Application {
 	private final boolean autoStart;
 	private boolean isRunning = false;
 	
+	private final String[] aliases;
+	
 	public Application(
 			List<Task> tasks, AuthenticationCache sessionCache, Translator translator, Database database,
 			Link link, Register register, List<String> migrations, ResponseFactory responseFactory,
 			Authenticator authenticator, Authorizator authorizator,
-			boolean autoStart) {
+			boolean autoStart, String... aliases) {
 		this.tasks = tasks;
 		this.sessionCache = sessionCache;
 		this.translator = translator;
@@ -46,6 +48,7 @@ public class Application {
 		this.authenticator = authenticator;
 		this.authorizator = authorizator;
 		this.autoStart = autoStart;
+		this.aliases = aliases;
 	}
 
 /*
@@ -57,6 +60,10 @@ public class Application {
 		return sessionCache;
 	}
 */
+	
+	public String[] getAliases() {
+		return aliases;
+	}
 
 	public Translator getTranslator() {
 		return translator;

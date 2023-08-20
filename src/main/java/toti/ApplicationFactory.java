@@ -66,6 +66,8 @@ public class ApplicationFactory {
 	private BiFunction<List<String>, Env, Database> createDatabase = null;
 	private Translator translator = null;
 	
+	private String[] aliases;
+	
 	//private Env appEnv;
 	
 	private final Env env;
@@ -73,11 +75,12 @@ public class ApplicationFactory {
 	private final String hostname;
 	private final String charset;
 	
-	public ApplicationFactory(String hostname, Env env, String charset, Function<String, Logger> loggerFactory) {
+	public ApplicationFactory(String hostname, Env env, String charset, Function<String, Logger> loggerFactory, String... aliases) {
 		this.env = env.getModule("applications").getModule(hostname);
 		this.loggerFactory = (hostName, loggerName)->loggerFactory.apply(hostname+ "_" + loggerName);
 		this.hostname = hostname;
 		this.charset = charset;
+		this.aliases = aliases;
 	}
 
 	public Application create(List<Module> modules) throws Exception {
@@ -177,7 +180,7 @@ public class ApplicationFactory {
 		);
 		return new Application(
 			tasks, sessionCache, translator, database, link, register, migrations,
-			response, authenticator, authorizator, getAutoStart(env)
+			response, authenticator, authorizator, getAutoStart(env), aliases
 		);
 	}
 

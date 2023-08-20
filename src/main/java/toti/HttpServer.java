@@ -40,9 +40,8 @@ public class HttpServer {
 			String hostname,
 			ThrowingBiFunction<Env, ApplicationFactory, Application, Exception> init,
 			String... alias) throws Exception {
-		ApplicationFactory applicationFactory = new ApplicationFactory(hostname, env, charset, loggerFactory);
+		ApplicationFactory applicationFactory = new ApplicationFactory(hostname, env, charset, loggerFactory, alias);
 		Application application = init.apply(env, applicationFactory);
-		consumer.addApplication(application.getResponseFactory(), hostname, alias);
 		applications.put(hostname, application);
 		if (isRunning && application.isAutoStart()) {
 			startApplication(hostname, application);
@@ -55,7 +54,7 @@ public class HttpServer {
 			if (!stopApplication(hostname, applications.get(hostname))) {
 				return false;
 			}
-			consumer.removeApplication(hostname);
+			//consumer.removeApplication(hostname);
 			applications.remove(hostname);
 		}
 		return true;
@@ -87,6 +86,7 @@ public class HttpServer {
 		try {
 			logger.info("Application is starting: " + host);
 			application.start();
+			consumer.addApplication(application.getResponseFactory(), host, application.getAliases());
 			logger.info("Application is running: " + host);
 		} catch (Exception e) {
 			logger.error("Application start fail: " + host, e);
@@ -96,6 +96,7 @@ public class HttpServer {
 	private boolean stopApplication(String host, Application application) {
 		try {
 			logger.info("Application is stopping: " + host);
+			consumer.removeApplication(host);
 			application.stop();
 			logger.info("Application is stopped: " + host);
 			return true;
