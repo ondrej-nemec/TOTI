@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ji.socketCommunication.http.RestApiServer;
+import toti.answers.Answer;
 
 public class ServerConsumer {
 
@@ -14,8 +15,8 @@ public class ServerConsumer {
 		this.server = server;
 	}
 	
-	public void addApplication(ResponseFactory factory, String hostname, String...alias) {
-		server.addApplication(factory, hostname, alias);
+	public void addApplication(Answer answer, String hostname, String...alias) {
+		server.addApplication(answer, hostname, alias);
 		aliases.put(hostname, alias);
 	}
 	

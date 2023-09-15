@@ -3,9 +3,9 @@ package toti;
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.Request;
 import ji.translator.Translator;
-import toti.response.Response;
+import toti.answers.response.Response;
 import toti.security.Identity;
-import toti.url.MappedUrl;
+import toti.url.MappedAction;
 
 public interface CustomExceptionResponse {
 
@@ -14,7 +14,7 @@ public interface CustomExceptionResponse {
 		StatusCode status,
 		Request request,
 		Identity identity,
-		MappedUrl mappedUrl, // can be null !!
+		MappedAction mappedUrl, // can be null !!
 		Throwable t,
 		Translator translator,
 		boolean isDevelopResponseAllowed,

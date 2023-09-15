@@ -10,11 +10,11 @@ import java.util.function.Function;
 import ji.common.exceptions.LogicException;
 import ji.common.structures.DictionaryValue;
 import ji.common.structures.ObjectBuilder;
-import toti.Module;
 import toti.annotations.Action;
 import toti.annotations.Controller;
-import toti.register.Register;
-import toti.response.Response;
+import toti.answers.action.ResponseAction;
+import toti.application.Module;
+import toti.application.register.Register;
 import toti.url.mock.MockCreator;
 
 public class Link {
@@ -25,14 +25,6 @@ public class Link {
 	public final static String METHOD = "[method]";
 	public final static String LANG = "[lang]";
 	public final static String PARAM = "[param]";
-
-	private static String patternCache = null;
-	private static Register registerCache = null;
-
-	@Deprecated
-	public static Link get() {
-		return new Link(patternCache, registerCache);
-	}
 	
 	// Allow anything starting with "/", except paths starting
 	// "//" and "/\".
@@ -40,27 +32,16 @@ public class Link {
 	  return url.matches("/[^/\\\\]?.*");
 	}
 
-	@Deprecated
-	public static void init(String pattern, Register reg) {
-		patternCache = pattern;
-		registerCache = reg;
-	}
-
-	private final String pattern;
 	private final Register register;
 		
-	public Link(String pattern, Register register) {
-		this.pattern = pattern;
+	public Link(Register register) {
 		this.register = register;
-		if (patternCache == null) {
-			init(pattern, register);
-		}
 	}
 	
 	private String getPath(Module module, Class<?> controller) {
 		return controller.getName()
 				.replace(".", "/")
-				.replace(module.getControllersPath(), "")
+			// TODO	.replace(module.getControllersPath(), "")
 				.replace(controller.getSimpleName(), "");
 	}
 		
@@ -94,7 +75,7 @@ public class Link {
 		return create(controller, method, getParams, urlParams.toArray());
 	}
 	
-	public String create(String controller, String method) {
+	/*public String create(String controller, String method) {
 		return create(controller, method, new HashMap<>(), new Object[] {});
 	}
 	
@@ -104,7 +85,7 @@ public class Link {
 	
 	public String create(String controller, String method, Map<String, Object> params) {
 		return create(controller, method, params, new Object[] {});
-	}
+	}*/
 	
 	public String create(String controllerName, String methodName, Map<String, Object> getParams, Object... urlParams) {
 		try {
@@ -144,32 +125,32 @@ public class Link {
 	
 	/////////////////////////////////////
 	
-	private <T> Method getMethod(Class<T> controller, Function<T, Response> method) {
+	private <T> Method getMethod(Class<T> controller, Function<T, ResponseAction> method) {
 		ObjectBuilder<Method> builder = new ObjectBuilder<>();
 		T result = new MockCreator().createMock(controller, builder);
     	method.apply(result);
     	return builder.get();
 	}
 	
-	public <T> String create(Class<T> controller, Function<T, Response> method) {
+	public <T> String create(Class<T> controller, Function<T, ResponseAction> method) {
 		return create(controller, getMethod(controller, method), new HashMap<>(), new Object[] {});
 	}
 	
-	public <T> String create(Class<T> controller, Function<T, Response> method, Object... params) {
+	public <T> String create(Class<T> controller, Function<T, ResponseAction> method, Object... params) {
 		return create(controller, getMethod(controller, method), new HashMap<>(), params);
 	}
 	
-	public <T> String create(Class<T> controller, Function<T, Response> method, Map<String, Object> params) {
+	public <T> String create(Class<T> controller, Function<T, ResponseAction> method, Map<String, Object> params) {
 		return create(controller, getMethod(controller, method), params, new Object[] {});
 	}
 	
-	public <T> String create(Class<T> controller, Function<T, Response> method, Map<String, Object> getParams, Object... urlParams) {
+	public <T> String create(Class<T> controller, Function<T, ResponseAction> method, Map<String, Object> getParams, Object... urlParams) {
 		return create(controller, getMethod(controller, method), getParams, urlParams);
 	}
 	
 	/////////////////////////////////////
 	
-	protected <T> String create(Class<T> controller, Method method, Map<String, Object> getParams, Object... urlParams) {
+	protected <T> String create(Class<T> controller, Method method, Map<String, Object> getParams, Object... pathParams) {
 		if (!controller.isAnnotationPresent(Controller.class)) {
 			throw new LogicException("Class " + controller + " is not TOTI controller");
 		}
@@ -177,27 +158,58 @@ public class Link {
 			throw new LogicException("Method " + method + " is not TOTI action");
 		}
 		try {
-			List<UrlParam> parameters = new LinkedList<>();
-			getParams.forEach((name, value)->parameters.add(new UrlParam(name, value)));
-			for (Object o : urlParams) {
-				parameters.add(new UrlParam(o));
+			Module module = register.getModuleForClass(controller);
+
+			StringBuilder uri = new StringBuilder("/");
+			uri.append(module.getName());
+			uri.append("/");
+			uri.append(controller.getAnnotation(Controller.class).value());
+			uri.append("/");
+			uri.append(method.getAnnotation(Action.class).path());
+			for (Object o : pathParams) {
+				uri.append("/");
+				uri.append(o);
+			}
+			if (getParams.size() > 0) {
+				StringBuilder get = new StringBuilder();
+				getParams.forEach((k, v)->parseParams(get, k, v));
+				uri.append("?");
+				uri.append(get.toString());
 			}
 			
-			String moduleClass = register._getFactory(controller.getName())._2();
-			Module module = Module.class.cast(Class.forName(moduleClass).getDeclaredConstructor().newInstance());
-			
-			return parse(
+			return uri.toString();
+			/*return parse(
 				module.getName(),
 				getPath(module, controller),
 				controller.getAnnotation(Controller.class).value(), 
-				method.getAnnotation(Action.class).value(),
+				method.getAnnotation(Action.class).path(),
 				parameters
-			);
+			);*/
 		} catch (Exception e) {
 			throw new RuntimeException("Cannot create link", e);
 		}
 	}
-
+	
+	private void parseParams(StringBuilder get, String key, Object value) {
+		if (value instanceof Map) {
+			new DictionaryValue(value).getMap().forEach((k, v)->{
+				parseParams(get, String.format("%s[%s]", key, k), v);
+			});
+		} else if (value instanceof Iterable) {
+			new DictionaryValue(value).getList().forEach((v)->{
+				parseParams(get, key + "[]", v);
+			});
+		} else {
+			if (get.toString().length() > 0) {
+				get.append("&");
+			}
+			get.append(key);
+			get.append("=");
+			get.append(value);
+		}
+	}
+	
+/*
 	protected String parse(String module, String path, String controller, String method, List<UrlParam> params) {
 		return parse(pattern, module, path, controller, method, params);
 	}
@@ -225,25 +237,6 @@ public class Link {
 		return pattern + (get.toString().length() > 1 ? "?" + get.toString() : "");
 	}
 	
-	private void parseParams(StringBuilder get, String key, Object value) {
-		if (value instanceof Map) {
-			new DictionaryValue(value).getMap().forEach((k, v)->{
-				parseParams(get, String.format("%s[%s]", key, k), v);
-			});
-		} else if (value instanceof Iterable) {
-			new DictionaryValue(value).getList().forEach((v)->{
-				parseParams(get, key + "[]", v);
-			});
-		} else {
-			if (get.toString().length() > 0) {
-				get.append("&");
-			}
-			get.append(key);
-			get.append("=");
-			get.append(value);
-		}
-	}
-	
 	private String parseUrl(String pattern, String key, String value) {
 		value = normalize(value);
 		if (value.length() == 0) {
@@ -265,5 +258,5 @@ public class Link {
 		}
 		return url;
 	}
-	
+	*/
 }

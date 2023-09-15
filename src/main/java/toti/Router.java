@@ -1,33 +1,31 @@
 package toti;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import toti.url.Link;
+import toti.application.register.Register;
+import toti.url.MappedAction;
 
 public class Router {
 
-	private Map<String, String> map = new HashMap<>();
+	private Map<String, MappedAction> map = new HashMap<>();
 	
 	private String redirectOnNotLoggedInUser = null;
 	
 	private CustomExceptionResponse customExceptionResponse = null;
 	
-	private final Link link;
+	private final Register register;
 	
-	public Router(Link link) {
-		this.link = link;
+	public Router(Register register) {
+		this.register = register;
 	}
 	
-	public Link getLink() {
-		return link;
+	public <T> void addUrl(String origin, Class<T> controller, Method method) {
+		map.put(origin, register.createRoutedAction(controller, method));
 	}
 	
-	public void addUrl(String origin, String destination) {
-		map.put(origin, destination);
-	}
-	
-	protected String getUrlMapping(String url) {
+	public MappedAction getUrlMapping(String url) {
 		return map.get(url);
 	}
 	

@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import toti.annotations.Action;
 import toti.annotations.Controller;
-import toti.response.Response;
+import toti.answers.response.Response;
 
 @Controller("dashboard")
 public class WelcomePageController {

@@ -13,7 +13,7 @@ import ji.json.Jsonable;
 import ji.socketCommunication.http.structures.Request;
 import ji.socketCommunication.http.profiler.HttpServerProfilerEvent;
 import toti.security.Identity;
-import toti.url.MappedUrl;
+import toti.url.MappedAction;
 
 public class ProfilerLog implements Jsonable{
 
@@ -25,7 +25,7 @@ public class ProfilerLog implements Jsonable{
 	
 	private Identity identity;
 	private Request request;
-	private MappedUrl mapped;
+	private MappedAction mapped;
 	
 	private final SortedMap<String, SqlLog> sqlLogs = new SortedMap<>();
 
@@ -44,7 +44,7 @@ public class ProfilerLog implements Jsonable{
 	//	this.createdAt = System.currentTimeMillis();
 	}
 	
-	public void setRequestInfo(Identity identity, Request request, MappedUrl mapped) {
+	public void setRequestInfo(Identity identity, Request request, MappedAction mapped) {
 		this.identity = identity;
 		this.request = request;
 		this.mapped = mapped;

@@ -16,7 +16,7 @@ import ji.translator.LanguageSettings;
 import ji.translator.Locale;
 import toti.HttpServer;
 import toti.HttpServerFactory;
-import toti.Module;
+import toti.application.Module;
 import toti.samples.developtools.DevelopToolsExample;
 import toti.samples.exceptions.ExceptionsExample;
 import toti.samples.form.FormExample;

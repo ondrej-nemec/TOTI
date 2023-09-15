@@ -3,13 +3,13 @@ package toti.tutorial1.services;
 import java.sql.SQLException;
 import java.util.List;
 
+import ext.EntityDao;
+import ext.GridEntityDao;
 import ji.database.Database;
 import ji.database.support.DatabaseRow;
 import ji.querybuilder.QueryBuilder;
 import ji.querybuilder.builders.SelectBuilder;
 import toti.tutorial1.entity.Device;
-import toti.application.EntityDao;
-import toti.application.GridEntityDao;
 
 public class DevicesDao implements EntityDao<Device>, GridEntityDao<Device> {
 	

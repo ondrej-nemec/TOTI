@@ -5,7 +5,6 @@ public enum AuthMode {
 	HEADER,
 	COOKIE,
 	COOKIE_AND_CSRF,
-	NO_TOKEN
-	//NO_PARAMS;
+	NO_TOKEN;
 	
 }

@@ -6,6 +6,9 @@ import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 
+import ext.FilterMode;
+import ext.GridColumn;
+import ext.GridOptions;
 import ji.common.structures.DictionaryValue;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
@@ -18,10 +21,7 @@ import toti.annotations.Method;
 import toti.annotations.ParamUrl;
 import toti.annotations.Params;
 import toti.annotations.Secured;
-import toti.application.FilterMode;
-import toti.application.GridColumn;
-import toti.application.GridOptions;
-import toti.response.Response;
+import toti.answers.response.Response;
 import toti.validation.ItemRules;
 import toti.validation.Validator;
 

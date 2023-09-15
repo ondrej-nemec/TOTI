@@ -7,9 +7,7 @@ import toti.security.AuthMode;
 
 @Retention(RUNTIME)
 public @interface Secured {
-
-	Domain[] value() default {};
 	
-	AuthMode mode() default AuthMode.HEADER;
+	AuthMode value() default AuthMode.HEADER;
 	
 }

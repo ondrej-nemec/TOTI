@@ -1,15 +1,54 @@
+static věci
+	TemplateFactory
+	Link
+	LoadUrls
+
+
+.setTokenExpirationTime(30 * 1000) // 30s
+.setMaxRequestBodySize(1024 * 10) // 10 kB - !! for all body
+.setLanguageSettings(new LanguageSettings(Arrays.asList(new Locale("en", true, Arrays.asList()))))
+// .setDevelopIpAdresses(Arrays.asList()) // no develop ips
+.setUseProfiler(true)
+
+
+
+	
+	<script src="/js/totiSortedMap.js"></script>
+	<script src="/js/totiImages.js" ></script>
+	<script src="/js/totiUtils.js" ></script>
+	<script src="/js/totiTranslations.js" ></script>
+	<script src="/js/totiStorage.js" ></script>
+	<script src="/js/totiProfiler.js" ></script>
+	<script src="/js/totiLang.js" ></script>
+	<script src="/js/totiLoad.js" ></script>
+	<script src="/js/totiAuth.js" ></script>
+	<script src="/js/totiFormDefaultTemplate.js" ></script>
+	<script src="/js/totiGridDefaultTemplate.js" ></script>
+	<script src="/js/totiFormCustomTemplate.js" ></script>
+	<script src="/js/totiGridCustomTemplate.js" ></script>
+	<script src="/js/totiDisplay.js" ></script>
+	<script src="/js/totiControl.js" ></script>
+	<script src="/js/totiForm.js" ></script>
+	<script src="/js/totiGrid.js" ></script>
+
+
 # TOTI TODO taskkist
 
 ## Known issue
 
 * sync form - exclude not working
+* dokumentace
+  * popsat index při dir requestu
+  * přidat placeholder parameter nebo ho smazat
 
 ## FIX and Bugs
 
 * Check: Cross Site Scripting (DOM Based)
 * documentation - filters and inputs - check methods(placeholder)
-* JS lib doc
 * incomplete HTML tag in JS comment cause exception
+* divny batch log
+
+Run server/application v omezeném režimu – jen db, Je migrate,….
 
 ## TODO
 
@@ -23,14 +62,13 @@
 		* Include
 		* variable define
 * Control
-	* Check firefox datetime with step 60
 	* Add title element (tooltip)
-	* Grid: page size hidden value. set at init, user cannot change
+	* u gridu jsou vyžadovány proměné v body->nullpoinerexception
 * JS
-	* TotiLoad: remove deprecated sync calling Synchronous XMLHttpRequest on the main thread is deprecated because of its detrimental effects to the end user's experience. For more help, check https://xhr.spec.whatwg.org/.
 	* JS method: take html element or element content and use as link. Element will be invisible
 	* Range, Color: actual value
 * DB viewer
+	* Db viewer by měl umět srazit db do několika málo migrací – view nechat samostatně - diff
 * Profiler - memory and CPU graphs, log dir requests
 * Permissions - Rule - owner ids will not be supplier but list ?
 * Routing
@@ -56,11 +94,6 @@
 	* Add ZonedDateTIme - need something in JS
 	* Grid
 		* Filtering: switch for like/equals
-		* autorefresh
-	* Form
-		* submit url - replace 'id' - custumize pattern, keys
-		* some simple api for dynamic input displaying
-		* DynamicList: JS api for add/remove
 * Validator
 	* Relation between parameters
 	* Size - not less not more
@@ -73,6 +106,7 @@
 * Profiler
 		Runtime runtime = Runtime.getRuntime();
 		return runtime.totalMemory() - runtime.freeMemory();
+		https://stackoverflow.com/questions/9368764/calculate-size-of-object-in-java/9368834#9368834
 
 ## Proposal
 

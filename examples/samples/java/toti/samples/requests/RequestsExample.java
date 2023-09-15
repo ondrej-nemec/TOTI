@@ -13,16 +13,16 @@ import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.structures.RequestParameters;
 import ji.socketCommunication.http.structures.UploadedFile;
 import ji.translator.Translator;
-import toti.Module;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Method;
 import toti.annotations.Param;
 import toti.annotations.ParamUrl;
 import toti.annotations.Params;
+import toti.answers.response.Response;
+import toti.application.Module;
 import toti.application.Task;
-import toti.register.Register;
-import toti.response.Response;
+import toti.application.register.Register;
 import toti.url.Link;
 
 /**

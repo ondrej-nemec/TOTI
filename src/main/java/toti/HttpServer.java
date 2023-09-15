@@ -86,7 +86,7 @@ public class HttpServer {
 		try {
 			logger.info("Application is starting: " + host);
 			application.start();
-			consumer.addApplication(application.getResponseFactory(), host, application.getAliases());
+			consumer.addApplication(application.getRequestAnswer(), host, application.getAliases());
 			logger.info("Application is running: " + host);
 		} catch (Exception e) {
 			logger.error("Application start fail: " + host, e);

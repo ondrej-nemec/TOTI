@@ -18,10 +18,10 @@ import toti.tutorial1.web.WelcomePageController;
 import toti.tutorial1.web.api.DeviceApiController;
 import toti.tutorial1.web.api.SignApiController;
 import toti.tutorial1.web.api.StateApiController;
-import toti.Module;
 import toti.Router;
+import toti.application.Module;
 import toti.application.Task;
-import toti.register.Register;
+import toti.application.register.Register;
 import toti.url.Link;
 
 public class EdgeControlModule implements Module {

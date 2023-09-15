@@ -4,14 +4,14 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Random;
 
+import ext.EntityDao;
+import ext.GridEntityDao;
 import ji.database.Database;
 import ji.database.support.DatabaseRow;
 import ji.querybuilder.QueryBuilder;
 import ji.querybuilder.builders.BatchBuilder;
 import ji.querybuilder.builders.SelectBuilder;
 import ji.querybuilder.enums.ColumnType;
-import toti.application.EntityDao;
-import toti.application.GridEntityDao;
 
 public class GridExampleDao implements EntityDao<GridExampleEntity>, GridEntityDao<GridExampleEntity> {
 

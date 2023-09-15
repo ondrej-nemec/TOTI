@@ -17,10 +17,10 @@ import ji.socketCommunication.http.structures.Request;
 import ji.socketCommunication.http.structures.RequestParameters;
 import ji.socketCommunication.http.profiler.HttpServerProfiler;
 import ji.socketCommunication.http.profiler.HttpServerProfilerEvent;
-import toti.response.Response;
+import toti.answers.response.Response;
 import toti.security.Identity;
 import toti.templating.TemplateProfiler;
-import toti.url.MappedUrl;
+import toti.url.MappedAction;
 
 public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProfiler, TemplateProfiler, Jsonable {
 
@@ -99,7 +99,7 @@ public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProf
 	
 	/***********/
 	
-	public void logRequest(Identity identity, Request request, MappedUrl mapped) {
+	public void logRequest(Identity identity, Request request, MappedAction mapped) {
 		log((log)->{
 			log.setRequestInfo(identity, request, mapped);
 		});

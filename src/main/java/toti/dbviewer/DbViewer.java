@@ -12,7 +12,7 @@ import ji.database.Database;
 import ji.database.support.DatabaseRow;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.structures.RequestParameters;
-import toti.response.Response;
+import toti.answers.response.Response;
 
 public class DbViewer {
 	

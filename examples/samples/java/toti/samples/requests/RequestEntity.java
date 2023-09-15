@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import toti.application.Entity;
+import ext.Entity;
 
 public class RequestEntity implements Entity {
 

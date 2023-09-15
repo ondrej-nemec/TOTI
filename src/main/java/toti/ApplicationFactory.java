@@ -14,24 +14,29 @@ import org.apache.logging.log4j.Logger;
 
 import ji.common.functions.Env;
 import ji.common.functions.Hash;
-import ji.common.structures.MapDictionary;
+import ji.common.structures.ObjectBuilder;
 import ji.database.Database;
 import ji.database.DatabaseConfig;
 import ji.database.support.SqlQueryProfiler;
 import ji.translator.LanguageSettings;
 import ji.translator.Locale;
 import ji.translator.Translator;
+import toti.answers.Answer;
+import toti.answers.ControllerAnswer;
+import toti.answers.ExceptionAnswer;
+import toti.answers.FileSystemAnswer;
+import toti.answers.TotiAnswer;
+import toti.application.Module;
 import toti.application.Task;
+import toti.application.register.Param;
+import toti.application.register.Register;
 import toti.profiler.Profiler;
-import toti.register.Register;
 import toti.security.AuthenticationCache;
 import toti.security.Authenticator;
 import toti.security.Authorizator;
 import toti.security.IdentityFactory;
 import toti.templating.TemplateFactory;
 import toti.url.Link;
-import toti.url.LoadUrls;
-import toti.url.UrlPart;
 
 public class ApplicationFactory {
 	
@@ -55,12 +60,12 @@ public class ApplicationFactory {
 	private Long tokenExpirationTime = null;
 	private String tokenCustomSalt = null;
 	private Boolean useProfiler = null;
-	private String urlPattern = null;
+	// private String urlPattern = null;
 	private String logsPath = null;
 	
 	private Boolean autoStart = null;
 
-	private Headers responseHeaders = null;
+	private Map<String, List<Object>>  responseHeaders = null;
 	private LanguageSettings langSettings = null;
 	//private Database database = null;
 	private BiFunction<List<String>, Env, Database> createDatabase = null;
@@ -102,10 +107,11 @@ public class ApplicationFactory {
 			logger.info("No database specified");
 		}
 		
-		
-		Register register = new Register();
-		Link link = new Link(getUrlPattern(env), register);
-		Router router = new Router(link);
+		ObjectBuilder<Module> actualModule = new ObjectBuilder<>();
+		Param root = new Param(null);
+		Register register = new Register(root, actualModule);
+		Link link = new Link(/*getUrlPattern(env),*/ register);
+		Router router = new Router(register);
 		
 		Map<String, TemplateFactory> templateFactories = new HashMap<>();
 		Set<String> trans = new HashSet<>();
@@ -116,8 +122,8 @@ public class ApplicationFactory {
 			langSettings.setProfiler(profiler.used());
 			this.translator = Translator.create(langSettings, trans, loggerFactory.apply(hostname, "translator"));
 		}
-		MapDictionary<UrlPart> mapping = MapDictionary.hashMap();
 		for (Module module : modules) {
+			actualModule.set(module);
 			TemplateFactory templateFactory = new TemplateFactory(
 					getTempPath(env, hostname),
 					module.getTemplatesPath(),
@@ -140,9 +146,9 @@ public class ApplicationFactory {
 					loggerFactory.apply(hostname, module.getName())
 				)
 			);
-			LoadUrls.loadUrlMap(mapping, module, router, register, link);
 			module.addRoutes(router);
 		};
+		actualModule.set(null);
 		// file session save is disabled - maybe enable hibrid saving - user in memory, some user data on disk
 		AuthenticationCache sessionCache = new AuthenticationCache(hostname, getTempPath(env, hostname), false, logger);
 		Authenticator authenticator = new Authenticator(
@@ -153,6 +159,40 @@ public class ApplicationFactory {
 		);
 		Authorizator authorizator = new Authorizator(logger);
 		
+		TemplateFactory totiTemplateFactory = new TemplateFactory(
+			getTempPath(env, hostname), "toti/web", "", "", templateFactories,
+			getDeleteTempJavaFiles(env), getMinimalize(env),
+			logger
+		).setProfiler(profiler.used());
+		
+		TotiAnswer totiAnwer = new TotiAnswer();
+		ExceptionAnswer exceptionAnswer = new ExceptionAnswer(
+			getDevelopIps(env),
+			totiTemplateFactory,
+			getLogsPath(env),
+			translator,
+			logger
+		);
+		ControllerAnswer controllerAnswer = new ControllerAnswer(
+			router, root, templateFactories, authenticator, authorizator, link, translator, logger
+		);
+		FileSystemAnswer fileSystemAnswer = new FileSystemAnswer(
+			getResourcesPath(env),
+			getDirResponseAllowed(env),
+			getDirDefaultFile(env),
+			logger
+		);
+		Answer answer = new Answer(
+			exceptionAnswer,
+			controllerAnswer,
+			fileSystemAnswer,
+			totiAnwer,
+			new IdentityFactory(translator, translator.getLocale().getLang()),
+			authenticator,
+			getResponseHeaders(env),
+			charset
+		);
+		/*
 		ResponseFactory response = new ResponseFactory(
 				getResponseHeaders(env),
 				getResourcesPath(env),
@@ -177,10 +217,10 @@ public class ApplicationFactory {
 				profiler,
 				register,
 				mapping
-		);
+		);*/
 		return new Application(
 			tasks, sessionCache, translator, database, link, register, migrations,
-			response, authenticator, authorizator, getAutoStart(env), aliases
+			answer, authenticator, authorizator, getAutoStart(env), aliases
 		);
 	}
 
@@ -213,11 +253,11 @@ public class ApplicationFactory {
 		}
 		return null;
 	}
-	
+	/*
 	private String getUrlPattern(Env env) {
 		return getProperty(urlPattern, "url-pattern", "/[module]</[path]>/[controller]/[method]</[param]>", String.class, env);
 	}
-	
+	*/
 	private String getTempPath(Env env, String hostname) {
 		return getProperty(tempPath, "temp", "temp", String.class, env) + "/" + hostname;
 	}
@@ -296,12 +336,12 @@ public class ApplicationFactory {
 		return new LanguageSettings(java.util.Locale.getDefault().toString(), Arrays.asList());
 	}
 	
-	private Headers getResponseHeaders(Env env) {
+	private Map<String, List<Object>>  getResponseHeaders(Env env) {
 		if (responseHeaders != null) {
 			return responseHeaders;
 		}
+		Headers headers = new Headers();
 		if (env.getValue("headers") != null) {
-			Headers headers = new Headers();
 			env.getList("headers", "\\|").forEach(h->{
 				String[] hds = h.split(":", 2);
 				if (hds.length == 1) {
@@ -310,8 +350,10 @@ public class ApplicationFactory {
 					headers.addHeader(hds[0].trim(), hds[1].trim());
 				}
 			});
+		} else {
+			headers.addHeader("Access-Control-Allow-Origin", "*");
 		}
-		return new Headers() .addHeader("Access-Control-Allow-Origin", "*");
+		return headers.getHeaders();
 	}
 	
 	private boolean getAutoStart(Env env) {
@@ -341,11 +383,6 @@ public class ApplicationFactory {
 	}
 
 	public ApplicationFactory setHeaders(Map<String, List<Object>> headers) {
-		this.responseHeaders = new Headers(headers);
-		return this;
-	}
-
-	public ApplicationFactory setHeaders(Headers headers) {
 		this.responseHeaders = headers;
 		return this;
 	}
@@ -399,12 +436,12 @@ public class ApplicationFactory {
 		this.useProfiler = useProfiler;
 		return this;
 	}
-
+/*
 	public ApplicationFactory setUrlPattern(String urlPattern) {
 		this.urlPattern = urlPattern;
 		return this;
 	}
-	
+	*/
 	public ApplicationFactory setTranslator(Translator translator) {
 		this.translator = translator;
 		return this;

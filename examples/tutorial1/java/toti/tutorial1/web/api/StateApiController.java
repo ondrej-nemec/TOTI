@@ -4,6 +4,9 @@ import java.util.Arrays;
 
 import org.apache.logging.log4j.Logger;
 
+import ext.FilterMode;
+import ext.GridColumn;
+import ext.GridOptions;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
 import toti.annotations.Action;
@@ -11,10 +14,7 @@ import toti.annotations.Controller;
 import toti.annotations.Method;
 import toti.annotations.Params;
 import toti.annotations.Secured;
-import toti.application.FilterMode;
-import toti.application.GridColumn;
-import toti.application.GridOptions;
-import toti.response.Response;
+import toti.answers.response.Response;
 import toti.tutorial1.services.DeviceStateDao;
 import toti.validation.Validator;
 

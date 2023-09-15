@@ -10,6 +10,11 @@ import java.util.Optional;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import ext.Entity;
+import ext.Filter;
+import ext.FilterMode;
+import ext.GridEntityDao;
+import ext.Sort;
 import ji.common.structures.MapInit;
 import ji.common.structures.SortedMap;
 import ji.database.Database;

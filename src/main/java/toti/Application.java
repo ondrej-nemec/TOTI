@@ -3,8 +3,9 @@ package toti;
 import java.util.List;
 
 import ji.database.Database;
+import toti.answers.Answer;
 import toti.application.Task;
-import toti.register.Register;
+import toti.application.register.Register;
 import toti.security.AuthenticationCache;
 import toti.security.Authenticator;
 import toti.security.Authorizator;
@@ -25,7 +26,7 @@ public class Application {
 	private final Authenticator authenticator;
     private final Authorizator authorizator;
 	// Map<String, TemplateFactory> templateFactories
-	private final ResponseFactory responseFactory;
+	private final Answer answer;
 	
 	private final boolean autoStart;
 	private boolean isRunning = false;
@@ -34,7 +35,7 @@ public class Application {
 	
 	public Application(
 			List<Task> tasks, AuthenticationCache sessionCache, Translator translator, Database database,
-			Link link, Register register, List<String> migrations, ResponseFactory responseFactory,
+			Link link, Register register, List<String> migrations, Answer answer,
 			Authenticator authenticator, Authorizator authorizator,
 			boolean autoStart, String... aliases) {
 		this.tasks = tasks;
@@ -44,7 +45,7 @@ public class Application {
 		this.link = link;
 		this.register = register;
 		this.migrations = migrations;
-		this.responseFactory = responseFactory;
+		this.answer = answer;
 		this.authenticator = authenticator;
 		this.authorizator = authorizator;
 		this.autoStart = autoStart;
@@ -85,8 +86,8 @@ public class Application {
 		return migrations;
 	}
 
-	protected ResponseFactory getResponseFactory() {
-		return responseFactory;
+	protected Answer getRequestAnswer() {
+		return answer;
 	}
 
 	public boolean isAutoStart() {

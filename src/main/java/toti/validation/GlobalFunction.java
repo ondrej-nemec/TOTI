@@ -7,6 +7,6 @@ import ji.translator.Translator;
 
 public interface GlobalFunction {
 
-	Set<String> apply(RequestParameters requestParams, RequestParameters validatorParams, Translator translator);
+	Set<String> apply(RequestParameters requestParams, Translator translator);
 	
 }

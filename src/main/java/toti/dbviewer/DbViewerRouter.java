@@ -11,8 +11,8 @@ import ji.database.DatabaseConfig;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.structures.RequestParameters;
 import toti.Headers;
+import toti.answers.response.Response;
 import toti.logging.TotiLoggerFactory;
-import toti.response.Response;
 import toti.security.Identity;
 
 public class DbViewerRouter {
@@ -26,8 +26,9 @@ public class DbViewerRouter {
 			String path, 
 			RequestParameters params, 
 			Identity identity, 
+			Headers requestHeaders, 
 			Headers responseHeaders) {
-		String authCookie = identity.getCookieValue(COOKIE_NAME);
+		String authCookie = requestHeaders.getCookieValue(COOKIE_NAME);
 		/*
 		if ("".equals(path)) {
 			

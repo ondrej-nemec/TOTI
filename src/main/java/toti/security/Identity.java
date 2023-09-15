@@ -4,13 +4,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import ji.translator.Locale;
-import toti.Headers;
 
 public class Identity {
 
 	private final String IP;
 	private final Locale locale;
-	private final Headers requestHeaders;
 	private String token; // full session string
 	
 	private AuthMode loginMode = AuthMode.NO_TOKEN;
@@ -25,10 +23,9 @@ public class Identity {
 	
 	private final List<String> responseHeaders = new LinkedList<>();
 	
-	protected Identity(String IP, Locale locale, Headers requestHeaders, String token, AuthMode loginMode) {
+	protected Identity(String IP, Locale locale, String token, AuthMode loginMode) {
 		this.IP = IP;
 		this.locale = locale;
-		this.requestHeaders = requestHeaders;
 		this.loginMode = loginMode;
 		this.token = token;
 	}
@@ -120,23 +117,6 @@ public class Identity {
 	}
 	
 	/**
-	 * Request headers
-	 * @return
-	 */
-	public Headers getHeaders() {
-		return requestHeaders;
-	}
-
-	/**
-	 * Returns cookie value by name
-	 * @param cookieName
-	 * @return cookie value or null
-	 */
-	public String getCookieValue(String cookieName) {
-		return getCookieValue(requestHeaders, cookieName);
-	}
-	
-	/**
 	 * Returns user IP
 	 * @return
 	 */
@@ -159,40 +139,12 @@ public class Identity {
 	public void addResponseHeader(String header) {
 		responseHeaders.add(header);
 	}
-	
-	/**
-	 * Determite if request is brower link or not
-	 * <strong>Resutl is not 100% sure.</strong>
-	 * @return true if request is asychronious
-	 */
-	public boolean isAsyncRequest() {
-		Object destination = requestHeaders.getHeader("Sec-Fetch-Dest");
-		return destination != null && destination.toString().equals("empty");
-	}
 
 	@Override
 	public String toString() {
 		return "Identity [IP=" + IP + ", locale=" + locale + ", token=" + token
 				+ ", loginMode=" + loginMode + ", id=" + id + ", expired=" + expired //+ ", content=" + content
-				+ ", user=" + user + ", requestHeaders=" + requestHeaders + "]";
-	}
-
-	// TODO test this method
-	public static String getCookieValue(Headers requestHeaders, String cookieName) {
-		if (requestHeaders.containsHeader("Cookie")) {
-			String[] cookiesArray = requestHeaders.getHeader("Cookie").toString().split(";");
-			for (String cookies : cookiesArray) {
-				String[] cookie = cookies.split("=", 2);
-				if (cookie.length == 2 && cookie[0].trim().equals(cookieName)) {
-					String value = cookie[1].trim();
-					if (value.equals("null")) {
-						return null;
-					}
-					return value;
-				}
-			}
-		}
-		return null;
+				+ ", user=" + user + "]";
 	}
 		
 	public String getPageId() {

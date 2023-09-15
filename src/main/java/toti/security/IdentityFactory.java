@@ -1,8 +1,6 @@
 package toti.security;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import ji.translator.Locale;
@@ -90,10 +88,9 @@ public class IdentityFactory {
 		//return headers;
 	}
 	
-	public Identity createIdentity(Map<String, List<Object>> requestHeaders, String IP, Profiler profiler) {
-		Headers headers = new Headers(requestHeaders);
+	public Identity createIdentity(Headers headers, String IP, Profiler profiler) {
 		Tuple2<String, AuthMode> token = getToken(headers);
-		Identity identity = new Identity(IP, getLocale(headers), headers, token._1(), token._2());
+		Identity identity = new Identity(IP, getLocale(headers), token._1(), token._2());
 		if (profiler.isUse()) {
 			identity.setPageId(getPageId(headers)); // profiler.getCurrentPageId()
 		}
@@ -118,14 +115,14 @@ public class IdentityFactory {
 				mode = AuthMode.HEADER;
 			}
 		} else {
-			token = Identity.getCookieValue(headers, SESSION_COOKIE_NAME);
+			token = headers.getCookieValue(SESSION_COOKIE_NAME);
 			mode = AuthMode.COOKIE;
 		}
 		return new Tuple2<>(token, mode);
 	}
 	
 	private Locale getLocale(Headers headers) {
-		String cookieLang = Identity.getCookieValue(headers, LOCALE_COOKIE_NAME);
+		String cookieLang = headers.getCookieValue(LOCALE_COOKIE_NAME);
 		if (cookieLang != null) {
 			return resolveLocale(cookieLang);
 		}

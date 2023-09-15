@@ -1,9 +1,9 @@
 package toti.tutorial1.entity;
 
+import ext.Entity;
 import ji.common.annotations.MapperIgnored;
 import ji.common.annotations.MapperParameter;
 import ji.common.annotations.MapperType;
-import toti.application.Entity;
 
 public class Device implements Entity {
 

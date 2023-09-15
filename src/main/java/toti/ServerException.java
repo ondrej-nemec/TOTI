@@ -1,20 +1,20 @@
 package toti;
 
 import ji.socketCommunication.http.StatusCode;
-import toti.url.MappedUrl;
+import toti.url.MappedAction;
 
 public class ServerException extends Exception {
 	
 	private static final long serialVersionUID = 1L;
 	
 	private final StatusCode code;
-	private MappedUrl url;
+	private MappedAction url;
 
 	public ServerException(StatusCode code, Throwable t) {
 		this(code, null, t);
 	}
 
-	public ServerException(StatusCode code, MappedUrl url, Throwable t) {
+	public ServerException(StatusCode code, MappedAction url, Throwable t) {
 		super(t);
 		this.url = url;
 		this.code = code;
@@ -24,7 +24,7 @@ public class ServerException extends Exception {
 		this(code, null, message);
 	}
 
-	public ServerException(StatusCode code, MappedUrl url, String message) {
+	public ServerException(StatusCode code, MappedAction url, String message) {
 		super(message);
 		this.code = code;
 		this.url = url;
@@ -34,7 +34,7 @@ public class ServerException extends Exception {
 		return code;
 	}
 
-	public MappedUrl getUrl() {
+	public MappedAction getUrl() {
 		return url;
 	}
 	

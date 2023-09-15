@@ -10,12 +10,12 @@ import toti.tutorial1.web.api.SignApiController;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Param;
+import toti.answers.response.Response;
 import toti.control.Form;
 import toti.control.inputs.Option;
 import toti.control.inputs.Password;
 import toti.control.inputs.Select;
 import toti.control.inputs.Submit;
-import toti.response.Response;
 import toti.url.Link;
 
 @Controller("sign")

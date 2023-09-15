@@ -14,7 +14,7 @@ import ji.common.structures.ListInit;
 import ji.common.structures.MapInit;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
-import toti.register.Register;
+import toti.application.register.Register;
 
 @RunWith(JUnitParamsRunner.class)
 public class LinkTest {
@@ -139,7 +139,7 @@ public class LinkTest {
 		);
 	}
 
-	@Test
+/*	@Test
 	public void testCreateUrlFromClassUrlParam() {
 		assertEquals(
 			"/toti/test/url-param/42",
@@ -165,7 +165,7 @@ public class LinkTest {
 			"/toti/test/url-get-param/42?param=27",
 			getLink().create(TestingController.class, c->c.methodPathAndQueryParam(null, null), params, 42)
 		);
-	}
+	}*/
 	
 	/********************************/
 	

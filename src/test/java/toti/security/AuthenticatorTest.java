@@ -36,7 +36,7 @@ public class AuthenticatorTest {
 		Mockito.when(cache.get("id1id2id3id4id5id6id7id8id9id0"))
 			.thenReturn(new User("id1id2id3id4id5id6id7id8id9id0", null));
 		Authenticator auth = new Authenticator(123, "salt", cache, hash, Mockito.mock(Logger.class));
-		Identity identity = new Identity("", null, null, 
+		Identity identity = new Identity("", null,
 				// "QlKvbHfY5F4wgrK0tlmrcRImLCx6t59RWq8XvTqmIL4=f1jmBdmnjIgFCEczXFkOYGE7tFulK9pJ1R3EleUauqvMT4WcgMqQqHSXrHW7i8wrFrOLJLHPd2X7Re2D1618244602626"
 				"has1has2has3has4has5has6has7has8has9has0hash"
 				+ "rand1rand2rand3rand4rand5rand6rand7rand8rand9rand0"

@@ -4,39 +4,38 @@ import static org.junit.Assert.fail;
 
 import toti.annotations.Action;
 import toti.annotations.Controller;
-import toti.annotations.Param;
-import toti.annotations.ParamUrl;
-import toti.response.Response;
+import toti.answers.action.ResponseAction;
+import toti.answers.response.Response;
 
 @Controller("test")
 public class TestingController {
 	
-	@Action("no-param")
-	public Response methodNoParams() {
+	@Action(path="no-param")
+	public ResponseAction methodNoParams() {
 		fail("Method doInsert cannot be called");
 		return null;
 	}
 	
-	@Action("path-param")
-	public Response methodPathParam(@ParamUrl("path") String path) {
+	/*@Action(path="path-param")
+	public ResponseAction methodPathParam(String path) {
 		fail("Method doInsert cannot be called");
 		return null;
 	}
 	
-	@Action("path-query-param")
-	public Response methodPathAndQueryParam(@ParamUrl("path") String path, @Param("query") String query) {
+	@Action(path="path-query-param")
+	public ResponseAction methodPathAndQueryParam(String path, @Param("query") String query) {
 		fail("Method doInsert cannot be called");
 		return null;
 	}
 	
-	@Action("query-param")
-	public Response methodQueryParam(@Param("query") String query) {
+	@Action(path="query-param")
+	public ResponseAction methodQueryParam(@Param("query") String query) {
 		fail("Method doInsert cannot be called");
 		return null;
-	}
+	}*/
 	
-	@Action("")
-	public Response methodNoName(@ParamUrl("path") String path) {
+	@Action()
+	public Response methodNoName(String path) {
 		fail("Method doInsert cannot be called");
 		return null;
 	}

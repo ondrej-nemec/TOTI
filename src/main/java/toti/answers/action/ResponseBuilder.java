@@ -1,0 +1,110 @@
+package toti.answers.action;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import ji.socketCommunication.http.StatusCode;
+import ji.socketCommunication.http.structures.RequestParameters;
+import ji.translator.Translator;
+import toti.answers.request.Request;
+import toti.answers.response.Response;
+import toti.security.Action;
+import toti.security.Identity;
+import toti.validation.Validator;
+
+public class ResponseBuilder implements Step1, ResponseAction {
+	
+	private final List<BodyType> allowedBody;
+	private Prevalidate prevalidate;
+	private Authorize authorize;
+	private Validate validate;
+	private Create create;
+	
+	private ResponseBuilder(BodyType[] types) {
+		this.allowedBody = Arrays.asList(types);
+	}
+	
+	public static Step1 get() {
+		return new ResponseBuilder(BodyType.values());
+	}
+	
+	public static Step1 get(BodyType...bodyTypes) {
+		return new ResponseBuilder(bodyTypes);
+	}
+
+	@Override
+	public Step2 prevalidate(Prevalidate prevalidate) {
+		this.prevalidate = prevalidate;
+		return this;
+	}
+	
+	@Override
+	public Step3 authrorize(Authorize authorize) {
+		this.authorize = authorize;
+		return this;
+	}
+
+	@Override
+	public Step3 authorize(String domain, Action action) {
+		// TODO dosavadni vyuziti authorizatoru
+		return null;
+	}
+
+	@Override
+	public Step4 validate(Validate validate) {
+		this.validate = validate;
+		return this;
+	}
+
+	@Override
+	public Step4 validate(Validator validator) {
+		this.validate = new Validate() {
+			@Override
+			public void validate(Request request, Translator translator, Identity identity) throws RequestInterruptedException {
+				RequestParameters params = new RequestParameters();
+				params.putAll(request.getBodyParams().toMap());
+				params.putAll(request.getQueryParams().toMap());
+				
+				Map<String, Set<String>> errors = validator.validate(params, translator);
+				if (!errors.isEmpty()) {
+					throw new RequestInterruptedException(Response.getJson(StatusCode.BAD_REQUEST, errors));
+				}
+			}
+		};
+		return this;
+	}
+
+	@Override
+	public ResponseAction createRequest(Create create) {
+		this.create = create;
+		return this;
+	}
+
+	@Override
+	public Prevalidate getPrevalidate() {
+		return prevalidate;
+	}
+
+	@Override
+	public Authorize getAuthorize() {
+		return authorize;
+	}
+
+	@Override
+	public Validate getValidate() {
+		return validate;
+	}
+
+	@Override
+	public Create getCreate() {
+		return create;
+	}
+
+	@Override
+	public List<BodyType> getAllowedBody() {
+		return allowedBody;
+	}
+	
+}
