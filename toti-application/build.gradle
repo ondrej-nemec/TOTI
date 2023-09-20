@@ -1,0 +1,83 @@
+plugins {
+    id 'java-library'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+compileTestJava.options.encoding = 'UTF-8'
+
+repositories {
+	mavenCentral()
+	maven { url 'https://jitpack.io' }
+}
+//*
+sourceSets {
+    main {
+        java {
+            srcDirs 'src/main/java'
+            
+            srcDirs '../../javainit/ji-common/src/main/java'
+            srcDirs '../../javainit/ji-communication/src/main/java'
+            srcDirs '../../javainit/ji-database/src/main/java'
+            srcDirs '../../javainit/ji-translate/src/main/java'
+            srcDirs '../../javainit/ji-files/src/main/java'
+            srcDirs '../../javainit/ji-testing/src/main/java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+        }
+    }
+    test {
+        java {
+            srcDir 'src/test/java'
+        }
+        resources {
+            srcDir 'src/test/resources'
+        }
+    }
+}
+//*/
+
+dependencies {
+	api project(':toti-templating')
+	api 'com.github.ondrej-nemec.JI:JI:' + JI_version
+	
+	// compile files("${System.properties['java.home']}/../lib/tools.jar")
+	
+	implementation group: 'at.favre.lib', name: 'bcrypt', version: '0.9.0'
+	// TODO can be removed ?
+  //  implementation group:'org.objenesis',name:'objenesis',version:'2.4'
+  //  implementation group:'net.bytebuddy',name:'byte-buddy',version:'1.8.13'
+  //  implementation group:'net.bytebuddy',name:'byte-buddy-agent',version:'1.8.1'
+    
+	// TODO temporary
+	// https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api
+	//implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.2'
+	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+	//implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
+	
+/*
+	// https://mvnrepository.com/artifact/com.itextpdf/itextpdf
+	implementation group: 'com.itextpdf', name: 'itextpdf', version: '5.5.13.1'
+	// https://mvnrepository.com/artifact/com.itextpdf.tool/xmlworker
+	implementation group: 'com.itextpdf.tool', name: 'xmlworker', version: '5.5.13.1'
+*/
+
+	// https://mvnrepository.com/artifact/org.postgresql/postgresql
+	testImplementation  group: 'org.postgresql', name: 'postgresql', version: '42.2.16'
+
+	// https://mvnrepository.com/artifact/mysql/mysql-connector-java
+	testImplementation  group: 'mysql', name: 'mysql-connector-java', version: '8.0.17'
+	
+	//testCompile fileTree(dir: "libs/derby", includes: ['*.jar'])
+	
+	// https://mvnrepository.com/artifact/junit/junit
+	testImplementation  group: 'junit', name: 'junit', version: '4.12'
+	// https://mvnrepository.com/artifact/org.mockito/mockito-core
+	testImplementation  group: 'org.mockito', name: 'mockito-core', version: '2.19.1'	
+	// https://mvnrepository.com/artifact/pl.pragmatists/JUnitParams
+	testImplementation  group: 'pl.pragmatists', name: 'JUnitParams', version: '1.1.1'
+	
+	testImplementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+}
+

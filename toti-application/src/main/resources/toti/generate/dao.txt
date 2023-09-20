@@ -1,0 +1,40 @@
+package samples.tutorial1.services;
+
+import ji.database.Database;
+import ji.database.support.DatabaseRow;
+import ji.querybuilder.QueryBuilder;
+import ji.querybuilder.builders.SelectBuilder;
+import toti.application.EntityDao;
+import toti.application.GridEntityDao;
+
+public class DevicesDao implements EntityDao<%nameUC%>, GridEntityDao<%nameUC%> {
+	
+	public static final String TABLE = "%nameLC%";
+	
+	private final Database database;
+	
+	public DevicesDao(Database database) {
+		this.database = database;
+	}
+
+	@Override
+	public SelectBuilder _getGrid(String select, QueryBuilder builder) {
+		return _getAll(select, builder);
+	}
+
+	@Override
+	public Database getDatabase() {
+		return database;
+	}
+
+	@Override
+	public String getTableName() {
+		return TABLE;
+	}
+
+	@Override
+	public %nameUC% createEntity(DatabaseRow row) {
+		return row.parse(%nameUC%.class);
+	}
+
+}

@@ -1,9 +1,0 @@
-	@Action("get")
-	public Response get(@ParamUrl("%id%") Object id) {
-		try {
-			return Response.getJson(dao.get(id));
-		} catch (Exception e) {
-			logger.error("%nameUC%: Get Item " + id, e);
-			return Response.getText(StatusCode.INTERNAL_SERVER_ERROR, "");
-		}
-	}

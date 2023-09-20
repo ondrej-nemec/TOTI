@@ -1,0 +1,40 @@
+<html>
+<head>
+	<title>Profiler Bar</title>
+
+	<script src="js/totiSortedMap.js"></script>
+	<script src="js/totiImages.js" ></script>
+	<script src="js/totiUtils.js" ></script>
+	<script src="js/totiTranslations.js" ></script>
+	<script src="js/totiStorage.js" ></script>
+	<script src="js/totiProfiler.js" ></script>
+	<script src="js/totiLang.js" ></script>
+	<script src="js/totiLoad.js" ></script>
+	<script src="js/totiAuth.js" ></script>
+	<script src="js/totiFormDefaultTemplate.js" ></script>
+	<script src="js/totiGridDefaultTemplate.js" ></script>
+	<script src="js/totiFormCustomTemplate.js" ></script>
+	<script src="js/totiGridCustomTemplate.js" ></script>
+	<script src="js/totiDisplay.js" ></script>
+	<script src="js/totiControl.js" ></script>
+	<script src="js/totiForm.js" ></script>
+	<script src="js/totiGrid.js" ></script>
+</head>
+<body>
+
+	<div id="show-time"></div>
+
+	<script type="text/javascript">
+		for (const[name, source] of Object.entries(totiImages)) {
+			var img = document.createElement('img');
+			img.setAttribute("src", source);
+			img.setAttribute("width", 25);
+			img.setAttribute('style', 'margin: 1em');
+			img.setAttribute('title', name);
+			document.querySelector('#show-time').appendChild(img);
+		}
+	</script>
+
+
+</body>
+</html>

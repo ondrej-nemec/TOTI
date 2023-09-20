@@ -1,0 +1,13 @@
+{
+	"default": "cs",
+	"locales": {
+		"cs": {
+			"isLeftToRight": true,
+			"substitutions": ["cs_CZ", "cs-CZ"]
+		},
+		"en": {
+			"isLeftToRight": true,
+			"substitutions": []
+		}
+	}
+}

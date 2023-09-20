@@ -1,0 +1,149 @@
+/* TOTI style version 0.0.4 */
+.toti-table {
+    font-family: Arial, Helvetica, sans-serif;
+    margin-bottom: 0.5em;
+}
+.toti-table td, .toti-table th {
+	padding: 0.5em;
+}
+.toti-table th a {
+	color: #000000;
+	text-decoration: none;
+}
+.toti-table thead {
+	background-color: #B0C4DE;
+}
+.toti-table-footer {
+    font-family: Arial, Helvetica, sans-serif;
+}
+.toti-table-footer div {
+	display: inline-block;
+	margin-right: 2%;
+}
+.toti-sorting-arrows {
+	display: inline-block;
+	position: relative;
+	padding-left: 5px;
+	padding-right: 5px;
+	width: 15px;
+	top: -1em;
+}
+.toti-sorting-arrows img.type2 {
+	position: absolute;
+	top: 10px;
+}
+.toti-sorting-arrows img.type1 {
+	position: absolute;
+}
+/* rows*/
+.toti-row-0 {
+	background-color: #ffffff;
+}
+.toti-row-1 {
+	background-color: #e9ecef;
+}
+.row-selected {
+	background-color: #32CD32;
+}
+.toti-form-label {
+	font-weight: bold;
+}
+/* flashes */
+.flash {
+	position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+}
+.flash-success {
+	color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+.flash-error {
+	color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+.flash-warning {
+	color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+}
+.flash-info {
+	color: #004085;
+    background-color: #cce5ff;
+    border-color: #b8daff;
+}
+/* buttons */
+.toti-button-pages {
+	font-weight: bold;
+	border-radius: 4px;
+	border: 3px solid #B0C4DE;
+	background-color: #ffffff;
+}
+.toti-button-pages:hover {
+	background-color: #E0FFFF;
+}
+.actualPage {
+	padding: 0.5em;
+	background-color: #E0FFFF;
+}
+.toti-button-execute {
+	font-weight: bold;
+	border-radius: 4px;
+	border: 3px solid #f44336;
+	background-color: #f8d7da;
+}
+.toti-actions select {
+	margin-right: 1em;
+}
+a.toti-button {
+	text-decoration: none;
+}
+a.toti-button:link {
+	text-decoration: none;
+}
+a.toti-button:hover {
+	text-decoration: none;
+}
+.toti-button-success {
+	border-radius: 4px;
+	border: 3px solid #c3e6cb;
+	background-color: #d4edda;
+	color: black;
+}
+.toti-button-info {
+	border-radius: 4px;
+	border: 3px solid #b8daff;
+	background-color: #cce5ff;
+	color: black;
+}
+.toti-button-warning {
+	border-radius: 4px;
+	border: 3px solid #ffeeba;
+	background-color: #fff3cd;
+	color: black;
+}
+.toti-button-danger {
+	border-radius: 4px;
+	border: 3px solid #f5c6cb;
+	background-color: #f8d7da;
+	color: black;
+}
+.toti-button-basic {
+	border-radius: 4px;
+	border: 3px solid #D3D3D3;
+	background-color: #F8F8FF;
+	color: black;
+}
+ul.error-list {
+	border: 3px solid #f5c6cb;
+	border-radius: 4px;
+	background-color: #f8d7da;
+}
+.toti-control table {
+    max-width: 100vw;
+	max-height: 100vw;
+}
