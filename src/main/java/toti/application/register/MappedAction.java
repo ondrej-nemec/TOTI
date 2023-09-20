@@ -1,9 +1,9 @@
-package toti.url;
+package toti.application.register;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 import ji.socketCommunication.http.HttpMethod;
-import toti.application.register.Factory;
 import toti.security.AuthMode;
 
 public class MappedAction {
@@ -76,6 +76,17 @@ public class MappedAction {
 	
 	public HttpMethod[] getMethods() {
 		return methods;
+	}
+	
+	protected boolean asssertNames(String module, String controller, String method) {
+		return module.equals(this.moduleName) && controller.equals(this.className) && method.equals(this.methodName);
+	}
+
+	@Override
+	public String toString() {
+		return "MappedAction [moduleName=" + moduleName + ", className=" + className + ", methodName=" + methodName
+				+ ", action=" + action + ", classFactory=" + classFactory + ", methods=" + Arrays.toString(methods)
+				+ ", securityMode=" + securityMode + "]";
 	}
 	
 }

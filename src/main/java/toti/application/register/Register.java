@@ -12,7 +12,6 @@ import toti.annotations.Controller;
 import toti.annotations.Secured;
 import toti.application.Module;
 import toti.security.AuthMode;
-import toti.url.MappedAction;
 
 public class Register {
 	
@@ -34,13 +33,16 @@ public class Register {
 	
 	public <T> void addController(Class<?> clazz, Factory<T> factory) {
 		if (module.get() == null) {
-			throw new RuntimeException("Cannot add controller outside 'initInstance' method. Class: " + clazz);
+			throw new RegisterException("Cannot add controller outside 'initInstance' method. Class: " + clazz);
 		}
 		if (!clazz.isAnnotationPresent(Controller.class)) {
-			throw new RuntimeException("Class is not TOTI controller: " + clazz);
+			throw new RegisterException("Class is not TOTI controller: " + clazz);
 		}
 		if (clazz.isInterface() || clazz.isAnonymousClass() || clazz.isPrimitive()) {
-			throw new RuntimeException("Class is interface or anonymous: " + clazz);
+			throw new RegisterException("Class is interface or anonymous: " + clazz);
+		}
+		if (CONTROLLERS.containsKey(clazz.getName())) {
+			throw new RegisterException("One controler can be registered only once. Class: " + clazz);
 		}
 		CONTROLLERS.put(clazz.getName(), new Tuple2<>(factory, module.get()));
 		
@@ -86,9 +88,12 @@ public class Register {
 		return securityMode;
 	}
 	
-	private Param getParam(String part, Param parent) {
+	protected Param getParam(String part, Param parent) {
 		if (part == null || part.isEmpty()) {
 			return parent;
+		}
+		if (part.contains("/")) {
+			throw new RuntimeException("URL path cannot contains / in '" + part + "'");
 		}
 		return parent.addChild(part);
 	}
@@ -98,7 +103,7 @@ public class Register {
 	private Tuple2<Factory<?>, Module> getController(Class<?> clazz) {
 		Tuple2<Factory<?>, Module> result = CONTROLLERS.get(clazz.getName());
 		if (result == null) {
-			throw new RuntimeException("Missing controller " + clazz.getName());
+			throw new RegisterException("Missing controller " + clazz.getName());
 		}
 		return result;
 	}
@@ -126,7 +131,7 @@ public class Register {
 		addFactory(clazz.getName(), factory);
 	}
 
-	private <T> void addFactory(String name, Factory<T> factory) {
+	public <T> void addFactory(String name, Factory<T> factory) {
 		FACTORIES.put(name, factory);
 	}
 	
@@ -138,9 +143,17 @@ public class Register {
     public <T> Factory<T> getFactory(String name, Class<T> clazz) {
     	Factory<?> result = FACTORIES.get(name);
         if (result == null) {
-             throw new RuntimeException("Missing factory " + name + " " + clazz);
+             throw new RegisterException("Missing factory " + name + " " + clazz);
         }
         return (Factory<T>)result;
+    }
+	
+    public boolean isFactoryPresent(Class<?> clazz) {
+    	return FACTORIES.get(clazz.getName()) != null;
+    }
+	
+    public boolean isFactoryPresent(String name) {
+    	return FACTORIES.get(name) != null;
     }
     
 	/********************************/
@@ -161,9 +174,13 @@ public class Register {
     public <T> T getService(String name, Class<T> clazz) {
         Object result = SERVICES.get(name);
         if (result == null) {
-             throw new RuntimeException("Missing service " + name + " " + clazz);
+             throw new RegisterException("Missing service " + name + " " + clazz);
         }
         return (T)result;
+    }
+	
+    public boolean isServicePresent(Class<?> clazz) {
+    	return SERVICES.get(clazz.getName()) != null;
     }
 	
     public boolean isServicePresent(String name) {

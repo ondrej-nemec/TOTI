@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ji.socketCommunication.http.HttpMethod;
-import toti.url.MappedAction;
 
 public class Param {
 
@@ -47,7 +46,31 @@ public class Param {
 	public boolean isParam() {
 		return text == null;
 	}
+	
+	protected String getText() {
+		return text;
+	}
+	
+	protected Map<HttpMethod, MappedAction> getActions() {
+		return actions;
+	}
+	
+	protected Map<Param, Param> getChilds() {
+		return childs;
+	}
 
+	@Override
+	public String toString() {
+		return toString("");
+	}
+	
+	private String toString(String prefix) {
+		StringBuilder string = new StringBuilder(prefix + "PARAM: " + text);
+		actions.forEach((method, action)->string.append("\n" + prefix + "- " + method + ": " + action));
+		childs.forEach((param, child)->string.append("\n" + child.toString(prefix + "  ")));
+		return string.toString();
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

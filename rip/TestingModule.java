@@ -17,10 +17,10 @@ public class TestingModule implements Module {
 		return "toti";
 	}
 
-	@Override
+	/*@Override
 	public String getControllersPath() {
 		return "";
-	}
+	}*/
 
 	@Override
 	public List<Task> initInstances(Env env, Translator translator, Register registr, Link link, Database database, Logger logger) throws Exception {
