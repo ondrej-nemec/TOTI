@@ -19,5 +19,6 @@ ext {
 dependencies {
 	api project('toti-templating')
 	api project('toti-application')
+	api project('toti-ui')
 }
 

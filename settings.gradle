@@ -3,6 +3,7 @@ rootProject.name = 'TOTI'
 
 include('toti-templating')
 include('toti-application')
+include('toti-ui')
 include('example-samples')
 include('example-project1')
 include('example-project2')

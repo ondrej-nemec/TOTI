@@ -64,10 +64,10 @@ dependencies {
 */
 
 	// https://mvnrepository.com/artifact/org.postgresql/postgresql
-	testImplementation  group: 'org.postgresql', name: 'postgresql', version: '42.2.16'
+	//testImplementation  group: 'org.postgresql', name: 'postgresql', version: '42.2.16'
 
 	// https://mvnrepository.com/artifact/mysql/mysql-connector-java
-	testImplementation  group: 'mysql', name: 'mysql-connector-java', version: '8.0.17'
+	//testImplementation  group: 'mysql', name: 'mysql-connector-java', version: '8.0.17'
 	
 	//testCompile fileTree(dir: "libs/derby", includes: ['*.jar'])
 	
