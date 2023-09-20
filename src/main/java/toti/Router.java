@@ -4,8 +4,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import toti.application.register.MappedAction;
 import toti.application.register.Register;
-import toti.url.MappedAction;
 
 public class Router {
 

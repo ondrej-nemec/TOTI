@@ -4,8 +4,8 @@ import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.Request;
 import ji.translator.Translator;
 import toti.answers.response.Response;
+import toti.application.register.MappedAction;
 import toti.security.Identity;
-import toti.url.MappedAction;
 
 public interface CustomExceptionResponse {
 

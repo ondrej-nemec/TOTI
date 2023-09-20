@@ -24,6 +24,7 @@ import toti.answers.request.Request;
 import toti.answers.response.Response;
 import toti.answers.response.ResponseContainer;
 import toti.answers.response.ResponseException;
+import toti.application.register.MappedAction;
 import toti.application.register.Param;
 import toti.security.AuthMode;
 import toti.security.Authenticator;
@@ -34,7 +35,6 @@ import toti.security.exceptions.NotAllowedActionException;
 import toti.templating.TemplateException;
 import toti.templating.TemplateFactory;
 import toti.url.Link;
-import toti.url.MappedAction;
 
 public class ControllerAnswer {
 	

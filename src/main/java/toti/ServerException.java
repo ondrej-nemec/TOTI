@@ -1,7 +1,7 @@
 package toti;
 
 import ji.socketCommunication.http.StatusCode;
-import toti.url.MappedAction;
+import toti.application.register.MappedAction;
 
 public class ServerException extends Exception {
 	

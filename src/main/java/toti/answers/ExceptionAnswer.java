@@ -17,9 +17,9 @@ import toti.Headers;
 import toti.answers.response.Response;
 import toti.answers.response.ResponseContainer;
 import toti.answers.response.TemplateResponse;
+import toti.application.register.MappedAction;
 import toti.security.Identity;
 import toti.templating.TemplateFactory;
-import toti.url.MappedAction;
 
 public class ExceptionAnswer {
 

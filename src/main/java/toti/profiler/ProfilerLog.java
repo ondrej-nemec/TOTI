@@ -12,8 +12,8 @@ import ji.common.structures.Tuple2;
 import ji.json.Jsonable;
 import ji.socketCommunication.http.structures.Request;
 import ji.socketCommunication.http.profiler.HttpServerProfilerEvent;
+import toti.application.register.MappedAction;
 import toti.security.Identity;
-import toti.url.MappedAction;
 
 public class ProfilerLog implements Jsonable{
 

@@ -18,9 +18,9 @@ import ji.socketCommunication.http.structures.RequestParameters;
 import ji.socketCommunication.http.profiler.HttpServerProfiler;
 import ji.socketCommunication.http.profiler.HttpServerProfilerEvent;
 import toti.answers.response.Response;
+import toti.application.register.MappedAction;
 import toti.security.Identity;
 import toti.templating.TemplateProfiler;
-import toti.url.MappedAction;
 
 public class Profiler implements TransProfiler, HttpServerProfiler, SqlQueryProfiler, TemplateProfiler, Jsonable {
 
