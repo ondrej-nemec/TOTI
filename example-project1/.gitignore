@@ -1,0 +1,15 @@
+# gradle
+/.gradle/
+/build
+
+# eclipse
+/bin/
+/.classpath
+/.project
+/.settings
+
+# toti
+/temp
+/logs
+
+/src/main/resources/conf/app.properties
