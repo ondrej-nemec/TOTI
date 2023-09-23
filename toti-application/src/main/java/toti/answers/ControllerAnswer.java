@@ -10,6 +10,8 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.Logger;
 
+import ji.common.structures.DictionaryValue;
+import ji.json.JsonReader;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.WebSocket;
@@ -30,6 +32,7 @@ import toti.security.AuthMode;
 import toti.security.Authenticator;
 import toti.security.Authorizator;
 import toti.security.Identity;
+import toti.security.IdentityFactory;
 import toti.security.exceptions.AccessDeniedException;
 import toti.security.exceptions.NotAllowedActionException;
 import toti.templating.TemplateException;
@@ -42,6 +45,7 @@ public class ControllerAnswer {
 	private final Translator translator;
 	private final Authenticator authenticator;
 	private final Authorizator authorizator;
+	private final IdentityFactory identityFactory;
 	private final Link link;
 	private final Map<String, TemplateFactory> modules;
 	private final Router router;
@@ -49,13 +53,14 @@ public class ControllerAnswer {
 	
 	public ControllerAnswer(
 			Router router, Param root, Map<String, TemplateFactory> modules,
-			Authenticator authenticator, Authorizator authorizator,
+			Authenticator authenticator, Authorizator authorizator, IdentityFactory identityFactory,
 			Link link, Translator translator, Logger logger) {
 		this.root = root;
 		this.router = router;
 		this.modules = modules;
 		this.authenticator = authenticator;
 		this.authorizator = authorizator;
+		this.identityFactory = identityFactory;
 		this.translator = translator;
 		this.link = link;
 		this.logger = logger;
@@ -78,9 +83,7 @@ public class ControllerAnswer {
 			Response response = run(request.getUri(), mapped, totiRequest, identity);
 			
 			TemplateFactory templateFactory = modules.get(mapped.getModuleName());
-			
-			// TODO
-			// identityFactory.setResponseHeaders(identity, responseHeaders); // for cookies and custom headers
+			identityFactory.setResponseHeaders(identity, responseHeaders); // for cookies and custom headers
 	    	try {
 	    		authenticator.saveIdentity(identity);
 	    	} catch (Exception e) {
@@ -122,6 +125,7 @@ public class ControllerAnswer {
 			}
 		}
 		MappedAction action = null;
+		// TODO statuscode method not allowed
 		if (param != null) {
 			action = param.getAction(method);
 		}
@@ -133,29 +137,18 @@ public class ControllerAnswer {
 		return action;
 	}
 	
-	private Response run(String uri, MappedAction mapped, Request request, Identity identity) throws Throwable {
+	protected Response run(String uri, MappedAction mapped, Request request, Identity identity) throws Throwable {
 		Object controller = mapped.getClassFactory().create();
 		ResponseAction action = (ResponseAction)mapped.getAction()
 				.invoke(controller, request.getPathParams().toArray());
 		Translator trans = translator.withLocale(identity.getLocale());
-		parseBody(request, action.getAllowedBody());
+		parseBody(request, action.getAllowedBody(), mapped);
 		// TODO check path params with expected?
 		try {
 			// prevalidate can be interrupted by exception
 			action.getPrevalidate().prevalidate(request, trans, identity);
 			try {
-				if (mapped.isSecured()) {
-					if (identity.isAnonymous()) {
-						throw new ServerException(StatusCode.UNAUTHORIZED, mapped, "Method require logged user");
-					}
-					if (mapped.getSecurityMode() == AuthMode.HEADER && identity.getLoginMode() != AuthMode.HEADER) {
-						throw new ServerException(StatusCode.FORBIDDEN, mapped, "For this url you cannot use cookie token");
-					}
-					if (mapped.getSecurityMode() == AuthMode.COOKIE_AND_CSRF
-							&& (identity.getLoginMode() == AuthMode.COOKIE || identity.getLoginMode() == AuthMode.NO_TOKEN)) {
-						throw new ServerException(StatusCode.FORBIDDEN, mapped, "For this url you need CSRF token");
-					}
-				}
+				checkSecured(mapped, identity);
 				// authorize can be interrupted by exception
 				action.getAuthorize().authrorize(request, trans, identity);
 			} catch (ServerException e) {
@@ -179,6 +172,21 @@ public class ControllerAnswer {
 		}
 	}   
 	
+	protected void checkSecured(MappedAction mapped, Identity identity) throws ServerException {
+		if (mapped.isSecured()) {
+			if (identity.isAnonymous()) {
+				throw new ServerException(StatusCode.UNAUTHORIZED, mapped, "Method require logged user");
+			}
+			if (mapped.getSecurityMode() == AuthMode.HEADER && identity.getLoginMode() != AuthMode.HEADER) {
+				throw new ServerException(StatusCode.FORBIDDEN, mapped, "For this url you cannot use cookie token");
+			}
+			if (mapped.getSecurityMode() == AuthMode.COOKIE_AND_CSRF
+					&& (identity.getLoginMode() == AuthMode.COOKIE || identity.getLoginMode() == AuthMode.NO_TOKEN)) {
+				throw new ServerException(StatusCode.FORBIDDEN, mapped, "For this url you need CSRF token");
+			}
+		}
+	}
+	
 	private String getBackLink(String fullUrl) {
         try {
              return URLEncoder.encode(fullUrl, StandardCharsets.UTF_8.toString());
@@ -187,17 +195,20 @@ public class ControllerAnswer {
         }
     }
 	
-	private void parseBody(Request request, List<BodyType> allowedTypes) {
+	protected void parseBody(Request request, List<BodyType> allowedTypes, MappedAction mapped) throws ServerException {
 		if (request.getBodyParams().size() > 0) {
 			if (!allowedTypes.contains(BodyType.FORM_DATA) || !allowedTypes.contains(BodyType.URL_PARAMS)) {
-				// TODO correct reaction
+				// TODO maybe convert from structured to plaintext - need change JI
+				throw new ServerException(StatusCode.NOT_ACCEPTABLE, mapped, "URL not allow body in FORM DATA or URL encoded");
 			}
 		}
 		Object contentType = request.getHeaders().getHeader("content-type");
 		if (request.getBody() == null && contentType != null) {
 			if (contentType.toString().startsWith("application/json") && allowedTypes.contains(BodyType.JSON)) {
-				// TODO can be list
-				// new JsonReader().read(new String(request.getBody()));
+				DictionaryValue json = new DictionaryValue(new JsonReader().read(new String(request.getBody())));
+				if (json.is(Map.class)) {
+					request.getBodyParams().putAll(json.getMap());
+				}
 			} else if (contentType.toString().startsWith("application/xml") && allowedTypes.contains(BodyType.XML)) {
 				// TODO
 			}

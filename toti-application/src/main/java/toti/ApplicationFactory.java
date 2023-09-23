@@ -165,6 +165,8 @@ public class ApplicationFactory {
 			logger
 		).setProfiler(profiler.used());
 		
+		IdentityFactory identityFactory = new IdentityFactory(translator, translator.getLocale().getLang());
+		
 		TotiAnswer totiAnwer = new TotiAnswer();
 		ExceptionAnswer exceptionAnswer = new ExceptionAnswer(
 			getDevelopIps(env),
@@ -174,7 +176,7 @@ public class ApplicationFactory {
 			logger
 		);
 		ControllerAnswer controllerAnswer = new ControllerAnswer(
-			router, root, templateFactories, authenticator, authorizator, link, translator, logger
+			router, root, templateFactories, authenticator, authorizator, identityFactory, link, translator, logger
 		);
 		FileSystemAnswer fileSystemAnswer = new FileSystemAnswer(
 			getResourcesPath(env),
@@ -187,7 +189,7 @@ public class ApplicationFactory {
 			controllerAnswer,
 			fileSystemAnswer,
 			totiAnwer,
-			new IdentityFactory(translator, translator.getLocale().getLang()),
+			identityFactory,
 			authenticator,
 			getResponseHeaders(env),
 			charset
