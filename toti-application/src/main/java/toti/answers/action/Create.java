@@ -7,6 +7,6 @@ import toti.security.Identity;
 
 public interface Create {
 
-	Response create(Request request, Translator translator, Identity identity);
+	Response create(Request request, Translator translator, Identity identity) throws RequestInterruptedException;
 	
 }

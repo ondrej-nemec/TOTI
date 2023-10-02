@@ -150,8 +150,8 @@ public class ControllerAnswer {
 			try {
 				checkSecured(mapped, identity);
 				// authorize can be interrupted by exception
-				action.getAuthorize().authrorize(request, trans, identity);
-			} catch (ServerException e) {
+				action.getAuthorize().authorize(request, trans, identity);
+			} catch (ServerException | RequestInterruptedException e) {
 				if (mapped.getSecurityMode() == AuthMode.HEADER || router.getRedirectOnNotLoggedInUser() == null) {
 					throw e;
 				}
@@ -184,6 +184,9 @@ public class ControllerAnswer {
 					&& (identity.getLoginMode() == AuthMode.COOKIE || identity.getLoginMode() == AuthMode.NO_TOKEN)) {
 				throw new ServerException(StatusCode.FORBIDDEN, mapped, "For this url you need CSRF token");
 			}
+			if (mapped.getSecurityMode() == AuthMode.COOKIE && identity.getLoginMode() == AuthMode.NO_TOKEN) {
+				throw new ServerException(StatusCode.FORBIDDEN, mapped, "For this url you need CSRF token");
+			}
 		}
 	}
 	
@@ -203,7 +206,7 @@ public class ControllerAnswer {
 			}
 		}
 		Object contentType = request.getHeaders().getHeader("content-type");
-		if (request.getBody() == null && contentType != null) {
+		if (request.getBody() != null && contentType != null) {
 			if (contentType.toString().startsWith("application/json") && allowedTypes.contains(BodyType.JSON)) {
 				DictionaryValue json = new DictionaryValue(new JsonReader().read(new String(request.getBody())));
 				if (json.is(Map.class)) {

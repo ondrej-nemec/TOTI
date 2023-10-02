@@ -1,4 +1,4 @@
-package toti.answer;
+package toti.answers;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;

@@ -17,9 +17,9 @@ import toti.validation.Validator;
 public class ResponseBuilder implements Step1, ResponseAction {
 	
 	private final List<BodyType> allowedBody;
-	private Prevalidate prevalidate;
-	private Authorize authorize;
-	private Validate validate;
+	private Prevalidate prevalidate = (r, t, i)->{};
+	private Authorize authorize = (r, t, i)->{};
+	private Validate validate = (r, t, i)->{};
 	private Create create;
 	
 	private ResponseBuilder(BodyType[] types) {
@@ -41,7 +41,7 @@ public class ResponseBuilder implements Step1, ResponseAction {
 	}
 	
 	@Override
-	public Step3 authrorize(Authorize authorize) {
+	public Step3 authorize(Authorize authorize) {
 		this.authorize = authorize;
 		return this;
 	}

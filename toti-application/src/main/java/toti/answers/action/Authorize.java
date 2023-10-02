@@ -6,6 +6,6 @@ import toti.security.Identity;
 
 public interface Authorize {
 
-	void authrorize(Request request, Translator translator, Identity identity) throws RequestInterruptedException;
+	void authorize(Request request, Translator translator, Identity identity) throws RequestInterruptedException;
 	
 }
