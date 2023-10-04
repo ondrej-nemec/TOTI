@@ -39,7 +39,7 @@ public class Param {
 		return actions.get(method);
 	}
 	
-	public boolean isAction() {
+	public boolean hasActions() {
 		return actions.size() == 0;
 	}
 	

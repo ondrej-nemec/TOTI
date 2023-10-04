@@ -29,6 +29,13 @@ public class MappedAction {
 			method, factory, securityMode, methods
 		);
 	}
+	
+	public static MappedAction test(String moduleName, String className, String methodName) {
+		return new MappedAction(
+				moduleName, className, methodName,
+				null, null, null, null
+			);
+	}
 
 	public MappedAction(
 			String moduleName, String className, String methodName,
@@ -81,7 +88,18 @@ public class MappedAction {
 	protected boolean asssertNames(String module, String controller, String method) {
 		return module.equals(this.moduleName) && controller.equals(this.className) && method.equals(this.methodName);
 	}
+	
+	public boolean assertForTest(MappedAction action) {
+		if (action == null) {
+			return false;
+		}
+		return moduleName.equals(action.moduleName) && className.equals(action.className) && methodName.equals(action.methodName);
+	}
 
+	public String simpleString() {
+		return String.format("Action[M: %s, C: %s, M: %s]", moduleName, className, methodName);
+	}
+	
 	@Override
 	public String toString() {
 		return "MappedAction [moduleName=" + moduleName + ", className=" + className + ", methodName=" + methodName

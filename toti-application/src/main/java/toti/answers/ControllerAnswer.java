@@ -4,6 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -115,26 +117,40 @@ public class ControllerAnswer {
 			return routered;
 		}
 		String[] urls = url.length() == 0 ? new String[] {} : url.substring(1).split("/");
-		Param param = this.root;
-		int index = 0;
-		while(param != null && !param.isAction()) {
-			String part = urls[index++];
-			param = param.getChild(part);
-			if (param.isParam()) {
-				request.getPathParams().add(part);
-			}
-		}
-		MappedAction action = null;
-		// TODO statuscode method not allowed
-		if (param != null) {
-			action = param.getAction(method);
-		}
-		if (action != null) {
-			for (int i = index; i < urls.length; i++) {
-				request.getPathParams().add(urls[i]);
-			}
+		MappedAction action =  getMappedAction(root, new LinkedList<>(Arrays.asList(urls)), method, request);
+		if (action == null) {
+			request.getPathParams().clear();
 		}
 		return action;
+	}
+	
+	private MappedAction getMappedAction(Param root, LinkedList<String> urls, HttpMethod method, Request request) {
+		// TODO
+		/*
+		pri '/' je parametr prazdny string
+		co kdyz je action index a index/12 - lze jako jedna url?
+		kontrola typu a poctu parametru?
+			index(string)
+			index(int)
+			index(int, int)
+		*/
+		if (urls.isEmpty()) {
+			return root.getAction(method);
+		}
+		String part = urls.getFirst();
+		Param child = root.getChild(part);
+		if (child == null) {
+			child = root.getChild(null); // param child
+		}
+		if (child == null) {
+			urls.forEach(p->request.getPathParams().add(p));
+			return root.getAction(method);
+		}
+		if (child.isParam()) {
+			request.getPathParams().add(part);
+		}
+		urls.removeFirst();
+		return getMappedAction(child, urls, method, request);
 	}
 	
 	protected Response run(String uri, MappedAction mapped, Request request, Identity identity) throws Throwable {

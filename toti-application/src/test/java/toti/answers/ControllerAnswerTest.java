@@ -1,9 +1,13 @@
 package toti.answers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Method;
@@ -20,6 +24,7 @@ import org.junit.runner.RunWith;
 
 import ji.common.structures.MapDictionary;
 import ji.common.structures.ThrowingFunction;
+import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.RequestParameters;
 import ji.testing.TestCase;
@@ -57,17 +62,219 @@ public class ControllerAnswerTest extends TestCase {
 	}
 
 	@Test
-	public void testGetMappedAction() {
-		// TODO
-		/*
-		router action
-		ruzne pripady mapovani a vysledky
-		*/
-		fail("TODO");
+	@Parameters(method="dataGetMappedAction")
+	public void testGetMappedAction(String url, HttpMethod method, Param root, MappedAction expected, List<Object> params) {
+		Router router = mock(Router.class);
+		when(router.getUrlMapping("/routered")).thenReturn(MappedAction.test("routered", "route", "method"));
+		
+		Translator translator = mock(Translator.class);
+		when(translator.withLocale(any(Locale.class))).thenReturn(translator);
+		
+		ControllerAnswer answer = new ControllerAnswer(
+			router, root, new HashMap<>(),
+			mock(Authenticator.class), mock(Authorizator.class), mock(IdentityFactory.class),
+			mock(Link.class), translator, mock(Logger.class)
+		);
+		Request request = new Request(new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty());
+		
+		MappedAction actual = answer.getMappedAction(url, method, request);
+		if (expected == null) {
+			assertNull(actual);
+		} else {
+			assertTrue(
+				String.format(
+					"Expected: %s, Actual: %s",
+					expected.simpleString(),
+					actual == null ? "NULL" : actual.simpleString()
+				),
+				expected.assertForTest(actual)
+			);
+		}
+		//if (params.size() == 0) {
+		//	assertEquals(params.size(), request.getPathParams().size());
+		//} else {
+			assertEquals(params, request.getPathParams().toList());	
+		//}
+		verify(router, times(1)).getUrlMapping(url);
 	}
 
+	// String url, HttpMethod method, Param root, MappedAction expected
+	public Object[] dataGetMappedAction() {
+		return new Object[] {
+			// no mapping
+			new Object[] {
+				"", HttpMethod.GET, new Param(null), null, Arrays.asList()
+			},
+			// root
+			new Object[] {
+				"", HttpMethod.GET, param((r)->{
+					r.addAction(HttpMethod.GET, MappedAction.test("ro", "ot", "GET"));
+				}),
+				MappedAction.test("ro", "ot", "GET"),
+				Arrays.asList()
+			},
+			new Object[] {
+				"/", HttpMethod.GET, param((r)->{
+					r.addAction(HttpMethod.GET, MappedAction.test("ro", "ot", "GET"));
+				}),
+				MappedAction.test("ro", "ot", "GET"),
+				Arrays.asList()
+			},
+			// routered
+			new Object[] {
+				"/routered", HttpMethod.GET, new Param(null),
+				MappedAction.test("routered", "route", "method"),
+				Arrays.asList()
+			},
+			// no route
+			new Object[] {
+				"/b", HttpMethod.GET, param((r)->{
+					Param a = r.addChild("a");
+					a.addAction(HttpMethod.GET, MappedAction.test("a", "a", "a"));
+				}),
+				null,
+				Arrays.asList()
+			},
+			// missing action
+			new Object[] {
+				"/b", HttpMethod.GET, param((r)->{
+					r.addChild("b");
+				}),
+				null,
+				Arrays.asList()
+			},
+			// wrong method
+			new Object[] {
+				"/a", HttpMethod.POST, param((r)->{
+					r.addChild("a").addAction(HttpMethod.GET, MappedAction.test("root", "a", "GET"));
+				}),
+				null,
+				Arrays.asList()
+			},
+			// ---------------
+			new Object[] {
+				"/module/controller", HttpMethod.GET, mapping(),
+				MappedAction.test("module", "list", "GET"),
+				Arrays.asList()
+			},
+			new Object[] {
+				// same as previous with / at the end
+				"/module/controller/", HttpMethod.GET, mapping(),
+				MappedAction.test("module", "list", "GET"),
+				Arrays.asList()
+			},
+			new Object[] {
+				"/module/controller/12", HttpMethod.GET, mapping(),
+				MappedAction.test("module", "list", "GET"),
+				Arrays.asList("12")
+			},
+			new Object[] {
+				"/module/controller/method2", HttpMethod.POST, mapping(),
+				MappedAction.test("module", "method2", "POST"),
+				Arrays.asList()
+			},
+			new Object[] {
+				"/module/controller/method2/42", HttpMethod.DELETE, mapping(),
+				MappedAction.test("module", "method2", "DELETE"),
+				Arrays.asList("42")
+			},
+			new Object[] {
+				"/extra/controller/generate/42", HttpMethod.GET, mapping(),
+				null,
+				Arrays.asList()
+			},
+			new Object[] {
+				"/extra/generate/42", HttpMethod.GET, mapping(),
+				MappedAction.test("extra", "generate", "GET"),
+				Arrays.asList("42")
+			},
+			new Object[] {
+				"/extra/something/string", HttpMethod.GET, mapping(),
+				MappedAction.test("extra", "string", "GET"),
+				Arrays.asList("something")
+			},
+			new Object[] {
+				"/extra/something/string/other", HttpMethod.GET, mapping(),
+				MappedAction.test("extra", "string", "GET"),
+				Arrays.asList("something", "other")
+			},
+			new Object[] {
+				"/extra/string/42", HttpMethod.GET, mapping(),
+				MappedAction.test("extra", "42", "GET"),
+				Arrays.asList("string")
+			},
+			new Object[] {
+				"/extra/some/42", HttpMethod.GET, mapping(),
+				MappedAction.test("extra", "42", "GET"),
+				Arrays.asList("some")
+			},
+			new Object[] {
+				"/extra/some/42/25", HttpMethod.GET, mapping(),
+				MappedAction.test("extra", "42", "GET"),
+				Arrays.asList("some", "25")
+			},
+			new Object[] {
+				"/extra/12/42/15", HttpMethod.GET, mapping(),
+				MappedAction.test("extra", "42", "GET"),
+				Arrays.asList("12", "15")
+			},
+			new Object[] {
+				"/extra/12/32/15", HttpMethod.POST, mapping(),
+				MappedAction.test("extra", "x", "GET"),
+				Arrays.asList("12", "32", "15")
+			},
+			new Object[] {
+				"/extra/12/32/15", HttpMethod.DELETE, mapping(),
+				null,
+				Arrays.asList()
+			},
+		};
+	}
+	
+	private Param mapping() {
+		Param root = new Param(null);
+		root.addAction(HttpMethod.GET, MappedAction.test("ro", "ot", "GET"));
+		root.addAction(HttpMethod.POST, MappedAction.test("ro", "ot", "POST"));
+		
+		Param module = root.addChild("module");
+		Param controller = module.addChild("controller");
+		controller.addAction(HttpMethod.GET, MappedAction.test("module", "list", "GET"));
+		
+		Param method1 = controller.addChild("method1");
+		method1.addAction(HttpMethod.POST, MappedAction.test("module", "method1", "POST"));
+		method1.addAction(HttpMethod.DELETE, MappedAction.test("module", "method1", "DELETE"));
+		Param method2 = controller.addChild("method2");
+		method2.addAction(HttpMethod.POST, MappedAction.test("module", "method2", "POST"));
+		method2.addAction(HttpMethod.DELETE, MappedAction.test("module", "method2", "DELETE"));
+		
+		Param extra = root.addChild("extra");
+		Param generate = extra.addChild("generate");
+		generate.addAction(HttpMethod.GET, MappedAction.test("extra", "generate", "GET"));
+		
+		Param param = extra.addChild(null);
+		param.addAction(HttpMethod.POST, MappedAction.test("extra", "x", "GET"));
+		
+		Param param1 = param.addChild("string");
+		param1.addAction(HttpMethod.GET, MappedAction.test("extra", "string", "GET"));
+		
+		Param param2 = param.addChild("int");
+		param2.addAction(HttpMethod.GET, MappedAction.test("extra", "int", "GET"));
+		
+		Param param3 = param.addChild("42");
+		param3.addAction(HttpMethod.GET, MappedAction.test("extra", "42", "GET"));
+		
+		return root;
+	}
+	
+	private Param param(Consumer<Param> create) {
+		Param root = new Param(null);
+		create.accept(root);
+		return root;
+	}
+	
+	
 	// TODO checkSecured throws serverException
-
+	
 	@Test
 	@Parameters(method="dataRun")
 	public void testRun(
