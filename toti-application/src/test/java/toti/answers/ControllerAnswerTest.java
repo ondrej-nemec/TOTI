@@ -5,9 +5,12 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Method;
@@ -26,6 +29,7 @@ import ji.common.structures.MapDictionary;
 import ji.common.structures.ThrowingFunction;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
+import ji.socketCommunication.http.structures.Protocol;
 import ji.socketCommunication.http.structures.RequestParameters;
 import ji.testing.TestCase;
 import ji.translator.Locale;
@@ -54,11 +58,77 @@ import toti.url.Link;
 public class ControllerAnswerTest extends TestCase {
 
 	@Test
-	public void testAnswer() {
-		// TODO
-		// projit correct state a overit, ze se vola, co se volat ma
-		// stavy, kdy neco hazi vyjimky - chytat pouze server exception - mozna kontrolovat status code
-		fail("TODO");
+	public void testAnswerNoMappedAction() throws ServerException {
+		Router router = mock(Router.class);
+		when(router.getUrlMapping("/routered")).thenReturn(MappedAction.test("routered", "route", "method"));
+		
+		Translator translator = mock(Translator.class);
+		when(translator.withLocale(any(Locale.class))).thenReturn(translator);
+		
+		IdentityFactory identityFactory = mock(IdentityFactory.class);
+		Authenticator authenticator = mock(Authenticator.class);
+		
+		ControllerAnswer answer = spy(new ControllerAnswer(
+			router, new Param(null), new HashMap<>(),
+			authenticator, mock(Authorizator.class), identityFactory,
+			mock(Link.class), translator, mock(Logger.class)
+		));
+		doReturn(null).when(answer).getMappedAction(any(), any(), any());
+		
+		ji.socketCommunication.http.structures.Request r = new ji.socketCommunication.http.structures.Request(HttpMethod.GET, "/a/b/c", Protocol.HTTP_1_1);
+		r.setUriParams("/a/b/c", MapDictionary.hashMap());
+		
+		assertNull(answer.answer(r, mock(Identity.class), new Headers(), Optional.empty(), new Headers(), ""));
+		
+		verify(answer, times(1)).answer(any(), any(), any(), any(), any(), any());
+		verify(answer, times(1)).getMappedAction("/a/b/c", HttpMethod.GET, new Request(
+			new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty()
+		));
+		verifyNoMoreInteractions(translator, identityFactory, authenticator, answer);
+	}
+
+	@Test
+	public void testAnswer() throws Throwable {
+		Router router = mock(Router.class);
+		when(router.getUrlMapping("/routered")).thenReturn(MappedAction.test("routered", "route", "method"));
+		
+		Translator translator = mock(Translator.class);
+		when(translator.withLocale(any(Locale.class))).thenReturn(translator);
+		
+		IdentityFactory identityFactory = mock(IdentityFactory.class);
+		Authenticator authenticator = mock(Authenticator.class);
+		Identity identity = mock(Identity.class);
+		when(identity.getLocale()).thenReturn(mock(Locale.class));
+		
+		MappedAction mappedAction = MappedAction.test("a", "b", "c");
+		
+		ControllerAnswer answer = spy(new ControllerAnswer(
+			router, new Param(null), new HashMap<>(),
+			authenticator, mock(Authorizator.class), identityFactory,
+			mock(Link.class), translator, mock(Logger.class)
+		));
+		ji.socketCommunication.http.structures.Response rs = mock(ji.socketCommunication.http.structures.Response.class);
+		Response response = mock(Response.class);
+		when(response.getResponse(any(), any(), any(), any(), any())).thenReturn(rs);
+		doReturn(mappedAction).when(answer).getMappedAction(any(), any(), any());
+		doReturn(response).when(answer).run(any(), any(), any(), any());
+
+		Headers responseHeaders = new Headers();
+		
+		ji.socketCommunication.http.structures.Request r = new ji.socketCommunication.http.structures.Request(HttpMethod.GET, "/a/b/c", Protocol.HTTP_1_1);
+		r.setUriParams("/a/b/c", MapDictionary.hashMap());
+		
+		assertEquals(rs, answer.answer(r, identity, new Headers(), Optional.empty(), responseHeaders, ""));
+
+		Request request = new Request(new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty());
+
+		verify(answer, times(1)).answer(any(), any(), any(), any(), any(), any());
+		verify(answer, times(1)).getMappedAction("/a/b/c", HttpMethod.GET, request);
+		verify(answer, times(1)).run("/a/b/c", mappedAction, request, identity);
+		verify(identityFactory, times(1)).setResponseHeaders(identity, responseHeaders);
+		verify(authenticator, times(1)).saveIdentity(identity);
+		verify(translator, times(1)).withLocale(any(Locale.class));
+		verifyNoMoreInteractions(translator, identityFactory, authenticator, answer);
 	}
 
 	@Test
@@ -90,15 +160,11 @@ public class ControllerAnswerTest extends TestCase {
 				expected.assertForTest(actual)
 			);
 		}
-		//if (params.size() == 0) {
-		//	assertEquals(params.size(), request.getPathParams().size());
-		//} else {
-			assertEquals(params, request.getPathParams().toList());	
-		//}
+		
+		assertEquals(params, request.getPathParams().toList());
 		verify(router, times(1)).getUrlMapping(url);
 	}
 
-	// String url, HttpMethod method, Param root, MappedAction expected
 	public Object[] dataGetMappedAction() {
 		return new Object[] {
 			// no mapping
@@ -228,6 +294,16 @@ public class ControllerAnswerTest extends TestCase {
 				null,
 				Arrays.asList()
 			},
+			new Object[] {
+				"/extra/index", HttpMethod.GET, mapping(),
+				MappedAction.test("extra", "index", "GET"),
+				Arrays.asList()
+			},
+			new Object[] {
+				"/extra/index/45", HttpMethod.GET, mapping(),
+				MappedAction.test("extra", "indexParam", "GET"),
+				Arrays.asList("45")
+			},
 		};
 	}
 	
@@ -262,6 +338,13 @@ public class ControllerAnswerTest extends TestCase {
 		
 		Param param3 = param.addChild("42");
 		param3.addAction(HttpMethod.GET, MappedAction.test("extra", "42", "GET"));
+		
+		Param index = extra.addChild("index");
+		index.addAction(HttpMethod.GET, MappedAction.test("extra", "index", "GET"));
+		
+		Param indexParam = index.addChild(null);
+		indexParam.addAction(HttpMethod.GET, MappedAction.test("extra", "indexParam", "GET"));
+		indexParam.addAction(HttpMethod.POST, MappedAction.test("extra", "indexParam", "POST"));
 		
 		return root;
 	}

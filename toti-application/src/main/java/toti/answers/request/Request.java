@@ -1,6 +1,7 @@
 package toti.answers.request;
 
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import ji.common.structures.ListDictionary;
@@ -84,6 +85,87 @@ public class Request {
 	 */
 	public MapDictionary<String> getData() {
 		return data;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(body);
+		result = prime * result + ((bodyParams == null) ? 0 : bodyParams.hashCode());
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		result = prime * result + ((headers == null) ? 0 : headers.hashCode());
+		result = prime * result + ((pathParams == null) ? 0 : pathParams.hashCode());
+		result = prime * result + ((queryParams == null) ? 0 : queryParams.hashCode());
+		result = prime * result + ((websocket == null) ? 0 : websocket.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		Request other = (Request) obj;
+		if (!Arrays.equals(body, other.body)) {
+			return false;
+		}
+		if (bodyParams == null) {
+			if (other.bodyParams != null) {
+				return false;
+			}
+		} else if (!bodyParams.equals(other.bodyParams)) {
+			return false;
+		}
+		if (data == null) {
+			if (other.data != null) {
+				return false;
+			}
+		} else if (!data.equals(other.data)) {
+			return false;
+		}
+		if (headers == null) {
+			if (other.headers != null) {
+				return false;
+			}
+		} else if (!headers.equals(other.headers)) {
+			return false;
+		}
+		if (pathParams == null) {
+			if (other.pathParams != null) {
+				return false;
+			}
+		} else if (!pathParams.equals(other.pathParams)) {
+			return false;
+		}
+		if (queryParams == null) {
+			if (other.queryParams != null) {
+				return false;
+			}
+		} else if (!queryParams.equals(other.queryParams)) {
+			return false;
+		}
+		if (websocket == null) {
+			if (other.websocket != null) {
+				return false;
+			}
+		} else if (!websocket.equals(other.websocket)) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Request [headers=" + headers + ", queryParams=" + queryParams + ", pathParams=" + pathParams
+				+ ", bodyParams=" + bodyParams + ", body=" + Arrays.toString(body) + ", websocket=" + websocket
+				+ ", data=" + data + "]";
 	}
 	
 }

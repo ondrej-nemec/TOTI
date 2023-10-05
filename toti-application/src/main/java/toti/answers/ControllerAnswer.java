@@ -81,6 +81,9 @@ public class ControllerAnswer {
 			websocket
 		);
 		MappedAction mapped = getMappedAction(request.getPlainUri(), request.getMethod(), totiRequest);
+		if (mapped == null) {
+			return null;
+		}
 		try {
 			Response response = run(request.getUri(), mapped, totiRequest, identity);
 			
@@ -116,24 +119,21 @@ public class ControllerAnswer {
 		if (routered != null) {
 			return routered;
 		}
-		String[] urls = url.length() == 0 ? new String[] {} : url.substring(1).split("/");
-		MappedAction action =  getMappedAction(root, new LinkedList<>(Arrays.asList(urls)), method, request);
+		MappedAction action =  getMappedAction(root, getUrlParts(url), method, request);
 		if (action == null) {
 			request.getPathParams().clear();
 		}
 		return action;
 	}
 	
+	private LinkedList<String> getUrlParts(String url) {
+		if (url.length() == 0 || "/".equals(url)) {
+			return new LinkedList<>();
+		}
+		return new LinkedList<>(Arrays.asList(url.substring(1).split("/")));
+	}
+	
 	private MappedAction getMappedAction(Param root, LinkedList<String> urls, HttpMethod method, Request request) {
-		// TODO
-		/*
-		pri '/' je parametr prazdny string
-		co kdyz je action index a index/12 - lze jako jedna url?
-		kontrola typu a poctu parametru?
-			index(string)
-			index(int)
-			index(int, int)
-		*/
 		if (urls.isEmpty()) {
 			return root.getAction(method);
 		}
