@@ -7,6 +7,7 @@ import java.util.Map;
 import ji.common.structures.ObjectBuilder;
 import ji.common.structures.Tuple2;
 import ji.socketCommunication.http.HttpMethod;
+import toti.CustomExceptionResponse;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Secured;
@@ -22,6 +23,8 @@ public class Register {
 
 	private final Param root;
 	private final ObjectBuilder<Module> module;
+	
+	private CustomExceptionResponse customExceptionResponse = null;
 	
 	public Register(Param root, ObjectBuilder<Module> module) {
 		this.FACTORIES = new HashMap<>();
@@ -186,4 +189,14 @@ public class Register {
     public boolean isServicePresent(String name) {
     	return SERVICES.get(name) != null;
     }
+    
+    /***************************/
+	
+	public CustomExceptionResponse getCustomExceptionResponse() {
+		return customExceptionResponse;
+	}
+
+	public void setCustomExceptionResponse(CustomExceptionResponse customExceptionResponse) {
+		this.customExceptionResponse = customExceptionResponse;
+	}
 }

@@ -17,7 +17,6 @@ import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import toti.Headers;
 import toti.ServerException;
-import toti.answers.FileSystemAnswer;
 
 @RunWith(JUnitParamsRunner.class)
 public class FileSystemAnswerTest {

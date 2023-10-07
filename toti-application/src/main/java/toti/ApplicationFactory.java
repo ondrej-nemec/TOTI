@@ -167,9 +167,13 @@ public class ApplicationFactory {
 		
 		IdentityFactory identityFactory = new IdentityFactory(translator, translator.getLocale().getLang());
 		
-		TotiAnswer totiAnwer = new TotiAnswer();
+		List<String> developIps = getDevelopIps(env);
+		TotiAnswer totiAnwer = new TotiAnswer(
+			developIps, totiTemplateFactory, translator
+		);
 		ExceptionAnswer exceptionAnswer = new ExceptionAnswer(
-			getDevelopIps(env),
+			register,
+			developIps,
 			totiTemplateFactory,
 			getLogsPath(env),
 			translator,

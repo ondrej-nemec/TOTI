@@ -13,8 +13,6 @@ public class Router {
 	
 	private String redirectOnNotLoggedInUser = null;
 	
-	private CustomExceptionResponse customExceptionResponse = null;
-	
 	private final Register register;
 	
 	public Router(Register register) {
@@ -37,17 +35,9 @@ public class Router {
 	public String getRedirectOnNotLoggedInUser() {
 		return redirectOnNotLoggedInUser;
 	}
-	
-	public CustomExceptionResponse getCustomExceptionResponse() {
-		return customExceptionResponse;
-	}
 
 	public void setRedirectOnNotLoggedInUser(String redirectOnNotLoggedInUser) {
 		this.redirectOnNotLoggedInUser = redirectOnNotLoggedInUser;
-	}
-	
-	public void setCustomExceptionResponse(CustomExceptionResponse customExceptionResponse) {
-		this.customExceptionResponse = customExceptionResponse;
 	}
 	
 }

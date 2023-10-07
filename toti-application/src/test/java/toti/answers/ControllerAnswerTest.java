@@ -82,7 +82,7 @@ public class ControllerAnswerTest extends TestCase {
 		
 		verify(answer, times(1)).answer(any(), any(), any(), any(), any(), any());
 		verify(answer, times(1)).getMappedAction("/a/b/c", HttpMethod.GET, new Request(
-			new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty()
+			HttpMethod.GET, new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty()
 		));
 		verifyNoMoreInteractions(translator, identityFactory, authenticator, answer);
 	}
@@ -120,7 +120,9 @@ public class ControllerAnswerTest extends TestCase {
 		
 		assertEquals(rs, answer.answer(r, identity, new Headers(), Optional.empty(), responseHeaders, ""));
 
-		Request request = new Request(new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty());
+		Request request = new Request(
+			HttpMethod.GET, new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty()
+		);
 
 		verify(answer, times(1)).answer(any(), any(), any(), any(), any(), any());
 		verify(answer, times(1)).getMappedAction("/a/b/c", HttpMethod.GET, request);
@@ -145,7 +147,7 @@ public class ControllerAnswerTest extends TestCase {
 			mock(Authenticator.class), mock(Authorizator.class), mock(IdentityFactory.class),
 			mock(Link.class), translator, mock(Logger.class)
 		);
-		Request request = new Request(new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty());
+		Request request = new Request(HttpMethod.GET, new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty());
 		
 		MappedAction actual = answer.getMappedAction(url, method, request);
 		if (expected == null) {
@@ -383,7 +385,7 @@ public class ControllerAnswerTest extends TestCase {
 			mock(Authenticator.class), mock(Authorizator.class), mock(IdentityFactory.class),
 			mock(Link.class), translator, mock(Logger.class)
 		);
-		Request request = new Request(new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty());
+		Request request = new Request(HttpMethod.GET, new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty());
 		request.getPathParams().addAll(pathParams);
 		
 		Response actual = answer.run(uri, action, request, identity);
@@ -587,7 +589,9 @@ public class ControllerAnswerTest extends TestCase {
 			mock(Authenticator.class), mock(Authorizator.class), mock(IdentityFactory.class),
 			mock(Link.class), translator, mock(Logger.class)
 		);
-		Request request = new Request(new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty());
+		Request request = new Request(
+			HttpMethod.GET, new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty()
+		);
 		request.getPathParams().addAll(pathParams);
 		
 		try {
@@ -766,6 +770,7 @@ public class ControllerAnswerTest extends TestCase {
 			mock(Link.class), mock(Translator.class), mock(Logger.class)
 		);
 		Request request = new Request(
+			HttpMethod.GET, 
 			new Headers(), 
 			MapDictionary.hashMap(),
 			new RequestParameters().put("some", "parameter"),
@@ -792,6 +797,7 @@ public class ControllerAnswerTest extends TestCase {
 			// request contains body in map - nothing change
 			new Object[] {
 				new Request(
+					HttpMethod.GET,
 					new Headers(), 
 					MapDictionary.hashMap(),
 					new RequestParameters().put("some", "parameter"),
@@ -809,6 +815,7 @@ public class ControllerAnswerTest extends TestCase {
 			// request contains body with json - allowed - add
 			new Object[] {
 				new Request(
+					HttpMethod.GET,
 					new Headers().addHeader("content-type", "application/json"), 
 					MapDictionary.hashMap(),
 					new RequestParameters(),
@@ -826,6 +833,7 @@ public class ControllerAnswerTest extends TestCase {
 			// request contains body with json - not allowed - nothing
 			new Object[] {
 				new Request(
+					HttpMethod.GET,
 					new Headers().addHeader("content-type", "application/json"), 
 					MapDictionary.hashMap(),
 					new RequestParameters(),
@@ -840,6 +848,7 @@ public class ControllerAnswerTest extends TestCase {
 			// request contains body with json - without header - nothing
 			new Object[] {
 				new Request(
+					HttpMethod.GET,
 					new Headers(), 
 					MapDictionary.hashMap(),
 					new RequestParameters(),
@@ -854,6 +863,7 @@ public class ControllerAnswerTest extends TestCase {
 			// request contains body with json - but list - nothing
 			new Object[] {
 				new Request(
+					HttpMethod.GET,
 					new Headers().addHeader("content-type", "application/json"), 
 					MapDictionary.hashMap(),
 					new RequestParameters(),
@@ -868,6 +878,7 @@ public class ControllerAnswerTest extends TestCase {
 			// request contains body with xml - allowed - add
 			new Object[] {
 				new Request(
+					HttpMethod.GET,
 					new Headers().addHeader("content-type", "application/xml"), 
 					MapDictionary.hashMap(),
 					new RequestParameters(),
@@ -885,6 +896,7 @@ public class ControllerAnswerTest extends TestCase {
 			// request contains body with xml - not allowed - nothing
 			new Object[] {
 				new Request(
+					HttpMethod.GET,
 					new Headers().addHeader("content-type", "application/xml"), 
 					MapDictionary.hashMap(),
 					new RequestParameters(),
@@ -899,6 +911,7 @@ public class ControllerAnswerTest extends TestCase {
 			// request contains body with xml - without header - nothing
 			new Object[] {
 				new Request(
+					HttpMethod.GET,
 					new Headers(), 
 					MapDictionary.hashMap(),
 					new RequestParameters(),

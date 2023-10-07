@@ -1,35 +1,71 @@
 package toti.answers;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
+import ji.socketCommunication.http.HttpMethod;
+import ji.socketCommunication.http.StatusCode;
+import ji.socketCommunication.http.structures.RequestParameters;
+import ji.translator.Translator;
 import toti.Headers;
 import toti.ServerException;
+import toti.answers.request.Request;
+import toti.answers.response.Response;
+import toti.answers.response.ResponseContainer;
 import toti.security.Identity;
+import toti.templating.TemplateFactory;
 
 public class TotiAnswer {
 	
-	// TODO
-	/*
-	moznost nacitat JS soubory z ext - dasich modulu
-	pridavat ext: profiler, db, ....
-	*/
+	private final List<String> developIps;
+	private final TemplateFactory templateFactory;
+	private final Translator translator;
+	
+	public TotiAnswer(List<String> developIps, TemplateFactory templateFactory, Translator translator) {
+		this.developIps = developIps;
+		this.templateFactory = templateFactory;
+		this.translator = translator;
+	}
 	
 	public ji.socketCommunication.http.structures.Response answer(
-			ji.socketCommunication.http.structures.Request request,
+			ji.socketCommunication.http.structures.Request request, Headers requestHeaders,
 			Identity identity, Headers responseHeaders, String charset
 		) throws ServerException {
-		return null;
+		return getResponse(request.getPlainUri(), Request.fromRequest(request, requestHeaders), identity, responseHeaders)
+				.getResponse(
+					request.getProtocol(), responseHeaders, identity,
+					new ResponseContainer(
+						translator.withLocale(identity.getLocale()), null, null, templateFactory, null
+					), 
+					charset
+				);
 	}
+	
+	private Response getResponse(String url, Request request, Identity identity, Headers responseHeaders) {
+		if ((url.length() < 2 || url.equals("/index.html")) && developIps.contains(identity.getIP())) {// "/toti"->"" OR "/toti/"->"/"
+			return getWelcomePage();
+		}
+		/*if (url.startsWith("db")) {
+			return getDbViewer(method, url, params, identity, responseHeaders);
+		}
+		if (url.startsWith("/profiler")) {
+			return getProfiler(method, params, identity);
+		}*/
+		// TODOreturn getTotiFiles(url, identity);
+		return Response.getText(StatusCode.NOT_FOUND, "");
+	}
+	
+	private Response getWelcomePage() {
+		return Response.getTemplate("index.html", new HashMap<>());
+	}
+	
 	/*
 		private final Profiler profiler;
 	private final Generate generator = new Generate();
 //	private final DbViewerRouter dbViewer;
 	
-	private final List<String> developIps;
-	private final TemplateFactory templateFactory;
-	private final Translator translator;
-	private final String charset;
 	
 	
 	public ji.socketCommunication.http.structures.Response getTotiResponse(
@@ -87,10 +123,6 @@ public class TotiAnswer {
 			return generator.generate(params);
 		}
 		return generator.getPage();
-	}
-	
-	private Response getWelcomePage() {
-		return Response.getTemplate("index.html", new HashMap<>());
 	}
 
 	*/

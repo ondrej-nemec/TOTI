@@ -34,7 +34,7 @@ public class ServerException extends Exception {
 		return code;
 	}
 
-	public MappedAction getUrl() {
+	public MappedAction getMappedAction() {
 		return url;
 	}
 	

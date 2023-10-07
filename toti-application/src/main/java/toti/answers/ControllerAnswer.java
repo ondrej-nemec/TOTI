@@ -73,13 +73,7 @@ public class ControllerAnswer {
 			Identity identity, Headers requestHeaders, Optional<WebSocket> websocket,
 			Headers responseHeaders, String charset
 		) throws ServerException {
-		Request totiRequest = new Request(
-			requestHeaders,
-			request.getQueryParameters(),
-			request.getBodyInParameters(),
-			request.getBody(),
-			websocket
-		);
+		Request totiRequest = Request.fromRequest(request, requestHeaders, websocket);
 		MappedAction mapped = getMappedAction(request.getPlainUri(), request.getMethod(), totiRequest);
 		if (mapped == null) {
 			return null;

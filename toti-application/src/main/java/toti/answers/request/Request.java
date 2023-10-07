@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import ji.common.structures.ListDictionary;
 import ji.common.structures.MapDictionary;
+import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.structures.RequestParameters;
 import ji.socketCommunication.http.structures.WebSocket;
 import toti.Headers;
@@ -14,6 +15,7 @@ public class Request {
 
 	private final Headers headers;
 	
+	private final HttpMethod method;
 	private final MapDictionary<String> queryParams;
 	private final ListDictionary pathParams;
 	private final RequestParameters bodyParams;
@@ -22,12 +24,33 @@ public class Request {
 	
 	private final MapDictionary<String> data;
 	
+	public static Request fromRequest(ji.socketCommunication.http.structures.Request request, Headers requestHeaders) {
+		return fromRequest(request, requestHeaders, Optional.empty());
+	}
+	
+	public static Request fromRequest(
+			ji.socketCommunication.http.structures.Request request,
+			Headers requestHeaders,
+			Optional<WebSocket> websocket
+		) {
+		return new Request(
+			request.getMethod(),
+			requestHeaders,
+			request.getQueryParameters(),
+			request.getBodyInParameters(),
+			request.getBody(),
+			websocket
+		);
+	}
+	
 	public Request(
+			HttpMethod method,
 			Headers headers,
 			MapDictionary<String> queryParams,
 			RequestParameters bodyParams,
 			byte[] body, // TODO optional too
 			Optional<WebSocket> websocket) {
+		this.method = method;
 		this.queryParams = queryParams;
 		this.headers = headers;
 		this.bodyParams = bodyParams;
@@ -35,6 +58,10 @@ public class Request {
 		this.data = MapDictionary.hashMap();
 		this.pathParams = ListDictionary.linkedList();
 		this.websocket = websocket;
+	}
+	
+	public HttpMethod getMethod() {
+		return method;
 	}
 	
 	public ListDictionary getPathParams() {

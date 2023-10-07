@@ -14,10 +14,12 @@ import ji.files.text.Text;
 import ji.socketCommunication.http.StatusCode;
 import ji.translator.Translator;
 import toti.Headers;
+import toti.answers.request.Request;
 import toti.answers.response.Response;
 import toti.answers.response.ResponseContainer;
 import toti.answers.response.TemplateResponse;
 import toti.application.register.MappedAction;
+import toti.application.register.Register;
 import toti.security.Identity;
 import toti.templating.TemplateFactory;
 
@@ -28,13 +30,21 @@ public class ExceptionAnswer {
 	private final String logsPath;
 	private final Translator translator;
 	private final TemplateFactory totiTemplateFactory;
+	private final Register register;
 	
-	public ExceptionAnswer(List<String> developIps, TemplateFactory totiTemplateFactory, String logsPath, Translator translator, Logger logger) {
+	public ExceptionAnswer(
+			Register register, List<String> developIps, TemplateFactory totiTemplateFactory, String logsPath, Translator translator, Logger logger) {
+		this.register = register;
 		this.logger = logger;
 		this.developIps = developIps;
-		this.logsPath = logsPath;
 		this.translator = translator;
 		this.totiTemplateFactory = totiTemplateFactory;
+		if (logsPath == null || logsPath.isEmpty()) {
+			this.logsPath = null;
+			logger.debug("Extended HTML request log is disabled");
+		} else {
+			this.logsPath = logsPath;
+		}
 	}
 
 	public ji.socketCommunication.http.structures.Response answer(
@@ -45,84 +55,75 @@ public class ExceptionAnswer {
 			Headers responseHeaders,
 			String charset
 		) {
-		return getResponse(request, requestHeaders, status, t, identity, mappedAction, responseHeaders, charset)
-			.getResponse(
-				request.getProtocol(), responseHeaders, identity,
-				new ResponseContainer(
-					translator.withLocale(identity.getLocale()), null, mappedAction, totiTemplateFactory, null
-				),
-				charset
-			);
+		return getResponse(request, requestHeaders, status, t, identity, mappedAction, charset)
+		.getResponse(
+			request.getProtocol(), responseHeaders, identity,
+			new ResponseContainer(
+				translator.withLocale(identity.getLocale()), null, mappedAction, totiTemplateFactory, null
+			),
+			charset
+		);
 	}
-
-	public Response getResponse(
+	
+	protected Response getResponse(
 			ji.socketCommunication.http.structures.Request request,
 			Headers requestHeaders,
-			StatusCode status, Throwable t,
-			Identity identity, MappedAction mappedAction,
-			Headers responseHeaders,
-			String charset
-		) {
+			StatusCode status, Throwable t, Identity identity, MappedAction mappedAction, String charset) {
 		logger.error(String.format("Exception occured %s URL: %s", status, request.getUri()), t);
 		boolean isDevelopResponseAllowed = developIps.contains(identity.getIP());
 		boolean isAsyncRequest = requestHeaders.isAsyncRequest(); // probably js request
 		
-		if (false) {
+		if (register.getCustomExceptionResponse() != null) {
 			try {
-				// TODO custom exception catch
+				return register.getCustomExceptionResponse()
+					.catchException(Request.fromRequest(request, requestHeaders), status, identity, translator, t, isDevelopResponseAllowed, isAsyncRequest);
 			} catch (Throwable t1) {
 				logger.error("CustomExceptionResponse fail, default implementation continue", t1);
 			}
 		}
-		TemplateResponse response = null; // TODO getTemplate(status, request, identity, mappedUrl, t);
+		TemplateResponse exceptionDetail = getExceptionDetail(request, requestHeaders, status, t, identity, mappedAction);
 		if (isAsyncRequest) {
-			saveToFile(response, charset);
+			saveToFile(exceptionDetail, charset);
 			if (isDevelopResponseAllowed) {
 				return Response.getText(status, t.getClass() + ": " + t.getMessage());
 			}
 			return Response.getText(status, status.getDescription());
 		}
 		if (isDevelopResponseAllowed) {
-			return response;
+			return exceptionDetail;
 		}
-		return getSyncException(status, response, charset);
+		saveToFile(exceptionDetail, charset);
+		return getExceptionInfo(status);
 	}
-	/*
-	private TemplateResponse getTemplate(
-			StatusCode code, 
-			Request request,
-			Identity identity,
-			MappedUrl mappedUrl,
-			Throwable t) {
-		Map<String, Object> variables = new HashMap<>();
-		variables.put("code", code);
-		variables.put("url", request.getPlainUri());
-		variables.put("fullUrl", request.getUri());
-		variables.put("method", request.getMethod());
-		variables.put("protocol", request.getProtocol());
-		variables.put("headers", identity.getHeaders());
-		variables.put("urlParameters", request.getQueryParameters());
-		variables.put("bodyParameters", request.getBodyInParameters());
-		variables.put("body", request.getBody());
-		variables.put("identity", identity);
-		variables.put("mappedUrl", mappedUrl);
-		variables.put("t", t);
-		return new TemplateResponse(code, "/errors/exception.jsp", variables);
-	}
-	*/
 	
-	private Response getSyncException(StatusCode code, TemplateResponse response, String charset) {
-		saveToFile(response, charset);
+	protected TemplateResponse getExceptionInfo(StatusCode status) {
 		Map<String, Object> variables = new HashMap<>();
-		variables.put("code", code);
-		return Response.getTemplate(code, "/errors/error.jsp", variables);
+		variables.put("code", status);
+		return new TemplateResponse(status, "/errors/error.jsp", variables);
 	}
-
-	private String saveToFile(TemplateResponse response, String charset) {
-		if (logsPath == null || logsPath.isEmpty()) {
-			logger.debug("Extended HTML request log is disabled");
-			return "-- log exception detail is disabled --";
-		}	
+	
+	protected TemplateResponse getExceptionDetail(ji.socketCommunication.http.structures.Request request,
+			Headers requestHeaders, StatusCode status, Throwable t, Identity identity, MappedAction mappedAction) {
+		Map<String, Object> variables = new HashMap<>();
+		variables.put("code", status);
+		variables.put("request", request);
+		variables.put("requestHeaders", requestHeaders);
+		variables.put("identity", identity);
+		variables.put("mappedUrl", mappedAction);
+		variables.put("t", t);
+		return new TemplateResponse(status, "/errors/exception.jsp", variables);
+	}
+	
+	private void saveToFile(TemplateResponse response, String charset) {
+		saveToFile(response, charset, Text.get());
+	}
+	
+	protected void saveToFile(TemplateResponse response, String charset, Text text) {
+		if (logsPath == null) {
+			return;
+		}
+		// TODO
+		/*	
 		try {
 			// TODO some way to minimalize log files - cache? hash?
 			String dirName = logsPath + (logsPath.endsWith("/") ? "" : "/");
@@ -148,10 +149,14 @@ public class ExceptionAnswer {
 			file.setExecutable(true, false);
 			file.setReadable(true, false);
 			file.setWritable(true, false);
+			logger.error("-- exception saved to " + fileName);
 			return fileName;
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("-- file not saved -- (" + e.getMessage() + ")");
 			return "-- file not saved -- (" + e.getMessage() + ")";
 		}
+		*/
 	}
+	
 }

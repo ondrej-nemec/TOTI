@@ -56,9 +56,8 @@ public class Answer implements ji.socketCommunication.http.ResponseFactory {
 		authenticator.authenticate(identity, request.getBodyInParameters());
 		Headers responseHeaders = new Headers(this.responseHeaders);
 		try {
-			// TODO check url.endsWith("/") ? url.substring(0, url.length()-1) : url,
 			if (request.getUri().toLowerCase().startsWith("/toti")) {
-				return totiAnswer.answer(request, identity, responseHeaders, charset);
+				return totiAnswer.answer(request, requestHeaders, identity, responseHeaders, charset);
 			}
 			Response response = controllerAnswer.answer(
 				request, identity, requestHeaders, webSocket, responseHeaders, charset
@@ -71,7 +70,7 @@ public class Answer implements ji.socketCommunication.http.ResponseFactory {
 			return exceptionAnswer.answer(
 				request, requestHeaders,
 				e.getStatusCode(), e.getCause() == null ? e : e.getCause(),
-				identity, e.getUrl(), responseHeaders, charset
+				identity, e.getMappedAction(), responseHeaders, charset
 			);
 		} catch (Throwable t) {
 			return exceptionAnswer.answer(
