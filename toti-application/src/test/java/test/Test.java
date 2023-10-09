@@ -34,7 +34,7 @@ public class Test {
 			// napr: true, false, specialni pripady exception?
 		})
 		// .authorize("some-domain", toti.security.Action.CREATE) // zustane zachovano pro jednodussi pouziti
-		.authrorize((request, trans, iden)->{
+		.authorize((request, trans, iden)->{
 			// neco hazet? vracet?
 			// napr: true, false, specialni pripady exception?
 		})

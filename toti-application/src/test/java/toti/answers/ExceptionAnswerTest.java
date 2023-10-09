@@ -2,15 +2,19 @@ package toti.answers;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -19,6 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import ji.common.structures.MapDictionary;
+import ji.files.text.Text;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.Protocol;
@@ -32,6 +37,7 @@ import toti.answers.response.TemplateResponse;
 import toti.answers.response.TextResponse;
 import toti.application.register.MappedAction;
 import toti.application.register.Register;
+import toti.logging.FileName;
 import toti.security.Identity;
 import toti.templating.TemplateFactory;
 
@@ -39,6 +45,8 @@ import toti.templating.TemplateFactory;
 public class ExceptionAnswerTest {
 	
 	// TODO test custom exception catch
+	// TODO test exception/error templates
+	// TODO test create real log file
 	
 	@Test
 	@Parameters(method="dataGetResponse")
@@ -74,7 +82,8 @@ public class ExceptionAnswerTest {
 			.getExceptionDetail(any(), any(), any(), any(), any(), any());
 		doReturn(new TemplateResponse(StatusCode.OK, "/info", new HashMap<>())).when(answer)
 			.getExceptionInfo(any());
-		doNothing().when(answer).saveToFile(any(), any(), any());
+		doReturn(0).when(answer).saveToFile(any(), any(), any(), any());
+		doReturn(new FileName(null, false)).when(answer).getFileName(any(), anyInt(), any(), any(), any());
 		
 		
 		assertEquals(expected, answer.getResponse(
@@ -87,7 +96,8 @@ public class ExceptionAnswerTest {
 			"charset"
 		));
 		verify(logger, times(1)).error(anyString(), any(Throwable.class));
-		verify(answer, times(saveToFile)).saveToFile(any(), any(), any());
+		verify(answer, times(saveToFile)).saveToFile(any(), any(), any(), any());
+		verify(answer, times(1)).getFileName(any(), anyInt(), any(), any(), any());
 	}
 	
 	public Object[] dataGetResponse() {
@@ -112,4 +122,95 @@ public class ExceptionAnswerTest {
 		};
 	}
 	
+	@Test
+	@Parameters(method="dataGetFileNameReturnsCorrectFilename")
+	public void testGetFileNameReturnsCorrectFilename(
+			String logsPath,
+			MappedAction action, StatusCode code, Throwable t,
+			FileName expected
+		) {
+		LocalDateTime now = LocalDateTime.of(2023, 10, 9, 21, 33, 45, 876);
+		int random = 123456789;
+		ExceptionAnswer answer = new ExceptionAnswer(
+			mock(Register.class),
+			Arrays.asList(),
+			mock(TemplateFactory.class),
+			logsPath,
+			mock(Translator.class),
+			mock(Logger.class)
+		);
+		assertEquals("First run", expected, answer.getFileName(now, random, action, code, t));
+		
+		FileName secondExpected = new FileName(expected.getName(), false);
+		assertEquals("Second run", secondExpected, answer.getFileName(now.plusHours(1), random*2, action, code, t));
+	}
+	
+	public Object[] dataGetFileNameReturnsCorrectFilename() {
+		return new Object[] {
+			new Object[] {
+				null,
+				MappedAction.test("a", "b", "c"), StatusCode.ACCEPTED, new Throwable(),
+				new FileName(null, false)
+			},
+			new Object[] {
+				"/logs",
+				MappedAction.test("a", "b", "c"), StatusCode.ACCEPTED, new Throwable(),
+				new FileName("/logs/exception-2023-10-09_21-33-45__123456789.html", true)
+			}
+		};
+	}
+	
+	@Test
+	@Parameters(method="dataSaveToFileDoNothingIfFileIsNotCreateAndNotUsed")
+	public void testSaveToFileDoNothingIfFileIsNotCreateAndNotUsed(FileName filename) {
+		Text text = mock(Text.class);
+		TemplateResponse templateResponse = mock(TemplateResponse.class);
+		
+		ExceptionAnswer answer = new ExceptionAnswer(
+			mock(Register.class),
+			Arrays.asList(),
+			mock(TemplateFactory.class),
+			null,
+			mock(Translator.class),
+			mock(Logger.class)
+		);
+		assertEquals(-1, answer.saveToFile(filename, templateResponse, "charset", text));
+		
+		verifyNoMoreInteractions(text, templateResponse);
+	}
+	
+	public Object[] dataSaveToFileDoNothingIfFileIsNotCreateAndNotUsed() {
+		return new Object[] {
+			new Object[] {
+				new FileName(null, false)
+			},
+			new Object[] {
+				new FileName("something", false)
+			},
+			new Object[] {
+				new FileName(null, true)
+			}
+		};
+	}
+
+	@Test
+	public void testSaveToFileSavefile() throws Exception {
+		Text text = mock(Text.class);
+		TemplateResponse templateResponse = mock(TemplateResponse.class);
+	//	when(templateResponse.createResponse(any())).thenReturn("templateContent");
+		
+		ExceptionAnswer answer = new ExceptionAnswer(
+			mock(Register.class),
+			Arrays.asList(),
+			mock(TemplateFactory.class),
+			null,
+			mock(Translator.class),
+			mock(Logger.class)
+		);
+		assertEquals(0, answer.saveToFile(new FileName("/path/to/file", true), templateResponse, "charset", text));
+		
+		verify(text, times(1)).write(any(), eq("/path/to/file"), eq("charset"), eq(false));
+		// verify(templateResponse, times(1)).createResponse(any());
+		verifyNoMoreInteractions(text, templateResponse);
+	}
 }

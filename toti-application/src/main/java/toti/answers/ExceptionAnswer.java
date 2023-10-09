@@ -20,6 +20,8 @@ import toti.answers.response.ResponseContainer;
 import toti.answers.response.TemplateResponse;
 import toti.application.register.MappedAction;
 import toti.application.register.Register;
+import toti.logging.ExceptionHashCode;
+import toti.logging.FileName;
 import toti.security.Identity;
 import toti.templating.TemplateFactory;
 
@@ -31,6 +33,8 @@ public class ExceptionAnswer {
 	private final Translator translator;
 	private final TemplateFactory totiTemplateFactory;
 	private final Register register;
+	
+	private final Map<ExceptionHashCode, String> exceptionFileName = new HashMap<>();
 	
 	public ExceptionAnswer(
 			Register register, List<String> developIps, TemplateFactory totiTemplateFactory, String logsPath, Translator translator, Logger logger) {
@@ -69,7 +73,13 @@ public class ExceptionAnswer {
 			ji.socketCommunication.http.structures.Request request,
 			Headers requestHeaders,
 			StatusCode status, Throwable t, Identity identity, MappedAction mappedAction, String charset) {
-		logger.error(String.format("Exception occured %s URL: %s", status, request.getUri()), t);
+		FileName fileName = getFileName(mappedAction, status, t);
+		String message = "Exception occured %s URL: %s.";
+		if (fileName.isUsed()) {
+			message += " Detail saved: " + fileName.getName();
+		}
+		logger.error(String.format(message, status, request.getUri()), t);
+		
 		boolean isDevelopResponseAllowed = developIps.contains(identity.getIP());
 		boolean isAsyncRequest = requestHeaders.isAsyncRequest(); // probably js request
 		
@@ -83,7 +93,7 @@ public class ExceptionAnswer {
 		}
 		TemplateResponse exceptionDetail = getExceptionDetail(request, requestHeaders, status, t, identity, mappedAction);
 		if (isAsyncRequest) {
-			saveToFile(exceptionDetail, charset);
+			saveToFile(fileName, exceptionDetail, charset);
 			if (isDevelopResponseAllowed) {
 				return Response.getText(status, t.getClass() + ": " + t.getMessage());
 			}
@@ -92,7 +102,7 @@ public class ExceptionAnswer {
 		if (isDevelopResponseAllowed) {
 			return exceptionDetail;
 		}
-		saveToFile(exceptionDetail, charset);
+		saveToFile(fileName, exceptionDetail, charset);
 		return getExceptionInfo(status);
 	}
 	
@@ -109,54 +119,73 @@ public class ExceptionAnswer {
 		variables.put("request", request);
 		variables.put("requestHeaders", requestHeaders);
 		variables.put("identity", identity);
-		variables.put("mappedUrl", mappedAction);
+		variables.put("mappedAction", mappedAction);
 		variables.put("t", t);
 		return new TemplateResponse(status, "/errors/exception.jsp", variables);
 	}
 	
-	private void saveToFile(TemplateResponse response, String charset) {
-		saveToFile(response, charset, Text.get());
+	private FileName getFileName(MappedAction action, StatusCode code, Throwable t) {
+		return getFileName(LocalDateTime.now(), new Random().nextInt(), action, code, t);
 	}
 	
-	protected void saveToFile(TemplateResponse response, String charset, Text text) {
+	protected FileName getFileName(LocalDateTime now, int random, MappedAction action, StatusCode code, Throwable t) {
 		if (logsPath == null) {
-			return;
+			return new FileName(null, false);
 		}
-		// TODO
-		/*	
+		ExceptionHashCode ehc = new ExceptionHashCode(code, action, t);
+		if (exceptionFileName.containsKey(ehc)) {
+			return new FileName(exceptionFileName.get(ehc), false);
+		}
+		String name = logsPath
+			+ (logsPath.endsWith("/") ? "" : "/")
+			+ "exception-"
+			+ now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")) 
+			+ "__"
+			+ random
+			+ ".html";
+		exceptionFileName.put(ehc, name);
+		return new FileName(name, true);
+	}
+	
+	private void saveToFile(FileName fileName, TemplateResponse response, String charset) {
+		saveToFile(fileName, response, charset, Text.get());
+	}
+	
+	protected int saveToFile(FileName fileName, TemplateResponse response, String charset, Text text) {
+		if (!fileName.isCreate() || !fileName.isUsed()) {
+			return -1;
+		}
 		try {
-			// TODO some way to minimalize log files - cache? hash?
+			/*
+			IS needed?
+			
 			String dirName = logsPath + (logsPath.endsWith("/") ? "" : "/");
             File dir = new File(dirName);
             dir.setExecutable(true, false);
             dir.setReadable(true, false);
             dir.setWritable(true, false);
             dir.mkdirs();
-            
-			String fileName =
-					dirName
-					+ "/exception-"
-					+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")) 
-					+ "__"
-					+ new Random().nextInt()
-					+ ".html";
-			Text.get().write((bw)->{
+			*/
+			text.write((bw)->{
 				bw.write(
 					response.createResponse(new ResponseContainer(translator, null, null, totiTemplateFactory, null))
 				);
-			}, fileName, charset, false);
-			File file = new File(fileName);
+			}, fileName.getName(), charset, false);
+			File file = new File(fileName.getName());
+			/*
+			IS needed?
+			
+			file.mkdirs();
+			*/
 			file.setExecutable(true, false);
 			file.setReadable(true, false);
 			file.setWritable(true, false);
-			logger.error("-- exception saved to " + fileName);
-			return fileName;
+			return 0;
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("-- file not saved -- (" + e.getMessage() + ")");
-			return "-- file not saved -- (" + e.getMessage() + ")";
+			return 1;
 		}
-		*/
 	}
 	
 }

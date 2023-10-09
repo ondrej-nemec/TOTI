@@ -106,5 +106,55 @@ public class MappedAction {
 				+ ", action=" + action + ", classFactory=" + classFactory + ", methods=" + Arrays.toString(methods)
 				+ ", securityMode=" + securityMode + "]";
 	}
+
+	public int logHashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((action == null) ? 0 : action.hashCode());
+		result = prime * result + ((className == null) ? 0 : className.hashCode());
+		result = prime * result + ((methodName == null) ? 0 : methodName.hashCode());
+		result = prime * result + Arrays.hashCode(methods);
+		result = prime * result + ((moduleName == null) ? 0 : moduleName.hashCode());
+		result = prime * result + ((securityMode == null) ? 0 : securityMode.hashCode());
+		return result;
+	}
+
+	public boolean logEquals(MappedAction other) {
+		if (action == null) {
+			if (other.action != null) {
+				return false;
+			}
+		} else if (!action.equals(other.action)) {
+			return false;
+		}
+		if (className == null) {
+			if (other.className != null) {
+				return false;
+			}
+		} else if (!className.equals(other.className)) {
+			return false;
+		}
+		if (methodName == null) {
+			if (other.methodName != null) {
+				return false;
+			}
+		} else if (!methodName.equals(other.methodName)) {
+			return false;
+		}
+		if (!Arrays.equals(methods, other.methods)) {
+			return false;
+		}
+		if (moduleName == null) {
+			if (other.moduleName != null) {
+				return false;
+			}
+		} else if (!moduleName.equals(other.moduleName)) {
+			return false;
+		}
+		if (securityMode != other.securityMode) {
+			return false;
+		}
+		return true;
+	}
 	
 }
