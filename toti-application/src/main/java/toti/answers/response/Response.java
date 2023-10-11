@@ -129,6 +129,15 @@ public interface Response {
 	}
 	
 	/**
+	 * Returns empty response with code
+	 * @param code
+	 * @return
+	 */
+	static Response getEmpty(StatusCode code) {
+		return new EmptyResponse(code);
+	}
+	
+	/**
 	 * Parse file as TOTI template with given parameters
 	 * @param code
 	 * @param fileName path to template files
