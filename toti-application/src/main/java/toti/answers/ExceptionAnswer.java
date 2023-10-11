@@ -95,7 +95,6 @@ public class ExceptionAnswer {
 		if (isAsyncRequest) {
 			saveToFile(fileName, exceptionDetail, charset);
 			if (isDevelopResponseAllowed) {
-				
 				return Response.create(status).getText(t.getClass() + ": " + t.getMessage());
 			}
 			return Response.create(status).getText(status.getDescription());
