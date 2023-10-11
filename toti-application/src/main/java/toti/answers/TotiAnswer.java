@@ -1,13 +1,8 @@
 package toti.answers;
 
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
-import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.structures.RequestParameters;
 import ji.translator.Translator;
 import toti.Headers;
 import toti.ServerException;
@@ -67,11 +62,11 @@ public class TotiAnswer {
 			return getProfiler(method, params, identity);
 		}*/
 		// TODOreturn getTotiFiles(url, identity);
-		return Response.getEmpty(StatusCode.NOT_FOUND);
+		return Response.create(StatusCode.NOT_FOUND).getEmpty();
 	}
 	
 	private Response getWelcomePage() {
-		return Response.getFile("toti/assets/index.html");
+		return Response.create(StatusCode.OK).getFile("toti/assets/index.html");
 	}
 	
 	/*

@@ -1,13 +1,8 @@
 package toti.answers.response;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.structures.WebSocket;
 import toti.Headers;
 
 public class ResponseFactory {
@@ -77,7 +72,7 @@ public class ResponseFactory {
 	 * @param code
 	 * @return
 	 */
-	public Response getEmpty(StatusCode code) {
+	public Response getEmpty() {
 		return new EmptyResponse(code, headers);
 	}
 	
@@ -117,11 +112,11 @@ public class ResponseFactory {
 	 * @param onError
 	 * @return
 	 */
-	public Response getWebsocket(WebSocket websocket,
+	/*public Response getWebsocket(WebSocket websocket,
 			BiConsumer<Boolean, ByteArrayOutputStream> onMessage,
 			Consumer<IOException> onError,
 			Consumer<String> onClose) {
 		return new WebsocketResponse(headers, websocket, onMessage, onError, onClose);
-	}
+	}*/
 
 }

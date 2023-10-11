@@ -17,6 +17,8 @@ import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import toti.Headers;
 import toti.answers.request.Request;
+import toti.answers.response.EmptyResponse;
+import toti.answers.response.FileResponse;
 import toti.answers.response.Response;
 import toti.security.Identity;
 import toti.templating.TemplateFactory;
@@ -46,11 +48,11 @@ public class TotiAnsserTest {
 		for (String url : both) {
 			// index request, not develop
 			result.add(new Object[] {
-				"notLocalHost", url, Response.getEmpty(StatusCode.NOT_FOUND)	
+				"notLocalHost", url, new EmptyResponse(StatusCode.NOT_FOUND, new Headers())	
 			});
 			// index request, develop
 			result.add(new Object[] {
-				"localhost", url, Response.getFile("toti/assets/index.html")
+				"localhost", url, new FileResponse(StatusCode.OK, new Headers(), "toti/assets/index.html")
 			});
 		}
 		String[] wrong = new String[] {
@@ -58,7 +60,7 @@ public class TotiAnsserTest {
 		};
 		for (String url : wrong) {
 			result.add(new Object[] {
-				"localhost", url, Response.getEmpty(StatusCode.NOT_FOUND)
+				"localhost", url, new EmptyResponse(StatusCode.NOT_FOUND, new Headers())
 			});
 		}
 		return result;

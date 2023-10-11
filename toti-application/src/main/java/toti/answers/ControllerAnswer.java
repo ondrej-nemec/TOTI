@@ -170,7 +170,7 @@ public class ControllerAnswer {
 				if (!uri.equals("/")) {
 					backlink = "?backlink=" + getBackLink(uri);
 				}
-				return Response.getRedirect(
+				return Response.create(StatusCode.TEMPORARY_REDIRECT).getRedirect(
 					router.getRedirectOnNotLoggedInUser() + backlink
 			    );
 			}

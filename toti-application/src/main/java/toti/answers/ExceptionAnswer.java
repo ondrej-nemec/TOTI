@@ -95,9 +95,10 @@ public class ExceptionAnswer {
 		if (isAsyncRequest) {
 			saveToFile(fileName, exceptionDetail, charset);
 			if (isDevelopResponseAllowed) {
-				return Response.getText(status, t.getClass() + ": " + t.getMessage());
+				
+				return Response.create(status).getText(t.getClass() + ": " + t.getMessage());
 			}
-			return Response.getText(status, status.getDescription());
+			return Response.create(status).getText(status.getDescription());
 		}
 		if (isDevelopResponseAllowed) {
 			return exceptionDetail;
@@ -109,7 +110,7 @@ public class ExceptionAnswer {
 	protected TemplateResponse getExceptionInfo(StatusCode status) {
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("code", status);
-		return new TemplateResponse(status, "/errors/error.jsp", variables);
+		return new TemplateResponse(status, new Headers(), "/errors/error.jsp", variables);
 	}
 	
 	protected TemplateResponse getExceptionDetail(ji.socketCommunication.http.structures.Request request,
@@ -121,7 +122,7 @@ public class ExceptionAnswer {
 		variables.put("identity", identity);
 		variables.put("mappedAction", mappedAction);
 		variables.put("t", t);
-		return new TemplateResponse(status, "/errors/exception.jsp", variables);
+		return new TemplateResponse(status, new Headers(), "/errors/exception.jsp", variables);
 	}
 	
 	private FileName getFileName(MappedAction action, StatusCode code, Throwable t) {

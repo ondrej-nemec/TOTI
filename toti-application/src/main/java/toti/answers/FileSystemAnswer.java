@@ -50,20 +50,20 @@ public class FileSystemAnswer {
 		
 		if (!file.exists() || (file.isDirectory() && !dirResponseAllowed)) {
 			if (file.isDirectory() && dirDefaultFile != null && new File(resourcesDir + url + "/" + dirDefaultFile).exists()) {
-                return Response.getFile(resourcesDir + url + "/" + dirDefaultFile);
+                return Response.create(StatusCode.OK).getFile(resourcesDir + url + "/" + dirDefaultFile);
 			}
 			throw new ServerException(StatusCode.NOT_FOUND, String.format("URL not fouded: %s (%s)", url, method));
 		}
 		if (file.isDirectory()) {
 			return getDirResponse(file.listFiles(), url, responseHeaders, charset);
 		}
-		return Response.getFile(resourcesDir + url);
+		return Response.create(StatusCode.OK).getFile(resourcesDir + url);
 	}
 	
 	private Response getDirResponse(File[] files, String path, Headers responseHeaders, String charset) throws ServerException {
 		try {
 			responseHeaders.addHeader("Content-Type", "text/html; charset=" + charset);
-			return Response.getText(new DirectoryTemplate(files, path).create(null, null, null));
+			return Response.create(StatusCode.OK).getText(new DirectoryTemplate(files, path).create(null, null, null));
 		} catch (Exception e) {
 			throw new ServerException(StatusCode.INTERNAL_SERVER_ERROR, null, "Directory list fail: " + path);
 		}

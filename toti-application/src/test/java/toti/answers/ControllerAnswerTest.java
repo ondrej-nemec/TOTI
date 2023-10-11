@@ -44,7 +44,9 @@ import toti.answers.action.RequestInterruptedException;
 import toti.answers.action.ResponseAction;
 import toti.answers.action.ResponseBuilder;
 import toti.answers.request.Request;
+import toti.answers.response.RedirectResponse;
 import toti.answers.response.Response;
+import toti.answers.response.TextResponse;
 import toti.application.register.MappedAction;
 import toti.application.register.Param;
 import toti.security.AuthMode;
@@ -402,15 +404,17 @@ public class ControllerAnswerTest extends TestCase {
 					public ResponseAction index() {
 						return ResponseBuilder.get()
 							.prevalidate((request, translator, identity)->{
-								throw new RequestInterruptedException(Response.getText("interrupted"));
+								throw new RequestInterruptedException(
+									new TextResponse(StatusCode.OK, new Headers(), "interrupted")
+								);
 							})
 							.createRequest((request, translator, identity)->{
 								fail();
-								return Response.getText("Fail");
+								return new TextResponse(StatusCode.OK, new Headers(), "Fail");
 							});
 					} 
 				}, throwingFunction((o)->o.getClass().getMethod("index")),
-				Response.getText("interrupted")
+				new TextResponse(StatusCode.OK, new Headers(), "interrupted")
 			},
 			// interrupted in authorize - authMode is header, redirect is null
 			new Object[] {
@@ -420,15 +424,17 @@ public class ControllerAnswerTest extends TestCase {
 					public ResponseAction index() {
 						return ResponseBuilder.get()
 							.authorize((request, translator, identity)->{
-								throw new RequestInterruptedException(Response.getText("interrupted"));
+								throw new RequestInterruptedException(
+									new TextResponse(StatusCode.OK, new Headers(), "interrupted")
+								);
 							})
 							.createRequest((request, translator, identity)->{
 								fail();
-								return Response.getText("Fail");
+								return new TextResponse(StatusCode.OK, new Headers(), "Fail");
 							});
 					} 
 				}, throwingFunction((o)->o.getClass().getMethod("index")),
-				Response.getText("interrupted")
+				new TextResponse(StatusCode.OK, new Headers(), "interrupted")
 			},
 			// interrupted in authorize - authMode is header, redirect is not null
 			new Object[] {
@@ -438,15 +444,17 @@ public class ControllerAnswerTest extends TestCase {
 					public ResponseAction index() {
 						return ResponseBuilder.get()
 							.authorize((request, translator, identity)->{
-								throw new RequestInterruptedException(Response.getText("interrupted"));
+								throw new RequestInterruptedException(
+									new TextResponse(StatusCode.OK, new Headers(), "interrupted")
+								);
 							})
 							.createRequest((request, translator, identity)->{
 								fail();
-								return Response.getText("Fail");
+								return new TextResponse(StatusCode.OK, new Headers(), "Fail");
 							});
 					} 
 				}, throwingFunction((o)->o.getClass().getMethod("index")),
-				Response.getText("interrupted")
+				new TextResponse(StatusCode.OK, new Headers(), "interrupted")
 			},
 			// interrupted in authorize - authMode is not header, redirect is null
 			new Object[] {
@@ -456,15 +464,17 @@ public class ControllerAnswerTest extends TestCase {
 					public ResponseAction index() {
 						return ResponseBuilder.get()
 							.authorize((request, translator, identity)->{
-								throw new RequestInterruptedException(Response.getText("interrupted"));
+								throw new RequestInterruptedException(
+									new TextResponse(StatusCode.OK, new Headers(), "interrupted")
+								);
 							})
 							.createRequest((request, translator, identity)->{
 								fail();
-								return Response.getText("Fail");
+								return new TextResponse(StatusCode.OK, new Headers(), "Fail");
 							});
 					} 
 				}, throwingFunction((o)->o.getClass().getMethod("index")),
-				Response.getText("interrupted")
+				new TextResponse(StatusCode.OK, new Headers(), "interrupted")
 			},
 			// interrupted in authorize - authMode is not header, redirect is not null
 			new Object[] {
@@ -474,15 +484,17 @@ public class ControllerAnswerTest extends TestCase {
 					public ResponseAction index() {
 						return ResponseBuilder.get()
 							.authorize((request, translator, identity)->{
-								throw new RequestInterruptedException(Response.getText("interrupted"));
+								throw new RequestInterruptedException(
+									new TextResponse(StatusCode.OK, new Headers(), "interrupted")
+								);
 							})
 							.createRequest((request, translator, identity)->{
 								fail();
-								return Response.getText("Fail");
+								return new TextResponse(StatusCode.OK, new Headers(), "Fail");
 							});
 					} 
 				}, throwingFunction((o)->o.getClass().getMethod("index")),
-				Response.getRedirect("/redirect?backlink=%2Furi")
+				new RedirectResponse(StatusCode.TEMPORARY_REDIRECT, new Headers(), "/redirect?backlink=%2Furi", false)
 			},
 			// interrupted in authorize - authMode is not header, redirect is not null, url is root
 			new Object[] {
@@ -492,15 +504,17 @@ public class ControllerAnswerTest extends TestCase {
 					public ResponseAction index() {
 						return ResponseBuilder.get()
 							.authorize((request, translator, identity)->{
-								throw new RequestInterruptedException(Response.getText("interrupted"));
+								throw new RequestInterruptedException(
+									new TextResponse(StatusCode.OK, new Headers(), "interrupted")
+								);
 							})
 							.createRequest((request, translator, identity)->{
 								fail();
-								return Response.getText("Fail");
+								return new TextResponse(StatusCode.OK, new Headers(), "Fail");
 							});
 					} 
 				}, throwingFunction((o)->o.getClass().getMethod("index")),
-				Response.getRedirect("/redirect")
+				new RedirectResponse(StatusCode.TEMPORARY_REDIRECT, new Headers(), "/redirect", false)
 			},
 			// interrupted in validate
 			new Object[] {
@@ -510,15 +524,17 @@ public class ControllerAnswerTest extends TestCase {
 					public ResponseAction index() {
 						return ResponseBuilder.get()
 							.validate((request, translator, identity)->{
-								throw new RequestInterruptedException(Response.getText("interrupted"));
+								throw new RequestInterruptedException(
+									new TextResponse(StatusCode.OK, new Headers(), "interrupted")
+								);
 							})
 							.createRequest((request, translator, identity)->{
 								fail();
-								return Response.getText("Fail");
+								return new TextResponse(StatusCode.OK, new Headers(), "Fail");
 							});
 					} 
 				}, throwingFunction((o)->o.getClass().getMethod("index")),
-				Response.getText("interrupted")
+				new TextResponse(StatusCode.OK, new Headers(), "interrupted")
 			},
 			// interrupted in create
 			new Object[] {
@@ -528,11 +544,13 @@ public class ControllerAnswerTest extends TestCase {
 					public ResponseAction index() {
 						return ResponseBuilder.get()
 							.createRequest((request, translator, identity)->{
-								throw new RequestInterruptedException(Response.getText("interrupted"));
+								throw new RequestInterruptedException(
+									new TextResponse(StatusCode.OK, new Headers(), "interrupted")
+								);
 							});
 					} 
 				}, throwingFunction((o)->o.getClass().getMethod("index")),
-				Response.getText("interrupted")
+				new TextResponse(StatusCode.OK, new Headers(), "interrupted")
 			},
 			// create return response
 			new Object[] {
@@ -542,11 +560,11 @@ public class ControllerAnswerTest extends TestCase {
 					public ResponseAction index() {
 						return ResponseBuilder.get()
 							.createRequest((request, translator, identity)->{
-								return Response.getText("response");
+								return new TextResponse(StatusCode.OK, new Headers(), "response");
 							});
 					} 
 				}, throwingFunction((o)->o.getClass().getMethod("index")),
-				Response.getText("response")
+				new TextResponse(StatusCode.OK, new Headers(), "response")
 			},
 			// create with params
 			new Object[] {
@@ -556,11 +574,11 @@ public class ControllerAnswerTest extends TestCase {
 					public ResponseAction index(int id, String value) {
 						return ResponseBuilder.get()
 							.createRequest((request, translator, identity)->{
-								return Response.getText("Response " + id + ": " + value);
+								return new TextResponse(StatusCode.OK, new Headers(), "Response " + id + ": " + value);
 							});
 					} 
 				}, throwingFunction((o)->o.getClass().getMethod("index", int.class, String.class)),
-				Response.getText("Response 10: aaa")
+				new TextResponse(StatusCode.OK, new Headers(), "Response 10: aaa")
 			}
 		};
 	}
@@ -613,7 +631,7 @@ public class ControllerAnswerTest extends TestCase {
 					public ResponseAction index(int id) {
 						return ResponseBuilder.get()
 						.createRequest((request, translator, identity)->{
-							return Response.getText("Response " + id);
+							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id);
 						});
 					} 
 				}, throwingFunction((o)->o.getClass().getMethod("index", int.class))
@@ -625,7 +643,7 @@ public class ControllerAnswerTest extends TestCase {
 					public ResponseAction index(int id) {
 						return ResponseBuilder.get()
 						.createRequest((request, translator, identity)->{
-							return Response.getText("Response " + id);
+							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id);
 						});
 					} 
 				}, throwingFunction((o)->o.getClass().getMethod("index", int.class))
@@ -637,7 +655,7 @@ public class ControllerAnswerTest extends TestCase {
 					public ResponseAction index(int id, String value) {
 						return ResponseBuilder.get()
 						.createRequest((request, translator, identity)->{
-							return Response.getText("Response " + id + ": " + value);
+							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id + ": " + value);
 						});
 					} 
 				}, throwingFunction((o)->o.getClass().getMethod("index", int.class, String.class))
@@ -649,7 +667,7 @@ public class ControllerAnswerTest extends TestCase {
 					public ResponseAction index(int id, String value) {
 						return ResponseBuilder.get()
 						.createRequest((request, translator, identity)->{
-							return Response.getText("Response " + id + ": " + value);
+							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id + ": " + value);
 						});
 					}
 					@SuppressWarnings("unused")
@@ -657,7 +675,7 @@ public class ControllerAnswerTest extends TestCase {
 						return ResponseBuilder.get()
 						.createRequest((request, translator, identity)->{
 							fail();
-							return Response.getText("Response " + id);
+							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id);
 						});
 					} 
 				}, throwingFunction((o)->o.getClass().getMethod("index", int.class, String.class))

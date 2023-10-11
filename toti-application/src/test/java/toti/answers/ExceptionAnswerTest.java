@@ -47,7 +47,7 @@ public class ExceptionAnswerTest {
 			@Override
 			public Response catchException(toti.answers.request.Request request, StatusCode status, Identity identity,
 					Translator translator, Throwable t, boolean isDevelopResponseAllowed, boolean isAsyncRequest) {
-				return new TextResponse(StatusCode.ACCEPTED, "catched");
+				return new TextResponse(StatusCode.ACCEPTED, new Headers(), "catched");
 			}
 		};
 		
@@ -72,7 +72,7 @@ public class ExceptionAnswerTest {
 			mock(MappedAction.class),
 			""
 		);
-		assertEquals(new TextResponse(StatusCode.ACCEPTED, "catched"), response);
+		assertEquals(new TextResponse(StatusCode.ACCEPTED, new Headers(), "catched"), response);
 		verify(logger, times(1)).error(anyString(), any(Throwable.class));
 		
 	}
@@ -107,9 +107,9 @@ public class ExceptionAnswerTest {
 			mock(Translator.class),
 			logger
 		));
-		doReturn(new TemplateResponse(StatusCode.OK, "/detail", new HashMap<>())).when(answer)
+		doReturn(new TemplateResponse(StatusCode.OK, new Headers(), "/detail", new HashMap<>())).when(answer)
 			.getExceptionDetail(any(), any(), any(), any(), any(), any());
-		doReturn(new TemplateResponse(StatusCode.OK, "/info", new HashMap<>())).when(answer)
+		doReturn(new TemplateResponse(StatusCode.OK, new Headers(), "/info", new HashMap<>())).when(answer)
 			.getExceptionInfo(any());
 		doReturn(0).when(answer).saveToFile(any(), any(), any(), any());
 		doReturn(new FileName(null, false)).when(answer).getFileName(any(), anyInt(), any(), any(), any());
@@ -133,20 +133,20 @@ public class ExceptionAnswerTest {
 		return new Object[] {
 			new Object[] {
 				"Sync request, dev ip",
-				false, "localhost", 0, new TemplateResponse(StatusCode.OK, "/detail", new HashMap<>())
+				false, "localhost", 0, new TemplateResponse(StatusCode.OK, new Headers(), "/detail", new HashMap<>())
 			},
 			new Object[] {
 				"Sync request, not dev ip",
-				false, "42.42.42.42", 1, new TemplateResponse(StatusCode.OK, "/info", new HashMap<>())
+				false, "42.42.42.42", 1, new TemplateResponse(StatusCode.OK, new Headers(), "/info", new HashMap<>())
 			},
 
 			new Object[] {
 				"Async request, dev ip",
-				true, "localhost", 1, new TextResponse(StatusCode.I_AM_A_TEAPORT, "class java.lang.Exception: Some Exception")
+				true, "localhost", 1, new TextResponse(StatusCode.I_AM_A_TEAPORT, new Headers(), "class java.lang.Exception: Some Exception")
 			},
 			new Object[] {
 				"Async request, not dev ip",
-				true, "42.42.42.42", 1, new TextResponse(StatusCode.I_AM_A_TEAPORT, "I'm a teapot")
+				true, "42.42.42.42", 1, new TextResponse(StatusCode.I_AM_A_TEAPORT, new Headers(), "I'm a teapot")
 			},
 		};
 	}

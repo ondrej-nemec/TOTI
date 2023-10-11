@@ -28,6 +28,27 @@ public interface Response {
 	}
 	
 	/***********/
+
+	static ResponseFactory ok() {
+		return create(StatusCode.OK);
+	}
+
+	static ResponseFactory forbidden() {
+		return create(StatusCode.FORBIDDEN);
+	}
+
+	static ResponseFactory temporalyRedirect() {
+		return create(StatusCode.TEMPORARY_REDIRECT);
+	}
+
+	static ResponseFactory notFound() {
+		return create(StatusCode.NOT_FOUND);
+	}
+	
+	static ResponseFactory internalServerError() {
+		return create(StatusCode.INTERNAL_SERVER_ERROR);
+	}
+
 	/**
 	 * Create builder for response
 	 * @param code response status code
@@ -58,6 +79,7 @@ public interface Response {
 	 * @param fileName specify path to file anywhere on disk
 	 * @return
 	 */
+	@Deprecated
 	static Response getFile(String fileName) {
 		return new FileResponse(StatusCode.OK, new Headers(), fileName);
 	}
@@ -68,6 +90,7 @@ public interface Response {
 	 * @param fileName specify path to file anywhere on disk
 	 * @return
 	 */
+	@Deprecated
 	static Response getFile(StatusCode code, String fileName) {
 		return new FileResponse(code, new Headers(), fileName);
 	}
@@ -78,6 +101,7 @@ public interface Response {
 	 * @param fileName specify downloaded file name
 	 * @return
 	 */
+	@Deprecated
 	static Response getFileDownload(String sourceFile, String fileName) {
 		return new FileResponse(StatusCode.OK, new Headers(), fileName, sourceFile);
 	}
@@ -89,6 +113,7 @@ public interface Response {
 	 * @param fileName specify downloaded file name
 	 * @return
 	 */
+	@Deprecated
 	static Response getFileDownload(StatusCode code, String sourceFile, String fileName) {
 		return new FileResponse(code, new Headers(), fileName, sourceFile);
 	}
@@ -99,6 +124,7 @@ public interface Response {
 	 * @param binaryContent
 	 * @return
 	 */
+	@Deprecated
 	static Response getFileDownload(String fileName, byte[] binaryContent) {
 		return new FileResponse(StatusCode.OK, new Headers(), fileName, binaryContent);
 	}
@@ -110,6 +136,7 @@ public interface Response {
 	 * @param binaryContent
 	 * @return
 	 */
+	@Deprecated
 	static Response getFileDownload(StatusCode code, String fileName, byte[] binaryContent) {
 		return new FileResponse(code, new Headers(), fileName, binaryContent);
 	}
@@ -120,6 +147,7 @@ public interface Response {
 	 * @param json
 	 * @return
 	 */
+	@Deprecated
 	static Response getJson(StatusCode code, Object json) {
 		return new JsonResponse(code, new Headers(), json);
 	}
@@ -129,6 +157,7 @@ public interface Response {
 	 * @param json
 	 * @return
 	 */
+	@Deprecated
 	static Response getJson(Object json) {
 		return new JsonResponse(StatusCode.OK, new Headers(), json);
 	}
@@ -138,6 +167,7 @@ public interface Response {
 	 * @param text
 	 * @return
 	 */
+	@Deprecated
 	static Response getText(Object text) {
 		return new TextResponse(StatusCode.OK, new Headers(), text);
 	}
@@ -148,6 +178,7 @@ public interface Response {
 	 * @param text
 	 * @return
 	 */
+	@Deprecated
 	static Response getText(StatusCode code, Object text) {
 		return new TextResponse(code, new Headers(), text);
 	}
@@ -157,6 +188,7 @@ public interface Response {
 	 * @param code
 	 * @return
 	 */
+	@Deprecated
 	static Response getEmpty(StatusCode code) {
 		return new EmptyResponse(code, new Headers());
 	}
@@ -168,6 +200,7 @@ public interface Response {
 	 * @param params template paramters
 	 * @return
 	 */
+	@Deprecated
 	static Response getTemplate(StatusCode code, String fileName, Map<String, Object> params) {
 		return new TemplateResponse(code, new Headers(), fileName, params);
 	}
@@ -178,6 +211,7 @@ public interface Response {
 	 * @param params template paramters
 	 * @return
 	 */
+	@Deprecated
 	static Response getTemplate(String fileName, Map<String, Object> params) {
 		return new TemplateResponse(StatusCode.OK, new Headers(), fileName, params);
 	}
@@ -188,6 +222,7 @@ public interface Response {
 	 * @param url - relative path inside application
 	 * @return
 	 */
+	@Deprecated
 	static Response getRedirect(StatusCode code, String url) {
 		return new RedirectResponse(code, new Headers(), url, false);
 	}
@@ -197,6 +232,7 @@ public interface Response {
 	 * @param url - relative path inside application
 	 * @return
 	 */
+	@Deprecated
 	static Response getRedirect(String url) {
 		return new RedirectResponse(StatusCode.TEMPORARY_REDIRECT, new Headers(), url, false);
 	}
@@ -208,6 +244,7 @@ public interface Response {
 	 * @param allowOutOfAppRedirect - if can redirect out of application
 	 * @return
 	 */
+	@Deprecated
 	static Response getRedirect(StatusCode code, String url, boolean allowOutOfAppRedirect) {
 		return new RedirectResponse(code, new Headers(), url, allowOutOfAppRedirect);
 	}
@@ -218,9 +255,12 @@ public interface Response {
 	 * @param allowOutOfAppRedirect - if can redirect out of application
 	 * @return
 	 */
+	@Deprecated
 	static Response getRedirect(String url, boolean allowOutOfAppRedirect) {
 		return new RedirectResponse(StatusCode.TEMPORARY_REDIRECT, new Headers(), url, allowOutOfAppRedirect);
 	}
+	
+	/***************************/
 	
 	default void setContentType(String fileName, String charset, Headers responseHeaders) {
 		String type = getContentType(fileName, charset);
