@@ -1,18 +1,8 @@
 package toti.answers;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -31,6 +21,7 @@ import ji.socketCommunication.http.structures.Request;
 import ji.translator.Translator;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+import toti.CustomExceptionResponse;
 import toti.Headers;
 import toti.answers.response.Response;
 import toti.answers.response.TemplateResponse;
@@ -44,9 +35,47 @@ import toti.templating.TemplateFactory;
 @RunWith(JUnitParamsRunner.class)
 public class ExceptionAnswerTest {
 	
-	// TODO test custom exception catch
 	// TODO test exception/error templates
 	// TODO test create real log file
+	
+	@Test
+	public void testCustomExceptionResponse() {
+		Logger logger = mock(Logger.class);
+		
+		CustomExceptionResponse custom = new CustomExceptionResponse() {
+			
+			@Override
+			public Response catchException(toti.answers.request.Request request, StatusCode status, Identity identity,
+					Translator translator, Throwable t, boolean isDevelopResponseAllowed, boolean isAsyncRequest) {
+				return new TextResponse(StatusCode.ACCEPTED, "catched");
+			}
+		};
+		
+		Register register = mock(Register.class);
+		when(register.getCustomExceptionResponse()).thenReturn(custom);
+		
+		ExceptionAnswer answer = spy(new ExceptionAnswer(
+			register,
+			Arrays.asList("localhost"),
+			mock(TemplateFactory.class),
+			null,
+			mock(Translator.class),
+			logger
+		));
+		
+		Response response = answer.getResponse(
+			mock(Request.class),
+			mock(Headers.class), 
+			StatusCode.I_AM_A_TEAPORT, 
+			mock(Throwable.class),
+			mock(Identity.class),
+			mock(MappedAction.class),
+			""
+		);
+		assertEquals(new TextResponse(StatusCode.ACCEPTED, "catched"), response);
+		verify(logger, times(1)).error(anyString(), any(Throwable.class));
+		
+	}
 	
 	@Test
 	@Parameters(method="dataGetResponse")
