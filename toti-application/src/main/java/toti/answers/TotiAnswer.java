@@ -43,10 +43,23 @@ public class TotiAnswer {
 				);
 	}
 	
-	private Response getResponse(String url, Request request, Identity identity, Headers responseHeaders) {
-		if ((url.length() < 2 || url.equals("/index.html")) && developIps.contains(identity.getIP())) {// "/toti"->"" OR "/toti/"->"/"
-			return getWelcomePage();
+	protected Response getResponse(String url, Request request, Identity identity, Headers responseHeaders) {
+		boolean isDevelopReqeust = developIps.contains(identity.getIP());
+		url = url.substring(5);
+		switch (url.toLowerCase()) {
+			case "":
+			case "/":
+			case "/index":
+			case "/index.html":
+				if (isDevelopReqeust) {
+					return getWelcomePage();
+				}
+				break;
+			case ".js":
+			case "/toti.js":
+				// TODO script reponse
 		}
+		
 		/*if (url.startsWith("db")) {
 			return getDbViewer(method, url, params, identity, responseHeaders);
 		}
@@ -54,11 +67,11 @@ public class TotiAnswer {
 			return getProfiler(method, params, identity);
 		}*/
 		// TODOreturn getTotiFiles(url, identity);
-		return Response.getText(StatusCode.NOT_FOUND, "");
+		return Response.getEmpty(StatusCode.NOT_FOUND);
 	}
 	
 	private Response getWelcomePage() {
-		return Response.getTemplate("index.html", new HashMap<>());
+		return Response.getFile("toti/assets/index.html");
 	}
 	
 	/*
@@ -79,22 +92,6 @@ public class TotiAnswer {
 				), 
 				charset
 			);
-	}
-	
-	private Response getResponse(HttpMethod method, String url, RequestParameters params, Identity identity, Headers responseHeaders) {
-		if ((url.length() < 2 || url.equals("/index.html")) && developIps.contains(identity.getIP())) {// "/toti"->"" OR "/toti/"->"/"
-			return getWelcomePage();
-		}
-		if (url.startsWith("db")) {
-			return getDbViewer(method, url, params, identity, responseHeaders);
-		}
-		if (url.startsWith("/profiler")) {
-			return getProfiler(method, params, identity);
-		}
-		if (url.startsWith("/generate")) {
-			return getGenerate(method, url.substring(9), params);
-		}
-		return getTotiFiles(url, identity);
 	}
 	
 	private Response getProfiler(HttpMethod method, RequestParameters params, Identity identity) {
