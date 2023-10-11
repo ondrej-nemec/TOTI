@@ -9,10 +9,12 @@ public class TextResponse implements Response {
 
 	private final String text;
 	private final StatusCode code;
+	private final Headers headers;
 	
-	public TextResponse(StatusCode code, Object text) {
+	public TextResponse(StatusCode code, Headers headers, Object text) {
 		this.text = text == null ? "" : text.toString();
 		this.code = code;
+		this.headers = headers;
 	}
 	
 	@Override
@@ -28,6 +30,7 @@ public class TextResponse implements Response {
 		if (!response.containsHeader("Content-Type")) {
             response.addHeader("Content-Type", "text/plain");
         }
+		response.setHeaders(this.headers.getHeaders());
 		return response;
 	}
 
@@ -36,6 +39,7 @@ public class TextResponse implements Response {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((code == null) ? 0 : code.hashCode());
+		result = prime * result + ((headers == null) ? 0 : headers.hashCode());
 		result = prime * result + ((text == null) ? 0 : text.hashCode());
 		return result;
 	}
@@ -55,6 +59,13 @@ public class TextResponse implements Response {
 		if (code != other.code) {
 			return false;
 		}
+		if (headers == null) {
+			if (other.headers != null) {
+				return false;
+			}
+		} else if (!headers.equals(other.headers)) {
+			return false;
+		}
 		if (text == null) {
 			if (other.text != null) {
 				return false;
@@ -67,7 +78,7 @@ public class TextResponse implements Response {
 
 	@Override
 	public String toString() {
-		return "TextResponse [text=" + text + ", code=" + code + "]";
+		return "TextResponse [text=" + text + ", code=" + code + ", headers=" + headers + "]";
 	}
 
 }

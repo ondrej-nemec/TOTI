@@ -15,11 +15,13 @@ public class TemplateResponse implements Response {
 	private final Map<String, Object> params;
 	private final StatusCode code;
 	private final String fileName;
+	private final Headers headers;
 
-	public TemplateResponse(StatusCode code, String fileName, Map<String, Object> params) {
+	public TemplateResponse(StatusCode code, Headers headers, String fileName, Map<String, Object> params) {
 		this.params = params;
 		this.code = code;
 		this.fileName = fileName;
+		this.headers = headers;
 	}
 
 	@Override
@@ -57,6 +59,7 @@ public class TemplateResponse implements Response {
 			});
 		});
 		response.addHeader("Content-Type", getContentType(fileName, charset));
+		response.setHeaders(this.headers.getHeaders());
 		
 		
 		response.setBody(createResponse(container).getBytes());
@@ -78,6 +81,7 @@ public class TemplateResponse implements Response {
 		int result = 1;
 		result = prime * result + ((code == null) ? 0 : code.hashCode());
 		result = prime * result + ((fileName == null) ? 0 : fileName.hashCode());
+		result = prime * result + ((headers == null) ? 0 : headers.hashCode());
 		result = prime * result + ((params == null) ? 0 : params.hashCode());
 		return result;
 	}
@@ -104,6 +108,13 @@ public class TemplateResponse implements Response {
 		} else if (!fileName.equals(other.fileName)) {
 			return false;
 		}
+		if (headers == null) {
+			if (other.headers != null) {
+				return false;
+			}
+		} else if (!headers.equals(other.headers)) {
+			return false;
+		}
 		if (params == null) {
 			if (other.params != null) {
 				return false;
@@ -116,6 +127,7 @@ public class TemplateResponse implements Response {
 
 	@Override
 	public String toString() {
-		return "TemplateResponse [code=" + code + ", fileName=" + fileName + ", params=" + params + "]";
+		return "TemplateResponse [params=" + params + ", code=" + code + ", fileName=" + fileName + ", headers="
+				+ headers + "]";
 	}
 }

@@ -17,24 +17,26 @@ public class FileResponse implements Response {
 	private final boolean download;
 	private final StatusCode code;
 	private final byte[] binaryContent;
+	private final Headers headers;
 	
-	public FileResponse(StatusCode code, String fileName) {
-		this(code, fileName, binaryContent(fileName), false);
+	public FileResponse(StatusCode code, Headers headers, String fileName) {
+		this(code, headers, fileName, binaryContent(fileName), false);
 	}
 	
-	public FileResponse(StatusCode code, String fileName, String source) {
-		this(code, fileName, binaryContent(source), true);
+	public FileResponse(StatusCode code, Headers headers, String fileName, String source) {
+		this(code, headers, fileName, binaryContent(source), true);
 	}
 	
-	public FileResponse(StatusCode code, String fileName, byte[] binaryContent) {
-		this(code, fileName, binaryContent, true);
+	public FileResponse(StatusCode code, Headers headers, String fileName, byte[] binaryContent) {
+		this(code, headers, fileName, binaryContent, true);
 	}
 	
-	private FileResponse(StatusCode code, String fileName, byte[] binaryContent, boolean download) {
+	private FileResponse(StatusCode code, Headers headers, String fileName, byte[] binaryContent, boolean download) {
 		this.code = code;
 		this.fileName = fileName;
 		this.binaryContent = binaryContent;
 		this.download = download;
+		this.headers = headers;
 	}
 
 	@Override
@@ -51,6 +53,7 @@ public class FileResponse implements Response {
 		}
 		ji.socketCommunication.http.structures.Response response = new  ji.socketCommunication.http.structures.Response(code, protocol);
 		response.setHeaders(responseHeader.getHeaders());
+		response.setHeaders(this.headers.getHeaders());
 		response.setBody(binaryContent);
 		return response;
 	}
@@ -77,6 +80,7 @@ public class FileResponse implements Response {
 		result = prime * result + ((code == null) ? 0 : code.hashCode());
 		result = prime * result + (download ? 1231 : 1237);
 		result = prime * result + ((fileName == null) ? 0 : fileName.hashCode());
+		result = prime * result + ((headers == null) ? 0 : headers.hashCode());
 		return result;
 	}
 
@@ -108,13 +112,20 @@ public class FileResponse implements Response {
 		} else if (!fileName.equals(other.fileName)) {
 			return false;
 		}
+		if (headers == null) {
+			if (other.headers != null) {
+				return false;
+			}
+		} else if (!headers.equals(other.headers)) {
+			return false;
+		}
 		return true;
 	}
 
 	@Override
 	public String toString() {
 		return "FileResponse [fileName=" + fileName + ", download=" + download + ", code=" + code + ", binaryContent="
-				+ Arrays.toString(binaryContent) + "]";
+				+ Arrays.toString(binaryContent) + ", headers=" + headers + "]";
 	}
 
 }

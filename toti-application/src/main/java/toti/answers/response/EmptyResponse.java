@@ -5,12 +5,14 @@ import ji.socketCommunication.http.structures.Protocol;
 import toti.Headers;
 import toti.security.Identity;
 
-public class EmptyResponse  implements Response {
+public class EmptyResponse implements Response {
 
 	private final StatusCode code;
+	private final Headers headers;
 	
-	public EmptyResponse(StatusCode code) {
+	public EmptyResponse(StatusCode code, Headers headers) {
 		this.code = code;
+		this.headers = headers;
 	}
 	
 	@Override
@@ -22,6 +24,7 @@ public class EmptyResponse  implements Response {
 			String charset) {
 		ji.socketCommunication.http.structures.Response response = new ji.socketCommunication.http.structures.Response(code, protocol);
 		response.setHeaders(header.getHeaders());
+		response.setHeaders(this.headers.getHeaders());
 		return response;
 	}
 
@@ -30,6 +33,7 @@ public class EmptyResponse  implements Response {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((code == null) ? 0 : code.hashCode());
+		result = prime * result + ((headers == null) ? 0 : headers.hashCode());
 		return result;
 	}
 
@@ -48,12 +52,19 @@ public class EmptyResponse  implements Response {
 		if (code != other.code) {
 			return false;
 		}
+		if (headers == null) {
+			if (other.headers != null) {
+				return false;
+			}
+		} else if (!headers.equals(other.headers)) {
+			return false;
+		}
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "EmptyResponse [code=" + code + "]";
+		return "EmptyResponse [code=" + code + ", headers=" + headers + "]";
 	}
 
 }

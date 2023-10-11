@@ -10,13 +10,15 @@ public class RedirectResponse implements Response {
 
 	private final String url;
 	private final StatusCode code;
+	private final Headers headers;
 	
-	public RedirectResponse(StatusCode code, String url, boolean allowOutOfAppRedirect) {
+	public RedirectResponse(StatusCode code, Headers headers, String url, boolean allowOutOfAppRedirect) {
 		if (!allowOutOfAppRedirect && !Link.isRelative(url)) {
 			throw new RuntimeException("Open redirection is not allowed");
 		}
 		this.url = url;
 		this.code = code;
+		this.headers = headers;
 	}
 	
 	@Override
@@ -29,6 +31,7 @@ public class RedirectResponse implements Response {
 		header.addHeader("Location", url);
 		ji.socketCommunication.http.structures.Response res = new ji.socketCommunication.http.structures.Response(code, protocol);
 		res.setHeaders(header.getHeaders());
+		res.setHeaders(this.headers.getHeaders());
 		return res;
 	}
 
@@ -37,6 +40,7 @@ public class RedirectResponse implements Response {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((code == null) ? 0 : code.hashCode());
+		result = prime * result + ((headers == null) ? 0 : headers.hashCode());
 		result = prime * result + ((url == null) ? 0 : url.hashCode());
 		return result;
 	}
@@ -56,6 +60,13 @@ public class RedirectResponse implements Response {
 		if (code != other.code) {
 			return false;
 		}
+		if (headers == null) {
+			if (other.headers != null) {
+				return false;
+			}
+		} else if (!headers.equals(other.headers)) {
+			return false;
+		}
 		if (url == null) {
 			if (other.url != null) {
 				return false;
@@ -68,7 +79,7 @@ public class RedirectResponse implements Response {
 
 	@Override
 	public String toString() {
-		return "RedirectResponse [url=" + url + ", code=" + code + "]";
+		return "RedirectResponse [url=" + url + ", code=" + code + ", headers=" + headers + "]";
 	}
 
 }
