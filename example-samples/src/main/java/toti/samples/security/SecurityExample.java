@@ -19,6 +19,8 @@ import toti.annotations.Domain;
 import toti.annotations.Method;
 import toti.annotations.Param;
 import toti.annotations.Secured;
+import toti.answers.request.AuthMode;
+import toti.answers.request.Identity;
 import toti.answers.response.Response;
 import toti.application.Module;
 import toti.application.Task;
@@ -26,8 +28,6 @@ import toti.application.register.Register;
 import toti.authentication.AuthentizationException;
 import toti.security.Authenticator;
 import toti.security.Authorizator;
-import toti.security.Identity;
-import toti.security.AuthMode;
 import toti.security.User;
 import toti.url.Link;
 

@@ -5,16 +5,15 @@ import toti.annotations.Action;
 import toti.annotations.Secured;
 import toti.answers.action.ResponseAction;
 import toti.answers.action.ResponseBuilder;
-import toti.application.register.Register;
 
 public class Test {
 	
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		Register r = null;
 		r.addFactory(String.class, ()->{
 			return "";
 		});
-	}
+	}*/
 
 	@Action(path = "index", methods = HttpMethod.GET)
 	@Secured

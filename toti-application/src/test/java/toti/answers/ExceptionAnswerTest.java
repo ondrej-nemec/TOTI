@@ -23,20 +23,20 @@ import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import toti.CustomExceptionResponse;
 import toti.Headers;
+import toti.answers.request.Identity;
 import toti.answers.response.Response;
 import toti.answers.response.TemplateResponse;
 import toti.answers.response.TextResponse;
 import toti.application.register.MappedAction;
 import toti.application.register.Register;
 import toti.logging.FileName;
-import toti.security.Identity;
 import toti.templating.TemplateFactory;
 
 @RunWith(JUnitParamsRunner.class)
 public class ExceptionAnswerTest {
 	
-	// TODO test exception/error templates
-	// TODO test create real log file
+	// TODO test exception/error templates - after testing it in samples
+	// TODO test create real log file - need mock file
 	
 	@Test
 	public void testCustomExceptionResponse() {

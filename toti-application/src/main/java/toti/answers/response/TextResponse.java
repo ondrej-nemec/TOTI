@@ -3,7 +3,7 @@ package toti.answers.response;
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.Protocol;
 import toti.Headers;
-import toti.security.Identity;
+import toti.answers.request.Identity;
 
 public class TextResponse implements Response {
 

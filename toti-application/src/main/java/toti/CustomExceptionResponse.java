@@ -1,10 +1,10 @@
 package toti;
 
 import ji.socketCommunication.http.StatusCode;
+import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import ji.translator.Translator;
 import toti.answers.response.Response;
-import toti.security.Identity;
 
 public interface CustomExceptionResponse {
 	

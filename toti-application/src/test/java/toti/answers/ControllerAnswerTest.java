@@ -43,17 +43,17 @@ import toti.answers.action.BodyType;
 import toti.answers.action.RequestInterruptedException;
 import toti.answers.action.ResponseAction;
 import toti.answers.action.ResponseBuilder;
+import toti.answers.request.AuthMode;
+import toti.answers.request.Identity;
+import toti.answers.request.IdentityFactory;
 import toti.answers.request.Request;
 import toti.answers.response.RedirectResponse;
 import toti.answers.response.Response;
 import toti.answers.response.TextResponse;
 import toti.application.register.MappedAction;
 import toti.application.register.Param;
-import toti.security.AuthMode;
 import toti.security.Authenticator;
 import toti.security.Authorizator;
-import toti.security.Identity;
-import toti.security.IdentityFactory;
 import toti.url.Link;
 
 @RunWith(JUnitParamsRunner.class)
@@ -129,8 +129,7 @@ public class ControllerAnswerTest extends TestCase {
 		verify(answer, times(1)).answer(any(), any(), any(), any(), any(), any());
 		verify(answer, times(1)).getMappedAction("/a/b/c", HttpMethod.GET, request);
 		verify(answer, times(1)).run("/a/b/c", mappedAction, request, identity);
-		verify(identityFactory, times(1)).setResponseHeaders(identity, responseHeaders);
-		verify(authenticator, times(1)).saveIdentity(identity);
+		verify(identityFactory, times(1)).finalizeIdentity(identity, responseHeaders);
 		verify(translator, times(1)).withLocale(any(Locale.class));
 		verifyNoMoreInteractions(translator, identityFactory, authenticator, answer);
 	}

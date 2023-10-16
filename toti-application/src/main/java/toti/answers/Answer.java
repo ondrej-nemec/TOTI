@@ -11,14 +11,12 @@ import ji.socketCommunication.http.structures.Response;
 import ji.socketCommunication.http.structures.WebSocket;
 import toti.Headers;
 import toti.ServerException;
-import toti.security.Authenticator;
-import toti.security.Identity;
-import toti.security.IdentityFactory;
+import toti.answers.request.Identity;
+import toti.answers.request.IdentityFactory;
 
 public class Answer implements ji.socketCommunication.http.ResponseFactory {
 
 	private final IdentityFactory identityFactory;
-	private final Authenticator authenticator;
 	
 	private final String charset;
 	private final Map<String, List<Object>> responseHeaders;
@@ -34,11 +32,9 @@ public class Answer implements ji.socketCommunication.http.ResponseFactory {
 			FileSystemAnswer fileSystemAnswer,
 			TotiAnswer totiAnswer,
 			IdentityFactory identityFactory,
-			Authenticator authenticator,
 			Map<String, List<Object>>  responseHeaders,
 			String charset) {
 		this.identityFactory = identityFactory;
-		this.authenticator = authenticator;
 		this.exceptionAnswer = exceptionAnswer;
 		this.totiAnswer = totiAnswer;
 		this.fileSystemAnswer = fileSystemAnswer;
@@ -52,8 +48,13 @@ public class Answer implements ji.socketCommunication.http.ResponseFactory {
 			Request request, String ipAddress, Optional<WebSocket> webSocket
 		) throws IOException {
 		Headers requestHeaders = new Headers(request.getHeaders());
-		Identity identity = identityFactory.createIdentity(requestHeaders, ipAddress, null); // TODO profiler
-		authenticator.authenticate(identity, request.getBodyInParameters());
+		Identity identity = identityFactory.createIdentity(
+			requestHeaders,
+			request.getQueryParameters(),
+			request.getBodyInParameters(),
+			ipAddress
+		);
+		
 		Headers responseHeaders = new Headers(this.responseHeaders);
 		try {
 			if (request.getUri().toLowerCase().startsWith("/toti")) {
@@ -80,5 +81,5 @@ public class Answer implements ji.socketCommunication.http.ResponseFactory {
 			);
 		}
 	}
-
+	
 }

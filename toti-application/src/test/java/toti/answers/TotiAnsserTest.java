@@ -16,11 +16,11 @@ import ji.translator.Translator;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import toti.Headers;
+import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.answers.response.EmptyResponse;
 import toti.answers.response.FileResponse;
 import toti.answers.response.Response;
-import toti.security.Identity;
 import toti.templating.TemplateFactory;
 
 @RunWith(JUnitParamsRunner.class)

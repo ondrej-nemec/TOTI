@@ -6,6 +6,7 @@ import java.util.Random;
 import ji.translator.Locale;
 import ji.translator.Translator;
 import toti.Headers;
+import toti.answers.request.AuthMode;
 import toti.profiler.Profiler;
 
 import ji.common.structures.Tuple2;
@@ -115,14 +116,14 @@ public class IdentityFactory {
 				mode = AuthMode.HEADER;
 			}
 		} else {
-			token = headers.getCookieValue(SESSION_COOKIE_NAME);
+			token = headers.getCookieValue(SESSION_COOKIE_NAME).get();
 			mode = AuthMode.COOKIE;
 		}
 		return new Tuple2<>(token, mode);
 	}
 	
 	private Locale getLocale(Headers headers) {
-		String cookieLang = headers.getCookieValue(LOCALE_COOKIE_NAME);
+		String cookieLang = headers.getCookieValue(LOCALE_COOKIE_NAME).get();
 		if (cookieLang != null) {
 			return resolveLocale(cookieLang);
 		}

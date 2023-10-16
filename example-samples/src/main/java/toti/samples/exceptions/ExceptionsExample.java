@@ -18,11 +18,11 @@ import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Method;
 import toti.annotations.Secured;
+import toti.answers.request.Identity;
 import toti.answers.response.Response;
 import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Register;
-import toti.security.Identity;
 import toti.url.Link;
 import toti.url.MappedUrl;
 

@@ -11,8 +11,8 @@ import toti.CustomExceptionResponse;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Secured;
+import toti.answers.request.AuthMode;
 import toti.application.Module;
-import toti.security.AuthMode;
 
 public class Register {
 	

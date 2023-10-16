@@ -9,6 +9,7 @@ import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.ParamUrl;
 import toti.annotations.Secured;
+import toti.answers.request.AuthMode;
 import toti.answers.response.Response;
 import toti.control.Form;
 import toti.control.Grid;
@@ -21,7 +22,6 @@ import toti.control.inputs.Option;
 import toti.control.inputs.Select;
 import toti.control.inputs.Submit;
 import toti.control.inputs.Text;
-import toti.security.AuthMode;
 import toti.tutorial1.web.api.DeviceApiController;
 import toti.url.Link;
 

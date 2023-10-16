@@ -13,10 +13,10 @@ import toti.annotations.Controller;
 import toti.annotations.Method;
 import toti.annotations.Param;
 import toti.annotations.Secured;
+import toti.answers.request.Identity;
 import toti.answers.response.Response;
 import toti.authentication.AuthentizationException;
 import toti.security.Authenticator;
-import toti.security.Identity;
 import toti.security.User;
 
 @Controller("sign")

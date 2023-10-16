@@ -5,10 +5,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import toti.answers.request.Identity;
 import toti.control.inputs.Hidden;
 import toti.control.inputs.Input;
 import toti.security.Authenticator;
-import toti.security.Identity;
 
 public class Form implements Control {
 
@@ -44,7 +44,7 @@ public class Form implements Control {
 	public void setCsrfSecured(Identity identity) {
 		fields.add(
 			Hidden.input(Authenticator.CSRF_TOKEN_PARAMETER)
-			.setDefaultValue(identity.getCsrfToken())
+			.setDefaultValue(identity.getCsrfToken().orElse(null))
 			.getInputSettings()
 		);
 	}

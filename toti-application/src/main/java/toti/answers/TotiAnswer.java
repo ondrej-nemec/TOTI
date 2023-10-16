@@ -1,15 +1,19 @@
 package toti.answers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ji.socketCommunication.http.StatusCode;
 import ji.translator.Translator;
 import toti.Headers;
 import toti.ServerException;
+import toti.answers.request.Identity;
+import toti.answers.request.IdentityFactory;
 import toti.answers.request.Request;
 import toti.answers.response.Response;
 import toti.answers.response.ResponseContainer;
-import toti.security.Identity;
+import toti.extensions.TotiResponse;
 import toti.templating.TemplateFactory;
 
 public class TotiAnswer {
@@ -18,10 +22,17 @@ public class TotiAnswer {
 	private final TemplateFactory templateFactory;
 	private final Translator translator;
 	
-	public TotiAnswer(List<String> developIps, TemplateFactory templateFactory, Translator translator) {
+	private final IdentityFactory identityFactory;
+	private final Map<String, TotiResponse> extensions = new HashMap<>();
+	
+	public TotiAnswer(
+			List<String> developIps, TemplateFactory templateFactory, Translator translator,
+			IdentityFactory identityFactory, List<TotiResponse> extensions) {
 		this.developIps = developIps;
 		this.templateFactory = templateFactory;
 		this.translator = translator;
+		this.identityFactory = identityFactory;
+		extensions.forEach(e->e.getListeneringUri().forEach(u->this.extensions.put(u, e)));
 	}
 	
 	public ji.socketCommunication.http.structures.Response answer(
@@ -50,11 +61,18 @@ public class TotiAnswer {
 					return getWelcomePage();
 				}
 				break;
-			case ".js":
-			case "/toti.js":
+		//	case ".js":
+		//	case "/toti.js":
 				// TODO script reponse
 		}
-		
+		if (extensions.containsKey(url)) {
+			TotiResponse extension = extensions.get(url);
+			return extension.getResponse(
+				url, request, 
+				identity, identityFactory.getSpace(extension.getIdentifier(), identity),
+				responseHeaders, isDevelopReqeust
+			);
+		}
 		/*if (url.startsWith("db")) {
 			return getDbViewer(method, url, params, identity, responseHeaders);
 		}

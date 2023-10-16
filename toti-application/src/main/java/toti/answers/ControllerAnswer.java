@@ -24,17 +24,17 @@ import toti.ServerException;
 import toti.answers.action.BodyType;
 import toti.answers.action.RequestInterruptedException;
 import toti.answers.action.ResponseAction;
+import toti.answers.request.AuthMode;
+import toti.answers.request.Identity;
+import toti.answers.request.IdentityFactory;
 import toti.answers.request.Request;
 import toti.answers.response.Response;
 import toti.answers.response.ResponseContainer;
 import toti.answers.response.ResponseException;
 import toti.application.register.MappedAction;
 import toti.application.register.Param;
-import toti.security.AuthMode;
 import toti.security.Authenticator;
 import toti.security.Authorizator;
-import toti.security.Identity;
-import toti.security.IdentityFactory;
 import toti.security.exceptions.AccessDeniedException;
 import toti.security.exceptions.NotAllowedActionException;
 import toti.templating.TemplateException;
@@ -45,7 +45,6 @@ public class ControllerAnswer {
 	
 	private final Param root;
 	private final Translator translator;
-	private final Authenticator authenticator;
 	private final Authorizator authorizator;
 	private final IdentityFactory identityFactory;
 	private final Link link;
@@ -60,7 +59,7 @@ public class ControllerAnswer {
 		this.root = root;
 		this.router = router;
 		this.modules = modules;
-		this.authenticator = authenticator;
+		// this.authenticator = authenticator;
 		this.authorizator = authorizator;
 		this.identityFactory = identityFactory;
 		this.translator = translator;
@@ -82,12 +81,10 @@ public class ControllerAnswer {
 			Response response = run(request.getUri(), mapped, totiRequest, identity);
 			
 			TemplateFactory templateFactory = modules.get(mapped.getModuleName());
-			identityFactory.setResponseHeaders(identity, responseHeaders); // for cookies and custom headers
-	    	try {
-	    		authenticator.saveIdentity(identity);
-	    	} catch (Exception e) {
-	    		logger.warn("Identity save fail", e);
-	    	}
+			/***************/
+			// kvuli prihlaseni
+			identityFactory.finalizeIdentity(identity, responseHeaders); // for cookies and custom headers
+	    	/*************/
 			return response.getResponse(null, responseHeaders, identity,  new ResponseContainer(
 				translator.withLocale(identity.getLocale()), authorizator, mapped, templateFactory, link
 			), charset);

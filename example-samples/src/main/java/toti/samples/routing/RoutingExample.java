@@ -16,11 +16,11 @@ import toti.annotations.Controller;
 import toti.annotations.Param;
 import toti.annotations.ParamUrl;
 import toti.annotations.Secured;
+import toti.answers.request.AuthMode;
 import toti.answers.response.Response;
 import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Register;
-import toti.security.AuthMode;
 import toti.url.Link;
 
 /**

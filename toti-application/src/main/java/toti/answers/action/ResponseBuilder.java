@@ -8,10 +8,10 @@ import java.util.Set;
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.RequestParameters;
 import ji.translator.Translator;
+import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.answers.response.Response;
 import toti.security.Action;
-import toti.security.Identity;
 import toti.validation.Validator;
 
 public class ResponseBuilder implements Step1, ResponseAction {

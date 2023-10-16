@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import ji.common.structures.DictionaryValue;
 
@@ -62,7 +63,7 @@ public class Headers {
 	 * @param cookieName
 	 * @return cookie value or null
 	 */
-	public String getCookieValue(String cookieName) {
+	public Optional<String> getCookieValue(String cookieName) {
 		if (containsHeader("Cookie")) {
 			String[] cookiesArray = getHeader("Cookie").toString().split(";");
 			for (String cookies : cookiesArray) {
@@ -70,13 +71,13 @@ public class Headers {
 				if (cookie.length == 2 && cookie[0].trim().equals(cookieName)) {
 					String value = cookie[1].trim();
 					if (value.equals("null")) {
-						return null;
+						return Optional.empty();
 					}
-					return value;
+					return Optional.of(value);
 				}
 			}
 		}
-		return null;
+		return  Optional.empty();
 	}
 
 	

@@ -8,6 +8,8 @@ import org.mockito.Mockito;
 import org.apache.logging.log4j.Logger;
 import ji.common.functions.Hash;
 import ji.socketCommunication.http.structures.RequestParameters;
+import toti.answers.request.AuthMode;
+import toti.answers.request.Identity;
 import ji.common.exceptions.HashException;
 
 public class AuthenticatorTest {

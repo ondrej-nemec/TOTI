@@ -1,4 +1,4 @@
-package toti.security;
+package toti.answers.request;
 
 public enum AuthMode {
 	

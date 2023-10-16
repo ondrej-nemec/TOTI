@@ -26,15 +26,19 @@ import toti.answers.ControllerAnswer;
 import toti.answers.ExceptionAnswer;
 import toti.answers.FileSystemAnswer;
 import toti.answers.TotiAnswer;
+import toti.answers.request.IdentityFactory;
+import toti.answers.request.SessionUserProvider;
 import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Param;
 import toti.application.register.Register;
+import toti.extensions.Extension;
+import toti.extensions.Session;
+import toti.extensions.TotiResponse;
 import toti.profiler.Profiler;
 import toti.security.AuthenticationCache;
 import toti.security.Authenticator;
 import toti.security.Authorizator;
-import toti.security.IdentityFactory;
 import toti.templating.TemplateFactory;
 import toti.url.Link;
 
@@ -97,8 +101,15 @@ public class ApplicationFactory {
 				migrations.add(config.getMigrationsPath());
 			}
 		});
+		
+		SessionUserProvider sessionUserProvider = null; // TODO
+		List<Session> sessions = Arrays.asList(); // TODO
+		List<TotiResponse> totiResponses = Arrays.asList(); // TODO
+		List<Extension> extensions = Arrays.asList(); // TODO maybe structure with getX methods
+		
 	//	Env env = appEnv = this.env.getModule("applications").getModule(hostname);
 		Profiler profiler = initProfiler(env, logger);
+		
 		
 		Database database = getDatabase(
 			env.getModule("database"), migrations, profiler.used(), loggerFactory.apply(hostname, "database")
@@ -165,11 +176,13 @@ public class ApplicationFactory {
 			logger
 		).setProfiler(profiler.used());
 		
-		IdentityFactory identityFactory = new IdentityFactory(translator, translator.getLocale().getLang());
+		IdentityFactory identityFactory = new IdentityFactory(
+			translator, translator.getLocale().getLang(), sessions, sessionUserProvider
+		);
 		
 		List<String> developIps = getDevelopIps(env);
 		TotiAnswer totiAnwer = new TotiAnswer(
-			developIps, totiTemplateFactory, translator
+			developIps, totiTemplateFactory, translator, identityFactory, totiResponses
 		);
 		ExceptionAnswer exceptionAnswer = new ExceptionAnswer(
 			register,
@@ -194,7 +207,6 @@ public class ApplicationFactory {
 			fileSystemAnswer,
 			totiAnwer,
 			identityFactory,
-			authenticator,
 			getResponseHeaders(env),
 			charset
 		);

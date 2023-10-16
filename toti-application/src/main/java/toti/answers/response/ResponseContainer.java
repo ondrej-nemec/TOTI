@@ -3,10 +3,10 @@ package toti.answers.response;
 import java.util.Map;
 
 import ji.translator.Translator;
+import toti.answers.request.Identity;
 import toti.application.register.MappedAction;
 import toti.security.Action;
 import toti.security.Authorizator;
-import toti.security.Identity;
 import toti.templating.TemplateContainer;
 import toti.templating.TemplateFactory;
 import toti.url.Link;
