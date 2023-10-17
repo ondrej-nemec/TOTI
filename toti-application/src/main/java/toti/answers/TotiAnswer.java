@@ -39,7 +39,8 @@ public class TotiAnswer {
 			ji.socketCommunication.http.structures.Request request, Headers requestHeaders,
 			Identity identity, Headers responseHeaders, String charset
 		) throws ServerException {
-		return getResponse(request.getPlainUri(), Request.fromRequest(request, requestHeaders), identity, responseHeaders)
+		String uri = request.getPlainUri().substring(5);
+		return getResponse(uri, Request.fromRequest(request, requestHeaders), identity, responseHeaders)
 				.getResponse(
 					request.getProtocol(), responseHeaders, identity,
 					new ResponseContainer(
@@ -51,7 +52,6 @@ public class TotiAnswer {
 	
 	protected Response getResponse(String url, Request request, Identity identity, Headers responseHeaders) {
 		boolean isDevelopReqeust = developIps.contains(identity.getIP());
-		url = url.substring(5);
 		switch (url.toLowerCase()) {
 			case "":
 			case "/":
@@ -63,7 +63,6 @@ public class TotiAnswer {
 				break;
 		//	case ".js":
 		//	case "/toti.js":
-				// TODO script reponse
 		}
 		if (extensions.containsKey(url)) {
 			TotiResponse extension = extensions.get(url);
@@ -88,24 +87,6 @@ public class TotiAnswer {
 	}
 	
 	/*
-		private final Profiler profiler;
-	private final Generate generator = new Generate();
-//	private final DbViewerRouter dbViewer;
-	
-	
-	
-	public ji.socketCommunication.http.structures.Response getTotiResponse(
-			String url, Request request,
-			Identity identity, Headers responseHeaders, Optional<WebSocket> websocket) {
-		return getResponse(request.getMethod(), url, request.getBodyInParameters(), identity, responseHeaders)
-			.getResponse(
-				request.getProtocol(), responseHeaders, identity,
-				new ResponseContainer(
-					translator.withLocale(identity.getLocale()), null, null, templateFactory, null
-				), 
-				charset
-			);
-	}
 	
 	private Response getProfiler(HttpMethod method, RequestParameters params, Identity identity) {
 		if (profiler.isUse() && developIps.contains(identity.getIP())) {

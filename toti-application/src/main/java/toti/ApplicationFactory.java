@@ -84,12 +84,18 @@ public class ApplicationFactory {
 	private final String hostname;
 	private final String charset;
 	
+	private final List<Session> sessions;
+	private final List<TotiResponse> totiResponses;
+	
 	public ApplicationFactory(String hostname, Env env, String charset, Function<String, Logger> loggerFactory, String... aliases) {
 		this.env = env.getModule("applications").getModule(hostname);
 		this.loggerFactory = (hostName, loggerName)->loggerFactory.apply(hostname+ "_" + loggerName);
 		this.hostname = hostname;
 		this.charset = charset;
 		this.aliases = aliases;
+		
+		this.sessions = new LinkedList<>();
+		this.totiResponses = new LinkedList<>();
 	}
 
 	public Application create(List<Module> modules) throws Exception {
@@ -103,9 +109,6 @@ public class ApplicationFactory {
 		});
 		
 		SessionUserProvider sessionUserProvider = null; // TODO
-		List<Session> sessions = Arrays.asList(); // TODO
-		List<TotiResponse> totiResponses = Arrays.asList(); // TODO
-		List<Extension> extensions = Arrays.asList(); // TODO maybe structure with getX methods
 		
 	//	Env env = appEnv = this.env.getModule("applications").getModule(hostname);
 		Profiler profiler = initProfiler(env, logger);
@@ -389,6 +392,16 @@ public class ApplicationFactory {
 	}
 	
 	/*************************/
+	
+	public ApplicationFactory addExtension(Extension extension) {
+		if (extension instanceof Session) {
+			sessions.add((Session)extension);
+		}
+		if (extension instanceof TotiResponse) {
+			totiResponses.add((TotiResponse)extension);
+		}
+		return this;
+	}
 
 	public ApplicationFactory setDirResponseAllowed(boolean dirResponseAllowed) {
 		this.dirResponseAllowed = dirResponseAllowed;
