@@ -5,9 +5,9 @@ import java.util.List;
 import org.apache.logging.log4j.Logger;
 import ji.common.functions.Env;
 import ji.database.Database;
-import toti.Router;
+import toti.answers.router.Link;
+import toti.answers.router.Router;
 import toti.application.register.Register;
-import toti.url.Link;
 import ji.translator.Translator;
 
 public interface Module {

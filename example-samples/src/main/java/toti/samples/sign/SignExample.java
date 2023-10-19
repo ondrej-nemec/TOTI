@@ -11,7 +11,6 @@ import ji.database.Database;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
 import ji.translator.Translator;
-import toti.Router;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Method;
@@ -20,6 +19,8 @@ import toti.annotations.Secured;
 import toti.answers.request.AuthMode;
 import toti.answers.request.Identity;
 import toti.answers.response.Response;
+import toti.answers.router.Link;
+import toti.answers.router.Router;
 import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Register;
@@ -31,7 +32,6 @@ import toti.control.inputs.Submit;
 import toti.control.inputs.Text;
 import toti.security.Authenticator;
 import toti.security.User;
-import toti.url.Link;
 
 /**
  * Example demonstrate authentication in TOTI

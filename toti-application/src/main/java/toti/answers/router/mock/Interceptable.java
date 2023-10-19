@@ -1,4 +1,4 @@
-package toti.url.mock;
+package toti.answers.router.mock;
 
 public interface Interceptable {
 	

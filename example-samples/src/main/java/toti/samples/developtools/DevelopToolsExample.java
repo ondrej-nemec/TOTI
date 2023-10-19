@@ -16,10 +16,10 @@ import ji.translator.Translator;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.answers.response.Response;
+import toti.answers.router.Link;
 import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Register;
-import toti.url.Link;
 
 /**
  * Class shows available developers tools

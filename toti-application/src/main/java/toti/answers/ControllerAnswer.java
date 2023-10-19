@@ -19,7 +19,6 @@ import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.WebSocket;
 import ji.translator.Translator;
 import toti.Headers;
-import toti.Router;
 import toti.ServerException;
 import toti.answers.action.BodyType;
 import toti.answers.action.RequestInterruptedException;
@@ -31,6 +30,8 @@ import toti.answers.request.Request;
 import toti.answers.response.Response;
 import toti.answers.response.ResponseContainer;
 import toti.answers.response.ResponseException;
+import toti.answers.router.Link;
+import toti.answers.router.Router;
 import toti.application.register.MappedAction;
 import toti.application.register.Param;
 import toti.security.Authenticator;
@@ -39,7 +40,6 @@ import toti.security.exceptions.AccessDeniedException;
 import toti.security.exceptions.NotAllowedActionException;
 import toti.templating.TemplateException;
 import toti.templating.TemplateFactory;
-import toti.url.Link;
 
 public class ControllerAnswer {
 	

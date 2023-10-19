@@ -20,10 +20,10 @@ import toti.annotations.Param;
 import toti.annotations.ParamUrl;
 import toti.annotations.Params;
 import toti.answers.response.Response;
+import toti.answers.router.Link;
 import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Register;
-import toti.url.Link;
 
 /**
  * This controller shows various ways of receiving parameters.

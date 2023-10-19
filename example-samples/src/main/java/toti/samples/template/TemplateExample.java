@@ -14,10 +14,10 @@ import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Param;
 import toti.answers.response.Response;
+import toti.answers.router.Link;
 import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Register;
-import toti.url.Link;
 
 /**
  * Example shows options of TOTI templates

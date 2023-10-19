@@ -13,17 +13,17 @@ import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.Request;
 import ji.translator.Translator;
 import toti.CustomExceptionResponse;
-import toti.Router;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Method;
 import toti.annotations.Secured;
 import toti.answers.request.Identity;
 import toti.answers.response.Response;
+import toti.answers.router.Link;
+import toti.answers.router.Router;
 import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Register;
-import toti.url.Link;
 import toti.url.MappedUrl;
 
 /**

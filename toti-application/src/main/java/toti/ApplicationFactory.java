@@ -28,6 +28,8 @@ import toti.answers.FileSystemAnswer;
 import toti.answers.TotiAnswer;
 import toti.answers.request.IdentityFactory;
 import toti.answers.request.SessionUserProvider;
+import toti.answers.router.Link;
+import toti.answers.router.Router;
 import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Param;
@@ -40,7 +42,6 @@ import toti.security.AuthenticationCache;
 import toti.security.Authenticator;
 import toti.security.Authorizator;
 import toti.templating.TemplateFactory;
-import toti.url.Link;
 
 public class ApplicationFactory {
 	

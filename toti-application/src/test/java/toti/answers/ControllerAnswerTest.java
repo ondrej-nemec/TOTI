@@ -37,7 +37,6 @@ import ji.translator.Translator;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import toti.Headers;
-import toti.Router;
 import toti.ServerException;
 import toti.answers.action.BodyType;
 import toti.answers.action.RequestInterruptedException;
@@ -50,11 +49,12 @@ import toti.answers.request.Request;
 import toti.answers.response.RedirectResponse;
 import toti.answers.response.Response;
 import toti.answers.response.TextResponse;
+import toti.answers.router.Link;
+import toti.answers.router.Router;
 import toti.application.register.MappedAction;
 import toti.application.register.Param;
 import toti.security.Authenticator;
 import toti.security.Authorizator;
-import toti.url.Link;
 
 @RunWith(JUnitParamsRunner.class)
 public class ControllerAnswerTest extends TestCase {

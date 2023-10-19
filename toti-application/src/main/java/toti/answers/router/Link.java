@@ -1,4 +1,4 @@
-package toti.url;
+package toti.answers.router;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -13,9 +13,9 @@ import ji.common.structures.ObjectBuilder;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.answers.action.ResponseAction;
+import toti.answers.router.mock.MockCreator;
 import toti.application.Module;
 import toti.application.register.Register;
-import toti.url.mock.MockCreator;
 
 public class Link {
 	

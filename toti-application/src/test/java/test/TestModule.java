@@ -8,10 +8,10 @@ import org.apache.logging.log4j.Logger;
 import ji.common.functions.Env;
 import ji.database.Database;
 import ji.translator.Translator;
+import toti.answers.router.Link;
 import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Register;
-import toti.url.Link;
 
 public class TestModule implements Module {
 

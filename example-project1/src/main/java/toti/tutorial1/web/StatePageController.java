@@ -10,6 +10,7 @@ import toti.annotations.Controller;
 import toti.annotations.Secured;
 import toti.answers.request.AuthMode;
 import toti.answers.response.Response;
+import toti.answers.router.Link;
 import toti.control.Grid;
 import toti.control.columns.ValueColumn;
 import toti.control.inputs.Option;
@@ -17,7 +18,6 @@ import toti.control.inputs.Select;
 import toti.control.inputs.Text;
 import toti.tutorial1.web.api.DeviceApiController;
 import toti.tutorial1.web.api.StateApiController;
-import toti.url.Link;
 
 @Controller("state")
 public class StatePageController {

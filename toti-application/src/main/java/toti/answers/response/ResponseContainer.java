@@ -4,12 +4,12 @@ import java.util.Map;
 
 import ji.translator.Translator;
 import toti.answers.request.Identity;
+import toti.answers.router.Link;
 import toti.application.register.MappedAction;
 import toti.security.Action;
 import toti.security.Authorizator;
 import toti.templating.TemplateContainer;
 import toti.templating.TemplateFactory;
-import toti.url.Link;
 
 public class ResponseContainer implements TemplateContainer {
 
@@ -40,7 +40,8 @@ public class ResponseContainer implements TemplateContainer {
 	
 	@Override
 	public boolean isAllowed(Object identity, String domain, String action) {
-		return authorizator.isAllowed(Identity.class.cast(identity).getUser(), domain, Action.valueOf(action));
+		// TODO return authorizator.isAllowed(Identity.class.cast(identity).getUser(), domain, Action.valueOf(action));
+		return false;
 	}
 	
 	@Override

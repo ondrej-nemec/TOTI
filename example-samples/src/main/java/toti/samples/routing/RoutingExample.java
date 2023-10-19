@@ -10,7 +10,6 @@ import ji.common.functions.Env;
 import ji.common.structures.MapInit;
 import ji.database.Database;
 import ji.translator.Translator;
-import toti.Router;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Param;
@@ -18,10 +17,11 @@ import toti.annotations.ParamUrl;
 import toti.annotations.Secured;
 import toti.answers.request.AuthMode;
 import toti.answers.response.Response;
+import toti.answers.router.Link;
+import toti.answers.router.Router;
 import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Register;
-import toti.url.Link;
 
 /**
  * This example shows routing and link options

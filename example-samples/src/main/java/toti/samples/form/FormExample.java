@@ -23,6 +23,7 @@ import toti.annotations.Secured;
 import toti.answers.request.AuthMode;
 import toti.answers.request.Identity;
 import toti.answers.response.Response;
+import toti.answers.router.Link;
 import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Register;
@@ -53,7 +54,6 @@ import toti.control.inputs.Time;
 import toti.control.inputs.Week;
 import toti.security.Authenticator;
 import toti.security.User;
-import toti.url.Link;
 import toti.validation.ItemRules;
 import toti.validation.Validator;
 

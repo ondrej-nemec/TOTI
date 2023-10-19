@@ -3,8 +3,8 @@ package toti.control.inputs;
 import java.util.HashMap;
 import java.util.Map;
 
+import toti.answers.router.Link;
 import toti.control.Control;
-import toti.url.Link;
 
 public class Submit implements Input {
 	

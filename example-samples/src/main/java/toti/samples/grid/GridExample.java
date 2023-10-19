@@ -26,6 +26,7 @@ import toti.annotations.Param;
 import toti.annotations.ParamUrl;
 import toti.annotations.Params;
 import toti.answers.response.Response;
+import toti.answers.router.Link;
 import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Register;
@@ -46,7 +47,6 @@ import toti.control.inputs.Select;
 import toti.control.inputs.Text;
 import toti.control.inputs.Time;
 import toti.control.inputs.Week;
-import toti.url.Link;
 import toti.validation.ItemRules;
 import toti.validation.Validator;
 

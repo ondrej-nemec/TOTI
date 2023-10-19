@@ -11,12 +11,12 @@ import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Param;
 import toti.answers.response.Response;
+import toti.answers.router.Link;
 import toti.control.Form;
 import toti.control.inputs.Option;
 import toti.control.inputs.Password;
 import toti.control.inputs.Select;
 import toti.control.inputs.Submit;
-import toti.url.Link;
 
 @Controller("sign")
 public class SignPageController {

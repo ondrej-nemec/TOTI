@@ -1,4 +1,4 @@
-package toti;
+package toti.answers.router;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;

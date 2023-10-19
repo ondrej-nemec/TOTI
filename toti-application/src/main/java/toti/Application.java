@@ -4,12 +4,12 @@ import java.util.List;
 
 import ji.database.Database;
 import toti.answers.Answer;
+import toti.answers.router.Link;
 import toti.application.Task;
 import toti.application.register.Register;
 import toti.security.AuthenticationCache;
 import toti.security.Authenticator;
 import toti.security.Authorizator;
-import toti.url.Link;
 import ji.translator.Translator;
 
 public class Application {

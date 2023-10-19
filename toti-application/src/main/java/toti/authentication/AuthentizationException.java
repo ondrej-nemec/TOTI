@@ -1,5 +1,6 @@
 package toti.authentication;
 
+@Deprecated // probably not used
 public class AuthentizationException extends Exception {
 
 	private static final long serialVersionUID = 1L;
