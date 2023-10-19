@@ -33,9 +33,9 @@ import toti.application.Task;
 import toti.application.register.Param;
 import toti.application.register.Register;
 import toti.extensions.Extension;
+import toti.extensions.Profiler;
 import toti.extensions.Session;
 import toti.extensions.TotiResponse;
-import toti.profiler.Profiler;
 import toti.security.AuthenticationCache;
 import toti.security.Authenticator;
 import toti.security.Authorizator;
@@ -86,6 +86,7 @@ public class ApplicationFactory {
 	
 	private final List<Session> sessions;
 	private final List<TotiResponse> totiResponses;
+	private Profiler profiler;
 	
 	public ApplicationFactory(String hostname, Env env, String charset, Function<String, Logger> loggerFactory, String... aliases) {
 		this.env = env.getModule("applications").getModule(hostname);
@@ -115,7 +116,7 @@ public class ApplicationFactory {
 		
 		
 		Database database = getDatabase(
-			env.getModule("database"), migrations, profiler.used(), loggerFactory.apply(hostname, "database")
+			env.getModule("database"), migrations, profiler, loggerFactory.apply(hostname, "database")
 		);
 		if (database == null) {
 			logger.info("No database specified");
@@ -133,7 +134,7 @@ public class ApplicationFactory {
 		List<Task> tasks = new LinkedList<>();
 		if (translator == null) {
 			LanguageSettings langSettings = getLangSettings(env);
-			langSettings.setProfiler(profiler.used());
+			langSettings.setProfiler(profiler);
 			this.translator = Translator.create(langSettings, trans, loggerFactory.apply(hostname, "translator"));
 		}
 		for (Module module : modules) {
@@ -148,7 +149,7 @@ public class ApplicationFactory {
 					getMinimalize(env),
 					logger
 			);
-			templateFactory.setProfiler(profiler.used());
+			templateFactory.setProfiler(profiler);
 			templateFactories.put(module.getName(), templateFactory);
 			if (module.getTranslationPath() != null) {
 				trans.add(module.getTranslationPath());
@@ -163,6 +164,9 @@ public class ApplicationFactory {
 			module.addRoutes(router);
 		};
 		actualModule.set(null);
+		
+		/******************/
+		// TODO this section is deprecated
 		// file session save is disabled - maybe enable hibrid saving - user in memory, some user data on disk
 		AuthenticationCache sessionCache = new AuthenticationCache(hostname, getTempPath(env, hostname), false, logger);
 		Authenticator authenticator = new Authenticator(
@@ -172,12 +176,13 @@ public class ApplicationFactory {
 			logger
 		);
 		Authorizator authorizator = new Authorizator(logger);
+		/******************/
 		
 		TemplateFactory totiTemplateFactory = new TemplateFactory(
 			getTempPath(env, hostname), "toti/web", "", "", templateFactories,
 			getDeleteTempJavaFiles(env), getMinimalize(env),
 			logger
-		).setProfiler(profiler.used());
+		).setProfiler(profiler);
 		
 		IdentityFactory identityFactory = new IdentityFactory(
 			translator, translator.getLocale().getLang(), sessions, sessionUserProvider
@@ -213,32 +218,6 @@ public class ApplicationFactory {
 			getResponseHeaders(env),
 			charset
 		);
-		/*
-		ResponseFactory response = new ResponseFactory(
-				getResponseHeaders(env),
-				getResourcesPath(env),
-				router,
-				templateFactories,
-				new TemplateFactory(
-					getTempPath(env, hostname), "toti/web", "", "", templateFactories,
-					getDeleteTempJavaFiles(env), getMinimalize(env),
-					logger
-				).setProfiler(profiler.used()),
-				translator,
-				link,
-				new IdentityFactory(translator, translator.getLocale().getLang()),
-				authenticator,
-				authorizator,
-				charset,
-				getDirResponseAllowed(env),
-				getDirDefaultFile(env),
-				getLogsPath(env),
-				getDevelopIps(env),
-				logger,
-				profiler,
-				register,
-				mapping
-		);*/
 		return new Application(
 			tasks, sessionCache, translator, database, link, register, migrations,
 			answer, authenticator, authorizator, getAutoStart(env), aliases
@@ -246,12 +225,14 @@ public class ApplicationFactory {
 	}
 
 	private Profiler initProfiler(Env env, Logger logger) {
-		Profiler profiler = new Profiler();
-		profiler.setUse(getUseProfiler(env));
-		if (profiler.isUse()) {
+		if (getUseProfiler(env) && profiler != null) {
 			logger.warn("Profiler is enabled");
+			return profiler;
 		}
-		return profiler;
+		if (getUseProfiler(env) && profiler == null) {
+			logger.warn("Profiler is enabled but no profiler set.");
+		}
+		return Profiler.empty();
 	}
 		
 	/*************************/
@@ -399,6 +380,9 @@ public class ApplicationFactory {
 		}
 		if (extension instanceof TotiResponse) {
 			totiResponses.add((TotiResponse)extension);
+		}
+		if (extension instanceof Profiler) {
+			this.profiler = (Profiler)extension;
 		}
 		return this;
 	}

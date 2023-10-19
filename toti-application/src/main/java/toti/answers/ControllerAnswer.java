@@ -71,7 +71,7 @@ public class ControllerAnswer {
 			ji.socketCommunication.http.structures.Request request,
 			Identity identity, Headers requestHeaders, Optional<WebSocket> websocket,
 			Headers responseHeaders, String charset
-		) throws ServerException {
+		) throws Exception {
 		Request totiRequest = Request.fromRequest(request, requestHeaders, websocket);
 		MappedAction mapped = getMappedAction(request.getPlainUri(), request.getMethod(), totiRequest);
 		if (mapped == null) {

@@ -61,6 +61,7 @@ public class TotiAnswer {
 					return getWelcomePage();
 				}
 				break;
+		// TODO do it or be in extension? 
 		//	case ".js":
 		//	case "/toti.js":
 		}

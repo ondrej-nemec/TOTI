@@ -60,7 +60,7 @@ import toti.url.Link;
 public class ControllerAnswerTest extends TestCase {
 
 	@Test
-	public void testAnswerNoMappedAction() throws ServerException {
+	public void testAnswerNoMappedAction() throws Exception {
 		Router router = mock(Router.class);
 		when(router.getUrlMapping("/routered")).thenReturn(MappedAction.test("routered", "route", "method"));
 		
