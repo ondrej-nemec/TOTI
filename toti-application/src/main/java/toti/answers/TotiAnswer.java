@@ -12,7 +12,7 @@ import toti.answers.request.IdentityFactory;
 import toti.answers.request.Request;
 import toti.answers.response.Response;
 import toti.answers.response.ResponseContainer;
-import toti.extensions.TotiResponse;
+import toti.extensions.OnToti;
 import toti.templating.TemplateFactory;
 
 public class TotiAnswer {
@@ -22,11 +22,11 @@ public class TotiAnswer {
 	private final Translator translator;
 	
 	private final IdentityFactory identityFactory;
-	private final Map<String, TotiResponse> extensions = new HashMap<>();
+	private final Map<String, OnToti> extensions = new HashMap<>();
 	
 	public TotiAnswer(
 			List<String> developIps, TemplateFactory templateFactory, Translator translator,
-			IdentityFactory identityFactory, List<TotiResponse> extensions) {
+			IdentityFactory identityFactory, List<OnToti> extensions) {
 		this.developIps = developIps;
 		this.templateFactory = templateFactory;
 		this.translator = translator;
@@ -62,7 +62,7 @@ public class TotiAnswer {
 				break;
 		}
 		if (extensions.containsKey(url)) {
-			TotiResponse extension = extensions.get(url);
+			OnToti extension = extensions.get(url);
 			return extension.getResponse(
 				url, request, 
 				identity, identityFactory.getSpace(extension.getIdentifier(), identity),

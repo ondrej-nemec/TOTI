@@ -24,7 +24,7 @@ import toti.answers.response.EmptyResponse;
 import toti.answers.response.FileResponse;
 import toti.answers.response.Response;
 import toti.answers.response.TextResponse;
-import toti.extensions.TotiResponse;
+import toti.extensions.OnToti;
 import toti.templating.TemplateFactory;
 
 @RunWith(JUnitParamsRunner.class)
@@ -33,7 +33,7 @@ public class TotiAnsserTest {
 	@Test
 	@Parameters(method="dataRoutingWithExtension")
 	public void testRoutingWithExtension(String url, Response expected) {
-		TotiResponse extension = new TotiResponse() {
+		OnToti extension = new OnToti() {
 			@Override
 			public String getIdentifier() {
 				return "testExtension";

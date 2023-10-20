@@ -36,8 +36,8 @@ import toti.application.register.Param;
 import toti.application.register.Register;
 import toti.extensions.Extension;
 import toti.extensions.Profiler;
-import toti.extensions.Session;
-import toti.extensions.TotiResponse;
+import toti.extensions.OnSession;
+import toti.extensions.OnToti;
 import toti.templating.TemplateFactory;
 
 public class ApplicationFactory {
@@ -72,8 +72,8 @@ public class ApplicationFactory {
 	private final String hostname;
 	private final String charset;
 	
-	private final List<Session> sessions;
-	private final List<TotiResponse> totiResponses;
+	private final List<OnSession> sessions;
+	private final List<OnToti> totiResponses;
 	private Profiler profiler;
 	private SessionUserProvider sessionUserProvider;
 	
@@ -364,11 +364,11 @@ public class ApplicationFactory {
 	}
 	
 	public ApplicationFactory addExtension(Extension extension) {
-		if (extension instanceof Session) {
-			sessions.add((Session)extension);
+		if (extension instanceof OnSession) {
+			sessions.add((OnSession)extension);
 		}
-		if (extension instanceof TotiResponse) {
-			totiResponses.add((TotiResponse)extension);
+		if (extension instanceof OnToti) {
+			totiResponses.add((OnToti)extension);
 		}
 		if (extension instanceof Profiler) {
 			this.profiler = (Profiler)extension;
