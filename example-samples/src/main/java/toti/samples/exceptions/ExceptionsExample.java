@@ -12,7 +12,6 @@ import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.Request;
 import ji.translator.Translator;
-import toti.CustomExceptionResponse;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Method;
@@ -24,6 +23,7 @@ import toti.answers.router.Router;
 import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Register;
+import toti.extensions.CustomExceptionResponse;
 import toti.url.MappedUrl;
 
 /**

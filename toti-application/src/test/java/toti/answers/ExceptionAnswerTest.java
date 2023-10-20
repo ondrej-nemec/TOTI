@@ -21,13 +21,13 @@ import ji.socketCommunication.http.structures.Request;
 import ji.translator.Translator;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
-import toti.CustomExceptionResponse;
 import toti.answers.request.Identity;
 import toti.answers.response.Response;
 import toti.answers.response.TemplateResponse;
 import toti.answers.response.TextResponse;
 import toti.application.register.MappedAction;
 import toti.application.register.Register;
+import toti.extensions.CustomExceptionResponse;
 import toti.logging.FileName;
 import toti.templating.TemplateFactory;
 

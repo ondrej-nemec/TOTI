@@ -1,4 +1,4 @@
-package toti;
+package toti.extensions;
 
 import ji.socketCommunication.http.StatusCode;
 import toti.answers.request.Identity;

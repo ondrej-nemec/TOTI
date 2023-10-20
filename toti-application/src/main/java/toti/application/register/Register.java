@@ -7,12 +7,12 @@ import java.util.Map;
 import ji.common.structures.ObjectBuilder;
 import ji.common.structures.Tuple2;
 import ji.socketCommunication.http.HttpMethod;
-import toti.CustomExceptionResponse;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Secured;
 import toti.answers.request.AuthMode;
 import toti.application.Module;
+import toti.extensions.CustomExceptionResponse;
 
 public class Register {
 	
