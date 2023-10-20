@@ -3,15 +3,15 @@ package toti;
 import java.util.HashMap;
 import java.util.Map;
 
-import ji.socketCommunication.http.RestApiServer;
+import ji.socketCommunication.http.WebServer;
 import toti.answers.Answer;
 
 public class ServerConsumer {
 
-	private final RestApiServer server;
+	private final WebServer server;
 	private final Map<String, String[]> aliases = new HashMap<>();
 	
-	public ServerConsumer(RestApiServer server) {
+	public ServerConsumer(WebServer server) {
 		this.server = server;
 	}
 	

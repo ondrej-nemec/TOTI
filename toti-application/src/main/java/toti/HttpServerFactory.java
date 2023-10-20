@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import ji.common.functions.Env;
 import ji.socketCommunication.SslCredentials;
-import ji.socketCommunication.http.RestApiServer;
+import ji.socketCommunication.http.WebServer;
 import toti.logging.TotiLoggerFactory;
 
 public class HttpServerFactory {
@@ -42,7 +42,7 @@ public class HttpServerFactory {
 		// maybe more - separated - loggers??
 		Logger logger = loggerFactory.apply("toti"); //TotiLogger.getLogger("totiServer");
 		Env settings = env.getModule("http");
-		RestApiServer server = new RestApiServer(getMaxRequestSize(settings), logger);
+		WebServer server = new WebServer(getMaxRequestSize(settings), logger);
 		// TODO add aplication from env
 		String charset = getCharset(settings);
 		return new HttpServer(
