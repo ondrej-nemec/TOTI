@@ -51,72 +51,79 @@ public class Link {
 	 * @param url
 	 * @return
 	 */
-	public String create(String url) {
-        String[] values = url.split(":");
+	public String create(String href) {
+		StringHref base = parseStringHref(href);
+		return create(base.getController(), base.getMethod(), base.getQueryParams(), base.getPathParams().toArray());
+	}
+	
+	protected StringHref parseStringHref(String href) {
+		String[] values = href.split(":");
+        if (values.length == 0) {
+			throw new LogicException("No HREF/SRC specified");
+		}
         if (values.length == 1) {
             throw new LogicException("HREF/SRC parameter required format: '[controller]:[method]<:[parameter]>{n}'");
         }
-        
         String controller = null;
         if (!values[0].isEmpty()) {
             controller = values[0];
         }
+		Map<String, Object> queryParams = new HashMap<>();
+		List<Object> pathParams= new LinkedList<>();
         String method = values[1];
-        Map<String, Object> getParams = new HashMap<>();
-        List<Object> urlParams = new LinkedList<>();
         for (int i = 2; i < values.length; i++) {
         	if (values[i].contains("=")) {
                 String[] get = values[i].split("=", 2);
-                getParams.put(get[0], get[1]);
+                queryParams.put(get[0], get[1]);
         	} else {
-                urlParams.add(values[i]);
+        		pathParams.add(values[i]);
         	}
         }
-		return create(controller, method, getParams, urlParams.toArray());
+        return new StringHref(controller, method, queryParams, pathParams);
 	}
-	
-	/*public String create(String controller, String method) {
-		return create(controller, method, new HashMap<>(), new Object[] {});
-	}
-	
-	public String create(String controller, String method, Object... params) {
-		return create(controller, method, new HashMap<>(), params);
-	}
-	
-	public String create(String controller, String method, Map<String, Object> params) {
-		return create(controller, method, params, new Object[] {});
-	}*/
 	
 	public String create(String controllerName, String methodName, Map<String, Object> getParams, Object... urlParams) {
 		try {
-			Class<?> controller = Class.forName(controllerName);
-			/*if (controllerName == null) {
-				controller = Class.forName(StackTrace.classParent(
-					ste->Class.forName(ste.getClassName()).isAnnotationPresent(Controller.class)
-				));
-			} else {
-				controller = Class.forName(controllerName);
-			}*/
-			Method method = getMethod(controller, methodName);
-			
+			Class<?> controller = getController(controllerName);
+			Method method = getMethod(controller, methodName, urlParams.length);
 			return create(controller, method, getParams, urlParams);
 		} catch (Exception e) {
 			throw new RuntimeException("Cannot create link.", e);
 		}
 	}
 	
-	private Method getMethod(Class<?> controller, String methodName) throws NoSuchMethodException {
+	protected Class<?> getController(String controllerName) throws ClassNotFoundException {
+		Class<?> controller = Class.forName(controllerName);
+		/*if (controllerName == null) {
+			controller = Class.forName(StackTrace.classParent(
+				ste->Class.forName(ste.getClassName()).isAnnotationPresent(Controller.class)
+			));
+		} else {
+			controller = Class.forName(controllerName);
+		}*/
+		return controller;
+	}
+	
+	protected Method getMethod(Class<?> controller, String methodName, int parameterCount) throws NoSuchMethodException {
 		try {
-			/*Class<?> []classes = new Class[params.size()];
-			for (int i = 0; i < params.size(); i++) {
-				classes[i] = params.get(i).getClass(); // can be null !!
+			if (parameterCount == 0) {
+				Method m = controller.getMethod(methodName);
+				if (m.isAnnotationPresent(Action.class)) {
+					return m;
+				}		
 			}
-			method = controller.getMethod(methodName, classes);*/
-			return controller.getMethod(methodName);
+			throw new NoSuchMethodException(
+				controller.getName() + "." + methodName + " with at least " + parameterCount
+				+ " parameters (not exists or not @Action)"
+			);
 		} catch (NoSuchMethodException e) {
 			for (Method m : controller.getMethods()) {
 				if (m.isAnnotationPresent(Action.class) && m.getName().equals(methodName)) {
-					return m;
+					if (m.getParameterCount() == parameterCount) {
+						return m;
+					} else if (m.getParameterCount() > parameterCount) {
+						return m;
+					}
 				}
 			}
 			throw e;
@@ -178,19 +185,12 @@ public class Link {
 			}
 			
 			return uri.toString();
-			/*return parse(
-				module.getName(),
-				getPath(module, controller),
-				controller.getAnnotation(Controller.class).value(), 
-				method.getAnnotation(Action.class).path(),
-				parameters
-			);*/
 		} catch (Exception e) {
 			throw new RuntimeException("Cannot create link", e);
 		}
 	}
 	
-	private void parseParams(StringBuilder get, String key, Object value) {
+	protected void parseParams(StringBuilder get, String key, Object value) {
 		if (value instanceof Map) {
 			new DictionaryValue(value).getMap().forEach((k, v)->{
 				parseParams(get, String.format("%s[%s]", key, k), v);
