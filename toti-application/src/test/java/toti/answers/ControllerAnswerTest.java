@@ -36,7 +36,6 @@ import ji.translator.Locale;
 import ji.translator.Translator;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
-import toti.Headers;
 import toti.ServerException;
 import toti.answers.action.BodyType;
 import toti.answers.action.RequestInterruptedException;

@@ -2,7 +2,7 @@ package toti.extensions;
 
 import ji.common.structures.MapDictionary;
 import ji.socketCommunication.http.structures.RequestParameters;
-import toti.Headers;
+import toti.answers.Headers;
 import toti.answers.request.Identity;
 
 public interface Session extends Extension {

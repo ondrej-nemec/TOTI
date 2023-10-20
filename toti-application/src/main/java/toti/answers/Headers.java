@@ -1,4 +1,4 @@
-package toti;
+package toti.answers;
 
 import java.util.HashMap;
 import java.util.LinkedList;

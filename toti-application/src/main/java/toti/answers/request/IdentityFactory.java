@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import ji.translator.Locale;
 import ji.translator.Translator;
-import toti.Headers;
+import toti.answers.Headers;
 import toti.extensions.Session;
 import ji.common.structures.MapDictionary;
 import ji.socketCommunication.http.structures.RequestParameters;

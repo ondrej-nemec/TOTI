@@ -10,7 +10,7 @@ import ji.common.functions.FileExtension;
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.Protocol;
 import ji.socketCommunication.http.structures.WebSocket;
-import toti.Headers;
+import toti.answers.Headers;
 import toti.answers.request.Identity;
 
 public interface Response {

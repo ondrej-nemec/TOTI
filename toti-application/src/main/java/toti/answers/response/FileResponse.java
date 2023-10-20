@@ -8,7 +8,7 @@ import java.util.Arrays;
 import ji.common.functions.InputStreamLoader;
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.Protocol;
-import toti.Headers;
+import toti.answers.Headers;
 import toti.answers.request.Identity;
 
 public class FileResponse implements Response {

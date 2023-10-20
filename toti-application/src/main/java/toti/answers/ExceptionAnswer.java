@@ -13,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 import ji.files.text.Text;
 import ji.socketCommunication.http.StatusCode;
 import ji.translator.Translator;
-import toti.Headers;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.answers.response.Response;

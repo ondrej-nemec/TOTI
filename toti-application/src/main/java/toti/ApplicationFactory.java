@@ -24,6 +24,7 @@ import toti.answers.Answer;
 import toti.answers.ControllerAnswer;
 import toti.answers.ExceptionAnswer;
 import toti.answers.FileSystemAnswer;
+import toti.answers.Headers;
 import toti.answers.TotiAnswer;
 import toti.answers.request.IdentityFactory;
 import toti.answers.request.SessionUserProvider;
@@ -40,16 +41,6 @@ import toti.extensions.TotiResponse;
 import toti.templating.TemplateFactory;
 
 public class ApplicationFactory {
-	
-	/*
-		"CSP:frame-ancestors 'none'" // nacteni stranky ve framu
-		, "Content-Security-Policy-Report-Only"
-			+ " script-src 'strict-dynamic' 'nonce-{nonce}' 'unsafe-inline' http: https:;"
-			+ " object-src 'none';"
-			+ " form-action 'self';"
-			+ " report-uri '/entity/api/entity/reporting'"
-		, "Access-Control-Allow-Origin: *"
-	*/
 	
 	private String tempPath = null;
 	private String resourcesPath = null;
@@ -336,6 +327,16 @@ public class ApplicationFactory {
 				}
 			});
 		} else {
+			/*
+			"CSP:frame-ancestors 'none'" // nacteni stranky ve framu
+			, "Content-Security-Policy-Report-Only"
+				+ " script-src 'strict-dynamic' 'nonce-{nonce}' 'unsafe-inline' http: https:;"
+				+ " object-src 'none';"
+				+ " form-action 'self';"
+				+ " report-uri '/entity/api/entity/reporting'"
+			, "Access-Control-Allow-Origin: *"
+		*/
+		
 			headers.addHeader("Access-Control-Allow-Origin", "*");
 		}
 		return headers.getHeaders();

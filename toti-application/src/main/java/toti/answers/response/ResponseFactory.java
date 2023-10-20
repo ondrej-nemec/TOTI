@@ -3,7 +3,7 @@ package toti.answers.response;
 import java.util.Map;
 
 import ji.socketCommunication.http.StatusCode;
-import toti.Headers;
+import toti.answers.Headers;
 
 public class ResponseFactory {
 	

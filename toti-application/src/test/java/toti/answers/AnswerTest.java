@@ -23,7 +23,6 @@ import ji.socketCommunication.http.structures.Protocol;
 import ji.socketCommunication.http.structures.Request;
 import ji.socketCommunication.http.structures.RequestParameters;
 import ji.socketCommunication.http.structures.Response;
-import toti.Headers;
 import toti.ServerException;
 import toti.answers.request.Identity;
 import toti.answers.request.IdentityFactory;

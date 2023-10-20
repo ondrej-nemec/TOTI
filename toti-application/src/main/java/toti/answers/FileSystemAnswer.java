@@ -7,7 +7,6 @@ import org.apache.logging.log4j.Logger;
 
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
-import toti.Headers;
 import toti.ServerException;
 import toti.answers.response.Response;
 import toti.templating.DirectoryTemplate;

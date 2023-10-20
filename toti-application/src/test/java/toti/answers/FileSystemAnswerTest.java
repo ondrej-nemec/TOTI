@@ -15,7 +15,6 @@ import ji.socketCommunication.http.structures.Request;
 import ji.socketCommunication.http.structures.Response;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
-import toti.Headers;
 import toti.ServerException;
 
 @RunWith(JUnitParamsRunner.class)

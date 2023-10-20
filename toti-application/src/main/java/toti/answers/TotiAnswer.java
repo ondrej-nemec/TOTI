@@ -6,7 +6,6 @@ import java.util.Map;
 
 import ji.socketCommunication.http.StatusCode;
 import ji.translator.Translator;
-import toti.Headers;
 import toti.ServerException;
 import toti.answers.request.Identity;
 import toti.answers.request.IdentityFactory;

@@ -6,7 +6,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.Protocol;
-import toti.Headers;
+import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.templating.Template;
 

@@ -22,7 +22,6 @@ import ji.translator.Translator;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import toti.CustomExceptionResponse;
-import toti.Headers;
 import toti.answers.request.Identity;
 import toti.answers.response.Response;
 import toti.answers.response.TemplateResponse;

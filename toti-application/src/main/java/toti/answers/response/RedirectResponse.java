@@ -2,7 +2,7 @@ package toti.answers.response;
 
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.Protocol;
-import toti.Headers;
+import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.answers.router.Link;
 

@@ -18,7 +18,6 @@ import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.WebSocket;
 import ji.translator.Translator;
-import toti.Headers;
 import toti.ServerException;
 import toti.answers.action.BodyType;
 import toti.answers.action.RequestInterruptedException;

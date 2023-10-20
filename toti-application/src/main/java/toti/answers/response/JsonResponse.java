@@ -8,7 +8,7 @@ import ji.json.OutputJsonStream;
 import ji.json.JsonWritter;
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.Protocol;
-import toti.Headers;
+import toti.answers.Headers;
 import toti.answers.request.Identity;
 
 public class JsonResponse implements Response {

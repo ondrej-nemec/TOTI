@@ -9,7 +9,7 @@ import ji.common.structures.MapDictionary;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.structures.RequestParameters;
 import ji.socketCommunication.http.structures.WebSocket;
-import toti.Headers;
+import toti.answers.Headers;
 
 public class Request {
 

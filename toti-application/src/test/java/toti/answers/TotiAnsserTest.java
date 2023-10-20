@@ -17,7 +17,6 @@ import ji.socketCommunication.http.StatusCode;
 import ji.translator.Translator;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
-import toti.Headers;
 import toti.answers.request.Identity;
 import toti.answers.request.IdentityFactory;
 import toti.answers.request.Request;

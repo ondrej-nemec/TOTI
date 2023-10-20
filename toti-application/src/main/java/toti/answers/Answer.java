@@ -9,7 +9,6 @@ import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.Request;
 import ji.socketCommunication.http.structures.Response;
 import ji.socketCommunication.http.structures.WebSocket;
-import toti.Headers;
 import toti.ServerException;
 import toti.answers.request.Identity;
 import toti.answers.request.IdentityFactory;

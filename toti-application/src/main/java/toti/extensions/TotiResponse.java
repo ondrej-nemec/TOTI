@@ -3,7 +3,7 @@ package toti.extensions;
 import java.util.List;
 
 import ji.common.structures.MapDictionary;
-import toti.Headers;
+import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.answers.response.Response;
