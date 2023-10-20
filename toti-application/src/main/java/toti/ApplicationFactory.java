@@ -13,7 +13,6 @@ import java.util.function.Function;
 import org.apache.logging.log4j.Logger;
 
 import ji.common.functions.Env;
-import ji.common.functions.Hash;
 import ji.common.structures.ObjectBuilder;
 import ji.database.Database;
 import ji.database.DatabaseConfig;
@@ -38,9 +37,6 @@ import toti.extensions.Extension;
 import toti.extensions.Profiler;
 import toti.extensions.Session;
 import toti.extensions.TotiResponse;
-import toti.security.AuthenticationCache;
-import toti.security.Authenticator;
-import toti.security.Authorizator;
 import toti.templating.TemplateFactory;
 
 public class ApplicationFactory {
@@ -62,8 +58,8 @@ public class ApplicationFactory {
 	private String dirDefaultFile = null;
 	private Boolean minimalize = null;
 	private List<String> developIps = null;
-	private Long tokenExpirationTime = null;
-	private String tokenCustomSalt = null;
+//	private Long tokenExpirationTime = null;
+//	private String tokenCustomSalt = null;
 	private Boolean useProfiler = null;
 	// private String urlPattern = null;
 	private String logsPath = null;
@@ -88,6 +84,7 @@ public class ApplicationFactory {
 	private final List<Session> sessions;
 	private final List<TotiResponse> totiResponses;
 	private Profiler profiler;
+	private SessionUserProvider sessionUserProvider;
 	
 	public ApplicationFactory(String hostname, Env env, String charset, Function<String, Logger> loggerFactory, String... aliases) {
 		this.env = env.getModule("applications").getModule(hostname);
@@ -109,8 +106,6 @@ public class ApplicationFactory {
 				migrations.add(config.getMigrationsPath());
 			}
 		});
-		
-		SessionUserProvider sessionUserProvider = null; // TODO
 		
 	//	Env env = appEnv = this.env.getModule("applications").getModule(hostname);
 		Profiler profiler = initProfiler(env, logger);
@@ -166,19 +161,6 @@ public class ApplicationFactory {
 		};
 		actualModule.set(null);
 		
-		/******************/
-		// TODO this section is deprecated
-		// file session save is disabled - maybe enable hibrid saving - user in memory, some user data on disk
-		AuthenticationCache sessionCache = new AuthenticationCache(hostname, getTempPath(env, hostname), false, logger);
-		Authenticator authenticator = new Authenticator(
-			getTokenExpirationTime(env), getTokenCustomSalt(env), 
-			sessionCache,
-			Hash.getSha256(),
-			logger
-		);
-		Authorizator authorizator = new Authorizator(logger);
-		/******************/
-		
 		TemplateFactory totiTemplateFactory = new TemplateFactory(
 			getTempPath(env, hostname), "toti/web", "", "", templateFactories,
 			getDeleteTempJavaFiles(env), getMinimalize(env),
@@ -202,7 +184,7 @@ public class ApplicationFactory {
 			logger
 		);
 		ControllerAnswer controllerAnswer = new ControllerAnswer(
-			router, root, templateFactories, authenticator, authorizator, identityFactory, link, translator, logger
+			router, root, templateFactories, sessionUserProvider, identityFactory, link, translator, logger
 		);
 		FileSystemAnswer fileSystemAnswer = new FileSystemAnswer(
 			getResourcesPath(env),
@@ -220,8 +202,8 @@ public class ApplicationFactory {
 			charset
 		);
 		return new Application(
-			tasks, sessionCache, translator, database, link, register, migrations,
-			answer, authenticator, authorizator, getAutoStart(env), aliases
+			tasks, translator, database, link, register, migrations,
+			answer, getAutoStart(env), aliases
 		);
 	}
 
@@ -299,7 +281,7 @@ public class ApplicationFactory {
 		}
 		return Arrays.asList("/127.0.0.1", "/0:0:0:0:0:0:0:1");
 	}
-	
+	/*
 	private Long getTokenExpirationTime(Env env) {
 		return getProperty(tokenExpirationTime, "token-expired",  1000L * 60 * 10, Long.class, env);
 	}
@@ -307,7 +289,7 @@ public class ApplicationFactory {
 	private String getTokenCustomSalt(Env env) {
 		return getProperty(tokenCustomSalt, "token-salt", "", String.class, env);
 	}
-	
+	*/
 	private Boolean getUseProfiler(Env env) {
 		return getProperty(useProfiler, "use-profiler", false, Boolean.class, env);
 	}
@@ -375,6 +357,11 @@ public class ApplicationFactory {
 	
 	/*************************/
 	
+	public ApplicationFactory setSessionUserProvider(SessionUserProvider sessionUserProvider) {
+		this.sessionUserProvider = sessionUserProvider;
+		return this;
+	}
+	
 	public ApplicationFactory addExtension(Extension extension) {
 		if (extension instanceof Session) {
 			sessions.add((Session)extension);
@@ -417,7 +404,7 @@ public class ApplicationFactory {
 		this.langSettings = settings;
 		return this;
 	}
-	
+	/*
 	public ApplicationFactory setTokenExpirationTime(long tokenExpirationTime) {
 		this.tokenExpirationTime = tokenExpirationTime;
 		return this;
@@ -427,7 +414,7 @@ public class ApplicationFactory {
 		this.tokenCustomSalt = tokenCustomSalt;
 		return this;
 	}
-
+*/
 	public ApplicationFactory setResourcesPath(String resourcesPath) {
 		this.resourcesPath = resourcesPath;
 		return this;

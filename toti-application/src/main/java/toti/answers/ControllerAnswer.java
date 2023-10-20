@@ -27,6 +27,7 @@ import toti.answers.request.AuthMode;
 import toti.answers.request.Identity;
 import toti.answers.request.IdentityFactory;
 import toti.answers.request.Request;
+import toti.answers.request.SessionUserProvider;
 import toti.answers.response.Response;
 import toti.answers.response.ResponseContainer;
 import toti.answers.response.ResponseException;
@@ -34,10 +35,6 @@ import toti.answers.router.Link;
 import toti.answers.router.Router;
 import toti.application.register.MappedAction;
 import toti.application.register.Param;
-import toti.security.Authenticator;
-import toti.security.Authorizator;
-import toti.security.exceptions.AccessDeniedException;
-import toti.security.exceptions.NotAllowedActionException;
 import toti.templating.TemplateException;
 import toti.templating.TemplateFactory;
 
@@ -45,7 +42,7 @@ public class ControllerAnswer {
 	
 	private final Param root;
 	private final Translator translator;
-	private final Authorizator authorizator;
+	private final SessionUserProvider sessionUserProvider;
 	private final IdentityFactory identityFactory;
 	private final Link link;
 	private final Map<String, TemplateFactory> modules;
@@ -54,13 +51,12 @@ public class ControllerAnswer {
 	
 	public ControllerAnswer(
 			Router router, Param root, Map<String, TemplateFactory> modules,
-			Authenticator authenticator, Authorizator authorizator, IdentityFactory identityFactory,
+			SessionUserProvider sessionUserProvider, IdentityFactory identityFactory,
 			Link link, Translator translator, Logger logger) {
 		this.root = root;
 		this.router = router;
 		this.modules = modules;
-		// this.authenticator = authenticator;
-		this.authorizator = authorizator;
+		this.sessionUserProvider = sessionUserProvider;
 		this.identityFactory = identityFactory;
 		this.translator = translator;
 		this.link = link;
@@ -86,14 +82,14 @@ public class ControllerAnswer {
 			identityFactory.finalizeIdentity(identity, responseHeaders); // for cookies and custom headers
 	    	/*************/
 			return response.getResponse(null, responseHeaders, identity,  new ResponseContainer(
-				translator.withLocale(identity.getLocale()), authorizator, mapped, templateFactory, link
+				translator.withLocale(identity.getLocale()), sessionUserProvider, mapped, templateFactory, link
 			), charset);
 		} catch (ServerException e){
 			throw e;
 		} catch (RequestInterruptedException e) {
 			return e.getResponse().getResponse(request.getProtocol(), responseHeaders, charset);
-		} catch (NotAllowedActionException | AccessDeniedException e) {
-			throw new ServerException(StatusCode.FORBIDDEN, mapped, e);
+		/*} catch (NotAllowedActionException | AccessDeniedException e) {
+			throw new ServerException(StatusCode.FORBIDDEN, mapped, e);*/
 		} catch (TemplateException e) {
 			throw new ServerException(StatusCode.INTERNAL_SERVER_ERROR, mapped, e);
 		} catch (InvocationTargetException e) { // if exception throwed in method

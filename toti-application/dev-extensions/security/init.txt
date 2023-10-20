@@ -1,0 +1,8 @@
+AuthenticationCache sessionCache = new AuthenticationCache(hostname, getTempPath(env, hostname), false, logger);
+		Authenticator authenticator = new Authenticator(
+			getTokenExpirationTime(env), getTokenCustomSalt(env), 
+			sessionCache,
+			Hash.getSha256(),
+			logger
+		);
+		Authorizator authorizator = new Authorizator(logger);

@@ -4,22 +4,21 @@ import java.util.Map;
 
 import ji.translator.Translator;
 import toti.answers.request.Identity;
+import toti.answers.request.SessionUserProvider;
 import toti.answers.router.Link;
 import toti.application.register.MappedAction;
-import toti.security.Action;
-import toti.security.Authorizator;
 import toti.templating.TemplateContainer;
 import toti.templating.TemplateFactory;
 
 public class ResponseContainer implements TemplateContainer {
 
 	private final Translator translator;
-	private final Authorizator authorizator;
+	private final SessionUserProvider authorizator;
 	private final MappedAction current;
 	private final TemplateFactory templateFactory;
 	private final Link link;
 	
-	public ResponseContainer(Translator translator, Authorizator authorizator, MappedAction current,
+	public ResponseContainer(Translator translator, SessionUserProvider authorizator, MappedAction current,
 			TemplateFactory templateFactory, Link link) {
 		this.translator = translator;
 		this.authorizator = authorizator;
@@ -39,9 +38,8 @@ public class ResponseContainer implements TemplateContainer {
 	}
 	
 	@Override
-	public boolean isAllowed(Object identity, String domain, String action) {
-		// TODO return authorizator.isAllowed(Identity.class.cast(identity).getUser(), domain, Action.valueOf(action));
-		return false;
+	public boolean isAllowed(Object identity, Map<String, Object> params) {
+		return authorizator.isAllowed(Identity.class.cast(identity).getUser(), params);
 	}
 	
 	@Override

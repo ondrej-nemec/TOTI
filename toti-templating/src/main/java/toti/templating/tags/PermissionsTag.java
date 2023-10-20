@@ -29,14 +29,16 @@ public class PermissionsTag implements Tag {
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
+		boolean not = params.remove("not") != null;
+		StringBuilder code = new StringBuilder();
+		code.append("new MapInit<String, Object>()");
+		params.forEach((name, value)->{
+			code.append(String.format(".append(\"%s\", %s)", name, value));
+		});
+		code.append(".toMap()");
 		return String.format(
-			"if(%scontainer.isAllowed("
-			+ "getVariable(\"totiIdentity\"),"
-			+ "\"%s\",\"%s\""
-			+ "))",
-            params.containsKey("not") ? "!":"",
-			params.get("domain"),
-			params.get("action").toUpperCase()
+			"if(%scontainer.isAllowed(getVariable(\"totiIdentity\"),%s))",
+            not ? "!":"", code
 		);
 	}
 

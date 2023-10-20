@@ -121,7 +121,7 @@ public class ParametersEndToEndTest {
 			}
 			
 			@Override
-			public boolean isAllowed(Object identity, String domain, String action) {
+			public boolean isAllowed(Object identity, Map<String, Object> params) {
 				return false;
 			}
 			

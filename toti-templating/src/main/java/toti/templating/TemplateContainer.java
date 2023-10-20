@@ -32,6 +32,6 @@ public interface TemplateContainer {
 			params.get("action").toUpperCase()
 		);
 	*/
-	boolean isAllowed(Object identity, String domain, String action);
+	boolean isAllowed(Object identity, Map<String, Object> params);
 	
 }

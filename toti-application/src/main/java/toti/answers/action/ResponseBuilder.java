@@ -11,7 +11,6 @@ import ji.translator.Translator;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.answers.response.Response;
-import toti.security.Action;
 import toti.validation.Validator;
 
 public class ResponseBuilder implements Step1, ResponseAction {
@@ -44,12 +43,6 @@ public class ResponseBuilder implements Step1, ResponseAction {
 	public Step3 authorize(Authorize authorize) {
 		this.authorize = authorize;
 		return this;
-	}
-
-	@Override
-	public Step3 authorize(String domain, Action action) {
-		// TODO dosavadni vyuziti authorizatoru
-		return null;
 	}
 
 	@Override
