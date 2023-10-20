@@ -117,6 +117,7 @@ public class ApplicationFactory {
 		
 		Map<String, TemplateFactory> templateFactories = new HashMap<>();
 		Set<String> trans = new HashSet<>();
+		// TODO if ui extension exists
 		trans.add("toti/translations");
 		List<Task> tasks = new LinkedList<>();
 		if (translator == null) {
