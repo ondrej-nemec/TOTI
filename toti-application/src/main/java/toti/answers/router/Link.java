@@ -38,12 +38,12 @@ public class Link {
 		this.register = register;
 	}
 	
-	private String getPath(Module module, Class<?> controller) {
+	/*private String getPath(Module module, Class<?> controller) {
 		return controller.getName()
 				.replace(".", "/")
 			// TODO	.replace(module.getControllersPath(), "")
 				.replace(controller.getSimpleName(), "");
-	}
+	}*/
 		
 	/**
 	 * Parse string to link

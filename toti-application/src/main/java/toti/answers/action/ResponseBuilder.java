@@ -62,7 +62,7 @@ public class ResponseBuilder implements Step1, ResponseAction {
 				
 				Map<String, Set<String>> errors = validator.validate(params, translator);
 				if (!errors.isEmpty()) {
-					throw new RequestInterruptedException(Response.getJson(StatusCode.BAD_REQUEST, errors));
+					throw new RequestInterruptedException(Response.create(StatusCode.BAD_REQUEST).getJson(errors));
 				}
 			}
 		};

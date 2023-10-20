@@ -8,20 +8,21 @@ import toti.answers.request.SessionUserProvider;
 import toti.answers.router.Link;
 import toti.application.register.MappedAction;
 import toti.templating.TemplateContainer;
+import toti.templating.TemplateException;
 import toti.templating.TemplateFactory;
 
 public class ResponseContainer implements TemplateContainer {
 
 	private final Translator translator;
-	private final SessionUserProvider authorizator;
+	private final SessionUserProvider sup;
 	private final MappedAction current;
 	private final TemplateFactory templateFactory;
 	private final Link link;
 	
-	public ResponseContainer(Translator translator, SessionUserProvider authorizator, MappedAction current,
+	public ResponseContainer(Translator translator, SessionUserProvider sup, MappedAction current,
 			TemplateFactory templateFactory, Link link) {
 		this.translator = translator;
-		this.authorizator = authorizator;
+		this.sup = sup;
 		this.current = current;
 		this.templateFactory = templateFactory;
 		this.link = link;
@@ -39,7 +40,10 @@ public class ResponseContainer implements TemplateContainer {
 	
 	@Override
 	public boolean isAllowed(Object identity, Map<String, Object> params) {
-		return authorizator.isAllowed(Identity.class.cast(identity).getUser(), params);
+		if (sup == null) {
+			throw new TemplateException("No SessionUserProvider set - you can't use isAllowed tag");
+		}
+		return sup.isAllowed(Identity.class.cast(identity).getUser(), params);
 	}
 	
 	@Override

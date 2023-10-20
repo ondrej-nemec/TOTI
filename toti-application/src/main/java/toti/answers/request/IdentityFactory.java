@@ -23,13 +23,13 @@ public class IdentityFactory {
 	
 	private final String defLang;
 	private final Translator translator;
-	private final SessionUserProvider authenticator;
+	private final SessionUserProvider sup;
 	private final List<Session> sessions;
 	
-	public IdentityFactory(Translator translator, String defLang, List<Session> sessions, SessionUserProvider authenticator) {
+	public IdentityFactory(Translator translator, String defLang, List<Session> sessions, SessionUserProvider sup) {
 		this.translator = translator;
 		this.defLang = defLang;
-		this.authenticator = authenticator;
+		this.sup = sup;
 		this.sessions = sessions;
 	}
 	
@@ -40,12 +40,12 @@ public class IdentityFactory {
 	public Identity createIdentity(Headers requestHeaders, MapDictionary<String> queryParameters, RequestParameters bodyParameters, String ip) {
 		Locale locale = getLocale(requestHeaders);
 		Identity identity = new Identity(ip, locale);
-		if (authenticator != null) {
+		if (sup != null) {
 			Optional<String> cookieToken = getCookieToken(requestHeaders);
 			Optional<String> csrfToken = getCsrfToken(bodyParameters);
 			Optional<String> headerToken = getHeaderToken(requestHeaders);
 			
-			Optional<LoggedUser> user = authenticator.getUser(headerToken, cookieToken, csrfToken);
+			Optional<LoggedUser> user = sup.getUser(headerToken, cookieToken, csrfToken);
 			if (user.isPresent()) {
 				identity.setUser(user.get());
 			}
@@ -60,37 +60,39 @@ public class IdentityFactory {
 	}
 	
 	public void finalizeIdentity(Identity identity, Headers responseHeaders) throws IOException {
-		responseHeaders.addHeader(
-			"Set-Cookie", 
-			LOCALE_COOKIE_NAME + "=" + identity.getLocale().getLang() // .toLanguageTag()
-			+ "; Path=/"
-			+ "; SameSite=Strict"
-		);
-		
-		if (identity.isAnonymous() || identity.getUser().getExpirationTime()  < 0) {
+		if (sup != null) {
 			responseHeaders.addHeader(
 				"Set-Cookie", 
-				SESSION_COOKIE_NAME + "="
+				LOCALE_COOKIE_NAME + "=" + identity.getLocale().getLang() // .toLanguageTag()
+				+ "; Path=/"
+				+ "; SameSite=Strict"
+			);
+			
+			if (identity.isAnonymous() || identity.getUser().getExpirationTime()  < 0) {
+				responseHeaders.addHeader(
+					"Set-Cookie", 
+					SESSION_COOKIE_NAME + "="
+						+ "; HttpOnly"
+						+ "; Path=/"
+						+ "; SameSite=Strict"
+						+ "; Max-Age=" + 0
+				);
+			} else if (identity.getUser().getCookieToken().isPresent())  {
+				responseHeaders.addHeader(
+					"Set-Cookie",
+					SESSION_COOKIE_NAME + "=" + identity.getUser().getCookieToken().get()
 					+ "; HttpOnly"
 					+ "; Path=/"
 					+ "; SameSite=Strict"
-					+ "; Max-Age=" + 0
-			);
-		} else if (identity.getUser().getCookieToken().isPresent())  {
-			responseHeaders.addHeader(
-				"Set-Cookie",
-				SESSION_COOKIE_NAME + "=" + identity.getUser().getCookieToken().get()
-				+ "; HttpOnly"
-				+ "; Path=/"
-				+ "; SameSite=Strict"
-				+ "; Max-Age=" + (identity.getUser().getExpirationTime() / 1000)
-			);
+					+ "; Max-Age=" + (identity.getUser().getExpirationTime() / 1000)
+				);
+			}
+			Optional<LoggedUser> user = Optional.empty();
+			if (identity.isPresent()) {
+				user = Optional.of(identity.getUser());
+			}
+			sup.saveUser(user);
 		}
-		Optional<LoggedUser> user = Optional.empty();
-		if (identity.isPresent()) {
-			user = Optional.of(identity.getUser());
-		}
-		authenticator.saveUser(user);
 		sessions.forEach((session)->{
 			session.onRequestEnd(
 				identity, identity.getSessionSpace(session), responseHeaders
