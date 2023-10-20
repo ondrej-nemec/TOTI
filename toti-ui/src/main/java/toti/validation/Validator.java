@@ -19,11 +19,17 @@ import ji.common.exceptions.LogicException;
 import ji.common.structures.DictionaryValue;
 import ji.common.structures.MapInit;
 import ji.common.structures.SortedMap;
+import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.RequestParameters;
 import ji.socketCommunication.http.structures.UploadedFile;
 import ji.translator.Translator;
+import toti.answers.action.RequestInterruptedException;
+import toti.answers.action.Validate;
+import toti.answers.request.Identity;
+import toti.answers.request.Request;
+import toti.answers.response.Response;
 
-public class Validator {
+public class Validator implements Validate {
 	
 	private final List<ItemRules> rules;
 	private final boolean strictList;
@@ -58,6 +64,18 @@ public class Validator {
 		this.onStrictListError = onStrictListError;
 		this.rules = new LinkedList<>();
 		this.defaultRule = defaultRule;
+	}
+	
+	@Override
+	public void validate(Request request, Translator translator, Identity identity) throws RequestInterruptedException {
+		RequestParameters params = new RequestParameters();
+		params.putAll(request.getBodyParams().toMap());
+		params.putAll(request.getQueryParams().toMap());
+		
+		Map<String, Set<String>> errors = validate(params, translator);
+		if (!errors.isEmpty()) {
+			throw new RequestInterruptedException(Response.create(StatusCode.BAD_REQUEST).getJson(errors));
+		}
 	}
 	
 	public Validator addRule(ItemRules rule) {

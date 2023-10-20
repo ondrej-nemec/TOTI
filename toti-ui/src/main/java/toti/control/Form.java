@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import toti.answers.request.Identity;
+import toti.answers.request.IdentityFactory;
 import toti.control.inputs.Hidden;
 import toti.control.inputs.Input;
-import toti.security.Authenticator;
 
 public class Form implements Control {
 
@@ -42,9 +42,12 @@ public class Form implements Control {
 	}
 	
 	public void setCsrfSecured(Identity identity) {
+		if (identity.isAnonymous()) {
+			throw new RuntimeException("For adding CSRF token to form you need logged user. Current Identity is anonymous.");
+		}
 		fields.add(
-			Hidden.input(Authenticator.CSRF_TOKEN_PARAMETER)
-			.setDefaultValue(identity.getCsrfToken().orElse(null))
+			Hidden.input(IdentityFactory.CSRF_TOKEN_PARAMETER)
+			.setDefaultValue(identity.getUser().getCsrfToken().orElse(null))
 			.getInputSettings()
 		);
 	}
