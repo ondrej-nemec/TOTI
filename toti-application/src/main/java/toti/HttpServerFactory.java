@@ -38,7 +38,7 @@ public class HttpServerFactory {
 		this.env = env;
 	}
 	
-	public  HttpServer create() throws Exception {
+	public HttpServer create() throws Exception {
 		// maybe more - separated - loggers??
 		Logger logger = loggerFactory.apply("toti"); //TotiLogger.getLogger("totiServer");
 		Env settings = env.getModule("http");
