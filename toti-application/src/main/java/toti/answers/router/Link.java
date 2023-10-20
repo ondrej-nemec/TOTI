@@ -41,7 +41,7 @@ public class Link {
 	/*private String getPath(Module module, Class<?> controller) {
 		return controller.getName()
 				.replace(".", "/")
-			// TODO	.replace(module.getControllersPath(), "")
+			//	.replace(module.getControllersPath(), "")
 				.replace(controller.getSimpleName(), "");
 	}*/
 		
@@ -109,7 +109,7 @@ public class Link {
 		try {
 			/*Class<?> []classes = new Class[params.size()];
 			for (int i = 0; i < params.size(); i++) {
-				classes[i] = params.get(i).getClass(); // TODO can be null !!
+				classes[i] = params.get(i).getClass(); // can be null !!
 			}
 			method = controller.getMethod(methodName, classes);*/
 			return controller.getMethod(methodName);
@@ -215,7 +215,6 @@ public class Link {
 	}
 	
 	private String parse(String pattern, String module, String path, String controller, String method, List<UrlParam> params) {
-		// TODO lang
 		pattern = parseUrl(pattern, MODULE, module);
 		pattern = parseUrl(pattern, PATH, path);
 		pattern = parseUrl(pattern, CONTROLLER, controller);
@@ -232,7 +231,7 @@ public class Link {
 		pattern = pattern.replaceAll("<[^<>\\(]*\\[([^<>]*)\\][^<>]*>", "") //replace missing optional characters
 				.replace("<", "")
 				.replace(">", "")
-				.replace("getVariable(()-{", "getVariable(()->{") // TODO fix
+				.replace("getVariable(()-{", "getVariable(()->{") // fix
 				;
 		return pattern + (get.toString().length() > 1 ? "?" + get.toString() : "");
 	}

@@ -61,9 +61,6 @@ public class TotiAnswer {
 					return getWelcomePage();
 				}
 				break;
-		// TODO do it or be in extension? 
-		//	case ".js":
-		//	case "/toti.js":
 		}
 		if (extensions.containsKey(url)) {
 			TotiResponse extension = extensions.get(url);
@@ -73,13 +70,6 @@ public class TotiAnswer {
 				responseHeaders, isDevelopReqeust
 			);
 		}
-		/*if (url.startsWith("db")) {
-			return getDbViewer(method, url, params, identity, responseHeaders);
-		}
-		if (url.startsWith("/profiler")) {
-			return getProfiler(method, params, identity);
-		}*/
-		// TODOreturn getTotiFiles(url, identity);
 		return Response.create(StatusCode.NOT_FOUND).getEmpty();
 	}
 	
@@ -107,7 +97,7 @@ public class TotiAnswer {
 	
 	private Response getDbViewer(HttpMethod method, String url, RequestParameters params, Identity identity, Headers responseHeaders) {
 		throw new NotImplementedYet();
-		// TODO return dbViewer.getResponse(method, url.substring(8), params, identity, headers);
+		//  return dbViewer.getResponse(method, url.substring(8), params, identity, headers);
 	}
 	
 	private Response getGenerate(HttpMethod method, String url, RequestParameters params) {
