@@ -8,7 +8,7 @@ import toti.answers.action.ResponseAction;
 @Controller("controllerA")
 public class ControllerA {
 	
-	@Action(path = "index")
+	@Action
 	public ResponseAction index() {
 		return null;
 	}

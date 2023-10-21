@@ -35,7 +35,7 @@ public class RegisterTest {
 		assertEquals(1, module.getChilds().size());
 		assertEquals(0, module.getActions().size());
 		
-		Param controller = module.getChild("A");
+		Param controller = module.getChild("controllerA");
 		assertNotNull(controller);
 		assertEquals(2, controller.getChilds().size());
 		assertEquals(3, controller.getActions().size());

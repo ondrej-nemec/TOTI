@@ -215,7 +215,7 @@ public class LinkTest {
 		register.addController(ControllerA.class, ()->new ControllerA());
 		Link link = new Link(register);
 		assertEquals(expected, link.create(
-			ControllerA.class, ControllerA.class.getMethod("index"), queryParams, pathParams
+			ControllerA.class, ControllerA.class.getMethod("list"), queryParams, pathParams
 		));
 	}
 	 
@@ -224,22 +224,22 @@ public class LinkTest {
 			new Object[] {
 				MapInit.create().toMap(),
 				new Object[] {},
-				"/testingModule/controllerA/index"
+				"/testingModule/controllerA/list"
 			},
 			new Object[] {
 				MapInit.create().toMap(),
 				new Object[] { "a", "b", "c" },
-				"/testingModule/controllerA/index/a/b/c"
+				"/testingModule/controllerA/list/a/b/c"
 			},
 			new Object[] {
 				MapInit.create().append("a", "b").append("c", "d").toMap(),
 				new Object[] {},
-				"/testingModule/controllerA/index?a=b&c=d"
+				"/testingModule/controllerA/list?a=b&c=d"
 			},
 			new Object[] {
 				MapInit.create().append("a", "b").append("c", "d").toMap(), 
 				new Object[] { "a", "b", "c" },
-				"/testingModule/controllerA/index/a/b/c?a=b&c=d"
+				"/testingModule/controllerA/list/a/b/c?a=b&c=d"
 			}
 		};
 	}
