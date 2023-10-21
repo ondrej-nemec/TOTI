@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import ji.common.exceptions.LogicException;
+import ji.common.functions.StackTrace;
 import ji.common.structures.DictionaryValue;
 import ji.common.structures.ObjectBuilder;
 import toti.annotations.Action;
@@ -93,15 +94,17 @@ public class Link {
 	}
 	
 	protected Class<?> getController(String controllerName) throws ClassNotFoundException {
-		Class<?> controller = Class.forName(controllerName);
-		/*if (controllerName == null) {
-			controller = Class.forName(StackTrace.classParent(
+		if (controllerName == null) {
+			String name = StackTrace.classParent(
 				ste->Class.forName(ste.getClassName()).isAnnotationPresent(Controller.class)
-			));
+			);
+			if (name == null) {
+				throw new ClassNotFoundException();
+			}
+			return Class.forName(name);
 		} else {
-			controller = Class.forName(controllerName);
-		}*/
-		return controller;
+			return Class.forName(controllerName);
+		}
 	}
 	
 	protected Method getMethod(Class<?> controller, String methodName, int parameterCount) throws NoSuchMethodException {
@@ -132,7 +135,7 @@ public class Link {
 	
 	/////////////////////////////////////
 	
-	private <T> Method getMethod(Class<T> controller, Function<T, ResponseAction> method) {
+	private <T> Method mockMethod(Class<T> controller, Function<T, ResponseAction> method) {
 		ObjectBuilder<Method> builder = new ObjectBuilder<>();
 		T result = new MockCreator().createMock(controller, builder);
     	method.apply(result);
@@ -140,24 +143,24 @@ public class Link {
 	}
 	
 	public <T> String create(Class<T> controller, Function<T, ResponseAction> method) {
-		return create(controller, getMethod(controller, method), new HashMap<>(), new Object[] {});
+		return create(controller, mockMethod(controller, method), new HashMap<>(), new Object[] {});
 	}
 	
 	public <T> String create(Class<T> controller, Function<T, ResponseAction> method, Object... params) {
-		return create(controller, getMethod(controller, method), new HashMap<>(), params);
+		return create(controller, mockMethod(controller, method), new HashMap<>(), params);
 	}
 	
 	public <T> String create(Class<T> controller, Function<T, ResponseAction> method, Map<String, Object> params) {
-		return create(controller, getMethod(controller, method), params, new Object[] {});
+		return create(controller, mockMethod(controller, method), params, new Object[] {});
 	}
 	
 	public <T> String create(Class<T> controller, Function<T, ResponseAction> method, Map<String, Object> getParams, Object... urlParams) {
-		return create(controller, getMethod(controller, method), getParams, urlParams);
+		return create(controller, mockMethod(controller, method), getParams, urlParams);
 	}
 	
 	/////////////////////////////////////
 	
-	protected <T> String create(Class<T> controller, Method method, Map<String, Object> getParams, Object... pathParams) {
+	protected <T> String create(Class<T> controller, Method method, Map<String, Object> queryParams, Object... pathParams) {
 		if (!controller.isAnnotationPresent(Controller.class)) {
 			throw new LogicException("Class " + controller + " is not TOTI controller");
 		}
@@ -177,9 +180,9 @@ public class Link {
 				uri.append("/");
 				uri.append(o);
 			}
-			if (getParams.size() > 0) {
+			if (queryParams.size() > 0) {
 				StringBuilder get = new StringBuilder();
-				getParams.forEach((k, v)->parseParams(get, k, v));
+				queryParams.forEach((k, v)->parseParams(get, k, v));
 				uri.append("?");
 				uri.append(get.toString());
 			}

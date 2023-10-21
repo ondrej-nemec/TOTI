@@ -1,20 +1,27 @@
 package toti.answers.router;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import ji.common.exceptions.LogicException;
 import ji.common.structures.MapInit;
+import ji.common.structures.ObjectBuilder;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+import test.ControllerA;
+import test.NotController;
 import test.NotRegisteredController;
+import test.TestModule;
+import toti.application.Module;
+import toti.application.register.Param;
 import toti.application.register.Register;
 
 @RunWith(JUnitParamsRunner.class)
@@ -162,22 +169,113 @@ public class LinkTest {
 			}
 		};
 	}
-	// TODO test create from string controler, string method - template tag
-	/*
-	class is not annotated as controller
-	method is not annotated as action
-	register returns null for class module - not registered
-	with and without query params - staci jednoduse - parse je testovano samostatne
-	with and without path params
-	*/
+	
+	@Test(expected = ClassNotFoundException.class)
+	public void testGetControllerThrowsOnWrongClass() throws ClassNotFoundException {
+		Link link = new Link(mock(Register.class));
+		link.getController("test.NotExistingClass");
+	}
+	
+	@Test
+	public void testGetControllerReturnsCorrectClass() throws ClassNotFoundException {
+		Link link = new Link(mock(Register.class));
+		assertEquals(ControllerA.class, link.getController("test.ControllerA"));
+	}
+	
+	@Test
+	public void testGetControllerReturnsClassIfStacktraceIsController() throws ClassNotFoundException {
+		Link link = new Link(mock(Register.class));
+		NotRegisteredController controller = new NotRegisteredController();
+		assertEquals(NotRegisteredController.class, controller.runLinkMethod(()->link.getController(null)));
+	}
 
-	// TODO test parseParams
+	@Test(expected = ClassNotFoundException.class)
+	public void testGetControllerThrowsWithNullNameAndNoController() throws ClassNotFoundException {
+		Link link = new Link(mock(Register.class));
+		link.getController(null);
+	}
+	
+	@Test(expected = LogicException.class)
+	public void testCreateThrowsIfClassIsNotController() throws NoSuchMethodException, SecurityException {
+		Link link = new Link(mock(Register.class));
+		link.create(NotController.class, NotController.class.getMethod("index"), new HashMap<>());
+	}
+	
+	@Test(expected = LogicException.class)
+	public void testCreateThrowsIfMethodNotAction() throws NoSuchMethodException, SecurityException {
+		Link link = new Link(mock(Register.class));
+		link.create(ControllerA.class, ControllerA.class.getMethod("notAction"), new HashMap<>());
+	}
+	
+	@Test
+	@Parameters(method="dataCreate")
+	public void testCreate(Map<String, Object> queryParams, Object[] pathParams, String expected) throws NoSuchMethodException, SecurityException {
+		ObjectBuilder<Module> module = new ObjectBuilder<>(new TestModule());
+		Register register = new Register(new Param(null), module);
+		register.addController(ControllerA.class, ()->new ControllerA());
+		Link link = new Link(register);
+		assertEquals(expected, link.create(
+			ControllerA.class, ControllerA.class.getMethod("index"), queryParams, pathParams
+		));
+	}
+	 
+	public Object[] dataCreate() {
+		return new Object[] {
+			new Object[] {
+				MapInit.create().toMap(),
+				new Object[] {},
+				"/testingModule/controllerA/index"
+			},
+			new Object[] {
+				MapInit.create().toMap(),
+				new Object[] { "a", "b", "c" },
+				"/testingModule/controllerA/index/a/b/c"
+			},
+			new Object[] {
+				MapInit.create().append("a", "b").append("c", "d").toMap(),
+				new Object[] {},
+				"/testingModule/controllerA/index?a=b&c=d"
+			},
+			new Object[] {
+				MapInit.create().append("a", "b").append("c", "d").toMap(), 
+				new Object[] { "a", "b", "c" },
+				"/testingModule/controllerA/index/a/b/c?a=b&c=d"
+			}
+		};
+	}
 
-
-	 @Test
-	 public void test() {
-	// TODO test create from class, function etc
-		 fail("TODO");
-	 }
+	@Test
+	@Parameters(method="dataParseParams")
+	public void testParseParams(String key, Object value, String expected) {
+		StringBuilder result = new StringBuilder();
+		Link link = new Link(mock(Register.class));
+		link.parseParams(result, key, value);
+		assertEquals(expected, result.toString());
+	}
+	
+	public Object[] dataParseParams() {
+		return new Object[] {
+			new Object[] {
+				"key", "value", "key=value"
+			},
+			new Object[] {
+				"list", Arrays.asList("a", "b", "c"), "list[]=a&list[]=b&list[]=c"
+			},
+			new Object[] {
+				"map", MapInit.create().append("a", "b").append("c", "d").toMap(),
+				"map[a]=b&map[c]=d"
+			},
+			new Object[] {
+				"main", Arrays.asList(
+					MapInit.create().append("a1", "b1").append("c1", "d1").toMap(),
+					MapInit.create().append("a2", "b2").append("c2", "d2").toMap()
+				), "main[][a1]=b1&main[][c1]=d1&main[][a2]=b2&main[][c2]=d2"
+			},
+			new Object[] {
+				"main", MapInit.create().append("a", Arrays.asList(1, 2, 3)).toMap(),
+				"main[a][]=1&main[a][]=2&main[a][]=3"
+			}
+		};
+	}
 	
 }

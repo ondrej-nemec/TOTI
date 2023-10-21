@@ -5,10 +5,10 @@ import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.answers.action.ResponseAction;
 
-@Controller("A")
+@Controller("controllerA")
 public class ControllerA {
 	
-	@Action
+	@Action(path = "index")
 	public ResponseAction index() {
 		return null;
 	}
@@ -25,6 +25,10 @@ public class ControllerA {
 	
 	@Action(methods = {HttpMethod.POST, HttpMethod.PUT})
 	public ResponseAction form() {
+		return null;
+	}
+	
+	public ResponseAction notAction() {
 		return null;
 	}
 

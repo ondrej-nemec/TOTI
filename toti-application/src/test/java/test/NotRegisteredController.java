@@ -1,5 +1,6 @@
 package test;
 
+import ji.common.structures.ThrowingSupplier;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.answers.action.ResponseAction;
@@ -33,6 +34,10 @@ public class NotRegisteredController {
 
 	public ResponseAction someMethod(String param1, Integer param2) {
 		return null;
+	}
+	
+	public <T> T runLinkMethod(ThrowingSupplier<T, ClassNotFoundException> run) throws ClassNotFoundException {
+		return run.get();
 	}
 
 }
