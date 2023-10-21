@@ -243,6 +243,26 @@ public class LinkTest {
 			}
 		};
 	}
+	
+	@Test
+	@Parameters(method="dataCreateBase")
+	public void testCreateBase(String module, String controller, String action, String expected) {
+		Link link = new Link(mock(Register.class));
+		assertEquals(expected, link.createBase(module, controller, action));
+	}
+	
+	public Object[] dataCreateBase() {
+		return new Object[] {
+			new Object[] { "m", "c", "a", "/m/c/a" },
+			new Object[] { "", "c", "a", "/c/a" },
+			new Object[] { null, "c", "a", "/c/a" },
+			new Object[] { "m", "", "a", "/m/a" },
+			new Object[] { "m", null, "a", "/m/a" },
+			new Object[] { "m", "c", "", "/m/c" },
+			new Object[] { "m", "c", null, "/m/c" },
+			new Object[] { "", "", "", "" },
+		};
+	}
 
 	@Test
 	@Parameters(method="dataParseParams")

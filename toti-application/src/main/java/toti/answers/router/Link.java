@@ -15,7 +15,6 @@ import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.answers.action.ResponseAction;
 import toti.answers.router.mock.MockCreator;
-import toti.application.Module;
 import toti.application.register.Register;
 
 public class Link {
@@ -168,14 +167,11 @@ public class Link {
 			throw new LogicException("Method " + method + " is not TOTI action");
 		}
 		try {
-			Module module = register.getModuleForClass(controller);
-
-			StringBuilder uri = new StringBuilder("/");
-			uri.append(module.getName());
-			uri.append("/");
-			uri.append(controller.getAnnotation(Controller.class).value());
-			uri.append("/");
-			uri.append(method.getAnnotation(Action.class).path());
+			StringBuilder uri = new StringBuilder(createBase(
+				register.getModuleForClass(controller).getName(),
+				controller.getAnnotation(Controller.class).value(),
+				method.getAnnotation(Action.class).path()
+			));
 			for (Object o : pathParams) {
 				uri.append("/");
 				uri.append(o);
@@ -191,6 +187,24 @@ public class Link {
 		} catch (Exception e) {
 			throw new RuntimeException("Cannot create link", e);
 		}
+	}
+	
+	protected String createBase(String module, String controller, String action) {
+		StringBuilder uri = new StringBuilder();
+		
+		if (module != null && !module.equals("")) {
+			uri.append("/");
+			uri.append(module);
+		}
+		if (controller != null && !controller.equals("")) {
+			uri.append("/");
+			uri.append(controller);
+		}
+		if (action != null && !action.equals("")) {
+			uri.append("/");
+			uri.append(action);
+		}
+		return uri.toString();
 	}
 	
 	protected void parseParams(StringBuilder get, String key, Object value) {
