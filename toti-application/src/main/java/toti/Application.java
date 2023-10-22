@@ -86,12 +86,16 @@ public class Application {
 		return autoStart;
 	}
 	
+	public boolean isRunning() {
+		return isRunning;
+	}
+	
 	/************/
 	
 	
-	public void start() throws Exception {
+	public boolean start() throws Exception {
 		if (isRunning) {
-			return;
+			return false;
 		}
 		if (database != null) {
 			database.createDbIfNotExists();
@@ -101,6 +105,7 @@ public class Application {
 			task.start();
 		}
 		isRunning = true;
+		return true;
 	}
 	
 	public void stop() throws Exception {

@@ -70,7 +70,7 @@ public class Headers {
 				String[] cookie = cookies.split("=", 2);
 				if (cookie.length == 2 && cookie[0].trim().equals(cookieName)) {
 					String value = cookie[1].trim();
-					if (value.equals("null")) {
+					if (value.trim().equalsIgnoreCase("null")) {
 						return Optional.empty();
 					}
 					return Optional.of(value);

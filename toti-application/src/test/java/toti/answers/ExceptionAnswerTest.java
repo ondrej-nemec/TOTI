@@ -18,6 +18,7 @@ import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.Protocol;
 import ji.socketCommunication.http.structures.Request;
+import ji.translator.Locale;
 import ji.translator.Translator;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -36,6 +37,49 @@ public class ExceptionAnswerTest {
 	
 	// TODO test exception/error templates - after testing it in samples
 	// TODO test create real log file - need mock file
+	
+	@Test
+	public void testAnswer() {
+		Request request = new Request(HttpMethod.GET, "/wrong", Protocol.HTTP_2);
+		request.setUriParams("/wrong", MapDictionary.hashMap());
+		
+		Locale locale = mock(Locale.class);
+		
+		Identity identity = mock(Identity.class);
+		when(identity.getLocale()).thenReturn(locale);
+		
+		Translator translator = mock(Translator.class);
+		when(translator.withLocale(any(Locale.class))).thenReturn(translator);
+		
+		
+		Headers reqHeaders = mock(Headers.class);
+		when(reqHeaders.isAsyncRequest()).thenReturn(true);
+		
+		Headers resHeaders = new Headers();
+		resHeaders.addHeader("test", "header");
+		
+		ExceptionAnswer answer = spy(new ExceptionAnswer(
+			mock(Register.class),
+			Arrays.asList("localhost"),
+			mock(TemplateFactory.class),
+			null,
+			translator,
+			mock(Logger.class)
+		));
+		
+		ji.socketCommunication.http.structures.Response expected
+		= new ji.socketCommunication.http.structures.Response(StatusCode.I_AM_A_TEAPORT, Protocol.HTTP_2);
+		expected.addHeader("test", "header");
+		expected.addHeader("content-type", "text/plain");
+		expected.setBody("I'm a teapot".getBytes());
+		
+		assertEquals(expected, answer.answer(
+			request, reqHeaders, StatusCode.I_AM_A_TEAPORT, new Throwable(), identity, null, resHeaders, "charset"
+		));
+		verify(translator, times(1)).withLocale(locale);
+		verify(identity, times(1)).getLocale();
+		verifyNoMoreInteractions(translator);
+	}
 	
 	@Test
 	public void testCustomExceptionResponse() {
