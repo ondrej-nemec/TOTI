@@ -36,6 +36,7 @@ import toti.application.register.Param;
 import toti.application.register.Register;
 import toti.extensions.Extension;
 import toti.extensions.Profiler;
+import toti.extensions.TranslatedExtension;
 import toti.extensions.OnSession;
 import toti.extensions.OnToti;
 import toti.templating.TemplateFactory;
@@ -74,6 +75,7 @@ public class ApplicationFactory {
 	
 	private final List<OnSession> sessions;
 	private final List<OnToti> totiResponses;
+	private final List<String> translationPaths;
 	private Profiler profiler;
 	private SessionUserProvider sessionUserProvider;
 	
@@ -86,6 +88,7 @@ public class ApplicationFactory {
 		
 		this.sessions = new LinkedList<>();
 		this.totiResponses = new LinkedList<>();
+		this.translationPaths = new LinkedList<>();
 	}
 
 	public Application create(List<Module> modules) throws Exception {
@@ -117,8 +120,7 @@ public class ApplicationFactory {
 		
 		Map<String, TemplateFactory> templateFactories = new HashMap<>();
 		Set<String> trans = new HashSet<>();
-		// TODO if ui extension exists
-		trans.add("toti/translations");
+		trans.addAll(translationPaths);
 		List<Task> tasks = new LinkedList<>();
 		if (translator == null) {
 			LanguageSettings langSettings = getLangSettings(env);
@@ -373,6 +375,9 @@ public class ApplicationFactory {
 		}
 		if (extension instanceof Profiler) {
 			this.profiler = (Profiler)extension;
+		}
+		if (extension instanceof TranslatedExtension) {
+			translationPaths.add(TranslatedExtension.class.cast(extension).getTranslationPath());
 		}
 		return this;
 	}
