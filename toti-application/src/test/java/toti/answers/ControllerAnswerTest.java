@@ -55,7 +55,7 @@ import toti.application.register.MappedAction;
 import toti.application.register.Param;
 
 @RunWith(JUnitParamsRunner.class)
-public class ControllerAnswerTest extends TestCase {
+public class ControllerAnswerTest implements TestCase {
 
 	@Test
 	public void testAnswerNoMappedAction() throws Exception {
