@@ -44,7 +44,7 @@ public class TotiAnsserTest {
 				return new TextResponse(StatusCode.ACCEPTED, new Headers(), "extensionResponse");
 			}
 			@Override
-			public List<String> getListeneringUri() {
+			public List<String> getListeningUri() {
 				return Arrays.asList("/ext", "/test");
 			}
 		};

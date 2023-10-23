@@ -10,7 +10,7 @@ import toti.answers.response.Response;
 
 public interface OnToti extends Extension {
 	
-	List<String> getListeneringUri();
+	List<String> getListeningUri();
 	
 	Response getResponse(
 		String uri, Request request,

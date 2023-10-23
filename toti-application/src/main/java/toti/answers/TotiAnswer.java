@@ -31,7 +31,7 @@ public class TotiAnswer {
 		this.templateFactory = templateFactory;
 		this.translator = translator;
 		this.identityFactory = identityFactory;
-		extensions.forEach(e->e.getListeneringUri().forEach(u->this.extensions.put(u, e)));
+		extensions.forEach(e->e.getListeningUri().forEach(u->this.extensions.put(u, e)));
 	}
 	
 	public ji.socketCommunication.http.structures.Response answer(
