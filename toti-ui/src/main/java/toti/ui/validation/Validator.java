@@ -95,7 +95,7 @@ public class Validator implements Validate {
 		return validate("%s", prop, translator);
 	}
 	
-	private Map<String, Set<String>> validate(String format, RequestParameters prop, Translator translator) {
+	public Map<String, Set<String>> validate(String format, RequestParameters prop, Translator translator) {
 		Map<String, Set<String>> errors = new HashMap<>();
 		List<String> names = new ArrayList<>();
 		rules.forEach((rule)->{

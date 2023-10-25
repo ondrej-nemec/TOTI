@@ -39,7 +39,7 @@ public class ItemRules {
 	private Function<Translator, String> onExpectedTypeError = (t)->"";
 	private boolean changeValueByType = false;
 	
-	private Optional<String> regex = Optional.empty();
+	/*private Optional<String> regex = Optional.empty();
 	private Function<Translator, String> onRegexError = (t)->"";
 	private Optional<Integer> maxLength = Optional.empty();
 	private Function<Translator, String> onMaxLengthError = (t)->"";
@@ -59,7 +59,7 @@ public class ItemRules {
 	private Function<Translator, String> onAllowedFileTypesError = (t)->"";
 	
 	private Optional<Collection<Object>> allowedValues = Optional.empty();
-	private Function<Translator, String> onAllowedValuesError = (t)->"";
+	private Function<Translator, String> onAllowedValuesError = (t)->"";*/
 	
 	private Optional<BiFunction<Object, Translator, Set<String>>> customValidation = Optional.empty();
 	
@@ -74,7 +74,7 @@ public class ItemRules {
 		this.required = required;
 		this.onRequiredError = onRequiredError;
 	}
-	
+	/*
 	public ItemRules setAllowedValues(Collection<Object> values) {
 		return setAllowedValues(values, (t)->t.translate(
 			"toti.validation.value-must-be-one-of", 
@@ -223,7 +223,7 @@ public class ItemRules {
 		this.regex = Optional.of(regex);
 		return this;
 	}
-	
+	*/
 	public ItemRules setType(Class<?> clazz) {
 		return setType(clazz, true);
 	}
@@ -300,7 +300,7 @@ public class ItemRules {
 	public boolean getChangeValueByType() {
 		return changeValueByType;
 	}
-
+/*
 	public Optional<String> getRegex() {
 		return regex;
 	}
@@ -324,7 +324,7 @@ public class ItemRules {
 	public Optional<Collection<Object>> getAllowedValues() {
 		return allowedValues;
 	}
-
+*/
 	public BiFunction<Translator, String, String> getOnRequiredError() {
 		return onRequiredError;
 	}
@@ -332,7 +332,7 @@ public class ItemRules {
 	public Function<Translator, String> getOnExpectedTypeError() {
 		return onExpectedTypeError;
 	}
-
+/*
 	public Function<Translator, String> getOnRegexError() {
 		return onRegexError;
 	}
@@ -380,7 +380,7 @@ public class ItemRules {
 	public Function<Translator, String> getOnAllowedFileTypesError() {
 		return onAllowedFileTypesError;
 	}
-
+*/
 	public Optional<Validator> getMapSpecification() {
 		return mapSpecification;
 	}
