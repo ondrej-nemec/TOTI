@@ -1,4 +1,4 @@
-package toti.ui.validation.rule;
+package toti.ui.validation.rules;
 
 import java.util.function.Function;
 

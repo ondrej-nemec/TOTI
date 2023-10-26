@@ -1,21 +1,21 @@
-package toti.ui.validation.rule;
+package toti.ui.validation.rules;
 
 import java.util.function.Function;
 
 import ji.common.structures.DictionaryValue;
 import ji.translator.Translator;
 
-public class MaxValueRule extends SimpleRule<Integer> {
+public class MinValueRule extends SimpleRule<Number> {
 
-	public MaxValueRule(Integer value, Function<Translator, String> onError) {
+	public MinValueRule(Number value, Function<Translator, String> onError) {
 		super(value, onError);
 	}
 
 	@Override
-	protected boolean isErrorToShow(Integer maxValue, Object o) {
+	protected boolean isErrorToShow(Number minValue, Object o) {
 		try {
 			Number value = new DictionaryValue(o).getNumber();
-			return value == null || maxValue.doubleValue() < value.doubleValue();
+			return value == null || minValue.doubleValue() > value.doubleValue();
 		} catch (NullPointerException | ClassCastException | NumberFormatException e) {
 			return true;
 		}

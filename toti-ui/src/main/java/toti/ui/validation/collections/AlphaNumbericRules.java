@@ -1,31 +1,28 @@
-package toti.ui.validation.rules;
+package toti.ui.validation.collections;
 
 import java.util.Collection;
-import java.util.Optional;
 import java.util.function.Function;
 
 import ji.common.exceptions.LogicException;
 import ji.common.structures.MapInit;
 import ji.translator.Translator;
+import toti.ui.validation.rules.AllowedValuesRule;
+import toti.ui.validation.rules.MaxLengthRule;
+import toti.ui.validation.rules.MinLengthRule;
+import toti.ui.validation.rules.RegexRule;
 
 public class AlphaNumbericRules {
 	
-	private Optional<Collection<Object>> allowedValues = Optional.empty();
-	private Function<Translator, String> onAllowedValuesError = (t)->"";
-	private Optional<Integer> maxLength = Optional.empty();
-	private Function<Translator, String> onMaxLengthError = (t)->"";
-	private Optional<Integer> minLength = Optional.empty();
-	private Function<Translator, String> onMinLengthError = (t)->"";
-	
-	private Optional<String> regex = Optional.empty();
-	private Function<Translator, String> onRegexError = (t)->"";
+	private AllowedValuesRule allowedValuesRule;
+	private MaxLengthRule maxLengthRule;
+	private MinLengthRule minLengthRule;
+	private RegexRule regexRule;
 	
 	public AlphaNumbericRules setRegex(String regex, Function<Translator, String> onRegexError) {
-		if (this.regex.isPresent()) {
+		if (this.regexRule != null) {
 			throw new LogicException("You cannot set an already set value");
 		}
-		this.onRegexError = onRegexError;
-		this.regex = Optional.of(regex);
+		this.regexRule = new RegexRule(regex, onRegexError);
 		return this;
 	}
 	
@@ -37,11 +34,10 @@ public class AlphaNumbericRules {
 	}
 	
 	public AlphaNumbericRules setAllowedValues(Collection<Object> values, Function<Translator, String> onAllowedValuesError) {
-		if (this.allowedValues.isPresent()) {
+		if (this.allowedValuesRule != null) {
 			throw new LogicException("You cannot set an already set value");
 		}
-		this.onAllowedValuesError = onAllowedValuesError;
-		this.allowedValues = Optional.of(values);
+		this.allowedValuesRule = new AllowedValuesRule(values, onAllowedValuesError);
 		return this;
 	}
 
@@ -53,11 +49,10 @@ public class AlphaNumbericRules {
 	}
 	
 	public AlphaNumbericRules setMinLength(int minLength, Function<Translator, String> onMinLengthError) {
-		if (this.minLength.isPresent()) {
+		if (this.minLengthRule != null) {
 			throw new LogicException("You cannot set an already set value");
 		}
-		this.onMinLengthError = onMinLengthError;
-		this.minLength = Optional.of(minLength);
+		this.minLengthRule = new MinLengthRule(minLength, onMinLengthError);;
 		return this;
 	}
 	
@@ -69,11 +64,10 @@ public class AlphaNumbericRules {
 	}
 	
 	public AlphaNumbericRules setMaxLength(int maxLength, Function<Translator, String> onMaxLengthError) {
-		if (this.maxLength.isPresent()) {
+		if (this.maxLengthRule != null) {
 			throw new LogicException("You cannot set an already set value");
 		}
-		this.onMaxLengthError = onMaxLengthError;
-		this.maxLength = Optional.of(maxLength);
+		this.maxLengthRule = new MaxLengthRule(maxLength, onMaxLengthError);
 		return this;
 	}
 

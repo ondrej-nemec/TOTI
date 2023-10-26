@@ -1,25 +1,21 @@
-package toti.ui.validation.rules;
+package toti.ui.validation.collections;
 
 import java.util.Collection;
-import java.util.Optional;
 import java.util.function.Function;
 
 import ji.common.exceptions.LogicException;
 import ji.common.structures.MapInit;
 import ji.translator.Translator;
-import toti.ui.validation.rule.FileAllowedTypesRule;
-import toti.ui.validation.rule.FileMaxSizeRule;
-import toti.ui.validation.rule.FileMinSizeRule;
+import toti.ui.validation.rules.FileAllowedTypesRule;
+import toti.ui.validation.rules.FileMaxSizeRule;
+import toti.ui.validation.rules.FileMinSizeRule;
 
 public class FileRules {
-		
-	private Optional<Integer> fileMaxSize = Optional.empty();
-	private Function<Translator, String> onFileMaxSizeError = (t)->"";
-	private Optional<Integer> fileMinSize = Optional.empty();
-	private Function<Translator, String> onFileMinSizeError = (t)->"";
-	private Optional<Collection<Object>> allowedFileTypes = Optional.empty();
-	private Function<Translator, String> onAllowedFileTypesError = (t)->"";
-
+	
+	private FileMaxSizeRule maxSizeRule;
+	private FileMinSizeRule minSizeRule;
+	private FileAllowedTypesRule allowedTypesRule;
+	
 	public FileRules setFileMaxSize(Integer fileMaxSize) {
 		return setFileMaxSize(fileMaxSize, (t)->t.translate(
 			"toti.validation.file-size-can-be-max", 
@@ -28,13 +24,10 @@ public class FileRules {
 	}
 
 	public FileRules setFileMaxSize(Integer fileMaxSize, Function<Translator, String> onFileMaxSizeError) {
-		if (this.fileMaxSize.isPresent()) {
+		if (this.maxSizeRule != null) {
 			throw new LogicException("You cannot set an already set value");
 		}
-		/*this.fileMaxSize = Optional.of(fileMaxSize);
-		this.onFileMaxSizeError = onFileMaxSizeError;
-		*/
-		new FileMaxSizeRule(fileMaxSize, onFileMaxSizeError);
+		this.maxSizeRule = new FileMaxSizeRule(fileMaxSize, onFileMaxSizeError);
 		return this;
 	}
 
@@ -46,12 +39,10 @@ public class FileRules {
 	}
 
 	public FileRules setFileMinSize(Integer fileMinSize, Function<Translator, String> onFileMinSizeError) {
-		if (this.fileMinSize.isPresent()) {
+		if (this.minSizeRule != null) {
 			throw new LogicException("You cannot set an already set value");
 		}
-		/*this.fileMinSize = Optional.of(fileMinSize);
-		this.onFileMinSizeError = onFileMinSizeError;*/
-		new FileMinSizeRule(fileMinSize, onFileMinSizeError);
+		this.minSizeRule = new FileMinSizeRule(fileMinSize, onFileMinSizeError);
 		return this;
 	}
 
@@ -63,12 +54,10 @@ public class FileRules {
 	}
 
 	public FileRules setAllowedFileTypes(Collection<Object> allowedFileTypes, Function<Translator, String> onAllowedFileTypesError) {
-		if (this.allowedFileTypes.isPresent()) {
+		if (this.allowedTypesRule != null) {
 			throw new LogicException("You cannot set an already set value");
 		}
-		/*this.allowedFileTypes = Optional.of(allowedFileTypes);
-		this.onAllowedFileTypesError = onAllowedFileTypesError;*/
-		new FileAllowedTypesRule(allowedFileTypes, onAllowedFileTypesError);
+		this.allowedTypesRule = new FileAllowedTypesRule(allowedFileTypes, onAllowedFileTypesError);
 		return this;
 	}
 	

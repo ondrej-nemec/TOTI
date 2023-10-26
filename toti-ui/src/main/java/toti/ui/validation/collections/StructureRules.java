@@ -1,18 +1,17 @@
-package toti.ui.validation.rules;
+package toti.ui.validation.collections;
 
-import java.util.Optional;
 import java.util.function.Function;
 
 import ji.common.exceptions.LogicException;
 import ji.common.structures.MapInit;
 import ji.translator.Translator;
+import toti.ui.validation.rules.MaxLengthRule;
+import toti.ui.validation.rules.MinLengthRule;
 
 public class StructureRules {
 	
-	private Optional<Integer> maxLength = Optional.empty();
-	private Function<Translator, String> onMaxLengthError = (t)->"";
-	private Optional<Integer> minLength = Optional.empty();
-	private Function<Translator, String> onMinLengthError = (t)->"";
+	private MaxLengthRule maxLengthRule;
+	private MinLengthRule minLengthRule;
 
 	public StructureRules setMinLength(int minLength) {
 		return setMinLength(minLength, (t)->t.translate(
@@ -22,11 +21,10 @@ public class StructureRules {
 	}
 	
 	public StructureRules setMinLength(int minLength, Function<Translator, String> onMinLengthError) {
-		if (this.minLength.isPresent()) {
+		if (this.minLengthRule != null) {
 			throw new LogicException("You cannot set an already set value");
 		}
-		this.onMinLengthError = onMinLengthError;
-		this.minLength = Optional.of(minLength);
+		this.minLengthRule = new MinLengthRule(minLength, onMinLengthError);
 		return this;
 	}
 	
@@ -38,11 +36,10 @@ public class StructureRules {
 	}
 	
 	public StructureRules setMaxLength(int maxLength, Function<Translator, String> onMaxLengthError) {
-		if (this.maxLength.isPresent()) {
+		if (this.maxLengthRule != null) {
 			throw new LogicException("You cannot set an already set value");
 		}
-		this.onMaxLengthError = onMaxLengthError;
-		this.maxLength = Optional.of(maxLength);
+		this.maxLengthRule = new MaxLengthRule(maxLength, onMaxLengthError);
 		return this;
 	}
 	

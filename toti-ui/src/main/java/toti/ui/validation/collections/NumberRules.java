@@ -1,18 +1,17 @@
-package toti.ui.validation.rules;
+package toti.ui.validation.collections;
 
-import java.util.Optional;
 import java.util.function.Function;
 
 import ji.common.exceptions.LogicException;
 import ji.common.structures.MapInit;
 import ji.translator.Translator;
+import toti.ui.validation.rules.MaxValueRule;
+import toti.ui.validation.rules.MinValueRule;
 
 public class NumberRules extends AlphaNumbericRules {
 	
-	private Optional<Number> maxValue = Optional.empty();
-	private Function<Translator, String> onMaxValueError = (t)->"";
-	private Optional<Number> minValue = Optional.empty();
-	private Function<Translator, String> onMinValueError = (t)->"";
+	private MaxValueRule maxValueRule;
+	private MinValueRule minValueRule;
 
 	public NumberRules setMaxValue(Number maxValue) {
 		return setMaxValue(maxValue, (t)->t.translate(
@@ -22,11 +21,10 @@ public class NumberRules extends AlphaNumbericRules {
 	}
 	
 	public NumberRules setMaxValue(Number maxValue, Function<Translator, String> onMaxValueError) {
-		if (this.maxValue.isPresent()) {
+		if (this.maxValueRule != null) {
 			throw new LogicException("You cannot set an already set value");
 		}
-		this.onMaxValueError = onMaxValueError;
-		this.maxValue = Optional.of(maxValue);
+		this.maxValueRule = new MaxValueRule(maxValue, onMaxValueError);
 		return this;
 	}
 	
@@ -38,11 +36,10 @@ public class NumberRules extends AlphaNumbericRules {
 	}
 	
 	public NumberRules setMinValue(Number minValue, Function<Translator, String> onMinValueError) {
-		if (this.minValue.isPresent()) {
+		if (this.minValueRule != null) {
 			throw new LogicException("You cannot set an already set value");
 		}
-		this.onMinValueError = onMinValueError;
-		this.minValue = Optional.of(minValue);
+		this.minValueRule = new MinValueRule(minValue, onMinValueError);
 		return this;
 	}
 	
