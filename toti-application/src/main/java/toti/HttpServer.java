@@ -59,7 +59,18 @@ public class HttpServer {
 		}
 		return true;
 	}
+/*
+	// TODO
+	public void makeApplicationVisible(String host, Application application) {
+		consumer.addApplication(application.getResponseFactory(), host, application.getAliases());
+		logger.info("Application " + host + " is visible now"); // TODO print aliases too?
+	}
 
+	public void makeApplicationHidden(String host, Application application) {
+		consumer.removeApplication(host);
+		logger.info("Application " + host + " is hidden now");
+	}
+*/
 	public void start() throws Exception {
 		logger.info("Server is starting");
 		server.start();
@@ -69,6 +80,7 @@ public class HttpServer {
 			}
 		});
 		logger.info("Server is running");
+		logger.info("Available applications: " + applications.keySet());
 		isRunning = true;
 	}
 	
