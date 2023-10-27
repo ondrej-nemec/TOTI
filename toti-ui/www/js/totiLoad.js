@@ -1,4 +1,4 @@
-/* TOTI Load version 1.0.1 */
+/* TOTI Load version 1.0.2 */
 var totiLoad = {
 	anonymous: function(url, method, headers = {}, urlData = {}, bodyData = {}) {
 		return totiLoad._load(url, method, headers, urlData, bodyData);
@@ -23,10 +23,15 @@ var totiLoad = {
 						...urlData,
 						...bodyData
 					};
+					var auxData = {};
+					for (const[name, value] of Object.entries(urlData)) {
+						totiLoad.parseParams(auxData, name, value);
+					}
+					urlData = auxData;
 				}
 			}
 			if (urlData !== null && urlData !== {}) {
-				url = url + "?" + ((bodyData instanceof URLSearchParams) ? bodyData : new URLSearchParams(urlData)).toString();
+				url = url + "?" + ((urlData instanceof URLSearchParams) ? urlData : new URLSearchParams(urlData)).toString();
 			}
 			xhr.open(method, url); /* method*/
 
@@ -74,6 +79,21 @@ var totiLoad = {
 				xhr.send(new URLSearchParams(bodyData).toString());
 			}
 		});
+	},
+	parseParams: function(result, name, value) {
+		if (value === null) {
+			/* ignore */
+		} else if (Array.isArray(value)) {
+			value.forEach((item)=>{
+				totiLoad.parseParams(result, name + '[]', item);
+			});
+		} else if (typeof value === 'object') {
+			for(const[key, item] of Object.entries(value)) {
+				totiLoad.parseParams(result, name + '[' + key + ']', item);
+			}
+		} else {
+			result[name] = value;
+		}
 	},
 	getTotiHeaders: function() {
 		var headers = {};
