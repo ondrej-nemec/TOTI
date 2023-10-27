@@ -24,7 +24,7 @@ public class HttpServer {
 	
 	private boolean isRunning = false;
 	
-	protected  HttpServer(
+	protected HttpServer(
 			Server server, Env env, String charset,
 			ServerConsumer consumer,
 			Function<String, Logger> loggerFactory, Logger logger) {
