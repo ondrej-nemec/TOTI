@@ -4,8 +4,8 @@ public enum FilterMode {
 
 	LIKE("%%%s%%", null), 
 	EQUALS("%s", null), 
-	STARTS_WITH("%%%s", null), 
-	ENDS_WITH("%s%%", null),
+	STARTS_WITH("%s%%", null), 
+	ENDS_WITH("%%%s", null),
     MORE_OR_EQUALS("%s", ">="),
     MORE("%s", ">"),
     LESS_OR_EQUALS("%s", "<="),
