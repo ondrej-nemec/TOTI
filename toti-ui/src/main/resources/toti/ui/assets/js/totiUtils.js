@@ -1,4 +1,4 @@
-/* TOTI Utils version 1.0.0 */
+/* TOTI Utils version 1.0.1 */
 var totiUtils = {
 	/* TODO is used? */
 	sleep: function(ms) {
@@ -14,7 +14,7 @@ var totiUtils = {
 		return string;
 	},
 	browser: function() {
-		console.warning("totiUtils.browser() is deprecated");
+		console.warn("totiUtils.browser() is deprecated");
 		/* https://stackoverflow.com/a/9851769 */
 		/* Opera 8.0+ */
 		if ((!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0) {
