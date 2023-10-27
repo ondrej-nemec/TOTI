@@ -140,11 +140,13 @@ public interface GridEntityDao<T extends Entity>{
              return String.format("unacce", value);
         }
         if (filter.isIgnoreDiacritics()) {
+           //   result = String.format("unaccent(%s)", result);
              return String.format("%s COLLATE latin1_general_cs", value);
         }*/
 
         if (filter.isCI()) {
-             return String.format("lower(%s)", value);
+        	// result = String.format("lower(%s)", result);
+            return String.format("lower(%s)", value);
         }
         return value;
 
