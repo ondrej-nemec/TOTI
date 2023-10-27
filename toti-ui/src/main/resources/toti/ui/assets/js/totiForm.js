@@ -1,4 +1,4 @@
-/* TOTI Form version 1.1.4 */
+/* TOTI Form version 1.1.5 */
 class TotiForm {
 
 	constructor(config) {
@@ -510,6 +510,7 @@ class TotiForm {
 
 	setValues(loadConfig, formUnique, container, setValue) {
 		var form = this;
+		totiDisplay.fadeIn();
 		totiLoad.load(loadConfig.url, loadConfig.method).then(function(values) {
 			if (loadConfig.hasOwnProperty("before") && loadConfig.before !== null) {
 				totiUtils.execute(loadConfig.before, [values, form]);
@@ -518,6 +519,8 @@ class TotiForm {
 			if (loadConfig.hasOwnProperty("after") && loadConfig.after !== null) {
 				totiUtils.execute(loadConfig.after, [values, form]);
 			}
+		}).then(()=>{ 
+    		totiDisplay.fadeOut();
 		}).catch(function(error) {
 			if (loadConfig.onFailure === null) {
 				switch(error.status) {
@@ -530,6 +533,7 @@ class TotiForm {
 			} else {
 				totiUtils.execute(loadConfig.onFailure, [error, form]);
 			}
+			totiDisplay.fadeOut();
 		});
 	}
 
