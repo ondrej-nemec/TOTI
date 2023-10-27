@@ -17,13 +17,14 @@ import toti.answers.action.Validate;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.answers.response.Response;
+import toti.ui.validation.collections.RulesCollection;
 import toti.ui.validation.rules.Rule;
 
 public class Validator implements Validate {
 	
-	private final List<ItemRules> rules;
+	private final List<RulesCollection> rules;
 	private final boolean strictList;
-	private final Optional<ItemRules> defaultRule;
+	private final Optional<RulesCollection> defaultRule;
 	private final BiFunction<Translator, List<String>, String> onStrictListError;
 	private Optional<GlobalFunction> globalFunc = Optional.empty();
 
@@ -38,18 +39,18 @@ public class Validator implements Validate {
 		this(strictList, Optional.empty(), onStrictListError);
 	}
 	
-	public Validator(ItemRules defaultRule) {
+	public Validator(RulesCollection defaultRule) {
 		this(false, Optional.of(defaultRule), (trans, params)->trans.translate(
 			"toti.validation.parameter-not-match-default-rule",
 			new MapInit<String, Object>().append("parameter", params).toMap()
 		)); // "Parameters not match default rule: " + params
 	}
 	
-	public Validator(ItemRules defaultRule, BiFunction<Translator, List<String>, String> onStrictListError) {
+	public Validator(RulesCollection defaultRule, BiFunction<Translator, List<String>, String> onStrictListError) {
 		this(false, Optional.of(defaultRule), onStrictListError);
 	}
 	
-	private Validator(boolean strictList, Optional<ItemRules> defaultRule, BiFunction<Translator, List<String>, String> onStrictListError) {
+	private Validator(boolean strictList, Optional<RulesCollection> defaultRule, BiFunction<Translator, List<String>, String> onStrictListError) {
 		this.strictList = strictList;
 		this.onStrictListError = onStrictListError;
 		this.rules = new LinkedList<>();
@@ -68,7 +69,7 @@ public class Validator implements Validate {
 		}
 	}
 	
-	public Validator addRule(ItemRules rule) {
+	public Validator addRule(RulesCollection rule) {
 		rules.add(rule);
 		return this;
 	}
@@ -117,7 +118,7 @@ public class Validator implements Validate {
 				onStrictListError.apply(translator, notChecked.stream().map(a->String.format(format, a)).collect(Collectors.toList()))
 		);*/
 		if (!strictList && defaultRule.isPresent()) {
-			ItemRules rule = defaultRule.get();
+			RulesCollection rule = defaultRule.get();
 			notChecked.forEach((notCheckedName)->{
 				iterateRules(format, rule, prop, result, translator);
 				/*swichRules(String.format(format, notCheckedName), notCheckedName, rule, errors, prop, translator);
@@ -134,21 +135,23 @@ public class Validator implements Validate {
 	}
 	
 	private String iterateRules(
-			String format, ItemRules itemRules, RequestParameters prop,
+			String format, RulesCollection collection, RequestParameters prop,
 			ValidationResult result, Translator translator) {
-		ValidationItem item = new ValidationItem(prop.getValue(itemRules.getName()), result, translator);
-		List<Rule> rules = null; // TODO
-		for (Rule singleRule : rules) {
-			singleRule.check(String.format(format, itemRules.getName()), itemRules.getName(), item);
+		ValidationItem item = new ValidationItem(prop.getValue(collection.getName()), result, translator);
+		for (Rule singleRule : collection.getRules()) {
+			singleRule.check(String.format(format, collection.getName()), collection.getName(), item);
 			if (!item.canValidationContinue()) {
 				break;
 			}
 		}
 		//prop.put(rule.getName(), item.getNewValue());
-		String newName = itemRules.getRename().orElse(itemRules.getName());
+		String newName = collection.getRename().orElse(collection.getName());
 
-		prop.remove(itemRules.getName());
-		prop.put(newName, itemRules.getChangeValue().apply(item.getNewValue()));
+		prop.remove(collection.getName());
+		prop.put(
+			newName,
+			collection.getChangeValue().orElse(o->o).apply(item.getNewValue())
+		);
 		
 		return newName;
 	}

@@ -1,17 +1,32 @@
 package toti.ui.validation.collections;
 
+import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import ji.common.exceptions.LogicException;
 import ji.common.structures.MapInit;
 import ji.translator.Translator;
+import toti.ui.validation.Validator;
 import toti.ui.validation.rules.MaxLengthRule;
 import toti.ui.validation.rules.MinLengthRule;
+import toti.ui.validation.rules.Rule;
+import toti.ui.validation.rules.StructureListRule;
+import toti.ui.validation.rules.StructureMapRule;
+import toti.ui.validation.rules.StructureSortedMapRule;
 
-public class StructureRules {
-	
+public class StructureRules extends AbstractBaseRules<StructureRules> {
+
 	private MaxLengthRule maxLengthRule;
 	private MinLengthRule minLengthRule;
+	
+	private StructureMapRule mapRule;
+	private StructureListRule listRule;
+	private StructureSortedMapRule sortedMapRule;
+	
+	public StructureRules(String name, boolean required, BiFunction<Translator, String, String> onRequiredError) {
+		super(name, required, onRequiredError);
+	}
 
 	public StructureRules setMinLength(int minLength) {
 		return setMinLength(minLength, (t)->t.translate(
@@ -41,6 +56,47 @@ public class StructureRules {
 		}
 		this.maxLengthRule = new MaxLengthRule(maxLength, onMaxLengthError);
 		return this;
+	}
+	
+	public StructureRules setSortedMapRule(Validator validator) {
+		this.sortedMapRule = new StructureSortedMapRule(validator, (t)->"");
+		return this;
+	}
+	
+	public StructureRules setMapRule(Validator validator) {
+		this.mapRule = new StructureMapRule(validator, (t)->"");
+		return this;
+	}
+	
+	public StructureRules setListRule(Validator validator) {
+		this.listRule = new StructureListRule(validator, (t)->"");
+		return this;
+	}
+
+	@Override
+	protected StructureRules getThis() {
+		return this;
+	}
+	
+	@Override
+	public List<Rule> getRules() {
+		List<Rule> rules = super.getRules();
+		if (maxLengthRule != null) {
+			rules.add(maxLengthRule);
+		}
+		if (minLengthRule != null) {
+			rules.add(minLengthRule);
+		}
+		if (sortedMapRule != null) {
+			rules.add(sortedMapRule);
+		}
+		if (mapRule != null) {
+			rules.add(mapRule);
+		}
+		if (listRule != null) {
+			rules.add(listRule);
+		}
+		return rules;
 	}
 	
 }

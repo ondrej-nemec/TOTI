@@ -1,6 +1,8 @@
 package toti.ui.validation.collections;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import ji.common.exceptions.LogicException;
@@ -9,12 +11,17 @@ import ji.translator.Translator;
 import toti.ui.validation.rules.FileAllowedTypesRule;
 import toti.ui.validation.rules.FileMaxSizeRule;
 import toti.ui.validation.rules.FileMinSizeRule;
+import toti.ui.validation.rules.Rule;
 
-public class FileRules {
-	
+public class FileRules extends AbstractBaseRules<FileRules> {
+
 	private FileMaxSizeRule maxSizeRule;
 	private FileMinSizeRule minSizeRule;
 	private FileAllowedTypesRule allowedTypesRule;
+	
+	public FileRules(String name, boolean required, BiFunction<Translator, String, String> onRequiredError) {
+		super(name, required, onRequiredError);
+	}
 	
 	public FileRules setFileMaxSize(Integer fileMaxSize) {
 		return setFileMaxSize(fileMaxSize, (t)->t.translate(
@@ -59,6 +66,26 @@ public class FileRules {
 		}
 		this.allowedTypesRule = new FileAllowedTypesRule(allowedFileTypes, onAllowedFileTypesError);
 		return this;
+	}
+
+	@Override
+	protected FileRules getThis() {
+		return this;
+	}
+	
+	@Override
+	public List<Rule> getRules() {
+		List<Rule> rules = super.getRules();
+		if (maxSizeRule != null) {
+			rules.add(maxSizeRule);
+		}
+		if (minSizeRule != null) {
+			rules.add(minSizeRule);
+		}
+		if (allowedTypesRule != null) {
+			rules.add(allowedTypesRule);
+		}
+		return rules;
 	}
 	
 }

@@ -1,5 +1,7 @@
 package toti.ui.validation.collections;
 
+import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import ji.common.exceptions.LogicException;
@@ -7,11 +9,16 @@ import ji.common.structures.MapInit;
 import ji.translator.Translator;
 import toti.ui.validation.rules.MaxValueRule;
 import toti.ui.validation.rules.MinValueRule;
+import toti.ui.validation.rules.Rule;
 
-public class NumberRules extends AlphaNumbericRules {
-	
+public class NumberRules extends AbstractAlphaNumbericRules<NumberRules> {
+
 	private MaxValueRule maxValueRule;
 	private MinValueRule minValueRule;
+	
+	public NumberRules(String name, boolean required, BiFunction<Translator, String, String> onRequiredError) {
+		super(name, required, onRequiredError);
+	}
 
 	public NumberRules setMaxValue(Number maxValue) {
 		return setMaxValue(maxValue, (t)->t.translate(
@@ -41,6 +48,23 @@ public class NumberRules extends AlphaNumbericRules {
 		}
 		this.minValueRule = new MinValueRule(minValue, onMinValueError);
 		return this;
+	}
+	
+	@Override
+	protected NumberRules getThis() {
+		return this;
+	}
+	
+	@Override
+	public List<Rule> getRules() {
+		List<Rule> rules = super.getRules();
+		if (minValueRule != null) {
+			rules.add(minValueRule);
+		}
+		if (maxValueRule != null) {
+			rules.add(maxValueRule);
+		}
+		return rules;
 	}
 	
 }

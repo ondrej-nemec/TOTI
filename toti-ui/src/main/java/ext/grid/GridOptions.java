@@ -73,8 +73,8 @@ public class GridOptions implements Entity {
                      type = String.class;
                 }
                 filters.addRule(
-                     ItemRules.forName(column.getName(), false).setType(type)
-                     .setChangeValue((v)->{
+                     ItemRules.objectRules(column.getName(), false).setType(type)
+                     .changeValue((v)->{
                          if (v == null) {
                               return null;
                          }
@@ -91,9 +91,9 @@ public class GridOptions implements Entity {
             }
 			if (column.isUseInSorting()) {
 				sorting.addRule(
-					ItemRules.forName(column.getName(), false).setType(boolean.class)
+					ItemRules.booleanRules(column.getName(), false)
 					//setAllowedValues(Arrays.asList("DESC", "ASC"))
-					.setChangeValue((v)->{
+					.changeValue((v)->{
 						if (v == null) {
 							return null;
 						}
@@ -103,10 +103,10 @@ public class GridOptions implements Entity {
 			}
 		});
 		return new Validator(true)
-			.addRule(ItemRules.forName("pageIndex", true).setType(Integer.class))
-			.addRule(ItemRules.forName("pageSize", true).setType(Integer.class))
-			.addRule(ItemRules.forName("filters", true).setSortedMapSpecification(filters))
-			.addRule(ItemRules.forName("sorting", true).setSortedMapSpecification(sorting));
+			.addRule(ItemRules.numberRules("pageIndex", true, Integer.class))
+			.addRule(ItemRules.numberRules("pageSize", true, Integer.class))
+			.addRule(ItemRules.sortedMapRules("filters", true, filters))
+			.addRule(ItemRules.sortedMapRules("sorting", true, sorting));
 	}
 
 }
