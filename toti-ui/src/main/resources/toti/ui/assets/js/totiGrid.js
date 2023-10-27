@@ -1,4 +1,4 @@
-/* TOTI Grid version 1.1.13 */
+/* TOTI Grid version 1.1.14 */
 class TotiGrid {
 
 	cookieName = "grid-cache";
@@ -489,7 +489,14 @@ class TotiGrid {
 						});
 						grid.template.addCell(grid.gridUnique, grid.container, row, column.name, buttons, 2);
 					} else if (column.hasOwnProperty("renderer")) {
-						var renderer = totiUtils.execute(column.renderer, [rowData[column.name], rowData]);
+						var value = rowData[column.name];
+						var rendererData = [value, rowData];
+						if (column.hasOwnProperty("filter") && column.filter.hasOwnProperty("renderOptions")) {
+							if (column.filter.renderOptions.hasOwnProperty(value)) {
+								rendererData.push(column.filter.renderOptions[value]);
+							}
+						}
+						var renderer = totiUtils.execute(column.renderer, rendererData);
 						grid.template.addCell(grid.gridUnique, grid.container, row, column.name, renderer, 0);
 					} else if (!rowData.hasOwnProperty(column.name)) {
 						grid.template.addCell(grid.gridUnique, grid.container, row, column.name, "", 0);

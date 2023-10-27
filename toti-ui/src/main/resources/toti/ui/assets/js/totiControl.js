@@ -1,4 +1,4 @@
-/* TOTI Control version 1.1.4 */
+/* TOTI Control version 1.1.5 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -350,7 +350,7 @@ var totiControl = {
 					/* render options for grid */
 					var renderOptions = {};
 					options.forEach(function(option) {
-						renderOptions[option.value] = option.title;
+						renderOptions[option.value] = option;
 					});
 					params.renderOptions = renderOptions;
 					return options;
