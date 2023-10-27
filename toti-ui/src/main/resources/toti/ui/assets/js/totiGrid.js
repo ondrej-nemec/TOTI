@@ -1,4 +1,4 @@
-/* TOTI Grid version 1.1.14 */
+/* TOTI Grid version 1.1.15 */
 class TotiGrid {
 
 	cookieName = "grid-cache";
@@ -529,7 +529,7 @@ class TotiGrid {
 			} else {
 				sortedFamily.forEach((identifier)=>{
 					var mainItem = family[identifier];
-					if (mainItem.parent === null) {
+					if (mainItem.parent === null || !family.hasOwnProperty(mainItem.parent)) {
 						function addChilds(id, item, level) {
 							family[id].parentLevel = level;
 							onRowItem(family[id].data);
