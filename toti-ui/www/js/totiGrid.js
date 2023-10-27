@@ -504,7 +504,7 @@ class TotiGrid {
 						var value = rowData[column.name];
 						if (value !== null) {
                             if (column.filter.renderOptions.hasOwnProperty(value)) {
-                                value = column.filter.renderOptions[value];
+                                value = column.filter.renderOptions[value].title;
                             }
 						}
 						grid.template.addCell(grid.gridUnique, grid.container, row, column.name, value, 0);
