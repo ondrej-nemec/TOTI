@@ -1,4 +1,4 @@
-/* TOTI Control version 1.1.5 */
+/* TOTI Control version 1.2.1 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -64,6 +64,8 @@ var totiControl = {
 			return totiControl.inputs._createOptionalInput("color", attributes);
 		} else if (type === 'password' && attributes.hasOwnProperty('optional') && attributes.optional === true) {
 			return totiControl.inputs._createOptionalInput("password", attributes);
+		} else if (type === 'text') {
+			return totiControl.inputs.text(attributes);
 		} else {
 			return totiControl.inputs._createInput(type, attributes);
 		}
@@ -424,6 +426,57 @@ var totiControl = {
 				
 			}
 			return option;
+		},
+		text: (attributes)=>{
+			if (!attributes.hasOwnProperty('load') && !attributes.hasOwnProperty('options')) {
+				return totiControl.inputs._createInput('text', attributes);
+			}
+			var load = attributes.hasOwnProperty("load") ? attributes.load : null;
+			delete attributes.load;
+			var options = attributes.hasOwnProperty('options') ? attributes.options : [];
+			delete attributes.options;
+
+			var input = totiControl.inputs._createInput('text', attributes);
+
+			var fieldset = document.createElement('fieldset');
+			fieldset.clear = ()=>{}; /* empty function for grid */
+
+			var datalist = document.createElement('datalist');
+			var id = attributes.name + "_datalist";
+			datalist.setAttribute('id', id);
+			input.setAttribute('list', id);
+
+			function addOption(res) {
+				res.forEach((option)=>{
+					datalist.appendChild(totiControl.inputs.option({
+						value: typeof option === 'object' ? option.value : option
+					}));
+				});
+			}
+
+			new Promise(function (resolve, reject) {
+				datalist.innerHTML = '';
+				resolve(options);
+			})
+			.then(addOption)
+			.then(function () {
+				if (load !== null) {
+					var cacheKey = JSON.stringify({
+						"url": load.url,
+						"method": load.method,
+						"params": load.params
+					});
+					if (!totiControl.inputs._selectCache.hasOwnProperty(cacheKey)) {
+						totiControl.inputs._selectCache[cacheKey] = totiLoad.load(load.url, load.method, {}, load.params);
+					}
+					return totiControl.inputs._selectCache[cacheKey];
+				}
+				return [];
+			}).then(addOption);
+
+			fieldset.appendChild(input);
+			fieldset.appendChild(datalist);
+			return fieldset;
 		},
 		datetime: function(attributes) {
 			var dateAttr = {};

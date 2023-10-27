@@ -1,5 +1,7 @@
 package toti.ui.control.inputs;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import toti.ui.control.columns.Filter;
@@ -9,6 +11,10 @@ public class Text implements Input, Filter {
 	private Integer size = null;
 	private Integer maxLength = null;
 	private Integer minLength = null;
+	
+	private Map<String, Object> load;
+	private List<Object> options;
+	private boolean autocomplete = true;
 	
 	private final Wrapper wrapper;
 	
@@ -37,6 +43,28 @@ public class Text implements Input, Filter {
 
 	public Text setMinLength(Integer minLength) {
 		this.minLength = minLength;
+		return this;
+	}
+
+	public Text disableAutocomplete() {
+		this.autocomplete = false;
+		return this;
+	}
+	
+	public Text setLoadData(String url, String method) {
+		return setLoadData(url, method, new HashMap<>());
+	}
+
+	public Text setLoadData(String url, String method, Map<String, String> params) {
+		this.load = new HashMap<>();
+		load.put("url", url);
+		load.put("method", method);
+		load.put("params", params);
+		return this;
+	}
+
+	public Text setOptions(List<Object> options) {
+		this.options = options;
 		return this;
 	}
 
@@ -93,6 +121,15 @@ public class Text implements Input, Filter {
 		}
 		if (minLength != null) {
 			set.put("minlength", minLength);
+		}
+		if (load != null) {
+			set.put("load", load);
+		}
+		if (options != null) {
+			set.put("options", options);
+		}
+		if (!autocomplete) {
+			set.put("autocomplete", "off");
 		}
 		return set;
 	}
