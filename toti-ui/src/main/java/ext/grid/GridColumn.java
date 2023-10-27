@@ -1,7 +1,5 @@
 package ext.grid;
 
-import ext.FilterMode;
-
 public class GridColumn {
 
 	private final String name;
@@ -23,6 +21,8 @@ public class GridColumn {
 		this.useInFilter = true;
 		this.useInSorting = true;
 		this.sortingName = name;
+		this.isCI = clazz.equals(String.class);
+		this.ignoreDiacritics = clazz.equals(String.class);
 	}
 	
 	public GridColumn setSortingName(String sortingName) {
