@@ -1,4 +1,4 @@
-/* TOTI Grid version 1.1.15 */
+/* TOTI Grid version 1.1.16 */
 class TotiGrid {
 
 	cookieName = "grid-cache";
@@ -480,6 +480,9 @@ class TotiGrid {
 							buttons.push(button);
 							var originClick = button.onclick;
 							button.onclick = function(e) {
+								if (originClick === null) {
+									return; /* next part is for async - they have onclick */
+								}
 								originClick(e).then(function(res) {
 									if (res) {
 										grid.refreshData(clearPrevious);
