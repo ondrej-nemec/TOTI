@@ -1,4 +1,4 @@
-/* TOTI Form default template version 0.1.0 */
+/* TOTI Form default template version 0.1.1 */
 /* can be overriden */
 var totiFormDefaultTemplate = {
 	getContainer: function(selector, formUnique, editable) {
@@ -85,7 +85,9 @@ var totiFormDefaultTemplate = {
 		var row = document.createElement("tr");
 
 		var labelCell = document.createElement('td');
-		labelCell.innerText = label;
+		if (label !== undefined) {
+			labelCell.innerText = label;
+		}
 
 		var inputCell = document.createElement('td');
 		inputCell.setAttribute('name', name);
