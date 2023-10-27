@@ -1,4 +1,4 @@
-/* TOTI Display version 1.0.1 */
+/* TOTI Display version 1.1.0 */
 var totiDisplay = {
 	prompt: function(message, defValue = "") {
 		return new Promise((resolve)=>{
@@ -79,6 +79,8 @@ var totiDisplay = {
 	},
 	/**********/
 	isFade: 0,
+	showFade: function(fade) {},
+	removeFade: function(fade) {},
 	fadeIn: function() {
 		var fadeElement = document.querySelector("#toti-fade-in");
 		if (fadeElement === null) {
@@ -95,7 +97,7 @@ var totiDisplay = {
 			fade.onclick = function() {}; /* prevent click */
 
 			document.body.appendChild(fade);
-			/* TODO loading picture */
+			totiDisplay.showFade(fade);
 		}
 		totiDisplay.isFade++;
 	},
@@ -103,6 +105,7 @@ var totiDisplay = {
 		totiDisplay.isFade--;
 		if (totiDisplay.isFade < 1) {
 			var fadeElement = document.querySelector("#toti-fade-in");
+			totiDisplay.removeFade(fadeElement);
 			if (fadeElement !== null) {
 				fadeElement.remove();
 			}
