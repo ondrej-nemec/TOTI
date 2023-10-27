@@ -11,8 +11,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import ext.Entity;
-import ext.Filter;
-import ext.FilterMode;
+import ext.grid.Filter;
+import ext.grid.FilterMode;
 import ext.grid.GridEntityDao;
 import ext.grid.Sort;
 import ji.common.structures.MapInit;

@@ -9,8 +9,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import ext.Entity;
-import ext.Filter;
-import ext.FilterMode;
 import ji.common.structures.SortedMap;
 import ji.database.Database;
 import ji.database.support.DatabaseRow;

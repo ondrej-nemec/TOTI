@@ -1,4 +1,4 @@
-package ext;
+package ext.grid;
 
 public class Filter {
 
