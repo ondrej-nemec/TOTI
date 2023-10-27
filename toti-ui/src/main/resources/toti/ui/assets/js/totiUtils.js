@@ -1,4 +1,4 @@
-/* TOTI Utils version 1.0.1 */
+/* TOTI Utils version 1.2.0 */
 var totiUtils = {
 	/* TODO is used? */
 	sleep: function(ms) {
@@ -116,7 +116,22 @@ var totiUtils = {
 			}
 			placeholder.parentNode.replaceChild(newElement, placeholder);
 		}
-	}
+	},
+	unaccent: function(str) {
+		if (str === null) {
+			return null;
+		}
+		/* https://stackoverflow.com/…463 */
+		return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+		},
+		/* https://stackoverflow.com/…508 */
+		delay: function(fn, ms) {
+			let timer = 0
+			return function(...args) {
+				clearTimeout(timer)
+				timer = setTimeout(fn.bind(this, ...args), ms || 0)
+			}
+		}
 };
 document.addEventListener("DOMContentLoaded", function(event) { 
 	totiUtils.printStoredFlash();
