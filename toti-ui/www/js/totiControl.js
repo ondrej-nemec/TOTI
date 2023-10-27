@@ -1,4 +1,4 @@
-/* TOTI Control version 1.1.3 */
+/* TOTI Control version 1.1.4 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -490,7 +490,11 @@ var totiControl = {
 		    datetime.onbind = function() {
 		        setValue(datetime.value);
 		    };
-
+			/* for reset button */
+			datetime.clear = function() {
+				date.value = '';
+				time.value = '';
+			};
     		/* if sub date or sub time change */
 		    datetime.onchange = function(event) {
 		        if (attributes.strict) {
