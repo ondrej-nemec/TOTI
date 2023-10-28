@@ -1,4 +1,4 @@
-/* TOTI Grid version 1.1.16 */
+/* TOTI Grid version 1.1.17 */
 class TotiGrid {
 
 	cookieName = "grid-cache";
@@ -95,7 +95,7 @@ class TotiGrid {
 							button.setAttribute("grid", grid.gridUnique);
 							button.addEventListener("click", function() {
 								setTimeout(function(){
-									grid.refreshData(clearPrevious);
+									grid.refreshData(true);
 								}, 500);
 							});
 							buttons.push(button);
