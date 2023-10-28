@@ -1,4 +1,4 @@
-/* TOTI Grid version 1.1.17 */
+/* TOTI Grid version 1.1.18 */
 class TotiGrid {
 
 	cookieName = "grid-cache";
@@ -124,13 +124,17 @@ class TotiGrid {
                             promises.push(filter.setOptions);
                         }
 						filter.setAttribute("grid", grid.gridUnique);
-						filter.classList.add("toti-grid-filtering");
-
-						filter.addEventListener('change', function() {
+						
+						var filterInput = filter;
+						if (filter.type === 'search-select') {
+							filterInput = filter.querySelector('input');
+						}
+						filterInput.classList.add("toti-grid-filtering");
+						filterInput.addEventListener('change', function() {
 							if (e !== null && !e.srcElement.checkValidity()) {
 								 e.srcElement.reportValidity();
 							} else {
-								grid.filterBy(column.name, filter.value);
+								grid.filterBy(column.name, filterInput.value);
 							}
 						});
 					}
