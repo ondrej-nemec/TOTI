@@ -1,4 +1,4 @@
-/* TOTI ExtendedSelect version 0.0.0 */
+/* TOTI ExtendedSelect version 0.0.1 */
 class ExtendedSelect {
 
 	selectedGroup = null;
@@ -209,27 +209,31 @@ class ExtendedSelect {
 		this.elements.forEach((key, element)=>{
 			displayedCount += object.processElement(phrase, element);
 		});
-		var bonds = this.input.getBoundingClientRect();
-
-		var spaceDown = window.innerHeight - bonds.bottom;
-		var spaceUp = bonds.top;
-
-		var heigth = Math.min(370, 19 * displayedCount);
-		var position = bonds.bottom;
-		if (spaceDown >= heigth) {
-				/* nothing */
-		} else if (spaceUp >= heigth || spaceUp > spaceDown) {
-			heigth = Math.min(spaceUp, heigth);
-			position = bonds.top - heigth;
-		} else {
-			heigth = spaceDown;
+		function resize() {
+			var bonds = this.input.getBoundingClientRect();
+	
+			var spaceDown = window.innerHeight - bonds.bottom;
+			var spaceUp = bonds.top;
+	
+			var heigth = Math.min(370, 19 * displayedCount);
+			var position = bonds.bottom;
+			if (spaceDown >= heigth) {
+					/* nothing */
+			} else if (spaceUp >= heigth || spaceUp > spaceDown) {
+				heigth = Math.min(spaceUp, heigth);
+				position = bonds.top - heigth;
+			} else {
+				heigth = spaceDown;
+			}
+	
+			this.hints.style.position = "fixed";
+			this.hints.style.top = position + "px";
+			this.hints.style.left = bonds.left + "px";
+			this.hints.style.width = bonds.width + "px";
+			this.hints.style['max-height'] = heigth + "px!important";
 		}
-
-		this.hints.style.position = "fixed";
-		this.hints.style.top = position + "px";
-		this.hints.style.left = bonds.left + "px";
-		this.hints.style.width = bonds.width + "px";
-		this.hints.style['max-height'] = heigth + "px!important";
+		resize();
+		new ResizeObserver(resize).observe(this.input);
 	}
 
 	processElement(phrase, element) {
