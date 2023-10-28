@@ -1,12 +1,12 @@
-package ext.grid;
+package toti.ui.backend.grid;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import ext.Entity;
 import ji.common.annotations.MapperParameter;
 import ji.common.annotations.MapperType;
 import ji.common.structures.SortedMap;
+import toti.ui.backend.Entity;
 import toti.ui.validation.ItemRules;
 import toti.ui.validation.Validator;
 

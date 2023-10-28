@@ -1,4 +1,4 @@
-package ext.grid;
+package toti.ui.backend.grid;
 
 import java.sql.SQLException;
 import java.util.Collection;
@@ -8,13 +8,13 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import ext.Entity;
 import ji.common.structures.SortedMap;
 import ji.database.Database;
 import ji.database.support.DatabaseRow;
 import ji.querybuilder.QueryBuilder;
 import ji.querybuilder.builders.SelectBuilder;
 import ji.translator.Translator;
+import toti.ui.backend.Entity;
 
 public interface GridEntityDao<T extends Entity>{
 	

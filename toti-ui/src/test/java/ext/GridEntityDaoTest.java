@@ -10,11 +10,6 @@ import java.util.Optional;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import ext.Entity;
-import ext.grid.Filter;
-import ext.grid.FilterMode;
-import ext.grid.GridEntityDao;
-import ext.grid.Sort;
 import ji.common.structures.MapInit;
 import ji.common.structures.SortedMap;
 import ji.database.Database;
@@ -24,6 +19,11 @@ import ji.querybuilder.mysql.MySqlFunctions;
 import ji.querybuilder.mysql.MySqlSelectBuilder;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+import toti.ui.backend.Entity;
+import toti.ui.backend.grid.Filter;
+import toti.ui.backend.grid.FilterMode;
+import toti.ui.backend.grid.GridEntityDao;
+import toti.ui.backend.grid.Sort;
 
 @RunWith(JUnitParamsRunner.class)
 public class GridEntityDaoTest implements Entity {

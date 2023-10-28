@@ -1,4 +1,4 @@
-package ext.help;
+package toti.ui.backend.help;
 
 import java.sql.SQLException;
 import java.util.Collection;
@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-import ext.Entity;
 import ji.database.Database;
 import ji.querybuilder.QueryBuilder;
 import ji.querybuilder.builders.SelectBuilder;
+import toti.ui.backend.Entity;
 
 public interface HelpEntityDao<T extends Entity>{
 	
