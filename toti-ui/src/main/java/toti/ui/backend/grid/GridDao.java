@@ -1,7 +1,6 @@
 package toti.ui.backend.grid;
 
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -14,30 +13,37 @@ import ji.database.support.DatabaseRow;
 import ji.querybuilder.QueryBuilder;
 import ji.querybuilder.builders.SelectBuilder;
 import ji.translator.Translator;
-import toti.ui.backend.Entity;
+import toti.ui.backend.Owner;
 
-public interface GridEntityDao<T extends Entity>{
+public interface GridDao {
 	
-	Database getDatabase();
-	
-	String getTableName();
-	
-	default Object onRow(DatabaseRow row, Translator translator) {
+	default Object onGridRow(DatabaseRow row, Translator translator) {
 		return row;
 	}
 
 	SelectBuilder _getGrid(String select, QueryBuilder builder);
-	
-	default Optional<String> getOwnerColumnName() {
-		return Optional.empty();
+
+	default GridDataSet getAll(Database database, String table, GridOptions options) throws SQLException {
+		return getAll(database, table, options, Optional.empty(), null);
 	}
 
-	default GridDataSet getAll(GridOptions options, Collection<Object> forOwners, Translator translator) throws SQLException {
+	default GridDataSet getAll(Database database, String table, GridOptions options, Translator translator) throws SQLException {
+		return getAll(database, table, options, Optional.empty(), translator);
+	}
+
+	default GridDataSet getAll(
+			Database database, String table, GridOptions options,
+			Optional<Owner> owner) throws SQLException {
+		return getAll(database, table, options, owner, null);
+	}
+
+	default GridDataSet getAll(
+			Database database, String table, GridOptions options,
+			Optional<Owner> owner, Translator translator) throws SQLException {
 		return getAll(
-			getDatabase(), options, forOwners,
+			database, options, owner,
 			(select, builder)->_getGrid(select, builder),
-			row->onRow(row, translator),
-			getOwnerColumnName()
+			row->onGridRow(row, translator)
 		);
 	}
 	
@@ -45,14 +51,14 @@ public interface GridEntityDao<T extends Entity>{
 
 	default GridDataSet getAll(
 			Database database, GridOptions options,
-			Collection<Object> forOwners, BiFunction<String, QueryBuilder, SelectBuilder> getSelect,
-			Function<DatabaseRow, Object> create, Optional<String> ownerColumnName) throws SQLException {
+			Optional<Owner> owner, BiFunction<String, QueryBuilder, SelectBuilder> getSelect,
+			Function<DatabaseRow, Object> create) throws SQLException {
 		return database.applyBuilder((builder)->{
 			SelectBuilder count = getSelect.apply("count(*)", builder);
-			_applyFilters(builder, count, options.getFilters(), forOwners, ownerColumnName);
+			_applyFilters(builder, count, options.getFilters(), owner);
 			
 			SelectBuilder select = getSelect.apply("*", builder);
-			_applyFilters(builder, select, options.getFilters(), forOwners, ownerColumnName);
+			_applyFilters(builder, select, options.getFilters(), owner);
 			_applySorting(select, options.getSorting());
 			
 			int countOfResults = count.fetchSingle().getInteger();
@@ -85,13 +91,13 @@ public interface GridEntityDao<T extends Entity>{
 			QueryBuilder builder,
 			SelectBuilder select,
 			SortedMap<String, Filter> filters,
-			Collection<Object> forOwners,
-			Optional<String> ownerColumnName) {
+			Optional<Owner> owner) {
 		select.where("1=1");
-		if (ownerColumnName.isPresent()) {
-			if (!forOwners.isEmpty()) {
-				select.andWhere(ownerColumnName.get() + " in (:in)")
-					.addParameter(":in", forOwners);
+		if (owner.isPresent()) {
+			Owner o = owner.get();
+			if (!o.getAllowedValues().isEmpty()) {
+				select.andWhere(o.getColumnName() + " in (:in)")
+					.addParameter(":in", o.getAllowedValues());
 			} else {
 				select.andWhere("1=2"); // no results
 			}

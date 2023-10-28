@@ -1,10 +1,9 @@
-package ext;
+package toti.ui.backend;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Optional;
 
 import org.junit.Test;
@@ -12,40 +11,36 @@ import org.junit.runner.RunWith;
 
 import ji.common.structures.MapInit;
 import ji.common.structures.SortedMap;
-import ji.database.Database;
 import ji.querybuilder.QueryBuilder;
 import ji.querybuilder.builders.SelectBuilder;
 import ji.querybuilder.mysql.MySqlFunctions;
 import ji.querybuilder.mysql.MySqlSelectBuilder;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
-import toti.ui.backend.Entity;
+import toti.ui.backend.Owner;
 import toti.ui.backend.grid.Filter;
 import toti.ui.backend.grid.FilterMode;
-import toti.ui.backend.grid.GridEntityDao;
+import toti.ui.backend.grid.GridDao;
 import toti.ui.backend.grid.Sort;
 
 @RunWith(JUnitParamsRunner.class)
-public class GridEntityDaoTest implements Entity {
+public class GridDaoTest {
 	
 	@Test
 	@Parameters(method = "dataApplyFilters")
 	public void testApplyFilters(
 			String message,
-			Optional<String> owner, Collection<Object> forOwners,
+			Optional<Owner> owner,
 			SortedMap<String, Filter> filters, String expected) {
 		QueryBuilder builder = mock(QueryBuilder.class);
 		SelectBuilder select = new MySqlSelectBuilder(null, ""); // mock(SelectBuilder.class);
 		when(builder.getSqlFunctions()).thenReturn(new MySqlFunctions());
 		
-		GridEntityDao<GridEntityDaoTest> dao = new GridEntityDao<GridEntityDaoTest>() {			
-			@Override public String getTableName() { return null; }
-			@Override public Database getDatabase() { return null; }
-			@Override public Optional<String> getOwnerColumnName() { return owner; }
+		GridDao dao = new GridDao() {
 			@Override public SelectBuilder _getGrid(String select, QueryBuilder builder) { return null; }
 		};
 		
-		dao._applyFilters(builder, select, filters, forOwners, owner);
+		dao._applyFilters(builder, select, filters, owner);
 		assertEquals(message, "SELECT  " + expected, select.createSql());
 	}
 	
@@ -54,28 +49,28 @@ public class GridEntityDaoTest implements Entity {
 			// owner specified, owners is empty, no filters
 			new Object[] {
 					"owner specified, owners is empty, no filters",
-				Optional.of("ownerId"), Arrays.asList(),
+				Optional.of(new Owner("ownerId", Arrays.asList())),
 				new MapInit<String, Filter>().toSortedMap(),
 				"WHERE (1=1) AND (1=2)"
 			},
 			// owner specified, owners with ids, no filters
 			new Object[] {
 					"owner specified, owners with ids, no filters",
-				Optional.of("ownerId"), Arrays.asList(1, "--id--", false),
+				Optional.of(new Owner("ownerId", Arrays.asList(1, "--id--", false))),
 				new MapInit<String, Filter>().toSortedMap(),
 				"WHERE (1=1) AND (ownerId in (1,'--id--',false))"
 			},
 			// no owner, owners with ids, no filters
-			new Object[] {
+			/*new Object[] {
 					"no owner, owners with ids, no filters",
 				Optional.empty(), Arrays.asList(1, "--id--", false),
 				new MapInit<String, Filter>().toSortedMap(),
 				"WHERE (1=1)"
-			},
+			},*/
 			// no owner, no ids, like
 			new Object[] {
 					"no owner, no ids, like",
-				Optional.empty(), Arrays.asList(),
+				Optional.empty(),
 				new MapInit<String, Filter>()
 					.append("likeColumn", new Filter("likeColumn", FilterMode.LIKE, "--value--", false, false))
 					.toSortedMap(),
@@ -84,7 +79,7 @@ public class GridEntityDaoTest implements Entity {
 			// no owner, no ids, starts
 			new Object[] {
 					"no owner, no ids, starts",
-				Optional.empty(), Arrays.asList(),
+				Optional.empty(),
 				new MapInit<String, Filter>()
 					.append("startsColumn", new Filter("startsColumn", FilterMode.STARTS_WITH, "--value--", false, false))
 					.toSortedMap(),
@@ -93,7 +88,7 @@ public class GridEntityDaoTest implements Entity {
 			// no owner, no ids, ends
 			new Object[] {
 					"no owner, no ids, ends",
-				Optional.empty(), Arrays.asList(),
+				Optional.empty(),
 				new MapInit<String, Filter>()
 				.append("endsColumn", new Filter("endsColumn", FilterMode.ENDS_WITH, "--value--", false, false))
 				.toSortedMap(),
@@ -102,7 +97,7 @@ public class GridEntityDaoTest implements Entity {
 			// no owner, no ids, equas
 			new Object[] {
 					"no owner, no ids, equas",
-				Optional.empty(), Arrays.asList(),
+				Optional.empty(),
 				new MapInit<String, Filter>()
 				.append("equalsColumn", new Filter("equalsColumn", FilterMode.EQUALS, "--value--", false, false))
 				.toSortedMap(),
@@ -111,7 +106,7 @@ public class GridEntityDaoTest implements Entity {
 			// combined
 			new Object[] {
 					"combined",
-				Optional.of("ownerId"), Arrays.asList(1, "--id--", false),
+				Optional.of(new Owner("ownerId", Arrays.asList(1, "--id--", false))),
 				new MapInit<String, Filter>()
 				.append("likeColumn", new Filter("likeColumn", FilterMode.LIKE, "--value--", false, false))
 				.append("startsColumn", new Filter("startsColumn", FilterMode.STARTS_WITH, "--value--", false, false))
@@ -133,10 +128,7 @@ public class GridEntityDaoTest implements Entity {
 			SortedMap<String, Sort> sorting, String expected) {
 		SelectBuilder select = new MySqlSelectBuilder(null, ""); // mock(SelectBuilder.class);
 		
-		GridEntityDao<GridEntityDaoTest> dao = new GridEntityDao<GridEntityDaoTest>() {			
-			@Override public String getTableName() { return null; }
-			@Override public Database getDatabase() { return null; }
-			@Override public Optional<String> getOwnerColumnName() { return null; }
+		GridDao dao = new GridDao() {
 			@Override public SelectBuilder _getGrid(String select, QueryBuilder builder) { return null; }
 		};
 		
