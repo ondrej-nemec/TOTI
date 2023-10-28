@@ -13,6 +13,7 @@ public class Select implements Input, Filter {
 	private String optionGroup;
 	private String depends = null;
 	private boolean selfReference = false;
+	private boolean search = false;
 	
 	private final Wrapper wrapper;
 
@@ -51,6 +52,10 @@ public class Select implements Input, Filter {
 		return this;
 	}
 
+	public Select setSearch(boolean search) {
+		this.search = search;
+		return this;
+	}
 
 	@Override
 	public String getType() {
@@ -108,6 +113,10 @@ public class Select implements Input, Filter {
 			set.put("depends", depends);
 		}
 		set.put("selfReference", selfReference);
+		set.put("search", search);
+		if (search) {
+			set.put("autocomplete", "off");
+		}
 		return set;
 	}
 	

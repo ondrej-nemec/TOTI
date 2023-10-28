@@ -1,4 +1,4 @@
-/* TOTI Control version 1.2.1 */
+/* TOTI Control version 2.0.0 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -125,6 +125,57 @@ var totiControl = {
 
 		    return container;
 		},
+		text: function(attributes) {
+			if (!attributes.hasOwnProperty('load') && !attributes.hasOwnProperty('options')) {
+				return totiControl.inputs._createInput('text', attributes);
+			}
+			var load = attributes.hasOwnProperty("load") ? attributes.load : null;
+			delete attributes.load;
+			var options = attributes.hasOwnProperty('options') ? attributes.options : [];
+			delete attributes.options;
+
+			var input = totiControl.inputs._createInput('text', attributes);
+
+			var fieldset = document.createElement('fieldset');
+			fieldset.clear = ()=>{}; /* empty function for grid */
+
+			var datalist = document.createElement('datalist');
+			var id = attributes.name + "_datalist";
+			datalist.setAttribute('id', id);
+			input.setAttribute('list', id);
+
+			function addOption(res) {
+				res.forEach((option)=>{
+					datalist.appendChild(totiControl.inputs.option({
+						value: typeof option === 'object' ? option.value : option
+					}));
+				});
+			}
+
+			new Promise(function (resolve, reject) {
+				datalist.innerHTML = '';
+				resolve(options);
+			})
+			.then(addOption)
+			.then(function () {
+				if (load !== null) {
+					var cacheKey = JSON.stringify({
+						"url": load.url,
+						"method": load.method,
+						"params": load.params
+					});
+					if (!totiControl.inputs._selectCache.hasOwnProperty(cacheKey)) {
+						totiControl.inputs._selectCache[cacheKey] = totiLoad.load(load.url, load.method, {}, load.params);
+					}
+					return totiControl.inputs._selectCache[cacheKey];
+				}
+				return [];
+			}).then(addOption);
+
+			fieldset.appendChild(input);
+			fieldset.appendChild(datalist);
+			return fieldset;
+		},
 		button: function(button, attributes) {
 			for ([key, name] of Object.entries(attributes)) {
 				switch (key) {
@@ -229,107 +280,77 @@ var totiControl = {
 			return textarea;
 		},
 		select: function (params) {
-			function addOption(container, option, selectedGroup, title) {
-				if (option.hasOwnProperty('optgroup') && selectedGroup !== null && selectedGroup != option.optgroup) {
-					return null;
-				}
-				if (option.hasOwnProperty('optgroup') && option.optgroup !== null && selectedGroup === null) {
-					var group = title !== null ? title : option.optgroup;
-					var optGroup = container.querySelector('[label="' + group + '"]');
-				    if (optGroup === null) {
-					    optGroup = document.createElement("optgroup");
-					    optGroup.setAttribute("label", group);
-					    container.appendChild(optGroup);
+			function select(params, factory) {
+				var select = factory.getInput();
+				for ([key, value] of Object.entries(params)) {
+					if (key === "options" || key === "load" || key === "value" || key === "depends") {
+							/* ignored now, done soon */
+					} else {
+						select.setAttribute(key, value);
 					}
-					container = optGroup;
 				}
-				var optionElement = totiControl.input({
-					type: 'option',
-					...option
+				if (!params.hasOwnProperty('disabled')) {
+					/* IMPROVE loading icon */
+					select.setAttribute('disabled', true);
+				}
+				select.setOptions = new Promise(function (resolve, reject) {
+				    /* first wait until depends is loaded */
+				    /* depends element must be first */
+					if (params.hasOwnProperty("depends")) {
+						var dependElement = document.querySelector(params.depends);
+				        /* IMPROVEMENT: Observer to wait depends added to DOM */
+				        /* IMPROVEMENT: suport for radiolist */
+						if (dependElement !== null) {
+				            if (dependElement.setOptions) { /* select */
+								resolve(dependElement.setOptions.then(function() {
+									return dependElement;
+								}));
+							} else {
+								resolve(dependElement);
+							}
+						} else {
+					        /*new MutationObserver((mutationList, observer) => {
+					            for (const mutation of mutationList) {
+					            	if (mutation.type === 'childList') {
+						            	console.log(mutation.target);
+						            	console.log(mutation.addedNodes);
+						            	console.log(mutation.target.querySelector(params.depends));
+					            	}
+						        }
+						        observer.disconnect();
+						   }).observe(document.body, { attributes: true, childList: true, subtree: true });*/
+						}
+					} else {
+					    resolve(null); /* no element depends */
+					}
+				}).then(function(depends) {
+					if (depends !== null) {
+						depends.addEventListener('change', function() {
+							addOptions(select, params, depends, factory);
+						});
+					}
+					return addOptions(select, params, depends, factory);
+				}).then(()=>{
+					if (!params.hasOwnProperty('disabled')) {
+						/* IMPROVE loading icon */
+						select.removeAttribute('disabled');
+					}
 				});
-				container.appendChild(optionElement);
-				return optionElement;
+				return factory.getContainer();
 			}
-			function addOptions(select, params, depends) {
+			function addOptions(select, params, depends, factory) {
 				var oldValue = select.value;
 				select.value = null;
-				/*params.renderOptions = {};*/
+				factory.clear();
 
-				var selectedGroup = null;
 				if (depends !== null) {
-					selectedGroup = depends.value;
+					factory.setSelectedGroup(depends.value === '' ? null : depends.value);
 				} else if (params.hasOwnProperty('optionGroup')) {
-					selectedGroup = params.optionGroup;
+					factory.setSelectedGroup(params.optionGroup);
 				}
-
-				var onOptions = function(options) {
-					if (params.selfReference) {
-						var sorted = [];
-						var missingParent = {};
-						var optCache = [];
-						options.forEach((option)=>{
-							if (option.optgroup === null || option.optgroup === undefined) {
-								sorted.push(option.value);
-							} else if (optCache.hasOwnProperty(option.optgroup)) {
-								optCache[option.optgroup].childs.push(option.value);
-							} else  {
-								if (!missingParent.hasOwnProperty(option.optgroup)) {
-									missingParent[option.optgroup] = [];
-								}
-								missingParent[option.optgroup].push(option.value);
-							}
-							optCache[option.value] = {
-								data: option,
-								childs: []
-							};
-							if (missingParent.hasOwnProperty(option.value)) {
-								optCache[option.value].childs = missingParent[option.value];
-								delete missingParent[option.value];
-							}
-						});
-						function iterate(item, level, parentName) {
-							addOption(select, item.data, selectedGroup === '' ? null : selectedGroup, parentName);
-							if (option === null) {
-                                return;
-                            }
-                            var pre = document.createElement('span');
-                            for (i = 0; i < level; i++) {
-                                pre.innerHTML += '&nbsp;&nbsp;';
-                            }
-                            var title = document.createElement('span');
-                            title.innerText = option.innerText;
-                            option.innerHTML = "";
-                            option.appendChild(pre);
-                            option.appendChild(title);
-                            item.childs.forEach((child)=>{
-                                optCache[child].data.optgroup = null;
-                                iterate(optCache[child], level + 1, null);
-                            });
-						}
-						sorted.forEach((id)=>{
-							iterate(optCache[id], 0, null);
-						})
-					} else {
-						var groupSubstitution = null;
-						options.forEach(function(option) {
-							if (depends !== null) {
-								var optGroup = depends.querySelector('[value="' + option.optgroup + '"]');
-								if (optGroup !== null) {
-									groupSubstitution = optGroup.innerText;
-								}
-							}
-							addOption(select, option, selectedGroup === '' ? null : selectedGroup, groupSubstitution);
-						/*	params.renderOptions[option.value] = option.title;*/
-						});
-					}
-					return options;
-				};
-
 				return new Promise(function (resolve, reject) {
-					select.innerHTML = '';
 					resolve(params.options);
 				})
-				.then(onOptions)
 				.then(function (res) {
 					if (params.hasOwnProperty("load")) {
 						var cacheKey = JSON.stringify({
@@ -340,15 +361,23 @@ var totiControl = {
 						if (!totiControl.inputs._selectCache.hasOwnProperty(cacheKey)) {
 							totiControl.inputs._selectCache[cacheKey] = totiLoad.load(params.load.url, params.load.method, {}, params.load.params);
 						}
-						return totiControl.inputs._selectCache[cacheKey].then(onOptions).then((options)=>{
-                            return res.concat(options);
+						return totiControl.inputs._selectCache[cacheKey].then((options)=>{
+							return res.concat(options);
 						});
 					}
 					return res;
 				})
+				.then((options)=>{
+					onOptions(options, params, factory, depends);
+					return options;
+				})
 				.then(function(options) {
-					/* previous code sometimes returns null, sometimes promise*/
-					select.value = params.value;
+					if (oldValue) {
+						select.value = params.oldValue;
+					} else if (params.value) {
+						select.value = params.value;
+					}
+					//select.value = params.value;
 					/* render options for grid */
 					var renderOptions = {};
 					options.forEach(function(option) {
@@ -358,125 +387,73 @@ var totiControl = {
 					return options;
 				});
 			}
-			
-
-			var select = document.createElement('select');
-			for ([key, value] of Object.entries(params)) {
-				if (key === "options" || key === "load" || key === "value" || key === "depends") {
-					/* ignored now, done soon */
-				} else {
-					select.setAttribute(key, value);
-				}
-			}
-			/*params.originOptions = totiUtils.clone(params.options);
-            params.renderOptions = {}; /* really displayed values */
-
-			select.setOptions = new Promise(function (resolve, reject) {
-	            /* first wait until depends is loaded */
-	            /* depends element must be first */
-	            if (params.hasOwnProperty("depends")) {
-	            	var dependElement = document.querySelector(params.depends);
-	            	/* IMPROVEMENT: Observer to wait depends added to DOM */
-	            	/* IMPROVEMENT: suport for radiolist */
-	            	if (dependElement !== null) {
-	            		if (dependElement.setOptions) { /* select */
-	            			resolve(dependElement.setOptions.then(function() {
-								return dependElement;
-							}));
-	            		} else {
-	            			resolve(dependElement);
-	            		}
-	            	} else {
-	            		/*new MutationObserver((mutationList, observer) => {
-	            			for (const mutation of mutationList) {
-	            				if (mutation.type === 'childList') {
-		            			   console.log(mutation.target);
-		            			   console.log(mutation.addedNodes);
-		            			   console.log(mutation.target.querySelector(params.depends));
-	            				}
-		            		}
-		            		observer.disconnect();
-		            	}).observe(document.body, { attributes: true, childList: true, subtree: true });*/
-	            	}
-	            } else {
-	            	resolve(null); /* no element depends */
-	            }
-			}).then(function(depends) {
-				if (depends !== null) {
-					depends.addEventListener('change', function() {
-						addOptions(select, params, depends);
+			function onOptions(options, params, factory, depends) {
+				if (params.selfReference) {
+					var sorted = [];
+					var missingParent = {};
+					var optCache = [];
+					options.forEach((option)=>{
+						if (option.optgroup === null || option.optgroup === undefined) {
+							sorted.push(option.value);
+						} else if (optCache.hasOwnProperty(option.optgroup)) {
+							optCache[option.optgroup].childs.push(option.value);
+						} else  {
+							if (!missingParent.hasOwnProperty(option.optgroup)) {
+								missingParent[option.optgroup] = [];
+							}
+							missingParent[option.optgroup].push(option.value);
+						}
+						optCache[option.value] = {
+							data: option,
+							childs: []
+						};
+						if (missingParent.hasOwnProperty(option.value)) {
+							optCache[option.value].childs = missingParent[option.value];
+							delete missingParent[option.value];
+						}
 					});
-				}
-				return addOptions(select, params, depends);
-			});
-			return select;
-		},
-		option: function(params) {
-			var option = document.createElement('option');
-			for ([key, value] of Object.entries(params)) {
-				if (key === "title") {
-					option.innerText = value;
-				} else if (key === "disabled") {
-                    if (value === true) {
-                        option.setAttribute("disabled", true);
-                    }
-				} else {
-					option.setAttribute(key, value);
-				}
-				
-			}
-			return option;
-		},
-		text: (attributes)=>{
-			if (!attributes.hasOwnProperty('load') && !attributes.hasOwnProperty('options')) {
-				return totiControl.inputs._createInput('text', attributes);
-			}
-			var load = attributes.hasOwnProperty("load") ? attributes.load : null;
-			delete attributes.load;
-			var options = attributes.hasOwnProperty('options') ? attributes.options : [];
-			delete attributes.options;
-
-			var input = totiControl.inputs._createInput('text', attributes);
-
-			var fieldset = document.createElement('fieldset');
-			fieldset.clear = ()=>{}; /* empty function for grid */
-
-			var datalist = document.createElement('datalist');
-			var id = attributes.name + "_datalist";
-			datalist.setAttribute('id', id);
-			input.setAttribute('list', id);
-
-			function addOption(res) {
-				res.forEach((option)=>{
-					datalist.appendChild(totiControl.inputs.option({
-						value: typeof option === 'object' ? option.value : option
-					}));
-				});
-			}
-
-			new Promise(function (resolve, reject) {
-				datalist.innerHTML = '';
-				resolve(options);
-			})
-			.then(addOption)
-			.then(function () {
-				if (load !== null) {
-					var cacheKey = JSON.stringify({
-						"url": load.url,
-						"method": load.method,
-						"params": load.params
-					});
-					if (!totiControl.inputs._selectCache.hasOwnProperty(cacheKey)) {
-						totiControl.inputs._selectCache[cacheKey] = totiLoad.load(load.url, load.method, {}, load.params);
+					function iterate(item, level, parentName) {
+						var added = addOption(select, item.data, factory, parentName, level);
+						if (!added) {
+							return;
+						}
+						item.childs.forEach((child)=>{
+							iterate(optCache[child], level + 1, null);
+						});
 					}
-					return totiControl.inputs._selectCache[cacheKey];
+					sorted.forEach((id)=>{
+						iterate(optCache[id], 0, null);
+					})
+				} else {
+					var groupSubstitution = null;
+					options.forEach(function(option) {
+						if (depends !== null) {
+							if (depends.classList.contains('toti-hints-input')) {
+								depends = depends.parentElement;
+							}
+							var optGroup = depends.querySelector('[value="' + option.optgroup + '"]');
+							if (optGroup !== null) {
+								groupSubstitution = optGroup.innerText;
+							}
+						}
+						addOption(select, option, factory, groupSubstitution, -1);
+					});
 				}
-				return [];
-			}).then(addOption);
-
-			fieldset.appendChild(input);
-			fieldset.appendChild(datalist);
-			return fieldset;
+				return options;
+			};
+			function addOption(select, option, factory, optGroupTitle, level) {
+				var optGroupValue = null;
+				if (option.hasOwnProperty('optgroup') && option.optgroup !== null) {
+					optGroupValue = option.optgroup;
+				}
+				return factory.addOption(option.value, option.title, optGroupValue, optGroupTitle, option.disabled, level);
+			}
+			var useSearch = params['search'];
+			delete params['search'];
+			if (useSearch) {
+				return select(params, new ExtendedSelect());
+			}
+			return select(params, new StandartSelect());
 		},
 		datetime: function(attributes) {
 			var dateAttr = {};
@@ -543,7 +520,7 @@ var totiControl = {
 		    datetime.onbind = function() {
 		        setValue(datetime.value);
 		    };
-			/* for reset button */
+		    /* for reset button */
 			datetime.clear = function() {
 				date.value = '';
 				time.value = '';

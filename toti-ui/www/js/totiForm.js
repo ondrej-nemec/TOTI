@@ -1,4 +1,4 @@
-/* TOTI Form version 1.1.5 */
+/* TOTI Form version 1.2.1 */
 class TotiForm {
 
 	constructor(config) {
@@ -258,7 +258,6 @@ class TotiForm {
 		if (this.dynamic.hasOwnProperty(name)) {
 			this.dynamic[name].remove(index);
 		}
-		
 	}
 
 	submit(srcElement) {
@@ -439,7 +438,8 @@ class TotiForm {
 	}
 
 	getBindSetValue(element, name, value) {
-		switch(element.type) {
+		var type = element.variation ? element.variation : element.type;
+		switch(type) {
 			case undefined:
 				/* not editable */
 				if (element.bind !== undefined) {
@@ -457,6 +457,7 @@ class TotiForm {
 				break;
 			/* IMPROVE: realValue u selectu */
 			case "select-one":
+			case "search-select":
 				var val = value;
 				var select = element;
 				element.setOptions.then(function() {
@@ -519,8 +520,8 @@ class TotiForm {
 			if (loadConfig.hasOwnProperty("after") && loadConfig.after !== null) {
 				totiUtils.execute(loadConfig.after, [values, form]);
 			}
-		}).then(()=>{ 
-    		totiDisplay.fadeOut();
+		}).then(()=>{
+			totiDisplay.fadeOut();
 		}).catch(function(error) {
 			if (loadConfig.onFailure === null) {
 				switch(error.status) {
