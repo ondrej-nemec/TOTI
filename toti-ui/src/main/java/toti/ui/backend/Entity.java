@@ -6,14 +6,17 @@ import ji.common.functions.Mapper;
 import ji.json.Jsonable;
 
 public interface Entity extends Jsonable {
+	
+	static final String SERIALIZE_DATABASE = "database";
+	static final String SERIALIZE_JSON = "json";
 
 	default Map<String, Object> toMap() {
-		return serialize("database");
+		return serialize(SERIALIZE_DATABASE);
 	}
 	
 	@Override
 	default Object toJson() {
-		return serialize("json");
+		return serialize("");
 	}
 	
 	default Map<String, Object> serialize(String key) {
