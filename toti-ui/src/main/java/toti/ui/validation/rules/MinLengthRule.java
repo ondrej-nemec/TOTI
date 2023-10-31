@@ -17,12 +17,12 @@ public class MinLengthRule extends SimpleRule<Integer> {
 	protected boolean isErrorToShow(Integer minLength, Object o) {
 		DictionaryValue dicVal = new DictionaryValue(o);
 		if (dicVal.is(Map.class)) {
-			return minLength.intValue() > dicVal.getMap().size();
+			return minLength.intValue() >= dicVal.getMap().size();
 		}
 		if (dicVal.is(List.class)) {
-			return minLength.intValue() > dicVal.getList().size();
+			return minLength.intValue() >= dicVal.getList().size();
 		}
-		return minLength.intValue() > o.toString().length();
+		return minLength.intValue() >= o.toString().length();
 	}
 
 }
