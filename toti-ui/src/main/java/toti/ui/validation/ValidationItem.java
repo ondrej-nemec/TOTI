@@ -48,5 +48,9 @@ public class ValidationItem {
 	public void addError(String propertyName, Function<Translator, String> onError) {
 		this.result.addError(propertyName, onError.apply(translator));
 	}
+	
+	public Translator getTranslator() {
+		return translator;
+	}
 
 }

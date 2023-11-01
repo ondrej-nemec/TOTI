@@ -23,7 +23,7 @@ public class StructureListRule implements Rule {
 	@Override
 	public void check(String propertyName, String ruleName, ValidationItem item) {
 		try {
-			List<Object> list = new DictionaryValue(item).getList();
+			List<Object> list = new DictionaryValue(item.getOriginValue()).getList();
 			RequestParameters fields = new RequestParameters();
 			for (int i = 0; i < list.size(); i++) {
 				fields.put(i + "", list.get(i));
@@ -31,7 +31,7 @@ public class StructureListRule implements Rule {
 			item.addSubResult(validator.validate(
 				(propertyName.contains(":") ? "" : "%s:") + propertyName + "[]",
 				fields,
-				null
+				item.getTranslator()
 			));
 			item.setNewValue(new ArrayList<>(fields.values()));
 		} catch (ClassCastException | NumberFormatException e) {

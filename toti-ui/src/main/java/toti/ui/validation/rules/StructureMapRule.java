@@ -23,7 +23,9 @@ public class StructureMapRule implements Rule {
 		try {
 			RequestParameters fields = new RequestParameters();
 			fields.putAll(new DictionaryValue(item.getOriginValue()).getMap());
-			item.addSubResult(validator.validate(propertyName + "[%s]", fields, null));
+			item.addSubResult(validator.validate(
+				propertyName + "[%s]", fields, item.getTranslator()
+			));
 			item.setNewValue(fields);
 		} catch (NullPointerException | ClassCastException e) {
 			item.addError(propertyName, onError);
