@@ -1,8 +1,6 @@
 package toti.ui.validation.rules;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import org.junit.Test;
@@ -30,7 +28,7 @@ public class ExpectedTypeRuleTest {
 		
 		assertEquals(newValue, item.getNewValue());
 		assertEquals(canValidate, item.canValidationContinue());
-		verify(result, times(times)).addError(eq("error"), any());
+		verify(result, times(times)).addError("propertyName", "error");
 	}
 	
 	public Object[] dataCheck() {
@@ -39,13 +37,16 @@ public class ExpectedTypeRuleTest {
 				String.class, "someText", "someText", true, 0
 			},
 			new Object[] {
-				Integer.class, "someText", null, false, 1
+				Integer.class, "someText", "someText", false, 1
 			},
 			new Object[] {
 				String.class, 42, "42", true, 0
 			},
 			new Object[] {
-				Integer.class, 42, 42.0, true, 0
+				Double.class, 42, 42.0, true, 0
+			},
+			new Object[] {
+				Integer.class, "42", 42, true, 0
 			}
 		};
 	}

@@ -11,7 +11,6 @@ public class FileAllowedTypesRule extends SimpleRule<Collection<Object>> {
 	public FileAllowedTypesRule(Collection<Object> value, Function<Translator, String> onError) {
 		super(value, onError);
 	}
-	// Collection<Object>
 
 	@Override
 	protected boolean isErrorToShow(Collection<Object> type, Object o) {
