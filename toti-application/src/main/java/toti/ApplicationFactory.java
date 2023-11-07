@@ -30,6 +30,7 @@ import toti.answers.request.IdentityFactory;
 import toti.answers.request.SessionUserProvider;
 import toti.answers.router.Link;
 import toti.answers.router.Router;
+import toti.answers.router.UriPattern;
 import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Param;
@@ -114,8 +115,9 @@ public class ApplicationFactory {
 		
 		ObjectBuilder<Module> actualModule = new ObjectBuilder<>();
 		Param root = new Param(null);
-		Register register = new Register(root, actualModule);
-		Link link = new Link(/*getUrlPattern(env),*/ register);
+		UriPattern pattern = new UriPattern();
+		Register register = new Register(root, actualModule, pattern);
+		Link link = new Link(/*getUrlPattern(env),*/ register, pattern);
 		Router router = new Router(register);
 		
 		Map<String, TemplateFactory> templateFactories = new HashMap<>();

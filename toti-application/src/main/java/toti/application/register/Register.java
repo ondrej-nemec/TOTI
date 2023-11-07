@@ -11,6 +11,7 @@ import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Secured;
 import toti.answers.request.AuthMode;
+import toti.answers.router.UriPattern;
 import toti.application.Module;
 import toti.extensions.CustomExceptionResponse;
 
@@ -23,15 +24,17 @@ public class Register {
 
 	private final Param root;
 	private final ObjectBuilder<Module> module;
+	private final UriPattern pattern;
 	
 	private CustomExceptionResponse customExceptionResponse = null;
 	
-	public Register(Param root, ObjectBuilder<Module> module) {
+	public Register(Param root, ObjectBuilder<Module> module, UriPattern pattern) {
 		this.FACTORIES = new HashMap<>();
 		this.SERVICES = new HashMap<>();
 		this.CONTROLLERS = new HashMap<>();
 		this.root = root;
 		this.module = module;
+		this.pattern = pattern;
 	}
 	
 	public <T> void addController(Class<?> clazz, Factory<T> factory) {
@@ -49,15 +52,21 @@ public class Register {
 		}
 		CONTROLLERS.put(clazz.getName(), new Tuple2<>(factory, module.get()));
 		
-		Param moduleParam = getParam(module.get().getName(), root);
-		Param controllerParam = getParam(clazz.getAnnotation(Controller.class).value(), moduleParam);
 		for (Method m : clazz.getMethods()) {
     		if (m.isAnnotationPresent(Action.class)) {
     			HttpMethod[] methods = getHttpMethods(m);
     			Action actionAnotation = getActionAnnotation(m);
     			String actionPart = actionAnotation.path();
-    			Param actionParam = getParam(actionPart, controllerParam);
     			
+    			String pattern = this.pattern.createUri(
+    				module.get(), clazz,
+    				module.get().getName(), clazz.getAnnotation(Controller.class).value(), actionPart
+    			);
+    			Param base = root;
+				// substring - remove first '/'
+    			for (String part : pattern.substring(1).split("/")) {
+    				base = base.addChild(part.equals(UriPattern.PARAM) ? null : part);
+    			}
     			/*List<Class<?>> methodParameters = new LinkedList<>();
     			for (Parameter p : m.getParameters()) {
     				methodParameters.add(p.getType());
@@ -68,7 +77,7 @@ public class Register {
     				getSecurityMode(m), methods
     			);
     			for (HttpMethod method : methods) {
-    				actionParam.addAction(method, action);
+    				base.addAction(method, action);
     			}
     		}
     	}

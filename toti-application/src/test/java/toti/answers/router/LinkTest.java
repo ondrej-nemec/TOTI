@@ -30,14 +30,14 @@ public class LinkTest {
 	@Test(expected = LogicException.class)
 	@Parameters({ "", ":", "something", "something:" })
 	public void testParseStringHrefThrowsWithWrongString(String href) {
-		Link link = new Link(mock(Register.class));
+		Link link = new Link(mock(Register.class), mock(UriPattern.class));
 		link.parseStringHref(href);
 	}
 
 	@Test
 	@Parameters(method="dataParseStringHrefReturnsCorrectResult")
 	public void testParseStringHrefReturnsCorrectResult(String href, StringHref expected) {
-		Link link = new Link(mock(Register.class));
+		Link link = new Link(mock(Register.class), mock(UriPattern.class));
 		StringHref actual = link.parseStringHref(href);
 		assertEquals(expected, actual);
 	}
@@ -119,7 +119,7 @@ public class LinkTest {
 	@Test(expected = NoSuchMethodException.class)
 	@Parameters(method="dataGetMethodThrowsIfNoMethodFound")
 	public void testGetMethodThrowsIfNoMethodFound(String method, int count) throws NoSuchMethodException {
-		Link link = new Link(mock(Register.class));
+		Link link = new Link(mock(Register.class), mock(UriPattern.class));
 		link.getMethod(NotRegisteredController.class, method, count);
 	}
 	
@@ -146,7 +146,7 @@ public class LinkTest {
 	@Test
 	@Parameters(method="dataGetMethodReturnsCorrectMethod")
 	public void testGetMethodReturnsCorrectMethod(String method, int parameterCount, Method expected) throws NoSuchMethodException {
-		Link link = new Link(mock(Register.class));
+		Link link = new Link(mock(Register.class), mock(UriPattern.class));
 		Method actual = link.getMethod(NotRegisteredController.class, method, parameterCount);
 		assertEquals(expected, actual);
 	}
@@ -172,48 +172,50 @@ public class LinkTest {
 	
 	@Test(expected = ClassNotFoundException.class)
 	public void testGetControllerThrowsOnWrongClass() throws ClassNotFoundException {
-		Link link = new Link(mock(Register.class));
+		Link link = new Link(mock(Register.class), mock(UriPattern.class));
 		link.getController("test.NotExistingClass");
 	}
 	
 	@Test
 	public void testGetControllerReturnsCorrectClass() throws ClassNotFoundException {
-		Link link = new Link(mock(Register.class));
+		Link link = new Link(mock(Register.class), mock(UriPattern.class));
 		assertEquals(ControllerA.class, link.getController("test.ControllerA"));
 	}
 	
 	@Test
 	public void testGetControllerReturnsClassIfStacktraceIsController() throws ClassNotFoundException {
-		Link link = new Link(mock(Register.class));
+		Link link = new Link(mock(Register.class), mock(UriPattern.class));
 		NotRegisteredController controller = new NotRegisteredController();
 		assertEquals(NotRegisteredController.class, controller.runLinkMethod(()->link.getController(null)));
 	}
 
 	@Test(expected = ClassNotFoundException.class)
 	public void testGetControllerThrowsWithNullNameAndNoController() throws ClassNotFoundException {
-		Link link = new Link(mock(Register.class));
+		Link link = new Link(mock(Register.class), mock(UriPattern.class));
 		link.getController(null);
 	}
 	
 	@Test(expected = LogicException.class)
 	public void testCreateThrowsIfClassIsNotController() throws NoSuchMethodException, SecurityException {
-		Link link = new Link(mock(Register.class));
+		Link link = new Link(mock(Register.class), mock(UriPattern.class));
 		link.create(NotController.class, NotController.class.getMethod("index"), new HashMap<>());
 	}
 	
 	@Test(expected = LogicException.class)
 	public void testCreateThrowsIfMethodNotAction() throws NoSuchMethodException, SecurityException {
-		Link link = new Link(mock(Register.class));
+		Link link = new Link(mock(Register.class), mock(UriPattern.class));
 		link.create(ControllerA.class, ControllerA.class.getMethod("notAction"), new HashMap<>());
 	}
 	
 	@Test
 	@Parameters(method="dataCreate")
 	public void testCreate(Map<String, Object> queryParams, Object[] pathParams, String expected) throws NoSuchMethodException, SecurityException {
+		UriPattern pattern = new UriPattern();
+		
 		ObjectBuilder<Module> module = new ObjectBuilder<>(new TestModule());
-		Register register = new Register(new Param(null), module);
+		Register register = new Register(new Param(null), module, pattern);
 		register.addController(ControllerA.class, ()->new ControllerA());
-		Link link = new Link(register);
+		Link link = new Link(register, pattern);
 		assertEquals(expected, link.create(
 			ControllerA.class, ControllerA.class.getMethod("list"), queryParams, pathParams
 		));
@@ -245,30 +247,10 @@ public class LinkTest {
 	}
 	
 	@Test
-	@Parameters(method="dataCreateBase")
-	public void testCreateBase(String module, String controller, String action, String expected) {
-		Link link = new Link(mock(Register.class));
-		assertEquals(expected, link.createBase(module, controller, action));
-	}
-	
-	public Object[] dataCreateBase() {
-		return new Object[] {
-			new Object[] { "m", "c", "a", "/m/c/a" },
-			new Object[] { "", "c", "a", "/c/a" },
-			new Object[] { null, "c", "a", "/c/a" },
-			new Object[] { "m", "", "a", "/m/a" },
-			new Object[] { "m", null, "a", "/m/a" },
-			new Object[] { "m", "c", "", "/m/c" },
-			new Object[] { "m", "c", null, "/m/c" },
-			new Object[] { "", "", "", "" },
-		};
-	}
-
-	@Test
 	@Parameters(method="dataParseParams")
 	public void testParseParams(String key, Object value, String expected) {
 		StringBuilder result = new StringBuilder();
-		Link link = new Link(mock(Register.class));
+		Link link = new Link(mock(Register.class), mock(UriPattern.class));
 		link.parseParams(result, key, value);
 		assertEquals(expected, result.toString());
 	}
