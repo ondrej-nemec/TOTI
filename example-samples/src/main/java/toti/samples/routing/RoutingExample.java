@@ -49,7 +49,7 @@ public class RoutingExample implements Module {
 	 */
 	@Action(path="secured")
 	@Secured(mode = AuthMode.COOKIE)
-	public Response secured() {
+	public ResponseAction secured() {
 		return Response.getText("Secured");
 	}
 	
@@ -61,7 +61,7 @@ public class RoutingExample implements Module {
 	 *  http://localhost:8080/api/routing/unsecured
 	 */
 	@Action(path="unsecured")
-	public Response unsecured(@Param("backlink") String backLink) {
+	public ResponseAction unsecured(@Param("backlink") String backLink) {
 		return Response.getText("Unsecured " + backLink);
 	}
 	
@@ -73,7 +73,7 @@ public class RoutingExample implements Module {
 	 *  http://localhost:8080/api/routing/notAccessible
 	 */
 	@Action(path="notAccessible")
-	public Response notAccessibleMethod() {
+	public ResponseAction notAccessibleMethod() {
 		return Response.getText("This never appear");
 	}
 	
@@ -89,7 +89,7 @@ public class RoutingExample implements Module {
 	 *  http://localhost:8080
 	 */
 	@Action(path="accessible")
-	public Response accessibleMethod() {
+	public ResponseAction accessibleMethod() {
 		return Response.getText("This always appear");
 	}
 	
@@ -101,7 +101,7 @@ public class RoutingExample implements Module {
 	 *  http://localhost:8080/api/routing/links
 	 */
 	@Action(path="links")
-	public Response links() {
+	public ResponseAction links() {
 		Map<String, Object> params = new HashMap<>();
 		
 		// method calling
@@ -139,7 +139,7 @@ public class RoutingExample implements Module {
 	 * @return
 	 */
 	@Action(path="links-destination")
-	public Response linksDestination(@ParamUrl("id") Integer id, @ParamUrl("name") String name) {
+	public ResponseAction linksDestination(@ParamUrl("id") Integer id, @ParamUrl("name") String name) {
 		return Response.getText("This never appear");
 	}
 	

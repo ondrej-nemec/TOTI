@@ -71,7 +71,7 @@ public class SignExample implements Module {
 	 * @return http://localhost:8080/examples-sign/sign/async-page
 	 */
 	@Action(path="async-page")
-	public Response asyncLoginPage(@Param("backlink") String backlink) {
+	public ResponseAction asyncLoginPage(@Param("backlink") String backlink) {
 		Form form = new Form(link.create(SignExample.class, c->c.asyncLogin(null, null)), true);
 		form.setFormMethod("post");
 		form.addInput(Text.input("username", true).setTitle("Username"));
@@ -95,7 +95,7 @@ public class SignExample implements Module {
 	 */
 	@Action(path="async-login")
 	@Method(HttpMethod.POST)
-	public Response asyncLogin(@Param("username") String username, @Param("password") String password) {
+	public ResponseAction asyncLogin(@Param("username") String username, @Param("password") String password) {
 		// here will be some kind of authentication
 		try {
 			return Response.getJson(authenticator.login(
@@ -115,7 +115,7 @@ public class SignExample implements Module {
 	@Action(path="async-logout")
 	@Method(HttpMethod.POST)
 	@Secured
-	public Response asyncLogout() {
+	public ResponseAction asyncLogout() {
 		authenticator.logout(identity);
 		return Response.getText(""); // 202 response
 	}
@@ -127,7 +127,7 @@ public class SignExample implements Module {
 	 * @return http://localhost:8080/examples-sign/sign/sync-page
 	 */
 	@Action(path="sync-page")
-	public Response syncLoginPage(@Param("backlink") String backlink) {
+	public ResponseAction syncLoginPage(@Param("backlink") String backlink) {
 		return getSyncPageResponse(backlink, null);
 	}
 	
@@ -137,7 +137,7 @@ public class SignExample implements Module {
 	 */
 	@Action(path="sync-login")
 	@Method(HttpMethod.POST)
-	public Response syncLogin(
+	public ResponseAction syncLogin(
 			@Param("username") String username,
 			@Param("password") String password, 
 			@Param("backlink") String backlink) {
@@ -179,7 +179,7 @@ public class SignExample implements Module {
 	 */
 	@Action(path="sync-logout")
 	@Secured(mode = AuthMode.COOKIE)
-	public Response syncLogout() {
+	public ResponseAction syncLogout() {
 		authenticator.logout(identity);
 		return Response.getRedirect(link.create(SignExample.class, c->c.syncLoginPage(null)));
 	}
@@ -192,7 +192,7 @@ public class SignExample implements Module {
 	 */
 	@Action(path="index")
 	@Secured(mode = AuthMode.COOKIE)
-	public Response index() {
+	public ResponseAction index() {
 		return Response.getTemplate("/index.jsp", new HashMap<>());
 	}
 	
@@ -202,7 +202,7 @@ public class SignExample implements Module {
 	 */
 	@Action(path="index2")
 	@Secured(mode = AuthMode.COOKIE)
-	public Response index2() {
+	public ResponseAction index2() {
 		identity.getUser().setProperty("index2", true);
 		return Response.getTemplate("/index2.jsp", new HashMap<>());
 	}
@@ -214,7 +214,7 @@ public class SignExample implements Module {
 	 * @return http://localhost:8080/examples-sign/sign/user-data
 	 */
 	@Action(path="user-data")
-	public Response userData() throws AuthentizationException {
+	public ResponseAction userData() throws AuthentizationException {
 		if (identity.isAnonymous()) {
 			// automatic login before page load
 			// demonstation requires logged user

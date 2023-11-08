@@ -37,7 +37,7 @@ public class ExceptionsExample implements Module {
 	 * @return http://localhost:8080/exception-example/exceptions/method
 	 */
 	@Action(path="method")
-	public Response inMethod() {
+	public ResponseAction inMethod() {
 		throw new LogicException("Example of logic exception");
 	}
 	
@@ -47,7 +47,7 @@ public class ExceptionsExample implements Module {
 	 * @return http://localhost:8080/exception-example/exceptions/cause
 	 */
 	@Action(path="cause")
-	public Response inMethodCause() {
+	public ResponseAction inMethodCause() {
 		throw new RuntimeException(new LogicException("Example of logic exception"));
 	}
 
@@ -59,7 +59,7 @@ public class ExceptionsExample implements Module {
 	 */
 	@Action(path="secured")
 	@Secured()
-	public Response secured() {
+	public ResponseAction secured() {
 		return Response.OK().getText("This text should not be displayed");
 	}
 
@@ -70,7 +70,7 @@ public class ExceptionsExample implements Module {
 	 * @return http://localhost:8080/exception-example/exceptions/post
 	 */
 	@Action(path="post", methods = HttpMethod.POST)
-	public Response wrongHttpMethod() {
+	public ResponseAction wrongHttpMethod() {
 		return Response.OK().getText("This text should not be displayed");
 	}
 
@@ -81,7 +81,7 @@ public class ExceptionsExample implements Module {
 	 * @return http://localhost:8080/exception-example/exceptions/notemplate
 	 */
 	@Action(path="notemplate")
-	public Response noTemplate() {
+	public ResponseAction noTemplate() {
 		return Response.OK().getTemplate("/missing-template.jsp", new HashMap<>());
 	}
 	
@@ -92,7 +92,7 @@ public class ExceptionsExample implements Module {
 	 * @return http://localhost:8080/exception-example/exceptions/intemplate
 	 */
 	@Action(path="intemplate")
-	public Response inTemplate() {
+	public ResponseAction inTemplate() {
 		return Response.OK().getTemplate("/inTemplate.jsp", null);
 	}
 	
@@ -103,7 +103,7 @@ public class ExceptionsExample implements Module {
 	 * @return http://localhost:8080/exception-example/exceptions/syntax
 	 */
 	@Action(path="syntax")
-	public Response templateSyntax() {
+	public ResponseAction templateSyntax() {
 		return Response.OK().getTemplate("/syntax.jsp", new HashMap<>());
 	}
 
@@ -113,7 +113,7 @@ public class ExceptionsExample implements Module {
 	 * @return http://localhost:8080/exception-example/exceptions/async
 	 */
 	@Action(path="async")
-	public Response async() {
+	public ResponseAction async() {
 		return Response.OK().getTemplate("/async.jsp", new HashMap<>());
 	}
 	
@@ -127,7 +127,7 @@ public class ExceptionsExample implements Module {
 		return new CustomExceptionResponse() {
 
 			@Override
-			public Response catchException(toti.answers.request.Request request, StatusCode status, Identity identity,
+			public ResponseAction catchException(toti.answers.request.Request request, StatusCode status, Identity identity,
 					Translator translator, Throwable t, boolean isDevelopResponseAllowed, boolean isAsyncRequest) {
 				return Response.OK().getText("Oops, something happends.");
 			}

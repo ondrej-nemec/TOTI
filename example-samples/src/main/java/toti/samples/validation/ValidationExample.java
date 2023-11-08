@@ -38,7 +38,7 @@ public class ValidationExample implements Module {
 	 * @return http://localhost:8080/examples-validation/validation/noValidator?username=smith&age=42
 	 */
 	@Action(path="noValidator")
-	public Response noValidator(@Param("username") String name, @Param("age") int age) {
+	public ResponseAction noValidator(@Param("username") String name, @Param("age") int age) {
 		return Response.getText("Validated " + name + " " + age);
 	}
 	
@@ -47,7 +47,7 @@ public class ValidationExample implements Module {
 	 * @return http://localhost:8080/examples-validation/validation/validationMethod?username=smith&age=42
 	 */
 	@Action(value = "validationMethod", validator = "validationMethodValidator")
-	public Response validationMethod(@Params RequestParameters params) {
+	public ResponseAction validationMethod(@Params RequestParameters params) {
 		return Response.getText("Validated " + params);
 	}
 	
@@ -62,7 +62,7 @@ public class ValidationExample implements Module {
 	 * @return http://localhost:8080/examples-validation/validation/validationService?login=smith&width=180
 	 */
 	@Action(value = "validationService", validator = VALIDATOR_SERVICE_KEY)
-	public Response validationService(@Params RequestParameters params) {
+	public ResponseAction validationService(@Params RequestParameters params) {
 		return Response.getText("Validated " + params);
 	}
 
@@ -71,7 +71,7 @@ public class ValidationExample implements Module {
 	 * @return http://localhost:8080/examples-validation/validation/validatorParams?id=42&year=2022
 	 */
 	@Action(value = "validatorParams", validator = "validatorParamsValidator")
-	public Response validatorParams(
+	public ResponseAction validatorParams(
 			@Param("id") String id,
 			@Params RequestParameters request,
 			@ParamValidator("id") String validatorId,

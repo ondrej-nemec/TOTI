@@ -41,7 +41,7 @@ public class ResponsesExample implements Module {
 	
 	@Action(path="index")
 	@Deprecated // no more required
-	public Response getIndex() {
+	public ResponseAction getIndex() {
 		return Response.getFile("samples/examples/responses/index.html");
 	}
 
@@ -52,7 +52,7 @@ public class ResponsesExample implements Module {
 	 * @return http://localhost:8080/examples-responses/responses/file
 	 */
 	@Action(path="file")
-	public Response getFile() {
+	public ResponseAction getFile() {
 	//	String fileName = "samples/plainTextFile.txt"; // Plain text file. Browser probably display instead of downloading.
 		String fileName = "samples/binaryFile.odt"; // Binary file. Browser starts downloading
 		return Response.getFileDownload(
@@ -67,7 +67,7 @@ public class ResponsesExample implements Module {
 	 * @return http://localhost:8080/examples-responses/responses/generate
 	 */
 	@Action(path="generate")
-	public Response getGenerated() {
+	public ResponseAction getGenerated() {
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		try {
 			bout.write("Generated".getBytes());
@@ -84,7 +84,7 @@ public class ResponsesExample implements Module {
 	 * @return http://localhost:8080/examples-responses/responses/json
 	 */
 	@Action(path="json")
-	public Response getJson() {
+	public ResponseAction getJson() {
 		Map<String, Object> json = new MapInit<String, Object>()
 			.append("first", "value")
 			.append("second", false)
@@ -99,7 +99,7 @@ public class ResponsesExample implements Module {
 	 * @return http://localhost:8080/examples-responses/responses/text
 	 */
 	@Action(path="text")
-	public Response getText() {
+	public ResponseAction getText() {
 		return Response.getText("Working");
 		// return Response.getText(StatusCode.OK, "Working");
 	}
@@ -109,7 +109,7 @@ public class ResponsesExample implements Module {
 	 * @return http://localhost:8080/examples-responses/responses/template
 	 */
 	@Action(path="template")
-	public Response getTemplate() {
+	public ResponseAction getTemplate() {
 		Map<String, Object> params = new MapInit<String, Object>()
 			.append("title", "Page title")
 			.append("number", 42)
@@ -124,7 +124,7 @@ public class ResponsesExample implements Module {
 	 * @return http://localhost:8080/examples-responses/responses/redirect
 	 */
 	@Action(path="redirect")
-	public Response getRedirect() {
+	public ResponseAction getRedirect() {
 		return Response.getRedirect("/examples/responses/text");
 		// return Response.getRedirect(StatusCode.TEMPORARY_REDIRECT, "/examples/responses/text");
 	}
@@ -134,7 +134,7 @@ public class ResponsesExample implements Module {
 	 * @return http://localhost:8080/examples-responses/responses/open-redirect
 	 */
 	@Action(path="open-redirect")
-	public Response getOpenRedirect() {
+	public ResponseAction getOpenRedirect() {
 		return Response.getRedirect("https://github.com/", true);
 		// return Response.getRedirect(StatusCode.TEMPORARY_REDIRECT, "https://github.com/", true;
 	}
@@ -144,7 +144,7 @@ public class ResponsesExample implements Module {
 	 * @return http://localhost:8080/examples-responses/responses/websocket
 	 */
 	@Action(path="websocket")
-	public Response getWebsocket(WebSocket websocket) {
+	public ResponseAction getWebsocket(WebSocket websocket) {
 		 // websocket can be null - means this request is not valid websocket request
 		if (websocket != null) {
 			task.setWebsocket(websocket);

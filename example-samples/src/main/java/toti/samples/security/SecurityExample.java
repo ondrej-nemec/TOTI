@@ -65,7 +65,7 @@ public class SecurityExample implements Module {
 	 * @return http://localhost:8080/examples-security/security/index
 	 */
 	@Action(path="index")
-	public Response index() {
+	public ResponseAction index() {
 		List<Tuple2<String, String>> links = new LinkedList<>();
 		
 		links.add(new Tuple2<>("Not secured", link.create(SecurityExample.class, c->c.notSecured())));
@@ -89,7 +89,7 @@ public class SecurityExample implements Module {
 	 * @return http://localhost:8080/examples-security/security/unsecured
 	 */
 	@Action(path="unsecured")
-	public Response notSecured() {
+	public ResponseAction notSecured() {
 		return Response.getText("Unsecured");
 	}
 
@@ -99,7 +99,7 @@ public class SecurityExample implements Module {
 	 */
 	@Action(path="secured")
 	@Secured(mode = AuthMode.COOKIE)
-	public Response secured() {
+	public ResponseAction secured() {
 		return Response.getText("Secured");
 	}
 
@@ -109,7 +109,7 @@ public class SecurityExample implements Module {
 	 */
 	@Action(path="secured-csrf")
 	@Secured(mode = AuthMode.COOKIE_AND_CSRF)
-	public Response securedCsrf() {
+	public ResponseAction securedCsrf() {
 		return Response.getText("Secured CSRF");
 	}
 	
@@ -119,7 +119,7 @@ public class SecurityExample implements Module {
 	 */
 	@Action(path="super-secured")
 	@Secured
-	public Response superSecured() {
+	public ResponseAction superSecured() {
 		return Response.getText("Super secured");
 	}
 	
@@ -129,7 +129,7 @@ public class SecurityExample implements Module {
 	 */
 	@Action(path="domain-read")
 	@Secured({@Domain(name=DOMAIN_1, action=toti.security.Action.READ)})
-	public Response domaiRead() {
+	public ResponseAction domaiRead() {
 		return Response.getText("Domain READ");
 	}
 	
@@ -139,7 +139,7 @@ public class SecurityExample implements Module {
 	 */
 	@Action(path="domain-delete")
 	@Secured({@Domain(name=DOMAIN_1, action=toti.security.Action.DELETE)})
-	public Response domainDelete() {
+	public ResponseAction domainDelete() {
 		return Response.getText("Domain DELETE");
 	}
 	
@@ -154,7 +154,7 @@ public class SecurityExample implements Module {
 		@Domain(name=DOMAIN_1, action=toti.security.Action.CREATE),
 		@Domain(name=DOMAIN_2, action=toti.security.Action.UPDATE)
 	})
-	public Response domainMultiple() {
+	public ResponseAction domainMultiple() {
 		return Response.getText("Domain Multiple");
 	}
 	
@@ -165,7 +165,7 @@ public class SecurityExample implements Module {
 	 */
 	@Action(path="owner-ids")
 	@Secured({@Domain(name=DOMAIN_1, action=toti.security.Action.ALLOWED)})
-	public Response ownerIds() {
+	public ResponseAction ownerIds() {
 		return Response.getText("Owner IDs " + identity.getUser().getAllowedIds());
 	}
 	
@@ -175,7 +175,7 @@ public class SecurityExample implements Module {
 	 */
 	@Action(path="owner")
 	@Secured({@Domain(name=DOMAIN_1, action=toti.security.Action.ALLOWED, owner="id")})
-	public Response owner() {
+	public ResponseAction owner() {
 		return Response.getText("Owner");
 	}
 	
@@ -185,7 +185,7 @@ public class SecurityExample implements Module {
 	 */
 	@Action(path="list")
 	@Secured
-	public Response inMethod() {
+	public ResponseAction inMethod() {
 		String response = "User is allowed for:";
 		if (authorizator.isAllowed(identity.getUser(), DOMAIN_1, toti.security.Action.READ)) {
 			response += DOMAIN_1 + " = READ";
@@ -201,7 +201,7 @@ public class SecurityExample implements Module {
 	
 	@Action(path="login")
 	@Method({HttpMethod.POST})
-	public Response login(@Param("username") String username) {
+	public ResponseAction login(@Param("username") String username) {
 		try {
 			return Response.getJson(
 				authenticator.login(
@@ -216,7 +216,7 @@ public class SecurityExample implements Module {
 	
 	@Action(path="logout")
 	@Method({HttpMethod.POST})
-	public Response logout() {
+	public ResponseAction logout() {
 		authenticator.logout(identity);
 		return Response.getText(StatusCode.OK, "");
 	}

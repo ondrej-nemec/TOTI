@@ -75,7 +75,7 @@ public class GridExample implements Module {
 	 * @return http://localhost:8080/examples-grid/grid/all
 	 */
 	@Action(path="all")
-	public Response allFilters() {
+	public ResponseAction allFilters() {
 		Grid grid = new Grid(link.create(getClass(), c->c.allFilters(null)), "get");
 		grid.addColumn(new ValueColumn("id").setTitle("ID"));
 		grid.addColumn(
@@ -166,7 +166,7 @@ public class GridExample implements Module {
 	 * @return http://localhost:8080/examples-grid/grid/all-data
 	 */
 	@Action(value = "all-data", validator = "allFilersValidator")
-	public Response allFilters(@Params GridOptions options) {
+	public ResponseAction allFilters(@Params GridOptions options) {
 		try {
 			return Response.getJson(dao.getAll(options, null, null));
 		} catch (Exception e) {
@@ -198,7 +198,7 @@ public class GridExample implements Module {
 	 * @return http://localhost:8080/examples-grid/grid/reset
 	 */
 	@Action(path="reset")
-	public Response reset() {
+	public ResponseAction reset() {
 		Grid grid = new Grid(link.create(getClass(), c->c.allFilters(null)), "get");
 		grid.addColumn(new ValueColumn("id"));
 		grid.addColumn(
@@ -239,7 +239,7 @@ public class GridExample implements Module {
 	 * @return http://localhost:8080/examples-grid/grid/buttons
 	 */
 	@Action(path="buttons")
-	public Response buttons() {
+	public ResponseAction buttons() {
 		Grid grid = new Grid(link.create(getClass(), c->c.allFilters(null)), "get");
 		grid.addColumn(new ValueColumn("id"));
 		grid.addColumn(new ValueColumn("text"));
@@ -290,18 +290,18 @@ public class GridExample implements Module {
 	}
 	
 	@Action(path="b-sync")
-	public Response syncButtonLink(@ParamUrl("id") int id, @Param("name") String name) {
+	public ResponseAction syncButtonLink(@ParamUrl("id") int id, @Param("name") String name) {
 		return Response.getText(String.format("Sync link. ID: %s, Name: %s", id, name));
 	}
 	
 	@Action(path="b-async")
-	public Response asyncButtonLink(@ParamUrl("id") int id, @Param("name") String name) {
+	public ResponseAction asyncButtonLink(@ParamUrl("id") int id, @Param("name") String name) {
 		return Response.getText(String.format("Async link. ID: %s, Name: %s", id, name));
 	}
 	
 	@Action(path="b-post")
 	@Method(HttpMethod.POST)
-	public Response syncButtonPost(@ParamUrl("id") int id, @Param("name") String name, @Param("postParam") String postParam) {
+	public ResponseAction syncButtonPost(@ParamUrl("id") int id, @Param("name") String name, @Param("postParam") String postParam) {
 		return Response.getText(String.format("Sync link. ID: %s, Name: %s. PostParam: %s", id, name, postParam));
 	}
 	
@@ -312,7 +312,7 @@ public class GridExample implements Module {
 	 * @return http://localhost:8080/examples-grid/grid/control
 	 */
 	@Action(path="control")
-	public Response gridControl() {
+	public ResponseAction gridControl() {
 		Grid grid = new Grid(link.create(getClass(), c->c.allFilters(null)), "get");
 		
 		grid.setPagesSizes(Arrays.asList(7, 14, 28, 35, 42), 14);
@@ -332,7 +332,7 @@ public class GridExample implements Module {
 	 * @return http://localhost:8080/examples-grid/grid/load
 	 */
 	@Action(path="load")
-	public Response gridLoad() {
+	public ResponseAction gridLoad() {
 		Grid grid = new Grid(link.create(getClass(), c->c.allFilters(null)), "get");
 		
 		grid.setPagesSizes(Arrays.asList(7, 14, 28, 35, 42), 14);
@@ -354,7 +354,7 @@ public class GridExample implements Module {
 	 * @return http://localhost:8080/examples-grid/grid/empty
 	 */
 	@Action(path="empty")
-	public Response empty() {
+	public ResponseAction empty() {
 		Grid grid = new Grid(link.create(getClass(), c->c.allFilters(null)), "get");
 		
 		grid.setPagesSizes(null);
@@ -375,7 +375,7 @@ public class GridExample implements Module {
 	 * @return http://localhost:8080/examples-grid/grid/renderer
 	 */
 	@Action(path="renderer")
-	public Response renderers() {
+	public ResponseAction renderers() {
 		Grid grid = new Grid(link.create(getClass(), c->c.allFilters(null)), "get");
 		
 		grid.addColumn(new ValueColumn("id").setRenderer("onColumnRenderer"));
@@ -393,7 +393,7 @@ public class GridExample implements Module {
 	 * @return http://localhost:8080/examples-grid/grid/selection
 	 */
 	@Action(path="selection")
-	public Response selection() {
+	public ResponseAction selection() {
 		Grid grid = new Grid(link.create(getClass(), c->c.allFilters(null)), "get");
 		
 		grid.addColumn(new ValueColumn("id"));
@@ -414,7 +414,7 @@ public class GridExample implements Module {
 	 * @return http://localhost:8080/examples-grid/grid/actions
 	 */
 	@Action(path="actions")
-	public Response actions() {
+	public ResponseAction actions() {
 		Grid grid = new Grid(link.create(getClass(), c->c.allFilters(null)), "get");
 		
 		grid.addAction(
@@ -442,18 +442,18 @@ public class GridExample implements Module {
 	}
 	
 	@Action(path="a-async")
-	public Response asyncActionLink(@Param("ids") List<Integer> ids) {
+	public ResponseAction asyncActionLink(@Param("ids") List<Integer> ids) {
 		return Response.getText(String.format("Async action. IDS: " + ids));
 	}
 	
 	@Action(path="a-sync")
-	public Response syncActionLink(@Param("ids") List<Integer> ids) {
+	public ResponseAction syncActionLink(@Param("ids") List<Integer> ids) {
 		return Response.getText(String.format("Sync action. IDS: " + ids));
 	}
 	
 	@Action(path="a-post")
 	@Method(HttpMethod.POST)
-	public Response postActionLink(@Param("ids") List<Integer> ids) {
+	public ResponseAction postActionLink(@Param("ids") List<Integer> ids) {
 		return Response.getText(String.format("Post action. IDS: " + ids));
 	}
 	
@@ -464,7 +464,7 @@ public class GridExample implements Module {
 	 * @return http://localhost:8080/examples-grid/grid/row-unique
 	 */
 	@Action(path="row-unique")
-	public Response rowUnique() {
+	public ResponseAction rowUnique() {
 		Grid grid = new Grid(link.create(getClass(), c->c.allFilters(null)), "get");
 		
 		grid.addAction(
@@ -483,7 +483,7 @@ public class GridExample implements Module {
 	}
 	
 	@Action(path="a-async-text")
-	public Response asyncActionLinkText(@Param("ids") List<String> ids) {
+	public ResponseAction asyncActionLinkText(@Param("ids") List<String> ids) {
 		return Response.getText(String.format("Async action with string ids. IDS: " + ids));
 	}
 	
@@ -494,7 +494,7 @@ public class GridExample implements Module {
 	 * @return http://localhost:8080/examples-grid/grid/tree-structure
 	 */
 	@Action(path="tree-structure")
-	public Response treeStructure() {
+	public ResponseAction treeStructure() {
 		Grid grid = new Grid(link.create(getClass(), c->c.allFilters(null)), "get");
 		grid.setPageSize(50);
 
@@ -524,7 +524,7 @@ public class GridExample implements Module {
 	 * @return http://localhost:8080/examples-grid/grid/filtering
 	 */
 	@Action(path="filtering")
-	public Response filtering() {
+	public ResponseAction filtering() {
 		Grid grid = new Grid(link.create(getClass(), c->c.filtering(null)), "get");
 		grid.addColumn(new ValueColumn("id").setTitle("ID"));
 		// like, startswith, endswith, equasl
@@ -575,7 +575,7 @@ public class GridExample implements Module {
 	 * @return http://localhost:8080/examples-grid/grid/filtering-data
 	 */
 	@Action(value = "filtering-data", validator = "filteringValidator")
-	public Response filtering(@Params GridOptions options) {
+	public ResponseAction filtering(@Params GridOptions options) {
 		try {
 			return Response.getJson(dao.getAll(options, null, null));
 		} catch (Exception e) {
@@ -600,7 +600,7 @@ public class GridExample implements Module {
 	 * @return http://localhost:8080/examples-grid/grid/subst
 	 */
 	@Action(path="subst")
-	public Response sortingSubst() {
+	public ResponseAction sortingSubst() {
 		Grid grid = new Grid(link.create(getClass(), c->c.substitution(null)), "get");
 		
 		grid.addColumn(new ValueColumn("id").setTitle("ID"));
@@ -621,7 +621,7 @@ public class GridExample implements Module {
 	 * @return http://localhost:8080/examples-grid/grid/substitution-data
 	 */
 	@Action(value = "substitution-data", validator = "substitutionValidator")
-	public Response substitution(@Params GridOptions options) {
+	public ResponseAction substitution(@Params GridOptions options) {
 		try {
 			return Response.getJson(dao.getAll(options, null, null));
 		} catch (Exception e) {
@@ -643,7 +643,7 @@ public class GridExample implements Module {
 	 * @return http://localhost:8080/examples-grid/grid/refresh
 	 */
 	@Action(path="refresh")
-	public Response refresh() {
+	public ResponseAction refresh() {
 		Grid grid = new Grid(link.create(getClass(), c->c.refreshRandomData(null)), "get");
 		grid.addColumn(new ValueColumn("id"));
 		grid.setRefreshInterval(30000); // 0.5 min
@@ -688,7 +688,7 @@ public class GridExample implements Module {
 	 * @return http://localhost:8080/examples-grid/grid/random-data
 	 */
 	@Action(value="random-data", validator="randomDataValidator")
-	public Response refreshRandomData(@Params GridOptions options) {
+	public ResponseAction refreshRandomData(@Params GridOptions options) {
 		List<Object> data = new LinkedList<>();
 		Random random = new Random();
 		for (int i = 0; i < 20; i++) {
@@ -713,7 +713,7 @@ public class GridExample implements Module {
 	 */
 	@Action(path="raw")
 	@Deprecated
-	public Response raw() {
+	public ResponseAction raw() {
 		Grid grid = new Grid(link.create(getClass(), c->c.raw(0, 0, null, null)), "get");
 		
 		grid.addColumn(
@@ -740,7 +740,7 @@ public class GridExample implements Module {
 	 */
 	@Action(value = "raw-data", validator = "rawValidator")
 	@Deprecated
-	public Response raw(
+	public ResponseAction raw(
 			@Param("pageIndex") int pageIndex, 
 			@Param("pageSize") int pageSize,
 			@Param("filters") Map<String, Object> filters,
@@ -788,7 +788,7 @@ public class GridExample implements Module {
 	 * @return http://localhost:8080/examples-grid/grid/xss
 	 */
 	@Action(path="xss")
-	public Response xss() {
+	public ResponseAction xss() {
 		Grid grid = new Grid(link.create(getClass(), c->c.xss(null)), "get");
 		
 		grid.addColumn(new ValueColumn("id"));
@@ -816,7 +816,7 @@ public class GridExample implements Module {
 	}
 	
 	@Action(path="xss-load")
-	public Response xssLoad() {
+	public ResponseAction xssLoad() {
 		Map<String, Object> json = new HashMap<>();
 		json.put("value", 1);
 		json.put("title", "<script>alert('select');</script>");
@@ -829,7 +829,7 @@ public class GridExample implements Module {
 	 * @return http://localhost:8080/examples-grid/grid/xss-data
 	 */
 	@Action(value = "xss-data")
-	public Response xss(@Params GridOptions options) {
+	public ResponseAction xss(@Params GridOptions options) {
 		try {
 			List<Object> dataset = new LinkedList<>();
 			dataset.add(
@@ -859,7 +859,7 @@ public class GridExample implements Module {
 	 * @return http://localhost:8080/examples-grid/grid/custom-template
 	 */
 	@Action(path="custom-template")
-	public Response customTemplate() {
+	public ResponseAction customTemplate() {
 		Grid grid = new Grid(link.create(getClass(), c->c.allFilters(null)), "get");
 		grid.setPageSize(50);
 		

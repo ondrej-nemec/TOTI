@@ -1082,29 +1082,28 @@ public class FormExample implements Module {
 	 */
 	@Action(path="redirect")
 	public ResponseAction submitWithRedirect() {
-		Form form = new Form(link.create(getClass(), c->c.formRedirectSave(null)), true);
-		form.setFormMethod("post");
-
-		form.addInput(
-			Text.input("some-input", false)
-			.setTitle("Some input")
-		);
-		form.addInput(
-			Submit.create("Submit", "submit")
-			.setRedirect(
-				link.create(
-					getClass(), c->c.afterRedirect(null),
-					MapInit.create().append("someParam", "{id}").toMap()
-				)
-			)
-		);
-		
-		Map<String, Object> params = new HashMap<>();
-		params.put("form", form);
-		params.put("title", "Submit redirect");
-		return Response.getTemplate("inputs.jsp", params);
 		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			Form form = new Form(link.create(getClass(), c->c.formRedirectSave()), true);
+			form.setFormMethod("post");
+
+			form.addInput(
+				Text.input("some-input", false)
+				.setTitle("Some input")
+			);
+			form.addInput(
+				Submit.create("Submit", "submit")
+				.setRedirect(
+					link.create(
+						getClass(), c->c.afterRedirect(),
+						MapInit.create().append("someParam", "{id}").toMap()
+					)
+				)
+			);
 			
+			Map<String, Object> params = new HashMap<>();
+			params.put("form", form);
+			params.put("title", "Submit redirect");
+			return Response.getTemplate("inputs.jsp", params);
 		});
 	}
 	
