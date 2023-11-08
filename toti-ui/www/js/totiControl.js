@@ -1,4 +1,4 @@
-/* TOTI Control version 2.0.0 */
+/* TOTI Control version 2.1.0 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -146,9 +146,9 @@ var totiControl = {
 
 			function addOption(res) {
 				res.forEach((option)=>{
-					datalist.appendChild(totiControl.inputs.option({
-						value: typeof option === 'object' ? option.value : option
-					}));
+					var container = document.createElement('option');
+					container.value = typeof option === 'object' ? option.value : option;
+					datalist.appendChild(container);
 				});
 			}
 
@@ -293,7 +293,30 @@ var totiControl = {
 					/* IMPROVE loading icon */
 					select.setAttribute('disabled', true);
 				}
-				select.setOptions = new Promise(function (resolve, reject) {
+				params.setOptions = {
+					options: null,
+					callbacks: [],
+					setFinished: (options) =>{
+						params.setOptions.options = options;
+						params.setOptions.callbacks.forEach((callback)=>{
+							callback(options);
+						});
+					},
+					then: (callback)=>{
+						if (params.setOptions.options !== null) {
+							return new Promise((resolve)=>{
+								resolve(callback(params.setOptions.options));
+							});
+						}
+						return new Promise((resolve)=>{
+							params.setOptions.callbacks.push((options)=>{
+								resolve(callback(options));
+							});
+						});
+					}
+				};
+				select.setOptions = params.setOptions;
+				new Promise(function (resolve, reject) {
 				    /* first wait until depends is loaded */
 				    /* depends element must be first */
 					if (params.hasOwnProperty("depends")) {
@@ -335,6 +358,8 @@ var totiControl = {
 						/* IMPROVE loading icon */
 						select.removeAttribute('disabled');
 					}
+				}).then(()=>{
+					params.setOptions.setFinished(options);
 				});
 				return factory.getContainer();
 			}
@@ -383,8 +408,8 @@ var totiControl = {
 					options.forEach(function(option) {
 						renderOptions[option.value] = option;
 					});
-					params.renderOptions = renderOptions;
-					return options;
+					/*params.renderOptions = renderOptions;*/
+					return renderOptions;
 				});
 			}
 			function onOptions(options, params, factory, depends) {
@@ -495,6 +520,7 @@ var totiControl = {
 			        } else if (values.length === 1 && value.length >=5) {
 				        time.value = value;
 			        }
+			        datetime.value = value;
 		    	}
 		    };
 
@@ -620,7 +646,11 @@ var totiControl = {
 				} else {
 					totiDisplay.fadeOut();
 					/* totiControl.load.link(href, method, {}, totiControl.getHeaders()); */
-					window.location = clickSettings.href;
+					var href = clickSettings.href;
+					if (clickSettings.params instanceof URLSearchParams) {
+						href += '?' + clickSettings.params.toString();
+					}
+					window.location = href;
 				}
 			});
 		};

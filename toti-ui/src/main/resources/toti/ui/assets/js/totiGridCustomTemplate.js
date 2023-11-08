@@ -1,4 +1,4 @@
-/* TOTI Grid custom template version 0.1.3 */
+/* TOTI Grid custom template version 0.2.0 */
 var totiGridCustomTemplate = {
 	getContainer: function(parentSelector, gridUnique) {
 		return document.querySelector(parentSelector);
@@ -124,6 +124,15 @@ var totiGridCustomTemplate = {
 				break;
 			case 2:
 				content.append(...value);
+				break;
+			case 3:
+				value.then((val)=>{
+					if (val instanceof Node || val instanceof HTMLElement) {
+						content.appendChild(val);
+					} else {
+						content.innerText = val;
+					}
+				});
 				break;
 		}
 	},

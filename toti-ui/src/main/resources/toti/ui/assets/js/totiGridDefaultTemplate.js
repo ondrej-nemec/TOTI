@@ -1,4 +1,4 @@
-/* TOTI Grid default template version 0.1.2 */
+/* TOTI Grid default template version 0.2.0 */
 /* can be overriden */
 var totiGridDefaultTemplate = {
 	getContainer: function(parentSelector, gridUnique) {
@@ -188,6 +188,7 @@ var totiGridDefaultTemplate = {
 	*  0: value
 	*  1: checkbox
 	*  2: list of buttons
+    *  3: promised value
 	*/
 	addCell: function(gridUnique, container, rowContainer, name, value, mode) {
 		var cell = document.createElement('td');
@@ -205,6 +206,15 @@ var totiGridDefaultTemplate = {
 				break;
 			case 2:
 				cell.append(...value);
+				break;
+			case 3:
+				value.then((val)=>{
+					if (val instanceof Node || val instanceof HTMLElement) {
+						cell.appendChild(val);
+					} else {
+						cell.innerText = val;
+					}
+				});
 				break;
 		}
 		rowContainer.appendChild(cell);

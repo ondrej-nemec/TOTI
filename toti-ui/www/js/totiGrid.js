@@ -1,4 +1,4 @@
-/* TOTI Grid version 1.1.18 */
+/* TOTI Grid version 1.2.0 */
 class TotiGrid {
 
 	cookieName = "grid-cache";
@@ -496,25 +496,34 @@ class TotiGrid {
 						});
 						grid.template.addCell(grid.gridUnique, grid.container, row, column.name, buttons, 2);
 					} else if (column.hasOwnProperty("renderer")) {
-						var value = rowData[column.name];
-						var rendererData = [value, rowData];
-						if (column.hasOwnProperty("filter") && column.filter.hasOwnProperty("renderOptions")) {
-							if (column.filter.renderOptions.hasOwnProperty(value)) {
-								rendererData.push(column.filter.renderOptions[value]);
-							}
+						if (column.hasOwnProperty("filter") && column.filter.hasOwnProperty("setOptions")) {
+							var value = rowData[column.name];
+							var rendererData = [value, rowData];
+							var renderer = column.filter.setOptions.then((options)=>{
+								if (options.hasOwnProperty(value)) {
+									rendererData.push(options[value]);
+								}
+								return totiUtils.execute(column.renderer, rendererData);
+							});
+							grid.template.addCell(grid.gridUnique, grid.container, row, column.name, renderer, 3);
+						} else {
+							var renderer = totiUtils.execute(column.renderer, [rowData[column.name], rowData]);
+							grid.template.addCell(grid.gridUnique, grid.container, row, column.name, renderer, 0);
 						}
-						var renderer = totiUtils.execute(column.renderer, rendererData);
-						grid.template.addCell(grid.gridUnique, grid.container, row, column.name, renderer, 0);
 					} else if (!rowData.hasOwnProperty(column.name)) {
 						grid.template.addCell(grid.gridUnique, grid.container, row, column.name, "", 0);
-					} else if (column.hasOwnProperty("filter") && column.filter.hasOwnProperty("renderOptions")) {
+					} else if (column.hasOwnProperty("filter") && column.filter.hasOwnProperty("setOptions")) {
 						var value = rowData[column.name];
-						if (value !== null) {
-                            if (column.filter.renderOptions.hasOwnProperty(value)) {
-                                value = column.filter.renderOptions[value].title;
-                            }
-						}
-						grid.template.addCell(grid.gridUnique, grid.container, row, column.name, value, 0);
+						var onValue = column.filter.setOptions.then((options)=>{
+							if (value === null) {
+								return null;
+							}
+							if (options.hasOwnProperty(value)) {
+								return options[value].title;
+							}
+							return value;
+						});
+						grid.template.addCell(grid.gridUnique, grid.container, row, column.name, onValue, 3);
 					} else if (column.hasOwnProperty("filter")  && column.filter.hasOwnProperty("originType")) {
 						grid.template.addCell(
 							grid.gridUnique, grid.container, row, column.name,
