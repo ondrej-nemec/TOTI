@@ -210,7 +210,7 @@ public class LinkTest {
 	@Test
 	@Parameters(method="dataCreate")
 	public void testCreate(Map<String, Object> queryParams, Object[] pathParams, String expected) throws NoSuchMethodException, SecurityException {
-		UriPattern pattern = new UriPattern();
+		UriPattern pattern = new UriPattern(){};
 		
 		ObjectBuilder<Module> module = new ObjectBuilder<>(new TestModule());
 		Register register = new Register(new Param(null), module, pattern);

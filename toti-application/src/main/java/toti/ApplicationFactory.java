@@ -64,6 +64,7 @@ public class ApplicationFactory {
 	//private Database database = null;
 	private BiFunction<List<String>, Env, Database> createDatabase = null;
 	private Translator translator = null;
+	private UriPattern pattern = new UriPattern() {};
 	
 	private String[] aliases;
 	
@@ -115,7 +116,6 @@ public class ApplicationFactory {
 		
 		ObjectBuilder<Module> actualModule = new ObjectBuilder<>();
 		Param root = new Param(null);
-		UriPattern pattern = new UriPattern();
 		Register register = new Register(root, actualModule, pattern);
 		Link link = new Link(/*getUrlPattern(env),*/ register, pattern);
 		Router router = new Router(register);
@@ -365,6 +365,11 @@ public class ApplicationFactory {
 	
 	public ApplicationFactory setSessionUserProvider(SessionUserProvider sessionUserProvider) {
 		this.sessionUserProvider = sessionUserProvider;
+		return this;
+	}
+	
+	public ApplicationFactory setUrlPattern(UriPattern pattern) {
+		this.pattern = pattern;
 		return this;
 	}
 	

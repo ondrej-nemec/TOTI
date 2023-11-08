@@ -16,7 +16,7 @@ public class UriPatternTest {
 	@Test
 	@Parameters(method="dataCreateBase")
 	public void testCreateBase(String module, String controller, String action, String expected) {
-		UriPattern pattern = new UriPattern();
+		UriPattern pattern = new UriPattern(){};
 		assertEquals(expected, pattern.createUri(mock(Module.class), Object.class, module, controller, action));
 	}
 	

@@ -243,7 +243,7 @@ public class RegisterTest {
 	}
 
 	private UriPattern getPattern() {
-		return new UriPattern();
+		return new UriPattern(){};
 	}
 	
 }
