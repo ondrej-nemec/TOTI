@@ -27,13 +27,20 @@ public class UiExtension implements TranslatedExtension, OnToti {
 
 	@Override
 	public List<String> getListeningUri() {
-		return Arrays.asList(".js");
+		return Arrays.asList(".js", ".css");
 	}
 
 	@Override
 	public Response getResponse(String uri, Request request, Identity identity, MapDictionary<String> space,
 			Headers responseHeaders, boolean isDeveloperRequest) {
-		return Response.create(StatusCode.OK).getTemplate("/toti/ui/assets/toti.jsp", new HashMap<>());
+		switch (uri) {
+			case ".js":
+				return Response.create(StatusCode.OK).getTemplate("/toti/ui/assets/toti.jsp", new HashMap<>());
+			case ".css":
+				return Response.create(StatusCode.OK).getTemplate("/toti/ui/assets/toti.css", new HashMap<>());
+			default:
+				return Response.create(StatusCode.NOT_FOUND).getEmpty();
+		}
 	}
 
 }
