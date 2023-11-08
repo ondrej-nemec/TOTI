@@ -28,6 +28,18 @@ public class GridDataSet implements Jsonable {
 		this.pageIndex = pageIndex;
 	}
 
+	public List<Object> getItems() {
+		return items;
+	}
+	
+	public int getPageIndex() {
+		return pageIndex;
+	}
+	
+	public int getTotalCount() {
+		return totalCount;
+	}
+	
 	@Override
 	public Object toJson() {
 		Map<String, Object> json = new HashMap<>();
