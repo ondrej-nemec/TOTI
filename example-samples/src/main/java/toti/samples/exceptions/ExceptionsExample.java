@@ -10,11 +10,9 @@ import ji.common.functions.Env;
 import ji.database.Database;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.structures.Request;
 import ji.translator.Translator;
 import toti.annotations.Action;
 import toti.annotations.Controller;
-import toti.annotations.Method;
 import toti.annotations.Secured;
 import toti.answers.request.Identity;
 import toti.answers.response.Response;
@@ -24,7 +22,6 @@ import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Register;
 import toti.extensions.CustomExceptionResponse;
-import toti.url.MappedUrl;
 
 /**
  * This example shows TOTI reaction on varios exceptions
@@ -39,7 +36,7 @@ public class ExceptionsExample implements Module {
 	 * @throws LogicException
 	 * @return http://localhost:8080/exception-example/exceptions/method
 	 */
-	@Action("method")
+	@Action(path="method")
 	public Response inMethod() {
 		throw new LogicException("Example of logic exception");
 	}
@@ -49,7 +46,7 @@ public class ExceptionsExample implements Module {
 	 * @throws LogicException
 	 * @return http://localhost:8080/exception-example/exceptions/cause
 	 */
-	@Action("cause")
+	@Action(path="cause")
 	public Response inMethodCause() {
 		throw new RuntimeException(new LogicException("Example of logic exception"));
 	}
@@ -60,10 +57,10 @@ public class ExceptionsExample implements Module {
 	 * @throws ServerException 401 Unauthorized
 	 * @return http://localhost:8080/exception-example/exceptions/secured
 	 */
-	@Action("secured")
+	@Action(path="secured")
 	@Secured()
 	public Response secured() {
-		return Response.getText("This text should not be displayed");
+		return Response.OK().getText("This text should not be displayed");
 	}
 
 	/**
@@ -72,10 +69,9 @@ public class ExceptionsExample implements Module {
 	 * @throws ServerException 404 Not found
 	 * @return http://localhost:8080/exception-example/exceptions/post
 	 */
-	@Action("post")
-	@Method(HttpMethod.POST)
+	@Action(path="post", methods = HttpMethod.POST)
 	public Response wrongHttpMethod() {
-		return Response.getText("This text should not be displayed");
+		return Response.OK().getText("This text should not be displayed");
 	}
 
 	/**
@@ -84,9 +80,9 @@ public class ExceptionsExample implements Module {
 	 * @throws FileNotFoundException
 	 * @return http://localhost:8080/exception-example/exceptions/notemplate
 	 */
-	@Action("notemplate")
+	@Action(path="notemplate")
 	public Response noTemplate() {
-		return Response.getTemplate("/missing-template.jsp", new HashMap<>());
+		return Response.OK().getTemplate("/missing-template.jsp", new HashMap<>());
 	}
 	
 	/**
@@ -95,9 +91,9 @@ public class ExceptionsExample implements Module {
 	 * @throws NullPoinerException
 	 * @return http://localhost:8080/exception-example/exceptions/intemplate
 	 */
-	@Action("intemplate")
+	@Action(path="intemplate")
 	public Response inTemplate() {
-		return Response.getTemplate("/inTemplate.jsp", null);
+		return Response.OK().getTemplate("/inTemplate.jsp", null);
 	}
 	
 	/**
@@ -106,9 +102,9 @@ public class ExceptionsExample implements Module {
 	 * @throws TemplateException Unknown syntax error
 	 * @return http://localhost:8080/exception-example/exceptions/syntax
 	 */
-	@Action("syntax")
+	@Action(path="syntax")
 	public Response templateSyntax() {
-		return Response.getTemplate("/syntax.jsp", new HashMap<>());
+		return Response.OK().getTemplate("/syntax.jsp", new HashMap<>());
 	}
 
 	/**
@@ -116,9 +112,9 @@ public class ExceptionsExample implements Module {
 	 * All previous method are requested async
 	 * @return http://localhost:8080/exception-example/exceptions/async
 	 */
-	@Action("async")
+	@Action(path="async")
 	public Response async() {
-		return Response.getTemplate("/async.jsp", new HashMap<>());
+		return Response.OK().getTemplate("/async.jsp", new HashMap<>());
 	}
 	
 	@Override
@@ -129,22 +125,19 @@ public class ExceptionsExample implements Module {
 	
 	protected CustomExceptionResponse getCustomExceptionHandler() {
 		return new CustomExceptionResponse() {
+
 			@Override
-			public Response catchException(StatusCode status, Request request, Identity identity, MappedUrl mappedUrl,
-					Throwable t, Translator translator, boolean isDevelopResponseAllowed, boolean isAsyncRequest) {
-				return Response.getText("Oops, something happends.");
+			public Response catchException(toti.answers.request.Request request, StatusCode status, Identity identity,
+					Translator translator, Throwable t, boolean isDevelopResponseAllowed, boolean isAsyncRequest) {
+				return Response.OK().getText("Oops, something happends.");
 			}
+			
 		};
 	}
 
 	@Override
 	public String getName() {
 		return "exception-example";
-	}
-
-	@Override
-	public String getControllersPath() {
-		return "toti/samples/exceptions";
 	}
 	
 	@Override

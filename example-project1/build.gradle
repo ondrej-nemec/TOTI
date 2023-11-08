@@ -14,6 +14,7 @@ repositories {
 dependencies {
 	api project(':toti-templating')
 	api project(':toti-application')
+	api project(':toti-ui')
 	
 	// https://mvnrepository.com/artifact/junit/junit
 	testImplementation  group: 'junit', name: 'junit', version: '4.12'

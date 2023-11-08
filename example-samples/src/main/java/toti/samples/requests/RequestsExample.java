@@ -44,7 +44,7 @@ public class RequestsExample implements Module  {
 	 * // others are not accepted <br>
 	 * http://localhost:8080/examples-requests/requests/primitives?someText=aaaa&someNumber=12&anotherNumber=21&bool=true&myNumber=12.3
 	 */
-	@Action("primitives")
+	@Action(path="primitives")
 	public Response primitives(
 			@Param("someText") String text, 
 			@Param("someNumber") int number1, // cannot be null
@@ -66,7 +66,7 @@ public class RequestsExample implements Module  {
 	 * Receive URL list
 	 * @return http://localhost:8080/examples-requests/requests/list?names[]=smith.john&names[]=doe.jane&names[]=my.name
 	 */
-	@Action("list")
+	@Action(path="list")
 	public Response list(@Param("names") List<String> names) {
 		return Response.getTemplate("/response.jsp", new MapInit<String, Object>("params", names).toMap());
 	}
@@ -75,7 +75,7 @@ public class RequestsExample implements Module  {
 	 * Receive URL map
 	 * @return http://localhost:8080/examples-requests/requests/map?rate[0]=273.15&rate[26.85]=300&rate[100]=373.15
 	 */
-	@Action("map")
+	@Action(path="map")
 	public Response map(@Param("rate") Map<String, String> exchangeRateList) {
 		return Response.getTemplate("/response.jsp", new MapInit<String, Object>("params", exchangeRateList).toMap());
 	}
@@ -85,7 +85,7 @@ public class RequestsExample implements Module  {
 	 * <strong>THIS IS NOT WORKING CORRECTLY</strong>
 	 * @return http://localhost:8080/examples-requests/requests/mapInList?list[][name]=smith.john&list[][name]=doe.jane&list[][name]=my.name
 	 */
-	/*@Action("mapInList")
+	/*@Action(path="mapInList")
 	public Response mapInList(@Param("list") List<Object> mapInList) {
 		return Response.getTemplate("/response.jsp", new MapInit<String, Object>("params", mapInList).toMap());
 	}*/
@@ -94,7 +94,7 @@ public class RequestsExample implements Module  {
 	 * Receive URL list in map
 	 * @return http://localhost:8080/examples-requests/requests/listInMap?map[list][]=273.15&map[list][]=300&map[100]=373.15
 	 */
-	@Action("listInMap")
+	@Action(path="listInMap")
 	public Response listInMap(@Param("map") Map<String, Object> listInMap) {
 		return Response.getTemplate("/response.jsp", new MapInit<String, Object>("params", listInMap).toMap());
 	}
@@ -104,7 +104,7 @@ public class RequestsExample implements Module  {
 	 * Receive parameter in URL
 	 * @return http://localhost:8080/examples-requests/requests/url/42
 	 */
-	@Action("url")
+	@Action(path="url")
 	public Response url(@ParamUrl("id") Integer id) {
 		return Response.getTemplate("/response.jsp", new MapInit<String, Object>("params", id).toMap());
 	}
@@ -113,7 +113,7 @@ public class RequestsExample implements Module  {
 	 * Show form for file uploading
 	 * @return http://localhost:8080/examples-requests/requests/file
 	 */
-	@Action("file")
+	@Action(path="file")
 	@Method({HttpMethod.GET})
 	public Response fileIndex() {
 		return Response.getTemplate("fileForm.jsp", new HashMap<>());
@@ -123,7 +123,7 @@ public class RequestsExample implements Module  {
 	 * Upload file
 	 * @return
 	 */
-	@Action("file")
+	@Action(path="file")
 	@Method({HttpMethod.POST})
 	public Response fileUpload(@Param("fileToUpload") UploadedFile file) {
 		// file.save(path); // save file on given path
@@ -141,7 +141,7 @@ public class RequestsExample implements Module  {
 	 * @return
 	 *  http://localhost:8080/examples-requests/requests/all?age=42&name=my_name&list[]=a&list[]=b&map[a]=aa&map[b]=bb
 	 */
-	@Action("all")
+	@Action(path="all")
 	public Response allParams(@Params RequestParameters parameters) {
 		return Response.getTemplate("/response.jsp", new MapInit<String, Object>("params", parameters).toMap());
 	}
@@ -151,7 +151,7 @@ public class RequestsExample implements Module  {
 	 * @return
 	 *  http://localhost:8080/examples-requests/requests/entity?age=42&name=my_name&list[]=a&list[]=b&map[a]=aa&map[b]=bb
 	 */
-	@Action("entity")
+	@Action(path="entity")
 	public Response entity(@Params RequestEntity entity) {
 		return Response.getTemplate("/response.jsp", new MapInit<String, Object>("params", entity).toMap());
 	}
@@ -160,7 +160,7 @@ public class RequestsExample implements Module  {
 	 * RequestParameters, Entity, URL parameters and GET/POST parameters can be together
 	 * @return http://localhost:8080/examples-requests/requests/combined/my_name?age=42&list[]=a&list[]=b&map[a]=aa&map[b]=bb
 	 */
-	@Action("combined")
+	@Action(path="combined")
 	public Response combined(
 			@ParamUrl("name") String name, 
 			@Param("age") Integer age, 
@@ -185,7 +185,7 @@ public class RequestsExample implements Module  {
 	 * @return
 	 *  http://localhost:8080/examples-requests/requests/body
 	 */
-	@Action("body")
+	@Action(path="body")
 	public Response byteBody(byte[] body) {
 		return Response.getTemplate("/response.jsp", new MapInit<String, Object>("params", new String(body)).toMap());
 	}

@@ -15,11 +15,9 @@ import ji.socketCommunication.http.structures.UploadedFile;
 import ji.translator.Translator;
 import toti.annotations.Action;
 import toti.annotations.Controller;
-import toti.annotations.Method;
-import toti.annotations.Param;
-import toti.annotations.ParamUrl;
-import toti.annotations.Params;
 import toti.annotations.Secured;
+import toti.answers.action.ResponseAction;
+import toti.answers.action.ResponseBuilder;
 import toti.answers.request.AuthMode;
 import toti.answers.request.Identity;
 import toti.answers.response.Response;
@@ -27,35 +25,17 @@ import toti.answers.router.Link;
 import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Register;
-import toti.authentication.AuthentizationException;
-import toti.control.Form;
-import toti.control.inputs.Button;
-import toti.control.inputs.Checkbox;
-import toti.control.inputs.Color;
-import toti.control.inputs.Date;
-import toti.control.inputs.Datetime;
-import toti.control.inputs.DynamicList;
-import toti.control.inputs.Email;
-import toti.control.inputs.File;
-import toti.control.inputs.Hidden;
-import toti.control.inputs.InputList;
-import toti.control.inputs.Month;
-import toti.control.inputs.Number;
-import toti.control.inputs.Option;
-import toti.control.inputs.Password;
-import toti.control.inputs.RadioList;
-import toti.control.inputs.Range;
-import toti.control.inputs.Select;
-import toti.control.inputs.Submit;
-import toti.control.inputs.SubmitPolicy;
-import toti.control.inputs.Text;
-import toti.control.inputs.TextArea;
-import toti.control.inputs.Time;
-import toti.control.inputs.Week;
-import toti.security.Authenticator;
-import toti.security.User;
-import toti.validation.ItemRules;
-import toti.validation.Validator;
+import toti.ui.control.Form;
+import toti.ui.control.inputs.Checkbox;
+import toti.ui.control.inputs.Color;
+import toti.ui.control.inputs.DynamicList;
+import toti.ui.control.inputs.File;
+import toti.ui.control.inputs.Hidden;
+import toti.ui.control.inputs.InputList;
+import toti.ui.control.inputs.Range;
+import toti.ui.control.inputs.Select;
+import toti.ui.control.inputs.Submit;
+import toti.ui.control.inputs.Text;
 
 /**
  * Example shows using forms
@@ -66,63 +46,74 @@ import toti.validation.Validator;
 public class FormExample implements Module {
 	
 	private FormExampleDao dao;
-	private Identity identity;
-	private Authenticator authenticator;
 	private Link link;
+	//private Authenticator authenticator;
 	
 	public FormExample() {}
 	
-	public FormExample(FormExampleDao dao, Link link, Identity identity, Authenticator authenticator) {
+	public FormExample(FormExampleDao dao, Link link/*, Authenticator authenticator*/) {
 		this.dao = dao;
 		this.link = link;
-		this.identity = identity;
-		this.authenticator = authenticator;
+	//	this.authenticator = authenticator;
 	}
 	
 	/**
 	 * Display inputs
 	 * @return http://localhost:8080/examples-form/form/inputs/{0-100}
 	 */
-	@Action("inputs")
-	public Response inputsForm(@ParamUrl("id") int i) {
-		return getInputs(i, true, "All inputs - Bind");
+	@Action(path="inputs")
+	public ResponseAction inputsForm(int i) {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return getInputs(i, true, "All inputs - Bind");
+		});
 	}
 	
 	/**
 	 * Display form as detail - not editable
 	 * @return http://localhost:8080/examples-form/form/detail/{0-100}
 	 */
-	@Action("detail")
-	public Response inputsNotEditable(@ParamUrl("id") int i) {
-		return getInputs(i, false, "All inputs - Not editable");
+	@Action(path="detail")
+	public ResponseAction inputsNotEditable(int i) {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return getInputs(i, false, "All inputs - Not editable");
+		});
 	}
 	
 	/**
 	 * Display inputs
 	 * @return http://localhost:8080/examples-form/form/insert
 	 */
-	@Action("insert")
-	public Response allInputsSave() {
+	@Action(path="insert")
+	public ResponseAction allInputsSave() {
 		return getInputs(null, true, "All inputs - No bind");
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			
+		});
 	}
 	
 	/**
 	 * Get data for form
 	 * @return http://localhost:8080/examples-form/form/get/{0-100}
 	 */
-	@Action("get")
-	public Response allInputsGet(@ParamUrl("id") int i) {
+	@Action(path="get")
+	public ResponseAction allInputsGet(@ParamUrl("id") int i) {
 		return Response.getJson(dao.get(i));
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			
+		});
 	}
 	
 	/**
 	 * Save data from form
 	 * @return http://localhost:8080/examples-form/form/save-inputs/{0-100}
 	 */
-	@Action("save-inputs")
-	public Response allInputs(@ParamUrl("hidden") Integer index, @Params FormExampleEntity entity) {
+	@Action(path="save-inputs")
+	public ResponseAction allInputs(@ParamUrl("hidden") Integer index, @Params FormExampleEntity entity) {
 		int id = dao.update(index, entity);
 		return Response.getJson(new MapInit<>().append("id", id).append("message", "Saved").toMap());
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			
+		});
 	}
 	
 	private Response getInputs(Integer i, boolean editable, String title) {
@@ -212,8 +203,8 @@ public class FormExample implements Module {
 	 * Display inputs with placeholders
 	 * @return http://localhost:8080/examples-form/form/placeholders/{0-100}
 	 */
-	@Action("placeholders")
-	public Response placeholders(@ParamUrl("id") int i) {
+	@Action(path="placeholders")
+	public ResponseAction placeholders(@ParamUrl("id") int i) {
 		Form form = new Form(link.create(getClass(), c->c.allInputs(0, null), i), true);
 		form.addInput(
 			Hidden.input("hidden").setDefaultValue(i)
@@ -294,6 +285,9 @@ public class FormExample implements Module {
 		params.put("form", form);
 		params.put("title", "Form - load placeholders");
 		return Response.getTemplate("inputs.jsp", params);
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			
+		});
 	}
 	
 	/*******/
@@ -302,8 +296,8 @@ public class FormExample implements Module {
 	 * Submit returns 400 with errors
 	 * @return http://localhost:8080/examples-form/form/validated
 	 */
-	@Action("validated")
-	public Response validated() {
+	@Action(path="validated")
+	public ResponseAction validated() {
 		Form form = new Form(link.create(getClass(), c->c.validateSave()), true);
 		form.addInput(
 			Text.input("text", true).setTitle("Text input")
@@ -322,6 +316,9 @@ public class FormExample implements Module {
 		params.put("form", form);
 		params.put("title", "With validator");
 		return Response.getTemplate("inputs.jsp", params);
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			
+		});
 	}
 	
 	public Validator validateForm() {
@@ -335,8 +332,11 @@ public class FormExample implements Module {
 	 * @return http://localhost:8080/examples-form/form/validate-save/{0-100}
 	 */
 	@Action(value = "validate-save", validator = "validateForm")
-	public Response validateSave() {
+	public ResponseAction validateSave() {
 		return Response.getText("NOK - this could not happends");
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			
+		});
 	}
 	
 	/******/
@@ -345,9 +345,9 @@ public class FormExample implements Module {
 	 * Form with sync and async submit
 	 * @return http://localhost:8080/examples-form/form/async
 	 */
-	@Action("async")
+	@Action(path="async")
 	@Method(HttpMethod.GET)
-	public Response asyncForm() {
+	public ResponseAction asyncForm() {
 		Form form = new Form(link.create(getClass(), c->c.save(null)), true);
 		form.setFormMethod("post");
 		
@@ -360,15 +360,18 @@ public class FormExample implements Module {
 		params.put("form", form);
 		params.put("title", "Sync and async send");
 		return Response.getTemplate("inputs.jsp", params);
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			
+		});
 	}
 	
 	/**
 	 * Form with sync and async submit
 	 * @return http://localhost:8080/examples-form/form/submit-modes
 	 */
-	@Action("submit-modes")
+	@Action(path="submit-modes")
 	@Method(HttpMethod.GET)
-	public Response submitModes() {
+	public ResponseAction submitModes() {
 		Form form = new Form(link.create(getClass(), c->c.save(null)), true);
 		form.setFormMethod("post");
 		
@@ -394,6 +397,9 @@ public class FormExample implements Module {
 		params.put("form", form);
 		params.put("title", "Submit modes send");
 		return Response.getTemplate("inputs.jsp", params);
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			
+		});
 	}
 	
 	/******/
@@ -402,8 +408,8 @@ public class FormExample implements Module {
 	 * Example of buttons
 	 * @return http://localhost:8080/examples-form/form/buttons
 	 */
-	@Action("buttons")
-	public Response buttons() {
+	@Action(path="buttons")
+	public ResponseAction buttons() {
 		Form form = new Form(link.create(getClass(), c->c.save(null)), true);
 		form.setFormMethod("post");
 		// setCondition is not supported for button in form
@@ -453,43 +459,58 @@ public class FormExample implements Module {
 		params.put("form", form);
 		params.put("title", "Buttons");
 		return Response.getTemplate("inputs.jsp", params);
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			
+		});
 	}
 	
 	/**
 	 * Link for not save
 	 * @return http://localhost:8080/examples-form/form/notsave
 	 */
-	@Action("notsave")
-	public Response notSave(@Params RequestParameters params) {
+	@Action(path="notsave")
+	public ResponseAction notSave(@Params RequestParameters params) {
 		return Response.getText("OK: " + params);
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			
+		});
 	}
 	
 	/**
 	 * Save for form testing
 	 * @return (POST)http://localhost:8080/examples/form/save
 	 */
-	@Action("save")
+	@Action(path="save")
 	@Method(HttpMethod.POST)
-	public Response save(@Params RequestParameters params) {
+	public ResponseAction save(@Params RequestParameters params) {
 		return Response.getText("OK: " + params);
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			
+		});
 	}
 	
 	/**
 	 * Form printed with template
 	 * @return http://localhost:8080/examples-form/form/template
 	 */
-	@Action("template")
-	public Response template() {
+	@Action(path="template")
+	public ResponseAction template() {
 		return templateResponse("Editable", true);
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			
+		});
 	}
 	
 	/**
 	 * Form printed with template - detail mode
 	 * @return http://localhost:8080/examples-form/form/template-detail
 	 */
-	@Action("template-detail")
-	public Response templateDetail() {
+	@Action(path="template-detail")
+	public ResponseAction templateDetail() {
 		return templateResponse("Detail", false);
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			
+		});
 	}
 	
 	private Response templateResponse(String title, boolean editable) {
@@ -521,8 +542,8 @@ public class FormExample implements Module {
 	 * Data for template
 	 * @return http://localhost:8080/examples-form/form/template-data
 	 */
-	@Action("template-data")
-	public Response templateData() {
+	@Action(path="template-data")
+	public ResponseAction templateData() {
 		return Response.getJson(
 			new MapInit<String, Object>()
 			.append("textInput", "Some text")
@@ -532,6 +553,9 @@ public class FormExample implements Module {
 			.append("notExpected", "Not expected")
 			.toMap()
 		);
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			
+		});
 	}
 	
 	/**
@@ -549,17 +573,20 @@ public class FormExample implements Module {
 	 */
 	@Action(value = "template-save", validator = "validatorForTemplateSave")
 	@Method(HttpMethod.POST)
-	public Response templateSave(@Params RequestParameters params) {
+	public ResponseAction templateSave(@Params RequestParameters params) {
 		return Response.getText("OK: " + params);
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			
+		});
 	}
 	
 	/**
 	 * Show select options: load, depends
 	 * @return http://localhost:8080/examples-form/form/select
 	 */
-	@Action("select")
+	@Action(path="select")
 	@Method(HttpMethod.GET)
-	public Response select() {
+	public ResponseAction select() {
 		Form form = new Form(link.create(getClass(), c->c.save(null)), true);
 		form.setFormMethod("post");
 		
@@ -651,14 +678,17 @@ public class FormExample implements Module {
 		params.put("form", form);
 		params.put("title", "Usage of select option loading");
 		return Response.getTemplate("inputs.jsp", params);
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			
+		});
 	}
 
 	/**
 	 * Options for select
 	 * @return http://localhost:8080/examples-form/form/load-select
 	 */
-	@Action("load-select")
-	public Response loadToSelect() {
+	@Action(path="load-select")
+	public ResponseAction loadToSelect() {
 		return Response.getJson(Arrays.asList(
 			new MapInit<String, Object>()
 				.append("value", "0")
@@ -696,14 +726,17 @@ public class FormExample implements Module {
 				.append("optgroup", "group2")
 				.toMap()
 		));
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			
+		});
 	}
 
 	/**
 	 * Tree options for select
 	 * @return http://localhost:8080/examples-form/form/load-tree-options
 	 */
-	@Action("load-tree-options")
-	public Response loadTreeOptions() {
+	@Action(path="load-tree-options")
+	public ResponseAction loadTreeOptions() {
 		return Response.getJson(Arrays.asList(
 			new MapInit<String, Object>()
 				.append("value", "1")
@@ -748,14 +781,17 @@ public class FormExample implements Module {
 				.append("optgroup", "3")
 				.toMap()
 		));
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			
+		});
 	}
 
 	/**
 	 * Options for select
 	 * @return http://localhost:8080/examples-form/form/load-optgroup
 	 */
-	@Action("load-optgroup")
-	public Response loadGroup() {
+	@Action(path="load-optgroup")
+	public ResponseAction loadGroup() {
 		return Response.getJson(Arrays.asList(
 			new MapInit<String, Object>()
 				.append("value", "v1.1").append("title", "G1-O1")
@@ -778,6 +814,9 @@ public class FormExample implements Module {
 			new MapInit<String, Object>()
 				.append("value", "v3.1").append("title", "G3-O3").append("optgroup", "G3").toMap()
 		));
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			
+		});
 	}
 	
 	/********/
@@ -786,8 +825,8 @@ public class FormExample implements Module {
 	 * Shows options of datetime
 	 * @return http://localhost:8080/examples-form/form/datetime
 	 */
-	@Action("datetime")
-	public Response dateTimeStrict() {
+	@Action(path="datetime")
+	public ResponseAction dateTimeStrict() {
 		Form form = new Form(link.create(getClass(), c->c.save(null)), true);
 		form.setFormMethod("post");
 		
@@ -817,6 +856,9 @@ public class FormExample implements Module {
 		params.put("form", form);
 		params.put("title", "Datetime strict");
 		return Response.getTemplate("inputs.jsp", params);
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			
+		});
 	}
 	
 	/********/
@@ -825,8 +867,8 @@ public class FormExample implements Module {
 	 * Shows extended inputs
 	 * @return http://localhost:8080/examples-form/form/optional
 	 */
-	@Action("optional")
-	public Response optionalInputs() {
+	@Action(path="optional")
+	public ResponseAction optionalInputs() {
 		Form form = new Form(link.create(getClass(), c->c.save(null)), true);
 		form.setFormMethod("post");
 		
@@ -854,6 +896,9 @@ public class FormExample implements Module {
 		params.put("form", form);
 		params.put("title", "Input extensions");
 		return Response.getTemplate("inputs.jsp", params);
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			
+		});
 	}
 	
 	/********/
@@ -862,8 +907,8 @@ public class FormExample implements Module {
 	 * Shows checkbox options
 	 * @return http://localhost:8080/examples-form/form/checkbox
 	 */
-	@Action("checkbox")
-	public Response checkbox() {
+	@Action(path="checkbox")
+	public ResponseAction checkbox() {
 		// checkbox renderer works only if form or input is not editable
 		Form form = new Form(link.create(getClass(), c->c.save(null)), false);
 		form.setFormMethod("post");
@@ -907,6 +952,9 @@ public class FormExample implements Module {
 		params.put("form", form);
 		params.put("title", "Input extensions");
 		return Response.getTemplate("inputs.jsp", params);
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			
+		});
 	}
 	
 	/********/
@@ -915,8 +963,8 @@ public class FormExample implements Module {
 	 * Usage and disabled
 	 * @return http://localhost:8080/examples-form/form/exclude
 	 */
-	@Action("exclude")
-	public Response exclude() {
+	@Action(path="exclude")
+	public ResponseAction exclude() {
 		Form form = new Form(link.create(getClass(), c->c.save(null)), true);
 		form.setFormMethod("post");
 		
@@ -955,6 +1003,9 @@ public class FormExample implements Module {
 		params.put("form", form);
 		params.put("title", "Disabled and exclude");
 		return Response.getTemplate("inputs.jsp", params);
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			
+		});
 	}
 	
 	/********/
@@ -963,8 +1014,8 @@ public class FormExample implements Module {
 	 * Not editable form with editable input
 	 * @return http://localhost:8080/examples-form/form/not-editable
 	 */
-	@Action("not-editable")
-	public Response notEditable() {
+	@Action(path="not-editable")
+	public ResponseAction notEditable() {
 		Form form = new Form(link.create(getClass(), c->c.save(null)), false);
 		form.setFormMethod("post");
 		
@@ -986,14 +1037,17 @@ public class FormExample implements Module {
 		params.put("form", form);
 		params.put("title", "Not editable form");
 		return Response.getTemplate("inputs.jsp", params);
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			
+		});
 	}
 	
 	/**
 	 * Not editable form with editable input
 	 * @return http://localhost:8080/examples-form/form/editable
 	 */
-	@Action("editable")
-	public Response editable() {
+	@Action(path="editable")
+	public ResponseAction editable() {
 		Form form = new Form(link.create(getClass(), c->c.save(null)), true);
 		form.setFormMethod("post");
 		
@@ -1015,6 +1069,9 @@ public class FormExample implements Module {
 		params.put("form", form);
 		params.put("title", "Editable form");
 		return Response.getTemplate("inputs.jsp", params);
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			
+		});
 	}
 	
 	/*****/
@@ -1023,8 +1080,8 @@ public class FormExample implements Module {
 	 * Redirect after async form submit
 	 * @return http://localhost:8080/examples-form/form/redirect
 	 */
-	@Action("redirect")
-	public Response submitWithRedirect() {
+	@Action(path="redirect")
+	public ResponseAction submitWithRedirect() {
 		Form form = new Form(link.create(getClass(), c->c.formRedirectSave(null)), true);
 		form.setFormMethod("post");
 
@@ -1046,27 +1103,34 @@ public class FormExample implements Module {
 		params.put("form", form);
 		params.put("title", "Submit redirect");
 		return Response.getTemplate("inputs.jsp", params);
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			
+		});
 	}
 	
 	/**
 	 * For after form submit
 	 * @return http://localhost:8080/examples-form/form/after-redirect-save
 	 */
-	@Action("after-redirect-save")
-	public Response formRedirectSave(@Param("some-input") String someInput) {
-		Map<String, Object> json = new HashMap<>();
-		json.put("id", someInput);
-		json.put("message", "Saved");
-		return Response.getJson(json);
+	@Action(path="after-redirect-save")
+	public ResponseAction formRedirectSave() {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			Map<String, Object> json = new HashMap<>();
+			json.put("id", req.getBodyParams().getString("some-input"));
+			json.put("message", "Saved");
+			return Response.getJson(json);
+		});
 	}
 	
 	/**
 	 * For after form submit
 	 * @return http://localhost:8080/examples-form/form/after-redirect
 	 */
-	@Action("after-redirect")
-	public Response afterRedirect(@Params RequestParameters params) {
-		return Response.getText("OK: " + params);
+	@Action(path="after-redirect")
+	public ResponseAction afterRedirect() {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.getText("OK: " + req.getBodyParams()));
+		});
 	}
 
 	/*****/
@@ -1075,31 +1139,36 @@ public class FormExample implements Module {
 	 * Redirect after async form submit
 	 * @return http://localhost:8080/examples-form/form/file
 	 */
-	@Action("file")
-	public Response file() {
-		Form form = new Form(link.create(getClass(), c->c.fileSave(null)), true);
-		form.setFormMethod("post");
+	@Action(path="file")
+	public ResponseAction file() {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			Form form = new Form(link.create(getClass(), c->c.fileSave()), true);
+			form.setFormMethod("post");
 
-		form.addInput(Hidden.input("some"));
-		form.addInput(
-			File.input("fileInput", true)
-			.setTitle("File upload")
-		);
-		form.addInput(Submit.create("Submit", "submit"));
-		
-		Map<String, Object> params = new HashMap<>();
-		params.put("form", form);
-		params.put("title", "File upload");
-		return Response.getTemplate("inputs.jsp", params);
+			form.addInput(Hidden.input("some"));
+			form.addInput(
+				File.input("fileInput", true)
+				.setTitle("File upload")
+			);
+			form.addInput(Submit.create("Submit", "submit"));
+			
+			Map<String, Object> params = new HashMap<>();
+			params.put("form", form);
+			params.put("title", "File upload");
+			return Response.getTemplate("inputs.jsp", params);
+		});
 	}
 	
 	/**
 	 * Redirect after async form submit
 	 * @return http://localhost:8080/examples-form/form/file-save
 	 */
-	@Action("file-save")
-	public Response fileSave(@Param("fileInput") UploadedFile file) {
-		return Response.getText("OK: " + file.getFileName() + " " + file.getContent().length + "b");
+	@Action(path="file-save")
+	public ResponseAction fileSave() {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			UploadedFile file = req.getBodyParams().getUploadedFile("fileInput");
+			return Response.getText("OK: " + file.getFileName() + " " + file.getContent().length + "b");
+		});
 	}
 	
 	/*****/
@@ -1108,23 +1177,25 @@ public class FormExample implements Module {
 	 * Using form callbaks
 	 * @return http://localhost:8080/examples-form/form/callbacks
 	 */
-	@Action("callbacks")
-	public Response callbacks() {
-		Form form = new Form(link.create(getClass(), c->c.allInputs(0, null), 10), true);
-		form.setBeforeRender("beforeRenderCallback");
-		form.setAfterRender("afterRenderCallback");
-		
-		form.setBeforeBind("beforeBindCallback");
-		form.setAfterBind("afterBindCallback");
-		
-		form.addInput(Text.input("text", true).setTitle("Text input"));
-		form.setBindUrl(link.create(getClass(), c->c.allInputsGet(0), 10));
-		form.setBindMethod("get");
-		
-		Map<String, Object> params = new HashMap<>();
-		params.put("form", form);
-		params.put("title", "Callbacks");
-		return Response.getTemplate("inputs.jsp", params);
+	@Action(path="callbacks")
+	public ResponseAction callbacks() {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			Form form = new Form(link.create(getClass(), c->c.allInputs(0, null), 10), true);
+			form.setBeforeRender("beforeRenderCallback");
+			form.setAfterRender("afterRenderCallback");
+			
+			form.setBeforeBind("beforeBindCallback");
+			form.setAfterBind("afterBindCallback");
+			
+			form.addInput(Text.input("text", true).setTitle("Text input"));
+			form.setBindUrl(link.create(getClass(), c->c.allInputsGet(0), 10));
+			form.setBindMethod("get");
+			
+			Map<String, Object> params = new HashMap<>();
+			params.put("form", form);
+			params.put("title", "Callbacks");
+			return Response.getTemplate("inputs.jsp", params);
+		});
 	}
 
 	/*****/
@@ -1133,8 +1204,8 @@ public class FormExample implements Module {
 	 * Using input list
 	 * @return http://localhost:8080/examples-form/form/inputlist
 	 */
-	@Action("inputlist")
-	public Response inputList() {
+	@Action(path="inputlist")
+	public ResponseAction inputList() {
 		return inputListResponse("Input list - default print", "inputs.jsp");
 	}
 
@@ -1142,92 +1213,96 @@ public class FormExample implements Module {
 	 * Using input list with custom template
 	 * @return http://localhost:8080/examples-form/form/inputlist-template
 	 */
-	@Action("inputlist-template")
-	public Response inputListTemplate() {
+	@Action(path="inputlist-template")
+	public ResponseAction inputListTemplate() {
 		return inputListResponse("Input list - template", "inputListTemplate.jsp");
 	}
 	
-	private Response inputListResponse(String title, String template) {
-		Form form = new Form(link.create(getClass(), c->c.save(null)), true);
-		form.setFormMethod("post");
-		
-		form.addInput(
-			InputList.input("simple-list")
-			.addInput(
-				Text.input("", true).setTitle("Simple list - input 1")
-			)
-			.addInput(
-				Text.input("", true).setTitle("Simple list - input 2")
-			)
-		);
-		
-		form.addInput(
-			InputList.input("simple-map")
-			.addInput(
-				Text.input("item1", true).setTitle("Simple map - input 1")
-			)
-			.addInput(
-				Text.input("item2", true).setTitle("Simple map - input 2")
-			)
-		);
-
-		form.addInput(
-			InputList.input("list-in-map")
-			.addInput(
-				InputList.input("sub-list-1")
+	private ResponseAction inputListResponse(String title, String template) {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			Form form = new Form(link.create(getClass(), c->c.save(null)), true);
+			form.setFormMethod("post");
+			
+			form.addInput(
+				InputList.input("simple-list")
 				.addInput(
-					Text.input("", true).setTitle("List in map - sublist 1 - input 1")
+					Text.input("", true).setTitle("Simple list - input 1")
 				)
 				.addInput(
-					Text.input("", true).setTitle("List in map - sublist 1 - input 2")
+					Text.input("", true).setTitle("Simple list - input 2")
 				)
-			)
-			.addInput(
-				InputList.input("sub-list-2")
+			);
+			
+			form.addInput(
+				InputList.input("simple-map")
 				.addInput(
-					Text.input("", true).setTitle("List in map - sublist 2 - input 1")
+					Text.input("item1", true).setTitle("Simple map - input 1")
 				)
 				.addInput(
-					Text.input("", true).setTitle("List in map - sublist 2 - input 2")
+					Text.input("item2", true).setTitle("Simple map - input 2")
 				)
-			)
-		);
-		
-		form.addInput(Submit.create("Submit", "submit"));
-		
-		form.setBindUrl(link.create(getClass(), c->c.inputListData()));
-		
-		Map<String, Object> params = new HashMap<>();
-		params.put("form", form);
-		params.put("title", title);
-		return Response.getTemplate(template, params);
+			);
+	
+			form.addInput(
+				InputList.input("list-in-map")
+				.addInput(
+					InputList.input("sub-list-1")
+					.addInput(
+						Text.input("", true).setTitle("List in map - sublist 1 - input 1")
+					)
+					.addInput(
+						Text.input("", true).setTitle("List in map - sublist 1 - input 2")
+					)
+				)
+				.addInput(
+					InputList.input("sub-list-2")
+					.addInput(
+						Text.input("", true).setTitle("List in map - sublist 2 - input 1")
+					)
+					.addInput(
+						Text.input("", true).setTitle("List in map - sublist 2 - input 2")
+					)
+				)
+			);
+			
+			form.addInput(Submit.create("Submit", "submit"));
+			
+			form.setBindUrl(link.create(getClass(), c->c.inputListData()));
+			
+			Map<String, Object> params = new HashMap<>();
+			params.put("form", form);
+			params.put("title", title);
+			return Response.getTemplate(template, params);
+		});
 	}
 
 	/**
 	 * Data for input list
 	 * @return http://localhost:8080/examples-form/form/inputlist-data
 	 */
-	@Action("inputlist-data")
-	public Response inputListData() {
-		return Response.getJson(
-			new MapInit<String, Object>()
-			.append("simple-list", Arrays.asList("value01", "value02"))
-			.append(
-				"simple-map", 
+	@Action(path="inputlist-data")
+	public ResponseAction inputListData() {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.getJson(
 				new MapInit<String, Object>()
-				.append("item1", "value11")
-				.append("item2", "value12")
+				.append("simple-list", Arrays.asList("value01", "value02"))
+				.append(
+					"simple-map", 
+					new MapInit<String, Object>()
+					.append("item1", "value11")
+					.append("item2", "value12")
+					.toMap()
+				)
+				.append(
+					"list-in-map",
+					new MapInit<String, Object>()
+					.append("sub-list-1", Arrays.asList("value21", "value22"))
+					.append("sub-list-2", Arrays.asList("value23", "value24"))
+					.toMap()
+				)
 				.toMap()
-			)
-			.append(
-				"list-in-map",
-				new MapInit<String, Object>()
-				.append("sub-list-1", Arrays.asList("value21", "value22"))
-				.append("sub-list-2", Arrays.asList("value23", "value24"))
-				.toMap()
-			)
-			.toMap()
-		);
+			);
+		});
 	}
 
 	/*****/
@@ -1236,8 +1311,8 @@ public class FormExample implements Module {
 	 * Using dynamic input list
 	 * @return http://localhost:8080/examples-form/form/dynamiclist
 	 */
-	@Action("dynamiclist")
-	public Response dynamicInputList() {
+	@Action(path="dynamiclist")
+	public ResponseAction dynamicInputList() {
 		return dynamicListResponse("Dynamic list - default print", "inputs.jsp", true);
 	}
 
@@ -1245,8 +1320,8 @@ public class FormExample implements Module {
 	 * Using dynamic input list with custom template
 	 * @return http://localhost:8080/examples-form/form/dynamiclist-template
 	 */
-	@Action("dynamiclist-template")
-	public Response dynamicListTemplate() {
+	@Action(path="dynamiclist-template")
+	public ResponseAction dynamicListTemplate() {
 		return dynamicListResponse("Dynamic list - template", "dynamicListTemplate.jsp", true);
 	}
 
@@ -1254,282 +1329,296 @@ public class FormExample implements Module {
 	 * Using dynamic input list with custom template
 	 * @return http://localhost:8080/examples-form/form/dynamiclist-detail
 	 */
-	@Action("dynamiclist-detail")
-	public Response dynamicListDetail() {
+	@Action(path="dynamiclist-detail")
+	public ResponseAction dynamicListDetail() {
 		return dynamicListResponse("Dynamic list - detail", "inputs.jsp", false);
 	}
 
-	private Response dynamicListResponse(String title, String template, boolean editable) {
-		Form form = new Form(link.create(getClass(), c->c.save(null)), editable);
-		form.setFormMethod("post");
+	private ResponseAction dynamicListResponse(String title, String template, boolean editable) {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			Form form = new Form(link.create(getClass(), c->c.save(null)), editable);
+			form.setFormMethod("post");
 
-		form.addInput(
-			DynamicList.input("simple-list")
-			.addInput(
-				Text.input("", true).setTitle("Simple list {i}")
-			)
-			.setTitle("Simple list")
-		);
-		
-		form.addInput(
-			DynamicList.input("map-of-map")
-			.addInput(
-				InputList.input("{i}")
+			form.addInput(
+				DynamicList.input("simple-list")
 				.addInput(
-					Text.input("a", true).setTitle(" {i} - A")
+					Text.input("", true).setTitle("Simple list {i}")
 				)
+				.setTitle("Simple list")
+			);
+			
+			form.addInput(
+				DynamicList.input("map-of-map")
 				.addInput(
-					Text.input("b", true).setTitle(" {i} - B")
+					InputList.input("{i}")
+					.addInput(
+						Text.input("a", true).setTitle(" {i} - A")
+					)
+					.addInput(
+						Text.input("b", true).setTitle(" {i} - B")
+					)
+					.addInput(
+						Text.input("c", true).setTitle(" {i} - C")
+					)
 				)
+			);
+			
+			form.addInput(
+				DynamicList.input("map-of-list")
 				.addInput(
-					Text.input("c", true).setTitle(" {i} - C")
+					InputList.input("{i}")
+					.addInput(
+						Text.input("", true).setTitle(" {i} - 1")
+					)
+					.addInput(
+						Text.input("", true).setTitle(" {i} - 2")
+					)
+					.addInput(
+						Text.input("", true).setTitle(" {i} - 3")
+					)
 				)
-			)
-		);
-		
-		form.addInput(
-			DynamicList.input("map-of-list")
-			.addInput(
-				InputList.input("{i}")
+			);
+			
+			form.addInput(
+				DynamicList.input("with-select")
 				.addInput(
-					Text.input("", true).setTitle(" {i} - 1")
+					Select.input("{i}", false, Arrays.asList())
+					.setTitle("{i}")
+					.setLoadData(link.create(getClass(), c->c.dynamicListLoadGroupsSelectOptions()), "get")
 				)
-				.addInput(
-					Text.input("", true).setTitle(" {i} - 2")
-				)
-				.addInput(
-					Text.input("", true).setTitle(" {i} - 3")
-				)
-			)
-		);
-		
-		form.addInput(
-			DynamicList.input("with-select")
-			.addInput(
-				Select.input("{i}", false, Arrays.asList())
-				.setTitle("{i}")
-				.setLoadData(link.create(getClass(), c->c.dynamicListLoadGroupsSelectOptions()), "get")
-			)
-		);
-		
-		form.addInput(Submit.create("Submit", "submit"));
-		
-		form.setBindUrl(link.create(getClass(), c->c.dynamicListData()));
-		
-		Map<String, Object> params = new HashMap<>();
-		params.put("form", form);
-		params.put("title", title);
-		return Response.getTemplate(template, params);
+			);
+			
+			form.addInput(Submit.create("Submit", "submit"));
+			
+			form.setBindUrl(link.create(getClass(), c->c.dynamicListData()));
+			
+			Map<String, Object> params = new HashMap<>();
+			params.put("form", form);
+			params.put("title", title);
+			return Response.getTemplate(template, params);
+		});
 	}
 
 	/**
 	 * Data for input list
 	 * @return http://localhost:8080/examples-form/form/dynamiclist-data
 	 */
-	@Action("dynamiclist-data")
-	public Response dynamicListData() {
-		return Response.getJson(
-			new MapInit<String, Object>()
-			.append("simple-list", Arrays.asList("value-01", "value-02", "value-03"))
-			.append(
-				"map-of-map", 
+	@Action(path="dynamiclist-data")
+	public ResponseAction dynamicListData() {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.getJson(
 				new MapInit<String, Object>()
+				.append("simple-list", Arrays.asList("value-01", "value-02", "value-03"))
 				.append(
-					"1",
+					"map-of-map", 
 					new MapInit<String, Object>()
-						.append("a", "A 1")
-						.append("b", "B 1")
-						.append("c", "C 1")
-						.toMap()
+					.append(
+						"1",
+						new MapInit<String, Object>()
+							.append("a", "A 1")
+							.append("b", "B 1")
+							.append("c", "C 1")
+							.toMap()
+					)
+					.append(
+						"2",
+						new MapInit<String, Object>()
+							.append("a", "A 2")
+							.append("b", "B 2")
+							.append("c", "C 2")
+							.toMap()
+					)
+					.toMap()
 				)
 				.append(
-					"2",
+					"map-of-list", 
 					new MapInit<String, Object>()
-						.append("a", "A 2")
-						.append("b", "B 2")
-						.append("c", "C 2")
-						.toMap()
+					.append("1", Arrays.asList("Item 1 A", "Item 1 B", "Item 1 C"))
+					.append("2", Arrays.asList("Item 2 A", "Item 2 B", "Item 2 C"))
+					.toMap()
 				)
 				.toMap()
-			)
-			.append(
-				"map-of-list", 
-				new MapInit<String, Object>()
-				.append("1", Arrays.asList("Item 1 A", "Item 1 B", "Item 1 C"))
-				.append("2", Arrays.asList("Item 2 A", "Item 2 B", "Item 2 C"))
-				.toMap()
-			)
-			.toMap()
-		);
+			);
+		});
 	}
 	
 	/**
 	 * Dynamic list with custom buttons
 	 * @return http://localhost:8080/examples-form/form/dynamiclist-buttons
 	 */
-	@Action("dynamiclist-buttons")
-	public Response dynamicInputListButtons() {
-		Form form = new Form(link.create(getClass(), c->c.save(null)), true);
-		form.setFormMethod("post");
+	@Action(path="dynamiclist-buttons")
+	public ResponseAction dynamicInputListButtons() {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			Form form = new Form(link.create(getClass(), c->c.save(null)), true);
+			form.setFormMethod("post");
 
-		form.addInput(
-			DynamicList.input("full-buttons")
-			.setTitle("Full buttons")
-			.addInput(
-				Text.input("", true).setTitle("{i}")
-			)
-		);
+			form.addInput(
+				DynamicList.input("full-buttons")
+				.setTitle("Full buttons")
+				.addInput(
+					Text.input("", true).setTitle("{i}")
+				)
+			);
 
-		form.addInput(
-			DynamicList.input("without-add-button")
-			.setTitle("Without add button")
-			.useAddButton(false)
-			.addInput(
-				Text.input("", true).setTitle("{i}")
-			)
-		);
+			form.addInput(
+				DynamicList.input("without-add-button")
+				.setTitle("Without add button")
+				.useAddButton(false)
+				.addInput(
+					Text.input("", true).setTitle("{i}")
+				)
+			);
 
-		form.addInput(
-			DynamicList.input("without-remove-buttons")
-			.setTitle("Without remove buttons")
-			.useRemoveButton(false)
-			.addInput(
-				Text.input("", true).setTitle("{i}")
-			)
-		);
-		
-		form.addInput(Submit.create("Submit", "submit"));
-		
-		form.setBindUrl(link.create(getClass(), c->c.dynamicListData()));
-		
-		Map<String, Object> params = new HashMap<>();
-		params.put("form", form);
-		params.put("title", "DynamicList with custom buttons");
-		return Response.getTemplate("inputs.jsp", params);
+			form.addInput(
+				DynamicList.input("without-remove-buttons")
+				.setTitle("Without remove buttons")
+				.useRemoveButton(false)
+				.addInput(
+					Text.input("", true).setTitle("{i}")
+				)
+			);
+			
+			form.addInput(Submit.create("Submit", "submit"));
+			
+			form.setBindUrl(link.create(getClass(), c->c.dynamicListData()));
+			
+			Map<String, Object> params = new HashMap<>();
+			params.put("form", form);
+			params.put("title", "DynamicList with custom buttons");
+			return Response.getTemplate("inputs.jsp", params);
+		});
 	}
 
 	/**
 	 * Using dynamic input list with custom template
 	 * @return http://localhost:8080/examples-form/form/dynamiclist-load
 	 */
-	@Action("dynamiclist-load")
-	public Response dynamicLoaded() {
-		Form form = new Form(link.create(getClass(), c->c.save(null)), true);
-		form.setFormMethod("post");
+	@Action(path="dynamiclist-load")
+	public ResponseAction dynamicLoaded() {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			Form form = new Form(link.create(getClass(), c->c.save(null)), true);
+			form.setFormMethod("post");
 
-		form.addInput(
-			DynamicList.input("dynamic-load")
-			.setLoadData(link.create(getClass(), c->c.dynamicListLoadGroups()), "get")
-			.addInput(
-				Select.input("{i}", false, Arrays.asList())
-				.setTitle("{i}")
-				.setLoadData(link.create(getClass(), c->c.dynamicListLoadGroupsSelectOptions()), "get")
-			)
-		);
-		// TODO improve - add text inputs
-		
-		form.addInput(Submit.create("Submit", "submit"));
-		
-		form.setBindUrl(link.create(getClass(), c->c.dynamicListLoadData()));
-		
-		Map<String, Object> params = new HashMap<>();
-		params.put("form", form);
-		params.put("title", "Dynamic list loaded");
-		return Response.getTemplate("inputs.jsp", params);
+			form.addInput(
+				DynamicList.input("dynamic-load")
+				.setLoadData(link.create(getClass(), c->c.dynamicListLoadGroups()), "get")
+				.addInput(
+					Select.input("{i}", false, Arrays.asList())
+					.setTitle("{i}")
+					.setLoadData(link.create(getClass(), c->c.dynamicListLoadGroupsSelectOptions()), "get")
+				)
+			);
+			// TODO improve - add text inputs
+			
+			form.addInput(Submit.create("Submit", "submit"));
+			
+			form.setBindUrl(link.create(getClass(), c->c.dynamicListLoadData()));
+			
+			Map<String, Object> params = new HashMap<>();
+			params.put("form", form);
+			params.put("title", "Dynamic list loaded");
+			return Response.getTemplate("inputs.jsp", params);
+		});
 	}
 
 	/**
 	 * Data for loaded dynamic list
 	 * @return http://localhost:8080/examples-form/form/dynamiclist-load-groups
 	 */
-	@Action("dynamiclist-load-groups")
-	public Response dynamicListLoadGroups() {
-		return Response.getJson(
-			Arrays.asList(
-				new MapInit<String, Object>()
-					.append("value", "group1")
-					.append("title", "Group 1")
-					.toMap(),
-				new MapInit<String, Object>()
-					.append("value", "group2")
-					.append("title", "Group 2")
-					.toMap(),
-				new MapInit<String, Object>()
-					.append("value", "group3")
-					.append("title", "Group 3")
-					.toMap()
-			)
-		);
+	@Action(path="dynamiclist-load-groups")
+	public ResponseAction dynamicListLoadGroups() {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.getJson(
+				Arrays.asList(
+					new MapInit<String, Object>()
+						.append("value", "group1")
+						.append("title", "Group 1")
+						.toMap(),
+					new MapInit<String, Object>()
+						.append("value", "group2")
+						.append("title", "Group 2")
+						.toMap(),
+					new MapInit<String, Object>()
+						.append("value", "group3")
+						.append("title", "Group 3")
+						.toMap()
+				)
+			);
+		});
 	}
 
 	/**
 	 * Data for loaded dynamic input list
 	 * @return http://localhost:8080/examples-form/form/dynamiclist-load-bind
 	 */
-	@Action("dynamiclist-load-bind")
-	public Response dynamicListLoadData() {
-		return Response.getJson(
-			new MapInit<String, Object>()
-			.append(
-				"dynamic-load",
+	@Action(path="dynamiclist-load-bind")
+	public ResponseAction dynamicListLoadData() {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.getJson(
 				new MapInit<String, Object>()
-				.append("group1", "a1")
-				.append("group2", "b2")
-				.append("group3", "c2")
+				.append(
+					"dynamic-load",
+					new MapInit<String, Object>()
+					.append("group1", "a1")
+					.append("group2", "b2")
+					.append("group3", "c2")
+					.toMap()
+				)
 				.toMap()
-			)
-			.toMap()
-		);
+			);
+		});
 	}
 
 	/**
 	 * Data for select in loaded dynamic list
 	 * @return http://localhost:8080/examples-form/form/dynamiclist-load-select
 	 */
-	@Action("dynamiclist-load-select")
-	public Response dynamicListLoadGroupsSelectOptions() {
-		return Response.getJson(
-			Arrays.asList(
-				new MapInit<String, Object>()
-					.append("value", "a1")
-					.append("title", "A1")
-					.append("optgroup", "group1")
-					.toMap(),
-				new MapInit<String, Object>()
-					.append("value", "a2")
-					.append("title", "A2")
-					.append("optgroup", "group1")
-					.toMap(),
-				new MapInit<String, Object>()
-					.append("value", "b1")
-					.append("title", "B1")
-					.append("optgroup", "group2")
-					.toMap(),
-				new MapInit<String, Object>()
-					.append("value", "b2")
-					.append("title", "B2")
-					.append("optgroup", "group2")
-					.toMap(),
-				new MapInit<String, Object>()
-					.append("value", "c1")
-					.append("title", "C1")
-					.append("optgroup", "group3")
-					.toMap(),
-				new MapInit<String, Object>()
-					.append("value", "c2")
-					.append("title", "C2")
-					.append("optgroup", "group3")
-					.toMap()
-			)
-		);
+	@Action(path="dynamiclist-load-select")
+	public ResponseAction dynamicListLoadGroupsSelectOptions() {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.getJson(
+				Arrays.asList(
+					new MapInit<String, Object>()
+						.append("value", "a1")
+						.append("title", "A1")
+						.append("optgroup", "group1")
+						.toMap(),
+					new MapInit<String, Object>()
+						.append("value", "a2")
+						.append("title", "A2")
+						.append("optgroup", "group1")
+						.toMap(),
+					new MapInit<String, Object>()
+						.append("value", "b1")
+						.append("title", "B1")
+						.append("optgroup", "group2")
+						.toMap(),
+					new MapInit<String, Object>()
+						.append("value", "b2")
+						.append("title", "B2")
+						.append("optgroup", "group2")
+						.toMap(),
+					new MapInit<String, Object>()
+						.append("value", "c1")
+						.append("title", "C1")
+						.append("optgroup", "group3")
+						.toMap(),
+					new MapInit<String, Object>()
+						.append("value", "c2")
+						.append("title", "C2")
+						.append("optgroup", "group3")
+						.toMap()
+				)
+			);
+		});
 	}
 
 	/**
 	 * Data for input list
 	 * @return http://localhost:8080/examples-form/form/dynamiclist-data
 	 */
-	/*@Action("dynamiclist-data")
-	public Response dynamicListData() {
+	/*@Action(path="dynamiclist-data")
+	public ResponseAction dynamicListData() {
 		return Response.getJson(
 			new MapInit<String, Object>()
 			.append("simple-list", Arrays.asList("value-01", "value-02", "value-02"))
@@ -1550,38 +1639,42 @@ public class FormExample implements Module {
 	 * Sync form with CSRF token
 	 * @return http://localhost:8080/examples-form/form/csrf
 	 */
-	@Action("csrf")
-	public Response csrf() throws AuthentizationException {
-		if (identity.isAnonymous()) {
-			// automatic login before page load
-			// demonstation requires logged user
-			authenticator.login(new User("someuser", new FormPermissions()), identity);
-		}
-		
-		Form form = new Form(link.create(getClass(), c->c.saveCsrf(null)), true);
-		form.setCsrfSecured(identity);
-		form.setFormMethod("post");
-		
-		form.addInput(Text.input("textInput", true).setTitle("Text"));
-		
-		form.addInput(Submit.create("Submit sync", "sync").setAsync(false));
-		
-		Map<String, Object> params = new HashMap<>();
-		params.put("form", form);
-		params.put("title", "Sync and async send");
-		return Response.getTemplate("inputs.jsp", params);
+	@Action(path="csrf")
+	public ResponseAction csrf() {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			if (identity.isAnonymous()) {
+				// automatic login before page load
+				// demonstation requires logged user
+				// TODO authenticator.login(new User("someuser", new FormPermissions()), identity);
+			}
+			
+			Form form = new Form(link.create(getClass(), c->c.saveCsrf(null)), true);
+			form.setCsrfSecured(identity);
+			form.setFormMethod("post");
+			
+			form.addInput(Text.input("textInput", true).setTitle("Text"));
+			
+			form.addInput(Submit.create("Submit sync", "sync").setAsync(false));
+			
+			Map<String, Object> params = new HashMap<>();
+			params.put("form", form);
+			params.put("title", "Sync and async send");
+			return Response.getTemplate("inputs.jsp", params);
+		});
 	}
 	
 	/**
 	 * Save for form testing
 	 * @return (POST)http://localhost:8080/examples-form/form/save
 	 */
-	@Action("save-csrf")
+	@Action(path="save-csrf")
 	@Method(HttpMethod.POST)
 	@Secured(mode = AuthMode.COOKIE_AND_CSRF)
-	public Response saveCsrf(@Params RequestParameters params) {
-		authenticator.logout(identity);
-		return Response.getText("Secured with CSRF OK: " + params);
+	public ResponseAction saveCsrf(@Params RequestParameters params) {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			// TODO authenticator.logout(identity);
+			return Response.getText("Secured with CSRF OK: " + params);
+		});
 	}
 	
 	/**************/
@@ -1592,7 +1685,7 @@ public class FormExample implements Module {
 		FormExampleDao dao = new FormExampleDao();
 		register.addFactory(
 			FormExample.class,
-			(t, identity, auth, authenticator)->new FormExample(dao, link, identity, authenticator)
+			()->new FormExample(dao, link)
 		);
 		return Arrays.asList();
 	}

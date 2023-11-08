@@ -64,7 +64,7 @@ public class SecurityExample implements Module {
 	 * Page for login with links and buttons for testing
 	 * @return http://localhost:8080/examples-security/security/index
 	 */
-	@Action("index")
+	@Action(path="index")
 	public Response index() {
 		List<Tuple2<String, String>> links = new LinkedList<>();
 		
@@ -88,7 +88,7 @@ public class SecurityExample implements Module {
 	 * Not secured method, anybody has access
 	 * @return http://localhost:8080/examples-security/security/unsecured
 	 */
-	@Action("unsecured")
+	@Action(path="unsecured")
 	public Response notSecured() {
 		return Response.getText("Unsecured");
 	}
@@ -97,7 +97,7 @@ public class SecurityExample implements Module {
 	 * Secured, require loged user. Can authenticate with header and cookie (with or without CSRF token)
 	 * @return http://localhost:8080/examples-security/security/secured
 	 */
-	@Action("secured")
+	@Action(path="secured")
 	@Secured(mode = AuthMode.COOKIE)
 	public Response secured() {
 		return Response.getText("Secured");
@@ -107,7 +107,7 @@ public class SecurityExample implements Module {
 	 * Secured, require loged user. Can authenticate with header and cookie(only with CSRF token)
 	 * @return http://localhost:8080/examples-security/security/secured
 	 */
-	@Action("secured-csrf")
+	@Action(path="secured-csrf")
 	@Secured(mode = AuthMode.COOKIE_AND_CSRF)
 	public Response securedCsrf() {
 		return Response.getText("Secured CSRF");
@@ -117,7 +117,7 @@ public class SecurityExample implements Module {
 	 * Secured, require loged user. Can authenticate only with header
 	 * @return http://localhost:8080/examples-security/security/super-secured
 	 */
-	@Action("super-secured")
+	@Action(path="super-secured")
 	@Secured
 	public Response superSecured() {
 		return Response.getText("Super secured");
@@ -127,7 +127,7 @@ public class SecurityExample implements Module {
 	 * Secured. Requred user access to domain-1 with at least read permissions
 	 * @return http://localhost:8080/examples-security/security/domain-read
 	 */
-	@Action("domain-read")
+	@Action(path="domain-read")
 	@Secured({@Domain(name=DOMAIN_1, action=toti.security.Action.READ)})
 	public Response domaiRead() {
 		return Response.getText("Domain READ");
@@ -137,7 +137,7 @@ public class SecurityExample implements Module {
 	 * Secured. Requred user access to domain-1 with at least delete permissions
 	 * @return http://localhost:8080/examples-security/security/domain-delete
 	 */
-	@Action("domain-delete")
+	@Action(path="domain-delete")
 	@Secured({@Domain(name=DOMAIN_1, action=toti.security.Action.DELETE)})
 	public Response domainDelete() {
 		return Response.getText("Domain DELETE");
@@ -149,7 +149,7 @@ public class SecurityExample implements Module {
 	 *  domain-2 with at leas update permissions 
 	 * @return http://localhost:8080/examples-security/security/domain-multiple
 	 */
-	@Action("domain-multiple")
+	@Action(path="domain-multiple")
 	@Secured({
 		@Domain(name=DOMAIN_1, action=toti.security.Action.CREATE),
 		@Domain(name=DOMAIN_2, action=toti.security.Action.UPDATE)
@@ -163,7 +163,7 @@ public class SecurityExample implements Module {
 	 * In response returns allowed ids of logged user for this 
 	 * @return http://localhost:8080/examples-security/security/owner-ids
 	 */
-	@Action("owner-ids")
+	@Action(path="owner-ids")
 	@Secured({@Domain(name=DOMAIN_1, action=toti.security.Action.ALLOWED)})
 	public Response ownerIds() {
 		return Response.getText("Owner IDs " + identity.getUser().getAllowedIds());
@@ -173,7 +173,7 @@ public class SecurityExample implements Module {
 	 * Secured. Requred user access to domain-1 with at least allowed permissions
 	 * @return http://localhost:8080/examples-security/security/owner
 	 */
-	@Action("owner")
+	@Action(path="owner")
 	@Secured({@Domain(name=DOMAIN_1, action=toti.security.Action.ALLOWED, owner="id")})
 	public Response owner() {
 		return Response.getText("Owner");
@@ -183,7 +183,7 @@ public class SecurityExample implements Module {
 	 * Method shows usage of Authorizator in method
 	 * @return http://localhost:8080/examples-security/security/list
 	 */
-	@Action("list")
+	@Action(path="list")
 	@Secured
 	public Response inMethod() {
 		String response = "User is allowed for:";
@@ -199,7 +199,7 @@ public class SecurityExample implements Module {
 	
 	/***********/
 	
-	@Action("login")
+	@Action(path="login")
 	@Method({HttpMethod.POST})
 	public Response login(@Param("username") String username) {
 		try {
@@ -214,7 +214,7 @@ public class SecurityExample implements Module {
 		}
 	}
 	
-	@Action("logout")
+	@Action(path="logout")
 	@Method({HttpMethod.POST})
 	public Response logout() {
 		authenticator.logout(identity);

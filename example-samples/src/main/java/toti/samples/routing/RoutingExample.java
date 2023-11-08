@@ -47,7 +47,7 @@ public class RoutingExample implements Module {
 	 *  OR with another pattern
 	 *  http://localhost:8080/api/routing/secured
 	 */
-	@Action("secured")
+	@Action(path="secured")
 	@Secured(mode = AuthMode.COOKIE)
 	public Response secured() {
 		return Response.getText("Secured");
@@ -60,7 +60,7 @@ public class RoutingExample implements Module {
 	 *  OR with another pattern
 	 *  http://localhost:8080/api/routing/unsecured
 	 */
-	@Action("unsecured")
+	@Action(path="unsecured")
 	public Response unsecured(@Param("backlink") String backLink) {
 		return Response.getText("Unsecured " + backLink);
 	}
@@ -72,7 +72,7 @@ public class RoutingExample implements Module {
 	 *  OR with another pattern
 	 *  http://localhost:8080/api/routing/notAccessible
 	 */
-	@Action("notAccessible")
+	@Action(path="notAccessible")
 	public Response notAccessibleMethod() {
 		return Response.getText("This never appear");
 	}
@@ -88,7 +88,7 @@ public class RoutingExample implements Module {
 	 *  http://localhost:8080/api/routing/notAccessible
 	 *  http://localhost:8080
 	 */
-	@Action("accessible")
+	@Action(path="accessible")
 	public Response accessibleMethod() {
 		return Response.getText("This always appear");
 	}
@@ -100,7 +100,7 @@ public class RoutingExample implements Module {
 	 *  OR with another pattern
 	 *  http://localhost:8080/api/routing/links
 	 */
-	@Action("links")
+	@Action(path="links")
 	public Response links() {
 		Map<String, Object> params = new HashMap<>();
 		
@@ -138,7 +138,7 @@ public class RoutingExample implements Module {
 	 * Used for Link::create testing
 	 * @return
 	 */
-	@Action("links-destination")
+	@Action(path="links-destination")
 	public Response linksDestination(@ParamUrl("id") Integer id, @ParamUrl("name") String name) {
 		return Response.getText("This never appear");
 	}

@@ -37,7 +37,7 @@ public class ValidationExample implements Module {
 	 * age will always be int and never null
 	 * @return http://localhost:8080/examples-validation/validation/noValidator?username=smith&age=42
 	 */
-	@Action("noValidator")
+	@Action(path="noValidator")
 	public Response noValidator(@Param("username") String name, @Param("age") int age) {
 		return Response.getText("Validated " + name + " " + age);
 	}

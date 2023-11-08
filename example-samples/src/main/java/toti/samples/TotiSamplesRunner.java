@@ -74,9 +74,9 @@ public class TotiSamplesRunner {
 	public void configFromFile(Supplier<Void> wait) throws Exception {
 		HttpServerFactory serverFactory = new HttpServerFactory(confFilePath);
 		HttpServer server = serverFactory.create();
-		server.addApplication("localhost", (evn, factory)->{
+		server.addApplication("samples", (evn, factory)->{
 			return factory.create(modules);
-		});
+		}, "localhost");
 		
 		// start() IS NOT BLOCKING
 		server.start();
@@ -97,9 +97,8 @@ public class TotiSamplesRunner {
 			.setPort(8080)
 			.setMaxRequestBodySize(1024 * 10); // 10 kB - !! for all body;
 		HttpServer server = serverFactory.create();
-		server.addApplication("localhost", (evn, factory)->{
+		server.addApplication("samples", (evn, factory)->{
 			return factory
-				.setTokenExpirationTime(30 * 1000) // 30s
 				.setLanguageSettings(new LanguageSettings(Arrays.asList(new Locale("en", true, Arrays.asList()))))
 				// try with or without following line
 				// .setDevelopIpAdresses(Arrays.asList()) // no develop ips
@@ -110,12 +109,12 @@ public class TotiSamplesRunner {
 				.setDatabase((migrations, env)->{
 					return new Database(
 						new DatabaseConfig(
-							dbEnv.getString("applications.localhost.database.type"),
-							dbEnv.getString("applications.localhost.database.url"), 
+							dbEnv.getString("applications.samples.database.type"),
+							dbEnv.getString("applications.samples.database.url"), 
 							false, 
-							dbEnv.getString("applications.localhost.database.schema-name"), 
-							dbEnv.getString("applications.localhost.database.login"), 
-							dbEnv.getString("applications.localhost.database.password"),
+							dbEnv.getString("applications.samples.database.schema-name"), 
+							dbEnv.getString("applications.samples.database.login"), 
+							dbEnv.getString("applications.samples.database.password"),
 							migrations,
 							1 // thread pool, 1 is enought in example
 						),
@@ -124,7 +123,7 @@ public class TotiSamplesRunner {
 				})
 				
 				.create(modules);
-		});
+		}, "localhost");
 				
 		server.start();// start IS NOT BLOCKING
 

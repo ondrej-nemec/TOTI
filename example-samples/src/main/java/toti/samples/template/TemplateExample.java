@@ -39,7 +39,7 @@ public class TemplateExample implements Module {
 	 * Basics of templating
 	 * @return http://localhost:8080/examples-templates/template/basics
 	 */
-	@Action("basics")
+	@Action(path="basics")
 	public Response basics() {
 		Map<String, Object> params = new HashMap<>();
 		params.put("title", "Page title");
@@ -50,7 +50,7 @@ public class TemplateExample implements Module {
 	 * How work with variables
 	 * @return http://localhost:8080/examples-templates/template/variable
 	 */
-	@Action("variable")
+	@Action(path="variable")
 	public Response variableOptions() {
 		Map<String, Object> params = new HashMap<>();
 		params.put("title", "Some text");
@@ -81,7 +81,7 @@ public class TemplateExample implements Module {
 	 * 
 	 * @return http://localhost:8080/examples-templates/template/owasp-form
 	 */
-	@Action("owasp-form")
+	@Action(path="owasp-form")
 	public Response owaspForm() {
 		Map<String, Object> params = new HashMap<>();
 		params.put("action", link.create(getClass(), c->c.owaspTest(null, null)));
@@ -92,7 +92,7 @@ public class TemplateExample implements Module {
 	 * 
 	 * @return http://localhost:8080/examples-templates/template/owasp-print
 	 */
-	@Action("owasp-print")
+	@Action(path="owasp-print")
 	public Response owaspTest(@Param("first") String first, @Param("second") String second) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("first", first);

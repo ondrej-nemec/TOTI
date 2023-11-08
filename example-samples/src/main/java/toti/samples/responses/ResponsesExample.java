@@ -39,7 +39,7 @@ public class ResponsesExample implements Module {
 	
 	public ResponsesExample() {};
 	
-	@Action("index")
+	@Action(path="index")
 	@Deprecated // no more required
 	public Response getIndex() {
 		return Response.getFile("samples/examples/responses/index.html");
@@ -51,7 +51,7 @@ public class ResponsesExample implements Module {
 	 * Path can be from directory tree or classpath
 	 * @return http://localhost:8080/examples-responses/responses/file
 	 */
-	@Action("file")
+	@Action(path="file")
 	public Response getFile() {
 	//	String fileName = "samples/plainTextFile.txt"; // Plain text file. Browser probably display instead of downloading.
 		String fileName = "samples/binaryFile.odt"; // Binary file. Browser starts downloading
@@ -66,7 +66,7 @@ public class ResponsesExample implements Module {
 	 * Returns new file generated inside method
 	 * @return http://localhost:8080/examples-responses/responses/generate
 	 */
-	@Action("generate")
+	@Action(path="generate")
 	public Response getGenerated() {
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		try {
@@ -83,7 +83,7 @@ public class ResponsesExample implements Module {
 	 * Returns data as JSON. See https://ondrej-nemec.github.io/JI/?file=files-json.html for more about Object->JSON
 	 * @return http://localhost:8080/examples-responses/responses/json
 	 */
-	@Action("json")
+	@Action(path="json")
 	public Response getJson() {
 		Map<String, Object> json = new MapInit<String, Object>()
 			.append("first", "value")
@@ -98,7 +98,7 @@ public class ResponsesExample implements Module {
 	 * Returns text as response
 	 * @return http://localhost:8080/examples-responses/responses/text
 	 */
-	@Action("text")
+	@Action(path="text")
 	public Response getText() {
 		return Response.getText("Working");
 		// return Response.getText(StatusCode.OK, "Working");
@@ -108,7 +108,7 @@ public class ResponsesExample implements Module {
 	 * Parse given template with paramters to HTML
 	 * @return http://localhost:8080/examples-responses/responses/template
 	 */
-	@Action("template")
+	@Action(path="template")
 	public Response getTemplate() {
 		Map<String, Object> params = new MapInit<String, Object>()
 			.append("title", "Page title")
@@ -123,7 +123,7 @@ public class ResponsesExample implements Module {
 	 * Redirect to given relative URL.
 	 * @return http://localhost:8080/examples-responses/responses/redirect
 	 */
-	@Action("redirect")
+	@Action(path="redirect")
 	public Response getRedirect() {
 		return Response.getRedirect("/examples/responses/text");
 		// return Response.getRedirect(StatusCode.TEMPORARY_REDIRECT, "/examples/responses/text");
@@ -133,7 +133,7 @@ public class ResponsesExample implements Module {
 	 * Redirect to given URL. <strong>Open redirection vulnerability</strong>
 	 * @return http://localhost:8080/examples-responses/responses/open-redirect
 	 */
-	@Action("open-redirect")
+	@Action(path="open-redirect")
 	public Response getOpenRedirect() {
 		return Response.getRedirect("https://github.com/", true);
 		// return Response.getRedirect(StatusCode.TEMPORARY_REDIRECT, "https://github.com/", true;
@@ -143,7 +143,7 @@ public class ResponsesExample implements Module {
 	 * Create websocket connection
 	 * @return http://localhost:8080/examples-responses/responses/websocket
 	 */
-	@Action("websocket")
+	@Action(path="websocket")
 	public Response getWebsocket(WebSocket websocket) {
 		 // websocket can be null - means this request is not valid websocket request
 		if (websocket != null) {

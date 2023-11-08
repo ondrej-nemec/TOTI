@@ -70,7 +70,7 @@ public class SignExample implements Module {
 	 * Async login page with TOTI form
 	 * @return http://localhost:8080/examples-sign/sign/async-page
 	 */
-	@Action("async-page")
+	@Action(path="async-page")
 	public Response asyncLoginPage(@Param("backlink") String backlink) {
 		Form form = new Form(link.create(SignExample.class, c->c.asyncLogin(null, null)), true);
 		form.setFormMethod("post");
@@ -93,7 +93,7 @@ public class SignExample implements Module {
 	 * Async login. Can be called as Rest API
 	 * @return http://localhost:8080/examples-sign/sign/async-login
 	 */
-	@Action("async-login")
+	@Action(path="async-login")
 	@Method(HttpMethod.POST)
 	public Response asyncLogin(@Param("username") String username, @Param("password") String password) {
 		// here will be some kind of authentication
@@ -112,7 +112,7 @@ public class SignExample implements Module {
 	 * Async logout. Can be called as Rest API
 	 * @return http://localhost:8080/examples-sign/sign/async-logout
 	 */
-	@Action("async-logout")
+	@Action(path="async-logout")
 	@Method(HttpMethod.POST)
 	@Secured
 	public Response asyncLogout() {
@@ -126,7 +126,7 @@ public class SignExample implements Module {
 	 * Sync login page with TOTI form
 	 * @return http://localhost:8080/examples-sign/sign/sync-page
 	 */
-	@Action("sync-page")
+	@Action(path="sync-page")
 	public Response syncLoginPage(@Param("backlink") String backlink) {
 		return getSyncPageResponse(backlink, null);
 	}
@@ -135,7 +135,7 @@ public class SignExample implements Module {
 	 * Sync login with TOTI form
 	 * @return http://localhost:8080/examples-sign/sign/sync-login
 	 */
-	@Action("sync-login")
+	@Action(path="sync-login")
 	@Method(HttpMethod.POST)
 	public Response syncLogin(
 			@Param("username") String username,
@@ -177,7 +177,7 @@ public class SignExample implements Module {
 	 * Sync logout
 	 * @return http://localhost:8080/examples-sign/sign/sync-logout
 	 */
-	@Action("sync-logout")
+	@Action(path="sync-logout")
 	@Secured(mode = AuthMode.COOKIE)
 	public Response syncLogout() {
 		authenticator.logout(identity);
@@ -190,7 +190,7 @@ public class SignExample implements Module {
 	 * Secured method for login verify
 	 * @return http://localhost:8080/examples-sign/sign/index
 	 */
-	@Action("index")
+	@Action(path="index")
 	@Secured(mode = AuthMode.COOKIE)
 	public Response index() {
 		return Response.getTemplate("/index.jsp", new HashMap<>());
@@ -200,7 +200,7 @@ public class SignExample implements Module {
 	 * Second secured method for login verify
 	 * @return http://localhost:8080/examples-sign/sign/index2
 	 */
-	@Action("index2")
+	@Action(path="index2")
 	@Secured(mode = AuthMode.COOKIE)
 	public Response index2() {
 		identity.getUser().setProperty("index2", true);
@@ -213,7 +213,7 @@ public class SignExample implements Module {
 	 * Example of using user data
 	 * @return http://localhost:8080/examples-sign/sign/user-data
 	 */
-	@Action("user-data")
+	@Action(path="user-data")
 	public Response userData() throws AuthentizationException {
 		if (identity.isAnonymous()) {
 			// automatic login before page load
