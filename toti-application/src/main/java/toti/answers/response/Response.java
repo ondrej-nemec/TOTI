@@ -29,23 +29,23 @@ public interface Response {
 	
 	/***********/
 
-	static ResponseFactory ok() {
+	static ResponseFactory OK() {
 		return create(StatusCode.OK);
 	}
 
-	static ResponseFactory forbidden() {
+	static ResponseFactory FORBIDDEN() {
 		return create(StatusCode.FORBIDDEN);
 	}
 
-	static ResponseFactory temporalyRedirect() {
+	static ResponseFactory TEMPORARY_REDIRECT() {
 		return create(StatusCode.TEMPORARY_REDIRECT);
 	}
 
-	static ResponseFactory notFound() {
+	static ResponseFactory NOT_FOUND() {
 		return create(StatusCode.NOT_FOUND);
 	}
 	
-	static ResponseFactory internalServerError() {
+	static ResponseFactory INTERNAL_SERVER_ERROR() {
 		return create(StatusCode.INTERNAL_SERVER_ERROR);
 	}
 
