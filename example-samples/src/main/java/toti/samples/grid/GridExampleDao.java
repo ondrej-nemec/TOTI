@@ -2,18 +2,19 @@ package toti.samples.grid;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Random;
 
-import ext.EntityDao;
-import ext.GridEntityDao;
 import ji.database.Database;
-import ji.database.support.DatabaseRow;
 import ji.querybuilder.QueryBuilder;
 import ji.querybuilder.builders.BatchBuilder;
 import ji.querybuilder.builders.SelectBuilder;
 import ji.querybuilder.enums.ColumnType;
+import toti.ui.backend.EntityDao;
+import toti.ui.backend.grid.GridDao;
+import toti.ui.backend.grid.GridOptions;
 
-public class GridExampleDao implements EntityDao<GridExampleEntity>, GridEntityDao<GridExampleEntity> {
+public class GridExampleDao implements EntityDao, GridDao {
 
 	private final Database database;
 	
@@ -24,26 +25,12 @@ public class GridExampleDao implements EntityDao<GridExampleEntity>, GridEntityD
 	}
 
 	@Override
-	public Database getDatabase() {
-		return database;
-	}
-
-	@Override
-	public String getTableName() {
-		return table;
-	}
-
-	@Override
 	public SelectBuilder _getGrid(String select, QueryBuilder builder) {
-		return builder._getAll(getTableName(), select);
+		return builder._getAll(table, select);
 	}
-
-	@Override
-	public GridExampleEntity createEntity(DatabaseRow row) {
-		if (row == null) {
-			return null;
-		}
-		return new GridExampleEntity(
+	
+	public List<GridExampleEntity> getAll() throws SQLException {
+		return getAll(database, table, row->new GridExampleEntity(
 			row.getInteger("id"), 
 			row.getString("text"),
 			row.getInteger("number"),
@@ -54,13 +41,16 @@ public class GridExampleDao implements EntityDao<GridExampleEntity>, GridEntityD
 			row.getTime("time_col"), 
 			row.getString("month"),
 			row.getString("week")
-		);
-		//return row.parse(GridExampleEntity.class);
+		));
 	}
 	
+	public Object getAll(GridOptions options) throws SQLException {
+		return getAll(database, table, options);
+	}
+
 	public void initDb() throws SQLException {
 		try {
-			get(0);
+			get(database, table, "id", 0, row->row);
 			return;
 		} catch (SQLException e) {
 			// connection error OR table not exists -> continue

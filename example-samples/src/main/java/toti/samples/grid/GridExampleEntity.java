@@ -5,9 +5,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Map;
 
-import ext.Entity;
 import ji.common.annotations.MapperParameter;
 import ji.common.annotations.MapperType;
+import toti.ui.backend.Entity;
 
 public class GridExampleEntity implements Entity {
 

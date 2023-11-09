@@ -63,7 +63,7 @@ public class Validator implements Validate {
 		params.putAll(request.getBodyParams().toMap());
 		params.putAll(request.getQueryParams().toMap());
 		
-		ValidationResult result = validate(params, translator);
+		ValidationResult result = validate(request, params, translator);
 		if (!result.isValid()) {
 			throw new RequestInterruptedException(Response.create(StatusCode.BAD_REQUEST).getJson(result));
 		}
@@ -82,15 +82,15 @@ public class Validator implements Validate {
 		return this;
 	}
 	
-	public ValidationResult validate(RequestParameters prop, Translator translator) {
-		return validate("%s", prop, translator);
+	public ValidationResult validate(Request request, RequestParameters prop, Translator translator) {
+		return validate(request, "%s", prop, translator);
 	}
 	
-	public ValidationResult validate(String format, RequestParameters prop, Translator translator) {
+	public ValidationResult validate(Request request, String format, RequestParameters prop, Translator translator) {
 		ValidationResult result = new ValidationResult();
 		List<String> names = new ArrayList<>();
 		rules.forEach((rule)->{
-			String newName = iterateRules(format, rule, prop, result, translator);
+			String newName = iterateRules(request, format, rule, prop, result, translator);
 			
 			/*
 			Object newValue = rule.getChangeValue().apply(item.getNewValue());
@@ -120,7 +120,7 @@ public class Validator implements Validate {
 		if (!strictList && defaultRule.isPresent()) {
 			RulesCollection rule = defaultRule.get();
 			notChecked.forEach((notCheckedName)->{
-				iterateRules(format, rule, prop, result, translator);
+				iterateRules(request, format, rule, prop, result, translator);
 				/*swichRules(String.format(format, notCheckedName), notCheckedName, rule, errors, prop, translator);
 				Object newValue = rule.getChangeValue().apply(prop.get(notCheckedName));
 				if (newValue != null) {
@@ -129,17 +129,17 @@ public class Validator implements Validate {
 			});
 		}
 		if (globalFunc.isPresent() && result.isValid()) {
-			globalFunc.get().apply(prop, result);
+			globalFunc.get().apply(request, prop, result);
 		}
 		return result;
 	}
 	
 	private String iterateRules(
-			String format, RulesCollection collection, RequestParameters prop,
+			Request request, String format, RulesCollection collection, RequestParameters prop,
 			ValidationResult result, Translator translator) {
 		ValidationItem item = new ValidationItem(prop.getValue(collection.getName()), result, translator);
 		for (Rule singleRule : collection.getRules()) {
-			singleRule.check(String.format(format, collection.getName()), collection.getName(), item);
+			singleRule.check(request, String.format(format, collection.getName()), collection.getName(), item);
 			if (!item.canValidationContinue()) {
 				break;
 			}

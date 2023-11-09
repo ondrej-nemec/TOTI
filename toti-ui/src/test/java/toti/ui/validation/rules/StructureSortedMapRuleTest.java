@@ -18,6 +18,7 @@ import ji.socketCommunication.http.structures.RequestParameters;
 import ji.translator.Translator;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+import toti.answers.request.Request;
 import toti.ui.validation.ValidationItem;
 import toti.ui.validation.ValidationResult;
 import toti.ui.validation.Validator;
@@ -39,12 +40,14 @@ public class StructureSortedMapRuleTest {
 		Validator validator = mock(Validator.class);
 		when(validator.validate(any(), any(), any(Translator.class))).thenReturn(subResult);
 		
+		Request request = mock(Request.class);
+		
 		StructureSortedMapRule rule = new StructureSortedMapRule(validator, (t)->"error");
-		rule.check(propertyName, "ruleName", item);
+		rule.check(request, propertyName, "ruleName", item);
 		
 		assertEquals(newValue, item.getNewValue());
 		assertEquals(canValidate, item.canValidationContinue());
-		verify(validator, times(validatorCalling)).validate(format, params, translator);
+		verify(validator, times(validatorCalling)).validate(request, format, params, translator);
 		verify(result, times(errorCalling)).addError(propertyName, "error");
 		verify(result, times(validatorCalling)).addSubResult(subResult);
 	}

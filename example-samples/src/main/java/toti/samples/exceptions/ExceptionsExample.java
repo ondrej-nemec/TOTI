@@ -14,6 +14,8 @@ import ji.translator.Translator;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Secured;
+import toti.answers.action.ResponseAction;
+import toti.answers.action.ResponseBuilder;
 import toti.answers.request.Identity;
 import toti.answers.response.Response;
 import toti.answers.router.Link;
@@ -60,7 +62,9 @@ public class ExceptionsExample implements Module {
 	@Action(path="secured")
 	@Secured()
 	public ResponseAction secured() {
-		return Response.OK().getText("This text should not be displayed");
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.OK().getText("This text should not be displayed");
+		});
 	}
 
 	/**
@@ -71,7 +75,9 @@ public class ExceptionsExample implements Module {
 	 */
 	@Action(path="post", methods = HttpMethod.POST)
 	public ResponseAction wrongHttpMethod() {
-		return Response.OK().getText("This text should not be displayed");
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.OK().getText("This text should not be displayed");
+		});
 	}
 
 	/**
@@ -82,7 +88,9 @@ public class ExceptionsExample implements Module {
 	 */
 	@Action(path="notemplate")
 	public ResponseAction noTemplate() {
-		return Response.OK().getTemplate("/missing-template.jsp", new HashMap<>());
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.OK().getTemplate("/missing-template.jsp", new HashMap<>());
+		});
 	}
 	
 	/**
@@ -93,7 +101,9 @@ public class ExceptionsExample implements Module {
 	 */
 	@Action(path="intemplate")
 	public ResponseAction inTemplate() {
-		return Response.OK().getTemplate("/inTemplate.jsp", null);
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.OK().getTemplate("/inTemplate.jsp", null);
+		});
 	}
 	
 	/**
@@ -104,7 +114,9 @@ public class ExceptionsExample implements Module {
 	 */
 	@Action(path="syntax")
 	public ResponseAction templateSyntax() {
-		return Response.OK().getTemplate("/syntax.jsp", new HashMap<>());
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.OK().getTemplate("/syntax.jsp", new HashMap<>());
+		});
 	}
 
 	/**
@@ -114,7 +126,9 @@ public class ExceptionsExample implements Module {
 	 */
 	@Action(path="async")
 	public ResponseAction async() {
-		return Response.OK().getTemplate("/async.jsp", new HashMap<>());
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.OK().getTemplate("/async.jsp", new HashMap<>());
+		});
 	}
 	
 	@Override
@@ -127,7 +141,7 @@ public class ExceptionsExample implements Module {
 		return new CustomExceptionResponse() {
 
 			@Override
-			public ResponseAction catchException(toti.answers.request.Request request, StatusCode status, Identity identity,
+			public Response catchException(toti.answers.request.Request request, StatusCode status, Identity identity,
 					Translator translator, Throwable t, boolean isDevelopResponseAllowed, boolean isAsyncRequest) {
 				return Response.OK().getText("Oops, something happends.");
 			}

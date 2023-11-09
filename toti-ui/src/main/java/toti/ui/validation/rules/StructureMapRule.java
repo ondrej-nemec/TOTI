@@ -5,6 +5,7 @@ import java.util.function.Function;
 import ji.common.structures.DictionaryValue;
 import ji.socketCommunication.http.structures.RequestParameters;
 import ji.translator.Translator;
+import toti.answers.request.Request;
 import toti.ui.validation.ValidationItem;
 import toti.ui.validation.Validator;
 
@@ -19,12 +20,12 @@ public class StructureMapRule implements Rule {
 	}
 
 	@Override
-	public void check(String propertyName, String ruleName, ValidationItem item) {
+	public void check(Request request, String propertyName, String ruleName, ValidationItem item) {
 		try {
 			RequestParameters fields = new RequestParameters();
 			fields.putAll(new DictionaryValue(item.getOriginValue()).getMap());
 			item.addSubResult(validator.validate(
-				propertyName + "[%s]", fields, item.getTranslator()
+				request, propertyName + "[%s]", fields, item.getTranslator()
 			));
 			item.setNewValue(fields);
 		} catch (NullPointerException | ClassCastException e) {

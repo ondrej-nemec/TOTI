@@ -17,6 +17,8 @@ import ji.socketCommunication.http.structures.WebSocket;
 import ji.translator.Translator;
 import toti.annotations.Action;
 import toti.annotations.Controller;
+import toti.answers.action.ResponseAction;
+import toti.answers.action.ResponseBuilder;
 import toti.answers.response.Response;
 import toti.answers.router.Link;
 import toti.application.Module;
@@ -42,7 +44,9 @@ public class ResponsesExample implements Module {
 	@Action(path="index")
 	@Deprecated // no more required
 	public ResponseAction getIndex() {
-		return Response.getFile("samples/examples/responses/index.html");
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.OK().getFile("samples/examples/responses/index.html");
+		});
 	}
 
 	/**
@@ -53,13 +57,14 @@ public class ResponsesExample implements Module {
 	 */
 	@Action(path="file")
 	public ResponseAction getFile() {
-	//	String fileName = "samples/plainTextFile.txt"; // Plain text file. Browser probably display instead of downloading.
-		String fileName = "samples/binaryFile.odt"; // Binary file. Browser starts downloading
-		return Response.getFileDownload(
-			fileName,
-			"fileToDownload_" + new Date().getTime() + "." + new FileExtension(fileName).getExtension()
-		);
-		// return Response.getFile(StatusCode.OK, fileName);
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			//	String fileName = "samples/plainTextFile.txt"; // Plain text file. Browser probably display instead of downloading.
+			String fileName = "samples/binaryFile.odt"; // Binary file. Browser starts downloading
+			return Response.OK().getFileDownload(
+				fileName,
+				"fileToDownload_" + new Date().getTime() + "." + new FileExtension(fileName).getExtension()
+			);
+		});
 	}
 
 	/**
@@ -68,15 +73,17 @@ public class ResponsesExample implements Module {
 	 */
 	@Action(path="generate")
 	public ResponseAction getGenerated() {
-		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		try {
-			bout.write("Generated".getBytes());
-			bout.write("\n".getBytes());
-			bout.write("File content :-D".getBytes());
-		} catch (IOException e) {
-			// never happends
-		}
-		return Response.getFileDownload(StatusCode.OK, "generatedFileToDownload_" + new Date().getTime() + ".odt", bout.toByteArray());
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			try {
+				bout.write("Generated".getBytes());
+				bout.write("\n".getBytes());
+				bout.write("File content :-D".getBytes());
+			} catch (IOException e) {
+				// never happends
+			}
+			return Response.OK().getFileDownload("generatedFileToDownload_" + new Date().getTime() + ".odt", bout.toByteArray());
+		});
 	}
 
 	/**
@@ -85,13 +92,14 @@ public class ResponsesExample implements Module {
 	 */
 	@Action(path="json")
 	public ResponseAction getJson() {
-		Map<String, Object> json = new MapInit<String, Object>()
-			.append("first", "value")
-			.append("second", false)
-			.toMap();
-		
-		return Response.getJson(json);
-		// return Response.getJson(StatusCode.ACCEPTED, json);
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			Map<String, Object> json = new MapInit<String, Object>()
+					.append("first", "value")
+					.append("second", false)
+					.toMap();
+				
+				return Response.OK().getJson(json);
+		});
 	}
 
 	/**
@@ -100,8 +108,9 @@ public class ResponsesExample implements Module {
 	 */
 	@Action(path="text")
 	public ResponseAction getText() {
-		return Response.getText("Working");
-		// return Response.getText(StatusCode.OK, "Working");
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.OK().getText("Working");
+		});
 	}
 
 	/**
@@ -110,13 +119,14 @@ public class ResponsesExample implements Module {
 	 */
 	@Action(path="template")
 	public ResponseAction getTemplate() {
-		Map<String, Object> params = new MapInit<String, Object>()
-			.append("title", "Page title")
-			.append("number", 42)
-			.toMap();
-		String template = "/template.jsp";
-		return Response.getTemplate(template, params);
-		// return Response.getTemplate(StatusCode.OK, template, params);
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			Map<String, Object> params = new MapInit<String, Object>()
+					.append("title", "Page title")
+					.append("number", 42)
+					.toMap();
+				String template = "/template.jsp";
+				return Response.OK().getTemplate(template, params);
+		});
 	}
 
 	/**
@@ -125,8 +135,9 @@ public class ResponsesExample implements Module {
 	 */
 	@Action(path="redirect")
 	public ResponseAction getRedirect() {
-		return Response.getRedirect("/examples/responses/text");
-		// return Response.getRedirect(StatusCode.TEMPORARY_REDIRECT, "/examples/responses/text");
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.create(StatusCode.TEMPORARY_REDIRECT).getRedirect("/examples/responses/text");
+		});
 	}
 
 	/**
@@ -135,8 +146,9 @@ public class ResponsesExample implements Module {
 	 */
 	@Action(path="open-redirect")
 	public ResponseAction getOpenRedirect() {
-		return Response.getRedirect("https://github.com/", true);
-		// return Response.getRedirect(StatusCode.TEMPORARY_REDIRECT, "https://github.com/", true;
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.create(StatusCode.TEMPORARY_REDIRECT).getRedirect("https://github.com/", true);
+		});
 	}
 
 	/**
@@ -145,22 +157,19 @@ public class ResponsesExample implements Module {
 	 */
 	@Action(path="websocket")
 	public ResponseAction getWebsocket(WebSocket websocket) {
-		 // websocket can be null - means this request is not valid websocket request
-		if (websocket != null) {
-			task.setWebsocket(websocket);
-			return Response.getWebsocket(websocket, task.onMessage(), task.onError(), (x)->task.removeWebsocket());
-		}
-		return Response.getFile("samples/examples/responses/websockets.html");
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			 // websocket can be null - means this request is not valid websocket request
+			if (websocket != null) {
+				task.setWebsocket(websocket);
+				return Response.getWebsocket(websocket, task.onMessage(), task.onError(), (x)->task.removeWebsocket());
+			}
+			return Response.OK().getFile("samples/examples/responses/websockets.html");
+		});
 	}
 
 	@Override
 	public String getName() {
 		return "examples-responses";
-	}
-
-	@Override
-	public String getControllersPath() {
-		return "toti/samples/responses";
 	}
 	
 	@Override

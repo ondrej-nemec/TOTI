@@ -25,7 +25,6 @@ import toti.samples.requests.RequestsExample;
 import toti.samples.responses.ResponsesExample;
 import toti.samples.routing.RoutingExample;
 import toti.samples.security.SecurityExample;
-import toti.samples.sign.SignExample;
 import toti.samples.template.TemplateExample;
 import toti.samples.validation.ValidationExample;
 
@@ -49,15 +48,14 @@ public class TotiSamplesRunner {
 			new ResponsesExample(),
 			new RoutingExample(),
 			new SecurityExample(),
-			new SignExample(),
 			new TemplateExample(),
 			new ValidationExample()
 		), "toti/samples/app.properties");
 
 		try {
 			// select one of the runs, then http://localhost:8080/toti
-			// runner.setProgramatically(wait);
-			runner.configFromFile(wait);
+			runner.setProgramatically(wait);
+			// runner.configFromFile(wait);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

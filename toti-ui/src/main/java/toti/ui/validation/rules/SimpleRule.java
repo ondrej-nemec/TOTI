@@ -3,6 +3,7 @@ package toti.ui.validation.rules;
 import java.util.function.Function;
 
 import ji.translator.Translator;
+import toti.answers.request.Request;
 import toti.ui.validation.ValidationItem;
 
 public abstract class SimpleRule<T> implements Rule {
@@ -16,7 +17,7 @@ public abstract class SimpleRule<T> implements Rule {
 	}
 
 	@Override
-	public void check(String propertyName, String ruleName, ValidationItem item) {
+	public void check(Request request, String propertyName, String ruleName, ValidationItem item) {
 		if (isErrorToShow(value, getValue(item))) {
 			item.addError(propertyName, onError);
 		}

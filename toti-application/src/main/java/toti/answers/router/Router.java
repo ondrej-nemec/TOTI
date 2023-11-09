@@ -39,5 +39,9 @@ public class Router {
 	public void setRedirectOnNotLoggedInUser(String redirectOnNotLoggedInUser) {
 		this.redirectOnNotLoggedInUser = redirectOnNotLoggedInUser;
 	}
+
+	public <T> void setRedirectOnNotLoggedInUser(Class<T> controller, Method method) {
+		// TODO
+	}
 	
 }

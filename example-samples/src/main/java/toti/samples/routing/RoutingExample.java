@@ -12,9 +12,9 @@ import ji.database.Database;
 import ji.translator.Translator;
 import toti.annotations.Action;
 import toti.annotations.Controller;
-import toti.annotations.Param;
-import toti.annotations.ParamUrl;
 import toti.annotations.Secured;
+import toti.answers.action.ResponseAction;
+import toti.answers.action.ResponseBuilder;
 import toti.answers.request.AuthMode;
 import toti.answers.response.Response;
 import toti.answers.router.Link;
@@ -48,9 +48,11 @@ public class RoutingExample implements Module {
 	 *  http://localhost:8080/api/routing/secured
 	 */
 	@Action(path="secured")
-	@Secured(mode = AuthMode.COOKIE)
+	@Secured(AuthMode.COOKIE)
 	public ResponseAction secured() {
-		return Response.getText("Secured");
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.OK().getText("Secured");
+		});
 	}
 	
 	/**
@@ -61,8 +63,10 @@ public class RoutingExample implements Module {
 	 *  http://localhost:8080/api/routing/unsecured
 	 */
 	@Action(path="unsecured")
-	public ResponseAction unsecured(@Param("backlink") String backLink) {
-		return Response.getText("Unsecured " + backLink);
+	public ResponseAction unsecured() {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.OK().getText("Unsecured " + req.getQueryParam("backlink"));
+		});
 	}
 	
 	/**
@@ -74,7 +78,9 @@ public class RoutingExample implements Module {
 	 */
 	@Action(path="notAccessible")
 	public ResponseAction notAccessibleMethod() {
-		return Response.getText("This never appear");
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.OK().getText("This never appear");
+		});
 	}
 	
 	/**
@@ -90,7 +96,9 @@ public class RoutingExample implements Module {
 	 */
 	@Action(path="accessible")
 	public ResponseAction accessibleMethod() {
-		return Response.getText("This always appear");
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.OK().getText("This always appear");
+		});
 	}
 	
 	/**
@@ -102,36 +110,38 @@ public class RoutingExample implements Module {
 	 */
 	@Action(path="links")
 	public ResponseAction links() {
-		Map<String, Object> params = new HashMap<>();
-		
-		// method calling
-		params.put(
-			"calling",
-			link
-				.create(RoutingExample.class, c->c.accessibleMethod())
-		);
-		// method calling parameters
-		params.put(
-			"callingParameter",
-			link.create(
-				RoutingExample.class, c->c.unsecured(null),
-				MapInit.create().append("backlink", "/back/link").toMap()
-			)
-		);
-		// method calling url parameters
-		params.put(
-			"callingUrlParameter",
-			link.create(
-				RoutingExample.class, c->c.linksDestination(null, null),
-				MapInit.create().append("get", "getParam").toMap(),
-				42, "john-smith"
-			)
-		);
-		
-		return Response.getTemplate(
-			"/links.jsp",
-			params
-		);
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			Map<String, Object> params = new HashMap<>();
+			
+			// method calling
+			params.put(
+				"calling",
+				link
+					.create(RoutingExample.class, c->c.accessibleMethod())
+			);
+			// method calling parameters
+			params.put(
+				"callingParameter",
+				link.create(
+					RoutingExample.class, c->c.unsecured(),
+					MapInit.create().append("backlink", "/back/link").toMap()
+				)
+			);
+			// method calling url parameters
+			params.put(
+				"callingUrlParameter",
+				link.create(
+					RoutingExample.class, c->c.linksDestination(null, null),
+					MapInit.create().append("get", "getParam").toMap(),
+					42, "john-smith"
+				)
+			);
+			
+			return Response.OK().getTemplate(
+				"/links.jsp",
+				params
+			);
+		});
 	}
 
 	/**
@@ -139,14 +149,16 @@ public class RoutingExample implements Module {
 	 * @return
 	 */
 	@Action(path="links-destination")
-	public ResponseAction linksDestination(@ParamUrl("id") Integer id, @ParamUrl("name") String name) {
-		return Response.getText("This never appear");
+	public ResponseAction linksDestination(Integer id, String name) {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.OK().getText("This never appear");
+		});
 	}
 	
 	@Override
 	public void addRoutes(Router router) {
 		// set URL for redirect if not logged in user try access secured route
-		router.setRedirectOnNotLoggedInUser(router.getLink().create(RoutingExample.class, c->c.unsecured(null)));
+		router.setRedirectOnNotLoggedInUser(RoutingExample.class, c->c.unsecured());
 		
 		// replace empty route with 'accessible'
 		router.addUrl("", router.getLink().create(RoutingExample.class, c->c.accessibleMethod()));
@@ -161,11 +173,6 @@ public class RoutingExample implements Module {
 	@Override
 	public String getName() {
 		return "examples-routing";
-	}
-
-	@Override
-	public String getControllersPath() {
-		return "toti/samples/routing";
 	}
 	
 	@Override

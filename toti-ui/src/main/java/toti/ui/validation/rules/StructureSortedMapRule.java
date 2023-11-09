@@ -8,6 +8,7 @@ import ji.common.structures.DictionaryValue;
 import ji.common.structures.SortedMap;
 import ji.socketCommunication.http.structures.RequestParameters;
 import ji.translator.Translator;
+import toti.answers.request.Request;
 import toti.ui.validation.ValidationItem;
 import toti.ui.validation.Validator;
 
@@ -22,7 +23,7 @@ public class StructureSortedMapRule implements Rule {
 	}
 
 	@Override
-	public void check(String propertyName, String ruleName, ValidationItem item) {
+	public void check(Request request, String propertyName, String ruleName, ValidationItem item) {
 		try {
 			RequestParameters fields = new RequestParameters();
 			for (Object value : new DictionaryValue(item.getOriginValue()).getList()) {
@@ -35,7 +36,7 @@ public class StructureSortedMapRule implements Rule {
 				fields.put(entryItem.getKey().toString(), entryItem.getValue());
 			}
 			item.addSubResult(validator.validate(
-				propertyName + "[%s]", fields, item.getTranslator()
+				request, propertyName + "[%s]", fields, item.getTranslator()
 			));
 			item.setNewValue(new SortedMap<String, Object>().putAll(fields.toMap()));
 		} catch (Exception e) {

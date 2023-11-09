@@ -27,7 +27,6 @@ import toti.answers.FileSystemAnswer;
 import toti.answers.Headers;
 import toti.answers.TotiAnswer;
 import toti.answers.request.IdentityFactory;
-import toti.answers.request.SessionUserProvider;
 import toti.answers.router.Link;
 import toti.answers.router.Router;
 import toti.answers.router.UriPattern;
@@ -79,7 +78,6 @@ public class ApplicationFactory {
 	private final List<OnToti> totiResponses;
 	private final List<String> translationPaths;
 	private Profiler profiler;
-	private SessionUserProvider sessionUserProvider;
 	
 	public ApplicationFactory(String hostname, Env env, String charset, Function<String, Logger> loggerFactory, String... aliases) {
 		this.env = env.getModule("applications").getModule(hostname);
@@ -164,7 +162,7 @@ public class ApplicationFactory {
 		).setProfiler(profiler);
 		
 		IdentityFactory identityFactory = new IdentityFactory(
-			translator, translator.getLocale().getLang(), sessions, sessionUserProvider
+			translator, translator.getLocale().getLang(), sessions, register.getSessionUserProvider()
 		);
 		
 		List<String> developIps = getDevelopIps(env);
@@ -180,7 +178,7 @@ public class ApplicationFactory {
 			logger
 		);
 		ControllerAnswer controllerAnswer = new ControllerAnswer(
-			router, root, templateFactories, sessionUserProvider, identityFactory, link, translator, logger
+			router, root, templateFactories, register.getSessionUserProvider(), identityFactory, link, translator, logger
 		);
 		FileSystemAnswer fileSystemAnswer = new FileSystemAnswer(
 			getResourcesPath(env),
@@ -362,11 +360,6 @@ public class ApplicationFactory {
 	}
 	
 	/*************************/
-	
-	public ApplicationFactory setSessionUserProvider(SessionUserProvider sessionUserProvider) {
-		this.sessionUserProvider = sessionUserProvider;
-		return this;
-	}
 	
 	public ApplicationFactory setUrlPattern(UriPattern pattern) {
 		this.pattern = pattern;

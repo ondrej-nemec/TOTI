@@ -1,236 +1,45 @@
 package toti.samples.security;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
+
 import ji.common.functions.Env;
-import ji.common.structures.Tuple2;
 import ji.database.Database;
-import ji.socketCommunication.http.HttpMethod;
-import ji.socketCommunication.http.StatusCode;
 import ji.translator.Translator;
-import toti.annotations.Action;
-import toti.annotations.Controller;
-import toti.annotations.Domain;
-import toti.annotations.Method;
-import toti.annotations.Param;
-import toti.annotations.Secured;
-import toti.answers.request.AuthMode;
-import toti.answers.request.Identity;
-import toti.answers.response.Response;
 import toti.answers.router.Link;
+import toti.answers.router.Router;
 import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Register;
-import toti.authentication.AuthentizationException;
-import toti.security.Authenticator;
-import toti.security.Authorizator;
-import toti.security.User;
 
 /**
- * Example demonstrate authorization in TOTI
+ * Example demonstrate security in TOTI
  * @author Ondřej Němec
  *
  */
-@Controller("security")
 public class SecurityExample implements Module {
 	
-	public static final String DOMAIN_1 = "domain-1";
-	public static final String DOMAIN_2 = "domain-2";
-	
-	private Identity identity;
-	private Authorizator authorizator;
-	private Authenticator authenticator;
-	private Link link;
-	
-	// module constructor
-	public SecurityExample() {}
-	
-	// controller constructor
-	public SecurityExample(Identity identity, Link link, Authorizator authorizator, Authenticator authenticator) {
-		this.identity = identity;
-		this.link = link;
-		this.authorizator = authorizator;
-		this.authenticator = authenticator;
-	}
-	
-	/*****************/
-	
-	/**
-	 * Page for login with links and buttons for testing
-	 * @return http://localhost:8080/examples-security/security/index
-	 */
-	@Action(path="index")
-	public ResponseAction index() {
-		List<Tuple2<String, String>> links = new LinkedList<>();
-		
-		links.add(new Tuple2<>("Not secured", link.create(SecurityExample.class, c->c.notSecured())));
-		links.add(new Tuple2<>("Secured", link.create(SecurityExample.class, c->c.secured())));
-		links.add(new Tuple2<>("Secured with CSRF", link.create(SecurityExample.class, c->c.securedCsrf())));
-		links.add(new Tuple2<>("Super secured", link.create(SecurityExample.class, c->c.superSecured())));
-		links.add(new Tuple2<>("Domain READ", link.create(SecurityExample.class, c->c.domaiRead())));
-		links.add(new Tuple2<>("Domain DELETE", link.create(SecurityExample.class, c->c.domainDelete())));
-		links.add(new Tuple2<>("Multiple domains", link.create(SecurityExample.class, c->c.domainMultiple())));
-		links.add(new Tuple2<>("Owner", link.create(SecurityExample.class, c->c.owner())));
-		links.add(new Tuple2<>("Owner IDs", link.create(SecurityExample.class, c->c.ownerIds())));
-		links.add(new Tuple2<>("In method calling", link.create(SecurityExample.class, c->c.inMethod())));
-		
-		Map<String, Object> params = new HashMap<>();
-		params.put("links", links);
-		return Response.getTemplate("index.jsp", params);
-	}
-	
-	/**
-	 * Not secured method, anybody has access
-	 * @return http://localhost:8080/examples-security/security/unsecured
-	 */
-	@Action(path="unsecured")
-	public ResponseAction notSecured() {
-		return Response.getText("Unsecured");
-	}
-
-	/**
-	 * Secured, require loged user. Can authenticate with header and cookie (with or without CSRF token)
-	 * @return http://localhost:8080/examples-security/security/secured
-	 */
-	@Action(path="secured")
-	@Secured(mode = AuthMode.COOKIE)
-	public ResponseAction secured() {
-		return Response.getText("Secured");
-	}
-
-	/**
-	 * Secured, require loged user. Can authenticate with header and cookie(only with CSRF token)
-	 * @return http://localhost:8080/examples-security/security/secured
-	 */
-	@Action(path="secured-csrf")
-	@Secured(mode = AuthMode.COOKIE_AND_CSRF)
-	public ResponseAction securedCsrf() {
-		return Response.getText("Secured CSRF");
-	}
-	
-	/**
-	 * Secured, require loged user. Can authenticate only with header
-	 * @return http://localhost:8080/examples-security/security/super-secured
-	 */
-	@Action(path="super-secured")
-	@Secured
-	public ResponseAction superSecured() {
-		return Response.getText("Super secured");
-	}
-	
-	/**
-	 * Secured. Requred user access to domain-1 with at least read permissions
-	 * @return http://localhost:8080/examples-security/security/domain-read
-	 */
-	@Action(path="domain-read")
-	@Secured({@Domain(name=DOMAIN_1, action=toti.security.Action.READ)})
-	public ResponseAction domaiRead() {
-		return Response.getText("Domain READ");
-	}
-	
-	/**
-	 * Secured. Requred user access to domain-1 with at least delete permissions
-	 * @return http://localhost:8080/examples-security/security/domain-delete
-	 */
-	@Action(path="domain-delete")
-	@Secured({@Domain(name=DOMAIN_1, action=toti.security.Action.DELETE)})
-	public ResponseAction domainDelete() {
-		return Response.getText("Domain DELETE");
-	}
-	
-	/**
-	 * Secured. Requred user access to (both):
-	 *  domain-1 with at least create permissions
-	 *  domain-2 with at leas update permissions 
-	 * @return http://localhost:8080/examples-security/security/domain-multiple
-	 */
-	@Action(path="domain-multiple")
-	@Secured({
-		@Domain(name=DOMAIN_1, action=toti.security.Action.CREATE),
-		@Domain(name=DOMAIN_2, action=toti.security.Action.UPDATE)
-	})
-	public ResponseAction domainMultiple() {
-		return Response.getText("Domain Multiple");
-	}
-	
-	/**
-	 * Secured. Requred user access to domain-1 with at least allowed permissions
-	 * In response returns allowed ids of logged user for this 
-	 * @return http://localhost:8080/examples-security/security/owner-ids
-	 */
-	@Action(path="owner-ids")
-	@Secured({@Domain(name=DOMAIN_1, action=toti.security.Action.ALLOWED)})
-	public ResponseAction ownerIds() {
-		return Response.getText("Owner IDs " + identity.getUser().getAllowedIds());
-	}
-	
-	/**
-	 * Secured. Requred user access to domain-1 with at least allowed permissions
-	 * @return http://localhost:8080/examples-security/security/owner
-	 */
-	@Action(path="owner")
-	@Secured({@Domain(name=DOMAIN_1, action=toti.security.Action.ALLOWED, owner="id")})
-	public ResponseAction owner() {
-		return Response.getText("Owner");
-	}
-	
-	/**
-	 * Method shows usage of Authorizator in method
-	 * @return http://localhost:8080/examples-security/security/list
-	 */
-	@Action(path="list")
-	@Secured
-	public ResponseAction inMethod() {
-		String response = "User is allowed for:";
-		if (authorizator.isAllowed(identity.getUser(), DOMAIN_1, toti.security.Action.READ)) {
-			response += DOMAIN_1 + " = READ";
-		}
-		if (authorizator.isAllowed(identity.getUser(), DOMAIN_2, toti.security.Action.READ)) {
-			response += DOMAIN_2 + " = READ";
-		}
-		return Response.getText(response);
-	}
-	
-	
-	/***********/
-	
-	@Action(path="login")
-	@Method({HttpMethod.POST})
-	public ResponseAction login(@Param("username") String username) {
-		try {
-			return Response.getJson(
-				authenticator.login(
-					new User(username, new SecurityExamplePermissions(username)),
-					identity
-				)
-			);
-		} catch (AuthentizationException e) {
-			return Response.getText(StatusCode.INTERNAL_SERVER_ERROR, "Login fail: " + e.getMessage());
-		}
-	}
-	
-	@Action(path="logout")
-	@Method({HttpMethod.POST})
-	public ResponseAction logout() {
-		authenticator.logout(identity);
-		return Response.getText(StatusCode.OK, "");
-	}
-	
-	/*****************/
 	
 	@Override
 	public List<Task> initInstances(Env env, Translator translator, Register register, Link link, Database database, Logger logger)
 			throws Exception {
-		register.addFactory(
-				SecurityExample.class, 
-			(trans, identity, authorizator, authenticator)->new SecurityExample(identity, link, authorizator, authenticator)
-		);
+		SessionManager session = new SessionManager();
+		register.setSessionUserProvider(session); // VERY IMPORTANT
+		register.addFactory(SecurityExample.class, ()->new SignController(link, session));
 		return Arrays.asList();
+	}
+	
+	@Override
+	public void addRoutes(Router router) {
+		//*
+		// redirect to async login
+		router.setRedirectOnNotLoggedInUser(router.getLink().create(SignExample.class, c->c.asyncLoginPage(null)));
+		/*/
+		// redirect to sync login
+		router.setRedirectOnNotLoggedInUser(router.getLink().create(SignExample.class, c->c.syncLoginPage(null)));
+		//*/
 	}
 
 	@Override
@@ -243,8 +52,4 @@ public class SecurityExample implements Module {
 		return "examples/samples/templates/security";
 	}
 
-	@Override
-	public String getControllersPath() {
-		return "toti/samples/security";
-	}
 }

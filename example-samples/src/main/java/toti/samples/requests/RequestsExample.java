@@ -3,22 +3,18 @@ package toti.samples.requests;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 import ji.common.functions.Env;
 import ji.common.structures.MapInit;
 import ji.database.Database;
 import ji.socketCommunication.http.HttpMethod;
-import ji.socketCommunication.http.structures.RequestParameters;
 import ji.socketCommunication.http.structures.UploadedFile;
 import ji.translator.Translator;
 import toti.annotations.Action;
 import toti.annotations.Controller;
-import toti.annotations.Method;
-import toti.annotations.Param;
-import toti.annotations.ParamUrl;
-import toti.annotations.Params;
+import toti.answers.action.ResponseAction;
+import toti.answers.action.ResponseBuilder;
 import toti.answers.response.Response;
 import toti.answers.router.Link;
 import toti.application.Module;
@@ -45,21 +41,19 @@ public class RequestsExample implements Module  {
 	 * http://localhost:8080/examples-requests/requests/primitives?someText=aaaa&someNumber=12&anotherNumber=21&bool=true&myNumber=12.3
 	 */
 	@Action(path="primitives")
-	public ResponseAction primitives(
-			@Param("someText") String text, 
-			@Param("someNumber") int number1, // cannot be null
-			@Param("anotherNumber") Integer number2, // can be null
-			@Param("bool") Boolean bool
-			) {
-		return Response.getTemplate("/response.jsp", new MapInit<String, Object>(
-			"params",
-			new MapInit<>()
-			.append("some text", text)
-			.append("some number", number1)
-			.append("another number", number2)
-			.append("boolean", bool)
-			.toMap()
-		).toMap());
+	// TODO maybe move query params to path params
+	public ResponseAction primitives() {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.OK().getTemplate("/response.jsp", new MapInit<String, Object>(
+					"params",
+					new MapInit<>()
+					.append("some text", req.getBodyParam("someText").getString())
+					.append("some number", req.getBodyParam("someNumber").getInteger())
+					.append("another number", req.getBodyParam("anotherNumber").getInteger())
+					.append("boolean", req.getBodyParam("bool").getBoolean())
+					.toMap()
+				).toMap());
+		});
 	}
 	
 	/**
@@ -67,8 +61,13 @@ public class RequestsExample implements Module  {
 	 * @return http://localhost:8080/examples-requests/requests/list?names[]=smith.john&names[]=doe.jane&names[]=my.name
 	 */
 	@Action(path="list")
-	public ResponseAction list(@Param("names") List<String> names) {
-		return Response.getTemplate("/response.jsp", new MapInit<String, Object>("params", names).toMap());
+	public ResponseAction list() {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.OK().getTemplate(
+				"/response.jsp",
+				new MapInit<String, Object>("params", req.getBodyParam("names").getList()).toMap()
+			);
+		});
 	}
 	
 	/**
@@ -76,8 +75,13 @@ public class RequestsExample implements Module  {
 	 * @return http://localhost:8080/examples-requests/requests/map?rate[0]=273.15&rate[26.85]=300&rate[100]=373.15
 	 */
 	@Action(path="map")
-	public ResponseAction map(@Param("rate") Map<String, String> exchangeRateList) {
-		return Response.getTemplate("/response.jsp", new MapInit<String, Object>("params", exchangeRateList).toMap());
+	public ResponseAction map() {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.OK().getTemplate(
+				"/response.jsp",
+				new MapInit<String, Object>("params", req.getBodyParam("rate").getMap()).toMap()
+			);
+		});
 	}
 
 	/**
@@ -87,7 +91,7 @@ public class RequestsExample implements Module  {
 	 */
 	/*@Action(path="mapInList")
 	public ResponseAction mapInList(@Param("list") List<Object> mapInList) {
-		return Response.getTemplate("/response.jsp", new MapInit<String, Object>("params", mapInList).toMap());
+		return Response.OK().getTemplate("/response.jsp", new MapInit<String, Object>("params", mapInList).toMap());
 	}*/
 	
 	/**
@@ -95,8 +99,13 @@ public class RequestsExample implements Module  {
 	 * @return http://localhost:8080/examples-requests/requests/listInMap?map[list][]=273.15&map[list][]=300&map[100]=373.15
 	 */
 	@Action(path="listInMap")
-	public ResponseAction listInMap(@Param("map") Map<String, Object> listInMap) {
-		return Response.getTemplate("/response.jsp", new MapInit<String, Object>("params", listInMap).toMap());
+	public ResponseAction listInMap() {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.OK().getTemplate(
+				"/response.jsp",
+				new MapInit<String, Object>("params", req.getBodyParam("map").getMap()).toMap()
+			);
+		});
 	}
 	
 	
@@ -105,35 +114,40 @@ public class RequestsExample implements Module  {
 	 * @return http://localhost:8080/examples-requests/requests/url/42
 	 */
 	@Action(path="url")
-	public ResponseAction url(@ParamUrl("id") Integer id) {
-		return Response.getTemplate("/response.jsp", new MapInit<String, Object>("params", id).toMap());
+	public ResponseAction url(Integer id) {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.OK().getTemplate("/response.jsp", new MapInit<String, Object>("params", id).toMap());
+		});
 	}
 	
 	/**
 	 * Show form for file uploading
 	 * @return http://localhost:8080/examples-requests/requests/file
 	 */
-	@Action(path="file")
-	@Method({HttpMethod.GET})
+	@Action(path="file", methods=HttpMethod.GET)
 	public ResponseAction fileIndex() {
-		return Response.getTemplate("fileForm.jsp", new HashMap<>());
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.OK().getTemplate("fileForm.jsp", new HashMap<>());
+		});
 	}
 	
 	/**
 	 * Upload file
 	 * @return
 	 */
-	@Action(path="file")
-	@Method({HttpMethod.POST})
-	public ResponseAction fileUpload(@Param("fileToUpload") UploadedFile file) {
-		// file.save(path); // save file on given path
-		return Response.getTemplate("/response.jsp", new MapInit<String, Object>(
-			"params",
-			new MapInit<>()
-			.append("type", file.getContentType())
-			.append("file name", file.getFileName())
-			.toMap()
-		).toMap());
+	@Action(path="file", methods=HttpMethod.POST)
+	public ResponseAction fileUpload() {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			UploadedFile file = req.getBodyParams().getUploadedFile("fileToUpload");
+			// file.save(path); // save file on given path
+			return Response.OK().getTemplate("/response.jsp", new MapInit<String, Object>(
+				"params",
+				new MapInit<>()
+				.append("type", file.getContentType())
+				.append("file name", file.getFileName())
+				.toMap()
+			).toMap());
+		});
 	}
 	
 	/**
@@ -142,8 +156,13 @@ public class RequestsExample implements Module  {
 	 *  http://localhost:8080/examples-requests/requests/all?age=42&name=my_name&list[]=a&list[]=b&map[a]=aa&map[b]=bb
 	 */
 	@Action(path="all")
-	public ResponseAction allParams(@Params RequestParameters parameters) {
-		return Response.getTemplate("/response.jsp", new MapInit<String, Object>("params", parameters).toMap());
+	public ResponseAction allParams() {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.OK().getTemplate(
+				"/response.jsp",
+				new MapInit<String, Object>("params", req.getBodyParams()).toMap()
+			);
+		});
 	}
 	
 	/**
@@ -152,8 +171,13 @@ public class RequestsExample implements Module  {
 	 *  http://localhost:8080/examples-requests/requests/entity?age=42&name=my_name&list[]=a&list[]=b&map[a]=aa&map[b]=bb
 	 */
 	@Action(path="entity")
-	public ResponseAction entity(@Params RequestEntity entity) {
-		return Response.getTemplate("/response.jsp", new MapInit<String, Object>("params", entity).toMap());
+	public ResponseAction entity() {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.OK().getTemplate(
+				"/response.jsp",
+				new MapInit<String, Object>("params", req.getBodyParams().parse(RequestEntity.class)).toMap()
+			);
+		});
 	}
 	
 	/**
@@ -161,21 +185,18 @@ public class RequestsExample implements Module  {
 	 * @return http://localhost:8080/examples-requests/requests/combined/my_name?age=42&list[]=a&list[]=b&map[a]=aa&map[b]=bb
 	 */
 	@Action(path="combined")
-	public ResponseAction combined(
-			@ParamUrl("name") String name, 
-			@Param("age") Integer age, 
-			@Param("list") List<Object> list,
-			@Params RequestParameters parameters,
-			@Params RequestEntity entity) {
-		return Response.getTemplate("/response.jsp", new MapInit<String, Object>(
+	public ResponseAction combined(String name) {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.OK().getTemplate("/response.jsp", new MapInit<String, Object>(
 				"params",
 				new MapInit<>()
-				.append("name and age", name + " " + age)
-				.append("list", list)
-				.append("parameters", parameters)
-				.append("entity", entity)
+				.append("name and age", name + " " + req.getBodyParam("age").getInteger())
+				.append("list", req.getBodyParam("list").getList())
+				.append("parameters", req.getBodyParams())
+				.append("entity", req.getBodyParams().parse(RequestEntity.class))
 				.toMap()
 			).toMap());
+		});
 	}
 	
 	/**
@@ -186,18 +207,18 @@ public class RequestsExample implements Module  {
 	 *  http://localhost:8080/examples-requests/requests/body
 	 */
 	@Action(path="body")
-	public ResponseAction byteBody(byte[] body) {
-		return Response.getTemplate("/response.jsp", new MapInit<String, Object>("params", new String(body)).toMap());
+	public ResponseAction byteBody() {
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			return Response.OK().getTemplate(
+				"/response.jsp",
+				new MapInit<String, Object>("params", new String(req.getBody())).toMap()
+			);
+		});
 	}
 
 	@Override
 	public String getName() {
 		return "examples-requests";
-	}
-
-	@Override
-	public String getControllersPath() {
-		return "toti/samples/requests";
 	}
 	
 	@Override

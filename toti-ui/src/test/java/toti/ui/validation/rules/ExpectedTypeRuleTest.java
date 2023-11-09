@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import ji.translator.Translator;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+import toti.answers.request.Request;
 import toti.ui.validation.ValidationItem;
 import toti.ui.validation.ValidationResult;
 
@@ -24,7 +25,7 @@ public class ExpectedTypeRuleTest {
 		ValidationItem item = new ValidationItem(originValue, result, translator);
 		
 		ExpectedTypeRule rule = new ExpectedTypeRule(expectedType, (t)->"error");
-		rule.check("propertyName", "ruleName", item);
+		rule.check(mock(Request.class), "propertyName", "ruleName", item);
 		
 		assertEquals(newValue, item.getNewValue());
 		assertEquals(canValidate, item.canValidationContinue());

@@ -4,6 +4,7 @@ package toti.answers.request;
 import java.util.Arrays;
 import java.util.Optional;
 
+import ji.common.structures.DictionaryValue;
 import ji.common.structures.ListDictionary;
 import ji.common.structures.MapDictionary;
 import ji.socketCommunication.http.HttpMethod;
@@ -72,8 +73,20 @@ public class Request {
 		return queryParams;
 	}
 	
+	public DictionaryValue getQueryParam(String name) {
+		return queryParams.getDictionaryValue(name);
+	}
+	
 	public RequestParameters getBodyParams() {
 		return bodyParams;
+	}
+	
+	public DictionaryValue getBodyParam(String name) {
+		return bodyParams.getDictionaryValue(name);
+	}
+	
+	public <T> T getBodyParams(Class<T> clazz) {
+		return bodyParams.parse(clazz);
 	}
 	
 	public byte[] getBody() {

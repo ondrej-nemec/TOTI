@@ -11,6 +11,7 @@ import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Secured;
 import toti.answers.request.AuthMode;
+import toti.answers.request.SessionUserProvider;
 import toti.answers.router.UriPattern;
 import toti.application.Module;
 import toti.extensions.CustomExceptionResponse;
@@ -27,6 +28,7 @@ public class Register {
 	private final UriPattern pattern;
 	
 	private CustomExceptionResponse customExceptionResponse = null;
+	private SessionUserProvider sessionUserProvider = null;
 	
 	public Register(Param root, ObjectBuilder<Module> module, UriPattern pattern) {
 		this.FACTORIES = new HashMap<>();
@@ -207,5 +209,13 @@ public class Register {
 
 	public void setCustomExceptionResponse(CustomExceptionResponse customExceptionResponse) {
 		this.customExceptionResponse = customExceptionResponse;
+	}
+	
+	public SessionUserProvider getSessionUserProvider() {
+		return sessionUserProvider;
+	}
+	
+	public void setSessionUserProvider(SessionUserProvider sessionUserProvider) {
+		this.sessionUserProvider = sessionUserProvider;
 	}
 }
