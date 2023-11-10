@@ -80,7 +80,7 @@ public class ControllerAnswer {
 			// kvuli prihlaseni
 			identityFactory.finalizeIdentity(identity, responseHeaders); // for cookies and custom headers
 	    	/*************/
-			return response.getResponse(null, responseHeaders, identity,  new ResponseContainer(
+			return response.getResponse(request.getProtocol(), responseHeaders, identity,  new ResponseContainer(
 				translator.withLocale(identity.getLocale()), sessionUserProvider, mapped, templateFactory, link
 			), charset);
 		} catch (ServerException e){
