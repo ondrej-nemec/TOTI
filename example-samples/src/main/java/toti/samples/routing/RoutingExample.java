@@ -157,6 +157,8 @@ public class RoutingExample implements Module {
 	
 	@Override
 	public void addRoutes(Router router) {
+		// TODO
+		/*
 		// set URL for redirect if not logged in user try access secured route
 		router.setRedirectOnNotLoggedInUser(RoutingExample.class, c->c.unsecured());
 		
@@ -168,6 +170,7 @@ public class RoutingExample implements Module {
 			router.getLink().create(RoutingExample.class, c->c.notAccessibleMethod()), 
 			router.getLink().create(RoutingExample.class, c->c.accessibleMethod())
 		);
+		*/
 	}
 
 	@Override
@@ -177,13 +180,13 @@ public class RoutingExample implements Module {
 	
 	@Override
 	public String getTemplatesPath() {
-		return "examples/samples/templates/routing";
+		return "templates/routing";
 	}
 
 	@Override
 	public List<Task> initInstances(Env env, Translator translator, Register registr, Link link, Database database, Logger logger)
 			throws Exception {
-		registr.addFactory(RoutingExample.class, ()->new RoutingExample(link));
+		registr.addController(RoutingExample.class, ()->new RoutingExample(link));
 		return Arrays.asList();
 	}
 }

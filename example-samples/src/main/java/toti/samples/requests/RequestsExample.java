@@ -41,16 +41,15 @@ public class RequestsExample implements Module  {
 	 * http://localhost:8080/examples-requests/requests/primitives?someText=aaaa&someNumber=12&anotherNumber=21&bool=true&myNumber=12.3
 	 */
 	@Action(path="primitives")
-	// TODO maybe move query params to path params
 	public ResponseAction primitives() {
 		return ResponseBuilder.get().createRequest((req, translator, identity)->{
 			return Response.OK().getTemplate("/response.jsp", new MapInit<String, Object>(
 					"params",
 					new MapInit<>()
-					.append("some text", req.getBodyParam("someText").getString())
-					.append("some number", req.getBodyParam("someNumber").getInteger())
-					.append("another number", req.getBodyParam("anotherNumber").getInteger())
-					.append("boolean", req.getBodyParam("bool").getBoolean())
+					.append("some text", req.getQueryParam("someText").getString())
+					.append("some number", req.getQueryParam("someNumber").getInteger())
+					.append("another number", req.getQueryParam("anotherNumber").getInteger())
+					.append("boolean", req.getQueryParam("bool").getBoolean())
 					.toMap()
 				).toMap());
 		});
@@ -65,7 +64,7 @@ public class RequestsExample implements Module  {
 		return ResponseBuilder.get().createRequest((req, translator, identity)->{
 			return Response.OK().getTemplate(
 				"/response.jsp",
-				new MapInit<String, Object>("params", req.getBodyParam("names").getList()).toMap()
+				new MapInit<String, Object>("params", req.getQueryParam("names").getList()).toMap()
 			);
 		});
 	}
@@ -79,7 +78,7 @@ public class RequestsExample implements Module  {
 		return ResponseBuilder.get().createRequest((req, translator, identity)->{
 			return Response.OK().getTemplate(
 				"/response.jsp",
-				new MapInit<String, Object>("params", req.getBodyParam("rate").getMap()).toMap()
+				new MapInit<String, Object>("params", req.getQueryParam("rate").getMap()).toMap()
 			);
 		});
 	}
@@ -103,7 +102,7 @@ public class RequestsExample implements Module  {
 		return ResponseBuilder.get().createRequest((req, translator, identity)->{
 			return Response.OK().getTemplate(
 				"/response.jsp",
-				new MapInit<String, Object>("params", req.getBodyParam("map").getMap()).toMap()
+				new MapInit<String, Object>("params", req.getQueryParam("map").getMap()).toMap()
 			);
 		});
 	}
@@ -223,13 +222,13 @@ public class RequestsExample implements Module  {
 	
 	@Override
 	public String getTemplatesPath() {
-		return "examples/samples/templates/requests";
+		return "templates/requests";
 	}
 
 	@Override
 	public List<Task> initInstances(Env env, Translator translator, Register register, Link link, Database database, Logger logger)
 			throws Exception {
-		register.addFactory(RequestsExample.class, ()->new RequestsExample());
+		register.addController(RequestsExample.class, ()->new RequestsExample());
 		return Arrays.asList();
 	}
 

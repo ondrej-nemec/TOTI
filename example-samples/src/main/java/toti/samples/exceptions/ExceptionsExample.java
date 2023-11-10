@@ -156,13 +156,13 @@ public class ExceptionsExample implements Module {
 	
 	@Override
 	public String getTemplatesPath() {
-		return "examples/samples/templates/exceptions";
+		return "templates/exceptions";
 	}
 
 	@Override
 	public List<Task> initInstances(Env env, Translator translator, Register registr, Link link, Database database, Logger logger)
 			throws Exception {
-		registr.addFactory(ExceptionsExample.class, ()->new ExceptionsExample());
+		registr.addController(ExceptionsExample.class, ()->new ExceptionsExample());
 		return Arrays.asList();
 	}
 	

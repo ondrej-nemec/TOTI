@@ -1095,15 +1095,19 @@ public class GridExample implements Module {
 	
 	@Override
 	public String getTemplatesPath() {
-		return "examples/samples/templates/grid";
+		return "templates/grid";
 	}
 
 	@Override
 	public List<Task> initInstances(Env env, Translator translator, Register register, Link link, Database database, Logger logger)
 			throws Exception {
 		GridExampleDao dao = new GridExampleDao(database);
-		dao.initDb();
-		register.addFactory(GridExample.class, ()->new GridExample(dao, link, logger));
+		try {
+			dao.initDb();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		register.addController(GridExample.class, ()->new GridExample(dao, link, logger));
 		return new LinkedList<>();
 	}
 

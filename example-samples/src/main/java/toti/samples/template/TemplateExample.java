@@ -114,7 +114,7 @@ public class TemplateExample implements Module {
 	@Override
 	public List<Task> initInstances(Env env, Translator translator, Register register, Link link, Database database, Logger logger)
 			throws Exception {
-		register.addFactory(TemplateExample.class, ()->new TemplateExample(link));
+		register.addController(TemplateExample.class, ()->new TemplateExample(link));
 		return Arrays.asList();
 	}
 
@@ -125,7 +125,7 @@ public class TemplateExample implements Module {
 	
 	@Override
 	public String getTemplatesPath() {
-		return "examples/samples/templates/template";
+		return "templates/template";
 	}
 	
 }

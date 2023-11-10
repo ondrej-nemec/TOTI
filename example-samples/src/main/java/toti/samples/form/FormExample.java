@@ -1662,7 +1662,7 @@ public class FormExample implements Module {
 	public List<Task> initInstances(Env env, Translator translator, Register register, Link link, Database database, Logger logger)
 			throws Exception {
 		FormExampleDao dao = new FormExampleDao();
-		register.addFactory(
+		register.addController(
 			FormExample.class,
 			()->new FormExample(dao, link)
 		);
@@ -1676,7 +1676,7 @@ public class FormExample implements Module {
 	
 	@Override
 	public String getTemplatesPath() {
-		return "examples/samples/templates/form";
+		return "templates/form";
 	}
 
 }

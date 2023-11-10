@@ -86,7 +86,7 @@ public class ValidationExample implements Module {
 	@Override
 	public List<Task> initInstances(Env env, Translator translator, Register register, Link link, Database database, Logger logger)
 			throws Exception {
-		register.addFactory(ValidationExample.class, ()->new ValidationExample());
+		register.addController(ValidationExample.class, ()->new ValidationExample());
 		return Arrays.asList();
 	}
 
@@ -97,7 +97,7 @@ public class ValidationExample implements Module {
 	
 	@Override
 	public String getTemplatesPath() {
-		return "examples/samples/templates/validation";
+		return "templates/validation";
 	}
 
 }

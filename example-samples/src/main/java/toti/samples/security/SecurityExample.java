@@ -27,7 +27,8 @@ public class SecurityExample implements Module {
 			throws Exception {
 		SessionManager session = new SessionManager();
 		register.setSessionUserProvider(session); // VERY IMPORTANT
-		register.addFactory(SecurityExample.class, ()->new SignController(link, session));
+		register.addController(SignController.class, ()->new SignController(link, session));
+		register.addController(PermissionsController.class, ()->new PermissionsController(link, session));
 		return Arrays.asList();
 	}
 	
@@ -35,7 +36,7 @@ public class SecurityExample implements Module {
 	public void addRoutes(Router router) {
 		//*
 		// redirect to async login
-		router.setRedirectOnNotLoggedInUser(router.getLink().create(SignExample.class, c->c.asyncLoginPage(null)));
+		// TODO router.setRedirectOnNotLoggedInUser(router.getLink().create(SignExample.class, c->c.asyncLoginPage(null)));
 		/*/
 		// redirect to sync login
 		router.setRedirectOnNotLoggedInUser(router.getLink().create(SignExample.class, c->c.syncLoginPage(null)));
@@ -49,7 +50,7 @@ public class SecurityExample implements Module {
 	
 	@Override
 	public String getTemplatesPath() {
-		return "examples/samples/templates/security";
+		return "templates/security";
 	}
 
 }

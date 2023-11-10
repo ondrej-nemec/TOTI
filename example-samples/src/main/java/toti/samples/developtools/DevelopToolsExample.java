@@ -112,7 +112,7 @@ public class DevelopToolsExample implements Module {
 	
 	@Override
 	public String getTemplatesPath() {
-		return "examples/samples/templates/developtools";
+		return "templates/developtools";
 	}
 
 }

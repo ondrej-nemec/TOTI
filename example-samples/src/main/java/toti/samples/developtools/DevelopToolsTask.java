@@ -29,6 +29,10 @@ public class DevelopToolsTask implements Task {
 
 	@Override
 	public void start() throws Exception {
+		if (database == null)  {
+			// whole samples can start without database
+			return;
+		}
 		try {
 			// try create and fill tables OneTable and JoinTable if not exist
 			database.applyBuilder((b)->{

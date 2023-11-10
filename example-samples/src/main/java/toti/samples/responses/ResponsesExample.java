@@ -174,14 +174,14 @@ public class ResponsesExample implements Module {
 	
 	@Override
 	public String getTemplatesPath() {
-		return "examples/samples/templates/responses";
+		return "templates/responses";
 	}
 
 	@Override
 	public List<Task> initInstances(Env env, Translator translator, Register register, Link link, Database database, Logger logger)
 			throws Exception {
 		TaskExample task = new TaskExample(logger);
-		register.addFactory(ResponsesExample.class, ()->new ResponsesExample(task));
+		register.addController(ResponsesExample.class, ()->new ResponsesExample(task));
 		return Arrays.asList(task);
 	}
 }
