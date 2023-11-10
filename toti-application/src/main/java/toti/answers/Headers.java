@@ -1,10 +1,12 @@
 package toti.answers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import ji.common.structures.DictionaryValue;
 
@@ -17,7 +19,8 @@ public class Headers {
 	}
 	
 	public Headers(Map<String, List<Object>> headers) {
-		this.headers = headers;
+		this.headers = headers.entrySet().stream()
+			.collect(Collectors.toMap(e->e.getKey(), e->new ArrayList<>(e.getValue())));
 	}
 	
 	public Headers addHeader(String name, Object value) {
