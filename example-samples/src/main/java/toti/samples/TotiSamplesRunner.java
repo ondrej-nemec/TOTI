@@ -27,6 +27,7 @@ import toti.samples.routing.RoutingExample;
 import toti.samples.security.SecurityExample;
 import toti.samples.template.TemplateExample;
 import toti.samples.validation.ValidationExample;
+import toti.ui.UiExtension;
 
 public class TotiSamplesRunner {
 	
@@ -73,6 +74,7 @@ public class TotiSamplesRunner {
 		HttpServerFactory serverFactory = new HttpServerFactory(confFilePath);
 		HttpServer server = serverFactory.create();
 		server.addApplication("samples", (evn, factory)->{
+			factory.addExtension(new UiExtension());
 			return factory.create(modules);
 		}, "localhost");
 		
@@ -96,6 +98,7 @@ public class TotiSamplesRunner {
 			.setMaxRequestBodySize(1024 * 10); // 10 kB - !! for all body;
 		HttpServer server = serverFactory.create();
 		server.addApplication("samples", (evn, factory)->{
+			factory.addExtension(new UiExtension());
 			return factory
 				.setLanguageSettings(new LanguageSettings(Arrays.asList(new Locale("en", true, Arrays.asList()))))
 				// try with or without following line
@@ -103,8 +106,9 @@ public class TotiSamplesRunner {
 				// try change URL pattern
 				// .setUrlPattern("/api/[controller]/[method]</[param]></[param]>")
 				.setUseProfiler(true)
-				
-				.setDatabase((migrations, env)->{
+
+				// TODO
+				/*.setDatabase((migrations, env)->{
 					return new Database(
 						new DatabaseConfig(
 							dbEnv.getString("applications.samples.database.type"),
@@ -118,7 +122,7 @@ public class TotiSamplesRunner {
 						),
 						mock(Logger.class) // real logger is not required
 					);
-				})
+				})*/
 				
 				.create(modules);
 		}, "localhost");
