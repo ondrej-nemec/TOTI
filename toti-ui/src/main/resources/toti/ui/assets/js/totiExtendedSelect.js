@@ -1,4 +1,4 @@
-/* TOTI ExtendedSelect version 0.0.1 */
+/* TOTI ExtendedSelect version 0.0.2 */
 class ExtendedSelect {
 
 	selectedGroup = null;
@@ -206,59 +206,63 @@ class ExtendedSelect {
 		this.hints.show = true;
 		var object = this;
 		var displayedCount = 0;
+		var maxLength = 0;
 		this.elements.forEach((key, element)=>{
-			displayedCount += object.processElement(phrase, element);
+			var res = object.processElement(phrase, element);
+			displayedCount += res.index;
+			maxLength = Math.max(maxLength, res.length);
 		});
-		function resize() {
-			var bonds = this.input.getBoundingClientRect();
-	
-			var spaceDown = window.innerHeight - bonds.bottom;
-			var spaceUp = bonds.top;
-	
-			var heigth = Math.min(370, 19 * displayedCount);
-			var position = bonds.bottom;
-			if (spaceDown >= heigth) {
-					/* nothing */
-			} else if (spaceUp >= heigth || spaceUp > spaceDown) {
-				heigth = Math.min(spaceUp, heigth);
-				position = bonds.top - heigth;
-			} else {
-				heigth = spaceDown;
+
+		function calculateBond(expected, mainSpace, auxSpace, mainPosition, auxPosition) {
+			if (mainSpace >= expected) {
+				return {
+					space: expected,
+					position: mainPosition
+				};
 			}
-	
-			this.hints.style.position = "fixed";
-			this.hints.style.top = position + "px";
-			this.hints.style.left = bonds.left + "px";
-			this.hints.style.width = bonds.width + "px";
-			this.hints.style['max-height'] = heigth + "px!important";
+			if (auxSpace >= expected) {
+				return {
+					space: expected,
+					position: auxPosition - expected
+				};
+			}
+			if (mainSpace >= auxSpace) {
+				return {
+					space: mainSpace,
+					position: mainPosition
+				};
+			}
+			return {
+				space: auxSpace,
+				position: auxPosition - auxSpace /* == 0*/
+			};
+		}
+
+		function resize() {
+			var bonds = object.input.getBoundingClientRect();
+			var height = calculateBond(
+				Math.min(370, 19 * displayedCount),
+				window.innerHeight - bonds.bottom,
+				bonds.top,
+				bonds.bottom,
+				bonds.top
+			);
+			var width = calculateBond(
+				Math.max(bonds.width, maxLength*16),
+				window.innerWidth - bonds.left,
+				bonds.left,
+				bonds.left,
+				bonds.left
+			);
+
+			object.hints.style.position = "fixed";
+			object.hints.style.top = height.position + "px";
+			object.hints.style['max-height'] = height.space + "px!important";
+			object.hints.style.left = width.position + "px";
+			object.hints.style['max-width'] = width.space + "px!important";
 		}
 		resize();
 		new ResizeObserver(resize).observe(this.input);
-	}
-
-	processElement(phrase, element) {
-		var index = 0;
-		if (element.hasOwnProperty('elements')) {
-			var result = 0;
-			var object = this;
-			element.elements.forEach((key, el)=>{
-				index += object.processElement(phrase, el);
-			});
-		}
-		var match = element.selectable && totiUtils.unaccent(element.title).includes(totiUtils.unaccent(phrase));
-		if (element.value === this.selectedValue) {
-			element.container.selected = true;
-		} else {
-			element.container.selected = false;
-		}
-		
-		if (phrase === null || match || index > 0) {
-			element.container.show = true;
-			index++;
-		} else {
-			element.container.show = false;
-		}
-		return index;
 	}
 
 	overrideProperty(element, property, attribute, trueOnly = false) {
