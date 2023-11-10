@@ -172,7 +172,7 @@ class ExtendedSelect {
 			title: title,
 			selectable: true
 		});
-		if (parent !== null) { // level > 0
+		if (parent !== null) {
 			this.selfRef[key] = elements.get(key);
 		}
 		container.appendChild(element);

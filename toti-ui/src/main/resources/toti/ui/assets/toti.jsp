@@ -1,21 +1,23 @@
-<t:include file="assets/js/totiSortedMap.js" />
-<t:include file="assets/js/totiTranslations.js" />
-<t:include file="assets/js/totiImages.js" />
+<t:include file="/ui/assets/js/totiSortedMap.js" />
+<t:include file="/ui/assets/js/totiTranslations.js" />
+<t:include file="/ui/assets/js/totiImages.js" />
 
-<t:include file="assets/js/totiStorage.js" />
-<t:include file="assets/js/totiUtils.js" />
-<t:include file="assets/js/totiLang.js" />
-<t:include file="assets/js/totiLoad.js" />
-<t:include file="assets/js/totiAuth.js" />
-<t:include file="assets/js/totiFormCustomTemplate.js" />
-<t:include file="assets/js/totiFormDefaultTemplate.js" />
-<t:include file="assets/js/totiGridCustomTemplate.js" />
-<t:include file="assets/js/totiGridDefaultTemplate.js" />
-<t:include file="assets/js/totiDisplay.js" />
+<t:include file="/ui/assets/js/totiStorage.js" />
+<t:include file="/ui/assets/js/totiUtils.js" />
+<t:include file="/ui/assets/js/totiLang.js" />
+<t:include file="/ui/assets/js/totiLoad.js" />
+<t:include file="/ui/assets/js/totiAuth.js" />
+<t:include file="/ui/assets/js/totiStandartSelect.js" />
+<t:include file="/ui/assets/js/totiExtendedSelect.js" />
+<t:include file="/ui/assets/js/totiFormCustomTemplate.js" />
+<t:include file="/ui/assets/js/totiFormDefaultTemplate.js" />
+<t:include file="/ui/assets/js/totiGridCustomTemplate.js" />
+<t:include file="/ui/assets/js/totiGridDefaultTemplate.js" />
+<t:include file="/ui/assets/js/totiDisplay.js" />
 
-<t:include file="assets/js/totiControl.js" />
-<t:include file="assets/js/totiForm.js" />
-<t:include file="assets/js/totiGrid.js" />
+<t:include file="/ui/assets/js/totiControl.js" />
+<t:include file="/ui/assets/js/totiForm.js" />
+<t:include file="/ui/assets/js/totiGrid.js" />
 
 <t:if cond="${totiIdentity.isPresent()}" >
 	totiAuth.login({

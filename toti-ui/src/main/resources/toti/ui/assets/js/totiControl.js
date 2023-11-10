@@ -353,12 +353,13 @@ var totiControl = {
 						});
 					}
 					return addOptions(select, params, depends, factory);
-				}).then(()=>{
+				}).then((options)=>{
 					if (!params.hasOwnProperty('disabled')) {
 						/* IMPROVE loading icon */
 						select.removeAttribute('disabled');
 					}
-				}).then(()=>{
+					return options;
+				}).then((options)=>{
 					params.setOptions.setFinished(options);
 				});
 				return factory.getContainer();
@@ -402,7 +403,6 @@ var totiControl = {
 					} else if (params.value) {
 						select.value = params.value;
 					}
-					//select.value = params.value;
 					/* render options for grid */
 					var renderOptions = {};
 					options.forEach(function(option) {
