@@ -59,7 +59,7 @@ public class ControlTag implements Tag {
 				+ "flushNode();"
 				+ "return;"
 			+ "}"
-			+ "toti.control.Control control=(toti.control.Control)(getVariable(\":name:\"));"
+			+ "toti.ui.control.Control control=(toti.ui.control.Control)(getVariable(\":name:\"));"
 			+ "if(!\"%s\".isEmpty() && !control.getType().equals(\"%s\")){"
 				+ "flushNode();"
 				+ "return;"

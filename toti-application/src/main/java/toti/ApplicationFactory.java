@@ -156,7 +156,7 @@ public class ApplicationFactory {
 		actualModule.set(null);
 		
 		TemplateFactory totiTemplateFactory = new TemplateFactory(
-			getTempPath(env, hostname), "toti/web", "", "", templateFactories,
+			getTempPath(env, hostname), "toti", "", "", templateFactories,
 			getDeleteTempJavaFiles(env), getMinimalize(env),
 			logger
 		).setProfiler(profiler);
