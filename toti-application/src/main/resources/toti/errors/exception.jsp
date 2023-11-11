@@ -35,6 +35,7 @@
 			<img src="" class="block-hide" width="20px">
 		</div>
 		<div class="block">
+		
 			<div class="section">
 				<div>
 					<h3>Info</h3>
@@ -45,24 +46,26 @@
 					<table>
 						<tr>
 							<th>URL</th>
-							<td>${url}</td>
+							<td>${request.getPlainUri()}</td>
 						</tr>
 						<tr>
 							<th>Full URL</th>
-							<td>${fullUrl}</td>
+							<td>${request.getUri()}</td>
 						</tr>
 						<tr>
 							<th>Method</th>
-							<td>${method}</td>
+							<td>${request.getMethod()}</td>
 						</tr>
 						<tr>
 							<th>Protocol</th>
-							<td>${protocol}</td>
+							<td>${request.getProtocol()}</td>
 						</tr>
 					</table>
 				</div>
 			</div>
-			<t:if cond='${mappedUrl} != null'>
+			
+			
+			<t:if cond='${mappedAction} != null'>
 			<div class="section">
 				<div>
 					<h3>Mapping</h3>
@@ -73,21 +76,25 @@
 					<table>
 						<tr>
 							<th>Module</th>
-							<td>${mappedUrl.getModuleName()}</td>
+							<td>${mappedAction.getModuleName()}</td>
 						</tr>
 						<tr>
 							<th>Controller</th>
-							<td>${mappedUrl.getClassName()}</td>
+							<td>${mappedAction.getClassName()}</td>
 						</tr>
 						<tr>
 							<th>Action</th>
-							<td>${mappedUrl.getMethodName()}</td>
+							<td>${mappedAction.getMethodName()}</td>
+						</tr>
+						<tr>
+							<th>Security Mode</th>
+							<td>${mappedAction.getSecurityMode()}</td>
 						</tr>
 					</table>
-					${mappedUrl}
 				</div>
 			</div>
 			</t:if>
+			
 			
 			<div class="section">
 				<div>
@@ -111,21 +118,14 @@
 							<td>${identity.getLoginMode()}</td>
 						</tr>
 						<tr>
-							<th>Content</th>
-							<td>${identity.getUser().getContent()}</td>
-						</tr>
-						<tr>
-							<th>User: Id</th>
+							<th>User Id</th>
 							<td>${identity.getUser().getId()}</td>
-						</tr>
-						<tr>
-							<th>User: Allowed Owners</th>
-							<td>${identity.getUser().getAllowedIds()}</td>
 						</tr>
 					</t:if>
 					</table>
 				</div>
 			</div>
+			
 			
 			<div class="section">
 				<div>
@@ -134,9 +134,9 @@
 					<img src="" class="block-hide" width="20px">
 				</div>
 				<div class="block">
-					<h3>URL parameters</h3>
+					<h3>Query parameters</h3>
 					<table>
-						<t:foreach key="String key" value="Object value" map="${urlParameters}">
+						<t:foreach key="String key" value="Object value" map="${request.getQueryParameters()}">
 							<tr>
 								<th>${key}</th>
 								<t:if cond="value == null">
@@ -150,9 +150,17 @@
 							</tr>
 						</t:foreach>
 					</table>
-					<h3>Body parameters</h3>
+					<h3>Binary body:</h3>
+					<div>
+						<t:if cond="${request.getBody()} == null">
+							No binary data
+						<t:else>
+							Contains ${request.getBody().length} bytes
+						</t:if>
+					</div>
+					<h3>Body as parameters</h3>
 					<table>
-						<t:foreach key="String key" value="Object value" map="${bodyParameters}">
+						<t:foreach key="String key" value="Object value" map="${request.getBodyInParameters()}">
 							<tr>
 								<th>${key}</th>
 								<t:if cond="value == null">
@@ -166,8 +174,6 @@
 							</tr>
 						</t:foreach>
 					</table>
-					<h3>Body</h3>
-					<div>${body}</div>
 				</div>
 			</div>
 			
@@ -179,7 +185,7 @@
 				</div>
 				<div class="block">
 					<table>
-						<t:foreach key="String key" value="Object list" map="${headers.getHeaders()}">
+						<t:foreach key="String key" value="Object list" map="${requestHeaders.getHeaders()}">
 							<t:foreach item="Object value" collection="${list}">
 								<tr>
 									<th>${key}</th>
@@ -196,6 +202,7 @@
 					</table>
 				</div>
 			</div>
+			
 		</div>
 	</div>
 	
