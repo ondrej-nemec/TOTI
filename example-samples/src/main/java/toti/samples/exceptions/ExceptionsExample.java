@@ -50,7 +50,9 @@ public class ExceptionsExample implements Module {
 	 */
 	@Action(path="cause")
 	public ResponseAction inMethodCause() {
-		throw new RuntimeException(new LogicException("Example of logic exception"));
+		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+			throw new RuntimeException(new LogicException("Example of logic exception"));
+		});
 	}
 
 	/**
@@ -132,7 +134,7 @@ public class ExceptionsExample implements Module {
 	}
 	
 	@Override
-	public void addRoutes(Router router) {
+	public void addRoutes(Router router, Link link) {
 		// uncoment for trying custm exception handler
 		// router.setCustomExceptionResponse(getCustomExceptionHandler());
 	}

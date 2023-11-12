@@ -25,7 +25,7 @@ public interface Module {
 		Link link, Database database, Logger logger
 	) throws Exception;
 	
-	default void addRoutes(Router router) {}
+	default void addRoutes(Router router, Link link) {}
 	
 	default String getTranslationPath() {
 		return null;

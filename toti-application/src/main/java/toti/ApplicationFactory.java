@@ -116,7 +116,7 @@ public class ApplicationFactory {
 		Param root = new Param(null);
 		Register register = new Register(root, actualModule, pattern);
 		Link link = new Link(/*getUrlPattern(env),*/ register, pattern);
-		Router router = new Router(register);
+		Router router = new Router(/*register*/);
 		
 		Map<String, TemplateFactory> templateFactories = new HashMap<>();
 		Set<String> trans = new HashSet<>();
@@ -151,7 +151,7 @@ public class ApplicationFactory {
 					loggerFactory.apply(hostname, module.getName())
 				)
 			);
-			module.addRoutes(router);
+			module.addRoutes(router, link);
 		};
 		actualModule.set(null);
 		

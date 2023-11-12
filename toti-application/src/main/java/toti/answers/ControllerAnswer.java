@@ -67,9 +67,21 @@ public class ControllerAnswer {
 			Identity identity, Headers requestHeaders, Optional<WebSocket> websocket,
 			Headers responseHeaders, String charset
 		) throws Exception {
+		String uri = request.getPlainUri();
+		if (router.getUrlMapping(uri) != null) {
+			uri = router.getUrlMapping(uri);
+		}
+		
 		Request totiRequest = Request.fromRequest(request, requestHeaders, websocket);
+		/*
 		MappedAction mapped = getMappedAction(request.getPlainUri(), request.getMethod(), totiRequest);
 		if (mapped == null) {
+			return null;
+		}
+		*/
+		MappedAction mapped = getMappedAction(root, getUrlParts(uri), request.getMethod(), totiRequest);
+		if (mapped == null) {
+			totiRequest.getPathParams().clear();
 			return null;
 		}
 		try {
@@ -77,7 +89,6 @@ public class ControllerAnswer {
 			
 			TemplateFactory templateFactory = modules.get(mapped.getModuleName());
 			/***************/
-			// kvuli prihlaseni
 			identityFactory.finalizeIdentity(identity, responseHeaders); // for cookies and custom headers
 	    	/*************/
 			return response.getResponse(request.getProtocol(), responseHeaders, identity,  new ResponseContainer(
@@ -99,7 +110,7 @@ public class ControllerAnswer {
 			throw new ServerException(StatusCode.INTERNAL_SERVER_ERROR, mapped, e);
 		}
 	}
-
+/*
 	protected MappedAction getMappedAction(String url, HttpMethod method, Request request) {
 		MappedAction routered = router.getUrlMapping(url);
 		if (routered != null) {
@@ -111,7 +122,7 @@ public class ControllerAnswer {
 		}
 		return action;
 	}
-	
+	*/
 	private LinkedList<String> getUrlParts(String url) {
 		if (url.length() == 0 || "/".equals(url)) {
 			return new LinkedList<>();
@@ -119,7 +130,7 @@ public class ControllerAnswer {
 		return new LinkedList<>(Arrays.asList(url.substring(1).split("/")));
 	}
 	
-	private MappedAction getMappedAction(Param root, LinkedList<String> urls, HttpMethod method, Request request) {
+	protected MappedAction getMappedAction(Param root, LinkedList<String> urls, HttpMethod method, Request request) {
 		if (urls.isEmpty()) {
 			return root.getAction(method);
 		}
