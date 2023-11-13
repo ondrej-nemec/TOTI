@@ -129,7 +129,7 @@ public class Validator implements Validate {
 			});
 		}
 		if (globalFunc.isPresent() && result.isValid()) {
-			globalFunc.get().apply(request, prop, result);
+			globalFunc.get().apply(request, prop, result, translator);
 		}
 		return result;
 	}

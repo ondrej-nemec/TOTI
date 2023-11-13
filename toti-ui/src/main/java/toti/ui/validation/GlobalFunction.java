@@ -1,11 +1,11 @@
 package toti.ui.validation;
 
 import ji.socketCommunication.http.structures.RequestParameters;
+import ji.translator.Translator;
 import toti.answers.request.Request;
 
 public interface GlobalFunction {
 
-	// TODO maybe send translator and request too
-	void apply(Request request, RequestParameters params, ValidationResult result);
+	void apply(Request request, RequestParameters params, ValidationResult result, Translator translator);
 	
 }
