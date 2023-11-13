@@ -68,8 +68,9 @@ public class ControllerAnswer {
 			Headers responseHeaders, String charset
 		) throws Exception {
 		String uri = request.getPlainUri();
-		if (router.getUrlMapping(uri) != null) {
-			uri = router.getUrlMapping(uri);
+		String routered = router.getUrlMapping(uri);
+		if (routered != null) {
+			uri = routered;
 		}
 		
 		Request totiRequest = Request.fromRequest(request, requestHeaders, websocket);

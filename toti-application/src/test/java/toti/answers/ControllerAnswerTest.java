@@ -16,6 +16,7 @@ import static org.mockito.Mockito.when;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -60,20 +61,22 @@ public class ControllerAnswerTest implements TestCase {
 	@Test
 	public void testAnswerNoMappedAction() throws Exception {
 		Router router = mock(Router.class);
-		when(router.getUrlMapping("/routered")).thenReturn(MappedAction.test("routered", "route", "method"));
+		// MappedAction.test("routered", "route", "method")
+		when(router.getUrlMapping(any())).thenReturn(null);
 		
 		Translator translator = mock(Translator.class);
 		when(translator.withLocale(any(Locale.class))).thenReturn(translator);
 		
 		IdentityFactory identityFactory = mock(IdentityFactory.class);
 		SessionUserProvider sup = mock(SessionUserProvider.class);
+		Param root = new Param(null);
 		
 		ControllerAnswer answer = spy(new ControllerAnswer(
-			router, new Param(null), new HashMap<>(),
+			router, root, new HashMap<>(),
 			sup, identityFactory,
 			mock(Link.class), translator, mock(Logger.class)
 		));
-		doReturn(null).when(answer).getMappedAction(any(), any(), any());
+		// doReturn(null).when(answer).getMappedAction(any(), any(), any());
 		
 		ji.socketCommunication.http.structures.Request r = new ji.socketCommunication.http.structures.Request(HttpMethod.GET, "/a/b/c", Protocol.HTTP_1_1);
 		r.setUriParams("/a/b/c", MapDictionary.hashMap());
@@ -81,7 +84,9 @@ public class ControllerAnswerTest implements TestCase {
 		assertNull(answer.answer(r, mock(Identity.class), new Headers(), Optional.empty(), new Headers(), ""));
 		
 		verify(answer, times(1)).answer(any(), any(), any(), any(), any(), any());
-		verify(answer, times(1)).getMappedAction("/a/b/c", HttpMethod.GET, new Request(
+		verify(answer, times(1)).getMappedAction(root, new LinkedList<>(Arrays.asList(
+				"a", "b", "c"
+			)),  HttpMethod.GET, new Request(
 			HttpMethod.GET, new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty()
 		));
 		verifyNoMoreInteractions(translator, identityFactory, sup, answer);
@@ -90,7 +95,8 @@ public class ControllerAnswerTest implements TestCase {
 	@Test
 	public void testAnswer() throws Throwable {
 		Router router = mock(Router.class);
-		when(router.getUrlMapping("/routered")).thenReturn(MappedAction.test("routered", "route", "method"));
+		when(router.getUrlMapping("/routered-action")).thenReturn("/routered/route/method");
+		//.thenReturn(MappedAction.test("routered", "route", "method"));
 		
 		Translator translator = mock(Translator.class);
 		when(translator.withLocale(any(Locale.class))).thenReturn(translator);
@@ -102,15 +108,16 @@ public class ControllerAnswerTest implements TestCase {
 		
 		MappedAction mappedAction = MappedAction.test("a", "b", "c");
 		
+		Param root = new Param(null);
 		ControllerAnswer answer = spy(new ControllerAnswer(
-			router, new Param(null), new HashMap<>(),
+			router, root, new HashMap<>(),
 			sup, identityFactory,
 			mock(Link.class), translator, mock(Logger.class)
 		));
 		ji.socketCommunication.http.structures.Response rs = mock(ji.socketCommunication.http.structures.Response.class);
 		Response response = mock(Response.class);
 		when(response.getResponse(any(), any(), any(), any(), any())).thenReturn(rs);
-		doReturn(mappedAction).when(answer).getMappedAction(any(), any(), any());
+		doReturn(mappedAction).when(answer).getMappedAction(any(), any(), any(), any());
 		doReturn(response).when(answer).run(any(), any(), any(), any());
 
 		Headers responseHeaders = new Headers();
@@ -125,7 +132,10 @@ public class ControllerAnswerTest implements TestCase {
 		);
 
 		verify(answer, times(1)).answer(any(), any(), any(), any(), any(), any());
-		verify(answer, times(1)).getMappedAction("/a/b/c", HttpMethod.GET, request);
+		verify(answer, times(1)).getMappedAction(root, new LinkedList<>(Arrays.asList(
+				"routered", "route", "method"
+			)), HttpMethod.GET, request);
+			// .getMappedAction("/a/b/c", HttpMethod.GET, request);
 		verify(answer, times(1)).run("/a/b/c", mappedAction, request, identity);
 		verify(identityFactory, times(1)).finalizeIdentity(identity, responseHeaders);
 		verify(translator, times(1)).withLocale(any(Locale.class));
@@ -136,7 +146,7 @@ public class ControllerAnswerTest implements TestCase {
 	@Parameters(method="dataGetMappedAction")
 	public void testGetMappedAction(String url, HttpMethod method, Param root, MappedAction expected, List<Object> params) {
 		Router router = mock(Router.class);
-		when(router.getUrlMapping("/routered")).thenReturn(MappedAction.test("routered", "route", "method"));
+	//	when(router.getUrlMapping("/routered")).thenReturn("/routered-method");
 		
 		Translator translator = mock(Translator.class);
 		when(translator.withLocale(any(Locale.class))).thenReturn(translator);
@@ -147,8 +157,13 @@ public class ControllerAnswerTest implements TestCase {
 			mock(Link.class), translator, mock(Logger.class)
 		);
 		Request request = new Request(HttpMethod.GET, new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty());
+
+		LinkedList<String> urls = new LinkedList<>();
+		if (url.length() > 0) {
+			urls.addAll(Arrays.asList(url.substring(1).split("/")));
+		}
 		
-		MappedAction actual = answer.getMappedAction(url, method, request);
+		MappedAction actual = answer.getMappedAction(root, urls, method, request);
 		if (expected == null) {
 			assertNull(actual);
 		} else {
@@ -161,9 +176,9 @@ public class ControllerAnswerTest implements TestCase {
 				expected.assertForTest(actual)
 			);
 		}
-		
 		assertEquals(params, request.getPathParams().toList());
-		verify(router, times(1)).getUrlMapping(url);
+	//	verify(router, times(1)).getUrlMapping(url);
+		verifyNoMoreInteractions(router);
 	}
 
 	public Object[] dataGetMappedAction() {
