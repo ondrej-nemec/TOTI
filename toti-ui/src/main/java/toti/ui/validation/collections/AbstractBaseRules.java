@@ -70,6 +70,11 @@ public abstract class AbstractBaseRules<T> implements RulesCollection {
 		this.expectedRuleType = new ExpectedTypeRule(clazz, onExpectedTypeError);
 		return getThis();
 	}
+
+	public T setCustomValidation(Consumer<ValidationItem> customValidation) {
+		this.customValidation = Optional.of(customValidation);
+		return getThis();
+	}
 	
 	abstract protected T getThis();
 
