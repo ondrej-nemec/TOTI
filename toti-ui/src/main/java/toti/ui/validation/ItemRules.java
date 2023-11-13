@@ -6,6 +6,7 @@ import ji.common.structures.MapInit;
 import ji.translator.Translator;
 import toti.ui.validation.collections.AlphaNumbericRules;
 import toti.ui.validation.collections.BaseRules;
+import toti.ui.validation.collections.FileRules;
 import toti.ui.validation.collections.NumberRules;
 import toti.ui.validation.collections.StructureRules;
 
@@ -101,6 +102,16 @@ public class ItemRules {
 		StructureRules rules = new StructureRules(name, required, onRequiredError);
 		rules.setSortedMapRule(validator);
 		return rules;
+	}
+	
+	/******************************/
+	
+	public static FileRules fileRules(String name, boolean required) {
+		return fileRules(name, required, getRequiredError());
+	}
+	
+	public static FileRules fileRules(String name, boolean required, BiFunction<Translator, String, String> onRequiredError) {
+		return new FileRules(name, required, onRequiredError);
 	}
 	
 	/******************************/

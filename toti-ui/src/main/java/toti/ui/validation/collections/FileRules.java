@@ -7,6 +7,7 @@ import java.util.function.Function;
 
 import ji.common.exceptions.LogicException;
 import ji.common.structures.MapInit;
+import ji.socketCommunication.http.structures.UploadedFile;
 import ji.translator.Translator;
 import toti.ui.validation.rules.FileAllowedTypesRule;
 import toti.ui.validation.rules.FileMaxSizeRule;
@@ -21,6 +22,7 @@ public class FileRules extends AbstractBaseRules<FileRules> {
 	
 	public FileRules(String name, boolean required, BiFunction<Translator, String, String> onRequiredError) {
 		super(name, required, onRequiredError);
+		setType(UploadedFile.class);
 	}
 	
 	public FileRules setFileMaxSize(Integer fileMaxSize) {
