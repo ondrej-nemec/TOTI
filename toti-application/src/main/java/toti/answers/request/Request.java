@@ -77,6 +77,10 @@ public class Request {
 		return queryParams.getDictionaryValue(name);
 	}
 	
+	public <T> T getQueryParams(Class<T> clazz) {
+		return queryParams.parse(clazz);
+	}
+	
 	public RequestParameters getBodyParams() {
 		return bodyParams;
 	}
@@ -125,6 +129,18 @@ public class Request {
 	 */
 	public MapDictionary<String> getData() {
 		return data;
+	}
+	
+	public DictionaryValue getData(String name) {
+		return data.getDictionaryValue(name);
+	}
+	
+	public <T> T getData(String name, Class<T> clazz) {
+		return data.getDictionaryValue(name).getValue(clazz);
+	}
+	
+	public void setData(String name, Object value) {
+		data.put(name, value);
 	}
 
 	@Override
