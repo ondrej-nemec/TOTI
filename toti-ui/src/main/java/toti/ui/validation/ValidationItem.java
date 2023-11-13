@@ -5,7 +5,8 @@ import java.util.function.Function;
 import ji.translator.Translator;
 
 public class ValidationItem {
-	
+
+	private final String name;
 	private final Object originValue;
 	private final ValidationResult result;
 	private final Translator translator;
@@ -13,7 +14,8 @@ public class ValidationItem {
 	private Object newValue;
 	private boolean canValidate;
 	
-	public ValidationItem(Object originValue, ValidationResult result, Translator translator) {
+	public ValidationItem(String name, Object originValue, ValidationResult result, Translator translator) {
+		this.name = name;
 		this.originValue = originValue;
 		this.newValue = originValue;
 		this.canValidate = true;
@@ -47,6 +49,10 @@ public class ValidationItem {
 	
 	public void addError(String propertyName, Function<Translator, String> onError) {
 		this.result.addError(propertyName, onError.apply(translator));
+	}
+	
+	public void addError(Function<Translator, String> onError) {
+		addError(name, onError);
 	}
 	
 	public Translator getTranslator() {

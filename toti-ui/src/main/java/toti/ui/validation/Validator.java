@@ -137,7 +137,11 @@ public class Validator implements Validate {
 	private String iterateRules(
 			Request request, String format, RulesCollection collection, RequestParameters prop,
 			ValidationResult result, Translator translator) {
-		ValidationItem item = new ValidationItem(prop.getValue(collection.getName()), result, translator);
+		ValidationItem item = new ValidationItem(
+			collection.getName(),
+			prop.getValue(collection.getName()),
+			result, translator
+		);
 		for (Rule singleRule : collection.getRules()) {
 			singleRule.check(request, String.format(format, collection.getName()), collection.getName(), item);
 			if (!item.canValidationContinue()) {
