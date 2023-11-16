@@ -44,7 +44,7 @@ public class MaxLengthRuleTest {
 	
 	@Test
 	public void testGetValue() {
-		ValidationItem item = new ValidationItem("origin", null, null);
+		ValidationItem item = new ValidationItem("name", "origin", null, null);
 		item.setNewValue("newValue");
 		
 		MaxLengthRule rule = new MaxLengthRule(null, null);

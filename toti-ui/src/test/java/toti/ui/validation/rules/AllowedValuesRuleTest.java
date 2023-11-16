@@ -50,7 +50,7 @@ public class AllowedValuesRuleTest {
 	
 	@Test
 	public void testGetValue() {
-		ValidationItem item = new ValidationItem("origin", null, null);
+		ValidationItem item = new ValidationItem("name", "origin", null, null);
 		item.setNewValue("newValue");
 		
 		AllowedValuesRule rule = new AllowedValuesRule(null, null);

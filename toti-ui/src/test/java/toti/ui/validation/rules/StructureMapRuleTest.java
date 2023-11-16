@@ -33,7 +33,7 @@ public class StructureMapRuleTest {
 		ValidationResult result = mock(ValidationResult.class);
 		Translator translator = mock(Translator.class);
 		
-		ValidationItem item = new ValidationItem(originValue, result, translator);
+		ValidationItem item = new ValidationItem("name", originValue, result, translator);
 		
 		ValidationResult subResult = mock(ValidationResult.class);
 		Validator validator = mock(Validator.class);

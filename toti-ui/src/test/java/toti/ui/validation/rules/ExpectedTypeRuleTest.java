@@ -22,7 +22,7 @@ public class ExpectedTypeRuleTest {
 		ValidationResult result = mock(ValidationResult.class);
 		Translator translator = mock(Translator.class);
 		
-		ValidationItem item = new ValidationItem(originValue, result, translator);
+		ValidationItem item = new ValidationItem("name", originValue, result, translator);
 		
 		ExpectedTypeRule rule = new ExpectedTypeRule(expectedType, (t)->"error");
 		rule.check(mock(Request.class), "propertyName", "ruleName", item);

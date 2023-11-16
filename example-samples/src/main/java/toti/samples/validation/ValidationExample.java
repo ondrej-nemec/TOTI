@@ -68,7 +68,7 @@ public class ValidationExample implements Module {
 		return ResponseBuilder.get()
 		.validate(
 			new Validator(false)
-			.setGlobalFunction((request, body, result)->{
+			.setGlobalFunction((request, body, result, translator)->{
 				body.forEach((key, value)->{
 					if ("id".equals(key)) {
 						request.getData().put(key, "--" + value + "--");

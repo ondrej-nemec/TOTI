@@ -33,7 +33,7 @@ public class MinValueRuleTest {
 	
 	@Test
 	public void testGetValue() {
-		ValidationItem item = new ValidationItem("origin", null, null);
+		ValidationItem item = new ValidationItem("name", "origin", null, null);
 		item.setNewValue("newValue");
 		
 		MinValueRule rule = new MinValueRule(null, null);

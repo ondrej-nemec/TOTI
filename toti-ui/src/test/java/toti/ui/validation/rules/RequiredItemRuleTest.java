@@ -24,7 +24,7 @@ public class RequiredItemRuleTest {
 		ValidationResult result = mock(ValidationResult.class);
 		Translator translator = mock(Translator.class);
 		
-		ValidationItem item = new ValidationItem(originValue, result, translator);
+		ValidationItem item = new ValidationItem("name", originValue, result, translator);
 		item.setNewValue(newValue);
 		
 		Request request = mock(Request.class);
