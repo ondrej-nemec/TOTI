@@ -33,7 +33,7 @@ public class SecurityExample implements Module {
 	}
 	
 	@Override
-	public void addRoutes(Router router) {
+	public void addRoutes(Router router, Link link) {
 		//*
 		// redirect to async login
 		// TODO router.setRedirectOnNotLoggedInUser(router.getLink().create(SignExample.class, c->c.asyncLoginPage(null)));

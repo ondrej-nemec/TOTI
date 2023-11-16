@@ -44,7 +44,7 @@ public class ResponsesExample implements Module {
 	@Action(path="index")
 	@Deprecated // no more required
 	public ResponseAction getIndex() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getFile("samples/examples/responses/index.html");
 		});
 	}
@@ -57,7 +57,7 @@ public class ResponsesExample implements Module {
 	 */
 	@Action(path="file")
 	public ResponseAction getFile() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			//	String fileName = "samples/plainTextFile.txt"; // Plain text file. Browser probably display instead of downloading.
 			String fileName = "samples/binaryFile.odt"; // Binary file. Browser starts downloading
 			return Response.OK().getFileDownload(
@@ -73,7 +73,7 @@ public class ResponsesExample implements Module {
 	 */
 	@Action(path="generate")
 	public ResponseAction getGenerated() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			try {
 				bout.write("Generated".getBytes());
@@ -92,7 +92,7 @@ public class ResponsesExample implements Module {
 	 */
 	@Action(path="json")
 	public ResponseAction getJson() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Map<String, Object> json = new MapInit<String, Object>()
 					.append("first", "value")
 					.append("second", false)
@@ -108,7 +108,7 @@ public class ResponsesExample implements Module {
 	 */
 	@Action(path="text")
 	public ResponseAction getText() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getText("Working");
 		});
 	}
@@ -119,7 +119,7 @@ public class ResponsesExample implements Module {
 	 */
 	@Action(path="template")
 	public ResponseAction getTemplate() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Map<String, Object> params = new MapInit<String, Object>()
 					.append("title", "Page title")
 					.append("number", 42)
@@ -135,7 +135,7 @@ public class ResponsesExample implements Module {
 	 */
 	@Action(path="redirect")
 	public ResponseAction getRedirect() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.create(StatusCode.TEMPORARY_REDIRECT).getRedirect("/examples/responses/text");
 		});
 	}
@@ -146,7 +146,7 @@ public class ResponsesExample implements Module {
 	 */
 	@Action(path="open-redirect")
 	public ResponseAction getOpenRedirect() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.create(StatusCode.TEMPORARY_REDIRECT).getRedirect("https://github.com/", true);
 		});
 	}
@@ -157,7 +157,7 @@ public class ResponsesExample implements Module {
 	 */
 	@Action(path="websocket")
 	public ResponseAction getWebsocket(WebSocket websocket) {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			 // websocket can be null - means this request is not valid websocket request
 			if (websocket != null) {
 				task.setWebsocket(websocket);

@@ -50,7 +50,7 @@ public class ExceptionsExample implements Module {
 	 */
 	@Action(path="cause")
 	public ResponseAction inMethodCause() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			throw new RuntimeException(new LogicException("Example of logic exception"));
 		});
 	}
@@ -64,7 +64,7 @@ public class ExceptionsExample implements Module {
 	@Action(path="secured")
 	@Secured()
 	public ResponseAction secured() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getText("This text should not be displayed");
 		});
 	}
@@ -77,7 +77,7 @@ public class ExceptionsExample implements Module {
 	 */
 	@Action(path="post", methods = HttpMethod.POST)
 	public ResponseAction wrongHttpMethod() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getText("This text should not be displayed");
 		});
 	}
@@ -90,7 +90,7 @@ public class ExceptionsExample implements Module {
 	 */
 	@Action(path="notemplate")
 	public ResponseAction noTemplate() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getTemplate("/missing-template.jsp", new HashMap<>());
 		});
 	}
@@ -103,7 +103,7 @@ public class ExceptionsExample implements Module {
 	 */
 	@Action(path="intemplate")
 	public ResponseAction inTemplate() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getTemplate("/inTemplate.jsp", null);
 		});
 	}
@@ -116,7 +116,7 @@ public class ExceptionsExample implements Module {
 	 */
 	@Action(path="syntax")
 	public ResponseAction templateSyntax() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getTemplate("/syntax.jsp", new HashMap<>());
 		});
 	}
@@ -128,7 +128,7 @@ public class ExceptionsExample implements Module {
 	 */
 	@Action(path="async")
 	public ResponseAction async() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getTemplate("/async.jsp", new HashMap<>());
 		});
 	}

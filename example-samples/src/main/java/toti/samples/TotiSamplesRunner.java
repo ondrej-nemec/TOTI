@@ -102,7 +102,7 @@ public class TotiSamplesRunner {
 			return factory
 				.setLanguageSettings(new LanguageSettings(Arrays.asList(new Locale("en", true, Arrays.asList()))))
 				// try with or without following line
-				// .setDevelopIpAdresses(Arrays.asList()) // no develop ips
+				.setDevelopIpAdresses(Arrays.asList()) // no develop ips
 				// try change URL pattern
 				// .setUrlPattern("/api/[controller]/[method]</[param]></[param]>")
 				.setUseProfiler(true)

@@ -35,7 +35,7 @@ public class ValidationExample implements Module {
 	 */
 	@Action(path="noValidator")
 	public ResponseAction noValidator() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			String name = req.getBodyParam("username").getString();
 			int age = req.getBodyParam("age").getInteger();
 			return Response.OK().getText("Validated " + name + " " + age);
@@ -54,7 +54,7 @@ public class ValidationExample implements Module {
 				.addRule(ItemRules.objectRules("username", true).setMinLength(3).setMaxLength(15))
 				.addRule(ItemRules.numberRules("age", true, Integer.class).setMinValue(0))
 		)
-		.createRequest((req, translator, identity)->{
+		.createResponse((req, translator, identity)->{
 			return Response.OK().getText("Validated " + req.getBodyParams());
 		});
 	}
@@ -78,7 +78,7 @@ public class ValidationExample implements Module {
 				});
 			})
 		)
-		.createRequest((req, translator, identity)->{
+		.createResponse((req, translator, identity)->{
 			return Response.OK().getText("Validated " + req.getBodyParams() + " " + req.getData());
 		});
 	}

@@ -40,7 +40,7 @@ public class PermissionsController {
 	 */
 	@Action(path="index")
 	public ResponseAction index() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			List<Tuple2<String, String>> links = new LinkedList<>();
 			
 			links.add(new Tuple2<>("Not secured", link.create(PermissionsController.class, c->c.notSecured())));
@@ -61,7 +61,7 @@ public class PermissionsController {
 	 */
 	@Action(path="unsecured")
 	public ResponseAction notSecured() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getText("Unsecured");
 		});
 	}
@@ -73,7 +73,7 @@ public class PermissionsController {
 	@Action(path="secured")
 	@Secured(AuthMode.COOKIE)
 	public ResponseAction secured() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getText("Secured");
 		});
 	}
@@ -85,7 +85,7 @@ public class PermissionsController {
 	@Action(path="secured-csrf")
 	@Secured(AuthMode.COOKIE_AND_CSRF)
 	public ResponseAction securedCsrf() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getText("Secured CSRF");
 		});
 	}
@@ -97,7 +97,7 @@ public class PermissionsController {
 	@Action(path="secured-header")
 	@Secured
 	public ResponseAction superSecured() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getText("Secured header");
 		});
 	}
@@ -118,7 +118,7 @@ public class PermissionsController {
 				);
 			}
 		})
-		.createRequest((req, translator, identity)->{
+		.createResponse((req, translator, identity)->{
 			return Response.OK().getText("Super secured");
 		});
 	}

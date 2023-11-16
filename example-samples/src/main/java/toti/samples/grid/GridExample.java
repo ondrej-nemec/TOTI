@@ -74,7 +74,7 @@ public class GridExample implements Module {
 	 */
 	@Action(path="all")
 	public ResponseAction allFilters() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Grid grid = new Grid(link.create(getClass(), c->c.allFiltersData()), "get");
 			grid.addColumn(new ValueColumn("id").setTitle("ID"));
 			grid.addColumn(
@@ -183,7 +183,7 @@ public class GridExample implements Module {
 					new GridColumn("parent")
 				))
 			)
-			.createRequest((req, translator, identity)->{
+			.createResponse((req, translator, identity)->{
 			try {
 				return Response.OK().getJson(dao.getAll(req.getBodyParams(GridOptions.class)));
 			} catch (Exception e) {
@@ -200,7 +200,7 @@ public class GridExample implements Module {
 	 */
 	@Action(path="reset")
 	public ResponseAction reset() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Grid grid = new Grid(link.create(getClass(), c->c.allFiltersData()), "get");
 			grid.addColumn(new ValueColumn("id"));
 			grid.addColumn(
@@ -243,7 +243,7 @@ public class GridExample implements Module {
 	 */
 	@Action(path="buttons")
 	public ResponseAction buttons() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Grid grid = new Grid(link.create(getClass(), c->c.allFiltersData()), "get");
 			grid.addColumn(new ValueColumn("id"));
 			grid.addColumn(new ValueColumn("text"));
@@ -296,21 +296,21 @@ public class GridExample implements Module {
 	
 	@Action(path="b-sync")
 	public ResponseAction syncButtonLink(int id) {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getText(String.format("Sync link. ID: %s, Name: %s", id, req.getBodyParam("name")));
 		});
 	}
 	
 	@Action(path="b-async")
 	public ResponseAction asyncButtonLink(int id) {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getText(String.format("Async link. ID: %s, Name: %s", id, req.getBodyParam("name")));
 		});
 	}
 	
 	@Action(path="b-post", methods=HttpMethod.POST)
 	public ResponseAction syncButtonPost(int id) {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getText(String.format(
 				"Sync link. ID: %s, Name: %s. PostParam: %s",
 				id, req.getBodyParam("name"), req.getBodyParam("postParam")
@@ -326,7 +326,7 @@ public class GridExample implements Module {
 	 */
 	@Action(path="control")
 	public ResponseAction gridControl() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Grid grid = new Grid(link.create(getClass(), c->c.allFiltersData()), "get");
 			
 			grid.setPagesSizes(Arrays.asList(7, 14, 28, 35, 42), 14);
@@ -348,7 +348,7 @@ public class GridExample implements Module {
 	 */
 	@Action(path="load")
 	public ResponseAction gridLoad() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Grid grid = new Grid(link.create(getClass(), c->c.allFiltersData()), "get");
 			
 			grid.setPagesSizes(Arrays.asList(7, 14, 28, 35, 42), 14);
@@ -372,7 +372,7 @@ public class GridExample implements Module {
 	 */
 	@Action(path="empty")
 	public ResponseAction empty() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Grid grid = new Grid(link.create(getClass(), c->c.allFiltersData()), "get");
 			
 			grid.setPagesSizes(null);
@@ -395,7 +395,7 @@ public class GridExample implements Module {
 	 */
 	@Action(path="renderer")
 	public ResponseAction renderers() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Grid grid = new Grid(link.create(getClass(), c->c.allFiltersData()), "get");
 			
 			grid.addColumn(new ValueColumn("id").setRenderer("onColumnRenderer"));
@@ -415,7 +415,7 @@ public class GridExample implements Module {
 	 */
 	@Action(path="selection")
 	public ResponseAction selection() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Grid grid = new Grid(link.create(getClass(), c->c.allFiltersData()), "get");
 			
 			grid.addColumn(new ValueColumn("id"));
@@ -438,7 +438,7 @@ public class GridExample implements Module {
 	 */
 	@Action(path="actions")
 	public ResponseAction actions() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Grid grid = new Grid(link.create(getClass(), c->c.allFiltersData()), "get");
 			
 			grid.addAction(
@@ -468,21 +468,21 @@ public class GridExample implements Module {
 	
 	@Action(path="a-async")
 	public ResponseAction asyncActionLink() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getText(String.format("Async action. IDS: " + req.getBodyParam("ids").getList()));
 		});
 	}
 	
 	@Action(path="a-sync")
 	public ResponseAction syncActionLink() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getText(String.format("Sync action. IDS: " + req.getBodyParam("ids").getList()));
 		});
 	}
 	
 	@Action(path="a-post", methods=HttpMethod.POST)
 	public ResponseAction postActionLink() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getText(String.format("Post action. IDS: " + req.getBodyParam("ids").getList()));
 		});
 	}
@@ -495,7 +495,7 @@ public class GridExample implements Module {
 	 */
 	@Action(path="row-unique")
 	public ResponseAction rowUnique() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Grid grid = new Grid(link.create(getClass(), c->c.allFiltersData()), "get");
 			
 			grid.addAction(
@@ -516,7 +516,7 @@ public class GridExample implements Module {
 	
 	@Action(path="a-async-text")
 	public ResponseAction asyncActionLinkText() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getText("Async action with string ids. IDS: " + req.getBodyParam("ids").getList());
 		});
 	}
@@ -529,7 +529,7 @@ public class GridExample implements Module {
 	 */
 	@Action(path="tree-structure")
 	public ResponseAction treeStructure() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Grid grid = new Grid(link.create(getClass(), c->c.allFiltersData()), "get");
 			grid.setPageSize(50);
 
@@ -561,7 +561,7 @@ public class GridExample implements Module {
 	 */
 	@Action(path="filtering")
 	public ResponseAction filtering() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Grid grid = new Grid(link.create(getClass(), c->c.filteringData()), "get");
 			grid.addColumn(new ValueColumn("id").setTitle("ID"));
 			// like, startswith, endswith, equasl
@@ -623,7 +623,7 @@ public class GridExample implements Module {
 				new GridColumn("select_col").setFilterMode(FilterMode.EQUALS)
 			))
 		)
-		.createRequest((req, translator, identity)->{
+		.createResponse((req, translator, identity)->{
 			try {
 				return Response.OK().getJson(dao.getAll(req.getBodyParams(GridOptions.class)));
 			} catch (Exception e) {
@@ -641,7 +641,7 @@ public class GridExample implements Module {
 	 */
 	@Action(path="subst")
 	public ResponseAction sortingSubst() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Grid grid = new Grid(link.create(getClass(), c->c.substitutionData()), "get");
 			
 			grid.addColumn(new ValueColumn("id").setTitle("ID"));
@@ -670,7 +670,7 @@ public class GridExample implements Module {
 				new GridColumn("number").setSortingName("id")
 			))
 		)
-		.createRequest((req, translator, identity)->{
+		.createResponse((req, translator, identity)->{
 			try {
 				return Response.OK().getJson(dao.getAll(req.getBodyParams(GridOptions.class)));
 			} catch (Exception e) {
@@ -688,7 +688,7 @@ public class GridExample implements Module {
 	 */
 	@Action(path="refresh")
 	public ResponseAction refresh() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Grid grid = new Grid(link.create(getClass(), c->c.refreshRandomData()), "get");
 			grid.addColumn(new ValueColumn("id"));
 			grid.setRefreshInterval(30000); // 0.5 min
@@ -735,7 +735,7 @@ public class GridExample implements Module {
 		.validate(
 			GridOptions.getValidator(Arrays.asList())
 		)
-		.createRequest((req, translator, identity)->{
+		.createResponse((req, translator, identity)->{
 			List<Object> data = new LinkedList<>();
 			Random random = new Random();
 			for (int i = 0; i < 20; i++) {
@@ -762,7 +762,7 @@ public class GridExample implements Module {
 	@Action(path="raw")
 	@Deprecated
 	public ResponseAction raw() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Grid grid = new Grid(link.create(getClass(), c->c.rawData()), "get");
 			
 			grid.addColumn(
@@ -805,7 +805,7 @@ public class GridExample implements Module {
 				.addRule(ItemRules.objectRules("text", false).setAllowedValues(Arrays.asList("ASC", "DESC")))
 			))
 		)
-		.createRequest((req, translator, identity)->{
+		.createResponse((req, translator, identity)->{
 			try {
 				int pageIndex = req.getBodyParam("pageIndex").getInteger();
 				int pageSize = req.getBodyParam("pageSize").getInteger();
@@ -841,7 +841,7 @@ public class GridExample implements Module {
 	 */
 	@Action(path="xss")
 	public ResponseAction xss() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Grid grid = new Grid(link.create(getClass(), c->c.xssData()), "get");
 			
 			grid.addColumn(new ValueColumn("id"));
@@ -871,7 +871,7 @@ public class GridExample implements Module {
 	
 	@Action(path="xss-load")
 	public ResponseAction xssLoad() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Map<String, Object> json = new HashMap<>();
 			json.put("value", 1);
 			json.put("title", "<script>alert('select');</script>");
@@ -886,7 +886,7 @@ public class GridExample implements Module {
 	 */
 	@Action(path = "xss-data")
 	public ResponseAction xssData() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			try {
 				List<Object> dataset = new LinkedList<>();
 				dataset.add(
@@ -918,7 +918,7 @@ public class GridExample implements Module {
 	 */
 	@Action(path="custom-template")
 	public ResponseAction customTemplate() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Grid grid = new Grid(link.create(getClass(), c->c.allFiltersData()), "get");
 			grid.setPageSize(50);
 			

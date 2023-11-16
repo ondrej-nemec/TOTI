@@ -41,7 +41,7 @@ public class SignController {
 	 */
 	@Action(path="async-page")
 	public ResponseAction asyncLoginPage() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Form form = new Form(link.create(SignController.class, c->c.asyncLogin()), true);
 			form.setFormMethod("post");
 			form.addInput(Text.input("username", true).setTitle("Username"));
@@ -66,7 +66,7 @@ public class SignController {
 	 */
 	@Action(path="async-login", methods=HttpMethod.POST)
 	public ResponseAction asyncLogin() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			String username = req.getBodyParam("username").getString();
 			String password = req.getBodyParam("password").getString();
 			boolean logged = session.login(identity, username, password);
@@ -86,7 +86,7 @@ public class SignController {
 	@Action(path="async-logout", methods=HttpMethod.POST)
 	@Secured
 	public ResponseAction asyncLogout() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			session.logout(identity);
 			return Response.OK().getEmpty(); // 200 response
 		});
@@ -100,7 +100,7 @@ public class SignController {
 	 */
 	@Action(path="sync-page")
 	public ResponseAction syncLoginPage() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return getSyncPageResponse(req.getBodyParam("backlink").getString(), null);
 		});
 	}
@@ -111,7 +111,7 @@ public class SignController {
 	 */
 	@Action(path="sync-login", methods=HttpMethod.POST)
 	public ResponseAction syncLogin() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			String username = req.getBodyParam("username").getString();
 			String password = req.getBodyParam("password").getString(); 
 			String backlink = req.getBodyParam("backlink").getString();
@@ -149,7 +149,7 @@ public class SignController {
 	@Action(path="sync-logout")
 	@Secured(AuthMode.COOKIE)
 	public ResponseAction syncLogout() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			session.logout(identity);
 			return Response.TEMPORARY_REDIRECT().getRedirect(link.create(SignController.class, c->c.syncLoginPage()));
 		});
@@ -164,7 +164,7 @@ public class SignController {
 	@Action(path="index")
 	@Secured(AuthMode.COOKIE)
 	public ResponseAction index() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getTemplate("/sign/index.jsp", new HashMap<>());
 		});
 	}
@@ -176,7 +176,7 @@ public class SignController {
 	@Action(path="index2")
 	@Secured(AuthMode.COOKIE)
 	public ResponseAction index2() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getTemplate("/sign/index2.jsp", new HashMap<>());
 		});
 	}

@@ -76,7 +76,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="inputs")
 	public ResponseAction inputsForm(int i) {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return getInputs(i, true, "All inputs - Bind");
 		});
 	}
@@ -87,7 +87,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="detail")
 	public ResponseAction inputsNotEditable(int i) {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return getInputs(i, false, "All inputs - Not editable");
 		});
 	}
@@ -98,7 +98,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="insert")
 	public ResponseAction allInputsSave() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return getInputs(null, true, "All inputs - No bind");
 		});
 	}
@@ -109,7 +109,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="get")
 	public ResponseAction allInputsGet(int i) {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getJson(dao.get(i));
 		});
 	}
@@ -120,7 +120,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="save-inputs")
 	public ResponseAction allInputs(Integer index) {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			FormExampleEntity entity = req.getBodyParams().parse(FormExampleEntity.class);
 			int id = dao.update(index, entity);
 			return Response.OK().getJson(new MapInit<>().append("id", id).append("message", "Saved").toMap());
@@ -216,7 +216,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="placeholders")
 	public ResponseAction placeholders(int i) {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 
 			Form form = new Form(link.create(getClass(), c->c.allInputs(0), i), true);
 			form.addInput(
@@ -309,7 +309,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="validated")
 	public ResponseAction validated() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Form form = new Form(link.create(getClass(), c->c.validateSave()), true);
 			form.addInput(
 				Text.input("text", true).setTitle("Text input")
@@ -343,7 +343,7 @@ public class FormExample implements Module {
 			.addRule(ItemRules.objectRules("text", true).setMaxLength(10).setMinLength(5))
 			.addRule(ItemRules.objectRules("missing-text", true))
 		)
-		.createRequest((req, translator, identity)->{
+		.createResponse((req, translator, identity)->{
 			return Response.OK().getText("NOK - this could not happends");
 		});
 	}
@@ -356,7 +356,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="async", methods=HttpMethod.GET)
 	public ResponseAction asyncForm() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Form form = new Form(link.create(getClass(), c->c.save()), true);
 			form.setFormMethod("post");
 			
@@ -378,7 +378,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="submit-modes", methods=HttpMethod.GET)
 	public ResponseAction submitModes() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Form form = new Form(link.create(getClass(), c->c.save()), true);
 			form.setFormMethod("post");
 			
@@ -415,7 +415,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="buttons")
 	public ResponseAction buttons() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Form form = new Form(link.create(getClass(), c->c.save()), true);
 			form.setFormMethod("post");
 			// setCondition is not supported for button in form
@@ -474,7 +474,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="notsave")
 	public ResponseAction notSave() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getText("OK: " + req.getBodyParams());
 		});
 	}
@@ -485,7 +485,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="save", methods=HttpMethod.POST)
 	public ResponseAction save() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getText("OK: " + req.getBodyParams());
 		});
 	}
@@ -496,7 +496,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="template")
 	public ResponseAction template() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return templateResponse("Editable", true);
 		});
 	}
@@ -507,7 +507,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="template-detail")
 	public ResponseAction templateDetail() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return templateResponse("Detail", false);
 		});
 	}
@@ -543,7 +543,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="template-data")
 	public ResponseAction templateData() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getJson(
 				new MapInit<String, Object>()
 				.append("textInput", "Some text")
@@ -567,7 +567,7 @@ public class FormExample implements Module {
 			.addRule(ItemRules.objectRules("textInput", true).setMaxLength(10))
 			.addRule(ItemRules.objectRules("numberInput", true).setMinLength(2).setMaxLength(4))
 		)
-		.createRequest((req, translator, identity)->{
+		.createResponse((req, translator, identity)->{
 			return Response.OK().getText("OK: " + req.getBodyParams());
 		});
 	}
@@ -578,7 +578,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="select", methods=HttpMethod.GET)
 	public ResponseAction select() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Form form = new Form(link.create(getClass(), c->c.save()), true);
 			form.setFormMethod("post");
 			
@@ -679,7 +679,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="load-select")
 	public ResponseAction loadToSelect() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getJson(Arrays.asList(
 					new MapInit<String, Object>()
 						.append("value", "0")
@@ -726,7 +726,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="load-tree-options")
 	public ResponseAction loadTreeOptions() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getJson(Arrays.asList(
 					new MapInit<String, Object>()
 						.append("value", "1")
@@ -780,7 +780,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="load-optgroup")
 	public ResponseAction loadGroup() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getJson(Arrays.asList(
 					new MapInit<String, Object>()
 						.append("value", "v1.1").append("title", "G1-O1")
@@ -814,7 +814,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="datetime")
 	public ResponseAction dateTimeStrict() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Form form = new Form(link.create(getClass(), c->c.save()), true);
 			form.setFormMethod("post");
 			
@@ -855,7 +855,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="optional")
 	public ResponseAction optionalInputs() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Form form = new Form(link.create(getClass(), c->c.save()), true);
 			form.setFormMethod("post");
 			
@@ -894,7 +894,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="checkbox")
 	public ResponseAction checkbox() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			// checkbox renderer works only if form or input is not editable
 			Form form = new Form(link.create(getClass(), c->c.save()), false);
 			form.setFormMethod("post");
@@ -949,7 +949,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="exclude")
 	public ResponseAction exclude() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Form form = new Form(link.create(getClass(), c->c.save()), true);
 			form.setFormMethod("post");
 			
@@ -999,7 +999,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="not-editable")
 	public ResponseAction notEditable() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Form form = new Form(link.create(getClass(), c->c.save()), false);
 			form.setFormMethod("post");
 			
@@ -1030,7 +1030,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="editable")
 	public ResponseAction editable() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Form form = new Form(link.create(getClass(), c->c.save()), true);
 			form.setFormMethod("post");
 			
@@ -1063,7 +1063,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="redirect")
 	public ResponseAction submitWithRedirect() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Form form = new Form(link.create(getClass(), c->c.formRedirectSave()), true);
 			form.setFormMethod("post");
 
@@ -1094,7 +1094,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="after-redirect-save")
 	public ResponseAction formRedirectSave() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Map<String, Object> json = new HashMap<>();
 			json.put("id", req.getBodyParams().getString("some-input"));
 			json.put("message", "Saved");
@@ -1108,7 +1108,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="after-redirect")
 	public ResponseAction afterRedirect() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getText("OK: " + req.getBodyParams());
 		});
 	}
@@ -1121,7 +1121,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="file")
 	public ResponseAction file() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Form form = new Form(link.create(getClass(), c->c.fileSave()), true);
 			form.setFormMethod("post");
 
@@ -1145,7 +1145,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="file-save")
 	public ResponseAction fileSave() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			UploadedFile file = req.getBodyParams().getUploadedFile("fileInput");
 			return Response.OK().getText("OK: " + file.getFileName() + " " + file.getContent().length + "b");
 		});
@@ -1159,7 +1159,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="callbacks")
 	public ResponseAction callbacks() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Form form = new Form(link.create(getClass(), c->c.allInputs(0), 10), true);
 			form.setBeforeRender("beforeRenderCallback");
 			form.setAfterRender("afterRenderCallback");
@@ -1199,7 +1199,7 @@ public class FormExample implements Module {
 	}
 	
 	private ResponseAction inputListResponse(String title, String template) {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Form form = new Form(link.create(getClass(), c->c.save()), true);
 			form.setFormMethod("post");
 			
@@ -1262,7 +1262,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="inputlist-data")
 	public ResponseAction inputListData() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getJson(
 				new MapInit<String, Object>()
 				.append("simple-list", Arrays.asList("value01", "value02"))
@@ -1315,7 +1315,7 @@ public class FormExample implements Module {
 	}
 
 	private ResponseAction dynamicListResponse(String title, String template, boolean editable) {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Form form = new Form(link.create(getClass(), c->c.save()), editable);
 			form.setFormMethod("post");
 
@@ -1385,7 +1385,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="dynamiclist-data")
 	public ResponseAction dynamicListData() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getJson(
 				new MapInit<String, Object>()
 				.append("simple-list", Arrays.asList("value-01", "value-02", "value-03"))
@@ -1428,7 +1428,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="dynamiclist-buttons")
 	public ResponseAction dynamicInputListButtons() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Form form = new Form(link.create(getClass(), c->c.save()), true);
 			form.setFormMethod("post");
 
@@ -1475,7 +1475,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="dynamiclist-load")
 	public ResponseAction dynamicLoaded() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Form form = new Form(link.create(getClass(), c->c.save()), true);
 			form.setFormMethod("post");
 
@@ -1507,7 +1507,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="dynamiclist-load-groups")
 	public ResponseAction dynamicListLoadGroups() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getJson(
 				Arrays.asList(
 					new MapInit<String, Object>()
@@ -1533,7 +1533,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="dynamiclist-load-bind")
 	public ResponseAction dynamicListLoadData() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getJson(
 				new MapInit<String, Object>()
 				.append(
@@ -1555,7 +1555,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="dynamiclist-load-select")
 	public ResponseAction dynamicListLoadGroupsSelectOptions() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getJson(
 				Arrays.asList(
 					new MapInit<String, Object>()
@@ -1621,7 +1621,7 @@ public class FormExample implements Module {
 	 */
 	@Action(path="csrf")
 	public ResponseAction csrf() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			if (identity.isAnonymous()) {
 				// automatic login before page load
 				// demonstation requires logged user
@@ -1650,7 +1650,7 @@ public class FormExample implements Module {
 	@Action(path="save-csrf", methods=HttpMethod.POST)
 	@Secured(AuthMode.COOKIE_AND_CSRF)
 	public ResponseAction saveCsrf() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			// TODO authenticator.logout(identity);
 			return Response.OK().getText("Secured with CSRF OK: " + req.getBodyParams());
 		});

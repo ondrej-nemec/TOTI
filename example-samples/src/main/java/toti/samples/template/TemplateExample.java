@@ -42,7 +42,7 @@ public class TemplateExample implements Module {
 	 */
 	@Action(path="basics")
 	public ResponseAction basics() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Map<String, Object> params = new HashMap<>();
 			params.put("title", "Page title");
 			return Response.OK().getTemplate("basics.jsp", params);
@@ -55,7 +55,7 @@ public class TemplateExample implements Module {
 	 */
 	@Action(path="variable")
 	public ResponseAction variableOptions() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Map<String, Object> params = new HashMap<>();
 			params.put("title", "Some text");
 			params.put(
@@ -88,7 +88,7 @@ public class TemplateExample implements Module {
 	 */
 	@Action(path="owasp-form")
 	public ResponseAction owaspForm() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Map<String, Object> params = new HashMap<>();
 			params.put("action", link.create(getClass(), c->c.owaspTest()));
 			return Response.OK().getTemplate("owaspForm.jsp", params);
@@ -101,7 +101,7 @@ public class TemplateExample implements Module {
 	 */
 	@Action(path="owasp-print")
 	public ResponseAction owaspTest() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Map<String, Object> params = new HashMap<>();
 			params.put("first", req.getBodyParam("first").getString());
 			params.put("second", req.getBodyParam("second").getString());

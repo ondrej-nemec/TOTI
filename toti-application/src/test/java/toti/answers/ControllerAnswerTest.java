@@ -420,7 +420,7 @@ public class ControllerAnswerTest implements TestCase {
 									new TextResponse(StatusCode.OK, new Headers(), "interrupted")
 								);
 							})
-							.createRequest((request, translator, identity)->{
+							.createResponse((request, translator, identity)->{
 								fail();
 								return new TextResponse(StatusCode.OK, new Headers(), "Fail");
 							});
@@ -440,7 +440,7 @@ public class ControllerAnswerTest implements TestCase {
 									new TextResponse(StatusCode.OK, new Headers(), "interrupted")
 								);
 							})
-							.createRequest((request, translator, identity)->{
+							.createResponse((request, translator, identity)->{
 								fail();
 								return new TextResponse(StatusCode.OK, new Headers(), "Fail");
 							});
@@ -460,7 +460,7 @@ public class ControllerAnswerTest implements TestCase {
 									new TextResponse(StatusCode.OK, new Headers(), "interrupted")
 								);
 							})
-							.createRequest((request, translator, identity)->{
+							.createResponse((request, translator, identity)->{
 								fail();
 								return new TextResponse(StatusCode.OK, new Headers(), "Fail");
 							});
@@ -480,7 +480,7 @@ public class ControllerAnswerTest implements TestCase {
 									new TextResponse(StatusCode.OK, new Headers(), "interrupted")
 								);
 							})
-							.createRequest((request, translator, identity)->{
+							.createResponse((request, translator, identity)->{
 								fail();
 								return new TextResponse(StatusCode.OK, new Headers(), "Fail");
 							});
@@ -500,7 +500,7 @@ public class ControllerAnswerTest implements TestCase {
 									new TextResponse(StatusCode.OK, new Headers(), "interrupted")
 								);
 							})
-							.createRequest((request, translator, identity)->{
+							.createResponse((request, translator, identity)->{
 								fail();
 								return new TextResponse(StatusCode.OK, new Headers(), "Fail");
 							});
@@ -520,7 +520,7 @@ public class ControllerAnswerTest implements TestCase {
 									new TextResponse(StatusCode.OK, new Headers(), "interrupted")
 								);
 							})
-							.createRequest((request, translator, identity)->{
+							.createResponse((request, translator, identity)->{
 								fail();
 								return new TextResponse(StatusCode.OK, new Headers(), "Fail");
 							});
@@ -540,7 +540,7 @@ public class ControllerAnswerTest implements TestCase {
 									new TextResponse(StatusCode.OK, new Headers(), "interrupted")
 								);
 							})
-							.createRequest((request, translator, identity)->{
+							.createResponse((request, translator, identity)->{
 								fail();
 								return new TextResponse(StatusCode.OK, new Headers(), "Fail");
 							});
@@ -555,7 +555,7 @@ public class ControllerAnswerTest implements TestCase {
 					@SuppressWarnings("unused")
 					public ResponseAction index() {
 						return ResponseBuilder.get()
-							.createRequest((request, translator, identity)->{
+							.createResponse((request, translator, identity)->{
 								throw new RequestInterruptedException(
 									new TextResponse(StatusCode.OK, new Headers(), "interrupted")
 								);
@@ -571,7 +571,7 @@ public class ControllerAnswerTest implements TestCase {
 					@SuppressWarnings("unused")
 					public ResponseAction index() {
 						return ResponseBuilder.get()
-							.createRequest((request, translator, identity)->{
+							.createResponse((request, translator, identity)->{
 								return new TextResponse(StatusCode.OK, new Headers(), "response");
 							});
 					} 
@@ -585,7 +585,7 @@ public class ControllerAnswerTest implements TestCase {
 					@SuppressWarnings("unused")
 					public ResponseAction index(int id, String value) {
 						return ResponseBuilder.get()
-							.createRequest((request, translator, identity)->{
+							.createResponse((request, translator, identity)->{
 								return new TextResponse(StatusCode.OK, new Headers(), "Response " + id + ": " + value);
 							});
 					} 
@@ -642,7 +642,7 @@ public class ControllerAnswerTest implements TestCase {
 					@SuppressWarnings("unused")
 					public ResponseAction index(int id) {
 						return ResponseBuilder.get()
-						.createRequest((request, translator, identity)->{
+						.createResponse((request, translator, identity)->{
 							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id);
 						});
 					} 
@@ -654,7 +654,7 @@ public class ControllerAnswerTest implements TestCase {
 					@SuppressWarnings("unused")
 					public ResponseAction index(int id) {
 						return ResponseBuilder.get()
-						.createRequest((request, translator, identity)->{
+						.createResponse((request, translator, identity)->{
 							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id);
 						});
 					} 
@@ -666,7 +666,7 @@ public class ControllerAnswerTest implements TestCase {
 					@SuppressWarnings("unused")
 					public ResponseAction index(int id, String value) {
 						return ResponseBuilder.get()
-						.createRequest((request, translator, identity)->{
+						.createResponse((request, translator, identity)->{
 							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id + ": " + value);
 						});
 					} 
@@ -678,14 +678,14 @@ public class ControllerAnswerTest implements TestCase {
 					@SuppressWarnings("unused")
 					public ResponseAction index(int id, String value) {
 						return ResponseBuilder.get()
-						.createRequest((request, translator, identity)->{
+						.createResponse((request, translator, identity)->{
 							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id + ": " + value);
 						});
 					}
 					@SuppressWarnings("unused")
 					public ResponseAction index(int id) {
 						return ResponseBuilder.get()
-						.createRequest((request, translator, identity)->{
+						.createResponse((request, translator, identity)->{
 							fail();
 							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id);
 						});

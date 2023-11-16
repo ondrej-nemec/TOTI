@@ -42,7 +42,7 @@ public class ResponseBuilder implements Step1, ResponseAction {
 	}
 
 	@Override
-	public ResponseAction createRequest(Create create) {
+	public ResponseAction createResponse(Create create) {
 		this.create = create;
 		return this;
 	}

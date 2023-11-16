@@ -46,7 +46,7 @@ public class DevelopToolsExample implements Module {
 	 */
 	@Action()
 	public ResponseAction index() {
-		return ResponseBuilder.get().createRequest((request, translator, identity )->{
+		return ResponseBuilder.get().createResponse((request, translator, identity )->{
 			translator.translate("path.to.translation");
 			translator.translate(
 				"path.to.another.translation",

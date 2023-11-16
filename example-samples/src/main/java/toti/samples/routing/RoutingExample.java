@@ -50,7 +50,7 @@ public class RoutingExample implements Module {
 	@Action(path="secured")
 	@Secured(AuthMode.COOKIE)
 	public ResponseAction secured() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getText("Secured");
 		});
 	}
@@ -64,7 +64,7 @@ public class RoutingExample implements Module {
 	 */
 	@Action(path="unsecured")
 	public ResponseAction unsecured() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getText("Unsecured " + req.getQueryParam("backlink"));
 		});
 	}
@@ -78,7 +78,7 @@ public class RoutingExample implements Module {
 	 */
 	@Action(path="notAccessible")
 	public ResponseAction notAccessibleMethod() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getText("This never appear");
 		});
 	}
@@ -96,7 +96,7 @@ public class RoutingExample implements Module {
 	 */
 	@Action(path="accessible")
 	public ResponseAction accessibleMethod() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getText("This always appear");
 		});
 	}
@@ -110,7 +110,7 @@ public class RoutingExample implements Module {
 	 */
 	@Action(path="links")
 	public ResponseAction links() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			Map<String, Object> params = new HashMap<>();
 			
 			// method calling
@@ -150,27 +150,24 @@ public class RoutingExample implements Module {
 	 */
 	@Action(path="links-destination")
 	public ResponseAction linksDestination(Integer id, String name) {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getText("This never appear");
 		});
 	}
 	
 	@Override
-	public void addRoutes(Router router) {
-		// TODO
-		/*
+	public void addRoutes(Router router, Link link) {
 		// set URL for redirect if not logged in user try access secured route
-		router.setRedirectOnNotLoggedInUser(RoutingExample.class, c->c.unsecured());
+		router.setRedirectOnNotLoggedInUser(link.create(RoutingExample.class, c->c.unsecured()));
 		
 		// replace empty route with 'accessible'
-		router.addUrl("", router.getLink().create(RoutingExample.class, c->c.accessibleMethod()));
+		router.addUrl("", link.create(RoutingExample.class, c->c.accessibleMethod()));
 
 		// replace 'notAccessible' route with 'accessible'
 		router.addUrl(
-			router.getLink().create(RoutingExample.class, c->c.notAccessibleMethod()), 
-			router.getLink().create(RoutingExample.class, c->c.accessibleMethod())
+			link.create(RoutingExample.class, c->c.notAccessibleMethod()), 
+			link.create(RoutingExample.class, c->c.accessibleMethod())
 		);
-		*/
 	}
 
 	@Override

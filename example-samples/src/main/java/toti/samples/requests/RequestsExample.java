@@ -42,7 +42,7 @@ public class RequestsExample implements Module  {
 	 */
 	@Action(path="primitives")
 	public ResponseAction primitives() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getTemplate("/response.jsp", new MapInit<String, Object>(
 					"params",
 					new MapInit<>()
@@ -61,7 +61,7 @@ public class RequestsExample implements Module  {
 	 */
 	@Action(path="list")
 	public ResponseAction list() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getTemplate(
 				"/response.jsp",
 				new MapInit<String, Object>("params", req.getQueryParam("names").getList()).toMap()
@@ -75,7 +75,7 @@ public class RequestsExample implements Module  {
 	 */
 	@Action(path="map")
 	public ResponseAction map() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getTemplate(
 				"/response.jsp",
 				new MapInit<String, Object>("params", req.getQueryParam("rate").getMap()).toMap()
@@ -99,7 +99,7 @@ public class RequestsExample implements Module  {
 	 */
 	@Action(path="listInMap")
 	public ResponseAction listInMap() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getTemplate(
 				"/response.jsp",
 				new MapInit<String, Object>("params", req.getQueryParam("map").getMap()).toMap()
@@ -114,7 +114,7 @@ public class RequestsExample implements Module  {
 	 */
 	@Action(path="url")
 	public ResponseAction url(Integer id) {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getTemplate("/response.jsp", new MapInit<String, Object>("params", id).toMap());
 		});
 	}
@@ -125,7 +125,7 @@ public class RequestsExample implements Module  {
 	 */
 	@Action(path="file", methods=HttpMethod.GET)
 	public ResponseAction fileIndex() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getTemplate("fileForm.jsp", new HashMap<>());
 		});
 	}
@@ -136,7 +136,7 @@ public class RequestsExample implements Module  {
 	 */
 	@Action(path="file", methods=HttpMethod.POST)
 	public ResponseAction fileUpload() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			UploadedFile file = req.getBodyParams().getUploadedFile("fileToUpload");
 			// file.save(path); // save file on given path
 			return Response.OK().getTemplate("/response.jsp", new MapInit<String, Object>(
@@ -156,7 +156,7 @@ public class RequestsExample implements Module  {
 	 */
 	@Action(path="all")
 	public ResponseAction allParams() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getTemplate(
 				"/response.jsp",
 				new MapInit<String, Object>("params", req.getBodyParams()).toMap()
@@ -171,7 +171,7 @@ public class RequestsExample implements Module  {
 	 */
 	@Action(path="entity")
 	public ResponseAction entity() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getTemplate(
 				"/response.jsp",
 				new MapInit<String, Object>("params", req.getBodyParams().parse(RequestEntity.class)).toMap()
@@ -185,7 +185,7 @@ public class RequestsExample implements Module  {
 	 */
 	@Action(path="combined")
 	public ResponseAction combined(String name) {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getTemplate("/response.jsp", new MapInit<String, Object>(
 				"params",
 				new MapInit<>()
@@ -207,7 +207,7 @@ public class RequestsExample implements Module  {
 	 */
 	@Action(path="body")
 	public ResponseAction byteBody() {
-		return ResponseBuilder.get().createRequest((req, translator, identity)->{
+		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			return Response.OK().getTemplate(
 				"/response.jsp",
 				new MapInit<String, Object>("params", new String(req.getBody())).toMap()

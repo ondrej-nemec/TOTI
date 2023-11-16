@@ -42,7 +42,7 @@ public class Test {
 			// validace query
 			// validace body (vcetne struktury: xml, json, form-data, urleconded, plaintext)
 		})
-		.createRequest((request, trans, iden)->{
+		.createResponse((request, trans, iden)->{
 			return null; // response
 		})
 		;
