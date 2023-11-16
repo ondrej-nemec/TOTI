@@ -61,7 +61,7 @@ public interface EntityDao {
 			ThrowingFunction<DatabaseRow, S, SQLException> create, TransactionListener<S> listener) throws SQLException {
 		return database.applyBuilder((builder)->{
             DatabaseRow data = builder.get(table, idName, id);
-            S item = create.apply(data);
+            S item = data == null ? null : create.apply(data);
             listener.onTransactionStart(id, item);
             builder.delete(table, idName, id);
             listener.onTransactionEnd(id, item);

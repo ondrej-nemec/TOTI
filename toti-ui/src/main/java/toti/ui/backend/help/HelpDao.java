@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import ji.database.Database;
@@ -13,31 +14,30 @@ import toti.ui.backend.Owner;
 
 public interface HelpDao{
 	
-	static final String HELP_KEY_NAME = "help_key";
-	static final String HELP_DISPLAY_VALUE_NAME = "help_display_";
-	static final String HELP_DISABLED_NAME = "help_disabled_";
-	static final String HELP_GROUP_NAME = "help_group_";
-
-	SelectBuilder _getHelp(QueryBuilder builder, String select);
+	static final String _HELP_KEY_NAME = "help_key";
+	static final String _HELP_DISPLAY_VALUE_NAME = "help_display_";
+	static final String _HELP_DISABLED_NAME = "help_disabled_";
+	static final String _HELP_GROUP_NAME = "help_group_";
 	
 	default List<Help> getHelp(
 			Database database,
-			Optional<Owner> owner, 
+			Optional<Owner> owner,
+			BiFunction<String, QueryBuilder, SelectBuilder> getSelect,
 			String key, String title, String disabled, String optGroup, String ...params) throws SQLException {
 		StringBuilder selectQuery = new StringBuilder();
 		selectQuery.append(key);
 		selectQuery.append(" AS ");
-		selectQuery.append(HELP_KEY_NAME);
+		selectQuery.append(_HELP_KEY_NAME);
 		selectQuery.append(",");             
 
 		selectQuery.append(title);
 		selectQuery.append(" AS ");
-		selectQuery.append(HELP_DISPLAY_VALUE_NAME);
+		selectQuery.append(_HELP_DISPLAY_VALUE_NAME);
 		if (disabled != null) {
 		    selectQuery.append(", ");
 		    selectQuery.append(disabled);
 		    selectQuery.append(" AS ");
-		    selectQuery.append(HELP_DISABLED_NAME);
+		    selectQuery.append(_HELP_DISABLED_NAME);
 		}
 		StringBuilder sorting = new StringBuilder();
 		if (optGroup != null) {
@@ -45,7 +45,7 @@ public interface HelpDao{
 		    selectQuery.append(", ");
 		    selectQuery.append(optGroup);
 		    selectQuery.append(" AS ");
-		    selectQuery.append(HELP_GROUP_NAME);
+		    selectQuery.append(_HELP_GROUP_NAME);
 		}
 		for (String param : params) {
 			selectQuery.append(", " + param);
@@ -54,14 +54,14 @@ public interface HelpDao{
 			sorting.append(",");
 		}
 		sorting.append(title);
-		return getHelp(
+		return _getHelp(
 			database, 
-			builder->_getHelp(builder, selectQuery.toString()), 
+			builder->getSelect.apply(selectQuery.toString(), builder), 
 			owner, sorting.toString()
 		);
 	}
 	
-	default List<Help> getHelp(
+	default List<Help> _getHelp(
 			Database database, Function<QueryBuilder, SelectBuilder> selectFactory,
 			Optional<Owner> owner, 
 			String sortingColumn) throws SQLException {
@@ -80,15 +80,15 @@ public interface HelpDao{
 		    
 		    select.fetchAll().forEach((row)->{
 		    	Help help = new Help(
-					row.getValue(HELP_KEY_NAME),
-					row.getValue(HELP_DISPLAY_VALUE_NAME),
-					row.getString(HELP_GROUP_NAME),
-					row.getValue(HELP_DISABLED_NAME) == null ? false : row.getBoolean(HELP_DISABLED_NAME)
+					row.getValue(_HELP_KEY_NAME),
+					row.getValue(_HELP_DISPLAY_VALUE_NAME),
+					row.getString(_HELP_GROUP_NAME),
+					row.getValue(_HELP_DISABLED_NAME) == null ? false : row.getBoolean(_HELP_DISABLED_NAME)
 				);
-		    	row.remove(HELP_DISPLAY_VALUE_NAME);
-		    	row.remove(HELP_KEY_NAME);
-		    	row.remove(HELP_GROUP_NAME);
-		    	row.remove(HELP_DISABLED_NAME);
+		    	row.remove(_HELP_DISPLAY_VALUE_NAME);
+		    	row.remove(_HELP_KEY_NAME);
+		    	row.remove(_HELP_GROUP_NAME);
+		    	row.remove(_HELP_DISABLED_NAME);
 		    	row.forEach((key, dv)->{
 		    		help.addParameter(key, dv.getValue());
 		    	});

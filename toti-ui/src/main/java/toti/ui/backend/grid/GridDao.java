@@ -12,39 +12,15 @@ import ji.database.Database;
 import ji.database.support.DatabaseRow;
 import ji.querybuilder.QueryBuilder;
 import ji.querybuilder.builders.SelectBuilder;
-import ji.translator.Translator;
 import toti.ui.backend.Owner;
 
 public interface GridDao {
 	
-	default Object onGridRow(DatabaseRow row, Translator translator) {
-		return row;
-	}
-
-	SelectBuilder _getGrid(String select, QueryBuilder builder);
-
-	default GridDataSet getAll(Database database, String table, GridOptions options) throws SQLException {
-		return getAll(database, table, options, Optional.empty(), null);
-	}
-
-	default GridDataSet getAll(Database database, String table, GridOptions options, Translator translator) throws SQLException {
-		return getAll(database, table, options, Optional.empty(), translator);
-	}
-
 	default GridDataSet getAll(
-			Database database, String table, GridOptions options,
-			Optional<Owner> owner) throws SQLException {
-		return getAll(database, table, options, owner, null);
-	}
-
-	default GridDataSet getAll(
-			Database database, String table, GridOptions options,
-			Optional<Owner> owner, Translator translator) throws SQLException {
-		return getAll(
-			database, options, owner,
-			(select, builder)->_getGrid(select, builder),
-			row->onGridRow(row, translator)
-		);
+			Database database, GridOptions options,
+			BiFunction<String, QueryBuilder, SelectBuilder> getSelect,
+			Function<DatabaseRow, Object> create) throws SQLException {
+		return getAll(database, options, Optional.empty(), getSelect, create);
 	}
 	
 	/*************/
