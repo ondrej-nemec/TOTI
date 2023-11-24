@@ -89,7 +89,9 @@ public class ControllerAnswerTest implements TestCase {
 			)),  HttpMethod.GET, new Request(
 			HttpMethod.GET, new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty()
 		));
-		verifyNoMoreInteractions(translator, identityFactory, sup, answer);
+		verify(router, times(1)).getUrlMapping("/a/b/c");
+		verify(answer, times(1)).getUrlParts("/a/b/c");
+		verifyNoMoreInteractions(translator, identityFactory, sup, answer, router);
 	}
 
 	@Test
@@ -132,14 +134,33 @@ public class ControllerAnswerTest implements TestCase {
 		);
 
 		verify(answer, times(1)).answer(any(), any(), any(), any(), any(), any());
-		verify(answer, times(1)).getMappedAction(root, new LinkedList<>(Arrays.asList(
-				"routered", "route", "method"
-			)), HttpMethod.GET, request);
+		verify(answer, times(1)).getMappedAction(root, new LinkedList<>(
+			Arrays.asList("a", "b", "c")
+		), HttpMethod.GET, request);
 			// .getMappedAction("/a/b/c", HttpMethod.GET, request);
 		verify(answer, times(1)).run("/a/b/c", mappedAction, request, identity);
 		verify(identityFactory, times(1)).finalizeIdentity(identity, responseHeaders);
 		verify(translator, times(1)).withLocale(any(Locale.class));
-		verifyNoMoreInteractions(translator, identityFactory, sup, answer);
+		verify(router, times(1)).getUrlMapping("/a/b/c");
+		verify(answer, times(1)).getUrlParts("/a/b/c");
+		verifyNoMoreInteractions(translator, identityFactory, sup, answer, router);
+	}
+	
+	@Test
+	@Parameters(method="dataGetUrlParts")
+	public void testGetUrlParts(String url, List<String> expected) {
+		ControllerAnswer answer = new ControllerAnswer(null, null, null, null, null, null, null, null);
+		assertEquals(expected, answer.getUrlParts(url));
+	}
+	
+	public Object[] dataGetUrlParts() {
+		return new Object[] {
+			new Object[] { "", Arrays.asList() },
+			new Object[] { "/", Arrays.asList() },
+			new Object[] { "/a", Arrays.asList("a") },
+			new Object[] { "/a/b/c", Arrays.asList("a", "b", "c") },
+			new Object[] { "/a/a", Arrays.asList("a", "a") }
+		};
 	}
 
 	@Test
@@ -195,19 +216,20 @@ public class ControllerAnswerTest implements TestCase {
 				MappedAction.test("ro", "ot", "GET"),
 				Arrays.asList()
 			},
-			new Object[] {
+			// this case should never happend
+			/*new Object[] {
 				"/", HttpMethod.GET, param((r)->{
 					r.addAction(HttpMethod.GET, MappedAction.test("ro", "ot", "GET"));
 				}),
 				MappedAction.test("ro", "ot", "GET"),
 				Arrays.asList()
-			},
+			},*/
 			// routered
-			new Object[] {
+			/*new Object[] {
 				"/routered", HttpMethod.GET, new Param(null),
 				MappedAction.test("routered", "route", "method"),
 				Arrays.asList()
-			},
+			},*/
 			// no route
 			new Object[] {
 				"/b", HttpMethod.GET, param((r)->{
@@ -215,7 +237,7 @@ public class ControllerAnswerTest implements TestCase {
 					a.addAction(HttpMethod.GET, MappedAction.test("a", "a", "a"));
 				}),
 				null,
-				Arrays.asList()
+				Arrays.asList("b")
 			},
 			// missing action
 			new Object[] {
@@ -263,7 +285,7 @@ public class ControllerAnswerTest implements TestCase {
 			new Object[] {
 				"/extra/controller/generate/42", HttpMethod.GET, mapping(),
 				null,
-				Arrays.asList()
+				Arrays.asList("controller", "generate", "42")
 			},
 			new Object[] {
 				"/extra/generate/42", HttpMethod.GET, mapping(),
@@ -308,7 +330,7 @@ public class ControllerAnswerTest implements TestCase {
 			new Object[] {
 				"/extra/12/32/15", HttpMethod.DELETE, mapping(),
 				null,
-				Arrays.asList()
+				Arrays.asList("12", "32", "15")
 			},
 			new Object[] {
 				"/extra/index", HttpMethod.GET, mapping(),

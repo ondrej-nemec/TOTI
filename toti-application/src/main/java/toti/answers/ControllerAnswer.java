@@ -5,10 +5,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import javax.xml.stream.XMLStreamException;
 
 import org.apache.logging.log4j.Logger;
 
@@ -18,6 +21,8 @@ import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.WebSocket;
 import ji.translator.Translator;
+import ji.xml.XmlObject;
+import ji.xml.XmlReader;
 import toti.ServerException;
 import toti.answers.action.BodyType;
 import toti.answers.action.RequestInterruptedException;
@@ -124,7 +129,7 @@ public class ControllerAnswer {
 		return action;
 	}
 	*/
-	private LinkedList<String> getUrlParts(String url) {
+	protected LinkedList<String> getUrlParts(String url) {
 		if (url.length() == 0 || "/".equals(url)) {
 			return new LinkedList<>();
 		}
@@ -227,8 +232,33 @@ public class ControllerAnswer {
 					request.getBodyParams().putAll(json.getMap());
 				}
 			} else if (contentType.toString().startsWith("application/xml") && allowedTypes.contains(BodyType.XML)) {
-				// TODO
+				try {
+					XmlObject xml = new XmlReader().read(new String(request.getBody()));
+					request.getBodyParams().putAll(toMap(xml));
+				} catch (XMLStreamException e) {
+					throw new ServerException(StatusCode.NOT_ACCEPTABLE, mapped, "XML is broken");
+				}
 			}
+		}
+	}
+	
+	protected Map<String, Object> toMap(XmlObject root) {
+		Map<String, Object> result = new HashMap<>();
+		root.getReferences().forEach((n, o)->{
+			toMap(o, result);
+		});
+		return result;
+	}
+	
+	private void toMap(XmlObject xml, Map<String, Object> result) {
+		if (!xml.getReferences().isEmpty() || !xml.getAttributes().isEmpty()) {
+			Map<String, Object> attributes = new HashMap<>();
+			xml.getReferences().forEach((n, o)->{
+				attributes.put(n, toMap(o));
+			});
+			attributes.putAll(xml.getAttributes().toMap());
+		} else {
+			result.put(xml.getName(), xml.getValue().getValue());
 		}
 	}
 	
