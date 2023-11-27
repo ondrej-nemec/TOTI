@@ -22,7 +22,7 @@ public class ItemRules {
 	
 	public static BaseRules booleanRules(String name, boolean required, BiFunction<Translator, String, String> onRequiredError) {
 		BaseRules rules = new BaseRules(name, required, onRequiredError);
-		rules.setType(Boolean.class);
+		rules._setType(Boolean.class);
 		return rules;
 	}
 	
@@ -38,7 +38,7 @@ public class ItemRules {
 	
 	public static NumberRules numberRules(String name, boolean required, Class<? extends Number> clazz, BiFunction<Translator, String, String> onRequiredError) {
 		NumberRules rules = new NumberRules(name, required, onRequiredError);
-		rules.setType(clazz);
+		rules._setType(clazz);
 		return rules;
 	}
 	

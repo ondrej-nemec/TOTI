@@ -22,7 +22,7 @@ public class FileRules extends AbstractBaseRules<FileRules> {
 	
 	public FileRules(String name, boolean required, BiFunction<Translator, String, String> onRequiredError) {
 		super(name, required, onRequiredError);
-		setType(UploadedFile.class);
+		_setType(UploadedFile.class);
 	}
 	
 	public FileRules setFileMaxSize(Integer fileMaxSize) {

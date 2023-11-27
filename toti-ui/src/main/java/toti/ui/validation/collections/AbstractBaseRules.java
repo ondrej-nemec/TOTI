@@ -47,25 +47,25 @@ public abstract class AbstractBaseRules<T> implements RulesCollection {
 		return getThis();
 	}
 	
-	public T setType(Class<?> clazz) {
-		return setType(clazz, true);
+	public T _setType(Class<?> clazz) {
+		return _setType(clazz, true);
 	}
 	
-	public T setType(Class<?> clazz, Function<Translator, String> onExpectedTypeError) {
-		return setType(clazz, true, onExpectedTypeError);
+	public T _setType(Class<?> clazz, Function<Translator, String> onExpectedTypeError) {
+		return _setType(clazz, true, onExpectedTypeError);
 	}
 	
-	public T setType(Class<?> clazz, boolean changeValueByType) {
-		return setType(clazz, changeValueByType, (t)->t.translate(
+	public T _setType(Class<?> clazz, boolean changeValueByType) {
+		return _setType(clazz, changeValueByType, (t)->t.translate(
 			"toti.validation.value-type-must-be", 
 			new MapInit<String, Object>().append("class", clazz).toMap()
 		)); // "Value must be " + clazz
 	}
 	
-	public T setType(Class<?> clazz, boolean changeValueByType, Function<Translator, String> onExpectedTypeError) {
-		/*if (this.expectedRuleType != null) {
+	public T _setType(Class<?> clazz, boolean changeValueByType, Function<Translator, String> onExpectedTypeError) {
+		if (this.expectedRuleType != null) {
 			throw new LogicException("You cannot set an already set value");
-		}*/
+		}
 		// TODO use it ? this.changeValueByType = changeValueByType;
 		this.expectedRuleType = new ExpectedTypeRule(clazz, onExpectedTypeError);
 		return getThis();
