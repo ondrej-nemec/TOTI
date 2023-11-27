@@ -157,12 +157,28 @@ public class ControllerAnswer {
 	}
 	
 	protected Response run(String uri, MappedAction mapped, Request request, Identity identity) throws Throwable {
+		/*
 		Object controller = mapped.getClassFactory().create();
 		ResponseAction action = (ResponseAction)mapped.getAction()
 				.invoke(controller, request.getPathParams().toArray());
+		/*/
+		if (mapped.getAction().getParameterCount() != request.getPathParams().size()) {
+			// probably never happends
+			return Response.create(StatusCode.BAD_REQUEST).getEmpty();
+		}
+		Object[] params = new Object[mapped.getAction().getParameterCount()];
+		try {
+			request.getPathParams().forEach((index, dicValue)->{
+				params[index] = dicValue.getValue(mapped.getAction().getParameters()[index].getType());
+			});
+		} catch (ClassCastException | NumberFormatException e) {
+			return Response.create(StatusCode.BAD_REQUEST).getEmpty();
+		}
+		Object controller = mapped.getClassFactory().create();
+		ResponseAction action = (ResponseAction)mapped.getAction().invoke(controller, params);
+		//*/
 		Translator trans = translator.withLocale(identity.getLocale());
 		parseBody(request, action.getAllowedBody(), mapped);
-		// TODO check path params with expected?
 		try {
 			// prevalidate can be interrupted by exception
 			action.getPrevalidate().prevalidate(request, trans, identity);

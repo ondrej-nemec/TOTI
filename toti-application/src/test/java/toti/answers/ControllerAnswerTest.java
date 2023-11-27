@@ -47,6 +47,7 @@ import toti.answers.request.Identity;
 import toti.answers.request.IdentityFactory;
 import toti.answers.request.Request;
 import toti.answers.request.SessionUserProvider;
+import toti.answers.response.EmptyResponse;
 import toti.answers.response.RedirectResponse;
 import toti.answers.response.Response;
 import toti.answers.response.TextResponse;
@@ -613,10 +614,66 @@ public class ControllerAnswerTest implements TestCase {
 					} 
 				}, throwingFunction((o)->o.getClass().getMethod("index", int.class, String.class)),
 				new TextResponse(StatusCode.OK, new Headers(), "Response 10: aaa")
+			},
+			// create with params - cast
+			new Object[] {
+				"/uri", Arrays.asList("10", "aaa"), AuthMode.COOKIE, null,
+				new Object() {
+					@SuppressWarnings("unused")
+					public ResponseAction index(int id, String value) {
+						return ResponseBuilder.get()
+							.createResponse((request, translator, identity)->{
+								return new TextResponse(StatusCode.OK, new Headers(), "Response " + id + ": " + value);
+							});
+					} 
+				}, throwingFunction((o)->o.getClass().getMethod("index", int.class, String.class)),
+				new TextResponse(StatusCode.OK, new Headers(), "Response 10: aaa")
+			},
+			// create with params - wrong type
+			new Object[] {
+				"/uri", Arrays.asList("not a number", "aaa"), AuthMode.COOKIE, null,
+				new Object() {
+					@SuppressWarnings("unused")
+					public ResponseAction index(int id, String value) {
+						return ResponseBuilder.get()
+							.createResponse((request, translator, identity)->{
+								return new TextResponse(StatusCode.OK, new Headers(), "Response " + id + ": " + value);
+							});
+					} 
+				}, throwingFunction((o)->o.getClass().getMethod("index", int.class, String.class)),
+				new EmptyResponse(StatusCode.BAD_REQUEST, new Headers())
+			},
+			// create with params - less that expected
+			new Object[] {
+				"/uri", Arrays.asList(10), AuthMode.COOKIE, null,
+				new Object() {
+					@SuppressWarnings("unused")
+					public ResponseAction index(int id, String value) {
+						return ResponseBuilder.get()
+							.createResponse((request, translator, identity)->{
+								return new TextResponse(StatusCode.OK, new Headers(), "Response " + id + ": " + value);
+							});
+					} 
+				}, throwingFunction((o)->o.getClass().getMethod("index", int.class, String.class)),
+				new EmptyResponse(StatusCode.BAD_REQUEST, new Headers())
+			},
+			// create with params - more than expected
+			new Object[] {
+				"/uri", Arrays.asList(10, "aaa", "bb"), AuthMode.COOKIE, null,
+				new Object() {
+					@SuppressWarnings("unused")
+					public ResponseAction index(int id, String value) {
+						return ResponseBuilder.get()
+							.createResponse((request, translator, identity)->{
+								return new TextResponse(StatusCode.OK, new Headers(), "Response " + id + ": " + value);
+							});
+					} 
+				}, throwingFunction((o)->o.getClass().getMethod("index", int.class, String.class)),
+				new EmptyResponse(StatusCode.BAD_REQUEST, new Headers())
 			}
 		};
 	}
-
+/*
 	@Test
 	@Parameters(method="dataRunCreateParametersNotMatch")
 	public void testRunCreateParametersNotMatch(
@@ -716,7 +773,7 @@ public class ControllerAnswerTest implements TestCase {
 			}
 		};
 	}
-
+*/
 	@Test
 	@Parameters(method="dataCheckSecured")
 	public void testCheckSecured(Supplier<MappedAction> mapped, Supplier<Identity> identity, StatusCode expectedCode) {
