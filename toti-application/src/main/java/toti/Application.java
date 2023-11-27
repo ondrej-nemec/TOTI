@@ -1,11 +1,15 @@
 package toti;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import ji.database.Database;
+import ji.socketCommunication.http.HttpMethod;
 import toti.answers.Answer;
 import toti.answers.router.Link;
 import toti.application.Task;
+import toti.application.register.MappedAction;
+import toti.application.register.Param;
 import toti.application.register.Register;
 import ji.translator.Translator;
 
@@ -25,11 +29,12 @@ public class Application {
 	
 	private final boolean autoStart;
 	private boolean isRunning = false;
+	private final Param root;
 	
 	private final String[] aliases;
 	
 	public Application(
-			List<Task> tasks, /*SessionUserProvider sessionUserProvider, */Translator translator, Database database,
+			List<Task> tasks, Translator translator, Param root, Database database,
 			Link link, Register register, List<String> migrations, Answer answer,
 			boolean autoStart, String... aliases) {
 		this.tasks = tasks;
@@ -42,6 +47,7 @@ public class Application {
 		//this.sessionUserProvider = sessionUserProvider;
 		this.autoStart = autoStart;
 		this.aliases = aliases;
+		this.root = root;
 	}
 
 /*
@@ -115,4 +121,53 @@ public class Application {
 		}
 	}
 	
+	/****************/
+	
+	public void iterate(Consumer<Item> onItem) {
+        iterate(onItem, root, "", 0);
+    }
+
+    private void iterate(Consumer<Item> onItem, Param param, String uri, int deep) {
+        param.getActions().forEach((method, action)->{
+             String path = uri;
+             if (param.getText() != null) {
+                 path += "/" + param.getText();
+             }
+             onItem.accept(new Item(path, method, action));
+        });
+
+        param.getChilds().forEach((x, child)->{
+             iterate(
+                 onItem,
+                 child,
+                 deep == 0 ? uri : uri + "/" + (param.getText() == null ? "{}" : param.getText()),
+                 deep+1
+             );
+        });
+    }
+
+    public class Item {
+
+        private final String uri;
+        private final HttpMethod method;
+        private final MappedAction action;
+        
+        public Item(String uri, HttpMethod method, MappedAction action) {
+             this.uri = uri;
+             this.method = method;
+             this.action = action;
+        }
+
+        public MappedAction getAction() {
+             return action;
+        }
+
+        public HttpMethod getMethod() {
+             return method;
+        }
+
+        public String getUri() {
+             return uri;
+        }
+    }
 }

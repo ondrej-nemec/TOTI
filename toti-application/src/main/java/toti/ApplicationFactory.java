@@ -196,7 +196,7 @@ public class ApplicationFactory {
 			charset
 		);
 		return new Application(
-			tasks, translator, database, link, register, migrations,
+			tasks, translator, root, database, link, register, migrations,
 			answer, getAutoStart(env), aliases
 		);
 	}

@@ -47,15 +47,15 @@ public class Param {
 		return text == null;
 	}
 	
-	protected String getText() {
+	public String getText() {
 		return text;
 	}
 	
-	protected Map<HttpMethod, MappedAction> getActions() {
+	public Map<HttpMethod, MappedAction> getActions() {
 		return actions;
 	}
 	
-	protected Map<Param, Param> getChilds() {
+	public Map<Param, Param> getChilds() {
 		return childs;
 	}
 
