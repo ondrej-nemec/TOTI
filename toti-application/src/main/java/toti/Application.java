@@ -128,11 +128,8 @@ public class Application {
     }
 
     private void iterate(Consumer<Item> onItem, Param param, String uri, int deep) {
+        String path = getPath(uri, param);
         param.getActions().forEach((method, action)->{
-             String path = uri;
-             if (param.getText() != null) {
-                 path += "/" + param.getText();
-             }
              onItem.accept(new Item(path, method, action));
         });
 
@@ -140,10 +137,17 @@ public class Application {
              iterate(
                  onItem,
                  child,
-                 deep == 0 ? uri : uri + "/" + (param.getText() == null ? "{}" : param.getText()),
+                 deep == 0 ? uri : path,
                  deep+1
              );
         });
+    }
+    
+    private String getPath(String uri, Param param) {
+    	if (param.getText() != null) {
+            return uri + "/" + param.getText();
+        }
+    	return uri + "/{}";
     }
 
     public class Item {
