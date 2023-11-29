@@ -103,7 +103,7 @@ public class Validator implements Validate {
 		ValidationResult result = new ValidationResult();
 		List<String> names = new ArrayList<>();
 		rules.forEach((rule)->{
-			String newName = iterateRules(request, format, rule, prop, result, translator);
+			String newName = iterateRules(request, format, rule.getName(), rule, prop, result, translator);
 			
 			/*
 			Object newValue = rule.getChangeValue().apply(item.getNewValue());
@@ -133,7 +133,7 @@ public class Validator implements Validate {
 		if (!strictList && defaultRule.isPresent()) {
 			RulesCollection rule = defaultRule.get();
 			notChecked.forEach((notCheckedName)->{
-				iterateRules(request, format, rule, prop, result, translator);
+				iterateRules(request, format, notCheckedName, rule, prop, result, translator);
 				/*swichRules(String.format(format, notCheckedName), notCheckedName, rule, errors, prop, translator);
 				Object newValue = rule.getChangeValue().apply(prop.get(notCheckedName));
 				if (newValue != null) {
@@ -148,24 +148,24 @@ public class Validator implements Validate {
 	}
 	
 	private String iterateRules(
-			Request request, String format, RulesCollection collection, RequestParameters prop,
+			Request request, String format, String propertyName,
+			RulesCollection collection, RequestParameters prop,
 			ValidationResult result, Translator translator) {
 		ValidationItem item = new ValidationItem(
-			collection.getName(),
-			prop.getValue(collection.getName()),
+			propertyName,
+			prop.getValue(propertyName),
 			result, translator
 		);
 		for (Rule singleRule : collection.getRules()) {
-			singleRule.check(request, String.format(format, collection.getName()), collection.getName(), item);
+			singleRule.check(request, String.format(format, propertyName), propertyName, item);
 			if (!item.canValidationContinue()) {
 				break;
 			}
 		}
-		//prop.put(rule.getName(), item.getNewValue());
-		String newName = collection.getRename().orElse(collection.getName());
+		String newName = collection.getRename().orElse(propertyName);
 		// if not contains and required - stopped by rule
-		if (prop.containsKey(collection.getName())) {
-			prop.remove(collection.getName());
+		if (prop.containsKey(propertyName)) {
+			prop.remove(propertyName);
 			prop.put(
 				newName,
 				collection.getChangeValue().orElse(o->o).apply(item.getNewValue())
