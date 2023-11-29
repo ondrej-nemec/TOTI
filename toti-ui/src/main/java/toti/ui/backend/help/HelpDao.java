@@ -19,11 +19,27 @@ public interface HelpDao{
 	static final String _HELP_DISABLED_NAME = "help_disabled_";
 	static final String _HELP_GROUP_NAME = "help_group_";
 	
+
+	
 	default List<Help> getHelp(
 			Database database,
 			Optional<Owner> owner,
 			BiFunction<String, QueryBuilder, SelectBuilder> getSelect,
 			String key, String title, String disabled, String optGroup, String ...params) throws SQLException {
+		List<String> sorting = new LinkedList<>();
+		if (optGroup != null) {
+			sorting.add(optGroup);
+		}
+		sorting.add(title);
+		return getHelp(database, owner, getSelect, key, title, disabled, optGroup, sorting, params);
+	}
+	
+	default List<Help> getHelp(
+			Database database,
+			Optional<Owner> owner,
+			BiFunction<String, QueryBuilder, SelectBuilder> getSelect,
+			String key, String title, String disabled, String optGroup,
+			List<String> sorting, String ...params) throws SQLException {
 		StringBuilder selectQuery = new StringBuilder();
 		selectQuery.append(key);
 		selectQuery.append(" AS ");
@@ -39,9 +55,7 @@ public interface HelpDao{
 		    selectQuery.append(" AS ");
 		    selectQuery.append(_HELP_DISABLED_NAME);
 		}
-		StringBuilder sorting = new StringBuilder();
 		if (optGroup != null) {
-			sorting.append(optGroup);
 		    selectQuery.append(", ");
 		    selectQuery.append(optGroup);
 		    selectQuery.append(" AS ");
@@ -50,14 +64,19 @@ public interface HelpDao{
 		for (String param : params) {
 			selectQuery.append(", " + param);
 		}
-		if (!sorting.toString().isEmpty()) {
-			sorting.append(",");
-		}
-		sorting.append(title);
+
+		StringBuilder sortingQuery = new StringBuilder();
+		sorting.forEach(s->{
+			if (!sortingQuery.toString().isEmpty()) {
+				sortingQuery.append(",");
+			}
+			sortingQuery.append(s);
+		});
+		
 		return _getHelp(
 			database, 
 			builder->getSelect.apply(selectQuery.toString(), builder), 
-			owner, sorting.toString()
+			owner, sortingQuery.toString()
 		);
 	}
 	
