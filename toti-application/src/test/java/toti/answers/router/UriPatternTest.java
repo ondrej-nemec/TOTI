@@ -15,9 +15,12 @@ public class UriPatternTest {
 	
 	@Test
 	@Parameters(method="dataCreateBase")
-	public void testCreateBase(String module, String controller, String action, String expected) {
+	public void testCreateBase(String module, String controller, String action, String expected) throws NoSuchMethodException, SecurityException {
 		UriPattern pattern = new UriPattern(){};
-		assertEquals(expected, pattern.createUri(mock(Module.class), Object.class, module, controller, action));
+		assertEquals(expected, pattern.createUri(
+			mock(Module.class), Object.class, Object.class.getMethod("toString"),
+			module, controller, action
+		));
 	}
 	
 	public Object[] dataCreateBase() {

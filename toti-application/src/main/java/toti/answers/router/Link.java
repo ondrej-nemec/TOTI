@@ -174,14 +174,21 @@ public class Link {
 			StringBuilder uri = new StringBuilder(pattern.createUri(
 				module,
 				controller,
+				method,
 				module.getName(),
 				controller.getAnnotation(Controller.class).value(),
 				method.getAnnotation(Action.class).path()	
 			));
-			// TODO replace params in uri, others add
 			for (Object o : pathParams) {
-				uri.append("/");
-				uri.append(o);
+				if (uri.toString().contains(UriPattern.PARAM)) {
+					uri = new StringBuilder(
+						uri.toString()
+						.replaceFirst(UriPattern.PARAM.replace("[", "\\[").replace("]", "\\]"), o.toString())
+					);
+				} else {
+					uri.append("/");
+					uri.append(o);
+				}
 			}
 			if (queryParams.size() > 0) {
 				StringBuilder get = new StringBuilder();

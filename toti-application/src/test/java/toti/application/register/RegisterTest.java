@@ -85,7 +85,7 @@ public class RegisterTest {
 	@Test
 	public void testAddControllerWithCustomLink() {
 		UriPattern pattern = mock(UriPattern.class);
-		when(pattern.createUri(any(), any(), any(), any(), any()))
+		when(pattern.createUri(any(), any(), any(), any(), any(), any()))
 			.thenReturn("/testingModule/controllerB/[param]")
 			.thenReturn("/testingModule/controllerB/[param]/generate");
 		Param root = new Param(null);
@@ -130,7 +130,7 @@ public class RegisterTest {
 	@Test(expected = RegisterException.class)
 	public void testAddControllerThanAlreadyExists() {
 		UriPattern pattern = mock(UriPattern.class);
-		when(pattern.createUri(any(), any(), any(), any(), any())).thenReturn("/a/b/c");
+		when(pattern.createUri(any(), any(), any(), any(), any(), any())).thenReturn("/a/b/c");
 		Param root = new Param(null);
 		Register register = new Register(root, new ObjectBuilder<>(new TestModule()), pattern);
 		register.addController(ControllerA.class, ()->new ControllerA());

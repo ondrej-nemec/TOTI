@@ -61,7 +61,7 @@ public class Register {
     			String actionPart = actionAnotation.path();
     			
     			String pattern = this.pattern.createUri(
-    				module.get(), clazz,
+    				module.get(), clazz, m,
     				module.get().getName(), clazz.getAnnotation(Controller.class).value(), actionPart
     			);
     			Param base = root;
