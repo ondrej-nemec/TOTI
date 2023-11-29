@@ -6,9 +6,7 @@ import java.util.List;
 import java.util.Random;
 
 import ji.database.Database;
-import ji.querybuilder.QueryBuilder;
 import ji.querybuilder.builders.BatchBuilder;
-import ji.querybuilder.builders.SelectBuilder;
 import ji.querybuilder.enums.ColumnType;
 import toti.ui.backend.EntityDao;
 import toti.ui.backend.grid.GridDao;
@@ -22,11 +20,6 @@ public class GridExampleDao implements EntityDao, GridDao {
 	
 	public GridExampleDao(Database database) {
 		this.database = database;
-	}
-
-	@Override
-	public SelectBuilder _getGrid(String select, QueryBuilder builder) {
-		return builder._getAll(table, select);
 	}
 	
 	public List<GridExampleEntity> getAll() throws SQLException {
@@ -45,7 +38,7 @@ public class GridExampleDao implements EntityDao, GridDao {
 	}
 	
 	public Object getAll(GridOptions options) throws SQLException {
-		return getAll(database, table, options);
+		return getAll(database, options, (select, builder)->builder._getAll(table, select), r->r);
 	}
 
 	public void initDb() throws SQLException {

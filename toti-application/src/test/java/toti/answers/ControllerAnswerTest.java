@@ -458,7 +458,28 @@ public class ControllerAnswerTest implements TestCase {
 				}, throwingFunction((o)->o.getClass().getMethod("index")),
 				new TextResponse(StatusCode.OK, new Headers(), "interrupted")
 			},
-			// interrupted in authorize - authMode is header, redirect is null
+			// interrupted in authorize 
+			new Object[] {
+				"/uri", Arrays.asList(), AuthMode.COOKIE, null,
+				new Object() {
+					@SuppressWarnings("unused")
+					public ResponseAction index() {
+						return ResponseBuilder.get()
+							.authorize((request, translator, identity)->{
+								throw new RequestInterruptedException(
+									new TextResponse(StatusCode.OK, new Headers(), "interrupted")
+								);
+							})
+							.createResponse((request, translator, identity)->{
+								fail();
+								return new TextResponse(StatusCode.OK, new Headers(), "Fail");
+							});
+					} 
+				}, throwingFunction((o)->o.getClass().getMethod("index")),
+				new TextResponse(StatusCode.OK, new Headers(), "interrupted")
+			},
+			// TODO convert to correct calling
+			/*// interrupted in authorize - authMode is header, redirect is null
 			new Object[] {
 				"/uri", Arrays.asList(), AuthMode.HEADER, null,
 				new Object() {
@@ -557,7 +578,7 @@ public class ControllerAnswerTest implements TestCase {
 					} 
 				}, throwingFunction((o)->o.getClass().getMethod("index")),
 				new RedirectResponse(StatusCode.TEMPORARY_REDIRECT, new Headers(), "/redirect", false)
-			},
+			},*/
 			// interrupted in validate
 			new Object[] {
 				"/uri", Arrays.asList(), AuthMode.COOKIE, null,

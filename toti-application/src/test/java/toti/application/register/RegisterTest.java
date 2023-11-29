@@ -73,11 +73,16 @@ public class RegisterTest {
 		
 		Param get = controller.getChild("get");
 		assertNotNull(get);
-		assertEquals(0, get.getChilds().size());
-		assertEquals(1, get.getActions().size());
+		assertEquals(1, get.getChilds().size());
+		assertEquals(0, get.getActions().size());
+		
+		Param getParam = get.getChild(null);
+		assertNotNull(getParam);
+		assertEquals(0, getParam.getChilds().size());
+		assertEquals(1, getParam.getActions().size());
 
 		assertTrue(
-			get.getAction(HttpMethod.GET)
+				getParam.getAction(HttpMethod.GET)
 			.asssertNames("testingModule", ControllerA.class.getName(), "get")
 		);
 	}
