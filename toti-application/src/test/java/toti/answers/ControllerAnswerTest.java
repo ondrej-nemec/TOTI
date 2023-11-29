@@ -279,8 +279,13 @@ public class ControllerAnswerTest implements TestCase {
 				Arrays.asList()
 			},
 			new Object[] {
-				"/module/controller/method2/42", HttpMethod.DELETE, mapping(),
+				"/module/controller/method2", HttpMethod.DELETE, mapping(),
 				MappedAction.test("module", "method2", "DELETE"),
+				Arrays.asList()
+			},
+			new Object[] {
+				"/module/controller/method2/42", HttpMethod.DELETE, mapping(),
+				MappedAction.test("module", "method2-param", "DELETE"),
 				Arrays.asList("42")
 			},
 			new Object[] {
@@ -361,6 +366,8 @@ public class ControllerAnswerTest implements TestCase {
 		Param method2 = controller.addChild("method2");
 		method2.addAction(HttpMethod.POST, MappedAction.test("module", "method2", "POST"));
 		method2.addAction(HttpMethod.DELETE, MappedAction.test("module", "method2", "DELETE"));
+		Param deleteChild = method2.addChild(null);
+        deleteChild.addAction(HttpMethod.DELETE, MappedAction.test("module", "method2-param", "DELETE"));
 		
 		Param extra = root.addChild("extra");
 		Param generate = extra.addChild("generate");
