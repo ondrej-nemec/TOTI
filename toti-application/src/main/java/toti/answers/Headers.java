@@ -132,4 +132,9 @@ public class Headers {
 		}
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "Headers [headers=" + headers + "]";
+	}
 }
