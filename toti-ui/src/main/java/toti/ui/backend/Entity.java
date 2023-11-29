@@ -16,7 +16,7 @@ public interface Entity extends Jsonable {
 	
 	@Override
 	default Object toJson() {
-		return serialize("");
+		return serialize(SERIALIZE_JSON);
 	}
 	
 	default Map<String, Object> serialize(String key) {
