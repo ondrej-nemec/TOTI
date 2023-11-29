@@ -47,16 +47,6 @@ dependencies {
 	 implementation 'com.github.ondrej-nemec.JI:ji-files:' + JI_version
 	
 	// compile files("${System.properties['java.home']}/../lib/tools.jar")
-	// TODO can be removed ?
-    implementation group:'org.objenesis',name:'objenesis',version:'2.4'
-    implementation group:'net.bytebuddy',name:'byte-buddy',version:'1.8.13'
-    implementation group:'net.bytebuddy',name:'byte-buddy-agent',version:'1.8.1'
-    
-	// TODO temporary
-	// https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api
-	//implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.2'
-	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-	//implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
 	
 	testImplementation 'com.github.ondrej-nemec.JI:ji-translate:' + JI_version
 	// https://mvnrepository.com/artifact/junit/junit

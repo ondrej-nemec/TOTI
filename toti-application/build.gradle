@@ -44,11 +44,12 @@ dependencies {
 	
 	// compile files("${System.properties['java.home']}/../lib/tools.jar")
 	
-	implementation group: 'at.favre.lib', name: 'bcrypt', version: '0.9.0'
-	// TODO can be removed ?
-  //  implementation group:'org.objenesis',name:'objenesis',version:'2.4'
-  //  implementation group:'net.bytebuddy',name:'byte-buddy',version:'1.8.13'
-  //  implementation group:'net.bytebuddy',name:'byte-buddy-agent',version:'1.8.1'
+	//implementation group: 'at.favre.lib', name: 'bcrypt', version: '0.9.0'
+	
+	// used for Link:create
+    implementation group:'org.objenesis',name:'objenesis',version:'2.4'
+    implementation group:'net.bytebuddy',name:'byte-buddy',version:'1.8.13'
+    implementation group:'net.bytebuddy',name:'byte-buddy-agent',version:'1.8.1'
     
 	// TODO temporary
 	// https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api
@@ -56,13 +57,6 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
 	//implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
 	
-/*
-	// https://mvnrepository.com/artifact/com.itextpdf/itextpdf
-	implementation group: 'com.itextpdf', name: 'itextpdf', version: '5.5.13.1'
-	// https://mvnrepository.com/artifact/com.itextpdf.tool/xmlworker
-	implementation group: 'com.itextpdf.tool', name: 'xmlworker', version: '5.5.13.1'
-*/
-
 	// https://mvnrepository.com/artifact/org.postgresql/postgresql
 	//testImplementation  group: 'org.postgresql', name: 'postgresql', version: '42.2.16'
 
