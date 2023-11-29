@@ -184,9 +184,7 @@ public class ControllerAnswer {
 			action.getPrevalidate().prevalidate(request, trans, identity);
 			try {
 				checkSecured(mapped, identity);
-				// authorize can be interrupted by exception
-				action.getAuthorize().authorize(request, trans, identity);
-			} catch (ServerException | RequestInterruptedException e) {
+			} catch (ServerException e) {
 				if (mapped.getSecurityMode() == AuthMode.HEADER || router.getRedirectOnNotLoggedInUser() == null) {
 					throw e;
 				}
@@ -199,6 +197,8 @@ public class ControllerAnswer {
 					router.getRedirectOnNotLoggedInUser() + backlink
 			    );
 			}
+			// authorize can be interrupted by exception
+			action.getAuthorize().authorize(request, trans, identity);
 			// validate can be interrupted by exception
 			action.getValidate().validate(request, trans, identity);
 			return action.getCreate().create(request, trans, identity);
