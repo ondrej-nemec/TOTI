@@ -59,14 +59,26 @@ public class Validator implements Validate {
 	
 	@Override
 	public void validate(Request request, Translator translator, Identity identity) throws RequestInterruptedException {
-		RequestParameters params = new RequestParameters();
-		params.putAll(request.getBodyParams().toMap());
-		params.putAll(request.getQueryParams().toMap());
-		
-		ValidationResult result = validate(request, params, translator);
-		if (!result.isValid()) {
-			throw new RequestInterruptedException(Response.create(StatusCode.BAD_REQUEST).getJson(result));
-		}
+		getValidate(false).validate(request, translator, identity);
+	}
+	
+	public Validate getQueryValidate() {
+		return getValidate(true);
+	}
+	
+	public Validate getBodyValidate() {
+		return getValidate(false);
+	}
+	
+	private Validate getValidate(boolean query) {
+		return (request, translator, identity)->{
+			RequestParameters params = query ? new RequestParameters(request.getQueryParams().toMap()) : request.getBodyParams();
+			
+			ValidationResult result = validate(request, params, translator);
+			if (!result.isValid()) {
+				throw new RequestInterruptedException(Response.create(StatusCode.BAD_REQUEST).getJson(result));
+			}
+		};
 	}
 	
 	public Validator addRule(RulesCollection rule) {
@@ -86,6 +98,7 @@ public class Validator implements Validate {
 		return validate(request, "%s", prop, translator);
 	}
 	
+	/** INTERNAL */
 	public ValidationResult validate(Request request, String format, RequestParameters prop, Translator translator) {
 		ValidationResult result = new ValidationResult();
 		List<String> names = new ArrayList<>();

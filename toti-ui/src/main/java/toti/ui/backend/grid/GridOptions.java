@@ -6,6 +6,7 @@ import java.util.List;
 import ji.common.annotations.MapperParameter;
 import ji.common.annotations.MapperType;
 import ji.common.structures.SortedMap;
+import toti.answers.action.Validate;
 import toti.ui.backend.Entity;
 import toti.ui.validation.ItemRules;
 import toti.ui.validation.Validator;
@@ -61,7 +62,7 @@ public class GridOptions implements Entity {
 		sorting.put(name, new Sort(name, isDesc));
 	}
 	
-	public static Validator getValidator(List<GridColumn> gridColumns) {
+	public static Validate getValidator(List<GridColumn> gridColumns) {
 		Validator filters = new Validator(true);
 		Validator sorting = new Validator(true);
 		gridColumns.forEach((column)->{
@@ -104,7 +105,8 @@ public class GridOptions implements Entity {
 			.addRule(ItemRules.numberRules("pageIndex", true, Integer.class))
 			.addRule(ItemRules.numberRules("pageSize", true, Integer.class))
 			.addRule(ItemRules.sortedMapRules("filters", true, filters))
-			.addRule(ItemRules.sortedMapRules("sorting", true, sorting));
+			.addRule(ItemRules.sortedMapRules("sorting", true, sorting))
+			.getQueryValidate();
 	}
 
 }
