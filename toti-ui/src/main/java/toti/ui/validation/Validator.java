@@ -163,13 +163,14 @@ public class Validator implements Validate {
 		}
 		//prop.put(rule.getName(), item.getNewValue());
 		String newName = collection.getRename().orElse(collection.getName());
-
-		prop.remove(collection.getName());
-		prop.put(
-			newName,
-			collection.getChangeValue().orElse(o->o).apply(item.getNewValue())
-		);
-		
+		// if not contains and required - stopped by rule
+		if (prop.containsKey(collection.getName())) {
+			prop.remove(collection.getName());
+			prop.put(
+				newName,
+				collection.getChangeValue().orElse(o->o).apply(item.getNewValue())
+			);
+		}
 		return newName;
 	}
 	
