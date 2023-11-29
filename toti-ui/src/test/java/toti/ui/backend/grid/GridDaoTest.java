@@ -32,9 +32,7 @@ public class GridDaoTest {
 		SelectBuilder select = new MySqlSelectBuilder(null, ""); // mock(SelectBuilder.class);
 		when(builder.getSqlFunctions()).thenReturn(new MySqlFunctions());
 		
-		GridDao dao = new GridDao() {
-			@Override public SelectBuilder _getGrid(String select, QueryBuilder builder) { return null; }
-		};
+		GridDao dao = new GridDao() {};
 		
 		dao._applyFilters(builder, select, filters, owner);
 		assertEquals(message, "SELECT  " + expected, select.createSql());
@@ -124,9 +122,7 @@ public class GridDaoTest {
 			SortedMap<String, Sort> sorting, String expected) {
 		SelectBuilder select = new MySqlSelectBuilder(null, ""); // mock(SelectBuilder.class);
 		
-		GridDao dao = new GridDao() {
-			@Override public SelectBuilder _getGrid(String select, QueryBuilder builder) { return null; }
-		};
+		GridDao dao = new GridDao() {};
 		
 		dao._applySorting(select, sorting);
 		assertEquals("SELECT " + expected, select.createSql());
