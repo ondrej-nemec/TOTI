@@ -59,17 +59,17 @@ public class StructureRules extends AbstractBaseRules<StructureRules> {
 	}
 	
 	public StructureRules setSortedMapRule(Validator validator) {
-		this.sortedMapRule = new StructureSortedMapRule(validator, (t)->"");
+		this.sortedMapRule = new StructureSortedMapRule(validator, (t)->"toti.validation.parameter-cannot-be-converted");
 		return this;
 	}
 	
 	public StructureRules setMapRule(Validator validator) {
-		this.mapRule = new StructureMapRule(validator, (t)->"");
+		this.mapRule = new StructureMapRule(validator, (t)->"toti.validation.parameter-cannot-be-converted");
 		return this;
 	}
 	
 	public StructureRules setListRule(Validator validator) {
-		this.listRule = new StructureListRule(validator, (t)->"");
+		this.listRule = new StructureListRule(validator, (t)->"toti.validation.parameter-cannot-be-converted");
 		return this;
 	}
 
