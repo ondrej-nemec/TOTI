@@ -164,6 +164,7 @@ public class ControllerAnswer {
 		/*/
 		if (mapped.getAction().getParameterCount() != request.getPathParams().size()) {
 			// probably never happends
+			logger.info("Request " + uri + " contains wrong parameters count");
 			return Response.create(StatusCode.BAD_REQUEST).getEmpty();
 		}
 		Object[] params = new Object[mapped.getAction().getParameterCount()];
@@ -172,6 +173,7 @@ public class ControllerAnswer {
 				params[index] = dicValue.getValue(mapped.getAction().getParameters()[index].getType());
 			});
 		} catch (ClassCastException | NumberFormatException e) {
+			logger.info("Request " + uri + " contains parameter with wrong type");
 			return Response.create(StatusCode.BAD_REQUEST).getEmpty();
 		}
 		Object controller = mapped.getClassFactory().create();
