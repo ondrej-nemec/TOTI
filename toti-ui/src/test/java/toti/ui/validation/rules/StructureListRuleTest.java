@@ -37,7 +37,7 @@ public class StructureListRuleTest {
 		
 		ValidationResult subResult = mock(ValidationResult.class);
 		Validator validator = mock(Validator.class);
-		when(validator.validate(any(), any(), any(Translator.class))).thenReturn(subResult);
+		when(validator.validate(any(), any(), any(), any(Translator.class))).thenReturn(subResult);
 		
 		Request request = mock(Request.class);
 		

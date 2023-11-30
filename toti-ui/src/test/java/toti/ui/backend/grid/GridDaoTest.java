@@ -77,7 +77,7 @@ public class GridDaoTest {
 				new MapInit<String, Filter>()
 					.append("startsColumn", new Filter("startsColumn", FilterMode.STARTS_WITH, "--value--", false, false))
 					.toSortedMap(),
-				"WHERE (1=1) AND (CONCAT('', startsColumn) LIKE '%--value--')"
+				"WHERE (1=1) AND (CONCAT('', startsColumn) LIKE '--value--%')"
 			},
 			// no owner, no ids, ends
 			new Object[] {
@@ -86,7 +86,7 @@ public class GridDaoTest {
 				new MapInit<String, Filter>()
 				.append("endsColumn", new Filter("endsColumn", FilterMode.ENDS_WITH, "--value--", false, false))
 				.toSortedMap(),
-				"WHERE (1=1) AND (CONCAT('', endsColumn) LIKE '--value--%')"
+				"WHERE (1=1) AND (CONCAT('', endsColumn) LIKE '%--value--')"
 			},
 			// no owner, no ids, equas
 			new Object[] {
@@ -109,9 +109,9 @@ public class GridDaoTest {
 				.toSortedMap(),
 				"WHERE (1=1) AND (ownerId in (1,'--id--',false))"
 				+ " AND (equalsColumn = '--value--')"
-				+ " AND (CONCAT('', startsColumn) LIKE '%--value--')"
+				+ " AND (CONCAT('', startsColumn) LIKE '--value--%')"
 				+ " AND (CONCAT('', likeColumn) LIKE '%--value--%')"
-				+ " AND (CONCAT('', endsColumn) LIKE '--value--%')"
+				+ " AND (CONCAT('', endsColumn) LIKE '%--value--')"
 			},
 		};
 	}
