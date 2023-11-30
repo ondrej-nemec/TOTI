@@ -26,7 +26,48 @@ import toti.ui.validation.rules.Rule;
 
 @RunWith(JUnitParamsRunner.class)
 public class ValidatorTest {
-	
+	/*
+	@Test
+	@Parameters({"true", "false"})
+	public void testValidateWithNullParam(boolean strict) {
+		Translator translator = new Translator() {
+			@Override
+			public String translate(String key, Map<String, Object> variables, String locale) {
+				return key + ":" + variables;
+			}
+			@Override public Translator withLocale(Locale locale) { return null; }
+			@Override public void setLocale(Locale locale) {}
+			@Override public Set<String> getSupportedLocales() { return null; }
+			@Override public Locale getLocale(String locale) { return new Locale("", true, Arrays.asList()); }
+			@Override public Locale getLocale() { return new Locale("", true, Arrays.asList()); }
+		};
+		Request request = mock(Request.class);
+		
+		RequestParameters parameters = new RequestParameters();
+		parameters.put("a", "1");
+		parameters.put("b", null);
+		
+		Validator validator = new Validator(strict);
+		validator.addRule(ItemRules.objectRules("a", true));
+		validator.addRule(ItemRules.objectRules("b", strict));
+		
+		ValidationResult actualResult = validator.validate(request, parameters, translator);
+
+		RequestParameters expectedParameters = new RequestParameters();
+		expectedParameters.put("a", "1");
+		expectedParameters.put("b", null);
+		ValidationResult expectedResult = new ValidationResult();
+		
+		
+		System.out.println(actualResult);
+		System.out.println(parameters);
+		assertEquals(expectedResult.toString(), actualResult.toString());
+		assertEquals(expectedParameters.toString(), parameters.toString());
+		
+		assertEquals(expectedResult, actualResult);
+		assertEquals(expectedParameters, parameters);
+	}
+	*/
 	@Test
 	@Parameters(method="dataValidate")
 	public void testValidate(
