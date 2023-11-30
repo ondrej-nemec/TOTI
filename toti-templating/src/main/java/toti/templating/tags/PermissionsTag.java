@@ -33,7 +33,7 @@ public class PermissionsTag implements Tag {
 		StringBuilder code = new StringBuilder();
 		code.append("new MapInit<String, Object>()");
 		params.forEach((name, value)->{
-			code.append(String.format(".append(\"%s\", %s)", name, value));
+			code.append(String.format(".append(\"%s\", \"%s\")", name, value));
 		});
 		code.append(".toMap()");
 		return String.format(
