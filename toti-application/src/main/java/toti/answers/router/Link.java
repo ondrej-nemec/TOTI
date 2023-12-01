@@ -183,7 +183,7 @@ public class Link {
 				if (uri.toString().contains(UriPattern.PARAM)) {
 					uri = new StringBuilder(
 						uri.toString()
-						.replaceFirst(UriPattern.PARAM.replace("[", "\\[").replace("]", "\\]"), o.toString())
+						.replaceFirst(UriPattern.PARAM.replace("[", "\\[").replace("]", "\\]"), o == null ? "" : o.toString())
 					);
 				} else {
 					uri.append("/");
