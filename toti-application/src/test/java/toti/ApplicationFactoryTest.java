@@ -29,6 +29,11 @@ public class ApplicationFactoryTest implements TestCase {
 	// TODO full test with env, manual set, def values
 	
 	@Test
+	public void tset() {
+		fail("TODO");
+	}
+	
+	@Test
 	@Parameters(method="data")
 	@Ignore
 	public void test(Properties properties, Consumer<ApplicationFactory> setFactory, boolean useDb) throws Exception {
