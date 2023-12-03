@@ -59,18 +59,7 @@ public class HttpServer {
 		}
 		return true;
 	}
-/*
-	// TODO
-	public void makeApplicationVisible(String host, Application application) {
-		consumer.addApplication(application.getResponseFactory(), host, application.getAliases());
-		logger.info("Application " + host + " is visible now"); // TODO print aliases too?
-	}
 
-	public void makeApplicationHidden(String host, Application application) {
-		consumer.removeApplication(host);
-		logger.info("Application " + host + " is hidden now");
-	}
-*/
 	public void start() throws Exception {
 		logger.info("Server is starting");
 		server.start();
@@ -94,7 +83,7 @@ public class HttpServer {
 		logger.info("Server stopped");
 	}
 	
-	private void startApplication(String host, Application application) {
+	protected void startApplication(String host, Application application) {
 		try {
 			logger.info("Application is starting: " + host);
 			application.start();
@@ -105,7 +94,7 @@ public class HttpServer {
 		}
 	}
 	
-	private boolean stopApplication(String host, Application application) {
+	protected boolean stopApplication(String host, Application application) {
 		try {
 			logger.info("Application is stopping: " + host);
 			consumer.removeApplication(host);
@@ -116,6 +105,20 @@ public class HttpServer {
 			logger.error("Application stop fail: " + host, e);
 			return false;
 		}
+	}
+
+	/** ONLY FOR TESTS */
+	protected Map<String, Application> getApplications() {
+		return applications;
+	}
+	
+	/** ONLY FOR TESTS */
+	protected void setRunning(boolean isRunning) {
+		this.isRunning = isRunning;
+	}
+	
+	public boolean isRunning() {
+		return isRunning;
 	}
 	
 }
