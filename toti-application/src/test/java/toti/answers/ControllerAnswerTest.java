@@ -48,7 +48,6 @@ import toti.answers.request.IdentityFactory;
 import toti.answers.request.Request;
 import toti.answers.request.SessionUserProvider;
 import toti.answers.response.EmptyResponse;
-import toti.answers.response.RedirectResponse;
 import toti.answers.response.Response;
 import toti.answers.response.TextResponse;
 import toti.answers.router.Link;
