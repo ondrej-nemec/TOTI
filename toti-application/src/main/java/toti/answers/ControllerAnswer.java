@@ -182,8 +182,6 @@ public class ControllerAnswer {
 		Translator trans = translator.withLocale(identity.getLocale());
 		parseBody(request, action.getAllowedBody(), mapped);
 		try {
-			// prevalidate can be interrupted by exception
-			action.getPrevalidate().prevalidate(request, trans, identity);
 			try {
 				checkSecured(mapped, identity);
 			} catch (ServerException e) {
@@ -199,6 +197,8 @@ public class ControllerAnswer {
 					router.getRedirectOnNotLoggedInUser() + backlink
 			    );
 			}
+			// prevalidate can be interrupted by exception
+			action.getPrevalidate().prevalidate(request, trans, identity);
 			// authorize can be interrupted by exception
 			action.getAuthorize().authorize(request, trans, identity);
 			// validate can be interrupted by exception
