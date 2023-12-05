@@ -37,11 +37,11 @@ public class UiExtension implements TranslatedExtension, OnToti {
 			case ".js":
 				return Response.create(StatusCode.OK)
 					.addHeader("Content-Type", "text/javascript")
-					.getTemplate("/ui/assets/toti.jsp", new HashMap<>());
+					.getTemplate("/ui/assets/js.jsp", new HashMap<>());
 			case ".css":
 				return Response.create(StatusCode.OK)
 					.addHeader("Content-Type", "text/css")
-					.getTemplate("/ui/assets/toti.css", new HashMap<>());
+					.getTemplate("/ui/assets/css.css", new HashMap<>());
 			default:
 				return Response.create(StatusCode.NOT_FOUND).getEmpty();
 		}
