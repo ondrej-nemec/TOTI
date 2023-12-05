@@ -265,6 +265,35 @@ class ExtendedSelect {
 		new ResizeObserver(resize).observe(this.input);
 	}
 
+	processElement(phrase, element) {
+		var result = {
+			index: 0,
+			length: 0
+		};
+		if (element.hasOwnProperty('elements')) {
+			var object = this;
+			element.elements.forEach((key, el)=>{
+				var subres = object.processElement(phrase, el);
+				result.index += subres.index;
+				result.length = Math.max(result.length, subres.length);
+			});
+		}
+		var match = element.selectable && totiUtils.unaccent(element.title).includes(totiUtils.unaccent(phrase));
+		if (element.value === this.selectedValue) {
+			element.container.selected = true;
+		} else {
+			element.container.selected = false;
+		}
+		result.length = element.title.length;
+		if (phrase === null || match || result.index > 0) {
+			element.container.show = true;
+			result.index++;
+		} else {
+			element.container.show = false;
+		}
+		return result;
+	}
+
 	overrideProperty(element, property, attribute, trueOnly = false) {
 		var name = 'toti_' + property;
 		Object.defineProperty(element, property, {
