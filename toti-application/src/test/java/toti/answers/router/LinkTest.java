@@ -27,6 +27,29 @@ import toti.application.register.Register;
 @RunWith(JUnitParamsRunner.class)
 public class LinkTest {
 	
+	@Test
+	@Parameters(method="dataIsRelative")
+	public void testIsRelative(String url, boolean expected) {
+		assertEquals(expected, Link.isRelative(url));
+	}
+	
+	public Object[] dataIsRelative() {
+		return new Object[] {
+			new Object[] { "/home", true },
+			new Object[] { "/", true },
+			new Object[] { "", true },
+			new Object[] { "#", true },
+			new Object[] { "#hash", true },
+			new Object[] { "link", false },
+			new Object[] { "www.example.com", false },
+			new Object[] { "example.com", false },
+			new Object[] { "http://example.com", false },
+			new Object[] { "www.example.com", false },
+			new Object[] { "//example.com", false },
+			new Object[] { "/\\example.com", false }
+		};
+	}
+	
 	@Test(expected = LogicException.class)
 	@Parameters({ "", ":", "something", "something:" })
 	public void testParseStringHrefThrowsWithWrongString(String href) {

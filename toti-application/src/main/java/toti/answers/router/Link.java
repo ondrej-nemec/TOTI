@@ -20,17 +20,23 @@ import toti.application.register.Register;
 
 public class Link {
 	
-	public final static String PATH = "[path]";
-	public final static String MODULE = "[module]";
-	public final static String CONTROLLER = "[controller]";
-	public final static String METHOD = "[method]";
-	public final static String LANG = "[lang]";
-	public final static String PARAM = "[param]";
-	
 	// Allow anything starting with "/", except paths starting
 	// "//" and "/\".
 	public static boolean isRelative(String url) {
-	  return url.matches("/[^/\\\\]?.*");
+		if (url.isEmpty()) {
+			return true;
+		}
+		if (url.startsWith("#")) {
+			return true;
+		}
+		if (url.startsWith("//")) {
+			return false;
+		}
+		if (url.startsWith("/\\")) {
+			return false;
+		}
+		return url.startsWith("/");
+		// return url.matches("/[^/\\\\]?.*");
 	}
 
 	private final Register register;
