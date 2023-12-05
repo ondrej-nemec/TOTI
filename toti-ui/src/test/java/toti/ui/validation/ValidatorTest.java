@@ -293,6 +293,22 @@ public class ValidatorTest {
 				.put("c", "3")
 			},
 			new Object[] {
+				"RULE: custom validation",
+				false, null, Arrays.asList(
+					new RC("a").setCustomValidation(item->{
+						item.addError("a", t->"customError");
+						item.setNewValue("xx");
+					}),
+					new RC("d").setChangeValue(x->"44") // not existing parameter
+				),
+				new ValidationResult()
+				.addError("a", "customError"),
+				new RequestParameters()
+				.put("a", "xx")
+				.put("b", "2")
+				.put("c", "3")
+			},
+			new Object[] {
 				"RULE: rename",
 				false, null, Arrays.asList(
 					new RC("a").setRename("aa"),

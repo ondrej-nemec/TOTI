@@ -162,6 +162,9 @@ public class Validator implements Validate {
 				break;
 			}
 		}
+		if (collection.getCustomValidation().isPresent()) {
+			collection.getCustomValidation().get().accept(item);
+		}
 		String newName = collection.getRename().orElse(propertyName);
 		// if not contains and required - stopped by rule
 		if (prop.containsKey(propertyName)) {
