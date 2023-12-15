@@ -31,6 +31,9 @@ import toti.ui.UiExtension;
 
 public class TotiSamplesRunner {
 	
+	// TODO new way of: file, def, program config
+	// ruzne answers: file (index.html), controlers, dir, toti...
+	
 	public static void main(String[] args) {
 		Supplier<Void> wait = ()->{
 			Console console = new Console();
