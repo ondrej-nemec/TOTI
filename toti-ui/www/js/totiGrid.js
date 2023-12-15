@@ -1,4 +1,4 @@
-/* TOTI Grid version 1.2.0 */
+/* TOTI Grid version 1.2.1 */
 class TotiGrid {
 
 	cookieName = "grid-cache";
@@ -130,7 +130,7 @@ class TotiGrid {
 							filterInput = filter.querySelector('input');
 						}
 						filterInput.classList.add("toti-grid-filtering");
-						filterInput.addEventListener('change', function() {
+						filterInput.addEventListener('change', function(e) {
 							if (e !== null && !e.srcElement.checkValidity()) {
 								 e.srcElement.reportValidity();
 							} else {
