@@ -262,21 +262,22 @@ public class ControllerAnswer {
 	
 	protected Map<String, Object> toMap(XmlObject root) {
 		Map<String, Object> result = new HashMap<>();
-		root.getReferences().forEach((n, o)->{
-			toMap(o, result);
+		root.getReferences().forEach((o)->{
+			result.put(o.getName(), parse(o));
 		});
 		return result;
 	}
 	
-	private void toMap(XmlObject xml, Map<String, Object> result) {
+	private Object parse(XmlObject xml) {
+		// TODO improve
 		if (!xml.getReferences().isEmpty() || !xml.getAttributes().isEmpty()) {
-			Map<String, Object> attributes = new HashMap<>();
-			xml.getReferences().forEach((n, o)->{
-				attributes.put(n, toMap(o));
+			List<Object> list = new LinkedList<>();
+			xml.getReferences().forEach((o)->{
+				list.add(parse(o));
 			});
-			attributes.putAll(xml.getAttributes().toMap());
+			return list;
 		} else {
-			result.put(xml.getName(), xml.getValue().getValue());
+			return xml.getValue().getValue();
 		}
 	}
 	
