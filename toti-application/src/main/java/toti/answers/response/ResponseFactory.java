@@ -104,19 +104,5 @@ public class ResponseFactory {
 	public Response getRedirect(String url, boolean allowOutOfAppRedirect) {
 		return new RedirectResponse(code, headers, url, allowOutOfAppRedirect);
 	}
-	
-	/**
-	 * For websocket response
-	 * @param websocket
-	 * @param onMessage
-	 * @param onError
-	 * @return
-	 */
-	/*public Response getWebsocket(WebSocket websocket,
-			BiConsumer<Boolean, ByteArrayOutputStream> onMessage,
-			Consumer<IOException> onError,
-			Consumer<String> onClose) {
-		return new WebsocketResponse(headers, websocket, onMessage, onError, onClose);
-	}*/
 
 }
