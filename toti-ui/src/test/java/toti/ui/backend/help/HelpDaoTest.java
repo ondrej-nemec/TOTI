@@ -2,12 +2,30 @@ package toti.ui.backend.help;
 
 import static org.junit.Assert.fail;
 
+import java.sql.SQLException;
+
 import org.junit.Test;
 
 public class HelpDaoTest {
 
 	@Test
-	public void test() {
+	public void test() throws SQLException {
+		/*
+		QueryBuilder builder = mock(QueryBuilder.class);
+		SelectBuilder select = new MySqlSelectBuilder(null, ""); // mock(SelectBuilder.class);
+		when(builder.getSqlFunctions()).thenReturn(new MySqlFunctions());
+		
+		Database database = new Database(null, null) {
+			@Override
+			public <T> T applyBuilder(QueryBuilderFunction<T> consumer) throws SQLException {
+				return consumer.apply(builder);
+			}
+		};
+		
+		HelpDao dao = new HelpDao() {};
+		
+		dao._getHelp(database, b->select, null, null);
+		*/
 		fail("TODO");
 	}
 	
