@@ -1,7 +1,9 @@
 package toti.application.register;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import ji.common.structures.ObjectBuilder;
@@ -65,17 +67,31 @@ public class Register {
     				module.get().getName(), clazz.getAnnotation(Controller.class).value(), actionPart
     			);
     			Param base = root;
+    			LinkedList<Class<?>> parameters = new LinkedList<>();
+    			for (Parameter p : m.getParameters()) {
+    				parameters.add(p.getType());
+    			}
+    			String parametersPart = parameters.toString();
 				// substring - remove first '/'
     			for (String part : pattern.substring(1).split("/")) {
-    				base = base.addChild(part.equals(UriPattern.PARAM) ? null : part);
+    				if (part.equals(UriPattern.PARAM)) {
+    					if (parameters.size() == 0) {
+    						throw new RegisterException(
+    							"URI pattern expects more pameters than method contains. "
+    							+ module.get().getName()
+    							+ ":" + clazz.getAnnotation(Controller.class).value()
+    							+ ":" + actionPart
+    							+ ":" + parametersPart
+    						);
+    					}
+    					base = base.addChild(null);
+    				} else {
+    					base = base.addChild(part);
+    				}
     			}
-    			/*List<Class<?>> methodParameters = new LinkedList<>();
-    			for (Parameter p : m.getParameters()) {
-    				methodParameters.add(p.getType());
-    			}*/
     			MappedAction action = new MappedAction(
-    				module.get().getName(), clazz.getName(), m.getName(),
-    				m, factory,// methodParameters,
+    				module.get().getName(), clazz.getName(), m.getName(), parametersPart,
+    				m, factory,
     				getSecurityMode(m), methods
     			);
     			for (HttpMethod method : methods) {

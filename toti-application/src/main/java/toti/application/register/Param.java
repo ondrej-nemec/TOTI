@@ -21,13 +21,20 @@ public class Param {
 		Param param = new Param(uri);
 		Param child = childs.get(param);
 		if (child == null) {
-			child = new Param(uri);
+			child = param;
 			childs.put(param, child);
 		}
 		return child;
 	}
 	
 	public void addAction(HttpMethod method, MappedAction action) {
+		if (actions.containsKey(method)) {
+			throw new RegisterException(
+				"URL already bind. "
+				+ "Actual method: " + actions.get(method)
+				+ ". Trying register: " + action
+			);
+		}
 		this.actions.put(method, action);
 	}
 	

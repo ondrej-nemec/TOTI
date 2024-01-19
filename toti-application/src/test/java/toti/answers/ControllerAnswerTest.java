@@ -415,7 +415,7 @@ public class ControllerAnswerTest implements TestCase {
 		when(identity.getLoginMode()).thenReturn(AuthMode.HEADER);
 		
 		MappedAction action = new MappedAction(
-			null, null, null,
+			null, null, null, null,
 			getMethod.apply(controller), ()->controller, authMode,
 			null
 		);

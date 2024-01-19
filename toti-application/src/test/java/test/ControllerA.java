@@ -13,6 +13,24 @@ public class ControllerA {
 		return null;
 	}
 	
+	@Action()
+	public ResponseAction index(Integer id) {
+		// same name as previsous but with parameter
+		return null;
+	}
+	
+	@Action(methods=HttpMethod.POST)
+	public ResponseAction index(String id) {
+		// same name as previsous but with another method
+		return null;
+	}
+
+	@Action()
+	public ResponseAction index(int i, String s) {
+		// same name as previsous but with tow parameters
+		return null;
+	}
+	
 	@Action(path="list")
 	public ResponseAction list() {
 		return null;

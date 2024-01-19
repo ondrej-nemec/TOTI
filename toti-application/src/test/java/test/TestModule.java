@@ -24,6 +24,7 @@ public class TestModule implements Module {
 	public List<Task> initInstances(Env env, Translator translator, Register register, Link link, Database database,
 			Logger logger) throws Exception {
 		register.addController(ControllerA.class, ()->new ControllerA());
+		register.addController(ControllerC.class, ()->new ControllerC());
 		return Arrays.asList();
 	}
 

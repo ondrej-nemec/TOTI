@@ -15,6 +15,7 @@ import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import test.ControllerA;
 import test.ControllerB;
+import test.ControllerC;
 import test.TestModule;
 import toti.answers.router.UriPattern;
 
@@ -41,7 +42,7 @@ public class RegisterTest {
 		
 		Param controller = module.getChild("controllerA");
 		assertNotNull(controller);
-		assertEquals(2, controller.getChilds().size());
+		assertEquals(3, controller.getChilds().size());
 		assertEquals(3, controller.getActions().size());
 		
 		assertNotNull(controller.getAction(HttpMethod.GET));
@@ -59,6 +60,33 @@ public class RegisterTest {
 		assertTrue(
 			controller.getAction(HttpMethod.PUT)
 			.asssertNames("testingModule", ControllerA.class.getName(), "form")
+		);
+		
+		Param index = controller.getChild(null);
+		assertNotNull(index);
+		assertEquals(1, index.getChilds().size());
+		assertEquals(2, index.getActions().size());
+		
+		assertNotNull(index.getAction(HttpMethod.GET));
+		assertNotNull(index.getAction(HttpMethod.POST));
+		assertTrue(
+				index.getAction(HttpMethod.POST)
+			.asssertNames("testingModule", ControllerA.class.getName(), "index", "[class java.lang.String]")
+		);
+		assertTrue(
+				index.getAction(HttpMethod.GET)
+			.asssertNames("testingModule", ControllerA.class.getName(), "index", "[class java.lang.Integer]")
+		);
+
+		Param index2 = index.getChild(null);
+		assertNotNull(index2);
+		assertEquals(0, index2.getChilds().size());
+		assertEquals(1, index2.getActions().size());
+		
+		assertNotNull(index2.getAction(HttpMethod.GET));
+		assertTrue(
+			index2.getAction(HttpMethod.GET)
+			.asssertNames("testingModule", ControllerA.class.getName(), "index", "[int, class java.lang.String]")
 		);
 		
 		Param list = controller.getChild("list");
@@ -82,8 +110,8 @@ public class RegisterTest {
 		assertEquals(1, getParam.getActions().size());
 
 		assertTrue(
-				getParam.getAction(HttpMethod.GET)
-			.asssertNames("testingModule", ControllerA.class.getName(), "get")
+			getParam.getAction(HttpMethod.GET)
+			.asssertNames("testingModule", ControllerA.class.getName(), "get", "[class java.lang.Integer]")
 		);
 	}
 	
@@ -97,6 +125,8 @@ public class RegisterTest {
 		
 		Register register = new Register(root, new ObjectBuilder<>(new TestModule()), pattern);
 		register.addController(ControllerB.class, ()->new ControllerB());
+		
+	//	System.out.println(root);
 		
 		assertEquals(1, root.getChilds().size());
 		assertEquals(0, root.getActions().size());
@@ -118,7 +148,7 @@ public class RegisterTest {
 		assertNotNull(param.getAction(HttpMethod.GET));
 		assertTrue(
 			param.getAction(HttpMethod.GET)
-			.asssertNames("testingModule", ControllerB.class.getName(), "get")
+			.asssertNames("testingModule", ControllerB.class.getName(), "get", "[class java.lang.Integer]")
 		);
 		
 		Param generate = param.getChild("generate");
@@ -128,8 +158,15 @@ public class RegisterTest {
 
 		assertTrue(
 				generate.getAction(HttpMethod.GET)
-			.asssertNames("testingModule", ControllerB.class.getName(), "generate")
+			.asssertNames("testingModule", ControllerB.class.getName(), "generate", "[class java.lang.Integer]")
 		);
+	}
+	
+	@Test(expected = RegisterException.class)
+	public void testAddControllerWithMoreSameNameMethodsAndSameparametersCount() {
+		Param root = new Param(null);
+		Register register = new Register(root, new ObjectBuilder<>(new TestModule()), getPattern());
+		register.addController(ControllerC.class, ()->new ControllerC());
 	}
 	
 	@Test(expected = RegisterException.class)
