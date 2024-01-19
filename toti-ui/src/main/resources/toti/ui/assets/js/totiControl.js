@@ -1,4 +1,4 @@
-/* TOTI Control version 2.1.1 */
+/* TOTI Control version 2.1.2 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -283,7 +283,7 @@ var totiControl = {
 			function select(params, factory) {
 				var select = factory.getInput();
 				for ([key, value] of Object.entries(params)) {
-					if (key === "options" || key === "load" || key === "value" || key === "depends") {
+					if (key === "options" || key === "load" || key === "value" || key === "depends" || key === "prompt") {
 							/* ignored now, done soon */
 					} else {
 						select.setAttribute(key, value);
