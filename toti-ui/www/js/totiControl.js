@@ -85,15 +85,15 @@ var totiControl = {
 				return totiControl.inputs._createInput(type, attributes);
 			}
 			var container = document.createElement("fieldset");
-		    for ([key, name] of Object.entries(attributes)) {
-		    	if (key !== "value") {
+			for ([key, name] of Object.entries(attributes)) {
+				if (key !== "value") {
 					container.setAttribute(key, name);
-		    	}
-		    }
-		    var checkbox = document.createElement("input");
+				}
+			}
+			var checkbox = document.createElement("input");
 			checkbox.setAttribute("type", "checkbox");
 
-		    var input = totiControl.inputs._createInput(type, attributes);
+			var input = totiControl.inputs._createInput(type, attributes);
 
 			checkbox.checked = false;
 			input.setAttribute("disabled", true);
@@ -120,10 +120,10 @@ var totiControl = {
 				}
 			};
 
-		    container.appendChild(checkbox);
-		    container.appendChild(input);
+			container.appendChild(checkbox);
+			container.appendChild(input);
 
-		    return container;
+			return container;
 		},
 		text: function(attributes) {
 			if (!attributes.hasOwnProperty('load') && !attributes.hasOwnProperty('options')) {
@@ -182,10 +182,10 @@ var totiControl = {
 					case "value":
 					case "title":
 						/*var span = document.createElement("span");
-		              	span.innerText = name;
-		              	button.appendChild(span);*/
-		              	button.innerText = name;
-		              	button.value = name;
+					  	span.innerText = name;
+					  	button.appendChild(span);*/
+					  	button.innerText = name;
+					  	button.value = name;
 						break;
 					case "tooltip":
 						button.setAttribute("title", name);
@@ -225,9 +225,9 @@ var totiControl = {
 						});
 						break;
 					case "icon":
-			            var i = document.createElement("i");
-			            i.setAttribute("class", name);
-			            button.append(i);
+						var i = document.createElement("i");
+						i.setAttribute("class", name);
+						button.append(i);
 						break;
 					default:
 						button.setAttribute(key, name);
@@ -317,14 +317,14 @@ var totiControl = {
 				};
 				select.setOptions = params.setOptions;
 				new Promise(function (resolve, reject) {
-				    /* first wait until depends is loaded */
-				    /* depends element must be first */
+					/* first wait until depends is loaded */
+					/* depends element must be first */
 					if (params.hasOwnProperty("depends")) {
 						var dependElement = document.querySelector(params.depends);
-				        /* IMPROVEMENT: Observer to wait depends added to DOM */
-				        /* IMPROVEMENT: suport for radiolist */
+						/* IMPROVEMENT: Observer to wait depends added to DOM */
+						/* IMPROVEMENT: suport for radiolist */
 						if (dependElement !== null) {
-				            if (dependElement.setOptions) { /* select */
+							if (dependElement.setOptions) { /* select */
 								resolve(dependElement.setOptions.then(function() {
 									return dependElement;
 								}));
@@ -332,19 +332,19 @@ var totiControl = {
 								resolve(dependElement);
 							}
 						} else {
-					        /*new MutationObserver((mutationList, observer) => {
-					            for (const mutation of mutationList) {
-					            	if (mutation.type === 'childList') {
-						            	console.log(mutation.target);
-						            	console.log(mutation.addedNodes);
-						            	console.log(mutation.target.querySelector(params.depends));
-					            	}
-						        }
-						        observer.disconnect();
+							/*new MutationObserver((mutationList, observer) => {
+								for (const mutation of mutationList) {
+									if (mutation.type === 'childList') {
+										console.log(mutation.target);
+										console.log(mutation.addedNodes);
+										console.log(mutation.target.querySelector(params.depends));
+									}
+								}
+								observer.disconnect();
 						   }).observe(document.body, { attributes: true, childList: true, subtree: true });*/
 						}
 					} else {
-					    resolve(null); /* no element depends */
+						resolve(null); /* no element depends */
 					}
 				}).then(function(depends) {
 					if (depends !== null) {
@@ -456,13 +456,31 @@ var totiControl = {
 					var groupSubstitution = null;
 					options.forEach(function(option) {
 						if (depends !== null) {
-							if (depends.classList.contains('toti-hints-input')) {
-								depends = depends.parentElement;
-							}
-							var optGroup = depends.querySelector('[value="' + option.optgroup + '"]');
-							if (optGroup !== null) {
-								groupSubstitution = optGroup.innerText;
-							}
+							var updateOptions = function() {
+								return addOptions(select, params, depends, factory);
+							};
+							depends.addEventListener('change', updateOptions);
+						
+							var updateParent = (value)=>{
+								var parentValue = params.setOptions.options[value].optgroup;
+								if (typeof depends.updateParent === 'function') {
+									return depends.updateParent(parentValue).then(()=>{
+										depends.value = parentValue;
+									}).then(()=>{
+										return updateOptions();
+									});
+								} else {
+									depends.value = parentValue;
+									return updateOptions();
+								}
+							};
+							select.updateParent = updateParent;
+							select.addEventListener('change', ()=>{
+								var value = select.value;
+								updateParent(value).then(()=>{
+									select.value = value;
+								});
+							});
 						}
 						addOption(select, option, factory, groupSubstitution, -1);
 					});
@@ -487,111 +505,111 @@ var totiControl = {
 			var dateAttr = {};
 			attributes.id = "id-" + attributes.name + "-" + Math.floor(Math.random() * 1000);
 			dateAttr.id = attributes.id + "-date";
-		    if (attributes.hasOwnProperty('required')) {
-		        dateAttr.required = attributes.required;
-		    }
-		    var date = totiControl.inputs._createInput("date", dateAttr);
+			if (attributes.hasOwnProperty('required')) {
+				dateAttr.required = attributes.required;
+			}
+			var date = totiControl.inputs._createInput("date", dateAttr);
 
-		    var timeAttr = {};
-		    timeAttr.id = attributes.id + "-time";
-		    if (attributes.hasOwnProperty("step")) {
-		        timeAttr.step = attributes.step;
-		    }
-		    if (attributes.hasOwnProperty('required')) {
-		        timeAttr.required = attributes.required;
-		    }
-		    var time = totiControl.inputs._createInput("time", timeAttr);
+			var timeAttr = {};
+			timeAttr.id = attributes.id + "-time";
+			if (attributes.hasOwnProperty("step")) {
+				timeAttr.step = attributes.step;
+			}
+			if (attributes.hasOwnProperty('required')) {
+				timeAttr.required = attributes.required;
+			}
+			var time = totiControl.inputs._createInput("time", timeAttr);
 
-		    var datetime = document.createElement("fieldset");
-		    for ([key, name] of Object.entries(attributes)) {
-		    	if (key !== "value") {
+			var datetime = document.createElement("fieldset");
+			for ([key, name] of Object.entries(attributes)) {
+				if (key !== "value") {
 					datetime.setAttribute(key, name);
-		    	}
-		    }
+				}
+			}
 
-		    datetime.appendChild(date);
-		    datetime.appendChild(time);
+			datetime.appendChild(date);
+			datetime.appendChild(time);
 
-		    var setValue = function(value) {
-		    	if (value) {
-			        var values = value.split("T");
-			        if (values.length === 2) {
-				        date.value = values[0];
-				        time.value = values[1];
-			        } else if (values.length === 1 && value.length === 10) {
-				        date.value = value;
-			        } else if (values.length === 1 && value.length >=5) {
-				        time.value = value;
-			        }
-			        datetime.value = value;
-		    	}
-		    };
+			var setValue = function(value) {
+				if (value) {
+					var values = value.split("T");
+					if (values.length === 2) {
+						date.value = values[0];
+						time.value = values[1];
+					} else if (values.length === 1 && value.length === 10) {
+						date.value = value;
+					} else if (values.length === 1 && value.length >=5) {
+						time.value = value;
+					}
+					datetime.value = value;
+				}
+			};
 
-		    if (attributes.hasOwnProperty("value")) {
-		        setValue(attributes.value);
-		    }
-		    /*TODO improve with observer */
-		    var formWaiting = function() {
-		        if (datetime.form === null) {
-		            setTimeout(formWaiting, 50);
-		        } else {
-		    		setValue(datetime.value);
-		            datetime.form.onreset = function() {
-		                datetime.value = '';
-		            };
-		        }
-		    };
+			if (attributes.hasOwnProperty("value")) {
+				setValue(attributes.value);
+			}
+			/*TODO improve with observer */
+			var formWaiting = function() {
+				if (datetime.form === null) {
+					setTimeout(formWaiting, 50);
+				} else {
+					setValue(datetime.value);
+					datetime.form.onreset = function() {
+						datetime.value = '';
+					};
+				}
+			};
 
 			/* for default value */
-		    formWaiting();
+			formWaiting();
 	
-     		/* form bind */
-		    datetime.onbind = function() {
-		        setValue(datetime.value);
-		    };
-		    /* for reset button */
+			/* form bind */
+			datetime.onbind = function() {
+				setValue(datetime.value);
+			};
+			/* for reset button */
 			datetime.clear = function() {
 				date.value = '';
 				time.value = '';
 			};
-    		/* if sub date or sub time change */
-		    datetime.onchange = function(event) {
-		        if (attributes.strict) {
-		             if (date.value === '' || time.value === '') {
-		                /*event.preventDefault(); // not working in firefox */
-               			return false;
-		             } else {
-		                 datetime.value = date.value + "T" + time.value;
-		             }
-		        } else {
-		             if (date.value === '' && time.value === '') {
-		                /*event.preventDefault(); // not working in firefox */
-		                datetime.value = '';
-               			return false;
-		             } else if (date.value === '') {
-		                 datetime.value = time.value;
-		             } else if (time.value === '') {
-		                  datetime.value = date.value;
-		            } else {
-		                 datetime.value = date.value + "T" + time.value;
-		             }
-		        }
-		    };
-		    return datetime;
+			/* if sub date or sub time change */
+			datetime.onchange = function(event) {
+				if (attributes.strict) {
+					if (date.value === '' || time.value === '') {
+						/*event.preventDefault(); // not working in firefox */
+						return false;
+					} else {
+						datetime.value = date.value + "T" + time.value;
+					 }
+				} else {
+					if (date.value === '' && time.value === '') {
+						/*event.preventDefault(); // not working in firefox */
+						datetime.value = '';
+						return false;
+					} else if (date.value === '') {
+						 datetime.value = time.value;
+					} else if (time.value === '') {
+						  datetime.value = date.value;
+					} else {
+						 datetime.value = date.value + "T" + time.value;
+					}
+				}
+			};
+			return datetime;
 		}
 	},
 	parseValue: function(type, value) {
 		/* TODO week*/
 		if (totiTranslations.timestamp.dateString.hasOwnProperty(type) && value !== '' && value !== null) {
 			return new Date(value).toLocaleDateString(
-            	totiLang.getLang().replace("_", "-"),
+				totiLang.getLang().replace("_", "-"),
 				totiTranslations.timestamp.dateString[type]
 			);
 		}
 		if (totiTranslations.timestamp.timeString.hasOwnProperty(type) && value !== '' && value !== null) {
 			value = "1970-01-01 " + value;
 			return new Date(value).toLocaleTimeString(
-            	totiLang.getLang().replace("_", "-"),
+				totiLang.getLang().replace("_", "-"),
 				totiTranslations.timestamp.timeString[type]
 			);
 		}
