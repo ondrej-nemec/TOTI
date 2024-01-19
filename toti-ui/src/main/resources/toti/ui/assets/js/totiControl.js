@@ -1,4 +1,4 @@
-/* TOTI Control version 2.1.2 */
+/* TOTI Control version 2.1.3 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -459,8 +459,15 @@ var totiControl = {
 							var updateOptions = function() {
 								return addOptions(select, params, depends, factory);
 							};
-							depends.addEventListener('change', updateOptions);
-						
+							depends.addEventListener('change', ()=>{
+								var running = depends.running;
+								if (running !== undefined) {
+									return running.then(()=>{
+										return updateOptions();
+									});
+								}
+								return updateOptions();
+							});
 							var updateParent = (value)=>{
 								var parentValue = params.setOptions.options[value].optgroup;
 								if (typeof depends.updateParent === 'function') {
@@ -477,8 +484,11 @@ var totiControl = {
 							select.updateParent = updateParent;
 							select.addEventListener('change', ()=>{
 								var value = select.value;
-								updateParent(value).then(()=>{
+								var running = updateParent(value);
+								select.running = running;
+								running.then(()=>{
 									select.value = value;
+									delete select.running;
 								});
 							});
 						}
