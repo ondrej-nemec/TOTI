@@ -14,6 +14,7 @@ public class Select implements Input, Filter {
 	private String depends = null;
 	private boolean selfReference = false;
 	private boolean search = false;
+	private String prompt = null;
 	
 	private final Wrapper wrapper;
 
@@ -54,6 +55,11 @@ public class Select implements Input, Filter {
 
 	public Select setSearch(boolean search) {
 		this.search = search;
+		return this;
+	}
+	
+	public Select setPrompt(String prompt) {
+		this.prompt = prompt;
 		return this;
 	}
 
@@ -116,6 +122,9 @@ public class Select implements Input, Filter {
 		set.put("search", search);
 		if (search) {
 			set.put("autocomplete", "off");
+		}
+		if (prompt != null) {
+			set.put("prompt", prompt);
 		}
 		return set;
 	}

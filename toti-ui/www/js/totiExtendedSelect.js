@@ -1,4 +1,4 @@
-/* TOTI ExtendedSelect version 0.0.2 */
+/* TOTI ExtendedSelect version 0.1.0 */
 class ExtendedSelect {
 
 	selectedGroup = null;
@@ -45,6 +45,10 @@ class ExtendedSelect {
 
 	setSelectedGroup(value) {
 		this.selectedGroup = value;
+	}
+	
+	addPrompt(title) {
+		/* TODO */
 	}
 
 	addOption(value, title, optGroupValue, optGroupTitle, disabled, level) {

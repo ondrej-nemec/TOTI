@@ -1,4 +1,4 @@
-/* TOTI StandartSelect version 0.0.0 */
+/* TOTI StandartSelect version 0.1.0 */
 class StandartSelect {
 
 	selectedGroup = null;
@@ -17,6 +17,15 @@ class StandartSelect {
 
 	setSelectedGroup(value) {
 		this.selectedGroup = value;
+	}
+	
+	addPrompt(title) {
+		var option = document.createElement('option');
+		option.value = "";
+		option.setAttribute("disabled", true);
+		option.setAttribute("selected", true);
+		option.innerText = title;
+		this.container.appendChild(option);
 	}
 
 	addOption(value, title, optGroupValue, optGroupTitle, disabled, level) {

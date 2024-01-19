@@ -1,4 +1,4 @@
-/* TOTI Control version 2.1.0 */
+/* TOTI Control version 2.1.1 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -413,6 +413,9 @@ var totiControl = {
 				});
 			}
 			function onOptions(options, params, factory, depends) {
+				if (params.hasOwnProperty("prompt")) {
+					factory.addPrompt(params.prompt);
+				}
 				if (params.selfReference) {
 					var sorted = [];
 					var missingParent = {};
