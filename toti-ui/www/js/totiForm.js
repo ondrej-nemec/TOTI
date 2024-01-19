@@ -1,4 +1,4 @@
-/* TOTI Form version 1.2.1 */
+/* TOTI Form version 1.2.2 */
 class TotiForm {
 
 	constructor(config) {
@@ -90,6 +90,9 @@ class TotiForm {
 			totiLoad.load(field.load.url, field.load.method, {}, {}, field.load.params)
 			.then((loaded)=>{
 				loaded.forEach((group)=>{
+					if (group.disabled) {
+						return;
+					}
 					var parentName = field.name;
 					if (field.fields.length > 1 || (field.fields.lenght == 1 && (field.fields[0].name.length > 1 || !field.fields[0].name.lenght === '{i}') )) {
 						parentName += "[" + group.value + "]";
