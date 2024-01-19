@@ -291,6 +291,7 @@ public class ValidatorTest {
 				.put("a", "11")
 				.put("b", "2")
 				.put("c", "3")
+				.put("d", "44")
 			},
 			new Object[] {
 				"RULE: custom validation",
@@ -307,6 +308,7 @@ public class ValidatorTest {
 				.put("a", "xx")
 				.put("b", "2")
 				.put("c", "3")
+				.put("d", "44")
 			},
 			new Object[] {
 				"RULE: rename",

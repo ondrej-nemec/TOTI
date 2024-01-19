@@ -15,6 +15,13 @@ public class ValidationResult implements Jsonable {
 		return errors.isEmpty();
 	}
 	
+	public boolean isValid(String param) {
+		if (!errors.containsKey(param)) {
+			return true;
+		}
+		return errors.get(param).isEmpty();
+	}
+	
 	public ValidationResult addSubResult(ValidationResult subResult) {
 		this.errors.putAll(subResult.errors);
 		return this;
