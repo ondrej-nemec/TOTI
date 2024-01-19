@@ -156,8 +156,8 @@ public class ApplicationTest {
 		});
 		assertEquals(Arrays.asList(
 			"GET /module/controller",
-			"POST /module/controller/method1",
 			"DELETE /module/controller/method1",
+			"POST /module/controller/method1",
 			"GET /extra/index",
 			"POST /extra/index/{}",
 			"GET /extra/index/{}",
