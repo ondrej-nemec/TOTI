@@ -23,6 +23,7 @@ public class IdentityTest {
 			this.header = header;
 		}
 		@Override public long getExpirationTime() { return 0; }
+		@Override public long getExpirationPeriod() { return 0; }
 		@Override public Object getId() { return null; }
 		@Override public Optional<String> getCookieToken() { return cookie; }
 		@Override public Optional<String> getCsrfToken() { return csrf; }

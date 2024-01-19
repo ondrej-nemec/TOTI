@@ -22,7 +22,7 @@
 <t:if cond="${totiIdentity.isPresent()}" >
 	totiAuth.login({
 		"access_token": "${totiIdentity.getUser().getHeaderToken().orElse("")}",
-		"expires_in": ${totiIdentity.getUser().getExpirationTime()}
+		"expires_in": ${totiIdentity.getUser().getExpirationPeriod()}
 	});
 <t:else>
 	<%-- token is in JS but not on server - server restarted OR sync logout --%>

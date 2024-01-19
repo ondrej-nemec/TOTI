@@ -7,6 +7,8 @@ import ji.common.structures.DictionaryValue;
 public interface LoggedUser {
 	
 	long getExpirationTime();
+	
+	long getExpirationPeriod();
 
 	Object getId();
 	
