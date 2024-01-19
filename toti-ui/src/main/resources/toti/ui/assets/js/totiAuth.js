@@ -1,4 +1,4 @@
-/* TOTI Auth version 2.1.0 */
+/* TOTI Auth version 2.1.1 */
 var totiAuth = {
 	variableToken: "authenticationToken",
     variableConfig: "authenticationConfig",
@@ -62,7 +62,8 @@ var totiAuth = {
              console.log("No saved config");
              return false;
         }
-        totiAuth.refresh(config.url, config.method, token.expires_in);
+        var expiredIn = token.expires_in - new Date().getTime();
+        totiAuth.refresh(config.url, config.method, expiredIn);
         return true;
     },
     customRefreshHandler: function () {},
