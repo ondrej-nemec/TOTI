@@ -36,7 +36,7 @@ public class FileAllowedTypeTest {
 	
 	@Test
 	public void testGetValue() {
-		ValidationItem item = new ValidationItem("name", "origin", null, null);
+		ValidationItem item = new ValidationItem("name", "origin", null, null, null);
 		item.setNewValue("newValue");
 		
 		FileAllowedTypesRule rule = new FileAllowedTypesRule(null, null);

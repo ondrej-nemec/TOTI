@@ -2,6 +2,7 @@ package toti.ui.validation;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -20,6 +21,7 @@ import ji.translator.Locale;
 import ji.translator.Translator;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.ui.validation.collections.RulesCollection;
 import toti.ui.validation.rules.Rule;
@@ -101,14 +103,16 @@ public class ValidatorTest {
 		if (globalFunction != null) {
 			validator.setGlobalFunction(globalFunction);
 		}
-		
-		ValidationResult actualResult = validator.validate(request, parameters, translator);
+		Identity identity = mock(Identity.class);
+		ValidationResult actualResult = validator.validate(request, parameters, translator, identity);
 
 		assertEquals(message, expectedResult.toString(), actualResult.toString());
 		assertEquals(message, expectedParameters.toString(), parameters.toString());
 		
 		assertEquals(message, expectedResult, actualResult);
 		assertEquals(message, expectedParameters, parameters);
+		
+		verifyNoMoreInteractions(identity);
 	}
 	
 	public Object[] dataValidate() {
@@ -161,7 +165,7 @@ public class ValidatorTest {
 			}, 
 			new Object[] {
 				"with global function",
-				false, g((req, data, result, t)->{
+				false, g((req, data, result, t, i)->{
 					result.addError("expected-error");
 					data.remove("a");
 					data.put("x", "y");

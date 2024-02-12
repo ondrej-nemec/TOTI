@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import ji.translator.Translator;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.ui.validation.ValidationItem;
 import toti.ui.validation.ValidationResult;
@@ -23,8 +24,9 @@ public class RequiredItemRuleTest {
 	public void testCheck(boolean required, Object originValue, Object newValue, int times, boolean canValidate) {
 		ValidationResult result = mock(ValidationResult.class);
 		Translator translator = mock(Translator.class);
+		Identity identity = mock(Identity.class);
 		
-		ValidationItem item = new ValidationItem("name", originValue, result, translator);
+		ValidationItem item = new ValidationItem("name", originValue, result, translator, identity);
 		item.setNewValue(newValue);
 		
 		Request request = mock(Request.class);

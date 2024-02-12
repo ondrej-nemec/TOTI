@@ -34,7 +34,7 @@ public class FileMaxSizeRuleTest {
 	
 	@Test
 	public void testGetValue() {
-		ValidationItem item = new ValidationItem("name", "origin", null, null);
+		ValidationItem item = new ValidationItem("name", "origin", null, null, null);
 		item.setNewValue("newValue");
 		
 		FileMaxSizeRule rule = new FileMaxSizeRule(null, null);

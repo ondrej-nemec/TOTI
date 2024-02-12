@@ -17,6 +17,7 @@ import ji.socketCommunication.http.structures.RequestParameters;
 import ji.translator.Translator;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.ui.validation.ValidationItem;
 import toti.ui.validation.ValidationResult;
@@ -32,12 +33,13 @@ public class StructureListRuleTest {
 			String propertyName, String format, RequestParameters params) {
 		ValidationResult result = mock(ValidationResult.class);
 		Translator translator = mock(Translator.class);
+		Identity identity = mock(Identity.class);
 		
-		ValidationItem item = new ValidationItem("name", originValue, result, translator);
+		ValidationItem item = new ValidationItem("name", originValue, result, translator, identity);
 		
 		ValidationResult subResult = mock(ValidationResult.class);
 		Validator validator = mock(Validator.class);
-		when(validator.validate(any(), any(), any(), any(Translator.class))).thenReturn(subResult);
+		when(validator.validate(any(), any(), any(), any(Translator.class), any())).thenReturn(subResult);
 		
 		Request request = mock(Request.class);
 		
@@ -46,7 +48,7 @@ public class StructureListRuleTest {
 		
 		assertEquals(newValue, item.getNewValue());
 		assertEquals(canValidate, item.canValidationContinue());
-		verify(validator, times(validatorCalling)).validate(request, format, params, translator);
+		verify(validator, times(validatorCalling)).validate(request, format, params, translator, identity);
 		verify(result, times(errorCalling)).addError(propertyName, "error");
 		verify(result, times(validatorCalling)).addSubResult(subResult);
 	}

@@ -28,7 +28,7 @@ public class RegexRuleTest {
 	
 	@Test
 	public void testGetValue() {
-		ValidationItem item = new ValidationItem("name", "origin", null, null);
+		ValidationItem item = new ValidationItem("name", "origin", null, null, null);
 		item.setNewValue("newValue");
 		
 		RegexRule rule = new RegexRule(null, null);

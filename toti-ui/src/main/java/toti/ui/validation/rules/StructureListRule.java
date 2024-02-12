@@ -33,7 +33,8 @@ public class StructureListRule implements Rule {
 				request,
 				(propertyName.contains(":") ? "" : "%s:") + propertyName + "[]",
 				fields,
-				item.getTranslator()
+				item.getTranslator(),
+				item.getIdentity()
 			));
 			item.setNewValue(new ArrayList<>(fields.values()));
 		} catch (ClassCastException | NumberFormatException e) {

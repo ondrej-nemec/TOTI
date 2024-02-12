@@ -36,7 +36,7 @@ public class StructureSortedMapRule implements Rule {
 				fields.put(entryItem.getKey().toString(), entryItem.getValue());
 			}
 			item.addSubResult(validator.validate(
-				request, propertyName + "[%s]", fields, item.getTranslator()
+				request, propertyName + "[%s]", fields, item.getTranslator(), item.getIdentity()
 			));
 			item.setNewValue(new SortedMap<String, Object>().putAll(fields.toMap()));
 		} catch (Exception e) {
