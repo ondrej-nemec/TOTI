@@ -1,4 +1,4 @@
-/* TOTI Grid version 1.2.1 */
+/* TOTI Grid version 1.3.0 */
 class TotiGrid {
 
 	cookieName = "grid-cache";
@@ -22,8 +22,8 @@ class TotiGrid {
 		this.gridUnique = gridUnique;
 
 		if (this.config.hasOwnProperty("beforeRender")) {
-            totiUtils.execute(this.config.beforeRender, [this]);
-        }
+			totiUtils.execute(this.config.beforeRender, [this]);
+		}
 
 		/* get grid selection from url and cookie */
 		var urlCache = decodeURIComponent(window.location.search.substring(1));
@@ -44,7 +44,7 @@ class TotiGrid {
 		}
 
 		var grid = this;
-        var promises = [];
+		var promises = [];
 		this.config.columns.forEach(function(column) {
 			template.setTitle(gridUnique, container, column.name, column.hasOwnProperty('title') ? column.title : column.name);
 			if (column.useSorting) {
@@ -74,31 +74,52 @@ class TotiGrid {
 				case "buttons":
 					var buttons = [];
 					column.globalButtons.forEach(function(buttonConf) {
-						if (buttonConf.type === 'button' && buttonConf.hasOwnProperty('is_reset') && buttonConf.is_reset) {
+						if (buttonConf.type === 'button' && buttonConf.is_reset) {
 							/* IPRROVEMENT refresh button */
 							var button = totiControl.button(buttonConf);
-                            button.setAttribute("grid", grid.gridUnique);
-                            button.onclick = function(e) {
-                                e.preventDefault();
-                                container.querySelectorAll(".toti-grid-filtering").forEach(function(input) {
+							button.setAttribute("grid", grid.gridUnique);
+							button.onclick = function(e) {
+								e.preventDefault();
+								container.querySelectorAll(".toti-grid-filtering").forEach(function(input) {
 									if (input.type === 'fieldset') {
 										input.clear();
 									}
-                                    input.value = '';
-                                    grid.filterBy(input.getAttribute("name"), null, false);
-                                });
-                                grid.refreshData();
-                             };
-                             buttons.push(button);
-						} else if (buttonConf.type === 'button') {
-							var button = totiControl.button(buttonConf, buttonConf.action.async);
-							button.setAttribute("grid", grid.gridUnique);
-							button.addEventListener("click", function() {
-								setTimeout(function(){
-									grid.refreshData(true);
-								}, 500);
-							});
+									input.value = '';
+									grid.filterBy(input.getAttribute("name"), null, false);
+								});
+								grid.refreshData();
+							};
 							buttons.push(button);
+						} else if (buttonConf.type === 'button') {
+								var action = buttonConf.action;
+								buttonConf.action = (event)=>{
+									var actionClone = totiUtils.clone(action);
+									/* now href can be manipulated from custom js */
+									actionClone.href = button.href;
+									if (buttonConf.addFilters) {
+										 grid.filtering.forEach((key, value)=>{
+											  actionClone.params[key] = value;
+										 });
+									}
+									totiControl.getAction(actionClone)(event);
+
+									setTimeout(function(){
+
+										 grid.refreshData(true);
+
+									}, 500);
+
+								};
+
+							   
+
+								var button = totiControl.button(buttonConf, action.async);
+
+								button.href = action.href;
+
+								button.setAttribute("grid", grid.gridUnique);
+
+								buttons.push(button);
 						}
 					});
 					template.addButtons(gridUnique, container, column.name, buttons);
@@ -121,8 +142,8 @@ class TotiGrid {
 
 						filter = totiControl.input(column.filter);
 						if (column.filter.originType === 'select') {
-                            promises.push(filter.setOptions);
-                        }
+							promises.push(filter.setOptions);
+						}
 						filter.setAttribute("grid", grid.gridUnique);
 						
 						var filterInput = filter;
@@ -162,8 +183,8 @@ class TotiGrid {
 				var onClickSettings = totiUtils.clone(settings);
 				onClickSettings['params'] = params;
 				var result = totiControl.getAction(onClickSettings)(event);
-                totiDisplay.fadeOut();
-                return result;
+				totiDisplay.fadeOut();
+				return result;
 			});
 		}
 		if (this.config.hasOwnProperty('pagesSizes')) {
@@ -178,18 +199,18 @@ class TotiGrid {
 		}
 
 		if (this.config.hasOwnProperty("afterRender")) {
-            totiUtils.execute(this.config.afterRender, [this]);
-        }
-        Promise.all(promises).then((values)=>{
+			totiUtils.execute(this.config.afterRender, [this]);
+		}
+		Promise.all(promises).then((values)=>{
 			totiDisplay.fadeOut();
 			this.refreshData();
 			if (this.config.refresh > 0) {
 				this.startRefresh();
 			}
-        }).catch(function(e) {
+		}).catch(function(e) {
 			totiDisplay.fadeOut();
-        	console.error(e);
-        });
+			console.error(e);
+		});
 	}
 
 	getTemplate(parentSelector, template) {
@@ -333,21 +354,21 @@ class TotiGrid {
 			pageSize: this.pageSize
 		};
 		/* TODO maybe load previous pages in cycle*/
-        var loadParameters = totiUtils.clone(selectionParameters);
-        if (this.config.useLoadButton && this.loadNext_count === 0) {
-           loadParameters.pageSize = this.pageSize * this.pageIndex;
-           loadParameters.pageIndex = 1;
-        }
+		var loadParameters = totiUtils.clone(selectionParameters);
+		if (this.config.useLoadButton && this.loadNext_count === 0) {
+		   loadParameters.pageSize = this.pageSize * this.pageIndex;
+		   loadParameters.pageIndex = 1;
+		}
 		var grid = this;
-		totiLoad.load(this.config.dataLoadUrl, this.config.dataLoadMethod, {}, {}, loadParameters)
+		totiLoad.async(this.config.dataLoadUrl, this.config.dataLoadMethod, {}, {}, loadParameters)
 		.then(function(response) {
 			grid.loadNext_count += response.data.length;
 			if (grid.pageIndex != response.pageIndex && loadParameters === selectionParameters) {
 				grid.setPageIndex(response.pageIndex, false);
 			}
 			if (grid.config.hasOwnProperty("beforeBind")) {
-	            totiUtils.execute(grid.config.beforeBind, [response.data, grid, response]);
-	        }
+				totiUtils.execute(grid.config.beforeBind, [response.data, grid, response]);
+			}
 			/* save state */
 			window.history.pushState({"html":window.location.href},"", "?" + new URLSearchParams(selectionParameters).toString());
 			totiUtils.setCookie(grid.cookieName, JSON.stringify(selectionParameters), grid.cookieAge, null);
@@ -363,17 +384,17 @@ class TotiGrid {
 				grid.template.clearBody(grid.gridUnique, grid.container);
 			}
 			if (response.data.length === 0) {
-                totiDisplay.flash("warn", totiTranslations.gridMessages.noItemsFound);
-            }
-            var family = {};
-            var sortedFamily = [];
-            if (grid.config.treeColumnIndex > -1) {
+				totiDisplay.flash("warn", totiTranslations.gridMessages.noItemsFound);
+			}
+			var family = {};
+			var sortedFamily = [];
+			if (grid.config.treeColumnIndex > -1) {
 				var tree = grid.config.columns[grid.config.treeColumnIndex];
-	            var missingParent = {};
-	            response.data.forEach(function(rowData, index) {
-		            var identifier = rowData[tree.identifier];
-		            var parent = rowData[tree.parent];
-		            sortedFamily[index] = identifier;
+				var missingParent = {};
+				response.data.forEach(function(rowData, index) {
+					var identifier = rowData[tree.identifier];
+					var parent = rowData[tree.parent];
+					sortedFamily[index] = identifier;
 					family[identifier] = {
 						childs: [],
 						parent: parent !== null && parent !== undefined ? parent : null,
@@ -409,7 +430,7 @@ class TotiGrid {
 						grid.selectedRow = grid.template.setRowSelected(grid.gridUnique, grid.container, row);
 					}
 				});
-                
+				
 				grid.config.columns.forEach(function(column) {
 					if (column.type === "tree") {
 						var identifier = rowData[column.identifier];
@@ -440,7 +461,7 @@ class TotiGrid {
 						if (expanded === false) {
 							toHide[identifier] = hideElements;
 						}
-		                grid.template.addExpand(
+						grid.template.addExpand(
 							grid.gridUnique, grid.container, row, column.name, expanded,
 							family[identifier].parentLevel,
 							()=>{  /* show */
@@ -534,9 +555,9 @@ class TotiGrid {
 						grid.template.addCell(grid.gridUnique, grid.container, row, column.name, rowData[column.name], 0);
 					}
 				});
-                if (grid.config.hasOwnProperty("rowRenderer")) {
-                    totiUtils.execute(grid.config.rowRenderer, [row, rowData]);
-                }
+				if (grid.config.hasOwnProperty("rowRenderer")) {
+					totiUtils.execute(grid.config.rowRenderer, [row, rowData]);
+				}
 			}
 			if (sortedFamily.length === 0) {
 				response.data.forEach(function(rowData) {
@@ -558,62 +579,62 @@ class TotiGrid {
 				});
 			}
 			
-		    toHide.forEach((func)=>{
+			toHide.forEach((func)=>{
 				func();
 			});
-		    grid.template.clearPageButtons(grid.gridUnique, grid.container);
+			grid.template.clearPageButtons(grid.gridUnique, grid.container);
 
-		    if (grid.config.paggingButtonsCount > 0 && response.data.length > 0)  {
-		    	var onClick = function(newIndex) {
-		    		return function() {
-		    			grid.setPageIndex(newIndex);
-		    		};
-		    	};
-			    if (response.itemsCount > grid.pageSize && response.pageIndex > 1) {
-			    	grid.template.addPageButton(grid.gridUnique, grid.container, totiTranslations.pages.first, false, onClick(1));
-			    }
-			    if (response.itemsCount > grid.pageSize && response.pageIndex > 2) {
-			    	grid.template.addPageButton(
-			    		grid.gridUnique, grid.container, totiTranslations.pages.previous, false, onClick(response.pageIndex - 1)
-			    	);
-			    }
-			    var lastPageIndex = Math.ceil(response.itemsCount/grid.pageSize);
-			    var lowerPage = response.pageIndex - Math.floor(grid.config.paggingButtonsCount / 2);
+			if (grid.config.paggingButtonsCount > 0 && response.data.length > 0)  {
+				var onClick = function(newIndex) {
+					return function() {
+						grid.setPageIndex(newIndex);
+					};
+				};
+				if (response.itemsCount > grid.pageSize && response.pageIndex > 1) {
+					grid.template.addPageButton(grid.gridUnique, grid.container, totiTranslations.pages.first, false, onClick(1));
+				}
+				if (response.itemsCount > grid.pageSize && response.pageIndex > 2) {
+					grid.template.addPageButton(
+						grid.gridUnique, grid.container, totiTranslations.pages.previous, false, onClick(response.pageIndex - 1)
+					);
+				}
+				var lastPageIndex = Math.ceil(response.itemsCount/grid.pageSize);
+				var lowerPage = response.pageIndex - Math.floor(grid.config.paggingButtonsCount / 2);
 				if (lowerPage > lastPageIndex - grid.config.paggingButtonsCount) {
 					lowerPage = lastPageIndex - grid.config.paggingButtonsCount;
 				}
-			    if (lowerPage < 1) {
+				if (lowerPage < 1) {
 					lowerPage = 1;
 				}
 
-			    var upperPage = lowerPage + grid.config.paggingButtonsCount;
-			    if (lastPageIndex === upperPage) {
-			    	upperPage = lastPageIndex + 1;
-			    } else if (upperPage > lastPageIndex) {
-			    	upperPage = lastPageIndex + 1;
-			    }
+				var upperPage = lowerPage + grid.config.paggingButtonsCount;
+				if (lastPageIndex === upperPage) {
+					upperPage = lastPageIndex + 1;
+				} else if (upperPage > lastPageIndex) {
+					upperPage = lastPageIndex + 1;
+				}
 
 				for (var i = lowerPage; i < upperPage; i++) {
 					grid.template.addPageButton(grid.gridUnique, grid.container, i, i === response.pageIndex, onClick(i));
 				}
 
 				if (response.pageIndex + 1 < lastPageIndex) {
-			    	grid.template.addPageButton(
-			    		grid.gridUnique, grid.container, totiTranslations.pages.next, false, onClick(response.pageIndex + 1)
-			    	);
-			    }
-				if (response.pageIndex < lastPageIndex) {
-			    	grid.template.addPageButton(grid.gridUnique, grid.container, totiTranslations.pages.last, false, onClick(lastPageIndex));
+					grid.template.addPageButton(
+						grid.gridUnique, grid.container, totiTranslations.pages.next, false, onClick(response.pageIndex + 1)
+					);
 				}
-		    }
-		    if (grid.config.useLoadButton && grid.loadNext_count < response.itemsCount) {
-		    	grid.template.addPageButton(grid.gridUnique, grid.container, totiTranslations.pages.loadNext, false, function() {
-		    		grid.addNextPage();
-		    	});
-		    }
+				if (response.pageIndex < lastPageIndex) {
+					grid.template.addPageButton(grid.gridUnique, grid.container, totiTranslations.pages.last, false, onClick(lastPageIndex));
+				}
+			}
+			if (grid.config.useLoadButton && grid.loadNext_count < response.itemsCount) {
+				grid.template.addPageButton(grid.gridUnique, grid.container, totiTranslations.pages.loadNext, false, function() {
+					grid.addNextPage();
+				});
+			}
 			if (grid.config.hasOwnProperty("afterBind")) {
-	            totiUtils.execute(grid.config.afterBind, [response.data, grid, response]);
-	        }
+				totiUtils.execute(grid.config.afterBind, [response.data, grid, response]);
+			}
 			totiDisplay.fadeOut();
 		})
 		.catch(function(xhr) {

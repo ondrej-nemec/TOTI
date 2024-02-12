@@ -1,4 +1,4 @@
-/* TOTI Control version 2.1.3 */
+/* TOTI Control version 2.2.0 */
 var totiControl = {
 	label: function (forInput, title, params = {}) {
 		var label = document.createElement("label");
@@ -165,7 +165,7 @@ var totiControl = {
 						"params": load.params
 					});
 					if (!totiControl.inputs._selectCache.hasOwnProperty(cacheKey)) {
-						totiControl.inputs._selectCache[cacheKey] = totiLoad.load(load.url, load.method, {}, load.params);
+						totiControl.inputs._selectCache[cacheKey] = totiLoad.async(load.url, load.method, {}, load.params);
 					}
 					return totiControl.inputs._selectCache[cacheKey];
 				}
@@ -192,19 +192,11 @@ var totiControl = {
 						break;
 					case "action":
 						if (typeof attributes[key] === "object") {
-							if (!attributes[key].async && attributes[key].method === 'get' && button.tagName === 'A') {
-								var href = attributes[key].href;
-								if (Object.keys(attributes[key].params).length > 0) {
-									var concat = '?';
-									if (attributes[key].href.includes('?')) {
-										concat = '&';
-									}
-									href += concat + new URLSearchParams(attributes[key].params).toString();
-								}
-								button.setAttribute("href", href);
-							} else {
-								button.onclick = totiControl.getAction(attributes[key]);
+							/* show full link on hover */
+							if (attributes[key].method === 'get' && button.tagName === 'A') {
+								button.href = totiLoad.createLink(attributes[key].href, attributes[key].params);
 							}
+							button.onclick = totiControl.getAction(attributes[key]);
 						} else if (typeof attributes[key] === 'function') {
 							button.addEventListener('click', attributes[key]);
 						} else {
@@ -385,7 +377,7 @@ var totiControl = {
 							"params": params.load.params
 						});
 						if (!totiControl.inputs._selectCache.hasOwnProperty(cacheKey)) {
-							totiControl.inputs._selectCache[cacheKey] = totiLoad.load(params.load.url, params.load.method, {}, params.load.params);
+							totiControl.inputs._selectCache[cacheKey] = totiLoad.async(params.load.url, params.load.method, {}, params.load.params);
 						}
 						return totiControl.inputs._selectCache[cacheKey].then((options)=>{
 							return res.concat(options);
@@ -651,7 +643,7 @@ var totiControl = {
 				}
 				if (clickSettings.async) {
 					totiDisplay.fadeIn();
-					return totiLoad.load(
+					return totiLoad.async(
 						clickSettings.href,
 						clickSettings.method,
 						{},
@@ -676,12 +668,13 @@ var totiControl = {
 					});
 				} else {
 					totiDisplay.fadeOut();
-					/* totiControl.load.link(href, method, {}, totiControl.getHeaders()); */
-					var href = clickSettings.href;
-					if (clickSettings.params instanceof URLSearchParams) {
-						href += '?' + clickSettings.params.toString();
-					}
-					window.location = href;
+					totiLoad.sync(
+						clickSettings.href,
+						clickSettings.method,
+						{},
+						{},
+						clickSettings.params
+					);
 				}
 			});
 		};

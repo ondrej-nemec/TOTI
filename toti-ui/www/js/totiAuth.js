@@ -17,7 +17,7 @@ var totiAuth = {
     	if (url === null) {
     		onLogout();
     	} else {
-    		totiLoad.load(url, method)
+    		totiLoad.async(url, method)
     		.then(onLogout)
     		.catch(function(err) {
     			/* TODO display error */
@@ -32,7 +32,7 @@ var totiAuth = {
     isRefreshActive: false, /* internal */
     refresh: function(url, method, expiredIn) {
         totiAuth.isRefreshActive = true;
-    	totiLoad.load(url, method)
+    	totiLoad.async(url, method)
         .then((response)=>{
             totiAuth.customRefreshHandler(response);
             return response;

@@ -1,4 +1,4 @@
-/* TOTI Form version 1.2.2 */
+/* TOTI Form version 1.3.0 */
 class TotiForm {
 
 	constructor(config) {
@@ -70,13 +70,13 @@ class TotiForm {
 		var originName = field.name;
 		if (parent !== null) {
 			var fieldName = parent.name;
-            if (parent.position !== false) {
-               	fieldName += "[" + field.name + "]";
-            }
-            if (parent.group !== null) {
-                fieldName = fieldName.replace('{i}', parent.group);
-            }
-            field.name = fieldName;
+			if (parent.position !== false) {
+			   	fieldName += "[" + field.name + "]";
+			}
+			if (parent.group !== null) {
+				fieldName = fieldName.replace('{i}', parent.group);
+			}
+			field.name = fieldName;
 
 			if (parent.position !== false && field.hasOwnProperty("title")) {
 				field.title = field.title.replace('{i}', parent.position);
@@ -87,7 +87,7 @@ class TotiForm {
 		
 		if (field.type === "dynamic" && field.hasOwnProperty('load')) {
 			var dynamicContainer = form.template.getDynamicContainer(form.formUnique, form.container, form.container, 0, field.name, field.title, null);
-			totiLoad.load(field.load.url, field.load.method, {}, {}, field.load.params)
+			totiLoad.async(field.load.url, field.load.method, {}, {}, field.load.params)
 			.then((loaded)=>{
 				loaded.forEach((group)=>{
 					if (group.disabled) {
@@ -110,16 +110,16 @@ class TotiForm {
 				});
 			}).catch((xhr)=>{
 				totiDisplay.flash('error', totiTranslations.formMessages.renderError, xhr);
-            });
+			});
 		} else if (field.type === "dynamic") {
 			var dynamicCache = this.dynamic;
-            var parentContainer = form.container;
-            var deep = 0;
+			var parentContainer = form.container;
+			var deep = 0;
 			if (parent !== null) {
 				if (parent.hasOwnProperty('dynamic')) {
 					parent.dynamic['dynamic'] = {};
 					dynamicCache = parent.dynamic['dynamic'];
-                    parentContainer = parent.container;
+					parentContainer = parent.container;
 					deep = parent.deep + 1;
 				}
 			}
@@ -154,9 +154,9 @@ class TotiForm {
 						name: parentName,
 						position: position+1,
 						container: rowContainer,
-                        group: position,
-                        dynamic: dynamicCache[field.name],
-                		deep: dynamicCache[realName].deep
+						group: position,
+						dynamic: dynamicCache[field.name],
+						deep: dynamicCache[realName].deep
 					});
 				});
 				return position;
@@ -174,7 +174,7 @@ class TotiForm {
 				position: -1,
 				container: dynamicContainer,
 				elements: {},
-                deep: deep
+				deep: deep
 			};
 			if (field.addFirstBlank) {
 				addItem();
@@ -185,7 +185,7 @@ class TotiForm {
 					name: field.name,
 					position: index,
 					container: container,
-                    group: null
+					group: null
 				});
 			});
 		} else if (!editable) {
@@ -349,7 +349,7 @@ class TotiForm {
 				if (form.getAttribute("enctype") !== null) {
 					headers.enctype = form.getAttribute("enctype");
 				}
-				totiLoad.load(
+				totiLoad.async(
 					form.getAttribute("action"), 
 					form.getAttribute("method"), 
 					headers,
@@ -410,23 +410,17 @@ class TotiForm {
 				});
 				return;
 			}
-			var formTosend = document.createElement("form");
-			formTosend.style.display = "none";
-			document.body.appendChild(formTosend);
-
-			formTosend.setAttribute("action", form.getAttribute("action"));
-			formTosend.setAttribute("method", form.getAttribute("method"));
+			var formAttibutes = {};
 			if (form.getAttribute("enctype") !== null) {
-				formTosend.setAttribute("enctype", form.getAttribute("enctype"));
+				formAttributes['enctype'] = form.getAttribute("enctype");
 			}
-			for (const[name, value] of data.entries()) {
-				var hidden = document.createElement("input");
-				hidden.name = name;
-				hidden.value = value;
-				formTosend.appendChild(hidden);
-			}
-			formTosend.submit();
-			formTosend.remove();
+			totiLoad.sync(
+				  form.getAttribute("action"),
+				  form.getAttribute("method"),
+				  formAttibutes,
+				  {},
+				  data
+			  );
 		});
 		totiDisplay.fadeOut();
 		return false;
@@ -467,12 +461,12 @@ class TotiForm {
 					select.value = val;
 				});
 				break;
-            case "datetime-local":
-                if (value !== null && value.length > 19) {
-                    /* FIX for Java 9 and above. LocalDateTime contains 6 digits in microseconds*/
-                    element.value = value.substring(0, 19);
-                    break;
-                }
+			case "datetime-local":
+				if (value !== null && value.length > 19) {
+					/* FIX for Java 9 and above. LocalDateTime contains 6 digits in microseconds*/
+					element.value = value.substring(0, 19);
+					break;
+				}
 			default:
 				element.value = value;
 		}
@@ -499,23 +493,23 @@ class TotiForm {
 			case "select-one":
 				/* now ignored */
 				break;
-            case "datetime-local":
-                if (value !== null && value.length > 19) {
-                    /* FIX for Java 9 and above. LocalDateTime contains 6 digits in microseconds*/
-                    element.setAttribute("placeholder", value.substring(0, 19));
-                    break;
-                }
+			case "datetime-local":
+				if (value !== null && value.length > 19) {
+					/* FIX for Java 9 and above. LocalDateTime contains 6 digits in microseconds*/
+					element.setAttribute("placeholder", value.substring(0, 19));
+					break;
+				}
 			default:
-                if (value !== null && value.length > 0) {
+				if (value !== null && value.length > 0) {
 					element.setAttribute("placeholder", value);
-                }
+				}
 		}
 	}
 
 	setValues(loadConfig, formUnique, container, setValue) {
 		var form = this;
 		totiDisplay.fadeIn();
-		totiLoad.load(loadConfig.url, loadConfig.method).then(function(values) {
+		totiLoad.async(loadConfig.url, loadConfig.method).then(function(values) {
 			if (loadConfig.hasOwnProperty("before") && loadConfig.before !== null) {
 				totiUtils.execute(loadConfig.before, [values, form]);
 			}
@@ -543,15 +537,15 @@ class TotiForm {
 
 	_setValues(values, setValue) {
 		var form = this;
-        var container = this.container;
-        function bindElement(dynamicCache, originName, name, value, position = 0) {
+		var container = this.container;
+		function bindElement(dynamicCache, originName, name, value, position = 0) {
 			var dynamic = dynamicCache[name]; /*dynamicCache[originName];*/
 			if (!dynamic) {
 				dynamic = dynamicCache[originName];
 			}
 			if (value === null) {
 				/* ignore */
-            } else if (Array.isArray(value)) {
+			} else if (Array.isArray(value)) {
 				value.forEach(function(val, index) {
 					var key = name + "[]";
 					if (dynamic) {

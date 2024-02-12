@@ -19,13 +19,18 @@ public class Button implements Input {
 	private boolean async = false;
 	private String method = "get";
 	private Map<String, String> requestParams = new HashMap<>();
-	private final Map<String, String> params = new HashMap<>();
+	private final Map<String, Object> params = new HashMap<>();
 	private String onFailure;
 	private String onSuccess;
 	private String condition = null;
 	private boolean evaluate = false;
 	private List<String> classes = new LinkedList<>();
 	// TODO vyzkouset value
+	
+	// grid only
+	private boolean isReset = false;
+	private boolean isRefresh = false;
+	private boolean addFilters = false;
 
 	public static Button create(String url, String name) {
 		return new Button(url, name, false);
@@ -87,7 +92,7 @@ public class Button implements Input {
 		return this;
 	}
 
-	public Button addParam(String name, String value) {
+	public Button addParam(String name, Object value) {
 		params.put(name, value);
 		return this;
 	}
@@ -110,6 +115,20 @@ public class Button implements Input {
 		this.condition = condition;
 		this.evaluate = evaluate;
 		return this;
+	}
+	
+	public Button setAddFilters(boolean addFilters) {
+		this.addFilters = addFilters;
+		return this;
+	}
+	
+
+	public Map<String, Object> getGlobalSettings() {
+		Map<String, Object> settings = getInputSettings();
+		settings.put("is_reset", isReset);
+		settings.put("is_refresh", isRefresh);
+		settings.put("addFilters", addFilters);
+		return settings;
 	}
 	
 	@Override

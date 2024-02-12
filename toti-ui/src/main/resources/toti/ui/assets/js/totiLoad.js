@@ -1,39 +1,31 @@
-/* TOTI Load version 1.0.2 */
+/* TOTI Load version 2.0.0 */
 var totiLoad = {
-	anonymous: function(url, method, headers = {}, urlData = {}, bodyData = {}) {
-		return totiLoad._load(url, method, headers, urlData, bodyData);
-	},
-	load: function(url, method, headers = {}, urlData = {}, bodyData = {}) {
-		return totiLoad._load(url, method, {
+	/*
+	- headers: object
+	- queryParams: object|URLSearchParams
+	- bodyData: object|URLSearchParams|string|FormData
+	*/
+	async: function(url, method, headers = {}, queryParams = {}, bodyData = {}) {
+		return totiLoad.asyncAnonymous(url, method, {
 			...headers,
 			...totiLoad.getTotiHeaders()
-		}, urlData, bodyData);
+		}, queryParams, bodyData);
 	},
-	_load: function(url, method, headers, urlData, bodyData) {
+	/*
+	- headers: object
+	- queryParams: object|URLSearchParams
+	- bodyData: object|URLSearchParams|string|FormData
+	*/
+	asyncAnonymous: function(url, method, headers = {}, queryParams = {}, bodyData = {}) {
 		return new Promise(function (resolve, reject) {
 			var xhr = new XMLHttpRequest();
+			
+			url = totiLoad.createLink(url, queryParams);
 			/* sending body is not supported for GET and HEAD */
 			if (method.toLowerCase() === "get" || method.toLowerCase() === "head") {
-				if (bodyData instanceof FormData) {
-					for (const[name, value] of bodyData.entries()) {
-						urlData[name] = value;
-					}
-				} else {
-					urlData = {
-						...urlData,
-						...bodyData
-					};
-					var auxData = {};
-					for (const[name, value] of Object.entries(urlData)) {
-						totiLoad.parseParams(auxData, name, value);
-					}
-					urlData = auxData;
-				}
+				url = totiLoad.createLink(url, bodyData);
 			}
-			if (urlData !== null && urlData !== {}) {
-				url = url + "?" + ((urlData instanceof URLSearchParams) ? urlData : new URLSearchParams(urlData)).toString();
-			}
-			xhr.open(method, url); /* method*/
+			xhr.open(method, url);
 
 			for (const[name, value] of Object.entries(headers)) {
 				xhr.setRequestHeader(name, value);
@@ -80,19 +72,71 @@ var totiLoad = {
 			}
 		});
 	},
-	parseParams: function(result, name, value) {
+	/*
+	- body data: FormData|object|URLSearchParams
+	- queryParams: object|URLSearchParams
+	- formAttributes: object
+	*/
+	sync: function(url, method, formAttributes = {}, queryParams = {}, bodyData = {}) {
+		var formTosend = document.createElement("form");
+		formTosend.style.display = "none";
+		document.body.appendChild(formTosend);
+
+		formTosend.setAttribute("action", totiLoad.createLink(url, queryParams));
+		formTosend.setAttribute("method", method);
+		for(const[name, value] of Object.entries(formAttributes)) {
+			formTosend.setAttribute(name, value);
+		}
+		totiLoad.iterateParams(bodyData, (name, value)=>{
+			var hidden = document.createElement("input");
+			hidden.name = name;
+			hidden.value = value;
+			formTosend.appendChild(hidden);
+		});
+		formTosend.submit();
+		formTosend.remove();
+	},
+	/*************/
+	createLink: function(link, params) {
+		var url = new URL(link, document.location);
+		totiLoad.iterateParams(params, (name, value)=>{
+			url.searchParams.set(name, value);
+		});
+		return url.toString();
+	},
+	iterateParams: function(params, callback) {
+		function onItem(name, value) {
+			totiLoad.parseParams(name, value, (n, v)=>{
+				callback(n, v);
+			});
+		}
+		if (params instanceof URLSearchParams) {
+			params.forEach((value, name)=>{
+				onItem(name, value);
+			});
+		} else if (params instanceof FormData) {
+			for (const[name, value] of params.entries()) {
+				onItem(name, value);
+			}
+		} else if (typeof params === 'object') {
+			for(const[name, value] of Object.entries(params)) {
+				onItem(name, value);
+			}
+		}
+	},
+	parseParams: function(name, value, addItem) {
 		if (value === null) {
 			/* ignore */
 		} else if (Array.isArray(value)) {
 			value.forEach((item)=>{
-				totiLoad.parseParams(result, name + '[]', item);
+				totiLoad.parseParams(name + '[]', item, addItem);
 			});
 		} else if (typeof value === 'object') {
 			for(const[key, item] of Object.entries(value)) {
-				totiLoad.parseParams(result, name + '[' + key + ']', item);
+				totiLoad.parseParams(name + '[' + key + ']', item, addItem);
 			}
 		} else {
-			result[name] = value;
+			addItem(name, value);
 		}
 	},
 	getTotiHeaders: function() {
