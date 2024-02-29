@@ -37,25 +37,25 @@ public class HttpServer {
 	}
 	
 	public Application addApplication(
-			String hostname,
+			String appIdentifier,
 			ThrowingBiFunction<Env, ApplicationFactory, Application, Exception> init,
 			String... alias) throws Exception {
-		ApplicationFactory applicationFactory = new ApplicationFactory(hostname, env, charset, loggerFactory, alias);
+		ApplicationFactory applicationFactory = new ApplicationFactory(appIdentifier, env, charset, loggerFactory, alias);
 		Application application = init.apply(env, applicationFactory);
-		applications.put(hostname, application);
+		applications.put(appIdentifier, application);
 		if (isRunning && application.isAutoStart()) {
-			startApplication(hostname, application);
+			startApplication(appIdentifier, application);
 		}
 		return application;
 	}
 	
-	public boolean removeApplication(String hostname) {
-		if (applications.containsKey(hostname)) {
-			if (!stopApplication(hostname, applications.get(hostname))) {
+	public boolean removeApplication(String appIdentifier) {
+		if (applications.containsKey(appIdentifier)) {
+			if (!stopApplication(appIdentifier, applications.get(appIdentifier))) {
 				return false;
 			}
 			//consumer.removeApplication(hostname);
-			applications.remove(hostname);
+			applications.remove(appIdentifier);
 		}
 		return true;
 	}
@@ -83,26 +83,26 @@ public class HttpServer {
 		logger.info("Server stopped");
 	}
 	
-	protected void startApplication(String host, Application application) {
+	protected void startApplication(String appIdentifier, Application application) {
 		try {
-			logger.info("Application is starting: " + host);
+			logger.info("Application is starting: " + appIdentifier);
 			application.start();
-			consumer.addApplication(application.getRequestAnswer(), host, application.getAliases());
-			logger.info("Application is running: " + host);
+			consumer.addApplication(application.getRequestAnswer(), appIdentifier, application.getAliases());
+			logger.info("Application is running: " + appIdentifier);
 		} catch (Exception e) {
-			logger.error("Application start fail: " + host, e);
+			logger.error("Application start fail: " + appIdentifier, e);
 		}
 	}
 	
-	protected boolean stopApplication(String host, Application application) {
+	protected boolean stopApplication(String appIdentifier, Application application) {
 		try {
-			logger.info("Application is stopping: " + host);
-			consumer.removeApplication(host);
+			logger.info("Application is stopping: " + appIdentifier);
+			consumer.removeApplication(appIdentifier);
 			application.stop();
-			logger.info("Application is stopped: " + host);
+			logger.info("Application is stopped: " + appIdentifier);
 			return true;
 		} catch (Exception e) {
-			logger.error("Application stop fail: " + host, e);
+			logger.error("Application stop fail: " + appIdentifier, e);
 			return false;
 		}
 	}
