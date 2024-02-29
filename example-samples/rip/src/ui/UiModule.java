@@ -1,4 +1,4 @@
-package toti.samples.templating;
+package toti.samples.ui;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,7 +13,15 @@ import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Register;
 
-public class TemplateModule implements Module {
+public class UiModule implements Module {
+	
+	// TODO
+	/*
+	- forms
+	- grids
+	- specials inputs
+	- validation
+	*/
 
 	@Override
 	public List<Task> initInstances(Env env, Translator translator, Register register, Link link, Database database,
@@ -23,7 +31,7 @@ public class TemplateModule implements Module {
 
 	@Override
 	public String getName() {
-		return "templating";
+		return "ui";
 	}
 
 }
