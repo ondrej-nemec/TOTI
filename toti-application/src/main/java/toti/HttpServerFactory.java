@@ -67,7 +67,7 @@ public class HttpServerFactory {
 	}
 	
 	private int getThreadPool(Env env) {
-		return getProperty(threadPool, "port", 5, Integer.class, env);
+		return getProperty(threadPool, "thread-pool", 5, Integer.class, env);
 	}
 	
 	private long getReadTimeout(Env env) {
