@@ -32,11 +32,12 @@ public class Application {
 	private final Param root;
 	
 	private final String[] aliases;
+	private final String hostname;
 	
 	public Application(
 			List<Task> tasks, Translator translator, Param root, Database database,
 			Link link, Register register, List<String> migrations, Answer answer,
-			boolean autoStart, String... aliases) {
+			boolean autoStart, String hostname, String... aliases) {
 		this.tasks = tasks;
 		this.translator = translator;
 		this.database = database;
@@ -48,6 +49,7 @@ public class Application {
 		this.autoStart = autoStart;
 		this.aliases = aliases;
 		this.root = root;
+		this.hostname = hostname;
 	}
 
 /*
@@ -62,6 +64,10 @@ public class Application {
 	
 	public String[] getAliases() {
 		return aliases;
+	}
+	
+	public String getHostname() {
+		return hostname;
 	}
 
 	public Translator getTranslator() {

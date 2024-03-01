@@ -39,12 +39,12 @@ public class HttpServer {
 	public Application addApplication(
 			String appIdentifier,
 			ThrowingBiFunction<Env, ApplicationFactory, Application, Exception> init,
-			String... alias) throws Exception {
-		ApplicationFactory applicationFactory = new ApplicationFactory(appIdentifier, env, charset, loggerFactory, alias);
+			String hostname, String... alias) throws Exception {
+		ApplicationFactory applicationFactory = new ApplicationFactory(appIdentifier, env, charset, loggerFactory, hostname, alias);
 		Application application = init.apply(env, applicationFactory);
 		applications.put(appIdentifier, application);
 		if (isRunning && application.isAutoStart()) {
-			startApplication(appIdentifier, application);
+			startApplication(appIdentifier);
 		}
 		return application;
 	}
@@ -65,7 +65,7 @@ public class HttpServer {
 		server.start();
 		applications.forEach((host, application)->{
 			if (application.isAutoStart()) {
-				startApplication(host, application);
+				startApplication(host);
 			}
 		});
 		logger.info("Server is running");
@@ -83,11 +83,15 @@ public class HttpServer {
 		logger.info("Server stopped");
 	}
 	
-	protected void startApplication(String appIdentifier, Application application) {
+	protected void startApplication(String appIdentifier) {
+		if (!applications.containsKey(appIdentifier)) {
+			logger.warn("Unknown application: " + appIdentifier);
+		}
 		try {
+			Application application = applications.get(appIdentifier);
 			logger.info("Application is starting: " + appIdentifier);
 			application.start();
-			consumer.addApplication(application.getRequestAnswer(), appIdentifier, application.getAliases());
+			consumer.addApplication(application.getRequestAnswer(), application.getHostname(), application.getAliases());
 			logger.info("Application is running: " + appIdentifier);
 		} catch (Exception e) {
 			logger.error("Application start fail: " + appIdentifier, e);

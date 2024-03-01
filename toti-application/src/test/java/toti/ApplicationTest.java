@@ -31,7 +31,7 @@ public class ApplicationTest {
 		Task task2 = mock(Task.class);
 		Database database = mock(Database.class);
 		
-		Application application = new Application(Arrays.asList(task1, task2), null, null, database, null, null, null, null, false);
+		Application application = new Application(Arrays.asList(task1, task2), null, null, database, null, null, null, null, false, null);
 
 		assertFalse(application.isRunning());
 		assertTrue(application.start()); // start
@@ -53,7 +53,7 @@ public class ApplicationTest {
 	public void testStartStartsTasks() throws Exception {
 		Task task1 = mock(Task.class);
 		Task task2 = mock(Task.class);
-		Application application = new Application(Arrays.asList(task1, task2), null, null, null, null, null, null, null, false);
+		Application application = new Application(Arrays.asList(task1, task2), null, null, null, null, null, null, null, false, null);
 		assertTrue(application.start());
 		verify(task1, times(1)).start();
 		verify(task2, times(1)).start();
@@ -63,7 +63,7 @@ public class ApplicationTest {
 	@Test
 	public void testStartCreateAndMigrateDatabase() throws Exception {
 		Database database = mock(Database.class);
-		Application application = new Application(Arrays.asList(), null, null, database, null, null, null, null, false);
+		Application application = new Application(Arrays.asList(), null, null, database, null, null, null, null, false, null);
 		assertTrue(application.start());
 		
 		verify(database, times(1)).createDbIfNotExists();
@@ -78,7 +78,7 @@ public class ApplicationTest {
 		Database database = mock(Database.class);
 		doThrow(new SQLException()).when(database).createDbIfNotExists();
 		
-		Application application = new Application(Arrays.asList(task1, task2), null, null, database, null, null, null, null, false);
+		Application application = new Application(Arrays.asList(task1, task2), null, null, database, null, null, null, null, false, null);
 		
 		try {
 			application.start();
@@ -97,7 +97,7 @@ public class ApplicationTest {
 		Database database = mock(Database.class);
 		doThrow(new SQLException()).when(database).migrate();
 		
-		Application application = new Application(Arrays.asList(task1, task2), null, null, database, null, null, null, null, false);
+		Application application = new Application(Arrays.asList(task1, task2), null, null, database, null, null, null, null, false, null);
 		
 		try {
 			application.start();
@@ -114,7 +114,7 @@ public class ApplicationTest {
 	public void testStopStopsTasks() throws Exception {
 		Task task1 = mock(Task.class);
 		Task task2 = mock(Task.class);
-		Application application = new Application(Arrays.asList(task1, task2), null, null, null, null, null, null, null, false);
+		Application application = new Application(Arrays.asList(task1, task2), null, null, null, null, null, null, null, false, null);
 		application.stop();
 		verify(task1, times(1)).stop();
 		verify(task2, times(1)).stop();
@@ -148,22 +148,29 @@ public class ApplicationTest {
 		indexParam.addAction(HttpMethod.GET, MappedAction.test("extra", "indexParam", "GET"));
 		indexParam.addAction(HttpMethod.POST, MappedAction.test("extra", "indexParam", "POST"));
 		
-		Application application = new Application(Arrays.asList(), null, root, null, null, null, null, null, false);
+		Application application = new Application(Arrays.asList(), null, root, null, null, null, null, null, false, null);
 		
 		List<String> actual = new LinkedList<>();
 		application.iterate((item)->{
 			actual.add(item.getMethod() + " " + item.getUri());
 		});
-		assertEquals(Arrays.asList(
+		List<String> expected = Arrays.asList(
 			"GET /module/controller",
 			"DELETE /module/controller/method1",
 			"POST /module/controller/method1",
 			"GET /extra/index",
-			"POST /extra/index/{}",
 			"GET /extra/index/{}",
+			"POST /extra/index/{}",
 			"POST /extra/{}",
 			"GET /extra/{}/string"
-		), actual);
+		);
+		
+		try {
+			assertEquals(expected, actual);
+		} catch (Throwable t) {
+			assertEquals(expected.toString(), actual.toString());
+			throw t;
+		}
 	}
 	
 }

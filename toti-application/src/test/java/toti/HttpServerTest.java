@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -46,7 +47,7 @@ public class HttpServerTest {
 			server, mock(Env.class), "charset",
 			mock(ServerConsumer.class), n->logger, logger
 		));
-		doNothing().when(toti).startApplication(any(), any());
+		doNothing().when(toti).startApplication(any());
 		toti.getApplications().put("h1", app1);
 		toti.getApplications().put("h2", app2);
 		toti.getApplications().put("h3", app3);
@@ -55,9 +56,9 @@ public class HttpServerTest {
 		assertTrue(toti.isRunning());
 		
 		verify(server, times(1)).start();
-		verify(toti, times(2)).startApplication(any(), any());
-		verify(toti, times(1)).startApplication("h1", app1);
-		verify(toti, times(1)).startApplication("h2", app2);
+		verify(toti, times(2)).startApplication(any());
+		verify(toti, times(1)).startApplication("h1");
+		verify(toti, times(1)).startApplication("h2");
 		// called in test
 		verify(toti, times(3)).getApplications();
 		verify(toti, times(1)).start();
@@ -141,23 +142,23 @@ public class HttpServerTest {
 			mock(ServerConsumer.class), n->logger, logger
 		));
 		server.setRunning(isServerRunning);
-		doNothing().when(server).startApplication(any(), any());
+		doNothing().when(server).startApplication(any());
 		
 		assertTrue(server.getApplications().isEmpty());
 		
-		server.addApplication("host", (e, factory)->{
+		server.addApplication("testId", (e, factory)->{
 			return app;
-		}, "h1", "h2");
+		}, "host", "a1", "a2");
 		
 		assertEquals(
-			MapInit.create().append("host", app).toMap(),
+			MapInit.create().append("testId", app).toMap(),
 			server.getApplications()
 		);
-		verify(server, times(times)).startApplication("host", app);
+		verify(server, times(times)).startApplication("testId");
 		// called in test
 		verify(server, times(1)).setRunning(anyBoolean());
 		verify(server, times(2)).getApplications();
-		verify(server, times(1)).addApplication(any(), any(), any());
+		verify(server, times(1)).addApplication(eq("testId"), any(), eq("host"), eq("a1"), eq("a2"));
 		verifyNoMoreInteractions(server);
 	}
 
@@ -222,10 +223,15 @@ public class HttpServerTest {
 		Application app = mock(Application.class);
 		when(app.getRequestAnswer()).thenReturn(answer);
 		when(app.getAliases()).thenReturn(aliases);
+		when(app.getHostname()).thenReturn("host");
 		
-		server.startApplication("host", app);
+		server.getApplications().put("testId", app);
+		
+		server.startApplication("testId");
+		
 		verify(app, times(1)).start();
 		verify(app, times(1)).getAliases();
+		verify(app, times(1)).getHostname();
 		verify(app, times(1)).getRequestAnswer();
 		verify(consumer, times(1)).addApplication(answer, "host", aliases);
 		verifyNoMoreInteractions(app, consumer);

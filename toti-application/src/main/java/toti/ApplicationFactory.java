@@ -66,12 +66,13 @@ public class ApplicationFactory {
 	private UriPattern pattern = new UriPattern() {};
 	
 	private String[] aliases;
+	private String hostname;
 	
 	//private Env appEnv;
 	
 	private final Env env;
 	private BiFunction<String, String, Logger> loggerFactory;
-	private final String hostname;
+	private final String appIdentifier;
 	private final String charset;
 	
 	private final List<OnSession> sessions;
@@ -79,12 +80,14 @@ public class ApplicationFactory {
 	private final List<String> translationPaths;
 	private Profiler profiler;
 	
-	public ApplicationFactory(String hostname, Env env, String charset, Function<String, Logger> loggerFactory, String... aliases) {
-		this.env = env.getModule("applications").getModule(hostname);
-		this.loggerFactory = (hostName, loggerName)->loggerFactory.apply(hostname+ "_" + loggerName);
-		this.hostname = hostname;
+	public ApplicationFactory(String appIdentifier, Env env, String charset, Function<String, Logger> loggerFactory,
+		String hostname, String... aliases) {
+		this.env = env.getModule("applications").getModule(appIdentifier);
+		this.loggerFactory = (hostName, loggerName)->loggerFactory.apply(appIdentifier+ "_" + loggerName);
+		this.appIdentifier = appIdentifier;
 		this.charset = charset;
 		this.aliases = aliases;
+		this.hostname = hostname;
 		
 		this.sessions = new LinkedList<>();
 		this.totiResponses = new LinkedList<>();
@@ -92,7 +95,7 @@ public class ApplicationFactory {
 	}
 
 	public Application create(List<Module> modules) throws Exception {
-		Logger logger = loggerFactory.apply(hostname, "toti");
+		Logger logger = loggerFactory.apply(appIdentifier, "toti");
 		
 		List<String> migrations = new LinkedList<>();
 		modules.forEach((config)->{
@@ -106,7 +109,7 @@ public class ApplicationFactory {
 		
 		
 		Database database = getDatabase(
-			env.getModule("database"), migrations, profiler, loggerFactory.apply(hostname, "database")
+			env.getModule("database"), migrations, profiler, loggerFactory.apply(appIdentifier, "database")
 		);
 		if (database == null) {
 			logger.info("No database specified");
@@ -125,12 +128,12 @@ public class ApplicationFactory {
 		if (translator == null) {
 			LanguageSettings langSettings = getLangSettings(env);
 			langSettings.setProfiler(profiler);
-			this.translator = Translator.create(langSettings, trans, loggerFactory.apply(hostname, "translator"));
+			this.translator = Translator.create(langSettings, trans, loggerFactory.apply(appIdentifier, "translator"));
 		}
 		for (Module module : modules) {
 			actualModule.set(module);
 			TemplateFactory templateFactory = new TemplateFactory(
-					getTempPath(env, hostname),
+					getTempPath(env, appIdentifier),
 					module.getTemplatesPath(),
 					module.getName(),
 					module.getPath(),
@@ -148,7 +151,7 @@ public class ApplicationFactory {
 			tasks.addAll(
 				module.initInstances(
 					env, translator, register, link, database,
-					loggerFactory.apply(hostname, module.getName())
+					loggerFactory.apply(appIdentifier, module.getName())
 				)
 			);
 			module.addRoutes(router, link);
@@ -156,7 +159,7 @@ public class ApplicationFactory {
 		actualModule.set(null);
 		
 		TemplateFactory totiTemplateFactory = new TemplateFactory(
-			getTempPath(env, hostname), "toti", "", "", templateFactories,
+			getTempPath(env, appIdentifier), "toti", "", "", templateFactories,
 			getDeleteTempJavaFiles(env), getMinimalize(env),
 			logger
 		).setProfiler(profiler);
@@ -197,7 +200,7 @@ public class ApplicationFactory {
 		);
 		return new Application(
 			tasks, translator, root, database, link, register, migrations,
-			answer, getAutoStart(env), aliases
+			answer, getAutoStart(env), hostname, aliases
 		);
 	}
 
@@ -242,7 +245,7 @@ public class ApplicationFactory {
 	}
 	
 	public String getTempPath() {
-		return getTempPath(env, hostname);
+		return getTempPath(env, appIdentifier);
 	}
 	
 	private String getResourcesPath(Env env) {
@@ -289,7 +292,7 @@ public class ApplicationFactory {
 	}
 	
 	private String getLogsPath(Env env) {
-		return getProperty(logsPath, "logs-path", "logs" + "/" + hostname,  String.class, env);
+		return getProperty(logsPath, "logs-path", "logs" + "/" + appIdentifier,  String.class, env);
 	}
 	
 	private LanguageSettings getLangSettings(Env conf) {
