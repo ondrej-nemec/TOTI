@@ -12,6 +12,6 @@
 /temp
 /logs
 
-/src/main/resources/toti/samples/app.properties
+/src/main/resources/toti/samples/fileConfiguration.properties
 # folter with auux jsp files
 /toti
