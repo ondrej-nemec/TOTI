@@ -2,7 +2,7 @@ package toti.answers.request;
 
 import ji.common.structures.MapDictionary;
 import ji.translator.Locale;
-import toti.extensions.OnSession;
+import toti.extensions.OnSessionExtension;
 
 public class Identity {
 
@@ -47,7 +47,7 @@ public class Identity {
 	
 	/*************/
 	
-	protected MapDictionary<String> getSessionSpace(OnSession session) {
+	protected MapDictionary<String> getSessionSpace(OnSessionExtension session) {
 		return getSessionSpace(session.getIdentifier());
 	}
 	

@@ -7,7 +7,7 @@ import java.util.Optional;
 import ji.translator.Locale;
 import ji.translator.Translator;
 import toti.answers.Headers;
-import toti.extensions.OnSession;
+import toti.extensions.OnSessionExtension;
 import ji.common.structures.MapDictionary;
 import ji.socketCommunication.http.structures.RequestParameters;
 
@@ -24,9 +24,9 @@ public class IdentityFactory {
 	private final String defLang;
 	private final Translator translator;
 	private final SessionUserProvider sup;
-	private final List<OnSession> sessions;
+	private final List<OnSessionExtension> sessions;
 	
-	public IdentityFactory(Translator translator, String defLang, List<OnSession> sessions, SessionUserProvider sup) {
+	public IdentityFactory(Translator translator, String defLang, List<OnSessionExtension> sessions, SessionUserProvider sup) {
 		this.translator = translator;
 		this.defLang = defLang;
 		this.sup = sup;

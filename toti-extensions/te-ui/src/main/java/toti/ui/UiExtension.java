@@ -4,16 +4,18 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import ji.common.functions.Env;
 import ji.common.structures.MapDictionary;
 import ji.socketCommunication.http.StatusCode;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.answers.response.Response;
-import toti.extensions.OnToti;
+import toti.application.register.Register;
+import toti.extensions.OnTotiExtension;
 import toti.extensions.TranslatedExtension;
 
-public class UiExtension implements TranslatedExtension, OnToti {
+public class UiExtension implements TranslatedExtension, OnTotiExtension {
 
 	@Override
 	public String getIdentifier() {
@@ -46,5 +48,8 @@ public class UiExtension implements TranslatedExtension, OnToti {
 				return Response.create(StatusCode.NOT_FOUND).getEmpty();
 		}
 	}
+
+	@Override
+	public void init(Env appEnv, Register register) {}
 
 }

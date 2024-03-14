@@ -6,7 +6,8 @@ include('toti-libs:toti-templating')
 include('toti-application')
 
 include('toti-extensions:te-ui')
-include('toti-extensions:te-validator')
+//include('toti-extensions:te-validator')
+include('toti-extensions:te-database')
 
 include('examples:samples')
 // include('examples:project1')

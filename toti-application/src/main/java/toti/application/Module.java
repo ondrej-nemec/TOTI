@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.Logger;
 import ji.common.functions.Env;
-import ji.database.Database;
 import toti.answers.router.Link;
 import toti.answers.router.Router;
 import toti.application.register.Register;
@@ -21,8 +20,7 @@ public interface Module {
 	// String getControllersPath();
 
 	List<Task> initInstances(
-		Env env, Translator translator, Register register,
-		Link link, Database database, Logger logger
+		Env env, Translator translator, Register register, Link link
 	) throws Exception;
 	
 	default void addRoutes(Router router, Link link) {}

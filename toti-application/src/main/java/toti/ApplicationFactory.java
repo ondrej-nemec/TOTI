@@ -34,11 +34,12 @@ import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Param;
 import toti.application.register.Register;
+import toti.extensions.ApplicationExtension;
 import toti.extensions.Extension;
 import toti.extensions.Profiler;
 import toti.extensions.TranslatedExtension;
-import toti.extensions.OnSession;
-import toti.extensions.OnToti;
+import toti.extensions.OnSessionExtension;
+import toti.extensions.OnTotiExtension;
 import toti.templating.TemplateFactory;
 
 public class ApplicationFactory {
@@ -61,7 +62,6 @@ public class ApplicationFactory {
 	private Map<String, List<Object>>  responseHeaders = null;
 	private LanguageSettings langSettings = null;
 	//private Database database = null;
-	private BiFunction<List<String>, Env, Database> createDatabase = null;
 	private Translator translator = null;
 	private UriPattern pattern = new UriPattern() {};
 	
@@ -75,10 +75,14 @@ public class ApplicationFactory {
 	private final String appIdentifier;
 	private final String charset;
 	
-	private final List<OnSession> sessions;
-	private final List<OnToti> totiResponses;
+	private final List<OnSessionExtension> extensionsSessions;
+	private final List<OnTotiExtension> extensionsTotiResponses;
+	private final List<ApplicationExtension> extensionsApplication;
+	
 	private final List<String> translationPaths;
-	private Profiler profiler;
+	
+	private final Map<String, Extension> extensions;
+	private Profiler profiler = Profiler.empty();
 	
 	public ApplicationFactory(String appIdentifier, Env env, String charset, Function<String, Logger> loggerFactory,
 		String hostname, String... aliases) {
@@ -89,9 +93,11 @@ public class ApplicationFactory {
 		this.aliases = aliases;
 		this.hostname = hostname;
 		
-		this.sessions = new LinkedList<>();
-		this.totiResponses = new LinkedList<>();
+		this.extensions = new HashMap<>();
+		this.extensionsSessions = new LinkedList<>();
+		this.extensionsTotiResponses = new LinkedList<>();
 		this.translationPaths = new LinkedList<>();
+		this.extensionsApplication = new LinkedList<>();
 	}
 
 	public Application create(List<Module> modules) throws Exception {
@@ -105,21 +111,16 @@ public class ApplicationFactory {
 		});
 		
 	//	Env env = appEnv = this.env.getModule("applications").getModule(hostname);
-		Profiler profiler = initProfiler(env, logger);
+		// Profiler profiler = initProfiler(env, logger);
 		
-		
-		Database database = getDatabase(
-			env.getModule("database"), migrations, profiler, loggerFactory.apply(appIdentifier, "database")
-		);
-		if (database == null) {
-			logger.info("No database specified");
-		}
 		
 		ObjectBuilder<Module> actualModule = new ObjectBuilder<>();
 		Param root = new Param(null);
 		Register register = new Register(root, actualModule, pattern);
 		Link link = new Link(/*getUrlPattern(env),*/ register, pattern);
 		Router router = new Router(/*register*/);
+
+		extensions.forEach((n, e)->e.init(env, register));
 		
 		Map<String, TemplateFactory> templateFactories = new HashMap<>();
 		Set<String> trans = new HashSet<>();
@@ -150,8 +151,8 @@ public class ApplicationFactory {
 			}
 			tasks.addAll(
 				module.initInstances(
-					env, translator, register, link, database,
-					loggerFactory.apply(appIdentifier, module.getName())
+					env, translator, register, link
+					// ,loggerFactory.apply(appIdentifier, module.getName())
 				)
 			);
 			module.addRoutes(router, link);
@@ -165,12 +166,12 @@ public class ApplicationFactory {
 		).setProfiler(profiler);
 		
 		IdentityFactory identityFactory = new IdentityFactory(
-			translator, translator.getLocale().getLang(), sessions, register.getSessionUserProvider()
+			translator, translator.getLocale().getLang(), extensionsSessions, register.getSessionUserProvider()
 		);
 		
 		List<String> developIps = getDevelopIps(env);
 		TotiAnswer totiAnwer = new TotiAnswer(
-			developIps, totiTemplateFactory, translator, identityFactory, totiResponses
+			developIps, totiTemplateFactory, translator, identityFactory, extensionsTotiResponses
 		);
 		ExceptionAnswer exceptionAnswer = new ExceptionAnswer(
 			register,
@@ -199,12 +200,12 @@ public class ApplicationFactory {
 			charset
 		);
 		return new Application(
-			tasks, translator, root, database, link, register, migrations,
+			tasks, translator, root, link, register, extensionsApplication,
 			answer, getAutoStart(env), hostname, aliases
 		);
 	}
 
-	private Profiler initProfiler(Env env, Logger logger) {
+	/*private Profiler initProfiler(Env env, Logger logger) {
 		if (getUseProfiler(env) && profiler != null) {
 			logger.warn("Profiler is enabled");
 			return profiler;
@@ -213,28 +214,9 @@ public class ApplicationFactory {
 			logger.warn("Profiler is enabled but no profiler set.");
 		}
 		return Profiler.empty();
-	}
+	}*/
 		
 	/*************************/
-	
-	private Database getDatabase(Env env, List<String> migrations, SqlQueryProfiler profiler, Logger logger) {
-		if (createDatabase != null) {
-			return createDatabase.apply(migrations, env);
-		}
-		if (env != null && env.getString("type") != null) {
-			return new Database(new DatabaseConfig(
-				env.getString("type"),
-				env.getString("url"),
-				env.getBoolean("external") == null ? true : env.getBoolean("external"),
-				env.getString("schema-name"),
-				env.getString("login"),
-				env.getString("password"),
-				migrations,
-				env.getInteger("pool-size")
-			), profiler, logger);
-		}
-		return null;
-	}
 	/*
 	private String getUrlPattern(Env env) {
 		return getProperty(urlPattern, "url-pattern", "/[module]</[path]>/[controller]/[method]</[param]>", String.class, env);
@@ -370,15 +352,18 @@ public class ApplicationFactory {
 	}
 	
 	public ApplicationFactory addExtension(Extension extension) {
-		if (extension instanceof OnSession) {
-			sessions.add((OnSession)extension);
+		extensions.put(extension.getClass().getName() ,extension);
+		
+		if (extension instanceof OnSessionExtension) {
+			extensionsSessions.add((OnSessionExtension)extension);
 		}
-		if (extension instanceof OnToti) {
-			totiResponses.add((OnToti)extension);
+		if (extension instanceof OnTotiExtension) {
+			extensionsTotiResponses.add((OnTotiExtension)extension);
 		}
-		if (extension instanceof Profiler) {
-			this.profiler = (Profiler)extension;
+		if (extension instanceof ApplicationExtension) {
+			extensionsApplication.add((ApplicationExtension)extension);
 		}
+		
 		if (extension instanceof TranslatedExtension) {
 			translationPaths.add(TranslatedExtension.class.cast(extension).getTranslationPath());
 		}
@@ -462,11 +447,6 @@ public class ApplicationFactory {
 	
 	public ApplicationFactory setLoggerFactory(BiFunction<String, String, Logger> loggerFactory) {
 		this.loggerFactory = loggerFactory;
-		return this;
-	}
-	
-	public ApplicationFactory setDatabase(BiFunction<List<String>, Env, Database> createDatabase) {
-		this.createDatabase = createDatabase;
 		return this;
 	}
 	

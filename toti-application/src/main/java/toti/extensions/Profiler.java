@@ -2,13 +2,16 @@ package toti.extensions;
 
 import java.util.Map;
 
+import ji.common.functions.Env;
 import ji.database.support.SqlQueryProfiler;
 import ji.json.Jsonable;
 import ji.socketCommunication.http.profiler.HttpServerProfiler;
 import ji.socketCommunication.http.profiler.HttpServerProfilerEvent;
 import ji.translator.TransProfiler;
+import toti.application.register.Register;
 import toti.templating.TemplateProfiler;
 
+@Deprecated
 public interface Profiler extends Extension, TransProfiler, HttpServerProfiler, SqlQueryProfiler, TemplateProfiler, Jsonable {
 
 	static Profiler empty() {
@@ -27,6 +30,7 @@ public interface Profiler extends Extension, TransProfiler, HttpServerProfiler, 
 			@Override public String getIdentifier() {
 				return "emptyProfiler";
 			}
+			@Override public void init(Env appEnv, Register register) {}
 		};
 	}
 	

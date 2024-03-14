@@ -3,7 +3,6 @@ package toti;
 import java.util.List;
 import java.util.function.Consumer;
 
-import ji.database.Database;
 import ji.socketCommunication.http.HttpMethod;
 import toti.answers.Answer;
 import toti.answers.router.Link;
@@ -11,6 +10,7 @@ import toti.application.Task;
 import toti.application.register.MappedAction;
 import toti.application.register.Param;
 import toti.application.register.Register;
+import toti.extensions.ApplicationExtension;
 import ji.translator.Translator;
 
 public class Application {
@@ -20,10 +20,9 @@ public class Application {
 	
 	private final Translator translator;
 	//private final SessionUserProvider sessionUserProvider;
-	private final Database database;
 	private final Link link;
 	private final Register register;
-	private final List<String> migrations;
+	//private final List<String> migrations;
 	// Map<String, TemplateFactory> templateFactories
 	private final Answer answer;
 	
@@ -34,22 +33,24 @@ public class Application {
 	private final String[] aliases;
 	private final String hostname;
 	
+	private final List<ApplicationExtension> appExtensions;
+	
 	public Application(
-			List<Task> tasks, Translator translator, Param root, Database database,
-			Link link, Register register, List<String> migrations, Answer answer,
+			List<Task> tasks, Translator translator, Param root,
+			Link link, Register register, List<ApplicationExtension> appExtensions, Answer answer,
 			boolean autoStart, String hostname, String... aliases) {
 		this.tasks = tasks;
 		this.translator = translator;
-		this.database = database;
 		this.link = link;
 		this.register = register;
-		this.migrations = migrations;
+		//this.migrations = migrations;
 		this.answer = answer;
 		//this.sessionUserProvider = sessionUserProvider;
 		this.autoStart = autoStart;
 		this.aliases = aliases;
 		this.root = root;
 		this.hostname = hostname;
+		this.appExtensions = appExtensions;
 	}
 
 /*
@@ -74,10 +75,6 @@ public class Application {
 		return translator;
 	}
 
-	public Database getDatabase() {
-		return database;
-	}
-
 	public Link getLink() {
 		return link;
 	}
@@ -85,11 +82,11 @@ public class Application {
 	public Register getRegister() {
 		return register;
 	}
-
+/*
 	public List<String> getMigrations() {
 		return migrations;
 	}
-
+*/
 	protected Answer getRequestAnswer() {
 		return answer;
 	}
@@ -109,9 +106,8 @@ public class Application {
 		if (isRunning) {
 			return false;
 		}
-		if (database != null) {
-			database.createDbIfNotExists();
-			database.migrate();
+		for (ApplicationExtension extension : appExtensions) {
+			extension.start();
 		}
 		for (Task task : tasks) {
 			task.start();
@@ -124,6 +120,9 @@ public class Application {
 		isRunning = false;
 		for (Task task : tasks) {
 			task.stop();
+		}
+		for (ApplicationExtension extension : appExtensions) {
+			extension.start();
 		}
 	}
 	

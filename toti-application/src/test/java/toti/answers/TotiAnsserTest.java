@@ -12,6 +12,7 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import ji.common.functions.Env;
 import ji.common.structures.MapDictionary;
 import ji.socketCommunication.http.StatusCode;
 import ji.translator.Translator;
@@ -24,7 +25,8 @@ import toti.answers.response.EmptyResponse;
 import toti.answers.response.FileResponse;
 import toti.answers.response.Response;
 import toti.answers.response.TextResponse;
-import toti.extensions.OnToti;
+import toti.application.register.Register;
+import toti.extensions.OnTotiExtension;
 import toti.templating.TemplateFactory;
 
 @RunWith(JUnitParamsRunner.class)
@@ -33,7 +35,7 @@ public class TotiAnsserTest {
 	@Test
 	@Parameters(method="dataRoutingWithExtension")
 	public void testRoutingWithExtension(String url, Response expected) {
-		OnToti extension = new OnToti() {
+		OnTotiExtension extension = new OnTotiExtension() {
 			@Override
 			public String getIdentifier() {
 				return "testExtension";
@@ -47,6 +49,8 @@ public class TotiAnsserTest {
 			public List<String> getListeningUri() {
 				return Arrays.asList("/ext", "/test");
 			}
+			@Override
+			public void init(Env appEnv, Register register) {}
 		};
 		
 		TotiAnswer answer = new TotiAnswer(

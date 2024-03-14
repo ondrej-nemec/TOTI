@@ -1,3 +1,24 @@
+# Extensions
+
+## OnSessionExtension
+
+Pro parsování request hlaviček a posílání response hlaviček
+
+## OnTotiExtension
+
+Pří požadavku /toti*
+
+## ApplicationExtension
+
+Spustí/vypne se spolu s applikací
+
+
+## TranslatedExtension
+
+Extension ma v sobe soubor prekladu
+
+
+
 # Dokumentace
 
 ## Application

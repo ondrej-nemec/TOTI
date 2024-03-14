@@ -22,6 +22,6 @@ dependencies {
 	api project('toti-application')
 	
 	api project('toti-extensions:te-ui')
-	api project('toti-extensions:te-validator')
+	api project('toti-extensions:te-database')
 }
 
