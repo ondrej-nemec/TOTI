@@ -39,7 +39,7 @@ sourceSets {
 //*/
 
 dependencies {
-	api project(':toti-templating')
+	api project(':toti-libs:toti-templating')
 	api 'com.github.ondrej-nemec.JI:JI:' + JI_version
 	
 	// compile files("${System.properties['java.home']}/../lib/tools.jar")

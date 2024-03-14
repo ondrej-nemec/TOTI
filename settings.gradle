@@ -1,9 +1,13 @@
 
 rootProject.name = 'TOTI'
 
-include('toti-templating')
+include('toti-libs:toti-templating')
+
 include('toti-application')
-include('toti-ui')
-include('example-samples')
-include('example-project1')
-include('example-project2')
+
+include('toti-extensions:te-ui')
+include('toti-extensions:te-validator')
+
+include('examples:samples')
+// include('examples:project1')
+// include('examples:project2')

@@ -1,0 +1,54 @@
+plugins {
+    id 'java-library'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+compileTestJava.options.encoding = 'UTF-8'
+
+repositories {
+	mavenCentral()
+	maven { url 'https://jitpack.io' }
+}
+//*
+sourceSets {
+    main {
+        java {
+            srcDirs 'src/main/java'
+            
+            srcDirs '../../../javainit/ji-common/src/main/java'
+            srcDirs '../../../javainit/ji-communication/src/main/java'
+            srcDirs '../../../javainit/ji-database/src/main/java'
+            srcDirs '../../../javainit/ji-translate/src/main/java'
+            srcDirs '../../../javainit/ji-files/src/main/java'
+            srcDirs '../../../javainit/ji-testing/src/main/java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+        }
+    }
+    test {
+        java {
+            srcDir 'src/test/java'
+        }
+        resources {
+            srcDir 'src/test/resources'
+        }
+    }
+}
+//*/
+
+dependencies {
+//	api project(':toti-templating')
+	api project(':toti-application')
+	
+	// https://mvnrepository.com/artifact/junit/junit
+	testImplementation  group: 'junit', name: 'junit', version: '4.12'
+	// https://mvnrepository.com/artifact/org.mockito/mockito-core
+	testImplementation  group: 'org.mockito', name: 'mockito-core', version: '2.19.1'	
+	// https://mvnrepository.com/artifact/pl.pragmatists/JUnitParams
+	testImplementation  group: 'pl.pragmatists', name: 'JUnitParams', version: '1.1.1'
+	
+	testImplementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+}
+

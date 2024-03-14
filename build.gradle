@@ -17,8 +17,11 @@ ext {
 }
 
 dependencies {
-	api project('toti-templating')
+	api project('toti-libs:toti-templating')
+	
 	api project('toti-application')
-	api project('toti-ui')
+	
+	api project('toti-extensions:te-ui')
+	api project('toti-extensions:te-validator')
 }
 
