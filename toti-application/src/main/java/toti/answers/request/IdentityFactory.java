@@ -4,31 +4,23 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-import ji.translator.Locale;
-import ji.translator.Translator;
 import toti.answers.Headers;
-import toti.extensions.OnSessionExtension;
+import toti.extensions.Extension;
 import ji.common.structures.MapDictionary;
 import ji.socketCommunication.http.structures.RequestParameters;
 
 public class IdentityFactory {
 
-	private final static String LOCALE_COOKIE_NAME = "Language";
-	private final static String LOCALE_HEADER_NAME = "Accept-Language";
 	private final static String SESSION_COOKIE_NAME = "SessionID";
 	private final static String SESSION_HEADER_NAME = "Authorization";
 //	private final static String PAGE_ID_HEADER_NAME = "PageId";
 //	private final static String PAGE_ID_COOKIE_NAME = "PageId";
 	public static final String CSRF_TOKEN_PARAMETER = "_csrf_token";
 	
-	private final String defLang;
-	private final Translator translator;
 	private final SessionUserProvider sup;
-	private final List<OnSessionExtension> sessions;
+	private final List<Extension> sessions;
 	
-	public IdentityFactory(Translator translator, String defLang, List<OnSessionExtension> sessions, SessionUserProvider sup) {
-		this.translator = translator;
-		this.defLang = defLang;
+	public IdentityFactory(List<Extension> sessions, SessionUserProvider sup) {
 		this.sup = sup;
 		this.sessions = sessions;
 	}
@@ -38,8 +30,7 @@ public class IdentityFactory {
 	}
 
 	public Identity createIdentity(Headers requestHeaders, MapDictionary<String> queryParameters, RequestParameters bodyParameters, String ip) {
-		Locale locale = getLocale(requestHeaders);
-		Identity identity = new Identity(ip, locale);
+		Identity identity = new Identity(ip);
 		if (sup != null) {
 			Optional<String> cookieToken = getCookieToken(requestHeaders);
 			Optional<String> csrfToken = getCsrfToken(bodyParameters);
@@ -61,13 +52,6 @@ public class IdentityFactory {
 	
 	public void finalizeIdentity(Identity identity, Headers responseHeaders) throws IOException {
 		if (sup != null) {
-			responseHeaders.addHeader(
-				"Set-Cookie", 
-				LOCALE_COOKIE_NAME + "=" + identity.getLocale().getLang() // .toLanguageTag()
-				+ "; Path=/"
-				+ "; SameSite=Strict"
-			);
-			
 			if (identity.isAnonymous() || identity.getUser().getExpirationTime()  < 0) {
 				responseHeaders.addHeader(
 					"Set-Cookie", 
@@ -138,30 +122,6 @@ public class IdentityFactory {
 			return Optional.of(csrfToken);
 		}
 		return Optional.empty();
-	}
-	
-	/***************************/
-	
-	private Locale getLocale(Headers headers) {
-		Optional<String> cookieLang = headers.getCookieValue(LOCALE_COOKIE_NAME);
-		if (cookieLang.isPresent()) {
-			return resolveLocale(cookieLang.get());
-		}
-		Object lang = headers.getHeader(LOCALE_HEADER_NAME);
-		if (lang == null) {
-			return resolveLocale(defLang);
-		} else {
-			String locale = lang.toString().split(" ", 2)[0].split(";")[0].split(",")[0].trim();
-			return resolveLocale(locale);
-		}
-	}
-	
-	private Locale resolveLocale(String locale) {
-		Locale loc = translator.getLocale(locale);
-		if (loc == null) {
-			return translator.getLocale(defLang);
-		}
-		return loc;
 	}
 
 }

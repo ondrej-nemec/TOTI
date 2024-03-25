@@ -16,7 +16,7 @@ import toti.answers.request.AuthMode;
 import toti.answers.request.SessionUserProvider;
 import toti.answers.router.UriPattern;
 import toti.application.Module;
-import toti.extensions.CustomExceptionResponse;
+import toti.extensions.CustomExceptionExtension;
 
 public class Register {
 	
@@ -29,7 +29,7 @@ public class Register {
 	private final ObjectBuilder<Module> module;
 	private final UriPattern pattern;
 	
-	private CustomExceptionResponse customExceptionResponse = null;
+	private CustomExceptionExtension customExceptionResponse = null;
 	private SessionUserProvider sessionUserProvider = null;
 	
 	public Register(Param root, ObjectBuilder<Module> module, UriPattern pattern) {
@@ -219,11 +219,11 @@ public class Register {
     
     /***************************/
 	
-	public CustomExceptionResponse getCustomExceptionResponse() {
+	public CustomExceptionExtension getCustomExceptionResponse() {
 		return customExceptionResponse;
 	}
 
-	public void setCustomExceptionResponse(CustomExceptionResponse customExceptionResponse) {
+	public void setCustomExceptionResponse(CustomExceptionExtension customExceptionResponse) {
 		this.customExceptionResponse = customExceptionResponse;
 	}
 	

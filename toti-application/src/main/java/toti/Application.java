@@ -10,20 +10,14 @@ import toti.application.Task;
 import toti.application.register.MappedAction;
 import toti.application.register.Param;
 import toti.application.register.Register;
-import toti.extensions.ApplicationExtension;
-import ji.translator.Translator;
+import toti.extensions.Extension;
 
 public class Application {
 	
-	
 	private final List<Task> tasks;
 	
-	private final Translator translator;
-	//private final SessionUserProvider sessionUserProvider;
 	private final Link link;
 	private final Register register;
-	//private final List<String> migrations;
-	// Map<String, TemplateFactory> templateFactories
 	private final Answer answer;
 	
 	private final boolean autoStart;
@@ -33,46 +27,29 @@ public class Application {
 	private final String[] aliases;
 	private final String hostname;
 	
-	private final List<ApplicationExtension> appExtensions;
+	private final List<Extension> extensions;
 	
 	public Application(
-			List<Task> tasks, Translator translator, Param root,
-			Link link, Register register, List<ApplicationExtension> appExtensions, Answer answer,
+			List<Task> tasks, Param root,
+			Link link, Register register, List<Extension> appExtensions, Answer answer,
 			boolean autoStart, String hostname, String... aliases) {
 		this.tasks = tasks;
-		this.translator = translator;
 		this.link = link;
 		this.register = register;
-		//this.migrations = migrations;
 		this.answer = answer;
-		//this.sessionUserProvider = sessionUserProvider;
 		this.autoStart = autoStart;
 		this.aliases = aliases;
 		this.root = root;
 		this.hostname = hostname;
-		this.appExtensions = appExtensions;
+		this.extensions = appExtensions;
 	}
 
-/*
-	public List<Task> getTasks() {
-		return tasks;
-	}
-
-	public AuthenticationCache getSessionCache() {
-		return sessionCache;
-	}
-*/
-	
 	public String[] getAliases() {
 		return aliases;
 	}
 	
 	public String getHostname() {
 		return hostname;
-	}
-
-	public Translator getTranslator() {
-		return translator;
 	}
 
 	public Link getLink() {
@@ -82,11 +59,7 @@ public class Application {
 	public Register getRegister() {
 		return register;
 	}
-/*
-	public List<String> getMigrations() {
-		return migrations;
-	}
-*/
+
 	protected Answer getRequestAnswer() {
 		return answer;
 	}
@@ -98,16 +71,15 @@ public class Application {
 	public boolean isRunning() {
 		return isRunning;
 	}
-	
+
 	/************/
-	
-	
+
 	public boolean start() throws Exception {
 		if (isRunning) {
 			return false;
 		}
-		for (ApplicationExtension extension : appExtensions) {
-			extension.start();
+		for (Extension extension : extensions) {
+			extension.onApplicationStart();
 		}
 		for (Task task : tasks) {
 			task.start();
@@ -121,8 +93,8 @@ public class Application {
 		for (Task task : tasks) {
 			task.stop();
 		}
-		for (ApplicationExtension extension : appExtensions) {
-			extension.start();
+		for (Extension extension : extensions) {
+			extension.onApplicationStop();
 		}
 	}
 	

@@ -1,13 +1,12 @@
 package toti.answers.request;
 
 import ji.common.structures.MapDictionary;
-import ji.translator.Locale;
-import toti.extensions.OnSessionExtension;
+import toti.extensions.Extension;
 
 public class Identity {
 
 	private final String IP;
-	private final Locale locale;
+	//private final Locale locale;
 	
 	private AuthMode loginMode = AuthMode.NO_TOKEN;
 		
@@ -15,9 +14,9 @@ public class Identity {
 	
 	private MapDictionary<String> sessionSpaces;
 	
-	protected Identity(String IP, Locale locale) {
+	protected Identity(String IP/*, Locale locale*/) {
 		this.IP = IP;
-		this.locale = locale;
+		//this.locale = locale;
 		this.sessionSpaces = MapDictionary.hashMap();
 	}
 	
@@ -47,8 +46,8 @@ public class Identity {
 	
 	/*************/
 	
-	protected MapDictionary<String> getSessionSpace(OnSessionExtension session) {
-		return getSessionSpace(session.getIdentifier());
+	protected MapDictionary<String> getSessionSpace(Extension extension) {
+		return getSessionSpace(extension.getIdentifier());
 	}
 	
 	protected MapDictionary<String> getSessionSpace(String name) {
@@ -95,8 +94,8 @@ public class Identity {
 	 * Provide user preferenced language
 	 * @return Locale
 	 */
-	public Locale getLocale() {
+	/*public Locale getLocale() {
 		return locale;
-	}
+	}*/
 	
 }

@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
 import ji.common.functions.Env;
 import ji.common.structures.MapDictionary;
 import ji.socketCommunication.http.StatusCode;
-import ji.translator.Translator;
+import ji.socketCommunication.http.structures.RequestParameters;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import toti.answers.request.Identity;
@@ -27,7 +27,7 @@ import toti.answers.response.Response;
 import toti.answers.response.TextResponse;
 import toti.application.register.Register;
 import toti.extensions.OnTotiExtension;
-import toti.templating.TemplateFactory;
+import toti.extensions.TemplateExtension;
 
 @RunWith(JUnitParamsRunner.class)
 public class TotiAnsserTest {
@@ -51,12 +51,19 @@ public class TotiAnsserTest {
 			}
 			@Override
 			public void init(Env appEnv, Register register) {}
+			
+			@Override public void onRequestStart(
+				Identity identity, MapDictionary<String> sessionSpace, Headers requestHeaders,
+				MapDictionary<String> queryParams, RequestParameters requestBody) {}
+			@Override public void onRequestEnd(
+				Identity identity, MapDictionary<String> sessionSpace, Headers responseHeaders) {}
+			@Override public void onApplicationStart() throws Exception {}
+			@Override public void onApplicationStop() throws Exception {}
 		};
 		
 		TotiAnswer answer = new TotiAnswer(
 			Arrays.asList("localhost"),
-			mock(TemplateFactory.class),
-			mock(Translator.class),
+			mock(TemplateExtension.class),
 			mock(IdentityFactory.class),
 			Arrays.asList(extension)
 		);
@@ -85,8 +92,7 @@ public class TotiAnsserTest {
 		
 		TotiAnswer answer = new TotiAnswer(
 			Arrays.asList("localhost"),
-			mock(TemplateFactory.class),
-			mock(Translator.class),
+			mock(TemplateExtension.class),
 			mock(IdentityFactory.class),
 			new LinkedList<>()
 		);

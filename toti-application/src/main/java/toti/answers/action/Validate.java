@@ -1,8 +1,8 @@
 package toti.answers.action;
 
-import ji.translator.Translator;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
+import toti.extensions.Translator;
 
 public interface Validate {
 

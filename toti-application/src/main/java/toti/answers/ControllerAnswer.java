@@ -20,7 +20,6 @@ import ji.json.JsonReader;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.WebSocket;
-import ji.translator.Translator;
 import ji.xml.XmlObject;
 import ji.xml.XmlReader;
 import toti.ServerException;
@@ -39,30 +38,32 @@ import toti.answers.router.Link;
 import toti.answers.router.Router;
 import toti.application.register.MappedAction;
 import toti.application.register.Param;
+import toti.extensions.TemplateExtension;
+import toti.extensions.Translator;
+import toti.extensions.TranslatorExtension;
 import toti.templating.TemplateException;
-import toti.templating.TemplateFactory;
 
 public class ControllerAnswer {
 	
 	private final Param root;
-	private final Translator translator;
+	private final TranslatorExtension translatorExtension;
 	private final SessionUserProvider sessionUserProvider;
 	private final IdentityFactory identityFactory;
 	private final Link link;
-	private final Map<String, TemplateFactory> modules;
+	private final TemplateExtension templateExtension;
 	private final Router router;
 	private final Logger logger;
 	
 	public ControllerAnswer(
-			Router router, Param root, Map<String, TemplateFactory> modules,
+			Router router, Param root, TemplateExtension templateExtension,
 			SessionUserProvider sessionUserProvider, IdentityFactory identityFactory,
-			Link link, Translator translator, Logger logger) {
+			Link link, TranslatorExtension translatorExtension, Logger logger) {
 		this.root = root;
 		this.router = router;
-		this.modules = modules;
+		this.templateExtension = templateExtension;
 		this.sessionUserProvider = sessionUserProvider;
 		this.identityFactory = identityFactory;
-		this.translator = translator;
+		this.translatorExtension = translatorExtension;
 		this.link = link;
 		this.logger = logger;
 	}
@@ -93,12 +94,10 @@ public class ControllerAnswer {
 		try {
 			Response response = run(request.getUri(), mapped, totiRequest, identity);
 			
-			TemplateFactory templateFactory = modules.get(mapped.getModuleName());
-			/***************/
 			identityFactory.finalizeIdentity(identity, responseHeaders); // for cookies and custom headers
-	    	/*************/
-			return response.getResponse(request.getProtocol(), responseHeaders, identity,  new ResponseContainer(
-				translator.withLocale(identity.getLocale()), sessionUserProvider, mapped, templateFactory, link
+			/*************/
+			return response.getResponse(request.getProtocol(), responseHeaders, identity, new ResponseContainer(
+				translatorExtension.getTranslator(identity), sessionUserProvider, mapped, templateExtension, link
 			), charset);
 		} catch (ServerException e){
 			throw e;
@@ -179,7 +178,7 @@ public class ControllerAnswer {
 		Object controller = mapped.getClassFactory().create();
 		ResponseAction action = (ResponseAction)mapped.getAction().invoke(controller, params);
 		//*/
-		Translator trans = translator.withLocale(identity.getLocale());
+		Translator trans = translatorExtension.getTranslator(identity);
 		parseBody(request, action.getAllowedBody(), mapped);
 		try {
 			try {

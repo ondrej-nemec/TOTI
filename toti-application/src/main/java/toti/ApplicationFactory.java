@@ -1,12 +1,9 @@
 package toti;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -14,18 +11,13 @@ import org.apache.logging.log4j.Logger;
 
 import ji.common.functions.Env;
 import ji.common.structures.ObjectBuilder;
-import ji.database.Database;
-import ji.database.DatabaseConfig;
-import ji.database.support.SqlQueryProfiler;
-import ji.translator.LanguageSettings;
-import ji.translator.Locale;
-import ji.translator.Translator;
 import toti.answers.Answer;
 import toti.answers.ControllerAnswer;
 import toti.answers.ExceptionAnswer;
 import toti.answers.FileSystemAnswer;
 import toti.answers.Headers;
 import toti.answers.TotiAnswer;
+import toti.answers.request.Identity;
 import toti.answers.request.IdentityFactory;
 import toti.answers.router.Link;
 import toti.answers.router.Router;
@@ -34,35 +26,27 @@ import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Param;
 import toti.application.register.Register;
-import toti.extensions.ApplicationExtension;
 import toti.extensions.Extension;
-import toti.extensions.Profiler;
-import toti.extensions.TranslatedExtension;
-import toti.extensions.OnSessionExtension;
+import toti.extensions.TemplateExtension;
+import toti.extensions.Translator;
+import toti.extensions.TranslatorExtension;
 import toti.extensions.OnTotiExtension;
-import toti.templating.TemplateFactory;
 
 public class ApplicationFactory {
 	
 	private String tempPath = null;
 	private String resourcesPath = null;
-	private Boolean deleteTempJavaFiles = null;
 	private Boolean dirResponseAllowed = null;
 	private String dirDefaultFile = null;
-	private Boolean minimalize = null;
 	private List<String> developIps = null;
 //	private Long tokenExpirationTime = null;
 //	private String tokenCustomSalt = null;
-	private Boolean useProfiler = null;
 	// private String urlPattern = null;
 	private String logsPath = null;
 	
 	private Boolean autoStart = null;
 
 	private Map<String, List<Object>>  responseHeaders = null;
-	private LanguageSettings langSettings = null;
-	//private Database database = null;
-	private Translator translator = null;
 	private UriPattern pattern = new UriPattern() {};
 	
 	private String[] aliases;
@@ -75,14 +59,12 @@ public class ApplicationFactory {
 	private final String appIdentifier;
 	private final String charset;
 	
-	private final List<OnSessionExtension> extensionsSessions;
 	private final List<OnTotiExtension> extensionsTotiResponses;
-	private final List<ApplicationExtension> extensionsApplication;
 	
-	private final List<String> translationPaths;
+	private final List<Extension> extensions;
 	
-	private final Map<String, Extension> extensions;
-	private Profiler profiler = Profiler.empty();
+	private TemplateExtension templateExtension;
+	private TranslatorExtension translatorExtension;
 	
 	public ApplicationFactory(String appIdentifier, Env env, String charset, Function<String, Logger> loggerFactory,
 		String hostname, String... aliases) {
@@ -93,22 +75,12 @@ public class ApplicationFactory {
 		this.aliases = aliases;
 		this.hostname = hostname;
 		
-		this.extensions = new HashMap<>();
-		this.extensionsSessions = new LinkedList<>();
+		this.extensions = new LinkedList<>();
 		this.extensionsTotiResponses = new LinkedList<>();
-		this.translationPaths = new LinkedList<>();
-		this.extensionsApplication = new LinkedList<>();
 	}
 
 	public Application create(List<Module> modules) throws Exception {
 		Logger logger = loggerFactory.apply(appIdentifier, "toti");
-		
-		List<String> migrations = new LinkedList<>();
-		modules.forEach((config)->{
-			if (config.getMigrationsPath() != null) {
-				migrations.add(config.getMigrationsPath());
-			}
-		});
 		
 	//	Env env = appEnv = this.env.getModule("applications").getModule(hostname);
 		// Profiler profiler = initProfiler(env, logger);
@@ -120,69 +92,35 @@ public class ApplicationFactory {
 		Link link = new Link(/*getUrlPattern(env),*/ register, pattern);
 		Router router = new Router(/*register*/);
 
-		extensions.forEach((n, e)->e.init(env, register));
+		extensions.forEach((e)->e.init(env, register));
+		TranslatorExtension translatorExtension = getTranslatorExtension();
+		TemplateExtension templateExtension = getTemplateExtension();
 		
-		Map<String, TemplateFactory> templateFactories = new HashMap<>();
-		Set<String> trans = new HashSet<>();
-		trans.addAll(translationPaths);
 		List<Task> tasks = new LinkedList<>();
-		if (translator == null) {
-			LanguageSettings langSettings = getLangSettings(env);
-			langSettings.setProfiler(profiler);
-			this.translator = Translator.create(langSettings, trans, loggerFactory.apply(appIdentifier, "translator"));
-		}
+		
 		for (Module module : modules) {
 			actualModule.set(module);
-			TemplateFactory templateFactory = new TemplateFactory(
-					getTempPath(env, appIdentifier),
-					module.getTemplatesPath(),
-					module.getName(),
-					module.getPath(),
-					templateFactories, 
-					getDeleteTempJavaFiles(env),
-					getMinimalize(env),
-					logger
-			);
-			templateFactory.setProfiler(profiler);
-			templateFactories.put(module.getName(), templateFactory);
-			if (module.getTranslationPath() != null) {
-				trans.add(module.getTranslationPath());
-				trans.add(module.getPath() + "/" + module.getTranslationPath());
-			}
-			tasks.addAll(
-				module.initInstances(
-					env, translator, register, link
-					// ,loggerFactory.apply(appIdentifier, module.getName())
-				)
-			);
+			tasks.addAll(module.initInstances(env, register, link));
 			module.addRoutes(router, link);
 		};
 		actualModule.set(null);
 		
-		TemplateFactory totiTemplateFactory = new TemplateFactory(
-			getTempPath(env, appIdentifier), "toti", "", "", templateFactories,
-			getDeleteTempJavaFiles(env), getMinimalize(env),
-			logger
-		).setProfiler(profiler);
-		
-		IdentityFactory identityFactory = new IdentityFactory(
-			translator, translator.getLocale().getLang(), extensionsSessions, register.getSessionUserProvider()
-		);
+		IdentityFactory identityFactory = new IdentityFactory(extensions, register.getSessionUserProvider());
 		
 		List<String> developIps = getDevelopIps(env);
 		TotiAnswer totiAnwer = new TotiAnswer(
-			developIps, totiTemplateFactory, translator, identityFactory, extensionsTotiResponses
+			developIps, templateExtension, identityFactory, extensionsTotiResponses
 		);
 		ExceptionAnswer exceptionAnswer = new ExceptionAnswer(
 			register,
 			developIps,
-			totiTemplateFactory,
 			getLogsPath(env),
-			translator,
+			translatorExtension,
 			logger
 		);
 		ControllerAnswer controllerAnswer = new ControllerAnswer(
-			router, root, templateFactories, register.getSessionUserProvider(), identityFactory, link, translator, logger
+			router, root, templateExtension, register.getSessionUserProvider(),
+			identityFactory, link, translatorExtension, logger
 		);
 		FileSystemAnswer fileSystemAnswer = new FileSystemAnswer(
 			getResourcesPath(env),
@@ -200,7 +138,7 @@ public class ApplicationFactory {
 			charset
 		);
 		return new Application(
-			tasks, translator, root, link, register, extensionsApplication,
+			tasks, root, link, register, extensions,
 			answer, getAutoStart(env), hostname, aliases
 		);
 	}
@@ -222,6 +160,7 @@ public class ApplicationFactory {
 		return getProperty(urlPattern, "url-pattern", "/[module]</[path]>/[controller]/[method]</[param]>", String.class, env);
 	}
 	*/
+	
 	private String getTempPath(Env env, String hostname) {
 		return getProperty(tempPath, "temp", "temp", String.class, env) + "/" + hostname;
 	}
@@ -234,20 +173,12 @@ public class ApplicationFactory {
 		return getProperty(resourcesPath, "resource-path", "www", String.class, env);
 	}
 	
-	private Boolean getDeleteTempJavaFiles(Env env) {
-		return getProperty(deleteTempJavaFiles, "delete-temp-java", true, Boolean.class, env);
-	}
-	
 	private Boolean getDirResponseAllowed(Env env) {
 		return getProperty(dirResponseAllowed, "dir-allowed", false, Boolean.class, env);
 	}
 	
 	private String getDirDefaultFile(Env env) {
 		return getProperty(dirDefaultFile, "dir-default-file", "index.html", String.class, env);
-	}
-	
-	private Boolean getMinimalize(Env env) {
-		return getProperty(minimalize, "minimalize-templates", true, Boolean.class, env);
 	}
 	
 	private List<String> getDevelopIps(Env env) {
@@ -260,44 +191,9 @@ public class ApplicationFactory {
 		}
 		return Arrays.asList("/127.0.0.1", "/0:0:0:0:0:0:0:1");
 	}
-	/*
-	private Long getTokenExpirationTime(Env env) {
-		return getProperty(tokenExpirationTime, "token-expired",  1000L * 60 * 10, Long.class, env);
-	}
-	
-	private String getTokenCustomSalt(Env env) {
-		return getProperty(tokenCustomSalt, "token-salt", "", String.class, env);
-	}
-	*/
-	private Boolean getUseProfiler(Env env) {
-		return getProperty(useProfiler, "use-profiler", false, Boolean.class, env);
-	}
 	
 	private String getLogsPath(Env env) {
 		return getProperty(logsPath, "logs-path", "logs" + "/" + appIdentifier,  String.class, env);
-	}
-	
-	private LanguageSettings getLangSettings(Env conf) {
-		if (langSettings != null) {
-			return langSettings;
-		}
-		Env env = conf.getModule("lang");
-		if (env.getString("locales") != null) {  
-			List<Locale> locales = new LinkedList<>();
-			for (String l : env.getString("locales").split(",")) {
-				String locale = l.trim();
-				Env langConf = env.getModule("locale").getModule(locale);
-				Boolean ltr = langConf.getBoolean("ltr");
-				String substitutions = langConf.getString("substitutions");
-				locales.add(new Locale(
-					locale,
-					ltr == null ? true : ltr,
-					substitutions == null ? Arrays.asList() : Arrays.asList(substitutions.split(",")) 
-				));
-			}
-			return new LanguageSettings(env.getString("default"), locales);
-		}
-		return new LanguageSettings(java.util.Locale.getDefault().toString(), Arrays.asList());
 	}
 	
 	private Map<String, List<Object>>  getResponseHeaders(Env env) {
@@ -346,26 +242,45 @@ public class ApplicationFactory {
 	
 	/*************************/
 	
+	private TranslatorExtension getTranslatorExtension() {
+		if (translatorExtension != null) {
+			return translatorExtension;
+		}
+		return new TranslatorExtension() {
+			public Translator getTranslator(Identity identity) {
+				return new Translator() {
+					@Override public String translate(String key) { return key; }
+					@Override public String translate(String key, Map<String, Object> params) { return key; }
+				};
+			};
+		};
+	}
+	
+	private TemplateExtension getTemplateExtension() {
+		if (templateExtension != null) {
+			return templateExtension;
+		}
+		return null; // TODO
+	}
+	
+	/*************************/
+	
 	public ApplicationFactory setUrlPattern(UriPattern pattern) {
 		this.pattern = pattern;
 		return this;
 	}
 	
 	public ApplicationFactory addExtension(Extension extension) {
-		extensions.put(extension.getClass().getName() ,extension);
+		extensions.add(extension);
 		
-		if (extension instanceof OnSessionExtension) {
-			extensionsSessions.add((OnSessionExtension)extension);
-		}
 		if (extension instanceof OnTotiExtension) {
 			extensionsTotiResponses.add((OnTotiExtension)extension);
 		}
-		if (extension instanceof ApplicationExtension) {
-			extensionsApplication.add((ApplicationExtension)extension);
+		if (extension instanceof TranslatorExtension) {
+			this.translatorExtension = (TranslatorExtension)extension;
 		}
-		
-		if (extension instanceof TranslatedExtension) {
-			translationPaths.add(TranslatedExtension.class.cast(extension).getTranslationPath());
+		if (extension instanceof TemplateExtension) {
+			this.templateExtension = (TemplateExtension)extension;
 		}
 		return this;
 	}
@@ -395,33 +310,8 @@ public class ApplicationFactory {
 		return this;
 	}
 
-	public ApplicationFactory setLanguageSettings(LanguageSettings settings) {
-		this.langSettings = settings;
-		return this;
-	}
-	/*
-	public ApplicationFactory setTokenExpirationTime(long tokenExpirationTime) {
-		this.tokenExpirationTime = tokenExpirationTime;
-		return this;
-	}
-	
-	public ApplicationFactory setTokenCustomSalt(String tokenCustomSalt) {
-		this.tokenCustomSalt = tokenCustomSalt;
-		return this;
-	}
-*/
 	public ApplicationFactory setResourcesPath(String resourcesPath) {
 		this.resourcesPath = resourcesPath;
-		return this;
-	}
-
-	public ApplicationFactory setDeleteTempJavaFiles(boolean deleteTempJavaFiles) {
-		this.deleteTempJavaFiles = deleteTempJavaFiles;
-		return this;
-	}
-
-	public ApplicationFactory setMinimalize(boolean minimalize) {
-		this.minimalize = minimalize;
 		return this;
 	}
 
@@ -429,30 +319,15 @@ public class ApplicationFactory {
 		this.developIps = developIps;
 		return this;
 	}
-	
-	public ApplicationFactory setUseProfiler(boolean useProfiler) {
-		this.useProfiler = useProfiler;
-		return this;
-	}
-/*
-	public ApplicationFactory setUrlPattern(String urlPattern) {
-		this.urlPattern = urlPattern;
-		return this;
-	}
-	*/
-	public ApplicationFactory setTranslator(Translator translator) {
-		this.translator = translator;
-		return this;
-	}
-	
+
 	public ApplicationFactory setLoggerFactory(BiFunction<String, String, Logger> loggerFactory) {
 		this.loggerFactory = loggerFactory;
 		return this;
 	}
-	
+
 	public ApplicationFactory setAutoStart(boolean autoStart) {
 		this.autoStart = autoStart;
 		return this;
 	}
-	
+
 }

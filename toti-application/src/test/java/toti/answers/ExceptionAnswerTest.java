@@ -18,8 +18,6 @@ import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.Protocol;
 import ji.socketCommunication.http.structures.Request;
-import ji.translator.Locale;
-import ji.translator.Translator;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import toti.answers.request.Identity;
@@ -28,9 +26,10 @@ import toti.answers.response.TemplateResponse;
 import toti.answers.response.TextResponse;
 import toti.application.register.MappedAction;
 import toti.application.register.Register;
-import toti.extensions.CustomExceptionResponse;
+import toti.extensions.CustomExceptionExtension;
+import toti.extensions.Translator;
+import toti.extensions.TranslatorExtension;
 import toti.logging.FileName;
-import toti.templating.TemplateFactory;
 
 @RunWith(JUnitParamsRunner.class)
 public class ExceptionAnswerTest {
@@ -43,13 +42,10 @@ public class ExceptionAnswerTest {
 		Request request = new Request(HttpMethod.GET, "/wrong", Protocol.HTTP_2);
 		request.setUriParams("/wrong", MapDictionary.hashMap());
 		
-		Locale locale = mock(Locale.class);
-		
 		Identity identity = mock(Identity.class);
-		when(identity.getLocale()).thenReturn(locale);
 		
 		Translator translator = mock(Translator.class);
-		when(translator.withLocale(any(Locale.class))).thenReturn(translator);
+		TranslatorExtension translatorExtension = mock(TranslatorExtension.class);
 		
 		
 		Headers reqHeaders = mock(Headers.class);
@@ -61,9 +57,8 @@ public class ExceptionAnswerTest {
 		ExceptionAnswer answer = spy(new ExceptionAnswer(
 			mock(Register.class),
 			Arrays.asList("localhost"),
-			mock(TemplateFactory.class),
 			null,
-			translator,
+			translatorExtension,
 			mock(Logger.class)
 		));
 		
@@ -76,8 +71,7 @@ public class ExceptionAnswerTest {
 		assertEquals(expected, answer.answer(
 			request, reqHeaders, StatusCode.I_AM_A_TEAPORT, new Throwable(), identity, null, resHeaders, "charset"
 		));
-		verify(translator, times(1)).withLocale(locale);
-		verify(identity, times(1)).getLocale();
+		verify(translatorExtension, times(1)).getTranslator(identity);
 		verifyNoMoreInteractions(translator);
 	}
 	
@@ -85,11 +79,10 @@ public class ExceptionAnswerTest {
 	public void testCustomExceptionResponse() {
 		Logger logger = mock(Logger.class);
 		
-		CustomExceptionResponse custom = new CustomExceptionResponse() {
-			
+		CustomExceptionExtension custom = new CustomExceptionExtension() {
 			@Override
 			public Response catchException(toti.answers.request.Request request, StatusCode status, Identity identity,
-					Translator translator, Throwable t, boolean isDevelopResponseAllowed, boolean isAsyncRequest) {
+				TranslatorExtension translator, Throwable t, boolean isDevelopResponseAllowed, boolean isAsyncRequest) {
 				return new TextResponse(StatusCode.ACCEPTED, new Headers(), "catched");
 			}
 		};
@@ -100,9 +93,8 @@ public class ExceptionAnswerTest {
 		ExceptionAnswer answer = spy(new ExceptionAnswer(
 			register,
 			Arrays.asList("localhost"),
-			mock(TemplateFactory.class),
 			null,
-			mock(Translator.class),
+			mock(TranslatorExtension.class),
 			logger
 		));
 		
@@ -140,14 +132,11 @@ public class ExceptionAnswerTest {
 		Identity identity = mock(Identity.class);
 		when(identity.getIP()).thenReturn(ip);
 		
-		TemplateFactory templateFactory = mock(TemplateFactory.class);
-		
 		ExceptionAnswer answer = spy(new ExceptionAnswer(
 			mock(Register.class),
 			Arrays.asList("localhost"),
-			templateFactory,
 			null,
-			mock(Translator.class),
+			mock(TranslatorExtension.class),
 			logger
 		));
 		doReturn(new TemplateResponse(StatusCode.OK, new Headers(), "/detail", new HashMap<>())).when(answer)
@@ -206,9 +195,8 @@ public class ExceptionAnswerTest {
 		ExceptionAnswer answer = new ExceptionAnswer(
 			mock(Register.class),
 			Arrays.asList(),
-			mock(TemplateFactory.class),
 			logsPath,
-			mock(Translator.class),
+			mock(TranslatorExtension.class),
 			mock(Logger.class)
 		);
 		assertEquals("First run", expected, answer.getFileName(now, random, action, code, t));
@@ -241,9 +229,8 @@ public class ExceptionAnswerTest {
 		ExceptionAnswer answer = new ExceptionAnswer(
 			mock(Register.class),
 			Arrays.asList(),
-			mock(TemplateFactory.class),
 			null,
-			mock(Translator.class),
+			mock(TranslatorExtension.class),
 			mock(Logger.class)
 		);
 		assertEquals(-1, answer.saveToFile(filename, templateResponse, "charset", text));
@@ -274,9 +261,8 @@ public class ExceptionAnswerTest {
 		ExceptionAnswer answer = new ExceptionAnswer(
 			mock(Register.class),
 			Arrays.asList(),
-			mock(TemplateFactory.class),
 			null,
-			mock(Translator.class),
+			mock(TranslatorExtension.class),
 			mock(Logger.class)
 		);
 		assertEquals(0, answer.saveToFile(new FileName("/path/to/file", true), templateResponse, "charset", text));

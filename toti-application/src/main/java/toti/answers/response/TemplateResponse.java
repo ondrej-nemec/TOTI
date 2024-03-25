@@ -8,7 +8,6 @@ import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.Protocol;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
-import toti.templating.Template;
 
 public class TemplateResponse implements Response {
 	
@@ -68,8 +67,11 @@ public class TemplateResponse implements Response {
 	
 	public String createResponse(ResponseContainer container) {
 		try {
-			Template template = container.getTemplateFactory().getTemplate(fileName);
-			return template.create(container.getTemplateFactory(), params, container);
+			String module = null;
+			if (container.getCurrent() != null) {
+				module = container.getCurrent().getModuleName();
+			}
+			return container.getTemplateExtension().getTemplate(module, fileName, params);
 		} catch (Exception e) {
 			throw new ResponseException(e);
 		}

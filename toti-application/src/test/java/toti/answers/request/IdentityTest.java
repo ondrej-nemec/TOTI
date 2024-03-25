@@ -33,7 +33,7 @@ public class IdentityTest {
 	@Test
 	@Parameters(method="dataSetUserSelectCorrectMode")
 	public void testSetUserSelectCorrectMode(LoggedUser user, AuthMode mode) {
-		Identity identity = new Identity("IP", null);
+		Identity identity = new Identity("IP");
 		identity.setUser(user);
 		assertEquals(mode, identity.getLoginMode());
 	}

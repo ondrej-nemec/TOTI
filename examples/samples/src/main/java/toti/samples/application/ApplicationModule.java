@@ -16,7 +16,7 @@ import toti.answers.router.Router;
 import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Register;
-import toti.extensions.CustomExceptionResponse;
+import toti.extensions.CustomExceptionExtension;
 import toti.samples.application.controllers.ExceptionsController;
 import toti.samples.application.controllers.RequestController;
 import toti.samples.application.controllers.ResponseController;
@@ -36,7 +36,7 @@ public class ApplicationModule implements Module {
 		
 		// uncomment for using custom exception handler
 		//*
-		register.setCustomExceptionResponse(new CustomExceptionResponse() {
+		register.setCustomExceptionResponse(new CustomExceptionExtension() {
 			@Override
 			public Response catchException(toti.answers.request.Request request, StatusCode status, Identity identity,
 					Translator translator, Throwable t, boolean isDevelopResponseAllowed, boolean isAsyncRequest) {

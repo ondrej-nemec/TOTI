@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 
 import ji.files.text.Text;
 import ji.socketCommunication.http.StatusCode;
-import ji.translator.Translator;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.answers.response.Response;
@@ -20,28 +19,27 @@ import toti.answers.response.ResponseContainer;
 import toti.answers.response.TemplateResponse;
 import toti.application.register.MappedAction;
 import toti.application.register.Register;
+import toti.extensions.TranslatorExtension;
 import toti.logging.ExceptionHashCode;
 import toti.logging.FileName;
-import toti.templating.TemplateFactory;
 
 public class ExceptionAnswer {
 
 	private final List<String> developIps;
 	private final Logger logger;
 	private final String logsPath;
-	private final Translator translator;
-	private final TemplateFactory totiTemplateFactory;
+	private final TranslatorExtension translator;
 	private final Register register;
 	
 	private final Map<ExceptionHashCode, String> exceptionFileName = new HashMap<>();
 	
 	public ExceptionAnswer(
-			Register register, List<String> developIps, TemplateFactory totiTemplateFactory, String logsPath, Translator translator, Logger logger) {
+			Register register, List<String> developIps,
+			String logsPath, TranslatorExtension translator, Logger logger) {
 		this.register = register;
 		this.logger = logger;
 		this.developIps = developIps;
 		this.translator = translator;
-		this.totiTemplateFactory = totiTemplateFactory;
 		if (logsPath == null || logsPath.isEmpty()) {
 			this.logsPath = null;
 			logger.debug("Extended HTML request log is disabled");
@@ -58,11 +56,12 @@ public class ExceptionAnswer {
 			Headers responseHeaders,
 			String charset
 		) {
+		
 		return getResponse(request, requestHeaders, status, t, identity, mappedAction, charset)
 		.getResponse(
 			request.getProtocol(), responseHeaders, identity,
 			new ResponseContainer(
-				translator.withLocale(identity.getLocale()), null, mappedAction, totiTemplateFactory, null
+				translator.getTranslator(identity), null, mappedAction, null, null
 			),
 			charset
 		);
@@ -104,13 +103,15 @@ public class ExceptionAnswer {
 		saveToFile(fileName, exceptionDetail, charset);
 		return getExceptionInfo(status);
 	}
-	
+
+	// TODO nebude vracet template, pouzije se spagety kod
 	protected TemplateResponse getExceptionInfo(StatusCode status) {
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("code", status);
 		return new TemplateResponse(status, new Headers(), "/errors/error.jsp", variables);
 	}
-	
+
+	// TODO nebude vracet template, pouzije se spagety kod
 	protected TemplateResponse getExceptionDetail(ji.socketCommunication.http.structures.Request request,
 			Headers requestHeaders, StatusCode status, Throwable t, Identity identity, MappedAction mappedAction) {
 		Map<String, Object> variables = new HashMap<>();
@@ -167,7 +168,7 @@ public class ExceptionAnswer {
 			*/
 			text.write((bw)->{
 				bw.write(
-					response.createResponse(new ResponseContainer(translator, null, null, totiTemplateFactory, null))
+					response.createResponse(new ResponseContainer(null, null, null, null, null))
 				);
 			}, fileName.getName(), charset, false);
 			File file = new File(fileName.getName());

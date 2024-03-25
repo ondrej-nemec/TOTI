@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import ji.socketCommunication.http.StatusCode;
-import ji.translator.Translator;
 import toti.ServerException;
 import toti.answers.request.Identity;
 import toti.answers.request.IdentityFactory;
@@ -13,23 +12,21 @@ import toti.answers.request.Request;
 import toti.answers.response.Response;
 import toti.answers.response.ResponseContainer;
 import toti.extensions.OnTotiExtension;
-import toti.templating.TemplateFactory;
+import toti.extensions.TemplateExtension;
 
 public class TotiAnswer {
 	
 	private final List<String> developIps;
-	private final TemplateFactory templateFactory;
-	private final Translator translator;
+	private final TemplateExtension templateExtension;
 	
 	private final IdentityFactory identityFactory;
 	private final Map<String, OnTotiExtension> extensions = new HashMap<>();
 	
 	public TotiAnswer(
-			List<String> developIps, TemplateFactory templateFactory, Translator translator,
+			List<String> developIps, TemplateExtension templateExtension,
 			IdentityFactory identityFactory, List<OnTotiExtension> extensions) {
 		this.developIps = developIps;
-		this.templateFactory = templateFactory;
-		this.translator = translator;
+		this.templateExtension = templateExtension;
 		this.identityFactory = identityFactory;
 		extensions.forEach(e->e.getListeningUri().forEach(u->this.extensions.put(u, e)));
 	}
@@ -43,7 +40,7 @@ public class TotiAnswer {
 				.getResponse(
 					request.getProtocol(), responseHeaders, identity,
 					new ResponseContainer(
-						translator.withLocale(identity.getLocale()), null, null, templateFactory, null
+						null, null, null, templateExtension, null
 					), 
 					charset
 				);

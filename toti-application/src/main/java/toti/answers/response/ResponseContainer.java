@@ -2,29 +2,29 @@ package toti.answers.response;
 
 import java.util.Map;
 
-import ji.translator.Translator;
 import toti.answers.request.Identity;
 import toti.answers.request.SessionUserProvider;
 import toti.answers.router.Link;
 import toti.application.register.MappedAction;
+import toti.extensions.TemplateExtension;
+import toti.extensions.Translator;
 import toti.templating.TemplateContainer;
 import toti.templating.TemplateException;
-import toti.templating.TemplateFactory;
 
 public class ResponseContainer implements TemplateContainer {
 
 	private final Translator translator;
 	private final SessionUserProvider sup;
 	private final MappedAction current;
-	private final TemplateFactory templateFactory;
+	private final TemplateExtension templateExtension;
 	private final Link link;
 	
 	public ResponseContainer(Translator translator, SessionUserProvider sup, MappedAction current,
-			TemplateFactory templateFactory, Link link) {
+			TemplateExtension templateExtension, Link link) {
 		this.translator = translator;
 		this.sup = sup;
 		this.current = current;
-		this.templateFactory = templateFactory;
+		this.templateExtension = templateExtension;
 		this.link = link;
 	}
 	
@@ -69,9 +69,26 @@ public class ResponseContainer implements TemplateContainer {
 	public String createLink(String controllerName, String methodName, Map<String, Object> getParams, Object... urlParams) {
 		return link.create(controllerName, methodName, getParams, urlParams);
 	}
-	
-	public TemplateFactory getTemplateFactory() {
-		return templateFactory;
+
+	public Translator getTranslator() {
+		return translator;
 	}
+
+	public SessionUserProvider getSup() {
+		return sup;
+	}
+
+	public MappedAction getCurrent() {
+		return current;
+	}
+
+	public TemplateExtension getTemplateExtension() {
+		return templateExtension;
+	}
+
+	public Link getLink() {
+		return link;
+	}
+	
 	
 }

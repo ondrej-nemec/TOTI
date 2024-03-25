@@ -1,0 +1,25 @@
+plugins {
+    id 'java-library'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+compileTestJava.options.encoding = 'UTF-8'
+
+repositories {
+	mavenCentral()
+	maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+	api project(':toti-libs:toti-templating')
+	api project(':toti-application')
+	
+	// https://mvnrepository.com/artifact/junit/junit
+	testImplementation  group: 'junit', name: 'junit', version: '4.12'
+	// https://mvnrepository.com/artifact/org.mockito/mockito-core
+	testImplementation  group: 'org.mockito', name: 'mockito-core', version: '2.19.1'	
+	// https://mvnrepository.com/artifact/pl.pragmatists/JUnitParams
+	testImplementation  group: 'pl.pragmatists', name: 'JUnitParams', version: '1.1.1'
+}
+

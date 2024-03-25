@@ -36,7 +36,7 @@ public class ApplicationFactoryTest implements TestCase {
 	@Test
 	@Parameters(method="data")
 	@Ignore
-	public void test(Properties properties, Consumer<ApplicationFactory> setFactory, boolean useDb) throws Exception {
+	public void test(Properties properties, Consumer<ApplicationFactory> setFactory) throws Exception {
 		Env env = new Env(properties);
 		Env applicationsEnv = mock(Env.class);
 		when(applicationsEnv.getModule(any())).thenReturn(env);
@@ -69,11 +69,10 @@ public class ApplicationFactoryTest implements TestCase {
 		
 		Module module1 = mock(Module.class);
 		when(module1.getName()).thenReturn("module1");
-		when(module1.getMigrationsPath()).thenReturn("migrations/module1");
-		when(module1.initInstances(any(), any(), any(), any(), any(), any())).thenReturn(Arrays.asList(task11, task12));
+		when(module1.initInstances(any(), any(), any())).thenReturn(Arrays.asList(task11, task12));
 		Module module2 = mock(Module.class);
 		when(module2.getName()).thenReturn("module2");
-		when(module2.initInstances(any(), any(), any(), any(), any(), any())).thenReturn(Arrays.asList(task21));
+		when(module2.initInstances(any(), any(), any())).thenReturn(Arrays.asList(task21));
 		
 		Application application = factory.create(Arrays.asList(module1, module2));
 		
@@ -84,39 +83,16 @@ public class ApplicationFactoryTest implements TestCase {
 		// muze byt: logger.info - no database specified
 		// muze by: logger.warn profilel
 		
-		if (useDb) {
-			assertNotNull(application.getDatabase());
-		} else {
-			assertNull(application.getDatabase());
-		}
-		
 		assertNotNull(application.getLink());
-		assertNotNull(application.getMigrations());
 		assertNotNull(application.getRegister());
 		assertNotNull(application.getRequestAnswer());
-		assertNotNull(application.getTranslator());
 		assertArrayEquals(new String[] {"alias1", "alias2"}, application.getAliases());
 		
-		verify(module1, times(2)).getMigrationsPath();
-		verify(module2, times(1)).getMigrationsPath();
-		verify(module1).getTranslationPath();
-		verify(module2).getTranslationPath();
 		verify(module1).getName();
 		verify(module2).getName();
-		verify(module1).getPath();
-		verify(module2).getPath();
-		verify(module1).getTemplatesPath();
-		verify(module2).getTemplatesPath();
-		verify(module1, times(1)).initInstances(
-			env, application.getTranslator(), application.getRegister(),
-			application.getLink(), application.getDatabase(), module1Logger
-		);
-		verify(module2, times(1)).initInstances(
-			env, application.getTranslator(), application.getRegister(),
-			application.getLink(), application.getDatabase(), module2Logger
-		);
-		// TODO verify answers
 		
+		// TODO verify answers
+		// TODO verify extensions
 		// TODO verify env db: type, url, external, schema-name, password, pool-size
 	}
 	
@@ -125,8 +101,7 @@ public class ApplicationFactoryTest implements TestCase {
 			// default values
 			new Object[] {
 				MapInit.create().toProperties(),
-				consumer(ApplicationFactory.class, (f)->{}),
-				false
+				consumer(ApplicationFactory.class, (f)->{})
 			},
 			/*// TODO
 			new Object[] {
