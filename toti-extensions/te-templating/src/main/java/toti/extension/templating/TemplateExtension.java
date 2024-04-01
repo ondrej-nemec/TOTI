@@ -33,14 +33,23 @@ public class TemplateExtension implements toti.extensions.TemplateExtension, Ext
 	
 	private final Map<String, TemplateFactory> templateFactories;
 	private final String tempPath;
+	private final boolean minimalizeTemplate;
+	private final boolean deleteAuxFiles;
 	private final Logger logger;
 	
 	private final List<Tag> tags;
 	private final List<Parameter> parameters;
 	
-	// TODO deleteAux, minimalize
-	// TODO from env
-	public TemplateExtension(String tempPath, Logger logger) {
+	public TemplateExtension(Env env, Logger logger) {
+		this(
+			env.getModule("templating").getString("temp"),
+			env.getModule("templating").getBoolean("TODO"),
+			env.getModule("templating").getBoolean("temp"),
+			logger
+		);
+	}
+	
+	public TemplateExtension(String tempPath, boolean minimalizeTemplate, boolean deleteAuxFiles, Logger logger) {
 		this.templateFactories = new HashMap<>();
 		this.tags = Arrays.asList(
 			new IfCurrentTag(),
@@ -56,11 +65,14 @@ public class TemplateExtension implements toti.extensions.TemplateExtension, Ext
 		);
 		this.tempPath = tempPath;
 		this.logger = logger;
+		this.deleteAuxFiles = deleteAuxFiles;
+		this.minimalizeTemplate = minimalizeTemplate;
 	}
 	
 	public void registerModule(String module, String modulePath, String templatePath) {
 		templateFactories.put(module, new TemplateFactory(
-			tempPath, templatePath, module, modulePath, templateFactories, tags, parameters, logger
+			tempPath, templatePath, module, modulePath,templateFactories,
+			deleteAuxFiles, minimalizeTemplate, tags, parameters, logger
 		));
 	}
 

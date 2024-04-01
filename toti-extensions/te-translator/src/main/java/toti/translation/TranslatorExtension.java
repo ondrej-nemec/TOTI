@@ -1,9 +1,13 @@
 package toti.translation;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
+import org.apache.logging.log4j.Logger;
 
 import ji.common.functions.Env;
 import ji.common.structures.MapDictionary;
@@ -20,27 +24,19 @@ public class TranslatorExtension implements toti.extensions.TranslatorExtension,
 	
 	private final static String LOCALE_COOKIE_NAME = "Language";
 	private final static String LOCALE_HEADER_NAME = "Accept-Language";
+	private final static String NAME = "selected-language";
 	
-//	private final String defLang;
-//	private final Translator translator;
+	private final LanguageSettings langSettings;
+	private final Logger logger;
+	private final Set<String> paths;
 	
+	private Translator translator;
+
+	public TranslatorExtension(Env env, Logger logger) {
+		this(parseLangSettings(env.getModule("lang")), logger);
+	}
 	
-	public TranslatorExtension() {
-		/*
-		if (translator == null) {
-			LanguageSettings langSettings = getLangSettings(env);
-			langSettings.setProfiler(profiler);
-			this.translator = Translator.create(langSettings, trans, loggerFactory.apply(appIdentifier, "translator"));
-		}
-		*/
-		/*
-		
-	
-	private LanguageSettings getLangSettings(Env conf) {
-		if (langSettings != null) {
-			return langSettings;
-		}
-		Env env = conf.getModule("lang");
+	private static LanguageSettings parseLangSettings(Env env) {
 		if (env.getString("locales") != null) {  
 			List<Locale> locales = new LinkedList<>();
 			for (String l : env.getString("locales").split(",")) {
@@ -58,7 +54,11 @@ public class TranslatorExtension implements toti.extensions.TranslatorExtension,
 		}
 		return new LanguageSettings(java.util.Locale.getDefault().toString(), Arrays.asList());
 	}
-		*/
+
+	public TranslatorExtension(LanguageSettings langSettings, Logger logger) {
+		this.langSettings = langSettings;
+		this.logger = logger;
+		this.paths = new HashSet<>();
 	}
 	
 	@Override
@@ -68,15 +68,18 @@ public class TranslatorExtension implements toti.extensions.TranslatorExtension,
 
 	@Override
 	public void init(Env appEnv, Register register) {
-		// TODO Auto-generated method stub
-		
+		this.translator = Translator.create(langSettings, paths, logger);
+	}
+	
+	public void addTranslationPath(String path) {
+		this.paths.add(path);
 	}
 
 	@Override
 	public void onRequestStart(Identity identity, MapDictionary<String> sessionSpace, Headers requestHeaders,
 		MapDictionary<String> queryParams, RequestParameters requestBody) {
 		Locale locale = getLocale(requestHeaders);
-		// TODO set to identity
+		identity.getSessionSpace(this).put(NAME, locale.getLang());
 	}
 	
 	private Locale getLocale(Headers headers) {
@@ -86,7 +89,7 @@ public class TranslatorExtension implements toti.extensions.TranslatorExtension,
 		}
 		Object lang = headers.getHeader(LOCALE_HEADER_NAME);
 		if (lang == null) {
-			return resolveLocale(defLang);
+			return resolveLocale(langSettings.getDefaultLang().getLang());
 		} else {
 			String locale = lang.toString().split(" ", 2)[0].split(";")[0].split(",")[0].trim();
 			return resolveLocale(locale);
@@ -96,7 +99,7 @@ public class TranslatorExtension implements toti.extensions.TranslatorExtension,
 	private Locale resolveLocale(String locale) {
 		Locale loc = translator.getLocale(locale);
 		if (loc == null) {
-			return translator.getLocale(defLang);
+			return translator.getLocale(langSettings.getDefaultLang().getLang());
 		}
 		return loc;
 	}
@@ -105,28 +108,21 @@ public class TranslatorExtension implements toti.extensions.TranslatorExtension,
 	public void onRequestEnd(Identity identity, MapDictionary<String> sessionSpace, Headers responseHeaders) {
 		responseHeaders.addHeader(
 			"Set-Cookie", 
-			LOCALE_COOKIE_NAME + "=" + identity.getLocale().getLang() // .toLanguageTag()
+			LOCALE_COOKIE_NAME + "=" + identity.getSessionSpace(this).getString(NAME)
 			+ "; Path=/"
 			+ "; SameSite=Strict"
 		);
 	}
 
 	@Override
-	public void onApplicationStart() throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onApplicationStop() throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public toti.extensions.Translator getTranslator(Identity identity) {
-		// TODO Auto-generated method stub
-		return null;
+		return new TranslatorImpl(translator.withLocale(identity.getSessionSpace(this).getString(NAME)));
 	}
+
+	@Override
+	public void onApplicationStart() throws Exception {}
+
+	@Override
+	public void onApplicationStop() throws Exception {}
 
 }

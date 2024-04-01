@@ -54,7 +54,7 @@ public class DatabaseExtension implements Extension {
 				env.getString("password"),
 				migrations,
 				env.getInteger("pool-size")
-			), profiler, logger);
+			), logger);
 		}
 		if (this.database == null) {
 			logger.info("No database specified");

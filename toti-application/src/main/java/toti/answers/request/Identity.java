@@ -46,11 +46,11 @@ public class Identity {
 	
 	/*************/
 	
-	protected MapDictionary<String> getSessionSpace(Extension extension) {
+	public MapDictionary<String> getSessionSpace(Extension extension) {
 		return getSessionSpace(extension.getIdentifier());
 	}
 	
-	protected MapDictionary<String> getSessionSpace(String name) {
+	public MapDictionary<String> getSessionSpace(String name) {
 		if (!sessionSpaces.containsKey(name)) {
 			sessionSpaces.put(name, MapDictionary.hashMap());
 		}
