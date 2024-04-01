@@ -34,10 +34,10 @@ public class SamplesMain {
 					return LogManager.getLogger(appName + "_" + loggerName);
 				});
 				// TODO applicationFactory.setUrlPattern(null);
-				applicationFactory.setTranslator(null); // TODO
 				
 				// optional: add extensions, always in code
 				applicationFactory.addExtension(new UiExtension());
+				// TODO all extensions
 				
 				return applicationFactory.create(Arrays.asList(
 					new ApplicationModule(),
@@ -79,13 +79,7 @@ public class SamplesMain {
 		serverFactory.setReadTimeout(90000); // 90s
 		serverFactory.setThreadPool(100);
 		return new SamplesMain(serverFactory, (applicationFactory)->{
-			applicationFactory.setUseProfiler(true);
-			
-			applicationFactory.setDatabase(null); // TODO
-			applicationFactory.setLanguageSettings(null); // TODO
-			
 			applicationFactory.setAutoStart(true);
-			applicationFactory.setDeleteTempJavaFiles(true);
 			applicationFactory.setDevelopIpAdresses(Arrays.asList("127.0.0.1", "0:0:0:0:0:0:0:1"));
 			applicationFactory.setDirDefaultFile("index.html");
 			applicationFactory.setDirResponseAllowed(true);
@@ -95,7 +89,6 @@ public class SamplesMain {
 				.toMap()
 			);
 			applicationFactory.setLogsPath("logs");
-			applicationFactory.setMinimalize(false);
 			applicationFactory.setResourcesPath("www");
 			applicationFactory.setTempPath("temp");
 		});

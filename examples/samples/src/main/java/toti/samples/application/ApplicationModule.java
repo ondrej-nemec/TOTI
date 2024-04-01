@@ -10,6 +10,7 @@ import ji.database.Database;
 import ji.socketCommunication.http.StatusCode;
 import ji.translator.Translator;
 import toti.answers.request.Identity;
+import toti.answers.request.Request;
 import toti.answers.response.Response;
 import toti.answers.router.Link;
 import toti.answers.router.Router;
@@ -17,6 +18,7 @@ import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Register;
 import toti.extensions.CustomExceptionExtension;
+import toti.extensions.TranslatorExtension;
 import toti.samples.application.controllers.ExceptionsController;
 import toti.samples.application.controllers.RequestController;
 import toti.samples.application.controllers.ResponseController;
@@ -29,7 +31,7 @@ public class ApplicationModule implements Module {
 	}
 
 	@Override
-	public List<Task> initInstances(Env env, Translator translator, Register register, Link link, Database database, Logger logger) throws Exception {
+	public List<Task> initInstances(Env env, Register register, Link link) throws Exception {
 		// TODO register.createRoutedAction(getClass(), null); + example
 		// TODO register.setSessionUserProvider(null); + example
 		// TODO zpracovani pozadavku - steps
@@ -38,8 +40,8 @@ public class ApplicationModule implements Module {
 		//*
 		register.setCustomExceptionResponse(new CustomExceptionExtension() {
 			@Override
-			public Response catchException(toti.answers.request.Request request, StatusCode status, Identity identity,
-					Translator translator, Throwable t, boolean isDevelopResponseAllowed, boolean isAsyncRequest) {
+			public Response catchException(Request request, StatusCode status, Identity identity,
+				TranslatorExtension translator, Throwable t, boolean isDevelopResponseAllowed, boolean isAsyncRequest) {
 				return Response.OK().getText("Oops, something happends.");
 			}
 		});
@@ -57,10 +59,10 @@ public class ApplicationModule implements Module {
 		// TODO router.addUrl(getName(), getName()); + example
 		// TODO router.setRedirectOnNotLoggedInUser(getName()); + example
 	}
-	
-	@Override
+	// TODO
+/*	@Override
 	public String getTemplatesPath() {
 		return "templates/application";
 	}
-
+*/
 }
