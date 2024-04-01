@@ -1,5 +1,6 @@
-package toti.templating.parameters;
+package toti.extension.templating.parameters;
 
+import toti.extension.templating.TemplateResponseContainer;
 import toti.templating.Parameter;
 
 public class SrcParameter implements Parameter {
@@ -16,7 +17,13 @@ public class SrcParameter implements Parameter {
              prefix = value.substring(2, value.indexOf(":", 3));
              value = value.substring(value.indexOf(":", 3)+1);
         }
-        return String.format("\"%s\" + container.createLink(\"%s\")", prefix, value);
+        return String.format(
+        	"\"%s\" + "
+        	+ TemplateResponseContainer.class.getCanonicalName()
+			+ ".class.cast(container)"
+        	+ ".createLink(\"%s\")",
+        	prefix, value
+        );
     }
 
 }

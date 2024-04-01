@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.function.Function;
 
 import ji.socketCommunication.http.structures.UploadedFile;
-import ji.translator.Translator;
+import toti.extensions.Translator;
 
 public class FileAllowedTypesRule extends SimpleRule<Collection<Object>> {
 

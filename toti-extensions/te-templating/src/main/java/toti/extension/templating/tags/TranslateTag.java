@@ -1,7 +1,8 @@
-package toti.templating.tags;
+package toti.extension.templating.tags;
 
 import java.util.Map;
 
+import toti.extension.templating.TemplateResponseContainer;
 import toti.templating.Tag;
 import toti.templating.TagVariableMode;
 
@@ -37,14 +38,12 @@ public class TranslateTag implements Tag {
 			}
 		});
 		variables.append(".toMap()");
-	/*	if (params.get("variable") != null) { // TODO remove it after code/variable handling
-			return String.format(
-				"write(Template.escapeVariable(translator.translate(%s, %s)));",
-				params.get("variable"), variables.toString()
-			);
-		}*/
 		return String.format(
-			"write(Template.escapeVariable(container.translate(\"%s\", %s)));",
+			"write(Template.escapeVariable("
+				+ TemplateResponseContainer.class.getCanonicalName()
+				+ ".class.cast(container)"
+				+ ".translate(\"%s\", %s))"
+			+ "));",
 			params.get("message"), variables.toString()
 		);
 	}

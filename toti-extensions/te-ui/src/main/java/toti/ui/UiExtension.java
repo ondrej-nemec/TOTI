@@ -7,26 +7,28 @@ import java.util.List;
 import ji.common.functions.Env;
 import ji.common.structures.MapDictionary;
 import ji.socketCommunication.http.StatusCode;
+import ji.socketCommunication.http.structures.RequestParameters;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.answers.response.Response;
 import toti.application.register.Register;
+import toti.extensions.Extension;
 import toti.extensions.OnTotiExtension;
-import toti.extensions.TranslatedExtension;
 
-public class UiExtension implements TranslatedExtension, OnTotiExtension {
+public class UiExtension implements Extension, OnTotiExtension {
 
 	@Override
 	public String getIdentifier() {
 		return "toti-ui";
 	}
-
+/*
+	// TODO
 	@Override
 	public String getTranslationPath() {
 		return "toti/ui/translations";
 	}
-
+*/
 	@Override
 	public List<String> getListeningUri() {
 		return Arrays.asList(".js", ".css");
@@ -51,5 +53,18 @@ public class UiExtension implements TranslatedExtension, OnTotiExtension {
 
 	@Override
 	public void init(Env appEnv, Register register) {}
+
+	@Override
+	public void onRequestStart(Identity identity, MapDictionary<String> sessionSpace, Headers requestHeaders,
+		MapDictionary<String> queryParams, RequestParameters requestBody) {}
+
+	@Override
+	public void onRequestEnd(Identity identity, MapDictionary<String> sessionSpace, Headers responseHeaders) {}
+
+	@Override
+	public void onApplicationStart() throws Exception {}
+
+	@Override
+	public void onApplicationStop() throws Exception {}
 
 }

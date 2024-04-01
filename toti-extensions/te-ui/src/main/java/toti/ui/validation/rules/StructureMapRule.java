@@ -4,7 +4,7 @@ import java.util.function.Function;
 
 import ji.common.structures.DictionaryValue;
 import ji.socketCommunication.http.structures.RequestParameters;
-import ji.translator.Translator;
+import toti.extensions.Translator;
 import toti.answers.request.Request;
 import toti.ui.validation.ValidationItem;
 import toti.ui.validation.Validator;

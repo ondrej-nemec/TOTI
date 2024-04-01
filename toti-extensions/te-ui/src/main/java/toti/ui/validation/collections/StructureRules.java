@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 import ji.common.exceptions.LogicException;
 import ji.common.structures.MapInit;
-import ji.translator.Translator;
+import toti.extensions.Translator;
 import toti.ui.validation.Validator;
 import toti.ui.validation.rules.MaxLengthRule;
 import toti.ui.validation.rules.MinLengthRule;

@@ -11,12 +11,12 @@ import ji.common.exceptions.LogicException;
 import ji.common.structures.MapInit;
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.RequestParameters;
-import ji.translator.Translator;
 import toti.answers.action.RequestInterruptedException;
 import toti.answers.action.Validate;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.answers.response.Response;
+import toti.extensions.Translator;
 import toti.ui.validation.collections.RulesCollection;
 import toti.ui.validation.rules.Rule;
 

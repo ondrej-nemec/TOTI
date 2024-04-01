@@ -7,12 +7,16 @@ import java.util.function.BiFunction;
 import org.apache.logging.log4j.Logger;
 
 import ji.common.functions.Env;
+import ji.common.structures.MapDictionary;
 import ji.database.Database;
 import ji.database.DatabaseConfig;
+import ji.socketCommunication.http.structures.RequestParameters;
+import toti.answers.Headers;
+import toti.answers.request.Identity;
 import toti.application.register.Register;
-import toti.extensions.ApplicationExtension;
+import toti.extensions.Extension;
 
-public class DatabaseExtension implements ApplicationExtension {
+public class DatabaseExtension implements Extension {
 
 	private final Logger logger;
 	
@@ -58,7 +62,7 @@ public class DatabaseExtension implements ApplicationExtension {
 	}
 
 	@Override
-	public void start() throws Exception {
+	public void onApplicationStart() throws Exception {
 		if (database != null) {
 			// database.startServer();
 			database.createDbIfNotExists();
@@ -67,10 +71,10 @@ public class DatabaseExtension implements ApplicationExtension {
 	}
 
 	@Override
-	public void stop() throws Exception {
-		/*if (database != null) {
+	public void onApplicationStop() throws Exception {
+		if (database != null) {
 			database.stopServer();
-		}*/
+		}
 	}
 	
 	public Database getDatabase() {
@@ -80,5 +84,12 @@ public class DatabaseExtension implements ApplicationExtension {
 	public void addMigration(String migration) {
 		migrations.add(migration);
 	}
+
+	@Override
+	public void onRequestStart(Identity identity, MapDictionary<String> sessionSpace, Headers requestHeaders,
+		MapDictionary<String> queryParams, RequestParameters requestBody) {}
+
+	@Override
+	public void onRequestEnd(Identity identity, MapDictionary<String> sessionSpace, Headers responseHeaders) {}
 
 }

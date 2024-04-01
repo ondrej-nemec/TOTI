@@ -71,7 +71,7 @@ public class TemplateResponse implements Response {
 			if (container.getCurrent() != null) {
 				module = container.getCurrent().getModuleName();
 			}
-			return container.getTemplateExtension().getTemplate(module, fileName, params);
+			return container.getTemplateExtension().getTemplate(module, fileName, params, container);
 		} catch (Exception e) {
 			throw new ResponseException(e);
 		}

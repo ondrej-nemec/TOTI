@@ -1,5 +1,6 @@
 plugins {
     id 'java-library'
+    id 'java-test-fixtures'
 }
 
 sourceCompatibility = 1.8
@@ -10,45 +11,12 @@ repositories {
 	mavenCentral()
 	maven { url 'https://jitpack.io' }
 }
-/*
-sourceSets {
-    main {
-        java {
-            srcDirs 'src/main/java'
-            
-            srcDirs '../javainit/ji-common/src/main/java'
-            srcDirs '../javainit/ji-communication/src/main/java'
-            srcDirs '../javainit/ji-database/src/main/java'
-            srcDirs '../javainit/ji-translate/src/main/java'
-            srcDirs '../javainit/ji-files/src/main/java'
-            srcDirs '../javainit/ji-testing/src/main/java'
-        }
-        resources {
-            srcDir 'src/main/resources'
-        }
-    }
-    test {
-        java {
-            srcDir 'src/test/java'
-            srcDir 'examples/samples/java'
-            srcDir 'examples/tutorial1/java'
-        }
-        resources {
-            srcDir 'src/test/resources'
-            srcDir 'examples/samples/resources'
-            srcDir 'examples/tutorial1/resources'
-        }
-    }
-}
-//*/
 
 dependencies {
 	 implementation 'com.github.ondrej-nemec.JI:ji-common:' + JI_version
 	 implementation 'com.github.ondrej-nemec.JI:ji-files:' + JI_version
 	
 	// compile files("${System.properties['java.home']}/../lib/tools.jar")
-	
-	testImplementation 'com.github.ondrej-nemec.JI:ji-translate:' + JI_version
 	// https://mvnrepository.com/artifact/junit/junit
 	testImplementation  group: 'junit', name: 'junit', version: '4.12'
 	// https://mvnrepository.com/artifact/org.mockito/mockito-core

@@ -1,8 +1,10 @@
 package toti.templating.parsing;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
@@ -20,13 +22,16 @@ import toti.templating.TemplateFactory;
 public class TemplateParserEndToEndTest extends TemplateFactory {
 	
 	public TemplateParserEndToEndTest(String tempPath, String templatePath, String module, String modulePath,
-			Map<String, TemplateFactory> modules, boolean deleteAuxJavaClass, boolean minimalize, Logger logger) {
-		super(tempPath, templatePath, module, modulePath, modules, deleteAuxJavaClass, minimalize, logger);
+			Map<String, TemplateFactory> modules, boolean deleteAuxJavaClass, boolean minimalize,
+			List<Tag> customTags, List<Parameter> customParams, Logger logger) {
+		super(
+			tempPath, templatePath, module, modulePath, modules,
+			deleteAuxJavaClass, minimalize, customTags, customParams, logger);
 	}
 
 	public static void main(String[] args) {
 		try {
-			TemplateFactory.addTag(new Tag() {
+				Tag tag = new Tag() {
 				
 				@Override public TagVariableMode getMode(String name) {
 					return TagVariableMode.NOT_SUPPORTED;
@@ -59,8 +64,8 @@ public class TemplateParserEndToEndTest extends TemplateFactory {
 				public String getName() {
 					return "tagName";
 				}
-			});
-			TemplateFactory.addParameter(new Parameter() {
+			};
+			Parameter parameter = new Parameter() {
 				
 				@Override
 				public String getName() {
@@ -71,7 +76,7 @@ public class TemplateParserEndToEndTest extends TemplateFactory {
 				public String getCode(String value) {
 					return "\"Value: " + value.length() + "\"";
 				}
-			});
+			};
 			/*
 			new TemplateParser(new HashMap<>(), false).createTempCache(
 				"toti/templating/parsing2", // namespace
@@ -87,7 +92,9 @@ public class TemplateParserEndToEndTest extends TemplateFactory {
 			
 			TemplateParserEndToEndTest test = new TemplateParserEndToEndTest(
 				"temp", "toti/templating/parsing", "", "", new HashMap<>(), 
-				false, false, new Log4j2LoggerTestImpl("parsing")
+				false, false,
+				Arrays.asList(tag), Arrays.asList(parameter),
+				new Log4j2LoggerTestImpl("parsing")
 			);
 			Template t = test.getTemplate("template.jsp");
 			Text.get().write((bw)->{

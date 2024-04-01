@@ -1,8 +1,9 @@
-package toti.templating.tags;
+package toti.extension.templating.tags;
 
 import java.util.Map;
 
 import ji.common.exceptions.LogicException;
+import toti.extension.templating.TemplateResponseContainer;
 import toti.templating.Tag;
 import toti.templating.TagVariableMode;
 
@@ -26,20 +27,33 @@ public class IfCurrentTag implements Tag {
 		String module = params.get("module");
 		if (module != null) {
 			result.append("&&");
-			result.append("(\"" + module + "\").equals(container.getModuleName())");
+			result.append("(\"" + module + "\").equals(" + callContainerMethod("getModuleName") +")");
 		}
 		String controller = params.get("controller");
 		if (controller != null) {
 			result.append("&&");
-			result.append("(\"" + controller + "\").equals(container.getClassName())");
+			result.append("(\"" + controller + "\").equals(" + callContainerMethod("getClassName") + ")");
 		}
 		String method = params.get("method");
 		if (method != null) {
 			result.append("&&");
-			result.append("(\"" + method + "\").equals(container.getMethodName())");
+			result.append("(\"" + method + "\").equals(" + callContainerMethod("getMethodName") + ")");
 		}
 		result.append(")){initNode(new HashMap<>());");
 		return result.toString();
+	}
+	
+	private String callContainerMethod(String method) {
+		return String.format(
+			"("
+			+TemplateResponseContainer.class.getCanonicalName()
+			+ ".class.cast(container).getCurrent() == null"
+			+ " ? null : "
+			+TemplateResponseContainer.class.getCanonicalName()
+			+ ".class.cast(container).getCurrent().%s()"
+			+ ")",
+			method
+		);
 	}
 
 	@Override

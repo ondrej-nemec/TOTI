@@ -2,7 +2,7 @@ package toti.ui.validation.rules;
 
 import java.util.function.BiFunction;
 
-import ji.translator.Translator;
+import toti.extensions.Translator;
 import toti.answers.request.Request;
 import toti.ui.validation.ValidationItem;
 

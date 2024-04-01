@@ -1,81 +1,49 @@
 package toti.templating.tags;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-
-import java.io.File;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import org.apache.logging.log4j.Logger;
 import ji.common.structures.MapInit;
-import ji.translator.Locale;
-import ji.translator.Translator;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
-import toti.templating.Template;
-import toti.templating.TemplateContainer;
-import toti.templating.TemplateFactory;
+import toti.templating.BaseTemplateTest;
 
 @RunWith(JUnitParamsRunner.class)
-public class TagsEndToEndTest {
+public class TagsEndToEndTest extends BaseTemplateTest {
 	
-	private final static String PATH = "toti/templating/tags";
-	
+	public TagsEndToEndTest() {
+		super("toti/templating/tags");
+	}
+
 	@Test
 	@Parameters(method="dataTags")
 	public void testTags(String module, String template, String expected) throws Exception {
-		//User user = mock(User.class);
-		//Identity identity = mock(Identity.class);
-		//when(identity.getUser()).thenReturn(user);
-		
-		Translator trans = new Translator() {
-			@Override public Translator withLocale(Locale locale) { return this; }
-			@Override public String translate(String key, Map<String, Object> variables, String locale) {
-				return key + " " + variables; 
-			}
-			@Override public void setLocale(Locale locale) {}
-			@Override public Locale getLocale(String locale) { return mock(Locale.class); }
-			@Override public Locale getLocale() { return mock(Locale.class); }
-			@Override public Set<String> getSupportedLocales() { return null; }
-		};
 		Map<String, Object> variables = new MapInit<String, Object>()
-				//.append("totiIdentity", identity)
-				.append("layout", "layout.jsp")
-				.append("included", "includedFile.jsp")
-				.append("blockName", "myBlock")
-				.append("parameter", "value")
-				.append("caseValue", 132)
-				.append("switchValue", 123)
-				.append("exceptionClass", Exception.class)
-				.append("defineException", new Exception("Exception message"))
-				.append("currentMethod", "myMethod")
-				.append("securityDoamin", "my-domain")
-				.append("toTranslate", "some.key")
-				.append("transParam", "some.value")
-				.append("condition", true)
-				.append("max", 3)
-				.append(
-					"map",
-					new MapInit<String, String>()
-					.append("a", "aa")
-					.append("b", "bb")
-					.append("c", "cc")
-					.toMap()
-				)
-				.append("list", Arrays.asList("a", "b", "c"))
-				.toMap();
-		
-		String t = create(
-			module, template, variables, trans, /*mock(Authorizator.class), mock(MappedUrl.class),*/ mock(Logger.class)
-		);
-		assertEquals(expected, t);
+			//.append("totiIdentity", identity)
+			.append("layout", "layout.jsp")
+			.append("included", "includedFile.jsp")
+			.append("blockName", "myBlock")
+			.append("parameter", "value")
+			.append("caseValue", 132)
+			.append("switchValue", 123)
+			.append("exceptionClass", Exception.class)
+			.append("defineException", new Exception("Exception message"))
+			.append("condition", true)
+			.append("max", 3)
+			.append(
+				"map",
+				new MapInit<String, String>()
+				.append("a", "aa")
+				.append("b", "bb")
+				.append("c", "cc")
+				.toMap()
+			)
+			.append("list", Arrays.asList("a", "b", "c"))
+			.toMap();
+		testTemplate(variables, module, template, expected);
 	}
 	
 	public Object[] dataTags() {
@@ -295,58 +263,6 @@ public class TagsEndToEndTest {
 			new Object[] {
 				"cycles", "dowhileVariable.jsp", "Dowhile: 0 1 2"
 			},
-			// if current + else
-			new Object[] {
-					"other", "ifCurrent.jsp", "If current: "
-				},
-			new Object[] {
-					"other", "ifCurrentElse.jsp", "If current: Not current"
-				},
-			new Object[] {
-					"other", "ifCurrentNot.jsp", "If current: Not current"
-				},
-			new Object[] {
-					"other", "ifCurrentReturning.jsp", "If current: "
-				},
-			new Object[] {
-					"other", "ifCurrentVariable.jsp", "If current: "
-				},
-			// permissions + else
-			new Object[] {
-					"other", "permissions.jsp", "Allowed: "
-				},
-			new Object[] {
-					"other", "permissionsElse.jsp", "Allowed: No"
-				},
-			new Object[] {
-					"other", "permissionsNot.jsp", "Allowed: Yes"
-				},
-			new Object[] {
-					"other", "permissionsReturning.jsp", "Allowed: "
-				},
-			new Object[] {
-					"other", "permissionsVariable.jsp", "Allowed: "
-				},
-			// transate
-			new Object[] {
-					"other", "translate.jsp", "Trans: some.key {}"
-				},
-			new Object[] {
-					"other", "translateParam.jsp", "Trans: some.key {param=some.value}"
-				},
-			new Object[] {
-					"other", "translateVariable.jsp", "Trans: some.key {}"
-				},
-			new Object[] {
-					"other", "translateReturning.jsp", "Trans: some.key {}"
-				},
-			new Object[] {
-					"other", "translateParamReturning.jsp", "Trans: some.key {param=some.value}"
-				},
-			new Object[] {
-					"other", "translateParamVariable.jsp", "Trans: some.key {param=some.value}"
-				},
-			//TODO link is missing - no controlelr
 			// TODO callback
 			// TODO form tags
 			// TODO datatime format
@@ -361,69 +277,5 @@ public class TagsEndToEndTest {
 					"variables", "consoleReturning.jsp", "Console: "
 				},
 		};
-	}
-	
-	private String create(
-			String submodule, String file, Map<String, Object> variables,
-			Translator translator, // Authorizator authorizator, MappedUrl mappedUrl,
-			Logger logger) throws Exception {
-		FileUtils.deleteDirectory(new File("temp/cache"));
-		Map<String, TemplateFactory> modules = new HashMap<>();
-		
-		TemplateFactory templateFactory = new TemplateFactory(
-			"temp", PATH + "/" + submodule, "", "", modules,
-			false, false, logger
-		);
-		modules.put("", templateFactory);
-		modules.put("module", new TemplateFactory(
-			"temp", PATH + "/module", "module", "", modules,
-			true, true, logger
-		));
-		
-		Template template = templateFactory.getTemplate(file);
-		// translator, authorizator, mappedUrl
-		return template.create(templateFactory, variables, new TemplateContainer() {
-			
-			@Override
-			public String translate(String key, Map<String, Object> variables) {
-				return translator.translate(key, variables);
-			}
-			
-			@Override
-			public String translate(String key) {
-				return translator.translate(key);
-			}
-			
-			@Override
-			public boolean isAllowed(Object identity, Map<String, Object> params) {
-				return false;
-			}
-			
-			@Override
-			public String getModuleName() {
-				return null;
-			}
-			
-			@Override
-			public String getMethodName() {
-				return null;
-			}
-			
-			@Override
-			public String getClassName() {
-				return null;
-			}
-			
-			@Override
-			public String createLink(String url) {
-				return null;
-			}
-			
-			@Override
-			public String createLink(String controllerName, String methodName, Map<String, Object> getParams,
-					Object... urlParams) {
-				return null;
-			}
-		});
 	}
 }

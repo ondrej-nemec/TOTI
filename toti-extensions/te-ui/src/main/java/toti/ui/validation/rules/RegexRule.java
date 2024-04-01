@@ -4,7 +4,7 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ji.translator.Translator;
+import toti.extensions.Translator;
 
 public class RegexRule extends SimpleRule<String> {
 

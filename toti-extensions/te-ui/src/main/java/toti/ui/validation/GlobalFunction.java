@@ -1,7 +1,7 @@
 package toti.ui.validation;
 
 import ji.socketCommunication.http.structures.RequestParameters;
-import ji.translator.Translator;
+import toti.extensions.Translator;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
 

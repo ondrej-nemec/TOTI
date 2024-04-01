@@ -12,7 +12,7 @@ import java.util.function.Function;
 import org.junit.Test;
 
 import ji.common.structures.BooleanBuilder;
-import ji.translator.Translator;
+import toti.extensions.Translator;
 import toti.answers.request.Request;
 import toti.ui.validation.ValidationItem;
 

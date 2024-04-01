@@ -6,7 +6,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,11 +19,6 @@ import ji.common.exceptions.LogicException;
 import ji.common.functions.FileExtension;
 import ji.common.structures.ThrowingFunction;
 import ji.common.structures.Tuple2;
-import toti.templating.parameters.AltParameter;
-import toti.templating.parameters.HrefParameter;
-import toti.templating.parameters.PlaceholderParameter;
-import toti.templating.parameters.SrcParameter;
-import toti.templating.parameters.TitleParameter;
 import toti.templating.parsing.TemplateParser;
 import toti.templating.tags.*;
 
@@ -32,8 +26,8 @@ public class TemplateFactory {
 	
 	private TemplateProfiler profiler = null;
 	
-	private static final List<Tag> CUSTOM_TAG_PROVIDERS = new LinkedList<>();
-	private static final List<Parameter> CUSTOM_PARAMETERS_PROVIDERS = new LinkedList<>();
+	private final List<Tag> customTags;
+	private final List<Parameter> customParams;
 
 	private final String tempPath;
 	private final boolean deleteAuxJavaClass;
@@ -45,8 +39,13 @@ public class TemplateFactory {
 	private final String modulePath;
 	private final Logger logger;
 	
-	public TemplateFactory(String tempPath, String templatePath, String module, String modulePath, Map<String, TemplateFactory> modules, Logger logger) {
-		this(tempPath, templatePath, module, modulePath, modules, true, false, logger);
+	public TemplateFactory(
+		String tempPath, String templatePath, String module, String modulePath,
+		Map<String, TemplateFactory> modules,
+		List<Tag> customTags,
+		List<Parameter> customParams,
+		Logger logger) {
+		this(tempPath, templatePath, module, modulePath, modules, true, false, customTags, customParams, logger);
 	}
 	
 	public TemplateFactory(
@@ -57,6 +56,8 @@ public class TemplateFactory {
 			Map<String, TemplateFactory> modules,
 			boolean deleteAuxJavaClass,
 			boolean minimalize,
+			List<Tag> customTags,
+			List<Parameter> customParams,
 			Logger logger) {
 		String cachePath = tempPath + "/cache/" + module;
 		File cacheDir = new File(cachePath);
@@ -66,6 +67,8 @@ public class TemplateFactory {
 		if (!cacheDir.setExecutable(true, false) || !cacheDir.setWritable(true, false) || !cacheDir.setReadable(true, false)) {
 			logger.warn("Temp cache dir cannot be set permissions: " + cachePath);
 		}
+		this.customParams = customParams;
+		this.customTags = customTags;
 		this.tempPath = cachePath;
 		this.templatePath = templatePath;
 		this.deleteAuxJavaClass = deleteAuxJavaClass;
@@ -203,9 +206,9 @@ public class TemplateFactory {
 		dir.setWritable(true, false);
 		
 		List<Tag> tags = initTags();
-		tags.addAll(CUSTOM_TAG_PROVIDERS);
+		tags.addAll(customTags);
 		List<Parameter> parameters = initParameters();
-		parameters.addAll(CUSTOM_PARAMETERS_PROVIDERS);
+		parameters.addAll(customParams);
 		
 		toti.templating.parsing.TemplateParser parser = new TemplateParser(
 			tags.stream().collect(Collectors.toMap(Tag::getName, tag -> tag)),
@@ -291,7 +294,7 @@ public class TemplateFactory {
 		tags.add(new ForTag());
 		tags.add(new IfTag());
 		tags.add(new SwitchTag());
-		tags.add(new TranslateTag());
+	//	tags.add(new TranslateTag());
 		tags.add(new TryTag());
 		tags.add(new VariableDefineTag());
 		tags.add(new VariablePrintTag());
@@ -306,9 +309,9 @@ public class TemplateFactory {
 	//	tags.add(new FormLabel());
 		tags.add(new FormTag());
 		tags.add(new GridTag());
-		tags.add(new PermissionsTag());
-		tags.add(new LinkTag());
-		tags.add(new IfCurrentTag());
+	//	tags.add(new PermissionsTag());
+	//	tags.add(new LinkTag());
+	//	tags.add(new IfCurrentTag());
 		tags.add(new CallbackTag());
 		tags.add(new DatetimeFormatTag());
 		return tags;
@@ -316,20 +319,11 @@ public class TemplateFactory {
 	
 	protected List<Parameter> initParameters() {
 		List<Parameter> parameters = new ArrayList<>();
-		parameters.add(new HrefParameter());
-		parameters.add(new SrcParameter());
-		parameters.add(new TitleParameter());
-		parameters.add(new PlaceholderParameter());
-		parameters.add(new AltParameter());
+	//	parameters.add(new HrefParameter());
+	//	parameters.add(new SrcParameter());
+	//	parameters.add(new TitleParameter());
+	//	parameters.add(new PlaceholderParameter());
+	//	parameters.add(new AltParameter());
 		return parameters;
 	}
-	
-	public static void addTag(Tag tag) {
-		CUSTOM_TAG_PROVIDERS.add(tag);
-	}
-	
-	public static void addParameter(Parameter parameter) {
-		CUSTOM_PARAMETERS_PROVIDERS.add(parameter);
-	}
-		
 }

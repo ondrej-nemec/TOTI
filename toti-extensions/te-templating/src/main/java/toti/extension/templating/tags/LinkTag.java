@@ -1,8 +1,9 @@
-package toti.templating.tags;
+package toti.extension.templating.tags;
 
 import java.util.Map;
 
 import ji.common.exceptions.LogicException;
+import toti.extension.templating.TemplateResponseContainer;
 import toti.templating.Tag;
 import toti.templating.TagVariableMode;
 
@@ -37,7 +38,9 @@ public class LinkTag implements Tag {
         String method = function[0];
 		
 		StringBuilder result = new StringBuilder(String.format(
-			"container.createLink(\"%s\", \"%s\", MapInit.create()", controller, method
+			TemplateResponseContainer.class.getCanonicalName()
+			+ ".class.cast(container)"
+			+ ".createLink(\"%s\", \"%s\", MapInit.create()", controller, method
 		));
 		
 	    params.forEach((name, value)->{

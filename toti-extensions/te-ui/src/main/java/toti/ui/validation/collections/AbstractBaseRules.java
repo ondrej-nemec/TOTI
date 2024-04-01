@@ -9,7 +9,7 @@ import java.util.function.Function;
 
 import ji.common.exceptions.LogicException;
 import ji.common.structures.MapInit;
-import ji.translator.Translator;
+import toti.extensions.Translator;
 import toti.ui.validation.ValidationItem;
 import toti.ui.validation.rules.ExpectedTypeRule;
 import toti.ui.validation.rules.RequiredItemRule;

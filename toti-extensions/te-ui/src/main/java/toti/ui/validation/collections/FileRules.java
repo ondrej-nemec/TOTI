@@ -8,7 +8,7 @@ import java.util.function.Function;
 import ji.common.exceptions.LogicException;
 import ji.common.structures.MapInit;
 import ji.socketCommunication.http.structures.UploadedFile;
-import ji.translator.Translator;
+import toti.extensions.Translator;
 import toti.ui.validation.rules.FileAllowedTypesRule;
 import toti.ui.validation.rules.FileMaxSizeRule;
 import toti.ui.validation.rules.FileMinSizeRule;

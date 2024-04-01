@@ -14,7 +14,7 @@ import org.junit.runner.RunWith;
 
 import ji.common.structures.MapInit;
 import ji.socketCommunication.http.structures.RequestParameters;
-import ji.translator.Translator;
+import toti.extensions.Translator;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import toti.answers.request.Identity;

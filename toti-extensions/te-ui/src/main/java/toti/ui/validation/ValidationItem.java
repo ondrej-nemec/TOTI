@@ -2,7 +2,7 @@ package toti.ui.validation;
 
 import java.util.function.Function;
 
-import ji.translator.Translator;
+import toti.extensions.Translator;
 import toti.answers.request.Identity;
 
 public class ValidationItem {

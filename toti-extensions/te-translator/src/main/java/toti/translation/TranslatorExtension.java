@@ -14,9 +14,9 @@ import ji.translator.Translator;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.application.register.Register;
-import toti.extensions.OnSessionExtension;
+import toti.extensions.Extension;
 
-public class TranslatorExtension implements toti.extensions.TranslatorExtension, OnSessionExtension {
+public class TranslatorExtension implements toti.extensions.TranslatorExtension, Extension {
 	
 	private final static String LOCALE_COOKIE_NAME = "Language";
 	private final static String LOCALE_HEADER_NAME = "Accept-Language";
@@ -63,8 +63,7 @@ public class TranslatorExtension implements toti.extensions.TranslatorExtension,
 	
 	@Override
 	public String getIdentifier() {
-		// TODO Auto-generated method stub
-		return null;
+		return getClass().getName();
 	}
 
 	@Override
@@ -110,6 +109,24 @@ public class TranslatorExtension implements toti.extensions.TranslatorExtension,
 			+ "; Path=/"
 			+ "; SameSite=Strict"
 		);
+	}
+
+	@Override
+	public void onApplicationStart() throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onApplicationStop() throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public toti.extensions.Translator getTranslator(Identity identity) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

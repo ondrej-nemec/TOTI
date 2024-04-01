@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import ji.common.structures.DictionaryValue;
-import ji.translator.Translator;
+import toti.extensions.Translator;
 
 public class MinLengthRule extends SimpleRule<Integer> {
 

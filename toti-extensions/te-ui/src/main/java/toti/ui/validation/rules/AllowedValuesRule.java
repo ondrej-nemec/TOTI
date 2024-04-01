@@ -3,7 +3,7 @@ package toti.ui.validation.rules;
 import java.util.Collection;
 import java.util.function.Function;
 
-import ji.translator.Translator;
+import toti.extensions.Translator;
 import toti.ui.validation.ValidationItem;
 
 public class AllowedValuesRule extends SimpleRule<Collection<Object>> {

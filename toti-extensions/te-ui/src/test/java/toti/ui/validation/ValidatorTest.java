@@ -9,7 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -17,8 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import ji.socketCommunication.http.structures.RequestParameters;
-import ji.translator.Locale;
-import ji.translator.Translator;
+import toti.extensions.Translator;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import toti.answers.request.Identity;
@@ -81,14 +79,13 @@ public class ValidatorTest {
 			RequestParameters expectedParameters) {
 		Translator translator = new Translator() {
 			@Override
-			public String translate(String key, Map<String, Object> variables, String locale) {
-				return key + ":" + variables;
+			public String translate(String key) {
+				return key;
 			}
-			@Override public Translator withLocale(Locale locale) { return null; }
-			@Override public void setLocale(Locale locale) {}
-			@Override public Set<String> getSupportedLocales() { return null; }
-			@Override public Locale getLocale(String locale) { return new Locale("", true, Arrays.asList()); }
-			@Override public Locale getLocale() { return new Locale("", true, Arrays.asList()); }
+			@Override
+			public String translate(String key, Map<String, Object> params) {
+				return key + ":" + params;
+			}
 		};
 		Request request = mock(Request.class);
 		

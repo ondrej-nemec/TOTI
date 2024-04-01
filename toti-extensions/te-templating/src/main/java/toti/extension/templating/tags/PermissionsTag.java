@@ -1,4 +1,4 @@
-package toti.templating.tags;
+package toti.extension.templating.tags;
 
 import java.util.Map;
 
