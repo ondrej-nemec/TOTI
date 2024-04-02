@@ -3,12 +3,8 @@ package toti.samples.application;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.logging.log4j.Logger;
-
 import ji.common.functions.Env;
-import ji.database.Database;
 import ji.socketCommunication.http.StatusCode;
-import ji.translator.Translator;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.answers.response.Response;

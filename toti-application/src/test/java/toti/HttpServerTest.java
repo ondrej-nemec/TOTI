@@ -45,7 +45,7 @@ public class HttpServerTest {
 		Logger logger = mock(Logger.class);
 		HttpServer toti = spy(new HttpServer(
 			server, mock(Env.class), "charset",
-			mock(ServerConsumer.class), n->logger, logger
+			mock(ServerConsumer.class), logger
 		));
 		doNothing().when(toti).startApplication(any());
 		toti.getApplications().put("h1", app1);
@@ -102,7 +102,7 @@ public class HttpServerTest {
 		IntegerBuilder callCount = new IntegerBuilder(0);
 		HttpServer toti = new HttpServer(
 			server, mock(Env.class), "charset",
-			mock(ServerConsumer.class), n->logger, logger
+			mock(ServerConsumer.class), logger
 		) {
 			@Override
 			protected boolean stopApplication(String host, Application application) {
@@ -137,10 +137,7 @@ public class HttpServerTest {
 		Env env = mock(Env.class);
 		when(env.getModule(any())).thenReturn(env);
 		Logger logger = mock(Logger.class);
-		HttpServer server = spy(new HttpServer(
-			mock(Server.class), env, "charset",
-			mock(ServerConsumer.class), n->logger, logger
-		));
+		HttpServer server = spy(new HttpServer(mock(Server.class), env, "charset", mock(ServerConsumer.class), logger));
 		server.setRunning(isServerRunning);
 		doNothing().when(server).startApplication(any());
 		
@@ -189,10 +186,7 @@ public class HttpServerTest {
 		verify(server, times(stopTimes)).stopApplication("host", app);
 		/*/
 		IntegerBuilder callCount = new IntegerBuilder(0);
-		HttpServer server = new HttpServer(
-			mock(Server.class), env, "charset",
-			mock(ServerConsumer.class), n->logger, logger
-		) {
+		HttpServer server = new HttpServer(mock(Server.class), env, "charset", mock(ServerConsumer.class), logger) {
 			@Override
 			protected boolean stopApplication(String host, Application application) {
 				callCount.add(1);
@@ -216,7 +210,7 @@ public class HttpServerTest {
 		ServerConsumer consumer = mock(ServerConsumer.class);
 		HttpServer server = new HttpServer(
 			mock(Server.class), mock(Env.class), "charset",
-			consumer, n->logger, logger
+			consumer, logger
 		);
 		Answer answer = mock(Answer.class);
 		String[] aliases = new String[] {"h1", "h2"};
@@ -241,10 +235,7 @@ public class HttpServerTest {
 	public void testStopApplicationWorking() throws Exception {
 		Logger logger = mock(Logger.class);
 		ServerConsumer consumer = mock(ServerConsumer.class);
-		HttpServer server = new HttpServer(
-			mock(Server.class), mock(Env.class), "charset",
-			consumer, n->logger, logger
-		);
+		HttpServer server = new HttpServer(mock(Server.class), mock(Env.class), "charset", consumer, logger);
 		Application app = mock(Application.class);
 		assertTrue(server.stopApplication("host", app));
 		verify(consumer, times(1)).removeApplication("host");
@@ -256,10 +247,7 @@ public class HttpServerTest {
 	public void testStopApplicationAppThrowsException() throws Exception {
 		Logger logger = mock(Logger.class);
 		ServerConsumer consumer = mock(ServerConsumer.class);
-		HttpServer server = new HttpServer(
-			mock(Server.class), mock(Env.class), "charset",
-			consumer, n->logger, logger
-		);
+		HttpServer server = new HttpServer(mock(Server.class), mock(Env.class), "charset", consumer, logger);
 		Application app = mock(Application.class);
 		doThrow(new RuntimeException()).when(app).stop();
 		

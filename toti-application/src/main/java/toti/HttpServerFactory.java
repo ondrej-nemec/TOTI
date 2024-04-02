@@ -4,14 +4,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.function.Function;
 
 import org.apache.logging.log4j.Logger;
 
 import ji.common.functions.Env;
 import ji.socketCommunication.SslCredentials;
 import ji.socketCommunication.http.WebServer;
-import toti.logging.TotiLoggerFactory;
 
 public class HttpServerFactory {
 	
@@ -23,8 +21,6 @@ public class HttpServerFactory {
 	private String charset = null;
 	
 	private final Env env;
-	
-	private Function<String, Logger> loggerFactory = TotiLoggerFactory.get();
 	
 	public HttpServerFactory() {
 		this.env = new Env(new Properties());
@@ -38,9 +34,7 @@ public class HttpServerFactory {
 		this.env = env;
 	}
 	
-	public HttpServer create() throws Exception {
-		// maybe more - separated - loggers??
-		Logger logger = loggerFactory.apply("toti"); //TotiLogger.getLogger("totiServer");
+	public HttpServer create(Logger logger) throws Exception {
 		Env settings = env.getModule("http");
 		WebServer server = new WebServer(getMaxRequestSize(settings), logger);
 		// TODO add aplication from env
@@ -53,7 +47,6 @@ public class HttpServerFactory {
 			env,
 			charset,
 			new ServerConsumer(server),
-			loggerFactory,
 			logger
 		);
 	}
@@ -125,11 +118,6 @@ public class HttpServerFactory {
 	
 	public HttpServerFactory setMaxRequestBodySize(int maxRequestBodySize) {
 		this.maxRequestSize = maxRequestBodySize;
-		return this;
-	}
-
-	public HttpServerFactory setLoggerFactory(Function<String, Logger> loggerFactory) {
-		this.loggerFactory = loggerFactory;
 		return this;
 	}
 

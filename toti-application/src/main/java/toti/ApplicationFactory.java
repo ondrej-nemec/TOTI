@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 import org.apache.logging.log4j.Logger;
 
@@ -33,8 +31,7 @@ import toti.extensions.TranslatorExtension;
 import toti.extensions.OnTotiExtension;
 
 public class ApplicationFactory {
-	
-	private String tempPath = null;
+
 	private String resourcesPath = null;
 	private Boolean dirResponseAllowed = null;
 	private String dirDefaultFile = null;
@@ -55,7 +52,6 @@ public class ApplicationFactory {
 	//private Env appEnv;
 	
 	private final Env env;
-	private BiFunction<String, String, Logger> loggerFactory;
 	private final String appIdentifier;
 	private final String charset;
 	
@@ -66,10 +62,8 @@ public class ApplicationFactory {
 	private TemplateExtension templateExtension;
 	private TranslatorExtension translatorExtension;
 	
-	public ApplicationFactory(String appIdentifier, Env env, String charset, Function<String, Logger> loggerFactory,
-		String hostname, String... aliases) {
+	public ApplicationFactory(String appIdentifier, Env env, String charset, String hostname, String... aliases) {
 		this.env = env.getModule("applications").getModule(appIdentifier);
-		this.loggerFactory = (hostName, loggerName)->loggerFactory.apply(appIdentifier+ "_" + loggerName);
 		this.appIdentifier = appIdentifier;
 		this.charset = charset;
 		this.aliases = aliases;
@@ -79,9 +73,7 @@ public class ApplicationFactory {
 		this.extensionsTotiResponses = new LinkedList<>();
 	}
 
-	public Application create(List<Module> modules) throws Exception {
-		Logger logger = loggerFactory.apply(appIdentifier, "toti");
-		
+	public Application create(List<Module> modules, Logger logger) throws Exception {
 	//	Env env = appEnv = this.env.getModule("applications").getModule(hostname);
 		// Profiler profiler = initProfiler(env, logger);
 		
@@ -155,20 +147,7 @@ public class ApplicationFactory {
 	}*/
 		
 	/*************************/
-	/*
-	private String getUrlPattern(Env env) {
-		return getProperty(urlPattern, "url-pattern", "/[module]</[path]>/[controller]/[method]</[param]>", String.class, env);
-	}
-	*/
-	
-	private String getTempPath(Env env, String hostname) {
-		return getProperty(tempPath, "temp", "temp", String.class, env) + "/" + hostname;
-	}
-	
-	public String getTempPath() {
-		return getTempPath(env, appIdentifier);
-	}
-	
+
 	private String getResourcesPath(Env env) {
 		return getProperty(resourcesPath, "resource-path", "www", String.class, env);
 	}
@@ -305,11 +284,6 @@ public class ApplicationFactory {
 		return this;
 	}
 
-	public ApplicationFactory setTempPath(String tempPath) {
-		this.tempPath = tempPath;
-		return this;
-	}
-
 	public ApplicationFactory setResourcesPath(String resourcesPath) {
 		this.resourcesPath = resourcesPath;
 		return this;
@@ -317,11 +291,6 @@ public class ApplicationFactory {
 
 	public ApplicationFactory setDevelopIpAdresses(List<String> developIps) {
 		this.developIps = developIps;
-		return this;
-	}
-
-	public ApplicationFactory setLoggerFactory(BiFunction<String, String, Logger> loggerFactory) {
-		this.loggerFactory = loggerFactory;
 		return this;
 	}
 

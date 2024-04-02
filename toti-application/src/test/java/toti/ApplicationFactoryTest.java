@@ -44,23 +44,8 @@ public class ApplicationFactoryTest implements TestCase {
 		when(baseEnv.getModule(any())).thenReturn(applicationsEnv);
 		
 		Logger totiLogger = mock(Logger.class);
-		Logger databaseLogger = mock(Logger.class);
-		Logger translatorLogger = mock(Logger.class);
-		Logger module1Logger = mock(Logger.class);
-		Logger module2Logger = mock(Logger.class);
 		
-		ApplicationFactory factory = new ApplicationFactory("hostName", env, "charset", (name)->{
-			switch (name) {
-				case "hostName_toti": return totiLogger;
-				case "hostName_database": return databaseLogger;
-				case "hostName_translator": return translatorLogger;
-				case "hostName_module1": return module1Logger;
-				case "hostName_module2": return module2Logger;
-				default:
-					fail("Unexpected logger: " + name);
-					return null;
-			}
-		}, "alias1", "alias2");
+		ApplicationFactory factory = new ApplicationFactory("appId", env, "charset", "hostName", "alias1", "alias2");
 		setFactory.accept(factory);
 		
 		Task task11 = mock(Task.class);
@@ -74,7 +59,7 @@ public class ApplicationFactoryTest implements TestCase {
 		when(module2.getName()).thenReturn("module2");
 		when(module2.initInstances(any(), any(), any())).thenReturn(Arrays.asList(task21));
 		
-		Application application = factory.create(Arrays.asList(module1, module2));
+		Application application = factory.create(Arrays.asList(module1, module2), totiLogger);
 		
 		verify(baseEnv, times(1)).getModule("applications");
 		verify(applicationsEnv, times(1)).getModule("hostName");

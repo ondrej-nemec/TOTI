@@ -2,7 +2,6 @@ package toti;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 import org.apache.logging.log4j.Logger;
 
@@ -16,7 +15,6 @@ public class HttpServer {
 	private final Env env;
 	private final ServerConsumer consumer;
 	
-	private final Function<String, Logger> loggerFactory;
 	private final Logger logger;
 	private final String charset;
 	
@@ -26,12 +24,10 @@ public class HttpServer {
 	
 	protected HttpServer(
 			Server server, Env env, String charset,
-			ServerConsumer consumer,
-			Function<String, Logger> loggerFactory, Logger logger) {
+			ServerConsumer consumer, Logger logger) {
 		this.server = server;
 		this.env = env;
 		this.consumer = consumer;
-		this.loggerFactory = loggerFactory;
 		this.logger = logger;
 		this.charset = charset;
 	}
@@ -40,7 +36,7 @@ public class HttpServer {
 			String appIdentifier,
 			ThrowingBiFunction<Env, ApplicationFactory, Application, Exception> init,
 			String hostname, String... alias) throws Exception {
-		ApplicationFactory applicationFactory = new ApplicationFactory(appIdentifier, env, charset, loggerFactory, hostname, alias);
+		ApplicationFactory applicationFactory = new ApplicationFactory(appIdentifier, env, charset, hostname, alias);
 		Application application = init.apply(env, applicationFactory);
 		applications.put(appIdentifier, application);
 		if (isRunning && application.isAutoStart()) {

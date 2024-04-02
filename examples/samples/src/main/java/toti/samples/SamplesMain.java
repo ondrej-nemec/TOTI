@@ -2,48 +2,50 @@ package toti.samples;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
 
 import org.apache.logging.log4j.LogManager;
 
 import ji.common.structures.MapInit;
-import toti.ApplicationFactory;
+import ji.translator.LanguageSettings;
+import ji.translator.Locale;
 import toti.HttpServer;
 import toti.HttpServerFactory;
+import toti.database.DatabaseExtension;
+import toti.extension.templating.TemplateExtension;
 import toti.samples.application.ApplicationModule;
 import toti.samples.templating.TemplatingModule;
 import toti.samples.ui.UiModule;
+import toti.translation.TranslatorExtension;
 import toti.ui.UiExtension;
 
 public class SamplesMain {
 
 	public static void main(String[] args) {
+		// createWithDefaultSettings();
+		createAndSetProgrammatically();
+		// createWithFileSettings();
+	}
+
+	/*****************/
+	protected static void createWithDefaultSettings() {
 		try {
-			SamplesMain sampleMain = getMain(-1);
-			
-			HttpServerFactory serverFactory = sampleMain.getServerFactory();
-			// can be set only in code, optional
-			serverFactory.setLoggerFactory((loggerName)->LogManager.getLogger(loggerName));
-			
-			HttpServer server = serverFactory.create();
+			HttpServerFactory serverFactory = new HttpServerFactory();
+
+			HttpServer server = serverFactory.create(LogManager.getLogger("toti"));
 			server.addApplication("samples", (env, applicationFactory)->{
-				// set
-				sampleMain.setApplicationFactory(applicationFactory);
-				// can be set only in code, optional
-				applicationFactory.setLoggerFactory((appName, loggerName)->{
-					return LogManager.getLogger(appName + "_" + loggerName);
-				});
 				// TODO applicationFactory.setUrlPattern(null);
 				
 				// optional: add extensions, always in code
 				applicationFactory.addExtension(new UiExtension());
-				// TODO all extensions
+				// TranslatorExtension require settings
+				// TemplateExtension require settings
+				// DatabaseExtension require settings
 				
 				return applicationFactory.create(Arrays.asList(
 					new ApplicationModule(),
 					new UiModule(),
 					new TemplatingModule()
-				));
+				), LogManager.getLogger("samples-toti"));
 			}, "localhost", "127.0.0.1");
 			server.start();
 		} catch (Exception e) {
@@ -51,63 +53,79 @@ public class SamplesMain {
 		}
 	}
 	
-	private static SamplesMain getMain(int i) throws Exception {
-		switch (i) {
-			case 0: return createAndSetProgrammatically();
-			case 1: return createWithFileSettings();
-			default: return createWithDefaultSettings();
+	protected static void createWithFileSettings() {
+		try {
+			HttpServerFactory serverFactory = new HttpServerFactory("toti/samples/fileConfiguration.properties");
+			
+			HttpServer server = serverFactory.create(LogManager.getLogger("toti"));
+			server.addApplication("samples", (env, applicationFactory)->{
+				// TODO applicationFactory.setUrlPattern(null);
+				
+				// optional: add extensions, always in code
+				applicationFactory.addExtension(new UiExtension());
+				applicationFactory.addExtension(new TranslatorExtension(env, LogManager.getLogger("translate")));
+				applicationFactory.addExtension(new TemplateExtension(env, LogManager.getLogger("template")));
+				applicationFactory.addExtension(new DatabaseExtension(LogManager.getLogger("database")));
+				
+				return applicationFactory.create(Arrays.asList(
+					new ApplicationModule(),
+					new UiModule(),
+					new TemplatingModule()
+				), LogManager.getLogger("samples-toti"));
+			}, "localhost", "127.0.0.1");
+			server.start();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
-	
-	private static SamplesMain createWithDefaultSettings() throws Exception {
-		return new SamplesMain(new HttpServerFactory(), (applicationFactory)->{});
-	}
-	
-	private static SamplesMain createWithFileSettings() throws Exception {
-		return new SamplesMain(
-			new HttpServerFactory("toti/samples/fileConfiguration.properties"),
-			(applicationFactory)->{}
-		);
-	}
-	
-	private static SamplesMain createAndSetProgrammatically() throws Exception {
-		HttpServerFactory serverFactory = new HttpServerFactory();
-		serverFactory.setCharset("utf-8");
-		serverFactory.setCerts(null); // TODO
-		serverFactory.setMaxRequestBodySize(20*1024); // 20 kB
-		serverFactory.setPort(8080);
-		serverFactory.setReadTimeout(90000); // 90s
-		serverFactory.setThreadPool(100);
-		return new SamplesMain(serverFactory, (applicationFactory)->{
-			applicationFactory.setAutoStart(true);
-			applicationFactory.setDevelopIpAdresses(Arrays.asList("127.0.0.1", "0:0:0:0:0:0:0:1"));
-			applicationFactory.setDirDefaultFile("index.html");
-			applicationFactory.setDirResponseAllowed(true);
-			applicationFactory.setHeaders(
-				new MapInit<String, List<Object>>()
-				.append("Access-Control-Allow-Origin", Arrays.asList("*"))
-				.toMap()
-			);
-			applicationFactory.setLogsPath("logs");
-			applicationFactory.setResourcesPath("www");
-			applicationFactory.setTempPath("temp");
-		});
-	}
-	
-	private final HttpServerFactory serverFactory;
-	private final Consumer<ApplicationFactory> setApplicationFactory;
-	
-	public SamplesMain(HttpServerFactory serverFactory, Consumer<ApplicationFactory> setApplicationFactory) {
-		this.serverFactory = serverFactory;
-		this.setApplicationFactory = setApplicationFactory;
-	}
-	
-	public HttpServerFactory getServerFactory() {
-		return serverFactory;
-	}
-	
-	public void setApplicationFactory(ApplicationFactory applicationFactory) {
-		setApplicationFactory.accept(applicationFactory);
+
+	protected static void createAndSetProgrammatically() {
+		try {
+			HttpServerFactory serverFactory = new HttpServerFactory();
+			serverFactory.setCharset("utf-8");
+			serverFactory.setCerts(null); // TODO
+			serverFactory.setMaxRequestBodySize(20*1024); // 20 kB
+			serverFactory.setPort(8080);
+			serverFactory.setReadTimeout(90000); // 90s
+			serverFactory.setThreadPool(100);
+			
+			HttpServer server = serverFactory.create(LogManager.getLogger("toti"));
+			server.addApplication("samples", (env, applicationFactory)->{
+				// set
+				applicationFactory.setAutoStart(true);
+				applicationFactory.setDevelopIpAdresses(Arrays.asList("127.0.0.1", "0:0:0:0:0:0:0:1"));
+				applicationFactory.setDirDefaultFile("index.html");
+				applicationFactory.setDirResponseAllowed(true);
+				applicationFactory.setHeaders(
+					new MapInit<String, List<Object>>()
+					.append("Access-Control-Allow-Origin", Arrays.asList("*"))
+					.toMap()
+				);
+				applicationFactory.setLogsPath("logs");
+				applicationFactory.setResourcesPath("www");
+				// TODO applicationFactory.setUrlPattern(null);
+				
+				// optional: add extensions, always in code
+				applicationFactory.addExtension(new UiExtension());
+				applicationFactory.addExtension(new TranslatorExtension(
+					new LanguageSettings("en", Arrays.asList(new Locale("en", true, Arrays.asList("en_GB")))),
+					LogManager.getLogger("translate")
+				));
+				applicationFactory.addExtension(new TemplateExtension(
+					"temp/samples", false, true, LogManager.getLogger("template")
+				));
+				applicationFactory.addExtension(new DatabaseExtension(LogManager.getLogger("database")));
+				
+				return applicationFactory.create(Arrays.asList(
+					new ApplicationModule(),
+					new UiModule(),
+					new TemplatingModule()
+				), LogManager.getLogger("samples-toti"));
+			}, "localhost", "127.0.0.1");
+			server.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

@@ -1,24 +1,3 @@
-# Extensions
-
-## OnSessionExtension
-
-Pro parsování request hlaviček a posílání response hlaviček
-
-## OnTotiExtension
-
-Pří požadavku /toti*
-
-## ApplicationExtension
-
-Spustí/vypne se spolu s applikací
-
-
-## TranslatedExtension
-
-Extension ma v sobe soubor prekladu
-
-
-
 # Dokumentace
 
 ## Application
@@ -36,10 +15,8 @@ Extension ma v sobe soubor prekladu
 
 ### Vysvětlení tříd
 Registr
-Databáze + migrace
 Link
 Env
-Translátor
 Router
 
 ### Vysvětlení modulů, tasků, kontrolerů a method, routování
@@ -65,5 +42,13 @@ Druhy odpovědí
 TODO
 
 ## UI
+
+TODO
+
+## Databaze
+
+TODO
+
+## Translator
 
 TODO
