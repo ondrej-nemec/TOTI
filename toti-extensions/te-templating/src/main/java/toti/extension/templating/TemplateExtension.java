@@ -43,8 +43,8 @@ public class TemplateExtension implements toti.extensions.TemplateExtension, Ext
 	public TemplateExtension(Env env, Logger logger) {
 		this(
 			env.getModule("templating").getString("temp"),
-			env.getModule("templating").getBoolean("TODO"),
-			env.getModule("templating").getBoolean("temp"),
+			env.getModule("templating").getBoolean("minimalize-templates"),
+			env.getModule("templating").getBoolean("delete-temp-java"),
 			logger
 		);
 	}
