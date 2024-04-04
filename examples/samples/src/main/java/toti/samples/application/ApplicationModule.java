@@ -16,6 +16,7 @@ import toti.application.register.Register;
 import toti.extensions.CustomExceptionExtension;
 import toti.extensions.TranslatorExtension;
 import toti.samples.application.controllers.ExceptionsController;
+import toti.samples.application.controllers.ProcessingController;
 import toti.samples.application.controllers.RequestController;
 import toti.samples.application.controllers.ResponseController;
 
@@ -33,7 +34,7 @@ public class ApplicationModule implements Module {
 		// TODO zpracovani pozadavku - steps
 		
 		// uncomment for using custom exception handler
-		//*
+		/*
 		register.setCustomExceptionResponse(new CustomExceptionExtension() {
 			@Override
 			public Response catchException(Request request, StatusCode status, Identity identity,
@@ -47,6 +48,7 @@ public class ApplicationModule implements Module {
 		register.addController(ExceptionsController.class, ()->new ExceptionsController());
 		register.addController(RequestController.class, ()->new RequestController());
 		register.addController(ResponseController.class, ()->new ResponseController());
+		register.addController(ProcessingController.class, ()->new ProcessingController());
 		return Arrays.asList();
 	}
 	
@@ -55,10 +57,5 @@ public class ApplicationModule implements Module {
 		// TODO router.addUrl(getName(), getName()); + example
 		// TODO router.setRedirectOnNotLoggedInUser(getName()); + example
 	}
-	// TODO
-/*	@Override
-	public String getTemplatesPath() {
-		return "templates/application";
-	}
-*/
+
 }

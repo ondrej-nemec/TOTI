@@ -6,6 +6,7 @@ import java.util.Map;
 
 import toti.templating.parsing.structures.TagNode;
 
+@Deprecated
 public class DirectoryTemplate implements Template {
 	
 	private final File[] files;

@@ -41,7 +41,6 @@ import toti.answers.response.ResponseContainer;
 import toti.extensions.TemplateExtension;
 import toti.extensions.Translator;
 import toti.extensions.TranslatorExtension;
-import toti.templating.TemplateException;
 
 public class ControllerAnswer {
 	
@@ -104,9 +103,9 @@ public class ControllerAnswer {
 		} catch (RequestInterruptedException e) {
 			return e.getResponse().getResponse(request.getProtocol(), responseHeaders, charset);
 		/*} catch (NotAllowedActionException | AccessDeniedException e) {
-			throw new ServerException(StatusCode.FORBIDDEN, mapped, e);*/
+			throw new ServerException(StatusCode.FORBIDDEN, mapped, e);
 		} catch (TemplateException e) {
-			throw new ServerException(StatusCode.INTERNAL_SERVER_ERROR, mapped, e);
+			throw new ServerException(StatusCode.INTERNAL_SERVER_ERROR, mapped, e);*/
 		} catch (InvocationTargetException e) { // if exception throwed in method
 			throw new ServerException(StatusCode.INTERNAL_SERVER_ERROR, mapped, (e.getCause() == null ? e : e.getCause()));
 		} catch (ResponseException e){

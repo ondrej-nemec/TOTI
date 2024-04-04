@@ -1,5 +1,8 @@
 package toti.samples.application.controllers;
 
+import toti.annotations.Controller;
+
+@Controller("response")
 public class ResponseController {
 	/*
 	{

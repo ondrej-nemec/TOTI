@@ -26,7 +26,6 @@ public class SamplesMain {
 		// createWithFileSettings();
 	}
 
-	/*****************/
 	protected static void createWithDefaultSettings() {
 		try {
 			HttpServerFactory serverFactory = new HttpServerFactory();
@@ -83,7 +82,7 @@ public class SamplesMain {
 		try {
 			HttpServerFactory serverFactory = new HttpServerFactory();
 			serverFactory.setCharset("utf-8");
-			serverFactory.setCerts(null); // TODO
+			// TODO serverFactory.setCerts(null);
 			serverFactory.setMaxRequestBodySize(20*1024); // 20 kB
 			serverFactory.setPort(8080);
 			serverFactory.setReadTimeout(90000); // 90s
@@ -93,7 +92,7 @@ public class SamplesMain {
 			server.addApplication("samples", (env, applicationFactory)->{
 				// set
 				applicationFactory.setAutoStart(true);
-				applicationFactory.setDevelopIpAdresses(Arrays.asList("127.0.0.1", "0:0:0:0:0:0:0:1"));
+				applicationFactory.setDevelopIpAdresses(Arrays.asList("/127.0.0.1", "/0:0:0:0:0:0:0:1"));
 				applicationFactory.setDirDefaultFile("index.html");
 				applicationFactory.setDirResponseAllowed(true);
 				applicationFactory.setHeaders(

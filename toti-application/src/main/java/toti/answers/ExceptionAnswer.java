@@ -47,6 +47,9 @@ public class ExceptionAnswer {
 			this.logsPath = logsPath;
 		}
 	}
+	
+	// TODO vyresit template
+	// TODO u dev IPs asi neposilat custom handler
 
 	public ji.socketCommunication.http.structures.Response answer(
 			ji.socketCommunication.http.structures.Request request,

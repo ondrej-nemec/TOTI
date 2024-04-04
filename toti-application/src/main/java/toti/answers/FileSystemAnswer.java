@@ -9,7 +9,6 @@ import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
 import toti.ServerException;
 import toti.answers.response.Response;
-import toti.templating.DirectoryTemplate;
 
 public class FileSystemAnswer {
 
@@ -49,7 +48,7 @@ public class FileSystemAnswer {
 		
 		if (!file.exists() || (file.isDirectory() && !dirResponseAllowed)) {
 			if (file.isDirectory() && dirDefaultFile != null && new File(resourcesDir + url + "/" + dirDefaultFile).exists()) {
-                return Response.create(StatusCode.OK).getFile(resourcesDir + url + "/" + dirDefaultFile);
+				return Response.create(StatusCode.OK).getFile(resourcesDir + url + "/" + dirDefaultFile);
 			}
 			throw new ServerException(StatusCode.NOT_FOUND, String.format("URL not fouded: %s (%s)", url, method));
 		}
@@ -62,10 +61,32 @@ public class FileSystemAnswer {
 	private Response getDirResponse(File[] files, String path, Headers responseHeaders, String charset) throws ServerException {
 		try {
 			responseHeaders.addHeader("Content-Type", "text/html; charset=" + charset);
-			return Response.create(StatusCode.OK).getText(new DirectoryTemplate(files, path).create(null, null, null));
+			return Response.create(StatusCode.OK).getText(createFolderHtml(files, path));
 		} catch (Exception e) {
 			throw new ServerException(StatusCode.INTERNAL_SERVER_ERROR, null, "Directory list fail: " + path);
 		}
+	}
+	
+	private String createFolderHtml(File[] files, String path) {
+		StringBuilder builder = new StringBuilder();
+		
+		builder.append("Folder: <br>");
+		
+		String filePath = path;
+		if (!path.endsWith("/")) {
+			filePath += "/";
+		}
+		if (!path.equals("/")) { // root
+			builder.append(String.format("<a href='%s..'>..</a>", filePath));			
+			builder.append("<br>");
+		}
+		
+		for(File file : files) {
+			builder.append(String.format("<a href='%s'>%s</a>", filePath + file.getName(), file.getName()));			
+			builder.append("<br>");
+		}
+		
+		return builder.toString();
 	}
 	
 }
