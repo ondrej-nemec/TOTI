@@ -116,7 +116,7 @@ public class HttpServerTest {
 		
 		toti.stop();
 		assertFalse(toti.isRunning());
-		assertEquals(3, callCount.getInteger());
+		assertEquals(3, callCount.get());
 		
 		verify(server, times(1)).stop();
 		verifyNoMoreInteractions(server);
@@ -199,7 +199,7 @@ public class HttpServerTest {
 		
 		assertEquals(expected, server.removeApplication("host"));
 		assertEquals(empty, server.getApplications().isEmpty());
-		assertEquals(stopTimes, callCount.getInteger());
+		assertEquals(stopTimes, callCount.get());
 		// verify(server, times(stopTimes)).stopApplication("host", app);
 		//*/
 	}
