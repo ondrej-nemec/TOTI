@@ -1,6 +1,7 @@
 package toti.ui.backend.grid;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -82,16 +83,22 @@ public interface GridDao {
 		filters.forEach((filterName, filter)->{
 			String where = "";
 			if (filter.getValue() == null) {
-                where = filter.getName() + " is null";
-            } else if (filter.getMode().getOperand() != null) {
-                where = filter.getName() + " " + filter.getMode().getOperand() + " :" + filter.getName() + "Value";
-            } else if (filter.getMode() == FilterMode.EQUALS) {
-                where = compare(filter.getName(), filter) + " = " + compare(":" + filter.getName() + "Value", filter);
-            // v2
-            } else {
-                where = compare(builder.getSqlFunctions().concat(":empty", filter.getName()), filter)
-                         + " LIKE " + compare(":" + filter.getName() + "Value", filter);
-            }
+				where = filter.getName() + " is null";
+			} else if (filter.getMode().getOperand() != null) {
+				where = filter.getName() + " " + filter.getMode().getOperand() + " :" + filter.getName() + "Value";
+			} else if (filter.getMode() == FilterMode.IN) {
+				if (Collection.class.cast(filter.getValue()).isEmpty()) {
+					where = "1=2"; // empty list - no values
+				} else {
+					where = filter.getName() + " IN (" + " :" + filter.getName() + "Value)";
+				}
+			} else if (filter.getMode() == FilterMode.EQUALS) {
+				where = compare(filter.getName(), filter) + " = " + compare(":" + filter.getName() + "Value", filter);
+			// v2
+			} else {
+				where = compare(builder.getSqlFunctions().concat(":empty", filter.getName()), filter)
+						 + " LIKE " + compare(":" + filter.getName() + "Value", filter);
+			}
 			// v1
 			/*else if (value.toString().length() > 20) {
 				where = builder.getSqlFunctions().concat(":empty", filter)
@@ -105,30 +112,31 @@ public interface GridDao {
 			}*/
 			select.andWhere(where)
 			.addParameter(
-				":" + filter.getName() + "Value", 
-				String.format(filter.getMode().getFormat(), filter.getValue())
+				":" + filter.getName() + "Value",
+				filter.getMode().getFormat() == null ? filter.getValue()
+					: String.format(filter.getMode().getFormat(), filter.getValue())
 			);
 		});
 	}
 	
 	default String compare(String value, Filter filter) {
-        // TODO use sql func. class
-        // TODO use sql func for collate latin
-        // WHERE Name COLLATE Latin1_general_CI_AI Like '%cafe%' COLLATE Latin1_general_CI_AI
-        // latin1_general_cs
-        /*if (filter.isCI() && filter.isIgnoreDiacritics()) {
-             return String.format("unacce", value);
-        }
-        if (filter.isIgnoreDiacritics()) {
-           //   result = String.format("unaccent(%s)", result);
-             return String.format("%s COLLATE latin1_general_cs", value);
-        }*/
+		// TODO use sql func. class
+		// TODO use sql func for collate latin
+		// WHERE Name COLLATE Latin1_general_CI_AI Like '%cafe%' COLLATE Latin1_general_CI_AI
+		// latin1_general_cs
+		/*if (filter.isCI() && filter.isIgnoreDiacritics()) {
+			 return String.format("unacce", value);
+		}
+		if (filter.isIgnoreDiacritics()) {
+		   //   result = String.format("unaccent(%s)", result);
+			 return String.format("%s COLLATE latin1_general_cs", value);
+		}*/
 
-        if (filter.isCI()) {
-        	// result = String.format("lower(%s)", result);
-            return String.format("lower(%s)", value);
-        }
-        return value;
+		if (filter.isCI()) {
+			// result = String.format("lower(%s)", result);
+			return String.format("lower(%s)", value);
+		}
+		return value;
 
-    }
+	}
 }

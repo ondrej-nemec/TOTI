@@ -9,7 +9,8 @@ public enum FilterMode {
     MORE_OR_EQUALS("%s", ">="),
     MORE("%s", ">"),
     LESS_OR_EQUALS("%s", "<="),
-    LESS("%s", "<")
+    LESS("%s", "<"),
+    IN(null, null)
     ;
 	
 	private String format;
