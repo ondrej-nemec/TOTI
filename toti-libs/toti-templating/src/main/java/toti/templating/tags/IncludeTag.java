@@ -11,13 +11,13 @@ public class IncludeTag implements Tag {
 	@Override
 	public TagVariableMode getMode(String name) {
 		switch (name) {
-	        case "file":
-	        case "block":
-	        case "optional":
-	        case "module":
-	            return TagVariableMode.STRING;
-	        default:
-	            return TagVariableMode.CODE;
+			case "file":
+			case "block":
+			case "optional":
+			case "module":
+				return TagVariableMode.STRING;
+			default:
+				return TagVariableMode.CODE;
 		}
 	}
 	
@@ -51,20 +51,20 @@ public class IncludeTag implements Tag {
 			code.append(".accept(new MapInit<String, Object>()");
 			params.forEach((name, value)->{
 				if (!name.equals("block") && !name.equals("optional")) {
-					code.append(String.format(".append(\"%s\", %s)", name, value));
+					code.append(String.format(".append(\"%s\", %s)", name, value.isEmpty() ? '"' + '"' : value));
 				}
 			});
 			code.append(".toMap());");
 			return code.toString();
 		}
 		StringBuilder code = new StringBuilder("{");
-        code.append("initNode(new MapInit<String, Object>()");
-        params.forEach((name, value)->{
-             if (!name.equals("file") && !name.equals("module")) {
-                  code.append(String.format(".append(\"%s\", %s)", name, value));
-             }
-        });
-        code.append(".toMap());");
+		code.append("initNode(new MapInit<String, Object>()");
+		params.forEach((name, value)->{
+			if (!name.equals("file") && !name.equals("module")) {
+				code.append(String.format(".append(\"%s\", %s)", name, value.isEmpty() ? '"' + '"' : value));
+			}
+		});
+		code.append(".toMap());");
 		if (params.get("module") == null) {
 			code.append(String.format("Template temp = templateFactory.getTemplate(\"%s\");", params.get("file")));
 		} else {
@@ -74,7 +74,7 @@ public class IncludeTag implements Tag {
 			));
 		}
 		code.append("temp._create(templateFactory,variables,container,this.nodes,this.hashCode());");
-        code.append("flushNode();");
+		code.append("flushNode();");
 		code.append("}");
 		return code.toString();
 	}
