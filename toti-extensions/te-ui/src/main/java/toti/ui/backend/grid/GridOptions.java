@@ -8,8 +8,8 @@ import ji.common.annotations.MapperType;
 import ji.common.structures.SortedMap;
 import toti.answers.action.Validate;
 import toti.ui.backend.Entity;
-import toti.ui.validation.ItemRules;
-import toti.ui.validation.Validator;
+import toti.validation.ItemRules;
+import toti.validation.Validator;
 
 public class GridOptions implements Entity {
 	

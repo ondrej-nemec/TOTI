@@ -10,6 +10,7 @@ include('toti-extensions:te-ui')
 include('toti-extensions:te-database')
 include('toti-extensions:te-templating')
 include('toti-extensions:te-translator')
+include('toti-extensions:te-validation')
 
 include('examples:samples')
 // include('examples:project1')
