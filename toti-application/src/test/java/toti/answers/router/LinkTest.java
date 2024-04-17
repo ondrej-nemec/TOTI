@@ -236,7 +236,7 @@ public class LinkTest {
 		UriPattern pattern = new UriPattern(){};
 		
 		ObjectBuilder<Module> module = new ObjectBuilder<>(new TestModule());
-		Register register = new Register(new Param(null), module, pattern);
+		Register register = new Register(new Param(null), module, pattern, new HashMap<>());
 		register.addController(ControllerA.class, ()->new ControllerA());
 		Link link = new Link(register, pattern);
 		assertEquals(expected, link.create(

@@ -1,7 +1,7 @@
 package toti.answers.request;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 
 import toti.answers.Headers;
@@ -18,9 +18,9 @@ public class IdentityFactory {
 	public static final String CSRF_TOKEN_PARAMETER = "_csrf_token";
 	
 	private final SessionUserProvider sup;
-	private final List<Extension> sessions;
+	private final Collection<Extension> sessions;
 	
-	public IdentityFactory(List<Extension> sessions, SessionUserProvider sup) {
+	public IdentityFactory(Collection<Extension> sessions, SessionUserProvider sup) {
 		this.sup = sup;
 		this.sessions = sessions;
 	}

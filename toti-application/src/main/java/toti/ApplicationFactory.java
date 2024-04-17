@@ -1,6 +1,7 @@
 package toti;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +58,7 @@ public class ApplicationFactory {
 	
 	private final List<TotiExtension> extensionsTotiResponses;
 	
-	private final List<Extension> extensions;
+	private final Map<String, Extension> extensions;
 	
 	private TemplateExtension templateExtension;
 	private TranslatorExtension translatorExtension;
@@ -69,7 +70,7 @@ public class ApplicationFactory {
 		this.aliases = aliases;
 		this.hostname = hostname;
 		
-		this.extensions = new LinkedList<>();
+		this.extensions = new HashMap<>();
 		this.extensionsTotiResponses = new LinkedList<>();
 	}
 
@@ -80,11 +81,11 @@ public class ApplicationFactory {
 		
 		ObjectBuilder<Module> actualModule = new ObjectBuilder<>();
 		Param root = new Param(null);
-		Register register = new Register(root, actualModule, pattern);
+		Register register = new Register(root, actualModule, pattern, extensions);
 		Link link = new Link(/*getUrlPattern(env),*/ register, pattern);
 		Router router = new Router(/*register*/);
 
-		extensions.forEach((e)->e.init(env, register));
+		extensions.forEach((n, e)->e.init(env, register));
 		TranslatorExtension translatorExtension = getTranslatorExtension();
 		TemplateExtension templateExtension = getTemplateExtension();
 		
@@ -97,7 +98,7 @@ public class ApplicationFactory {
 		};
 		actualModule.set(null);
 		
-		IdentityFactory identityFactory = new IdentityFactory(extensions, register.getSessionUserProvider());
+		IdentityFactory identityFactory = new IdentityFactory(extensions.values(), register.getSessionUserProvider());
 		
 		List<String> developIps = getDevelopIps(env);
 		TotiAnswer totiAnwer = new TotiAnswer(
@@ -130,7 +131,7 @@ public class ApplicationFactory {
 			charset
 		);
 		return new Application(
-			tasks, root, link, register, extensions,
+			tasks, root, link, register, extensions.values(),
 			answer, getAutoStart(env), hostname, aliases
 		);
 	}
@@ -250,7 +251,7 @@ public class ApplicationFactory {
 	}
 	
 	public ApplicationFactory addExtension(Extension extension) {
-		extensions.add(extension);
+		extensions.put(extension.getClass().getName(), extension);
 		
 		if (extension instanceof TotiExtension) {
 			extensionsTotiResponses.add((TotiExtension)extension);

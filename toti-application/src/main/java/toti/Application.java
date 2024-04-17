@@ -1,5 +1,6 @@
 package toti;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -27,11 +28,11 @@ public class Application {
 	private final String[] aliases;
 	private final String hostname;
 	
-	private final List<Extension> extensions;
+	private final Collection<Extension> extensions;
 	
 	public Application(
 			List<Task> tasks, Param root,
-			Link link, Register register, List<Extension> appExtensions, Answer answer,
+			Link link, Register register, Collection<Extension> appExtensions, Answer answer,
 			boolean autoStart, String hostname, String... aliases) {
 		this.tasks = tasks;
 		this.link = link;

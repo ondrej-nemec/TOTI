@@ -17,6 +17,7 @@ import toti.answers.request.SessionUserProvider;
 import toti.answers.router.UriPattern;
 import toti.application.Module;
 import toti.extensions.CustomExceptionExtension;
+import toti.extensions.Extension;
 
 public class Register {
 	
@@ -29,16 +30,19 @@ public class Register {
 	private final ObjectBuilder<Module> module;
 	private final UriPattern pattern;
 	
+	private final Map<String, Extension> extensions;
+	
 	private CustomExceptionExtension customExceptionResponse = null;
 	private SessionUserProvider sessionUserProvider = null;
 	
-	public Register(Param root, ObjectBuilder<Module> module, UriPattern pattern) {
+	public Register(Param root, ObjectBuilder<Module> module, UriPattern pattern, Map<String, Extension> extensions) {
 		this.FACTORIES = new HashMap<>();
 		this.SERVICES = new HashMap<>();
 		this.CONTROLLERS = new HashMap<>();
 		this.root = root;
 		this.module = module;
 		this.pattern = pattern;
+		this.extensions = extensions;
 	}
 	
 	public <T> void addController(Class<?> clazz, Factory<T> factory) {
@@ -153,6 +157,16 @@ public class Register {
 	// link
 	public Module getModuleForClass(Class<?> controller) {
 		return getController(controller)._2();
+	}
+	
+	/********************************/
+	
+	public <E extends Extension> E getExtension(Class<E> clazz) {
+		Extension ex = extensions.get(clazz.getName());
+		if (ex == null) {
+			return null; // throw ?
+		}
+		return clazz.cast(ex);
 	}
 	
 	/********************************/

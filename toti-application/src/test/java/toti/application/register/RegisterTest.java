@@ -5,6 +5,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.HashMap;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +29,7 @@ public class RegisterTest {
 	@Test
 	public void testAddController() {
 		Param root = new Param(null);
-		Register register = new Register(root, new ObjectBuilder<>(new TestModule()), getPattern());
+		Register register = new Register(root, new ObjectBuilder<>(new TestModule()), getPattern(), new HashMap<>());
 		register.addController(ControllerA.class, ()->new ControllerA());
 		
 	//	System.out.println(root);
@@ -123,7 +125,7 @@ public class RegisterTest {
 			.thenReturn("/testingModule/controllerB/[param]/generate");
 		Param root = new Param(null);
 		
-		Register register = new Register(root, new ObjectBuilder<>(new TestModule()), pattern);
+		Register register = new Register(root, new ObjectBuilder<>(new TestModule()), pattern, new HashMap<>());
 		register.addController(ControllerB.class, ()->new ControllerB());
 		
 	//	System.out.println(root);
@@ -165,7 +167,7 @@ public class RegisterTest {
 	@Test(expected = RegisterException.class)
 	public void testAddControllerWithMoreSameNameMethodsAndSameparametersCount() {
 		Param root = new Param(null);
-		Register register = new Register(root, new ObjectBuilder<>(new TestModule()), getPattern());
+		Register register = new Register(root, new ObjectBuilder<>(new TestModule()), getPattern(), new HashMap<>());
 		register.addController(ControllerC.class, ()->new ControllerC());
 	}
 	
@@ -174,21 +176,21 @@ public class RegisterTest {
 		UriPattern pattern = mock(UriPattern.class);
 		when(pattern.createUri(any(), any(), any(), any(), any(), any())).thenReturn("/a/b/c");
 		Param root = new Param(null);
-		Register register = new Register(root, new ObjectBuilder<>(new TestModule()), pattern);
+		Register register = new Register(root, new ObjectBuilder<>(new TestModule()), pattern, new HashMap<>());
 		register.addController(ControllerA.class, ()->new ControllerA());
 		register.addController(ControllerA.class, ()->new ControllerA());
 	}
 	
 	@Test(expected = RuntimeException.class)
 	public void testGetParamThrowsIfPartContainsSlash() {
-		Register register = new Register(mock(Param.class), new ObjectBuilder<>(), mock(UriPattern.class));
+		Register register = new Register(mock(Param.class), new ObjectBuilder<>(), mock(UriPattern.class), new HashMap<>());
 		register.getParam("a/x", new Param(""));
 	}
 	
 	@Test
 	@Parameters(method="dataGetParam")
 	public void testGetParam(Param parent, String part, Param expected) {
-		Register register = new Register(mock(Param.class), new ObjectBuilder<>(), getPattern());
+		Register register = new Register(mock(Param.class), new ObjectBuilder<>(), getPattern(), new HashMap<>());
 		assertEquals(expected, register.getParam(part, parent));
 	}
 	
@@ -208,13 +210,13 @@ public class RegisterTest {
 
 	@Test(expected = RegisterException.class)
 	public void testAddControllerThrowsIfModuleIsNull() {
-		Register register = new Register(mock(Param.class), new ObjectBuilder<>(), mock(UriPattern.class));
+		Register register = new Register(mock(Param.class), new ObjectBuilder<>(), mock(UriPattern.class), new HashMap<>());
 		register.addController(ControllerA.class, ()->new ControllerA());
 	}
 	
 	@Test(expected = RegisterException.class)
 	public void testAdControllerThrowsIfClassIsNotController() {
-		Register register = new Register(mock(Param.class), new ObjectBuilder<>(new TestModule()), mock(UriPattern.class));
+		Register register = new Register(mock(Param.class), new ObjectBuilder<>(new TestModule()), mock(UriPattern.class), new HashMap<>());
 		register.addController(SomeClass.class, ()->new SomeClass());
 	}
 
@@ -222,7 +224,7 @@ public class RegisterTest {
 	@Ignore
 	public void testAddControllerThrowsIfClassIsAnnonymous() {
 		@SuppressWarnings("unused")
-		Register register = new Register(mock(Param.class), new ObjectBuilder<>(), getPattern());
+		Register register = new Register(mock(Param.class), new ObjectBuilder<>(), getPattern(), new HashMap<>());
 		// register.addController(RegisteredController.class, ()->new RegisteredController());
 	}
 	
@@ -240,7 +242,7 @@ public class RegisterTest {
 	@Test
 	public void testFactoryWithoutCustomName() {
 		@SuppressWarnings("unchecked")
-		Register register = new Register(mock(Param.class), mock(ObjectBuilder.class), getPattern());
+		Register register = new Register(mock(Param.class), mock(ObjectBuilder.class), getPattern(), new HashMap<>());
 		
 		assertFalse(register.isFactoryPresent(SomeClass.class));
 		
@@ -251,7 +253,7 @@ public class RegisterTest {
 	@Test
 	public void testFactoryWithCustomName() {
 		@SuppressWarnings("unchecked")
-		Register register = new Register(mock(Param.class), mock(ObjectBuilder.class), getPattern());
+		Register register = new Register(mock(Param.class), mock(ObjectBuilder.class), getPattern(), new HashMap<>());
 		
 		assertFalse(register.isFactoryPresent("someName"));
 		
@@ -263,7 +265,7 @@ public class RegisterTest {
 	@Test
 	public void testServiceWithoutCustomName() {
 		@SuppressWarnings("unchecked")
-		Register register = new Register(mock(Param.class), mock(ObjectBuilder.class), getPattern());
+		Register register = new Register(mock(Param.class), mock(ObjectBuilder.class), getPattern(), new HashMap<>());
 		
 		assertFalse(register.isServicePresent(SomeClass.class));
 		SomeClass instance = new SomeClass();
@@ -274,7 +276,7 @@ public class RegisterTest {
 	@Test
 	public void testServiceWithCustomName() {
 		@SuppressWarnings("unchecked")
-		Register register = new Register(mock(Param.class), mock(ObjectBuilder.class), getPattern());
+		Register register = new Register(mock(Param.class), mock(ObjectBuilder.class), getPattern(), new HashMap<>());
 		
 		assertFalse(register.isServicePresent("someInstance"));
 		SomeClass instance = new SomeClass();
@@ -284,6 +286,11 @@ public class RegisterTest {
 		assertFalse(register.isServicePresent(SomeClass.class));
 	}
 
+	@Test
+	public void testGetExtension() {
+		fail("TODO");
+	}
+	
 	private UriPattern getPattern() {
 		return new UriPattern(){};
 	}
