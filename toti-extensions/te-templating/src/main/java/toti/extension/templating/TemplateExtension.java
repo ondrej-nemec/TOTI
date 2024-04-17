@@ -69,16 +69,12 @@ public class TemplateExtension implements toti.extensions.TemplateExtension, Ext
 		this.minimalizeTemplate = minimalizeTemplate;
 	}
 	
-	public void registerTags(Tag ...tags) {
-		for (Tag tag : tags) {
-			this.tags.add(tag);
-		}
+	public void registerTags(List<Tag> tags) {
+		this.tags.addAll(tags);
 	}
 	
-	public void registerParameters(Parameter ...parameters) {
-		for (Parameter parameter : parameters) {
-			this.parameters.add(parameter);
-		}
+	public void registerParameters(List<Parameter> parameters) {
+		this.parameters.addAll(parameters);
 	}
 	
 	public void registerModule(String module, String modulePath, String templatePath) {

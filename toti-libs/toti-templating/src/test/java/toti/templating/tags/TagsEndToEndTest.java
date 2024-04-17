@@ -264,7 +264,6 @@ public class TagsEndToEndTest extends BaseTemplateTest {
 				"cycles", "dowhileVariable.jsp", "Dowhile: 0 1 2"
 			},
 			// TODO callback
-			// TODO form tags
 			// TODO datatime format
 			// print
 			new Object[] {

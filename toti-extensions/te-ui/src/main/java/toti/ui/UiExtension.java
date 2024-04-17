@@ -13,8 +13,13 @@ import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.answers.response.Response;
 import toti.application.register.Register;
+import toti.extension.templating.TemplateExtension;
 import toti.extensions.Extension;
 import toti.extensions.TotiExtension;
+import toti.templating.Tag;
+import toti.ui.tags.ControlTag;
+import toti.ui.tags.FormTag;
+import toti.ui.tags.GridTag;
 
 public class UiExtension implements Extension, TotiExtension {
 
@@ -52,7 +57,20 @@ public class UiExtension implements Extension, TotiExtension {
 	}
 
 	@Override
-	public void init(Env appEnv, Register register) {}
+	public void init(Env appEnv, Register register) {
+		TemplateExtension templateExtension = register.getExtension(TemplateExtension.class);
+		if (templateExtension != null) {
+			templateExtension.registerTags(getTags());
+		}
+	}
+	
+	protected List<Tag> getTags() {
+		return Arrays.asList(
+			new ControlTag(),
+			new FormTag(),
+			new GridTag()
+		);
+	}
 
 	@Override
 	public void onRequestStart(Identity identity, MapDictionary<String> sessionSpace, Headers requestHeaders,
