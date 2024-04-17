@@ -59,9 +59,13 @@ public class UiExtension implements Extension, TotiExtension {
 	@Override
 	public void init(Env appEnv, Register register) {
 		TemplateExtension templateExtension = register.getExtension(TemplateExtension.class);
-		if (templateExtension != null) {
-			templateExtension.registerTags(getTags());
+		if (templateExtension == null) {
+			throw new RuntimeException("TOTI-UI Extension requires TOTI-Templating Extension.");
 		}
+		templateExtension.registerTags(getTags());
+		// TODO some special only for this
+		// module path is empty - files are in classpath
+		templateExtension.registerModule("toti", "", "toti");
 	}
 	
 	protected List<Tag> getTags() {

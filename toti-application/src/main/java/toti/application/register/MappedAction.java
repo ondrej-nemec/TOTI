@@ -31,6 +31,13 @@ public class MappedAction {
 		);
 	}
 	
+	public static MappedAction totiAnswer() {
+		return new MappedAction(
+			"toti", null, null, null,
+			null, null, null, null
+		);
+	}
+	
 	public static MappedAction test(String moduleName, String className, String methodName) {
 		return test(moduleName, className, methodName, "[]");
 	}

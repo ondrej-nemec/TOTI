@@ -11,6 +11,7 @@ import toti.answers.request.IdentityFactory;
 import toti.answers.request.Request;
 import toti.answers.response.Response;
 import toti.answers.response.ResponseContainer;
+import toti.application.register.MappedAction;
 import toti.extensions.TotiExtension;
 import toti.extensions.TemplateExtension;
 
@@ -40,7 +41,7 @@ public class TotiAnswer {
 				.getResponse(
 					request.getProtocol(), responseHeaders, identity,
 					new ResponseContainer(
-						null, null, null, templateExtension, null
+						null, null, MappedAction.totiAnswer(), templateExtension, null
 					), 
 					charset
 				);

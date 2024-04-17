@@ -2,6 +2,7 @@ package toti.extension.templating;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -51,18 +52,18 @@ public class TemplateExtension implements toti.extensions.TemplateExtension, Ext
 	
 	public TemplateExtension(String tempPath, boolean minimalizeTemplate, boolean deleteAuxFiles, Logger logger) {
 		this.templateFactories = new HashMap<>();
-		this.tags = Arrays.asList(
+		this.tags = new LinkedList<>(Arrays.asList(
 			new IfCurrentTag(),
 			new LinkTag(),
 			new PermissionsTag(),
 			new TranslateTag()
-		);
-		this.parameters = Arrays.asList(
+		));
+		this.parameters = new LinkedList<>(Arrays.asList(
 			new AltParameter(),
 			new HrefParameter(),
 			new SrcParameter(),
 			new TitleParameter()
-		);
+		));
 		this.tempPath = tempPath;
 		this.logger = logger;
 		this.deleteAuxFiles = deleteAuxFiles;
