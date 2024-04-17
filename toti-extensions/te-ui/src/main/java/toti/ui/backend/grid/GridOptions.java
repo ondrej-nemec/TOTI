@@ -67,27 +67,27 @@ public class GridOptions implements Entity {
 		Validator sorting = new Validator(true);
 		gridColumns.forEach((column)->{
 			if (column.isUseInFilter()) {
-                Class<?> type = column.getType();
-                if (type.equals(LocalDateTime.class)) {
-                     type = String.class;
-                }
-                filters.addRule(
-                     ItemRules.objectRules(column.getName(), false).setType(type)
-                     .changeValue((v)->{
-                         if (v == null) {
-                              return null;
-                         }
-                         if (column.getType().equals(LocalDateTime.class)) {
-                              v = v.toString().replace("T", " ");
-                         }
-                         return new Filter(
-                              column.getName(), column.getFilterMode(), v,
-                              column.getType().equals(String.class) ? column.isCI() : false,
-                              column.getType().equals(String.class) ? column.isIgnoreDiacritics() : false
-                         );
-                     })
-                );
-            }
+				Class<?> type = column.getType();
+				if (type.equals(LocalDateTime.class)) {
+					 type = String.class;
+				}
+				filters.addRule(
+					 ItemRules.objectRules(column.getName(), false).setType(type)
+					 .changeValue((v)->{
+						 if (v == null) {
+							  return null;
+						 }
+						 if (column.getType().equals(LocalDateTime.class)) {
+							  v = v.toString().replace("T", " ");
+						 }
+						 return new Filter(
+							  column.getName(), column.getFilterMode(), v,
+							  column.getType().equals(String.class) ? column.isCI() : false,
+							  column.getType().equals(String.class) ? column.isIgnoreDiacritics() : false
+						 );
+					 })
+				);
+			}
 			if (column.isUseInSorting()) {
 				sorting.addRule(
 					ItemRules.booleanRules(column.getName(), false)
