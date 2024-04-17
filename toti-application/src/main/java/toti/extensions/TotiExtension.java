@@ -8,7 +8,7 @@ import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.answers.response.Response;
 
-public interface OnTotiExtension extends Extension {
+public interface TotiExtension extends Extension {
 	
 	List<String> getListeningUri();
 	

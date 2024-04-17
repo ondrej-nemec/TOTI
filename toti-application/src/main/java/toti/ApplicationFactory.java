@@ -28,7 +28,7 @@ import toti.extensions.Extension;
 import toti.extensions.TemplateExtension;
 import toti.extensions.Translator;
 import toti.extensions.TranslatorExtension;
-import toti.extensions.OnTotiExtension;
+import toti.extensions.TotiExtension;
 
 public class ApplicationFactory {
 
@@ -55,7 +55,7 @@ public class ApplicationFactory {
 	private final String appIdentifier;
 	private final String charset;
 	
-	private final List<OnTotiExtension> extensionsTotiResponses;
+	private final List<TotiExtension> extensionsTotiResponses;
 	
 	private final List<Extension> extensions;
 	
@@ -252,8 +252,8 @@ public class ApplicationFactory {
 	public ApplicationFactory addExtension(Extension extension) {
 		extensions.add(extension);
 		
-		if (extension instanceof OnTotiExtension) {
-			extensionsTotiResponses.add((OnTotiExtension)extension);
+		if (extension instanceof TotiExtension) {
+			extensionsTotiResponses.add((TotiExtension)extension);
 		}
 		if (extension instanceof TranslatorExtension) {
 			this.translatorExtension = (TranslatorExtension)extension;

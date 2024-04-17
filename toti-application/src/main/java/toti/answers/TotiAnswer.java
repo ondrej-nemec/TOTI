@@ -11,7 +11,7 @@ import toti.answers.request.IdentityFactory;
 import toti.answers.request.Request;
 import toti.answers.response.Response;
 import toti.answers.response.ResponseContainer;
-import toti.extensions.OnTotiExtension;
+import toti.extensions.TotiExtension;
 import toti.extensions.TemplateExtension;
 
 public class TotiAnswer {
@@ -20,11 +20,11 @@ public class TotiAnswer {
 	private final TemplateExtension templateExtension;
 	
 	private final IdentityFactory identityFactory;
-	private final Map<String, OnTotiExtension> extensions = new HashMap<>();
+	private final Map<String, TotiExtension> extensions = new HashMap<>();
 	
 	public TotiAnswer(
 			List<String> developIps, TemplateExtension templateExtension,
-			IdentityFactory identityFactory, List<OnTotiExtension> extensions) {
+			IdentityFactory identityFactory, List<TotiExtension> extensions) {
 		this.developIps = developIps;
 		this.templateExtension = templateExtension;
 		this.identityFactory = identityFactory;
@@ -59,7 +59,7 @@ public class TotiAnswer {
 				break;
 		}
 		if (extensions.containsKey(url)) {
-			OnTotiExtension extension = extensions.get(url);
+			TotiExtension extension = extensions.get(url);
 			return extension.getResponse(
 				url, request, 
 				identity, identityFactory.getSpace(extension.getIdentifier(), identity),

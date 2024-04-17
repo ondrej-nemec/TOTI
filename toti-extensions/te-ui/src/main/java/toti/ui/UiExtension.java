@@ -14,9 +14,9 @@ import toti.answers.request.Request;
 import toti.answers.response.Response;
 import toti.application.register.Register;
 import toti.extensions.Extension;
-import toti.extensions.OnTotiExtension;
+import toti.extensions.TotiExtension;
 
-public class UiExtension implements Extension, OnTotiExtension {
+public class UiExtension implements Extension, TotiExtension {
 
 	@Override
 	public String getIdentifier() {
