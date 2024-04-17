@@ -6,9 +6,9 @@ public class Filter {
 	private String name;
 	private Object value;
 
-    private boolean isCI;
-    private boolean ignoreDiacritics;
-    
+	private boolean isCI;
+	private boolean ignoreDiacritics;
+
 	public Filter() {}
 
 	public Filter(String name, FilterMode mode, Object value, boolean isCI, boolean isIgnoreDiactritics) {
