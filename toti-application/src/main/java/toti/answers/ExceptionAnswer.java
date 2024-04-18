@@ -15,7 +15,7 @@ import ji.socketCommunication.http.StatusCode;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.answers.response.Response;
-import toti.answers.response.TemplateResponse;
+import toti.answers.response.TextResponse;
 import toti.application.register.MappedAction;
 import toti.application.register.Register;
 import toti.answers.response.ResponseContainer;
@@ -92,7 +92,7 @@ public class ExceptionAnswer {
 				logger.error("CustomExceptionResponse fail, default implementation continue", t1);
 			}
 		}
-		TemplateResponse exceptionDetail = getExceptionDetail(request, requestHeaders, status, t, identity, mappedAction);
+		String exceptionDetail = getExceptionDetail(request, requestHeaders, status, t, identity, mappedAction);
 		if (isAsyncRequest) {
 			saveToFile(fileName, exceptionDetail, charset);
 			if (isDevelopResponseAllowed) {
@@ -100,31 +100,91 @@ public class ExceptionAnswer {
 			}
 			return Response.create(status).getText(status.getDescription());
 		}
+		
 		if (isDevelopResponseAllowed) {
-			return exceptionDetail;
+			return getExceptionResponse(status, exceptionDetail);
 		}
 		saveToFile(fileName, exceptionDetail, charset);
-		return getExceptionInfo(status);
+		
+		return getExceptionResponse(status, getExceptionInfo(status));
+	}
+	
+	protected Response getExceptionResponse(StatusCode status, String message) {
+		return new TextResponse(status, new Headers().addHeader("Content-Type", "text/html"), message);
 	}
 
-	// TODO nebude vracet template, pouzije se spagety kod
-	protected TemplateResponse getExceptionInfo(StatusCode status) {
-		Map<String, Object> variables = new HashMap<>();
-		variables.put("code", status);
-		return new TemplateResponse(status, new Headers(), "/errors/error.jsp", variables);
+	protected String getExceptionInfo(StatusCode status) {
+		return String.format(
+			"<html>"
+			+ "<head>"
+				+ "<title>%s - Exception</title>"
+			+ "</head>"
+			+ "<body>"
+				+ "<h1>Error %s: %s</h1>"
+			+ "</body>"
+			+ "</html>",
+			status.getCode(), status.getCode(), status.getDescription()
+		);
 	}
 
-	// TODO nebude vracet template, pouzije se spagety kod
-	protected TemplateResponse getExceptionDetail(ji.socketCommunication.http.structures.Request request,
+	protected String getExceptionDetail(ji.socketCommunication.http.structures.Request request,
 			Headers requestHeaders, StatusCode status, Throwable t, Identity identity, MappedAction mappedAction) {
-		Map<String, Object> variables = new HashMap<>();
-		variables.put("code", status);
-		variables.put("request", request);
-		variables.put("requestHeaders", requestHeaders);
-		variables.put("identity", identity);
-		variables.put("mappedAction", mappedAction);
-		variables.put("t", t);
-		return new TemplateResponse(status, new Headers(), "/errors/exception.jsp", variables);
+		String title = String.format("<title>Exception ${code}</title>", status);
+		String headline = String.format(
+			"<h1>Exception occured: %s %s</h1>"
+			+ "<div>In %s %s</div>", 
+			status.getCode(), status.getDescription(),
+			request.getMethod(), request.getUri()
+		);
+		String style = "<style>"
+			+ "h1 {"
+				+ "text-align: center;"
+				+ "padding: 0.5em;"
+				+ "color: #e3ffff;"
+				+ "background-color: #017CA5;"
+			+ "}"
+			+ "body {"
+				+ "background-color: #7FC6CC;"
+				+ "padding-left: 1em;"
+				+ "padding-right: 1em;"
+			+ "}"
+			+ "</style>";
+		
+		StringBuilder errorStackTrace = new StringBuilder();
+		Throwable aux = t;
+		while (aux != null) {
+			String prefix = "";
+			if (!errorStackTrace.toString().isEmpty()) {
+				prefix = "Caused by: ";
+			}
+			errorStackTrace.append(String.format(
+				"<h2>%s%s: %s</h2>",
+				prefix, aux.getClass(), aux.getMessage()
+			));
+			errorStackTrace.append("<div>");
+			for (StackTraceElement el : aux.getStackTrace()) {
+				errorStackTrace.append(String.format(
+					"at %s.%s (%s:%s)",
+					el.getClassName(), el.getMethodName(),
+					el.getFileName(), el.getLineNumber()
+				));
+				errorStackTrace.append("<br>");
+			}
+			errorStackTrace.append("</div>");
+			
+			aux = aux.getCause();
+		}
+		
+		return String.format(
+			"<html><head>"
+			+ title
+			+ style
+			+ "</head><body>"
+			+ headline
+			+ errorStackTrace.toString()
+			+ "</body></html>",
+			status.getCode(), status.getCode(), status.getDescription()
+		);
 	}
 	
 	private FileName getFileName(MappedAction action, StatusCode code, Throwable t) {
@@ -150,11 +210,11 @@ public class ExceptionAnswer {
 		return new FileName(name, true);
 	}
 	
-	private void saveToFile(FileName fileName, TemplateResponse response, String charset) {
+	private void saveToFile(FileName fileName, String response, String charset) {
 		saveToFile(fileName, response, charset, Text.get());
 	}
 	
-	protected int saveToFile(FileName fileName, TemplateResponse response, String charset, Text text) {
+	protected int saveToFile(FileName fileName, String response, String charset, Text text) {
 		if (!fileName.isCreate() || !fileName.isUsed()) {
 			return -1;
 		}
@@ -169,11 +229,7 @@ public class ExceptionAnswer {
             dir.setWritable(true, false);
             dir.mkdirs();
 			*/
-			text.write((bw)->{
-				bw.write(
-					response.createResponse(new ResponseContainer(null, null, null, null, null))
-				);
-			}, fileName.getName(), charset, false);
+			text.write((bw)->{ bw.write(response); }, fileName.getName(), charset, false);
 			File file = new File(fileName.getName());
 			/*
 			IS needed?

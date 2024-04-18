@@ -224,7 +224,6 @@ public class ExceptionAnswerTest {
 	@Parameters(method="dataSaveToFileDoNothingIfFileIsNotCreateAndNotUsed")
 	public void testSaveToFileDoNothingIfFileIsNotCreateAndNotUsed(FileName filename) {
 		Text text = mock(Text.class);
-		TemplateResponse templateResponse = mock(TemplateResponse.class);
 		
 		ExceptionAnswer answer = new ExceptionAnswer(
 			mock(Register.class),
@@ -233,9 +232,9 @@ public class ExceptionAnswerTest {
 			mock(TranslatorExtension.class),
 			mock(Logger.class)
 		);
-		assertEquals(-1, answer.saveToFile(filename, templateResponse, "charset", text));
+		assertEquals(-1, answer.saveToFile(filename, "some text", "charset", text));
 		
-		verifyNoMoreInteractions(text, templateResponse);
+		verifyNoMoreInteractions(text);
 	}
 	
 	public Object[] dataSaveToFileDoNothingIfFileIsNotCreateAndNotUsed() {
@@ -255,7 +254,6 @@ public class ExceptionAnswerTest {
 	@Test
 	public void testSaveToFileSavefile() throws Exception {
 		Text text = mock(Text.class);
-		TemplateResponse templateResponse = mock(TemplateResponse.class);
 	//	when(templateResponse.createResponse(any())).thenReturn("templateContent");
 		
 		ExceptionAnswer answer = new ExceptionAnswer(
@@ -265,10 +263,10 @@ public class ExceptionAnswerTest {
 			mock(TranslatorExtension.class),
 			mock(Logger.class)
 		);
-		assertEquals(0, answer.saveToFile(new FileName("/path/to/file", true), templateResponse, "charset", text));
+		assertEquals(0, answer.saveToFile(new FileName("/path/to/file", true), "some content", "charset", text));
 		
 		verify(text, times(1)).write(any(), eq("/path/to/file"), eq("charset"), eq(false));
 		// verify(templateResponse, times(1)).createResponse(any());
-		verifyNoMoreInteractions(text, templateResponse);
+		verifyNoMoreInteractions(text);
 	}
 }
