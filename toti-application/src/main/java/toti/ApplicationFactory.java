@@ -102,7 +102,7 @@ public class ApplicationFactory {
 		
 		List<String> developIps = getDevelopIps(env);
 		TotiAnswer totiAnwer = new TotiAnswer(
-			developIps, templateExtension, identityFactory, extensionsTotiResponses
+			developIps, templateExtension, translatorExtension, identityFactory, extensionsTotiResponses
 		);
 		ExceptionAnswer exceptionAnswer = new ExceptionAnswer(
 			register,

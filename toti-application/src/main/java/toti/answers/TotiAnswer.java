@@ -13,21 +13,24 @@ import toti.answers.response.Response;
 import toti.answers.response.ResponseContainer;
 import toti.application.register.MappedAction;
 import toti.extensions.TotiExtension;
+import toti.extensions.TranslatorExtension;
 import toti.extensions.TemplateExtension;
 
 public class TotiAnswer {
 	
 	private final List<String> developIps;
 	private final TemplateExtension templateExtension;
+	private final TranslatorExtension translatorExtension;
 	
 	private final IdentityFactory identityFactory;
 	private final Map<String, TotiExtension> extensions = new HashMap<>();
 	
 	public TotiAnswer(
-			List<String> developIps, TemplateExtension templateExtension,
+			List<String> developIps, TemplateExtension templateExtension, TranslatorExtension translatorExtension,
 			IdentityFactory identityFactory, List<TotiExtension> extensions) {
 		this.developIps = developIps;
 		this.templateExtension = templateExtension;
+		this.translatorExtension = translatorExtension;
 		this.identityFactory = identityFactory;
 		extensions.forEach(e->e.getListeningUri().forEach(u->this.extensions.put(u, e)));
 	}
@@ -40,8 +43,9 @@ public class TotiAnswer {
 		return getResponse(uri, Request.fromRequest(request, requestHeaders), identity, responseHeaders)
 				.getResponse(
 					request.getProtocol(), responseHeaders, identity,
+					// TODO MappedAction send in different way
 					new ResponseContainer(
-						null, null, MappedAction.totiAnswer(), templateExtension, null
+						translatorExtension.getTranslator(identity), null, MappedAction.totiAnswer(), templateExtension, null
 					), 
 					charset
 				);

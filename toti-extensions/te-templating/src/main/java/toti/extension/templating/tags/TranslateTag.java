@@ -42,7 +42,7 @@ public class TranslateTag implements Tag {
 			"write(Template.escapeVariable("
 				+ TemplateResponseContainer.class.getCanonicalName()
 				+ ".class.cast(container)"
-				+ ".translate(\"%s\", %s))"
+				+ ".translate(\"%s\", %s)"
 			+ "));",
 			params.get("message"), variables.toString()
 		);

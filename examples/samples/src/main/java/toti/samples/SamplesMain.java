@@ -111,7 +111,7 @@ public class SamplesMain {
 					LogManager.getLogger("translate")
 				));
 				applicationFactory.addExtension(new TemplateExtension(
-					"temp/samples", false, true, LogManager.getLogger("template")
+					"temp/samples", false, false, LogManager.getLogger("template")
 				));
 				applicationFactory.addExtension(new DatabaseExtension(LogManager.getLogger("database")));
 				

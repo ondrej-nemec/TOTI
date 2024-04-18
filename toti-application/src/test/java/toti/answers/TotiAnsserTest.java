@@ -27,6 +27,7 @@ import toti.answers.response.Response;
 import toti.answers.response.TextResponse;
 import toti.application.register.Register;
 import toti.extensions.TotiExtension;
+import toti.extensions.TranslatorExtension;
 import toti.extensions.TemplateExtension;
 
 @RunWith(JUnitParamsRunner.class)
@@ -64,6 +65,7 @@ public class TotiAnsserTest {
 		TotiAnswer answer = new TotiAnswer(
 			Arrays.asList("localhost"),
 			mock(TemplateExtension.class),
+			mock(TranslatorExtension.class),
 			mock(IdentityFactory.class),
 			Arrays.asList(extension)
 		);
@@ -93,6 +95,7 @@ public class TotiAnsserTest {
 		TotiAnswer answer = new TotiAnswer(
 			Arrays.asList("localhost"),
 			mock(TemplateExtension.class),
+			mock(TranslatorExtension.class),
 			mock(IdentityFactory.class),
 			new LinkedList<>()
 		);
