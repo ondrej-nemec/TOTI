@@ -35,22 +35,22 @@ public interface EntityDao {
 	}
 	
 	default boolean exists(Database database, String table, String idName, Object id, Map<String, Object> params) throws SQLException {
-        return database.applyBuilder((builder)->{
-             SelectBuilder select = builder.select(idName)
-                     .from(table);
-             if (id != null) {
-                 select.where(idName + " != :" + idName)
-                      .addParameter(":" + idName, id);
-             } else {
-                 select.where("1=1");
-             }   
-             params.forEach((name, value)->{
-                 select.andWhere(name + " = :" + name)
-                      .addParameter(":" + name, value);
-             });
-             return select.fetchRow() != null;
-         });
-    }
+		return database.applyBuilder((builder)->{
+			 SelectBuilder select = builder.select(idName)
+					 .from(table);
+			 if (id != null) {
+				 select.where(idName + " != :" + idName)
+					  .addParameter(":" + idName, id);
+			 } else {
+				 select.where("1=1");
+			 }   
+			 params.forEach((name, value)->{
+				 select.andWhere(name + " = :" + name)
+					  .addParameter(":" + name, value);
+			 });
+			 return select.fetchRow() != null;
+		 });
+	}
 	
 	default <S> S delete(Database database, String table, String idName, Object id, ThrowingFunction<DatabaseRow, S, SQLException> create) throws SQLException {
 		return delete(database, table, idName, id, create, new TransactionListener<S>() {});
@@ -60,12 +60,12 @@ public interface EntityDao {
 			Database database, String table, String idName, Object id, 
 			ThrowingFunction<DatabaseRow, S, SQLException> create, TransactionListener<S> listener) throws SQLException {
 		return database.applyBuilder((builder)->{
-            DatabaseRow data = builder.get(table, idName, id);
-            S item = data == null ? null : create.apply(data);
-            listener.onTransactionStart(id, item);
-            builder.delete(table, idName, id);
-            listener.onTransactionEnd(id, item);
-            return item;
+			DatabaseRow data = builder.get(table, idName, id);
+			S item = data == null ? null : create.apply(data);
+			listener.onTransactionStart(id, item);
+			builder.delete(table, idName, id);
+			listener.onTransactionEnd(id, item);
+			return item;
 		});
 	}
 	
