@@ -75,11 +75,11 @@ public class ExceptionAnswer {
 			Headers requestHeaders,
 			StatusCode status, Throwable t, Identity identity, MappedAction mappedAction, String charset) {
 		FileName fileName = getFileName(mappedAction, status, t);
-		String message = "Exception occured %s URL: %s.";
+		String message = "Exception occured %s. URL: %s %s.";
 		if (fileName.isUsed()) {
 			message += " Detail saved: " + fileName.getName();
 		}
-		logger.error(String.format(message, status, request.getUri()), t);
+		logger.error(String.format(message, status, request.getMethod(), request.getUri()), t);
 		
 		boolean isDevelopResponseAllowed = developIps.contains(identity.getIP());
 		boolean isAsyncRequest = requestHeaders.isAsyncRequest(); // probably js request
