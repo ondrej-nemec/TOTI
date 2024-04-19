@@ -18,6 +18,10 @@ public interface EntityDao {
 		});
 	}
 
+	default <S> S get(Database database, String table, String idName, Object id, Class<S> clazz) throws SQLException {
+		return get(database, table, idName, id, r->r.parse(clazz));
+	}
+	
 	default <S> S get(Database database, String table, String idName, Object id, ThrowingFunction<DatabaseRow, S, SQLException> create) throws SQLException {
 		return database.applyBuilder((builder)->{
 			DatabaseRow data = builder.get(table, idName, id);
@@ -52,8 +56,18 @@ public interface EntityDao {
 		 });
 	}
 	
+	default <S> S delete(Database database, String table, String idName, Object id, Class<S> clazz) throws SQLException {
+		return delete(database, table, idName, id, r->r.parse(clazz));
+	}
+	
 	default <S> S delete(Database database, String table, String idName, Object id, ThrowingFunction<DatabaseRow, S, SQLException> create) throws SQLException {
 		return delete(database, table, idName, id, create, new TransactionListener<S>() {});
+	}
+	
+	default <S> S delete(
+			Database database, String table, String idName, Object id, 
+			Class<S> clazz, TransactionListener<S> listener) throws SQLException {
+		return delete(database, table, idName, id, r->r.parse(clazz), listener);
 	}
 	
 	default <S> S delete(
