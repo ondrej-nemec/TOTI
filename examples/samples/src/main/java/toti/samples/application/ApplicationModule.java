@@ -3,6 +3,7 @@ package toti.samples.application;
 import java.util.Arrays;
 import java.util.List;
 
+import ji.common.exceptions.LogicException;
 import ji.common.functions.Env;
 import ji.socketCommunication.http.StatusCode;
 import toti.answers.request.Identity;
@@ -33,16 +34,17 @@ public class ApplicationModule implements Module {
 		// TODO register.setSessionUserProvider(null); + example
 		// TODO zpracovani pozadavku - steps
 		
-		// uncomment for using custom exception handler
-		/*
 		register.setCustomExceptionResponse(new CustomExceptionExtension() {
 			@Override
 			public Response catchException(Request request, StatusCode status, Identity identity,
 				TranslatorExtension translator, Throwable t, boolean isDevelopResponseAllowed, boolean isAsyncRequest) {
-				return Response.OK().getText("Oops, something happends.");
+				// handle only some expected exceptions
+				if (t instanceof LogicException) {
+					return Response.OK().getText("Oops, something happends: " + t.getMessage());
+				}
+				throw new RuntimeException(t);
 			}
 		});
-		//*/
 		
 		// TODO links to all methods - call sync and async
 		register.addController(ExceptionsController.class, ()->new ExceptionsController());

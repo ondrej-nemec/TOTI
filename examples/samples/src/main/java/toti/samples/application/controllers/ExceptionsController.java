@@ -1,7 +1,5 @@
 package toti.samples.application.controllers;
 
-import java.util.HashMap;
-
 import ji.common.exceptions.LogicException;
 import ji.socketCommunication.http.HttpMethod;
 import toti.annotations.Action;
@@ -27,16 +25,6 @@ public class ExceptionsController {
 	 */
 	@Action(path="method")
 	public ResponseAction inMethod() {
-		throw new LogicException("Example of logic exception");
-	}
-	
-	/**
-	 * Exception throwed inside method before Response is returned
-	 * @throws LogicException
-	 * @return http://localhost:8080/application/exceptions/cause
-	 */
-	@Action(path="cause")
-	public ResponseAction inMethodCause() {
 		return ResponseBuilder.get().createResponse((req, translator, identity)->{
 			throw new RuntimeException(new LogicException("Example of logic exception"));
 		});
@@ -83,42 +71,15 @@ public class ExceptionsController {
 	}
 
 	/**
-	 * Exception throwed by TOTI after method is called
-	 * Caused by missing template
-	 * @throws FileNotFoundException
-	 * @return http://localhost:8080/application/exceptions/notemplate
+	 * Exception throwed inside method before Response is returned, exception catched by CustomExceptionExtension
+	 * @throws LogicException
+	 * @return http://localhost:8080/application/exceptions/catched
 	 */
-	@Action(path="notemplate")
-	public ResponseAction noTemplate() {
+	@Action(path="catched")
+	public ResponseAction catched() {
 		return ResponseBuilder.get().createResponse((req, translator, identity)->{
-			return Response.OK().getTemplate("/exceptions/missing-template.jsp", new HashMap<>());
+			throw new LogicException("Example of logic exception");
 		});
 	}
 	
-	/**
-	 * Exception throwed by TOTI after method is called during template rendering
-	 * Caused: template parameters are NULL, calling parameters in template
-	 * @throws NullPoinerException
-	 * @return http://localhost:8080/application/exceptions/intemplate
-	 */
-	@Action(path="intemplate")
-	public ResponseAction inTemplate() {
-		return ResponseBuilder.get().createResponse((req, translator, identity)->{
-			return Response.OK().getTemplate("/exceptions/inTemplate.jsp", null);
-		});
-	}
-	
-	/**
-	 * Exception throwed by TOTI after method is called during template parsing
-	 * Caused: wrong template syntax
-	 * @throws TemplateException Unknown syntax error
-	 * @return http://localhost:8080/application/exceptions/syntax
-	 */
-	@Action(path="syntax")
-	public ResponseAction templateSyntax() {
-		return ResponseBuilder.get().createResponse((req, translator, identity)->{
-			return Response.OK().getTemplate("/exceptions/syntax.jsp", new HashMap<>());
-		});
-	}
-
 }

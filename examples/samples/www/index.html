@@ -55,7 +55,31 @@
 				name: 'Application: Exceptions',
 				description: 'How TOTI reacts on different exceptions throwed in different sources.',
 				links: [
-					
+					{
+						name: 'Inside of method',
+						description: 'Exception throwed directly in method.',
+						link: '/application/exceptions/method'
+					},
+					{
+						name: 'Secured',
+						description: 'Exception throwed by TOTI because of missing logged user.',
+						link: '/application/exceptions/secured'
+					},
+					{
+						name: 'Request Interrupted',
+						description: 'Request interrupted in createResponse step.',
+						link: '/application/exceptions/interrupt'
+					},
+					{
+						name: 'Wrong HTTP method',
+						description: 'Exception throwed by TOTI because of wrong HTTP method.',
+						link: '/application/exceptions/post'
+					},
+					{
+						name: 'Catched',
+						description: 'Exception catched by CustomExceptionExtension',
+						link: '/application/exceptions/catched'
+					}
 				]
 			},
 			{

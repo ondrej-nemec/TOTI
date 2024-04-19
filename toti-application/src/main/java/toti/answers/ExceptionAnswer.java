@@ -129,7 +129,7 @@ public class ExceptionAnswer {
 
 	protected String getExceptionDetail(ji.socketCommunication.http.structures.Request request,
 			Headers requestHeaders, StatusCode status, Throwable t, Identity identity, MappedAction mappedAction) {
-		String title = String.format("<title>Exception ${code}</title>", status);
+		String title = String.format("<title>Exception %s</title>", status);
 		String headline = String.format(
 			"<h1>Exception occured: %s %s</h1>"
 			+ "<div>In %s %s</div>", 
