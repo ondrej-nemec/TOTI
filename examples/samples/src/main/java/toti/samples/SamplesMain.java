@@ -114,6 +114,7 @@ public class SamplesMain {
 					"temp/samples", false, false, LogManager.getLogger("template")
 				));
 				applicationFactory.addExtension(new DatabaseExtension(LogManager.getLogger("database")));
+				// validation extension doesn't need register
 				
 				return applicationFactory.create(Arrays.asList(
 					new ApplicationModule(),
