@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ji.common.structures.ObjectBuilder;
 import ji.socketCommunication.http.StatusCode;
 import toti.ServerException;
 import toti.answers.request.Identity;
@@ -39,19 +40,21 @@ public class TotiAnswer {
 			ji.socketCommunication.http.structures.Request request, Headers requestHeaders,
 			Identity identity, Headers responseHeaders, String charset
 		) throws ServerException {
+		ObjectBuilder<String> moduleName = new ObjectBuilder<>();
 		String uri = request.getPlainUri().substring(5);
-		return getResponse(uri, Request.fromRequest(request, requestHeaders), identity, responseHeaders)
+		return getResponse(uri, Request.fromRequest(request, requestHeaders), identity, responseHeaders, moduleName)
 				.getResponse(
 					request.getProtocol(), responseHeaders, identity,
-					// TODO MappedAction send in different way
 					new ResponseContainer(
-						translatorExtension.getTranslator(identity), null, MappedAction.totiAnswer(), templateExtension, null
+						translatorExtension.getTranslator(identity), null,
+						MappedAction.totiAnswer(moduleName.get()),
+						templateExtension, null
 					), 
 					charset
 				);
 	}
 	
-	protected Response getResponse(String url, Request request, Identity identity, Headers responseHeaders) {
+	protected Response getResponse(String url, Request request, Identity identity, Headers responseHeaders, ObjectBuilder<String> moduleName) {
 		boolean isDevelopReqeust = developIps.contains(identity.getIP());
 		switch (url.toLowerCase()) {
 			case "":
@@ -65,6 +68,7 @@ public class TotiAnswer {
 		}
 		if (extensions.containsKey(url)) {
 			TotiExtension extension = extensions.get(url);
+			moduleName.set(extension.getIdentifier());
 			return extension.getResponse(
 				url, request, 
 				identity, identityFactory.getSpace(extension.getIdentifier(), identity),

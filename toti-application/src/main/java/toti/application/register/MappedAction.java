@@ -31,9 +31,9 @@ public class MappedAction {
 		);
 	}
 	
-	public static MappedAction totiAnswer() {
+	public static MappedAction totiAnswer(String module) {
 		return new MappedAction(
-			"toti", null, null, null,
+			module, null, null, null,
 			null, null, null, null
 		);
 	}

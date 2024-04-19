@@ -14,6 +14,7 @@ import org.junit.runner.RunWith;
 
 import ji.common.functions.Env;
 import ji.common.structures.MapDictionary;
+import ji.common.structures.ObjectBuilder;
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.RequestParameters;
 import junitparams.JUnitParamsRunner;
@@ -69,7 +70,9 @@ public class TotiAnsserTest {
 			mock(IdentityFactory.class),
 			Arrays.asList(extension)
 		);
-		assertEquals(expected, answer.getResponse(url, mock(Request.class), mock(Identity.class), mock(Headers.class)));
+		assertEquals(expected, answer.getResponse(
+			url, mock(Request.class), mock(Identity.class), mock(Headers.class), new ObjectBuilder<>()
+		));
 	}
 
 	public Object[] dataRoutingWithExtension() {
@@ -99,7 +102,9 @@ public class TotiAnsserTest {
 			mock(IdentityFactory.class),
 			new LinkedList<>()
 		);
-		assertEquals(expected, answer.getResponse(url, mock(Request.class), identity, mock(Headers.class)));
+		assertEquals(expected, answer.getResponse(
+			url, mock(Request.class), identity, mock(Headers.class), new ObjectBuilder<>()
+		));
 	}
 	
 	public Collection<Object[]> dataGetResponseWithEmptyAndNotExistingUrl() {
