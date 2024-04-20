@@ -31,7 +31,7 @@ public class ApplicationModule implements Module {
 	@Override
 	public List<Task> initInstances(Env env, Register register, Link link) throws Exception {
 		// TODO register.createRoutedAction(getClass(), null); + example
-		// TODO register.setSessionUserProvider(null); + example
+		// TODO register.setSessionUserProvider(null); + example + prace s identity
 		// TODO zpracovani pozadavku - steps
 		
 		register.setCustomExceptionResponse(new CustomExceptionExtension() {

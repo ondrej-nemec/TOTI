@@ -2,15 +2,26 @@ package toti.samples.application.controllers;
 
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
+import ji.socketCommunication.http.structures.UploadedFile;
 import toti.annotations.Action;
 import toti.annotations.Controller;
+import toti.answers.action.BodyType;
 import toti.answers.action.ResponseAction;
 import toti.answers.action.ResponseBuilder;
 import toti.answers.response.Response;
 
+/**
+ * This example shows how different type of request are served
+ * @author Ondřej Němec
+ *
+ */
 @Controller("request")
 public class RequestController {
-	
+
+	/**
+	 * Request on URI only
+	 * @return http://localhost:8080/application/request/basic
+	 */
 	@Action(path="basic")
 	public ResponseAction get() {
 		return ResponseBuilder.get()
@@ -18,7 +29,11 @@ public class RequestController {
 			return Response.create(StatusCode.OK).getText("Working: GET");
 		});
 	}
-	
+
+	/**
+	 * Request with URI parameter
+	 * @return http://localhost:8080/application/request/basic/{parameter}
+	 */
 	@Action(path="basic")
 	public ResponseAction get(String parameter) {
 		return ResponseBuilder.get()
@@ -26,7 +41,11 @@ public class RequestController {
 			return Response.create(StatusCode.OK).getText("Working: GET " + parameter);
 		});
 	}
-	
+
+	/**
+	 * Request with different HTTP method
+	 * @return http://localhost:8080/application/request/post
+	 */
 	@Action(path="post", methods=HttpMethod.POST)
 	public ResponseAction post() {
 		return ResponseBuilder.get()
@@ -34,7 +53,11 @@ public class RequestController {
 			return Response.create(StatusCode.OK).getText("Working: POST");
 		});
 	}
-	
+
+	/**
+	 * Serving more HTTP methods
+	 * @return http://localhost:8080/application/request/get-or-post
+	 */
 	@Action(path="get-or-post", methods= {HttpMethod.POST, HttpMethod.GET})
 	public ResponseAction getOrPost() {
 		return ResponseBuilder.get()
@@ -42,15 +65,11 @@ public class RequestController {
 			return Response.create(StatusCode.OK).getText("Working: GET or POST " + request.getMethod());
 		});
 	}
-	/*
-	?someText=aaaa&someNumber=12&anotherNumber=21&bool=true'
-	?names[]=smith.john&names[]=doe.jane&names[]=my.name'
-	?rate[0]=273.15&rate[26.85]=300&rate[100]=373.15'
-	?map[list][]=273.15&map[list][]=300&map[100]=373.15'
-	?age=42&name=my_name&list[]=a&list[]=b&map[a]=aa&map[b]=bb'
-	?age=42&name=my_name&list[]=a&list[]=b&map[a]=aa&map[b]=bb'
-	?age=42&list[]=a&list[]=b&map[a]=aa&map[b]=bb'
-*/
+	
+	/**
+	 * Parsing query parameters
+	 * @return http://localhost:8080/application/request/query
+	 */
 	@Action(path="query")
 	public ResponseAction query() {
 		return ResponseBuilder.get()
@@ -58,7 +77,31 @@ public class RequestController {
 			return Response.create(StatusCode.OK).getJson(request.getQueryParams().toMap());
 		});
 	}
-	// TODO file
-	// TODO body + body types
+	
+	/**
+	 * Accepting only selected body type
+	 * @return http://localhost:8080/application/request/body-type
+	 */
+	@Action(path="body-type")
+	public ResponseAction bodyType() {
+		return ResponseBuilder.get(BodyType.JSON)
+		.createResponse((request, translator, identity)->{
+			return Response.create(StatusCode.OK).getJson(request.getBodyParams());
+		});
+	}
+	
+	/**
+	 * Request contains file
+	 * <strong>Required parameter name: <i>file</></strong>
+	 * @return http://localhost:8080/application/request/file
+	 */
+	@Action(path="file")
+	public ResponseAction file() {
+		return ResponseBuilder.get()
+		.createResponse((request, translator, identity)->{
+			UploadedFile file = request.getBodyParams().getUploadedFile("file");
+			return Response.create(StatusCode.OK).getText("Uploaded file: " + file.toString());
+		});
+	}
 
 }
