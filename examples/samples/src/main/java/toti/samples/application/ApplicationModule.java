@@ -3,6 +3,8 @@ package toti.samples.application;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+
 import ji.common.exceptions.LogicException;
 import ji.common.functions.Env;
 import ji.socketCommunication.http.StatusCode;
@@ -14,6 +16,7 @@ import toti.answers.router.Router;
 import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Register;
+import toti.extension.templating.TemplateExtension;
 import toti.extensions.CustomExceptionExtension;
 import toti.extensions.TranslatorExtension;
 import toti.samples.application.controllers.ExceptionsController;
@@ -32,7 +35,8 @@ public class ApplicationModule implements Module {
 	public List<Task> initInstances(Env env, Register register, Link link) throws Exception {
 		// TODO register.createRoutedAction(getClass(), null); + example
 		// TODO register.setSessionUserProvider(null); + example + prace s identity
-		// TODO zpracovani pozadavku - steps
+		
+		register.getExtension(TemplateExtension.class).registerModule(getName(), "", "templates");
 		
 		register.setCustomExceptionResponse(new CustomExceptionExtension() {
 			@Override
@@ -46,12 +50,13 @@ public class ApplicationModule implements Module {
 			}
 		});
 		
-		// TODO links to all methods - call sync and async
+		TaskExample task = new TaskExample(LogManager.getLogger("task"));
+		
 		register.addController(ExceptionsController.class, ()->new ExceptionsController());
 		register.addController(RequestController.class, ()->new RequestController());
-		register.addController(ResponseController.class, ()->new ResponseController());
+		register.addController(ResponseController.class, ()->new ResponseController(task, link));
 		register.addController(ProcessingController.class, ()->new ProcessingController());
-		return Arrays.asList();
+		return Arrays.asList(task);
 	}
 	
 	@Override
