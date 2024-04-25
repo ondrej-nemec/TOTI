@@ -183,7 +183,7 @@ public class ControllerAnswer {
 			try {
 				checkSecured(mapped, identity);
 			} catch (ServerException e) {
-				if (mapped.getSecurityMode() == AuthMode.HEADER || router.getRedirectOnNotLoggedInUser() == null) {
+				if (mapped.getSecurityMode() == AuthMode.HEADER || sessionUserProvider == null) {
 					throw e;
 				}
 				logger.debug(uri + " Redirect to login page: " + e.getMessage());
@@ -192,8 +192,8 @@ public class ControllerAnswer {
 					backlink = "?backlink=" + getBackLink(uri);
 				}
 				return Response.create(StatusCode.TEMPORARY_REDIRECT).getRedirect(
-					router.getRedirectOnNotLoggedInUser() + backlink
-			    );
+					sessionUserProvider.getNotLoggedUserRedirect(backlink)
+				);
 			}
 			// prevalidate can be interrupted by exception
 			action.getPrevalidate().prevalidate(request, trans, identity);

@@ -14,4 +14,6 @@ public interface SessionUserProvider {
 	// for template
 	boolean isAllowed(LoggedUser identity, Map<String, Object> params);
 	
+	String getNotLoggedUserRedirect(String backlink);
+	
 }

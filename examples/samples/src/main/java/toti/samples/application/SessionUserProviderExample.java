@@ -12,7 +12,7 @@ public class SessionUserProviderExample implements SessionUserProvider {
 	public Optional<LoggedUser> getUser(Optional<String> headerToken, Optional<String> cookieToken,
 		Optional<String> csrfToken) {
 		// TODO Auto-generated method stub
-		return null;
+		return Optional.empty();
 	}
 
 	@Override
@@ -25,6 +25,12 @@ public class SessionUserProviderExample implements SessionUserProvider {
 	public boolean isAllowed(LoggedUser identity, Map<String, Object> params) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public String getNotLoggedUserRedirect(String backlink) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -141,7 +141,8 @@ public class Register {
 		}
 		return result;
 	}
-	
+	/*
+// why is there this method? is used somewhere?
 	// router
 	public MappedAction createRoutedAction(Class<?> controller, Method method) {
 		Tuple2<Factory<?>, Module> factory = getController(controller);
@@ -153,7 +154,7 @@ public class Register {
 			getHttpMethods(method)
 		);
 	}
-	
+	*/
 	// link
 	public Module getModuleForClass(Class<?> controller) {
 		return getController(controller)._2();

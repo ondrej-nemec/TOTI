@@ -31,6 +31,7 @@ public class IdentityFactory {
 
 	public Identity createIdentity(Headers requestHeaders, MapDictionary<String> queryParameters, RequestParameters bodyParameters, String ip) {
 		Identity identity = new Identity(ip);
+		// TODO this will be separated extension
 		if (sup != null) {
 			Optional<String> cookieToken = getCookieToken(requestHeaders);
 			Optional<String> csrfToken = getCsrfToken(bodyParameters);

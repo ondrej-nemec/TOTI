@@ -424,12 +424,12 @@ public class ControllerAnswerTest implements TestCase {
 			null
 		);
 		
-		Router router = mock(Router.class);
-		when(router.getRedirectOnNotLoggedInUser()).thenReturn(redirect);
+		SessionUserProvider sessionUserProvider = mock(SessionUserProvider.class);
+		when(sessionUserProvider.getNotLoggedUserRedirect(any())).thenReturn(redirect);
 		
 		ControllerAnswer answer = new ControllerAnswer(
-			router, mock(Param.class), mock(TemplateExtension.class),
-			mock(SessionUserProvider.class), mock(IdentityFactory.class),
+			mock(Router.class), mock(Param.class), mock(TemplateExtension.class),
+			sessionUserProvider, mock(IdentityFactory.class),
 			mock(Link.class), translatorExtension, mock(Logger.class)
 		);
 		Request request = new Request(HttpMethod.GET, new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty());
