@@ -43,7 +43,6 @@ import toti.answers.request.AuthMode;
 import toti.answers.request.Identity;
 import toti.answers.request.IdentityFactory;
 import toti.answers.request.Request;
-import toti.answers.request.SessionUserProvider;
 import toti.answers.response.EmptyResponse;
 import toti.answers.response.Response;
 import toti.answers.response.TextResponse;
@@ -51,6 +50,7 @@ import toti.answers.router.Link;
 import toti.answers.router.Router;
 import toti.application.register.MappedAction;
 import toti.application.register.Param;
+import toti.extensions.AuthenticationExtension;
 import toti.extensions.TemplateExtension;
 import toti.extensions.Translator;
 import toti.extensions.TranslatorExtension;
@@ -69,12 +69,12 @@ public class ControllerAnswerTest implements TestCase {
 		when(translatorExtension.getTranslator(any())).thenReturn(translator);
 		
 		IdentityFactory identityFactory = mock(IdentityFactory.class);
-		SessionUserProvider sup = mock(SessionUserProvider.class);
+		AuthenticationExtension authenticationExtension = mock(AuthenticationExtension.class);
 		Param root = new Param(null);
 		
 		ControllerAnswer answer = spy(new ControllerAnswer(
 			router, root, mock(TemplateExtension.class),
-			sup, identityFactory,
+			authenticationExtension, identityFactory,
 			mock(Link.class), translatorExtension, mock(Logger.class)
 		));
 		// doReturn(null).when(answer).getMappedAction(any(), any(), any());
@@ -92,7 +92,7 @@ public class ControllerAnswerTest implements TestCase {
 		));
 		verify(router, times(1)).getUrlMapping("/a/b/c");
 		verify(answer, times(1)).getUrlParts("/a/b/c");
-		verifyNoMoreInteractions(translator, identityFactory, sup, answer, router);
+		verifyNoMoreInteractions(translator, identityFactory, authenticationExtension, answer, router);
 	}
 
 	@Test
@@ -106,7 +106,7 @@ public class ControllerAnswerTest implements TestCase {
 		when(translatorExtension.getTranslator(any())).thenReturn(translator);
 		
 		IdentityFactory identityFactory = mock(IdentityFactory.class);
-		SessionUserProvider sup = mock(SessionUserProvider.class);
+		AuthenticationExtension authenticationExtension = mock(AuthenticationExtension.class);
 		Identity identity = mock(Identity.class);
 		
 		MappedAction mappedAction = MappedAction.test("a", "b", "c");
@@ -114,7 +114,7 @@ public class ControllerAnswerTest implements TestCase {
 		Param root = new Param(null);
 		ControllerAnswer answer = spy(new ControllerAnswer(
 			router, root, mock(TemplateExtension.class),
-			sup, identityFactory,
+			authenticationExtension, identityFactory,
 			mock(Link.class), translatorExtension, mock(Logger.class)
 		));
 		ji.socketCommunication.http.structures.Response rs = mock(ji.socketCommunication.http.structures.Response.class);
@@ -144,7 +144,7 @@ public class ControllerAnswerTest implements TestCase {
 		verify(translatorExtension, times(1)).getTranslator(identity);
 		verify(router, times(1)).getUrlMapping("/a/b/c");
 		verify(answer, times(1)).getUrlParts("/a/b/c");
-		verifyNoMoreInteractions(translator, identityFactory, sup, answer, router);
+		verifyNoMoreInteractions(translator, identityFactory, authenticationExtension, answer, router);
 	}
 	
 	@Test
@@ -176,7 +176,7 @@ public class ControllerAnswerTest implements TestCase {
 		
 		ControllerAnswer answer = new ControllerAnswer(
 			router, root, mock(TemplateExtension.class),
-			mock(SessionUserProvider.class), mock(IdentityFactory.class),
+			mock(AuthenticationExtension.class), mock(IdentityFactory.class),
 			mock(Link.class), translatorExtension, mock(Logger.class)
 		);
 		Request request = new Request(HttpMethod.GET, new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty());
@@ -424,12 +424,12 @@ public class ControllerAnswerTest implements TestCase {
 			null
 		);
 		
-		SessionUserProvider sessionUserProvider = mock(SessionUserProvider.class);
-		when(sessionUserProvider.getNotLoggedUserRedirect(any())).thenReturn(redirect);
+		AuthenticationExtension authenticationExtension = mock(AuthenticationExtension.class);
+		when(authenticationExtension.getNotLoggedUserRedirect(any())).thenReturn(redirect);
 		
 		ControllerAnswer answer = new ControllerAnswer(
 			mock(Router.class), mock(Param.class), mock(TemplateExtension.class),
-			sessionUserProvider, mock(IdentityFactory.class),
+			authenticationExtension, mock(IdentityFactory.class),
 			mock(Link.class), translatorExtension, mock(Logger.class)
 		);
 		Request request = new Request(HttpMethod.GET, new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty());
@@ -810,7 +810,7 @@ public class ControllerAnswerTest implements TestCase {
 	public void testCheckSecured(Supplier<MappedAction> mapped, Supplier<Identity> identity, StatusCode expectedCode) {
 		ControllerAnswer answer = new ControllerAnswer(
 			mock(Router.class), mock(Param.class), mock(TemplateExtension.class),
-			mock(SessionUserProvider.class), mock(IdentityFactory.class),
+			mock(AuthenticationExtension.class), mock(IdentityFactory.class),
 			mock(Link.class), mock(TranslatorExtension.class), mock(Logger.class)
 		);
 		try {
@@ -906,7 +906,7 @@ public class ControllerAnswerTest implements TestCase {
 	public void testParseBodyThrowsWithNotSupportedTypes() throws ServerException {
 		ControllerAnswer answer = new ControllerAnswer(
 			mock(Router.class), mock(Param.class), mock(TemplateExtension.class),
-			mock(SessionUserProvider.class), mock(IdentityFactory.class),
+			mock(AuthenticationExtension.class), mock(IdentityFactory.class),
 			mock(Link.class), mock(TranslatorExtension.class), mock(Logger.class)
 		);
 		Request request = new Request(
@@ -925,7 +925,7 @@ public class ControllerAnswerTest implements TestCase {
 	public void testParseBody(Request request, List<BodyType> allowedTypes, Consumer<Request> check) throws ServerException {
 		ControllerAnswer answer = new ControllerAnswer(
 			mock(Router.class), mock(Param.class), mock(TemplateExtension.class),
-			mock(SessionUserProvider.class), mock(IdentityFactory.class),
+			mock(AuthenticationExtension.class), mock(IdentityFactory.class),
 			mock(Link.class), mock(TranslatorExtension.class), mock(Logger.class)
 		);
 		answer.parseBody(request, allowedTypes, mock(MappedAction.class));

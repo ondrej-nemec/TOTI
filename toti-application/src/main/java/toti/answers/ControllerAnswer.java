@@ -30,7 +30,6 @@ import toti.answers.request.AuthMode;
 import toti.answers.request.Identity;
 import toti.answers.request.IdentityFactory;
 import toti.answers.request.Request;
-import toti.answers.request.SessionUserProvider;
 import toti.answers.response.Response;
 import toti.answers.response.ResponseException;
 import toti.answers.router.Link;
@@ -38,6 +37,7 @@ import toti.answers.router.Router;
 import toti.application.register.MappedAction;
 import toti.application.register.Param;
 import toti.answers.response.ResponseContainer;
+import toti.extensions.AuthenticationExtension;
 import toti.extensions.TemplateExtension;
 import toti.extensions.Translator;
 import toti.extensions.TranslatorExtension;
@@ -46,7 +46,7 @@ public class ControllerAnswer {
 	
 	private final Param root;
 	private final TranslatorExtension translatorExtension;
-	private final SessionUserProvider sessionUserProvider;
+	private final AuthenticationExtension authenticationExtension;
 	private final IdentityFactory identityFactory;
 	private final Link link;
 	private final TemplateExtension templateExtension;
@@ -55,12 +55,12 @@ public class ControllerAnswer {
 	
 	public ControllerAnswer(
 			Router router, Param root, TemplateExtension templateExtension,
-			SessionUserProvider sessionUserProvider, IdentityFactory identityFactory,
+			AuthenticationExtension authenticationExtension, IdentityFactory identityFactory,
 			Link link, TranslatorExtension translatorExtension, Logger logger) {
 		this.root = root;
 		this.router = router;
 		this.templateExtension = templateExtension;
-		this.sessionUserProvider = sessionUserProvider;
+		this.authenticationExtension = authenticationExtension;
 		this.identityFactory = identityFactory;
 		this.translatorExtension = translatorExtension;
 		this.link = link;
@@ -96,7 +96,7 @@ public class ControllerAnswer {
 			identityFactory.finalizeIdentity(identity, responseHeaders); // for cookies and custom headers
 			/*************/
 			return response.getResponse(request.getProtocol(), responseHeaders, identity, new ResponseContainer(
-				translatorExtension.getTranslator(identity), sessionUserProvider, mapped, templateExtension, link
+				translatorExtension.getTranslator(identity), authenticationExtension, mapped, templateExtension, link
 			), charset);
 		} catch (ServerException e){
 			throw e;
@@ -183,7 +183,7 @@ public class ControllerAnswer {
 			try {
 				checkSecured(mapped, identity);
 			} catch (ServerException e) {
-				if (mapped.getSecurityMode() == AuthMode.HEADER || sessionUserProvider == null) {
+				if (mapped.getSecurityMode() == AuthMode.HEADER || authenticationExtension == null) {
 					throw e;
 				}
 				logger.debug(uri + " Redirect to login page: " + e.getMessage());
@@ -192,7 +192,7 @@ public class ControllerAnswer {
 					backlink = "?backlink=" + getBackLink(uri);
 				}
 				return Response.create(StatusCode.TEMPORARY_REDIRECT).getRedirect(
-					sessionUserProvider.getNotLoggedUserRedirect(backlink)
+					authenticationExtension.getNotLoggedUserRedirect(backlink)
 				);
 			}
 			// prevalidate can be interrupted by exception

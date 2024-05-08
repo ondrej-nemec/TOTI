@@ -1,4 +1,4 @@
-package toti.answers.request;
+package toti.extensions.auth;
 
 import java.util.Map;
 import java.util.Optional;
@@ -12,7 +12,7 @@ public interface SessionUserProvider {
 	void saveUser(Optional<LoggedUser> user);
 	
 	// for template
-	boolean isAllowed(LoggedUser identity, Map<String, Object> params);
+	boolean isAllowed(LoggedUser user, Map<String, Object> params);
 	
 	String getNotLoggedUserRedirect(String backlink);
 	

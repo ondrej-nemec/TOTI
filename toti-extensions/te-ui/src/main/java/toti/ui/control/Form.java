@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import toti.answers.request.Identity;
-import toti.answers.request.IdentityFactory;
+import toti.extensions.auth.AuthenticationExtension;
+import toti.extensions.auth.LoggedUser;
 import toti.ui.control.inputs.Hidden;
 import toti.ui.control.inputs.Input;
 
@@ -45,9 +46,12 @@ public class Form implements Control {
 		if (identity.isAnonymous()) {
 			throw new RuntimeException("For adding CSRF token to form you need logged user. Current Identity is anonymous.");
 		}
+		if (!(identity.getUser(Object.class) instanceof LoggedUser)) {
+			throw new RuntimeException("User must be instance of " + LoggedUser.class.getName());
+		}
 		fields.add(
-			Hidden.input(IdentityFactory.CSRF_TOKEN_PARAMETER)
-			.setDefaultValue(identity.getUser().getCsrfToken().orElse(null))
+			Hidden.input(AuthenticationExtension.CSRF_TOKEN_PARAMETER)
+			.setDefaultValue(identity.getUser(LoggedUser.class).getCsrfToken().orElse(null))
 			.getInputSettings()
 		);
 	}

@@ -17,6 +17,7 @@ import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Register;
 import toti.extension.templating.TemplateExtension;
+import toti.extensions.auth.AuthenticationExtension;
 import toti.extensions.CustomExceptionExtension;
 import toti.extensions.TranslatorExtension;
 import toti.samples.application.controllers.ExceptionsController;
@@ -52,7 +53,7 @@ public class ApplicationModule implements Module {
 		
 		SessionUserProviderExample sipe = new SessionUserProviderExample();
 		
-		register.setSessionUserProvider(sipe);
+		register.getExtension(AuthenticationExtension.class).setSessionUserProvider(sipe);
 		
 		register.addController(ExceptionsController.class, ()->new ExceptionsController());
 		register.addController(RequestController.class, ()->new RequestController());

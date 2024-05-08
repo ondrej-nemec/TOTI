@@ -6,37 +6,26 @@ import toti.extensions.Extension;
 public class Identity {
 
 	private final String IP;
-	//private final Locale locale;
 	
+	// TODO will be Level? or something else more general? or in Steps?
 	private AuthMode loginMode = AuthMode.NO_TOKEN;
 		
-	private LoggedUser user;
+	private Object user;
 	
 	private MapDictionary<String> sessionSpaces;
 	
-	protected Identity(String IP/*, Locale locale*/) {
+	protected Identity(String IP) {
 		this.IP = IP;
-		//this.locale = locale;
 		this.sessionSpaces = MapDictionary.hashMap();
 	}
 	
-	public void login(LoggedUser user) {
-		setUser(user);
+	public void login(Object user, AuthMode loginMode) {
+		this.user = user;
+		this.loginMode = loginMode;
 	}
 	
 	public void logout() {
 		clear();
-	}
-	
-	protected void setUser(LoggedUser user) {
-		this.user = user;
-		if (user.getHeaderToken().isPresent()) {
-			loginMode = AuthMode.HEADER;
-		} else if (user.getCsrfToken().isPresent() && user.getCookieToken().isPresent()) {
-			loginMode = AuthMode.COOKIE_AND_CSRF;
-		} else if (user.getCookieToken().isPresent()) {
-			loginMode = AuthMode.COOKIE;
-		}
 	}
 	
 	protected void clear() {
@@ -69,16 +58,12 @@ public class Identity {
 		return !isAnonymous();
 	}
 	
-	public LoggedUser getUser() {
-		return user;
-	}
-	
 	/**
 	 * Returns user as defined class. This class must extends of User
 	 * @param clazz
 	 * @return
 	 */
-	public <U extends LoggedUser> U getUser(Class<U> clazz) {
+	public <U> U getUser(Class<U> clazz) {
 		return clazz.cast(user);
 	}
 	
@@ -89,13 +74,5 @@ public class Identity {
 	public String getIP() {
 		return IP;
 	}
-	
-	/**
-	 * Provide user preferenced language
-	 * @return Locale
-	 */
-	/*public Locale getLocale() {
-		return locale;
-	}*/
 	
 }

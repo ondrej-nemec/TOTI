@@ -25,6 +25,7 @@ import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Param;
 import toti.application.register.Register;
+import toti.extensions.AuthenticationExtension;
 import toti.extensions.Extension;
 import toti.extensions.TemplateExtension;
 import toti.extensions.Translator;
@@ -62,6 +63,7 @@ public class ApplicationFactory {
 	
 	private TemplateExtension templateExtension;
 	private TranslatorExtension translatorExtension;
+	private AuthenticationExtension authenticationExtension;
 	
 	public ApplicationFactory(String appIdentifier, Env env, String charset, String hostname, String... aliases) {
 		this.env = env.getModule("applications").getModule(appIdentifier);
@@ -98,7 +100,7 @@ public class ApplicationFactory {
 		};
 		actualModule.set(null);
 		
-		IdentityFactory identityFactory = new IdentityFactory(extensions.values(), register.getSessionUserProvider());
+		IdentityFactory identityFactory = new IdentityFactory(extensions.values());
 		
 		List<String> developIps = getDevelopIps(env);
 		TotiAnswer totiAnwer = new TotiAnswer(
@@ -112,7 +114,7 @@ public class ApplicationFactory {
 			logger
 		);
 		ControllerAnswer controllerAnswer = new ControllerAnswer(
-			router, root, templateExtension, register.getSessionUserProvider(),
+			router, root, templateExtension, authenticationExtension,
 			identityFactory, link, translatorExtension, logger
 		);
 		FileSystemAnswer fileSystemAnswer = new FileSystemAnswer(
@@ -261,6 +263,9 @@ public class ApplicationFactory {
 		}
 		if (extension instanceof TemplateExtension) {
 			this.templateExtension = (TemplateExtension)extension;
+		}
+		if (extension instanceof AuthenticationExtension) {
+			this.authenticationExtension =  (AuthenticationExtension)extension;
 		}
 		return this;
 	}
