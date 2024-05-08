@@ -18,6 +18,7 @@ import toti.answers.Headers;
 import toti.answers.TotiAnswer;
 import toti.answers.request.Identity;
 import toti.answers.request.IdentityFactory;
+import toti.answers.response.ResponseContainer;
 import toti.answers.router.Link;
 import toti.answers.router.Router;
 import toti.answers.router.UriPattern;
@@ -242,7 +243,13 @@ public class ApplicationFactory {
 		if (templateExtension != null) {
 			return templateExtension;
 		}
-		return null; // TODO
+		return new TemplateExtension() {
+			@Override
+			public String getTemplate(String module, String filename, Map<String, Object> params, ResponseContainer container)
+				throws Exception {
+				throw new RuntimeException("TemplateExtension is not registered");
+			}
+		};
 	}
 	
 	/*************************/

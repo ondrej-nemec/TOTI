@@ -37,7 +37,7 @@ public class HttpServerFactory {
 	public HttpServer create(Logger logger) throws Exception {
 		Env settings = env.getModule("http");
 		WebServer server = new WebServer(getMaxRequestSize(settings), logger);
-		// TODO add aplication from env
+		// TODO IMPROVEMENT add aplication from env
 		String charset = getCharset(settings);
 		return new HttpServer(
 			server.createWebServer(

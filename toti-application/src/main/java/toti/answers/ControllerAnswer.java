@@ -236,7 +236,7 @@ public class ControllerAnswer {
 	protected void parseBody(Request request, List<BodyType> allowedTypes, MappedAction mapped) throws ServerException {
 		if (request.getBodyParams().size() > 0) {
 			if (!allowedTypes.contains(BodyType.FORM_DATA) || !allowedTypes.contains(BodyType.URL_PARAMS)) {
-				// TODO maybe convert from structured to plaintext - need change JI
+				// TODO IMPROVEMENT maybe convert from structured to plaintext - need change JI
 				throw new ServerException(StatusCode.NOT_ACCEPTABLE, mapped, "URL not allow body in FORM DATA or URL encoded");
 			}
 		}

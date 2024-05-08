@@ -7,7 +7,7 @@ public class Identity {
 
 	private final String IP;
 	
-	// TODO will be Level? or something else more general? or in Steps?
+	// TODO IMPROVE will be Level? or something else more general? or in Steps?
 	private AuthMode loginMode = AuthMode.NO_TOKEN;
 		
 	private Object user;

@@ -87,7 +87,7 @@ public interface Response {
 		String ext = new FileExtension(fileName).getExtension();
 		// https://stackoverflow.com/a/48704300
 		switch (ext) {
-		// TODO more https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
+		// TODO IMPROVE more https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
 			case "jsp":
 			case "html": return "text/html; charset=" + charset;
 			case "css": return "text/css; charset=" + charset;
@@ -105,12 +105,12 @@ public interface Response {
 			case "giff": return "image/giff";
 			case "gif": return "image/gif";
 			
-			// TODO add more https://wiki.documentfoundation.org/Faq/General/036
+			// TODO IMPROVE add more https://wiki.documentfoundation.org/Faq/General/036
 			case "odt": return "application/vnd.oasis.opendocument.text";
 			case "ods": return "application/vnd.oasis.opendocument.spreadsheet";
 			case "ots": return "application/vnd.oasis.opendocument.spreadsheet-template";
 			
-			// TODO add microsoft https://filext.com/faq/office_mime_types.html
+			// TODO IMPROVE add microsoft https://filext.com/faq/office_mime_types.html
 			
 			default: return "application/x-binary"; // application/octet-stream
 			//default: return null;
