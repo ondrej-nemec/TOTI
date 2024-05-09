@@ -32,7 +32,7 @@
 	<div id="modules"></div>
 
 	<script type="text/javascript">
-		var modules = [
+		var applicationModule = [
 			{
 				name: 'TOTI',
 				description: 'Basic TOTI URLs and functions',
@@ -105,7 +105,7 @@
 				links: [
 					{
 						name: 'TOTI',
-						description: 'Route start with toti. Not working.',
+						description: 'Route start with toti. Returns error - routes start with /toti are not allowed.',
 						link: '/toti-test'
 					},
 					{
@@ -115,7 +115,7 @@
 					},
 					{
 						name: 'File',
-						description: 'Pointing to file in resource directory. Not working.',
+						description: 'Pointing to file in resource directory. Returns error - routes pointing to file are not allowed.',
 						link: '/ico'
 					}
 				]
@@ -248,75 +248,116 @@
 				]
 			}
 		];
+		var authExtension = [];
+		var translateExtension = [];
+		var templateExtension = [];
+		var validatorExtension = [];
+		var uiExtension = [];
+		var databaseExtension = [];
 
-		modules.forEach(function(module) {
-			var headline = document.createElement("h3");
-			headline.innerText = module.name;
-			var desc = document.createElement('p');
-			desc.innerText = module.description;
-			var links = document.createElement("div");
-			module.links.forEach(function(item) {
-				var headline = document.createElement("h4");
-				headline.innerText = item.name;
+		var modules = [
+			{
+				name: 'Application',
+				description: '',
+				links: applicationModule
+			},
+			{
+				name: 'Extension: Authenticate',
+				description: '',
+				links: authExtension
+			},
+			{
+				name: 'Extension: Translate',
+				description: '',
+				links: translateExtension
+			},
+			{
+				name: 'Extension: Templating',
+				description: '',
+				links: templateExtension
+			},
+			{
+				name: 'Extension: Validator',
+				description: '',
+				links: validatorExtension
+			},
+			{
+				name: 'Extension: UI',
+				description: '',
+				links: uiExtension
+			},
+			{
+				name: 'Extension: Database',
+				description: '',
+				links: databaseExtension
+			}
+		];
 
-				var message = document.createElement('div');
-				message.innerText = item.description;
-				
-				var dynamic = document.createElement('div');
-
-				var container = document.createElement("div");
-				container.classList.add('tile');
-
-				container.appendChild(headline);
-				container.appendChild(message);
-				container.appendChild(dynamic);
-
-				links.appendChild(container);
-
-				if (item.hasOwnProperty('form')) {
-					console.log(item.form);
-				} else if (item.hasOwnProperty('options')) {
-					var buttons = document.createElement('div');
-					item.options.forEach((option)=>{
+		modules.forEach((module)=>{
+			var moduleContainer = createContainer(
+				document.querySelector("#modules"),
+				module.name, 'h2', module.description
+			);
+			module.links.forEach((part)=>{
+				var partContainer = createContainer(moduleContainer, part.name, 'h3', part.description);
+				var links = document.createElement("div");
+				partContainer.appendChild(links);
+				part.links.forEach((item)=>{
+					var itemContainer = createContainer(links, item.name, 'h4', item.description);
+					itemContainer.classList.add('tile');
+					if (item.hasOwnProperty('form')) {
+						console.log(item.form);
+					} else if (item.hasOwnProperty('options')) {
+						var buttons = document.createElement('div');
+						item.options.forEach((option)=>{
+							var sync = document.createElement('div');
+							sync.innerText =  option.name;
+							sync.classList.add('button');
+							sync.onclick = ()=>{
+								window.open(item.link + option.value, '_blank').focus();
+							};
+							buttons.appendChild(sync);
+						});
+						itemContainer.appendChild(buttons);
+					} else {
+						var send = document.createElement('div');
+						
 						var sync = document.createElement('div');
-						sync.innerText =  option.name;
+						sync.innerText =  'Sync';
 						sync.classList.add('button');
 						sync.onclick = ()=>{
-							window.open(item.link + option.value, '_blank').focus();
+							window.open(item.link, '_blank').focus();
 						};
+	/*
+						var async = document.createElement('span');
+						async.innerText =  'Async';
+						async.classList.add('button');
+	*/
+						var buttons = document.createElement('div');
 						buttons.appendChild(sync);
-					});
-					container.appendChild(buttons);
-				} else {
-					var send = document.createElement('div');
-					
-					
-					var sync = document.createElement('div');
-					sync.innerText =  'Sync';
-					sync.classList.add('button');
-					sync.onclick = ()=>{
-						window.open(item.link, '_blank').focus();
-					};
-/*
-					var async = document.createElement('span');
-					async.innerText =  'Async';
-					async.classList.add('button');
-*/
-					var buttons = document.createElement('div');
-					buttons.appendChild(sync);
-//					buttons.appendChild(async);
-					
-					container.appendChild(send);
-					container.appendChild(buttons);
-				}
+	//					buttons.appendChild(async);
+						
+						itemContainer.appendChild(send);
+						itemContainer.appendChild(buttons);
+					}
+				});
 			});
+		});
+
+		function createContainer(parent, title, healineType, description) {
+			var headline = document.createElement(healineType);
+			headline.innerText = title;
+
+			var desc = document.createElement('p');
+			desc.innerText = description;
+
 			var container = document.createElement("div");
 			container.appendChild(headline);
 			container.appendChild(desc);
-			container.appendChild(links);
 
-			document.querySelector("#modules").appendChild(container);
-		});
+			parent.appendChild(container);
+			return container;
+		}
 	</script>
 
 </body>
