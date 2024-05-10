@@ -51,7 +51,7 @@ public class ApplicationModule implements Module {
 		
 		TaskExample task = new TaskExample(LogManager.getLogger("task"));
 		
-		SessionUserProviderExample sipe = new SessionUserProviderExample();
+		SessionUserProviderExample sipe = new SessionUserProviderExample(link);
 		
 		register.getExtension(AuthenticationExtension.class).setSessionUserProvider(sipe);
 		

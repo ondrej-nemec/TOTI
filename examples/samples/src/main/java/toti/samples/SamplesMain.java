@@ -12,6 +12,7 @@ import toti.HttpServer;
 import toti.HttpServerFactory;
 import toti.database.DatabaseExtension;
 import toti.extension.templating.TemplateExtension;
+import toti.extensions.auth.AuthenticationExtension;
 import toti.samples.application.ApplicationModule;
 import toti.samples.templating.TemplatingModule;
 import toti.samples.ui.UiModule;
@@ -35,6 +36,7 @@ public class SamplesMain {
 				// TODO applicationFactory.setUrlPattern(null);
 				
 				// optional: add extensions, always in code
+				applicationFactory.addExtension(new AuthenticationExtension());
 				applicationFactory.addExtension(new UiExtension());
 				// TranslatorExtension require settings
 				// TemplateExtension require settings
@@ -61,6 +63,7 @@ public class SamplesMain {
 				// TODO applicationFactory.setUrlPattern(null);
 				
 				// optional: add extensions, always in code
+				applicationFactory.addExtension(new AuthenticationExtension());
 				applicationFactory.addExtension(new UiExtension());
 				applicationFactory.addExtension(new TranslatorExtension(env, LogManager.getLogger("translate")));
 				applicationFactory.addExtension(new TemplateExtension(env, LogManager.getLogger("template")));
@@ -105,6 +108,7 @@ public class SamplesMain {
 				// TODO applicationFactory.setUrlPattern(null);
 				
 				// optional: add extensions, always in code
+				applicationFactory.addExtension(new AuthenticationExtension());
 				applicationFactory.addExtension(new UiExtension());
 				applicationFactory.addExtension(new TranslatorExtension(
 					new LanguageSettings("en", Arrays.asList(new Locale("en", true, Arrays.asList("en_GB")))),
