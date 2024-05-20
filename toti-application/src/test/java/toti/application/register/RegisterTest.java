@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -20,6 +21,7 @@ import test.ControllerB;
 import test.ControllerC;
 import test.TestModule;
 import toti.answers.router.UriPattern;
+import toti.extensions.Extension;
 
 @RunWith(JUnitParamsRunner.class)
 public class RegisterTest {
@@ -288,7 +290,20 @@ public class RegisterTest {
 
 	@Test
 	public void testGetExtension() {
-		fail("TODO");
+		Map<String, Extension> extensions = new HashMap<>();
+		Extension ext1 = new Extension1();
+		Extension ext2 = new Extension2();
+	//	Extension ext3 = new Extension3();
+		extensions.put(ext1.getClass().getName(), ext1);
+		extensions.put(ext2.getClass().getName(), ext2);
+	//	extensions.put(ext1.getClass().getName(), ext3);
+		
+		@SuppressWarnings("unchecked")
+		Register register = new Register(mock(Param.class), mock(ObjectBuilder.class), getPattern(), extensions);
+		
+		assertEquals(ext1, register.getExtension(Extension1.class));
+		assertEquals(ext2, register.getExtension(Extension2.class));
+		assertNull(register.getExtension(Extension3.class));
 	}
 	
 	private UriPattern getPattern() {

@@ -99,11 +99,11 @@ public class ExceptionAnswer {
 		}
 		
 		if (isDevelopResponseAllowed) {
-			return getExceptionResponse(status, exceptionDetail);
+			return getExceptionResponse(StatusCode.OK, exceptionDetail);
 		}
 		saveToFile(fileName, exceptionDetail, charset);
 		
-		return getExceptionResponse(status, getExceptionInfo(status));
+		return getExceptionResponse(StatusCode.OK, getExceptionInfo(status));
 	}
 	
 	protected Response getExceptionResponse(StatusCode status, String message) {

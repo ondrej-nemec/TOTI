@@ -28,8 +28,8 @@ public class TextResponse implements Response {
 		response.setHeaders(header.getHeaders());
 		response.setBody(text.getBytes());
 		if (!response.containsHeader("Content-Type")) {
-            response.addHeader("Content-Type", "text/plain");
-        }
+			response.addHeader("Content-Type", "text/plain");
+		}
 		response.setHeaders(this.headers.getHeaders());
 		return response;
 	}
