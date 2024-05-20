@@ -20,25 +20,40 @@ public class UserController {
 		this.sipe = sipe;
 	}
 	
-	@Action()
-	public ResponseAction index() {
-		return ResponseBuilder.get()
-		.createResponse((request, translator, identity)->{
-			return Response.OK().getFile("templates/application/auth/index.html");
-		});
-	}
-	
 	@Action(path="login")
 	// username is in URL - just for easy test
 	public ResponseAction login(String username) {
 		return ResponseBuilder.get()
 		.createResponse((request, translator, identity)->{
 			sipe.login(username);
-			return Response.create(StatusCode.OK).getEmpty();
+			return Response.create(StatusCode.OK).getText("AUTH: user logged in: " + username);
 		});
 	}
 	
-
+	@Action(path="logout")
+	@Secured
+	public ResponseAction logout() {
+		return ResponseBuilder.get()
+		.createResponse((request, translator, identity)->{
+			sipe.logout(identity.getUser(SampleUser.class));
+			return Response.create(StatusCode.OK).getText("AUTH: user logged out");
+		});
+	}
+	
+	@Action(path="check")
+	public ResponseAction check() {
+		return ResponseBuilder.get()
+		.createResponse((request, translator, identity)->{
+			if (identity.isAnonymous()) {
+				return Response.create(StatusCode.OK).getText("AUTH: no current user. Logged: " + sipe.getLoggedUsers());
+			}
+			return Response.create(StatusCode.OK).getText(
+				"AUTH: current user: " + identity.getUser(SampleUser.class).getUserName()
+				+ " Logged: " + sipe.getLoggedUsers()
+			);
+		});
+	}
+	
 	@Action(path="not-secured")
 	public ResponseAction notSecured() {
 		return ResponseBuilder.get()

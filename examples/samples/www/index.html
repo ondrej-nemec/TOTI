@@ -43,6 +43,25 @@
 	</div>
 
 	<script type="text/javascript">
+		var openLinkButtons = [
+			{
+				name: 'OPEN',
+				method: 'GET',
+				sync: true
+			}
+		];
+		var syncAsyncButtons = [
+			{
+				name: 'OPEN',
+				method: 'GET',
+				sync: true
+			},
+			{
+				name: 'RUN',
+				method: 'GET',
+				sync: false
+			}
+		];
 		var applicationModule = [
 			{
 				name: 'TOTI',
@@ -52,30 +71,35 @@
 						name: 'Welcome page',
 						description: 'TOTI Welcome page for verify system is running and responding.'
 							+ ' Works only from develing IP addresses.',
-						link: '/toti'
+						link: '/toti',
+						buttons: openLinkButtons
 					},
 					{
 						name: 'Link to folder',
 						description: 'Link points to folder inside www folder. TOTI prints filder content'
 							+ ' Works only if dir response is allowed.',
-						link: '/folder1'
+						link: '/folder1',
+						buttons: openLinkButtons
 					},
 					{
 						name: 'Link to folder',
 						description: 'Link points to folder inside www folder, but folder contains index file.'
 							+ ' TOTI open index file.'
 							+ ' Works only if dir default file is set to index.html and dir response is forbidden.',
-						link: '/folder2'
+						link: '/folder2',
+						buttons: openLinkButtons
 					},
 					{
 						name: 'Link to plain text file',
 						description: 'Link points to file in www folder. TOTI opens file.',
-						link: '/files/plainTextFile.txt'
+						link: '/files/plainTextFile.txt',
+						buttons: openLinkButtons
 					},
 					{
 						name: 'Link to binary file',
 						description: 'Link points to file in www folder. Browser downloads file.',
-						link: '/files/binaryFile.odt'
+						link: '/files/binaryFile.odt',
+						buttons: openLinkButtons
 					}
 				]
 			},
@@ -86,27 +110,32 @@
 					{
 						name: 'Inside of method',
 						description: 'Exception throwed directly in method.',
-						link: '/application/exceptions/method'
+						link: '/application/exceptions/method',
+						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Secured',
 						description: 'Exception throwed by TOTI because of missing logged user.',
-						link: '/application/exceptions/secured'
+						link: '/application/exceptions/secured',
+						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Request Interrupted',
 						description: 'Request interrupted in createResponse step.',
-						link: '/application/exceptions/interrupt'
+						link: '/application/exceptions/interrupt',
+						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Wrong HTTP method',
-						description: 'Exception throwed by TOTI because of wrong HTTP method.',
-						link: '/application/exceptions/post'
+						description: 'Exception throwed by TOTI because of wrong HTTP method. POST required, GET used.',
+						link: '/application/exceptions/post',
+						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Catched',
 						description: 'Exception catched by CustomExceptionExtension',
-						link: '/application/exceptions/catched'
+						link: '/application/exceptions/catched',
+						buttons: syncAsyncButtons
 					}
 				]
 			},
@@ -117,17 +146,20 @@
 					{
 						name: 'TOTI',
 						description: 'Route start with toti. Returns error - routes start with /toti are not allowed.',
-						link: '/toti-test'
+						link: '/toti-test',
+						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Controller',
 						description: 'Pointing to existing controller.',
-						link: '/application-response.text'
+						link: '/application-response.text',
+						buttons: syncAsyncButtons
 					},
 					{
 						name: 'File',
 						description: 'Pointing to file in resource directory. Returns error - routes pointing to file are not allowed.',
-						link: '/ico'
+						link: '/ico',
+						buttons: syncAsyncButtons
 					}
 				]
 			},
@@ -138,20 +170,25 @@
 					{
 						name: 'Basic',
 						description: 'Simple request on controller method.',
-						link: '/application/request/basic'
+						link: '/application/request/basic',
+						buttons: syncAsyncButtons
 					},
 					{
 						name: 'URI parameter',
 						description: 'Request on controller method with paramter (String).',
 						link: '/application/request/basic/',
-						options: [
+						buttons: [
 							{
 								name: 'Parameter: someRandomString',
-								value: 'someRandomString'
+								method: 'GET',
+								sync: true,
+								linkParam: 'someRandomString'
 							},
 							{
 								name: 'Parameter: 42 (number)',
-								value: '42'
+								method: 'GET',
+								sync: true,
+								linkParam: '42'
 							}
 						]
 					},
@@ -159,42 +196,96 @@
 						name: 'HTTP POST',
 						description: 'Request with POST method. Method GET cause Exception.',
 						link: '/application/request/post',
-						methods: [ 'POST' ]
+						buttons: [
+							{
+								name: 'OPEN',
+								method: 'GET',
+								sync: true
+							},
+							{
+								name: 'RUN',
+								method: 'GET',
+								sync: false
+							},
+							{
+								name: 'OPEN',
+								method: 'POST',
+								sync: true
+							},
+							{
+								name: 'RUN',
+								method: 'POST',
+								sync: false
+							}
+						]
 					},
 					{
 						name: 'HTTP GET or POST',
 						description: 'Controller method servers both GET and POST.',
 						link: '/application/request/get-or-post',
-						methods: [ 'GET', 'POST' ]
+						buttons: [
+							{
+								name: 'OPEN',
+								method: 'GET',
+								sync: true
+							},
+							{
+								name: 'RUN',
+								method: 'GET',
+								sync: false
+							},
+							{
+								name: 'OPEN',
+								method: 'POST',
+								sync: true
+							},
+							{
+								name: 'RUN',
+								method: 'POST',
+								sync: false
+							}
+						]
 					},
 					{
 						name: 'URI query',
 						description: 'Parsing query parameters',
 						link: '/application/request/query?',
-						options: [
+						buttons: [
 							{
 								name: 'Simple parameters',
-								value: 'someText=aaaa&someNumber=12&anotherNumber=21&bool=true'
+								method: 'GET',
+								sync: false,
+								linkParam: 'someText=aaaa&someNumber=12&anotherNumber=21&bool=true'
 							},
 							{
 								name: 'Array',
-								value: 'names[]=smith.john&names[]=doe.jane&names[]=my.name'
+								method: 'GET',
+								sync: false,
+								linkParam: 'names[]=smith.john&names[]=doe.jane&names[]=my.name'
 							},
 							{
 								name: 'Map',
-								value: 'rate[0]=273.15&rate[26.85]=300&rate[100]=373.15'
+								method: 'GET',
+								sync: false,
+								linkParam: 'rate[0]=273.15&rate[26.85]=300&rate[100]=373.15'
 							},
 							{
 								name: 'List in map',
-								value: 'map[list][]=273.15&map[list][]=300&map[100]=373.15'
+								method: 'GET',
+								sync: false,
+								linkParam: 'map[list][]=273.15&map[list][]=300&map[100]=373.15'
 							},
 							{
 								name: 'Simple + list + map',
-								value: 'age=42&name=my_name&list[]=a&list[]=b&map[a]=aa&map[b]=bb'
+								method: 'GET',
+								sync: false,
+								linkParam: 'age=42&name=my_name&list[]=a&list[]=b&map[a]=aa&map[b]=bb'
 							},
 							{
 								name: 'Simple + list + map 2',
-								value: 'age=42&list[]=a&list[]=b&map[a]=aa&map[b]=bb'
+								method: 'GET',
+								sync: false,
+								linkParam: 'age=42&list[]=a&list[]=b&map[a]=aa&map[b]=bb'
 							}
 						]
 					},
@@ -219,56 +310,161 @@
 					{
 						name: 'File from disk',
 						description: 'Returns file from disk.',
-						link: '/application/response/file'
+						link: '/application/response/file',
+						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Generate file',
 						description: 'Returns runtime generated file.',
-						link: '/application/response/generate'
+						link: '/application/response/generate',
+						buttons: syncAsyncButtons
 					},
 					{
 						name: 'JSON',
 						description: 'Returns JSON response.',
-						link: '/application/response/json'
+						link: '/application/response/json',
+						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Simple text',
 						description: 'Returns simple text response.',
-						link: '/application/response/text'
+						link: '/application/response/text',
+						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Template',
 						description: 'Returns response created from tempkate. Requires registered TemplateExtension.',
-						link: '/application/response/template'
+						link: '/application/response/template',
+						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Redirect inside application',
 						description: 'Redirect to Simple text page.',
-						link: '/application/response/redirect'
+						link: '/application/response/redirect',
+						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Redirect out of application',
 						description: 'Redirect to Github.',
-						link: '/application/response/open-redirect'
+						link: '/application/response/open-redirect',
+						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Websocket',
 						description: 'Communication thru websocket.',
-						link: '/application/response/websocket'
+						link: '/application/response/websocket',
+						buttons: syncAsyncButtons
 					}
 				]
 			}
 		];
-// TODO
+// TODO formulare a posilani tokenu
+// TODO callbacky pro js prihlaseni
+		var authButtons = [
+			{
+				name: 'No token',
+				method: 'GET',
+				sync: true
+			},
+			{
+				name: 'Cookie only',
+				method: 'GET',
+				sync: true
+			},
+			{
+				name: 'Cookie and CSFR',
+				method: 'GET',
+				sync: false
+			},
+			{
+				name: 'Authentication header',
+				method: 'GET',
+				sync: true
+			},
+		];
 		var authExtension = [
 			{
 				name: 'Authentication: login',
 				description: '',
 				links: [
 					{
-						name: '',
-						description: '',
-						link: ''
+						name: 'Login',
+						description: 'Login selected user',
+						link: '/application/users/login/',
+						buttons: [
+							{
+								name: 'User 1',
+								method: 'GET',
+								sync: true,
+								linkParam: 'user1'
+							},
+							{
+								name: 'User 1',
+								method: 'GET',
+								sync: false,
+								linkParam: 'user1'
+							},
+							{
+								name: 'User 2',
+								method: 'GET',
+								sync: true,
+								linkParam: 'user2'
+							},
+							{
+								name: 'User 2',
+								method: 'GET',
+								sync: false,
+								linkParam: 'user2'
+							}
+						]
+					},
+					{
+						name: 'Logout',
+						description: 'Logout current user.',
+						link: '/application/users/logout',
+						buttons: [
+							{
+								name: 'RUN',
+								method: 'GET',
+								sync: false
+							}
+						]
+					},
+					{
+						name: 'Check user',
+						description: 'Check current user',
+						link: '/application/users/check',
+						buttons: [
+							{
+								name: 'RUN',
+								method: 'GET',
+								sync: false
+							}
+						]
+					},
+					{
+						name: 'Not secured',
+						description: 'Works every time',
+						link: '/application/users/not-secured',
+						buttons: authButtons
+					},
+					{
+						name: 'Cookie token',
+						description: 'Requires token at least in cookie',
+						link: '/application/users/page',
+						buttons: authButtons
+					},
+					{
+						name: 'CSFR',
+						description: 'Requires token in cookie and CSFR token',
+						link: '/application/users/form',
+						buttons: authButtons
+					},
+					{
+						name: 'Header',
+						description: 'Requires token in Authentication header',
+						link: '/application/users/api',
+						buttons: authButtons
 					}
 				]
 			}
@@ -330,60 +526,54 @@
 					var itemContainer = createContainer(links, item.name, 'h4', item.description);
 					itemContainer.classList.add('tile');
 
-					// TODO method for buttons
-					// TODO select which button type
-					// TODO support for methods
-					if (item.hasOwnProperty('form')) {
-						console.log(item.form);
-					} else if (item.hasOwnProperty('options')) {
-						var buttons = document.createElement('div');
-						item.options.forEach((option)=>{
-							var sync = document.createElement('div');
-							sync.innerText =  option.name;
-							sync.classList.add('button');
-							sync.onclick = ()=>{
-								window.open(item.link + option.value, '_blank').focus();
-							};
-							buttons.appendChild(sync);
-						});
-						itemContainer.appendChild(buttons);
-					} else {
-						var send = document.createElement('div');
-						
-						var sync = document.createElement('div');
-						sync.innerText =  'Sync';
-						sync.classList.add('button');
-						sync.onclick = ()=>{
-							window.open(item.link, '_blank').focus();
-						};
-	
-						var async = document.createElement('span');
-						async.innerText =  'Async';
-						async.classList.add('button');
-						async.onclick = ()=>{
-							var xhr = new XMLHttpRequest();
-							var url = item.link;
-							var method = 'GET'; // TODO
-
-							document.getElementById('asyncRes-url').innerText = method + ": " + url;
-							xhr.open(method, url);
-							var onResponse = ()=>{
-								document.getElementById('asyncRes-code').innerText = 'Code: ' + xhr.status + " " + xhr.responseText;
-								document.getElementById('asyncRes').innerText = xhr.responseText;
-							};
-							xhr.onload = onResponse;
-							xhr.onerror = onResponse;
-
-							xhr.send();
-						};
-	
-						var buttons = document.createElement('div');
-						buttons.appendChild(sync);
-						buttons.appendChild(async);
-						
-						itemContainer.appendChild(send);
-						itemContainer.appendChild(buttons);
+					if (!item.hasOwnProperty('buttons')) {
+						console.warn(
+							'Item requires button settings ' + part.name + ":" + item.name
+						);
+						return;
 					}
+					var buttons = document.createElement('div');
+					item.buttons.forEach((button)=>{
+						if (button.method !== 'GET' && button.sync) {
+							console.warn('Method ' + button.method + ' called synchronious is not supported');
+							return;
+						}
+						var element = document.createElement('div');
+						buttons.appendChild(element);
+						element.classList.add('button');
+
+						element.innerText = (button.sync ? '(S)' : '(A)')
+							+ ' ' + button.method + ":" + button.name;
+						var link = item.link;
+						if (button.hasOwnProperty('linkParam')) {
+							link += button.linkParam;
+						}
+						if (button.hasOwnProperty('params')) {
+							// TODO
+							// vyplnit uzivatelem
+							// jiz vyplneny form - neviditelny
+						}
+						element.onclick = ()=>{
+							if (button.hasOwnProperty('callback')) {
+								button.callback();
+							}
+							if (button.sync) {
+								window.open(link, '_blank').focus();
+							} else {
+								var xhr = new XMLHttpRequest
+								document.getElementById('asyncRes-url').innerText = button.method + ": " + link;
+								xhr.open(button.method, link);
+								var onResponse = ()=>{
+									document.getElementById('asyncRes-code').innerText = 'Code: ' + xhr.status + " " + xhr.responseText;
+									document.getElementById('asyncRes').innerText = xhr.responseText;
+								};
+								xhr.onload = onResponse;
+								xhr.onerror = onResponse;
+								xhr.send();
+							}
+						};
+					});
+					itemContainer.appendChild(buttons);
 				});
 			});
 		});

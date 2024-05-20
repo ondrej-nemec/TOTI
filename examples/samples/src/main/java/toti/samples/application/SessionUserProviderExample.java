@@ -1,8 +1,10 @@
 package toti.samples.application;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import toti.answers.router.Link;
 import toti.extensions.auth.LoggedUser;
@@ -31,6 +33,10 @@ public class SessionUserProviderExample implements SessionUserProvider {
 		this.loggedUsers.remove(user.getUserName());
 	}
 
+	public List<String> getLoggedUsers() {
+		return loggedUsers.values().stream().map(u->((SampleUser)u).getUserName()).collect(Collectors.toList());
+	}
+	
 	@Override
 	public Optional<LoggedUser> getUser(Optional<String> headerToken, Optional<String> cookieToken, Optional<String> csrfToken) {
 		// need verify all tokens are correct
@@ -69,7 +75,7 @@ public class SessionUserProviderExample implements SessionUserProvider {
 
 	@Override
 	public String getNotLoggedUserRedirect(String backlink) {
-		return link.create(UserController.class, c->c.index());
+		return link.create(UserController.class, c->c.check());
 	}
 
 }
