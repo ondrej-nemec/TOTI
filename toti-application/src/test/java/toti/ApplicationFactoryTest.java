@@ -29,7 +29,7 @@ public class ApplicationFactoryTest implements TestCase {
 	// TODO full test with env, manual set, def values
 	
 	@Test
-	public void tset() {
+	public void test() {
 		fail("TODO");
 	}
 	
