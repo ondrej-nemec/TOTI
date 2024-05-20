@@ -267,7 +267,7 @@ public class ControllerAnswer {
 	}
 	
 	private Object parse(XmlObject xml) {
-		// TODO improve
+		// TODO IMPROVE
 		if (!xml.getReferences().isEmpty() || !xml.getAttributes().isEmpty()) {
 			List<Object> list = new LinkedList<>();
 			xml.getReferences().forEach((o)->{
