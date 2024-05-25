@@ -21,7 +21,7 @@ TOTI is modular. Except base part, contains several libraries and extensions. Li
 	* [Templating](toti-extensions/te-templating): add templating system using *Templating* library
 	* [Translator](toti-extensions/te-translator): add implementation of *Translator* 
 	* [Validator](toti-extensions/te-validator): add tools for validating request parameters
-	* [Database](toti-extensions/te-database): 
+	* [Database](toti-extensions/te-database): provide SQL connection
 	* [UI](toti-extensions/te-ui): add UI elements configured in Java and printed using JS
 
 
