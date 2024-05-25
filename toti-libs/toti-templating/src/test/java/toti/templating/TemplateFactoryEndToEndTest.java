@@ -6,7 +6,6 @@ import java.util.Map;
 
 import ji.common.Log4j2LoggerTestImpl;
 import ji.files.text.Text;
-import ji.files.text.basic.WriteText;
 
 @Deprecated
 public class TemplateFactoryEndToEndTest {
@@ -30,7 +29,7 @@ public class TemplateFactoryEndToEndTest {
 		String html = template.create(factory, variables, null);
 		System.out.println(html);
 		Text.get().write((bw)->{
-			WriteText.get().write(bw, html);
+			bw.write(html);
 		}, "test/index.html", false);
 		/*/
 		index in = new index();

@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 import ji.common.Log4j2LoggerTestImpl;
 import ji.common.structures.MapInit;
 import ji.files.text.Text;
-import ji.files.text.basic.WriteText;
 import toti.templating.Parameter;
 import toti.templating.Tag;
 import toti.templating.TagVariableMode;
@@ -99,7 +98,7 @@ public class TemplateParserEndToEndTest extends TemplateFactory {
 			Template t = test.getTemplate("template.jsp");
 			Text.get().write((bw)->{
 				try {
-					WriteText.get().write(bw, t.create(null, 
+					bw.write(t.create(null, 
 						new MapInit<String, Object>()
 						.append("title", "Hello World!")
 						.append("age", 42)

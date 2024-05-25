@@ -114,7 +114,7 @@ public class TemplateParser {
 				+ "}", 
 				module, templatePath, templateFile
 			));
-			loadFile(fileName, bw, module);
+			loadFile(fileName, bw.getBufferedWriter(), module);
 			bw.write("if(layout!=null){"
 					+ "layout._create(templateFactory,variables,container,this.nodes,this.hashCode());"
 					+ "}");
@@ -140,7 +140,7 @@ public class TemplateParser {
 			}
 		}
 		Text.get().read((br)->{
-			parse(br, (text)->{
+			parse(br.getBufferedReader(), (text)->{
 				bw.write(text);
 			}, info);			
 			// TODO read s void
