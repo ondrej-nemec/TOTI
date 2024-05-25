@@ -44,38 +44,38 @@ public class HttpServer implements Servant {
 		try (InputStreamWrapper is = new InputStreamWrapper(new BufferedInputStream(socket.getInputStream()));
 				OutputStreamWrapper os = new OutputStreamWrapper(new BufferedOutputStream(socket.getOutputStream()));) {
 			serve(is, os, socket.getInetAddress().toString());
-       } catch (Exception e) {
-    	   logger.fatal("Uncaught exception. Client: " + socket.getInetAddress().toString(), e);
-       }
+		} catch (Exception e) {
+			logger.fatal("Uncaught exception. Client: " + socket.getInetAddress().toString(), e);
+	   }
 	}
-    
-    public HttpServer addApplication(ResponseFactory servant, String hostname, String... aliases) {
-    	applications.put(hostname, servant);
-    	for (String alias : aliases) {
-    		applications.put(alias, servant);
-    	}
-    	return this;
-    }
-    
-    public void removeApplication(String hostname) {
-    	applications.remove(hostname);
-    }
-    
-    public Server createWebServer(int port,
-    		int threadPool,
-    		long readTimeout,
-    		Optional<SslCredentials> ssl,
-    		String charset) throws Exception {
-    	return new Server(
-    			port, 
-    			threadPool,
-    			readTimeout,
-    			this,
-    			ssl,
-    			charset,
-    			logger
-    	);
-    }
+	
+	public HttpServer addApplication(ResponseFactory servant, String hostname, String... aliases) {
+		applications.put(hostname, servant);
+		for (String alias : aliases) {
+			applications.put(alias, servant);
+		}
+		return this;
+	}
+	
+	public void removeApplication(String hostname) {
+		applications.remove(hostname);
+	}
+	
+	public Server createWebServer(int port,
+			int threadPool,
+			long readTimeout,
+			Optional<SslCredentials> ssl,
+			String charset) throws Exception {
+		return new Server(
+				port, 
+				threadPool,
+				readTimeout,
+				this,
+				ssl,
+				charset,
+				logger
+		);
+	}
 	
 	protected void serve(InputStreamWrapper is, OutputStreamWrapper os, String clientIp) throws IOException {
 		//profile(HttpServerProfilerEvent.REQUEST_ACCEPT);
