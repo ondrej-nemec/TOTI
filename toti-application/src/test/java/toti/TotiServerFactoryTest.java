@@ -4,7 +4,7 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
-public class HttpServerFactoryTest {
+public class TotiServerFactoryTest {
 
 	// TODO test default
 	// TODO test file conf

@@ -28,7 +28,7 @@ import junitparams.Parameters;
 import toti.answers.Answer;
 
 @RunWith(JUnitParamsRunner.class)
-public class HttpServerTest {
+public class TotiServerTest {
 
 	@Test
 	public void testStart() throws Exception {
@@ -43,7 +43,7 @@ public class HttpServerTest {
 		
 		Server server = mock(Server.class);
 		Logger logger = mock(Logger.class);
-		HttpServer toti = spy(new HttpServer(
+		TotiServer toti = spy(new TotiServer(
 			server, mock(Env.class), "charset",
 			mock(ServerConsumer.class), logger
 		));
@@ -100,7 +100,7 @@ public class HttpServerTest {
 		verifyNoMoreInteractions(toti, server);
 		/*/
 		IntegerBuilder callCount = new IntegerBuilder(0);
-		HttpServer toti = new HttpServer(
+		TotiServer toti = new TotiServer(
 			server, mock(Env.class), "charset",
 			mock(ServerConsumer.class), logger
 		) {
@@ -137,7 +137,7 @@ public class HttpServerTest {
 		Env env = mock(Env.class);
 		when(env.getModule(any())).thenReturn(env);
 		Logger logger = mock(Logger.class);
-		HttpServer server = spy(new HttpServer(mock(Server.class), env, "charset", mock(ServerConsumer.class), logger));
+		TotiServer server = spy(new TotiServer(mock(Server.class), env, "charset", mock(ServerConsumer.class), logger));
 		server.setRunning(isServerRunning);
 		doNothing().when(server).startApplication(any());
 		
@@ -186,7 +186,7 @@ public class HttpServerTest {
 		verify(server, times(stopTimes)).stopApplication("host", app);
 		/*/
 		IntegerBuilder callCount = new IntegerBuilder(0);
-		HttpServer server = new HttpServer(mock(Server.class), env, "charset", mock(ServerConsumer.class), logger) {
+		TotiServer server = new TotiServer(mock(Server.class), env, "charset", mock(ServerConsumer.class), logger) {
 			@Override
 			protected boolean stopApplication(String host, Application application) {
 				callCount.add(1);
@@ -208,7 +208,7 @@ public class HttpServerTest {
 	public void testStartApplication() throws Exception {
 		Logger logger = mock(Logger.class);
 		ServerConsumer consumer = mock(ServerConsumer.class);
-		HttpServer server = new HttpServer(
+		TotiServer server = new TotiServer(
 			mock(Server.class), mock(Env.class), "charset",
 			consumer, logger
 		);
@@ -235,7 +235,7 @@ public class HttpServerTest {
 	public void testStopApplicationWorking() throws Exception {
 		Logger logger = mock(Logger.class);
 		ServerConsumer consumer = mock(ServerConsumer.class);
-		HttpServer server = new HttpServer(mock(Server.class), mock(Env.class), "charset", consumer, logger);
+		TotiServer server = new TotiServer(mock(Server.class), mock(Env.class), "charset", consumer, logger);
 		Application app = mock(Application.class);
 		assertTrue(server.stopApplication("host", app));
 		verify(consumer, times(1)).removeApplication("host");
@@ -247,7 +247,7 @@ public class HttpServerTest {
 	public void testStopApplicationAppThrowsException() throws Exception {
 		Logger logger = mock(Logger.class);
 		ServerConsumer consumer = mock(ServerConsumer.class);
-		HttpServer server = new HttpServer(mock(Server.class), mock(Env.class), "charset", consumer, logger);
+		TotiServer server = new TotiServer(mock(Server.class), mock(Env.class), "charset", consumer, logger);
 		Application app = mock(Application.class);
 		doThrow(new RuntimeException()).when(app).stop();
 		

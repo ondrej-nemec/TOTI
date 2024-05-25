@@ -8,8 +8,8 @@ import org.apache.logging.log4j.LogManager;
 import ji.common.structures.MapInit;
 import ji.translator.LanguageSettings;
 import ji.translator.Locale;
-import toti.HttpServer;
-import toti.HttpServerFactory;
+import toti.TotiServer;
+import toti.TotiServerFactory;
 import toti.database.DatabaseExtension;
 import toti.extension.templating.TemplateExtension;
 import toti.extensions.auth.AuthenticationExtension;
@@ -29,9 +29,9 @@ public class SamplesMain {
 
 	protected static void createWithDefaultSettings() {
 		try {
-			HttpServerFactory serverFactory = new HttpServerFactory();
+			TotiServerFactory serverFactory = new TotiServerFactory();
 
-			HttpServer server = serverFactory.create(LogManager.getLogger("toti"));
+			TotiServer server = serverFactory.create(LogManager.getLogger("toti"));
 			server.addApplication("samples", (env, applicationFactory)->{
 				// TODO applicationFactory.setUrlPattern(null);
 				
@@ -56,9 +56,9 @@ public class SamplesMain {
 	
 	protected static void createWithFileSettings() {
 		try {
-			HttpServerFactory serverFactory = new HttpServerFactory("toti/samples/fileConfiguration.properties");
+			TotiServerFactory serverFactory = new TotiServerFactory("toti/samples/fileConfiguration.properties");
 			
-			HttpServer server = serverFactory.create(LogManager.getLogger("toti"));
+			TotiServer server = serverFactory.create(LogManager.getLogger("toti"));
 			server.addApplication("samples", (env, applicationFactory)->{
 				// TODO applicationFactory.setUrlPattern(null);
 				
@@ -83,7 +83,7 @@ public class SamplesMain {
 
 	protected static void createAndSetProgrammatically() {
 		try {
-			HttpServerFactory serverFactory = new HttpServerFactory();
+			TotiServerFactory serverFactory = new TotiServerFactory();
 			serverFactory.setCharset("utf-8");
 			// TODO serverFactory.setCerts(null);
 			serverFactory.setMaxRequestBodySize(20*1024); // 20 kB
@@ -91,7 +91,7 @@ public class SamplesMain {
 			serverFactory.setReadTimeout(90000); // 90s
 			serverFactory.setThreadPool(100);
 			
-			HttpServer server = serverFactory.create(LogManager.getLogger("toti"));
+			TotiServer server = serverFactory.create(LogManager.getLogger("toti"));
 			server.addApplication("samples", (env, applicationFactory)->{
 				// set
 				applicationFactory.setAutoStart(true);

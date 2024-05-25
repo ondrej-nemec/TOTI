@@ -11,7 +11,7 @@ import ji.common.functions.Env;
 import ji.socketCommunication.SslCredentials;
 import ji.socketCommunication.http.WebServer;
 
-public class HttpServerFactory {
+public class TotiServerFactory {
 	
 	private Integer port = null;
 	private Integer threadPool = null;
@@ -22,24 +22,24 @@ public class HttpServerFactory {
 	
 	private final Env env;
 	
-	public HttpServerFactory() {
+	public TotiServerFactory() {
 		this.env = new Env(new Properties());
 	}
 	
-	public HttpServerFactory(String configFile) throws FileNotFoundException, IOException {
+	public TotiServerFactory(String configFile) throws FileNotFoundException, IOException {
 		this(new Env(configFile));
 	}
 
-	public HttpServerFactory(Env env) {
+	public TotiServerFactory(Env env) {
 		this.env = env;
 	}
 	
-	public HttpServer create(Logger logger) throws Exception {
+	public TotiServer create(Logger logger) throws Exception {
 		Env settings = env.getModule("http");
 		WebServer server = new WebServer(getMaxRequestSize(settings), logger);
 		// TODO IMPROVEMENT add aplication from env
 		String charset = getCharset(settings);
-		return new HttpServer(
+		return new TotiServer(
 			server.createWebServer(
 				getPort(settings), getThreadPool(settings), getReadTimeout(settings),
 				getCerts(settings), charset
@@ -116,32 +116,32 @@ public class HttpServerFactory {
 	
 	/*********************/
 	
-	public HttpServerFactory setMaxRequestBodySize(int maxRequestBodySize) {
+	public TotiServerFactory setMaxRequestBodySize(int maxRequestBodySize) {
 		this.maxRequestSize = maxRequestBodySize;
 		return this;
 	}
 
-	public HttpServerFactory setPort(int port) {
+	public TotiServerFactory setPort(int port) {
 		this.port = port;
 		return this;
 	}
 
-	public HttpServerFactory setThreadPool(int threadPool) {
+	public TotiServerFactory setThreadPool(int threadPool) {
 		this.threadPool = threadPool;
 		return this;
 	}
 
-	public HttpServerFactory setReadTimeout(long readTimeout) {
+	public TotiServerFactory setReadTimeout(long readTimeout) {
 		this.readTimeout = readTimeout;
 		return this;
 	}
 
-	public HttpServerFactory setCerts(SslCredentials certs) {
+	public TotiServerFactory setCerts(SslCredentials certs) {
 		this.certs = Optional.of(certs);
 		return this;
 	}
 
-	public HttpServerFactory setCharset(String charset) {
+	public TotiServerFactory setCharset(String charset) {
 		this.charset = charset;
 		return this;
 	}

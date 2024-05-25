@@ -9,7 +9,7 @@ import ji.common.functions.Env;
 import ji.common.structures.ThrowingBiFunction;
 import ji.socketCommunication.Server;
 
-public class HttpServer {
+public class TotiServer {
 	
 	private final Server server;
 	private final Env env;
@@ -22,7 +22,7 @@ public class HttpServer {
 	
 	private boolean isRunning = false;
 	
-	protected HttpServer(
+	protected TotiServer(
 			Server server, Env env, String charset,
 			ServerConsumer consumer, Logger logger) {
 		this.server = server;
