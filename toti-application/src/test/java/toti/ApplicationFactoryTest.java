@@ -65,9 +65,6 @@ public class ApplicationFactoryTest implements TestCase {
 		verify(applicationsEnv, times(1)).getModule("hostName");
 		verifyNoMoreInteractions(baseEnv, applicationsEnv);
 		
-		// muze byt: logger.info - no database specified
-		// muze by: logger.warn profilel
-		
 		assertNotNull(application.getLink());
 		assertNotNull(application.getRegister());
 		assertNotNull(application.getRequestAnswer());

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -20,6 +21,7 @@ import ji.socketCommunication.http.HttpMethod;
 import toti.application.Task;
 import toti.application.register.MappedAction;
 import toti.application.register.Param;
+import toti.extensions.Extension;
 
 public class ApplicationTest {
 
@@ -28,7 +30,15 @@ public class ApplicationTest {
 		Task task1 = mock(Task.class);
 		Task task2 = mock(Task.class);
 		
-		Application application = new Application(Arrays.asList(task1, task2), null, null, null, null, null, false, null);
+		Extension ext1 = mock(Extension.class);
+		Extension ext2 = mock(Extension.class);
+		
+		Application application = new Application(
+			Arrays.asList(task1, task2),
+			null, null, null,
+			Arrays.asList(ext1, ext2),
+			null, false, null
+		);
 
 		assertFalse(application.isRunning());
 		assertTrue(application.start()); // start
@@ -45,21 +55,32 @@ public class ApplicationTest {
 	public void testStartStartsTasks() throws Exception {
 		Task task1 = mock(Task.class);
 		Task task2 = mock(Task.class);
-		Application application = new Application(Arrays.asList(task1, task2), null, null, null, null, null, false, null);
+		Application application = new Application(
+			Arrays.asList(task1, task2),
+			null, null, null,
+			Arrays.asList(), null, false, null
+		);
 		assertTrue(application.start());
 		verify(task1, times(1)).start();
 		verify(task2, times(1)).start();
 		verifyNoMoreInteractions(task1, task2);
-		
-		fail("verify extensions");
 	}
 	
 	@Test
 	public void testStartStartExtensions() throws Exception {
-		Application application = new Application(Arrays.asList(), null, null, null, null, null, false, null);
+		Extension ext1 = mock(Extension.class);
+		Extension ext2 = mock(Extension.class);
+		
+		Application application = new Application(
+			Arrays.asList(), null, null, null,
+			Arrays.asList(ext1, ext2),
+			null, false, null
+		);
 		assertTrue(application.start());
 
-		fail("TODO");
+		verify(ext1, times(1)).onApplicationStart();
+		verify(ext2, times(1)).onApplicationStart();
+		verifyNoMoreInteractions(ext1, ext2);
 	}
 
 	@Test
@@ -67,7 +88,17 @@ public class ApplicationTest {
 		Task task1 = mock(Task.class);
 		Task task2 = mock(Task.class);
 		
-		Application application = new Application(Arrays.asList(task1, task2), null, null, null, null, null, false, null);
+		Extension ext1 = mock(Extension.class);
+		Extension ext2 = mock(Extension.class);
+		
+		doThrow(new SQLException()).when(ext1).onApplicationStart();
+		
+		Application application = new Application(
+			Arrays.asList(task1, task2),
+			null, null, null,
+			Arrays.asList(ext1, ext2),
+			null, false, null
+		);
 		
 		try {
 			application.start();
@@ -75,15 +106,21 @@ public class ApplicationTest {
 		} catch (SQLException e) {
 			// expected
 		}
-		
-		fail("TODO");
+
+		verify(ext1, times(1)).onApplicationStart();
+		verifyNoMoreInteractions(ext1, ext2);
+		verifyNoMoreInteractions(task1, task2);
 	}
 	
 	@Test
 	public void testStopStopsTasks() throws Exception {
 		Task task1 = mock(Task.class);
 		Task task2 = mock(Task.class);
-		Application application = new Application(Arrays.asList(task1, task2), null, null, null, null, null, false, null);
+		Application application = new Application(
+			Arrays.asList(task1, task2),
+			null, null, null, Arrays.asList(),
+			null, false, null
+		);
 		application.stop();
 		verify(task1, times(1)).stop();
 		verify(task2, times(1)).stop();
@@ -92,11 +129,18 @@ public class ApplicationTest {
 	
 	@Test
 	public void testStopStopsExtensions() throws Exception {
-		Task task1 = mock(Task.class);
-		Task task2 = mock(Task.class);
-		Application application = new Application(Arrays.asList(task1, task2), null, null, null, null, null, false, null);
+		Extension ext1 = mock(Extension.class);
+		Extension ext2 = mock(Extension.class);
+		Application application = new Application(
+			Arrays.asList(), null, null, null,
+			Arrays.asList(ext1, ext2),
+			null, false, null
+		);
 		application.stop();
-		fail("TODO");
+		
+		verify(ext1, times(1)).onApplicationStop();
+		verify(ext2, times(1)).onApplicationStop();
+		verifyNoMoreInteractions(ext1, ext2);
 	}
 	
 	@Test
