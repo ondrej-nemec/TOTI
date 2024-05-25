@@ -10,7 +10,7 @@ repositories {
 	mavenCentral()
 	maven { url 'https://jitpack.io' }
 }
-//*
+/*
 sourceSets {
     main {
         java {
@@ -19,12 +19,11 @@ sourceSets {
             srcDirs '../../javainit/ji-common/src/main/java'
             srcDirs '../../javainit/ji-communication/src/main/java'
             srcDirs '../../javainit/ji-database/src/main/java'
-            srcDirs '../../javainit/ji-translate/src/main/java'
             srcDirs '../../javainit/ji-files/src/main/java'
-            srcDirs '../../javainit/ji-testing/src/main/java'
         }
         resources {
             srcDir 'src/main/resources'
+            srcDirs '../../javainit/ji-testing/src/main/java'
         }
     }
     test {
@@ -41,6 +40,8 @@ sourceSets {
 dependencies {
 	//api project(':toti-libs:toti-templating')
 	api 'com.github.ondrej-nemec.JI:JI:' + JI_version
+	
+	api project(':toti-libs:toti-http')
 	
 	// compile files("${System.properties['java.home']}/../lib/tools.jar")
 	

@@ -17,9 +17,6 @@ import org.apache.logging.log4j.Logger;
 
 import ji.common.structures.DictionaryValue;
 import ji.json.JsonReader;
-import ji.socketCommunication.http.HttpMethod;
-import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.structures.WebSocket;
 import ji.xml.XmlObject;
 import ji.xml.XmlReader;
 import toti.ServerException;
@@ -41,6 +38,9 @@ import toti.extensions.AuthenticationExtension;
 import toti.extensions.TemplateExtension;
 import toti.extensions.Translator;
 import toti.extensions.TranslatorExtension;
+import toti.http.http.HttpMethod;
+import toti.http.http.StatusCode;
+import toti.http.http.structures.WebSocket;
 
 public class ControllerAnswer {
 	
@@ -67,8 +67,8 @@ public class ControllerAnswer {
 		this.logger = logger;
 	}
 	
-	public ji.socketCommunication.http.structures.Response answer(
-			ji.socketCommunication.http.structures.Request request,
+	public toti.http.http.structures.Response answer(
+			toti.http.http.structures.Request request,
 			Identity identity, Headers requestHeaders, Optional<WebSocket> websocket,
 			Headers responseHeaders, String charset
 		) throws Exception {

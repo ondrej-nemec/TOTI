@@ -2,8 +2,8 @@ package toti.validation.rules;
 
 import java.util.function.Function;
 
-import ji.socketCommunication.http.structures.UploadedFile;
 import toti.extensions.Translator;
+import toti.http.http.structures.UploadedFile;
 
 public class FileMaxSizeRule extends SimpleRule<Integer> {
 

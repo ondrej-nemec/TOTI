@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import ji.common.functions.Env;
 import ji.common.structures.ThrowingBiFunction;
-import ji.socketCommunication.Server;
+import toti.http.Server;
 
 public class TotiServer {
 	

@@ -8,7 +8,6 @@ import java.util.Map;
 
 import ji.common.structures.ObjectBuilder;
 import ji.common.structures.Tuple2;
-import ji.socketCommunication.http.HttpMethod;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Secured;
@@ -17,6 +16,7 @@ import toti.answers.router.UriPattern;
 import toti.application.Module;
 import toti.extensions.CustomExceptionExtension;
 import toti.extensions.Extension;
+import toti.http.http.HttpMethod;
 
 public class Register {
 	

@@ -10,11 +10,11 @@ import ji.common.functions.Env;
 import ji.common.structures.MapDictionary;
 import ji.database.Database;
 import ji.database.DatabaseConfig;
-import ji.socketCommunication.http.structures.RequestParameters;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.application.register.Register;
 import toti.extensions.Extension;
+import toti.http.http.structures.RequestParameters;
 
 public class DatabaseExtension implements Extension {
 

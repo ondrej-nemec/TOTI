@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
-import ji.socketCommunication.http.HttpMethod;
 import toti.answers.Answer;
 import toti.answers.router.Link;
 import toti.application.Task;
@@ -12,6 +11,7 @@ import toti.application.register.MappedAction;
 import toti.application.register.Param;
 import toti.application.register.Register;
 import toti.extensions.Extension;
+import toti.http.http.HttpMethod;
 
 public class Application {
 	

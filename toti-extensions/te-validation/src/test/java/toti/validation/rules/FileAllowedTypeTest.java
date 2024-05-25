@@ -7,9 +7,9 @@ import java.util.Arrays;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import ji.socketCommunication.http.structures.UploadedFile;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+import toti.http.http.structures.UploadedFile;
 import toti.validation.ValidationItem;
 
 @RunWith(JUnitParamsRunner.class)

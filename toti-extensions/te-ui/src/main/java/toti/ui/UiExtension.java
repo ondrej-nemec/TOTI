@@ -6,8 +6,6 @@ import java.util.List;
 
 import ji.common.functions.Env;
 import ji.common.structures.MapDictionary;
-import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.structures.RequestParameters;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
@@ -16,6 +14,8 @@ import toti.application.register.Register;
 import toti.extension.templating.TemplateExtension;
 import toti.extensions.Extension;
 import toti.extensions.TotiExtension;
+import toti.http.http.StatusCode;
+import toti.http.http.structures.RequestParameters;
 import toti.templating.Tag;
 import toti.ui.tags.ControlTag;
 import toti.ui.tags.FormTag;

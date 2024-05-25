@@ -1,10 +1,10 @@
 package toti.answers.response;
 
-import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.structures.Protocol;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.answers.router.Link;
+import toti.http.http.StatusCode;
+import toti.http.http.structures.Protocol;
 
 public class RedirectResponse implements Response {
 
@@ -22,14 +22,14 @@ public class RedirectResponse implements Response {
 	}
 	
 	@Override
-	public ji.socketCommunication.http.structures.Response getResponse(
+	public toti.http.http.structures.Response getResponse(
 			Protocol protocol,
 			Headers header,
 			Identity identity,
 			ResponseContainer container,
 			String charset) {
 		header.addHeader("Location", url);
-		ji.socketCommunication.http.structures.Response res = new ji.socketCommunication.http.structures.Response(code, protocol);
+		toti.http.http.structures.Response res = new toti.http.http.structures.Response(code, protocol);
 		res.setHeaders(header.getHeaders());
 		res.setHeaders(this.headers.getHeaders());
 		return res;

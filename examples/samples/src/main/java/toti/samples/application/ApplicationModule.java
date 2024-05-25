@@ -7,7 +7,6 @@ import org.apache.logging.log4j.LogManager;
 
 import ji.common.exceptions.LogicException;
 import ji.common.functions.Env;
-import ji.socketCommunication.http.StatusCode;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.answers.response.Response;
@@ -18,6 +17,7 @@ import toti.application.Task;
 import toti.application.register.Register;
 import toti.extension.templating.TemplateExtension;
 import toti.extensions.auth.AuthenticationExtension;
+import toti.http.http.StatusCode;
 import toti.extensions.CustomExceptionExtension;
 import toti.extensions.TranslatorExtension;
 import toti.samples.application.controllers.ExceptionsController;

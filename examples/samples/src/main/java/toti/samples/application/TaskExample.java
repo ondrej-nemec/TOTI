@@ -10,8 +10,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import org.apache.logging.log4j.Logger;
-import ji.socketCommunication.http.structures.WebSocket;
+
 import toti.application.Task;
+import toti.http.http.structures.WebSocket;
 
 public class TaskExample implements Task {
 	

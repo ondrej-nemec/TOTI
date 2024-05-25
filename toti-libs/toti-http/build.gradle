@@ -1,0 +1,35 @@
+
+// Apply the java-library plugin to add support for Java Library
+plugins {
+    id 'java-library'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+compileTestJava.options.encoding = 'UTF-8'
+// In this section you declare where to find the dependencies of your project
+repositories {
+    mavenCentral()
+	maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+	implementation 'com.github.ondrej-nemec.JI:ji-common:' + JI_version
+	implementation 'com.github.ondrej-nemec.JI:ji-files:' + JI_version
+	
+	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
+	// https://mvnrepository.com/artifact/commons-codec/commons-codec
+	implementation group: 'commons-codec', name: 'commons-codec', version: '1.15'
+
+	// https://mvnrepository.com/artifact/junit/junit
+	testImplementation group: 'junit', name: 'junit', version: '4.12'
+	
+	// https://mvnrepository.com/artifact/org.mockito/mockito-core
+	testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.19.1'
+	
+	// https://mvnrepository.com/artifact/pl.pragmatists/JUnitParams
+	testImplementation group: 'pl.pragmatists', name: 'JUnitParams', version: '1.1.1'
+
+}
+

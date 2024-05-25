@@ -5,10 +5,10 @@ import java.io.IOException;
 
 import org.apache.logging.log4j.Logger;
 
-import ji.socketCommunication.http.HttpMethod;
-import ji.socketCommunication.http.StatusCode;
 import toti.ServerException;
 import toti.answers.response.Response;
+import toti.http.http.HttpMethod;
+import toti.http.http.StatusCode;
 
 public class FileSystemAnswer {
 
@@ -27,8 +27,8 @@ public class FileSystemAnswer {
 		this.dirDefaultFile = dirDefaultFile;
 	}
 	
-	public  ji.socketCommunication.http.structures.Response answer(
-			 ji.socketCommunication.http.structures.Request request, Headers responseHeaders, String charset
+	public  toti.http.http.structures.Response answer(
+			 toti.http.http.structures.Request request, Headers responseHeaders, String charset
 			) throws ServerException {
 		return answer(request.getPlainUri(), request.getMethod(), responseHeaders, charset)
 				.getResponse(request.getProtocol(), responseHeaders, charset);

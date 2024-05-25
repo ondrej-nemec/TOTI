@@ -17,11 +17,11 @@ sourceSets {
             srcDirs 'src/main/java'
             
             srcDirs '../../../javainit/ji-common/src/main/java'
-            srcDirs '../../../javainit/ji-communication/src/main/java'
-            srcDirs '../../../javainit/ji-database/src/main/java'
-            srcDirs '../../../javainit/ji-translate/src/main/java'
+       //     srcDirs '../../../javainit/ji-communication/src/main/java'
+       //     srcDirs '../../../javainit/ji-database/src/main/java'
+        //    srcDirs '../../../javainit/ji-translate/src/main/java'
             srcDirs '../../../javainit/ji-files/src/main/java'
-            srcDirs '../../../javainit/ji-testing/src/main/java'
+       //     srcDirs '../../../javainit/ji-testing/src/main/java'
         }
         resources {
             srcDir 'src/main/resources'

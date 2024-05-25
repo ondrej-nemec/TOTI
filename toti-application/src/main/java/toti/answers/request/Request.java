@@ -7,10 +7,10 @@ import java.util.Optional;
 import ji.common.structures.DictionaryValue;
 import ji.common.structures.ListDictionary;
 import ji.common.structures.MapDictionary;
-import ji.socketCommunication.http.HttpMethod;
-import ji.socketCommunication.http.structures.RequestParameters;
-import ji.socketCommunication.http.structures.WebSocket;
 import toti.answers.Headers;
+import toti.http.http.HttpMethod;
+import toti.http.http.structures.RequestParameters;
+import toti.http.http.structures.WebSocket;
 
 public class Request {
 
@@ -25,12 +25,12 @@ public class Request {
 	
 	private final MapDictionary<String> data;
 	
-	public static Request fromRequest(ji.socketCommunication.http.structures.Request request, Headers requestHeaders) {
+	public static Request fromRequest(toti.http.http.structures.Request request, Headers requestHeaders) {
 		return fromRequest(request, requestHeaders, Optional.empty());
 	}
 	
 	public static Request fromRequest(
-			ji.socketCommunication.http.structures.Request request,
+			toti.http.http.structures.Request request,
 			Headers requestHeaders,
 			Optional<WebSocket> websocket
 		) {

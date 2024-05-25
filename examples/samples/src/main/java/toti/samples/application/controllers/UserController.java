@@ -1,6 +1,5 @@
 package toti.samples.application.controllers;
 
-import ji.socketCommunication.http.StatusCode;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Secured;
@@ -8,6 +7,7 @@ import toti.answers.action.ResponseAction;
 import toti.answers.action.ResponseBuilder;
 import toti.answers.request.AuthMode;
 import toti.answers.response.Response;
+import toti.http.http.StatusCode;
 import toti.samples.application.SampleUser;
 import toti.samples.application.SessionUserProviderExample;
 

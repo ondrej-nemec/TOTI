@@ -17,16 +17,16 @@ import java.util.Optional;
 import org.junit.Test;
 
 import ji.common.structures.MapDictionary;
-import ji.socketCommunication.http.HttpMethod;
-import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.structures.Protocol;
-import ji.socketCommunication.http.structures.Request;
-import ji.socketCommunication.http.structures.RequestParameters;
-import ji.socketCommunication.http.structures.Response;
 import toti.ServerException;
 import toti.answers.request.Identity;
 import toti.answers.request.IdentityFactory;
 import toti.application.register.MappedAction;
+import toti.http.http.HttpMethod;
+import toti.http.http.StatusCode;
+import toti.http.http.structures.Protocol;
+import toti.http.http.structures.Request;
+import toti.http.http.structures.RequestParameters;
+import toti.http.http.structures.Response;
 
 public class AnswerTest {
 	

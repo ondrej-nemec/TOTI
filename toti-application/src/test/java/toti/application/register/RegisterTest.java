@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import ji.common.structures.ObjectBuilder;
-import ji.socketCommunication.http.HttpMethod;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import test.ControllerA;
@@ -22,6 +21,7 @@ import test.ControllerC;
 import test.TestModule;
 import toti.answers.router.UriPattern;
 import toti.extensions.Extension;
+import toti.http.http.HttpMethod;
 
 @RunWith(JUnitParamsRunner.class)
 public class RegisterTest {

@@ -5,11 +5,11 @@ import java.io.IOException;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.structures.Protocol;
-import ji.socketCommunication.http.structures.WebSocket;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
+import toti.http.http.StatusCode;
+import toti.http.http.structures.Protocol;
+import toti.http.http.structures.WebSocket;
 
 public class WebsocketResponse implements Response {
 	
@@ -32,13 +32,13 @@ public class WebsocketResponse implements Response {
 	}
 
 	@Override
-	public ji.socketCommunication.http.structures.Response getResponse(
+	public toti.http.http.structures.Response getResponse(
 			Protocol protocol,
 			Headers responseHeaders,
 			Identity identity,
 			ResponseContainer container,
 			String charset) {
-		ji.socketCommunication.http.structures.Response wbRes = new ji.socketCommunication.http.structures.Response(StatusCode.SWITCHING_PROTOCOL,protocol);
+		toti.http.http.structures.Response wbRes = new toti.http.http.structures.Response(StatusCode.SWITCHING_PROTOCOL,protocol);
 		wbRes.setHeaders(responseHeaders.getHeaders());
 		wbRes.setHeaders(this.headers.getHeaders());
 		websocket.accept(onMessage, onError, onClose);

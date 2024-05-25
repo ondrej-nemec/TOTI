@@ -22,10 +22,10 @@ import org.junit.runner.RunWith;
 import ji.common.functions.Env;
 import ji.common.structures.IntegerBuilder;
 import ji.common.structures.MapInit;
-import ji.socketCommunication.Server;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import toti.answers.Answer;
+import toti.http.Server;
 
 @RunWith(JUnitParamsRunner.class)
 public class TotiServerTest {

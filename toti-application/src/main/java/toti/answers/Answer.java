@@ -5,15 +5,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.structures.Request;
-import ji.socketCommunication.http.structures.Response;
-import ji.socketCommunication.http.structures.WebSocket;
 import toti.ServerException;
 import toti.answers.request.Identity;
 import toti.answers.request.IdentityFactory;
+import toti.http.http.StatusCode;
+import toti.http.http.structures.Request;
+import toti.http.http.structures.Response;
+import toti.http.http.structures.WebSocket;
 
-public class Answer implements ji.socketCommunication.http.ResponseFactory {
+public class Answer implements toti.http.http.ResponseFactory {
 
 	private final IdentityFactory identityFactory;
 	

@@ -3,8 +3,8 @@ package toti.validation.rules;
 import java.util.function.Function;
 
 import ji.common.structures.DictionaryValue;
-import ji.socketCommunication.http.structures.RequestParameters;
 import toti.extensions.Translator;
+import toti.http.http.structures.RequestParameters;
 import toti.validation.ValidationItem;
 import toti.validation.Validator;
 import toti.answers.request.Request;

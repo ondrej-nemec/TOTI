@@ -4,10 +4,10 @@ import java.util.Map;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
-import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.structures.Protocol;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
+import toti.http.http.StatusCode;
+import toti.http.http.structures.Protocol;
 
 public class TemplateResponse implements Response {
 	
@@ -24,7 +24,7 @@ public class TemplateResponse implements Response {
 	}
 
 	@Override
-	public ji.socketCommunication.http.structures.Response getResponse(
+	public toti.http.http.structures.Response getResponse(
 			Protocol protocol,
 			Headers header, 
 			Identity identity, 
@@ -45,7 +45,7 @@ public class TemplateResponse implements Response {
 			});
 		});
 		setContentType(fileName, charset, resHeaders);*/
-		ji.socketCommunication.http.structures.Response response = new ji.socketCommunication.http.structures.Response(code, protocol);
+		toti.http.http.structures.Response response = new toti.http.http.structures.Response(code, protocol);
 		
 		// response.setHeaders(resHeaders.getHeaders());
 		header.getHeaders().forEach((n, l)->{

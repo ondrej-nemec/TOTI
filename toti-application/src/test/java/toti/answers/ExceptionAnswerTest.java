@@ -14,10 +14,6 @@ import org.junit.runner.RunWith;
 
 import ji.common.structures.MapDictionary;
 import ji.files.text.Text;
-import ji.socketCommunication.http.HttpMethod;
-import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.structures.Protocol;
-import ji.socketCommunication.http.structures.Request;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import toti.answers.request.Identity;
@@ -28,6 +24,10 @@ import toti.application.register.Register;
 import toti.extensions.CustomExceptionExtension;
 import toti.extensions.Translator;
 import toti.extensions.TranslatorExtension;
+import toti.http.http.HttpMethod;
+import toti.http.http.StatusCode;
+import toti.http.http.structures.Protocol;
+import toti.http.http.structures.Request;
 import toti.logging.FileName;
 
 @RunWith(JUnitParamsRunner.class)
@@ -61,8 +61,8 @@ public class ExceptionAnswerTest {
 			mock(Logger.class)
 		));
 		
-		ji.socketCommunication.http.structures.Response expected
-		= new ji.socketCommunication.http.structures.Response(StatusCode.I_AM_A_TEAPORT, Protocol.HTTP_2);
+		toti.http.http.structures.Response expected
+		= new toti.http.http.structures.Response(StatusCode.I_AM_A_TEAPORT, Protocol.HTTP_2);
 		expected.addHeader("test", "header");
 		expected.addHeader("content-type", "text/plain");
 		expected.setBody("I'm a teapot".getBytes());

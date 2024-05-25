@@ -1,0 +1,66 @@
+<html>
+<head>
+	<title>Form</title>
+</head>
+<body>
+
+	<h1>Form</h1>
+	
+	<h2>GET</h2>
+	
+	<form action="/params">
+		<fieldset>
+			<legend>Simple input</legend>
+			<label>Simple text</label><input name="someText">
+		</fieldset> <br>
+		<fieldset>
+			<legend>List</legend>
+			<label>List 0</label><input name="list[]"> <br>
+			<label>List 1</label><input name="list[]"> <br>
+			<label>List 2</label><input name=""> <br>
+		</fieldset><br>
+		<fieldset>
+			<legend>Map</legend>
+			<label>Map A</label><input name="map[a]"> <br>
+			<label>Map B</label><input name="map[b]">
+		</fieldset><br>
+		<fieldset>
+			<legend>List in Map</legend>
+			<label>Map A List 0</label><input name="maplist[a][]"> <br>
+			<label>Map A List 1</label><input name="maplist[a][]"> <br>
+			<label>Map B List 0</label><input name="maplist[b][]"> <br>
+			<label>Map B List 1</label><input name="maplist[b][]"> <br>
+		</fieldset> <br>
+		<input type="submit" value="Submit">
+	</form>
+	
+	<h2>POST</h2>
+	
+	<form action="/params" method="POST">
+		<fieldset>
+			<legend>Simple input</legend>
+			<label>Simple text</label><input name="someText">
+		</fieldset> <br>
+		<fieldset>
+			<legend>List</legend>
+			<label>List 0</label><input name="list[]"> <br>
+			<label>List 1</label><input name="list[]"> <br>
+			<label>List 2</label><input name=""> <br>
+		</fieldset><br>
+		<fieldset>
+			<legend>Map</legend>
+			<label>Map A</label><input name="map[a]"> <br>
+			<label>Map B</label><input name="map[b]">
+		</fieldset><br>
+		<fieldset>
+			<legend>List in Map</legend>
+			<label>Map A List 0</label><input name="maplist[a][]"> <br>
+			<label>Map A List 1</label><input name="maplist[a][]"> <br>
+			<label>Map B List 0</label><input name="maplist[b][]"> <br>
+			<label>Map B List 1</label><input name="maplist[b][]"> <br>
+		</fieldset> <br>
+		<input type="submit" value="Submit">
+	</form>
+
+</body>
+</html>

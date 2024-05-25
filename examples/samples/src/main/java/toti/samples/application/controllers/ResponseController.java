@@ -7,14 +7,14 @@ import java.util.Map;
 
 import ji.common.functions.FileExtension;
 import ji.common.structures.MapInit;
-import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.structures.WebSocket;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.answers.action.ResponseAction;
 import toti.answers.action.ResponseBuilder;
 import toti.answers.response.Response;
 import toti.answers.router.Link;
+import toti.http.http.StatusCode;
+import toti.http.http.structures.WebSocket;
 import toti.samples.application.TaskExample;
 
 @Controller("response")

@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 
 import ji.common.functions.Env;
 import ji.common.structures.MapDictionary;
-import ji.socketCommunication.http.structures.RequestParameters;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.answers.response.ResponseContainer;
@@ -25,6 +24,7 @@ import toti.extension.templating.tags.LinkTag;
 import toti.extension.templating.tags.PermissionsTag;
 import toti.extension.templating.tags.TranslateTag;
 import toti.extensions.Extension;
+import toti.http.http.structures.RequestParameters;
 import toti.templating.Parameter;
 import toti.templating.Tag;
 import toti.templating.Template;

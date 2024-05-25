@@ -1,9 +1,9 @@
 package test;
 
-import ji.socketCommunication.http.HttpMethod;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.answers.action.ResponseAction;
+import toti.http.http.HttpMethod;
 
 @Controller("controllerA")
 public class ControllerA {

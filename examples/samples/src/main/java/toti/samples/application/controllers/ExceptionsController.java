@@ -1,7 +1,6 @@
 package toti.samples.application.controllers;
 
 import ji.common.exceptions.LogicException;
-import ji.socketCommunication.http.HttpMethod;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Secured;
@@ -9,6 +8,7 @@ import toti.answers.action.RequestInterruptedException;
 import toti.answers.action.ResponseAction;
 import toti.answers.action.ResponseBuilder;
 import toti.answers.response.Response;
+import toti.http.http.HttpMethod;
 
 /**
  * This example shows TOTI reaction on varios exceptions

@@ -11,7 +11,6 @@ import java.util.Random;
 import org.apache.logging.log4j.Logger;
 
 import ji.files.text.Text;
-import ji.socketCommunication.http.StatusCode;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.answers.response.Response;
@@ -20,6 +19,7 @@ import toti.application.register.MappedAction;
 import toti.application.register.Register;
 import toti.answers.response.ResponseContainer;
 import toti.extensions.TranslatorExtension;
+import toti.http.http.StatusCode;
 import toti.logging.ExceptionHashCode;
 import toti.logging.FileName;
 
@@ -48,8 +48,8 @@ public class ExceptionAnswer {
 		}
 	}
 
-	public ji.socketCommunication.http.structures.Response answer(
-			ji.socketCommunication.http.structures.Request request,
+	public toti.http.http.structures.Response answer(
+			toti.http.http.structures.Request request,
 			Headers requestHeaders,
 			StatusCode status, Throwable t,
 			Identity identity, MappedAction mappedAction,
@@ -68,7 +68,7 @@ public class ExceptionAnswer {
 	}
 	
 	protected Response getResponse(
-			ji.socketCommunication.http.structures.Request request,
+			toti.http.http.structures.Request request,
 			Headers requestHeaders,
 			StatusCode status, Throwable t, Identity identity, MappedAction mappedAction, String charset) {
 		FileName fileName = getFileName(mappedAction, status, t);
@@ -124,7 +124,7 @@ public class ExceptionAnswer {
 		);
 	}
 
-	protected String getExceptionDetail(ji.socketCommunication.http.structures.Request request,
+	protected String getExceptionDetail(toti.http.http.structures.Request request,
 			Headers requestHeaders, StatusCode status, Throwable t, Identity identity, MappedAction mappedAction) {
 		String title = String.format("<title>Exception %s</title>", status);
 		String headline = String.format(

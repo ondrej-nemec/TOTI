@@ -8,14 +8,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import ji.common.structures.MapDictionary;
-import ji.socketCommunication.http.HttpMethod;
-import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.structures.Protocol;
-import ji.socketCommunication.http.structures.Request;
-import ji.socketCommunication.http.structures.Response;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import toti.ServerException;
+import toti.http.http.HttpMethod;
+import toti.http.http.StatusCode;
+import toti.http.http.structures.Protocol;
+import toti.http.http.structures.Request;
+import toti.http.http.structures.Response;
 
 @RunWith(JUnitParamsRunner.class)
 public class FileSystemAnswerTest {

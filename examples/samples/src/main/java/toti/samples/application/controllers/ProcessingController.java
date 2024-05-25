@@ -2,13 +2,13 @@ package toti.samples.application.controllers;
 
 import java.time.LocalDateTime;
 
-import ji.socketCommunication.http.StatusCode;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.answers.action.RequestInterruptedException;
 import toti.answers.action.ResponseAction;
 import toti.answers.action.ResponseBuilder;
 import toti.answers.response.Response;
+import toti.http.http.StatusCode;
 
 @Controller("processing")
 public class ProcessingController {

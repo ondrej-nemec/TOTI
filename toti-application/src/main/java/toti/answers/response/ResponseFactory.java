@@ -2,8 +2,8 @@ package toti.answers.response;
 
 import java.util.Map;
 
-import ji.socketCommunication.http.StatusCode;
 import toti.answers.Headers;
+import toti.http.http.StatusCode;
 
 public class ResponseFactory {
 	

@@ -1,10 +1,10 @@
 package test;
 
-import ji.socketCommunication.http.HttpMethod;
 import toti.annotations.Action;
 import toti.annotations.Secured;
 import toti.answers.action.ResponseAction;
 import toti.answers.action.ResponseBuilder;
+import toti.http.http.HttpMethod;
 
 public class Test {
 	

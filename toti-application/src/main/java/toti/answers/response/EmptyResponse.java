@@ -1,9 +1,9 @@
 package toti.answers.response;
 
-import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.structures.Protocol;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
+import toti.http.http.StatusCode;
+import toti.http.http.structures.Protocol;
 
 public class EmptyResponse implements Response {
 
@@ -16,13 +16,13 @@ public class EmptyResponse implements Response {
 	}
 	
 	@Override
-	public ji.socketCommunication.http.structures.Response getResponse(
+	public toti.http.http.structures.Response getResponse(
 			Protocol protocol,
 			Headers header,
 			Identity identity,
 			ResponseContainer container,
 			String charset) {
-		ji.socketCommunication.http.structures.Response response = new ji.socketCommunication.http.structures.Response(code, protocol);
+		toti.http.http.structures.Response response = new toti.http.http.structures.Response(code, protocol);
 		response.setHeaders(header.getHeaders());
 		response.setHeaders(this.headers.getHeaders());
 		return response;

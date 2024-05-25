@@ -27,10 +27,6 @@ import org.junit.runner.RunWith;
 
 import ji.common.structures.MapDictionary;
 import ji.common.structures.ThrowingFunction;
-import ji.socketCommunication.http.HttpMethod;
-import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.structures.Protocol;
-import ji.socketCommunication.http.structures.RequestParameters;
 import ji.testing.TestCase;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -54,6 +50,10 @@ import toti.extensions.AuthenticationExtension;
 import toti.extensions.TemplateExtension;
 import toti.extensions.Translator;
 import toti.extensions.TranslatorExtension;
+import toti.http.http.HttpMethod;
+import toti.http.http.StatusCode;
+import toti.http.http.structures.Protocol;
+import toti.http.http.structures.RequestParameters;
 
 @RunWith(JUnitParamsRunner.class)
 public class ControllerAnswerTest implements TestCase {
@@ -79,7 +79,7 @@ public class ControllerAnswerTest implements TestCase {
 		));
 		// doReturn(null).when(answer).getMappedAction(any(), any(), any());
 		
-		ji.socketCommunication.http.structures.Request r = new ji.socketCommunication.http.structures.Request(HttpMethod.GET, "/a/b/c", Protocol.HTTP_1_1);
+		toti.http.http.structures.Request r = new toti.http.http.structures.Request(HttpMethod.GET, "/a/b/c", Protocol.HTTP_1_1);
 		r.setUriParams("/a/b/c", MapDictionary.hashMap());
 		
 		assertNull(answer.answer(r, mock(Identity.class), new Headers(), Optional.empty(), new Headers(), ""));
@@ -117,7 +117,7 @@ public class ControllerAnswerTest implements TestCase {
 			authenticationExtension, identityFactory,
 			mock(Link.class), translatorExtension, mock(Logger.class)
 		));
-		ji.socketCommunication.http.structures.Response rs = mock(ji.socketCommunication.http.structures.Response.class);
+		toti.http.http.structures.Response rs = mock(toti.http.http.structures.Response.class);
 		Response response = mock(Response.class);
 		when(response.getResponse(any(), any(), any(), any(), any())).thenReturn(rs);
 		doReturn(mappedAction).when(answer).getMappedAction(any(), any(), any(), any());
@@ -125,7 +125,7 @@ public class ControllerAnswerTest implements TestCase {
 
 		Headers responseHeaders = new Headers();
 		
-		ji.socketCommunication.http.structures.Request r = new ji.socketCommunication.http.structures.Request(HttpMethod.GET, "/a/b/c", Protocol.HTTP_1_1);
+		toti.http.http.structures.Request r = new toti.http.http.structures.Request(HttpMethod.GET, "/a/b/c", Protocol.HTTP_1_1);
 		r.setUriParams("/a/b/c", MapDictionary.hashMap());
 		
 		assertEquals(rs, answer.answer(r, identity, new Headers(), Optional.empty(), responseHeaders, ""));

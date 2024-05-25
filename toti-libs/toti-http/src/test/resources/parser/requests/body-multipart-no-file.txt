@@ -1,0 +1,42 @@
+POST /some/url HTTP/1.1
+content-length: 789
+content-type: multipart/form-data; boundary=item-separator
+some-header: my header value
+
+--item-separator
+Content-Disposition: form-data; name="maplist[a][]"
+
+value-maplist-a-1
+--item-separator
+Content-Disposition: form-data; name="maplist[a][]"
+
+value-maplist-a-2
+--item-separator
+Content-Disposition: form-data; name="maplist[b][]"
+
+value-maplist-b-1
+--item-separator
+Content-Disposition: form-data; name="maplist[b][]"
+
+value-maplist-b-2
+--item-separator
+Content-Disposition: form-data; name="list[]"
+
+value-list-1
+--item-separator
+Content-Disposition: form-data; name="list[]"
+
+value-list-2
+--item-separator
+Content-Disposition: form-data; name="list[]"
+
+value-list-3
+--item-separator
+Content-Disposition: form-data; name="map[a]"
+
+value-map-a
+--item-separator
+Content-Disposition: form-data; name="map[b]"
+
+value-map-b
+--item-separator--

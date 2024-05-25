@@ -6,10 +6,10 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 import ji.common.functions.InputStreamLoader;
-import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.structures.Protocol;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
+import toti.http.http.StatusCode;
+import toti.http.http.structures.Protocol;
 
 public class FileResponse implements Response {
 
@@ -40,7 +40,7 @@ public class FileResponse implements Response {
 	}
 
 	@Override
-	public ji.socketCommunication.http.structures.Response getResponse(
+	public toti.http.http.structures.Response getResponse(
 			Protocol protocol,
 			Headers responseHeader,
 			Identity identity,
@@ -51,7 +51,7 @@ public class FileResponse implements Response {
 			//	header.addHeader("Content-Disposition: attachment; filename=\"" + fileName + "\"");
 			responseHeader.addHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
 		}
-		ji.socketCommunication.http.structures.Response response = new  ji.socketCommunication.http.structures.Response(code, protocol);
+		toti.http.http.structures.Response response = new  toti.http.http.structures.Response(code, protocol);
 		response.setHeaders(responseHeader.getHeaders());
 		response.setHeaders(this.headers.getHeaders());
 		response.setBody(binaryContent);

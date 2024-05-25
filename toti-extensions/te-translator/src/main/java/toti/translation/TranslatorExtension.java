@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 
 import ji.common.functions.Env;
 import ji.common.structures.MapDictionary;
-import ji.socketCommunication.http.structures.RequestParameters;
 import ji.translator.LanguageSettings;
 import ji.translator.Locale;
 import ji.translator.Translator;
@@ -19,6 +18,7 @@ import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.application.register.Register;
 import toti.extensions.Extension;
+import toti.http.http.structures.RequestParameters;
 
 public class TranslatorExtension implements toti.extensions.TranslatorExtension, Extension {
 	

@@ -3,7 +3,7 @@ package toti.application.register;
 import java.util.HashMap;
 import java.util.Map;
 
-import ji.socketCommunication.http.HttpMethod;
+import toti.http.http.HttpMethod;
 
 public class Param {
 

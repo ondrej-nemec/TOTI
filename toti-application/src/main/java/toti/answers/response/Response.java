@@ -6,15 +6,15 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import ji.common.functions.FileExtension;
-import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.structures.Protocol;
-import ji.socketCommunication.http.structures.WebSocket;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
+import toti.http.http.StatusCode;
+import toti.http.http.structures.Protocol;
+import toti.http.http.structures.WebSocket;
 
 public interface Response {
 
-	ji.socketCommunication.http.structures.Response getResponse(
+	toti.http.http.structures.Response getResponse(
 			Protocol protocol,
 			Headers responseHeaders,
 			Identity identity,
@@ -22,7 +22,7 @@ public interface Response {
 			String charset
 	);
 
-	default ji.socketCommunication.http.structures.Response getResponse(Protocol protocol, Headers responseHeaders, String charset) {
+	default toti.http.http.structures.Response getResponse(Protocol protocol, Headers responseHeaders, String charset) {
 		return getResponse(protocol, responseHeaders, null, null, charset);
 	}
 	

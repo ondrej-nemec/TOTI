@@ -8,8 +8,8 @@ import java.util.Properties;
 import org.apache.logging.log4j.Logger;
 
 import ji.common.functions.Env;
-import ji.socketCommunication.SslCredentials;
-import ji.socketCommunication.http.WebServer;
+import toti.http.SslCredentials;
+import toti.http.http.HttpServer;
 
 public class TotiServerFactory {
 	
@@ -36,7 +36,7 @@ public class TotiServerFactory {
 	
 	public TotiServer create(Logger logger) throws Exception {
 		Env settings = env.getModule("http");
-		WebServer server = new WebServer(getMaxRequestSize(settings), logger);
+		HttpServer server = new HttpServer(getMaxRequestSize(settings), logger);
 		// TODO IMPROVEMENT add aplication from env
 		String charset = getCharset(settings);
 		return new TotiServer(

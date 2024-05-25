@@ -13,10 +13,11 @@ repositories {
 }
 
 ext {
-  JI_version = '17cd78e852'
+  JI_version = '3d42d68771'
 }
 
 dependencies {
+	api project('toti-libs:toti-http')
 	api project('toti-libs:toti-templating')
 	
 	api project('toti-application')

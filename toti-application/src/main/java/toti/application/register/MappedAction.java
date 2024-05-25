@@ -3,8 +3,8 @@ package toti.application.register;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import ji.socketCommunication.http.HttpMethod;
 import toti.answers.request.AuthMode;
+import toti.http.http.HttpMethod;
 
 public class MappedAction {
 

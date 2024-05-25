@@ -15,8 +15,6 @@ import org.junit.runner.RunWith;
 import ji.common.functions.Env;
 import ji.common.structures.MapDictionary;
 import ji.common.structures.ObjectBuilder;
-import ji.socketCommunication.http.StatusCode;
-import ji.socketCommunication.http.structures.RequestParameters;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import toti.answers.request.Identity;
@@ -29,6 +27,8 @@ import toti.answers.response.TextResponse;
 import toti.application.register.Register;
 import toti.extensions.TotiExtension;
 import toti.extensions.TranslatorExtension;
+import toti.http.http.StatusCode;
+import toti.http.http.structures.RequestParameters;
 import toti.extensions.TemplateExtension;
 
 @RunWith(JUnitParamsRunner.class)

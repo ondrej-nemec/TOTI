@@ -2,6 +2,7 @@
 rootProject.name = 'TOTI'
 
 include('toti-libs:toti-templating')
+include('toti-libs:toti-http')
 
 include('toti-application')
 

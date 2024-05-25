@@ -13,8 +13,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import ji.common.structures.MapInit;
-import ji.socketCommunication.http.structures.RequestParameters;
 import toti.extensions.Translator;
+import toti.http.http.structures.RequestParameters;
 import toti.validation.ValidationItem;
 import toti.validation.ValidationResult;
 import toti.validation.Validator;

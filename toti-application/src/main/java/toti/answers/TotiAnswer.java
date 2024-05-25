@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import ji.common.structures.ObjectBuilder;
-import ji.socketCommunication.http.StatusCode;
 import toti.ServerException;
 import toti.answers.request.Identity;
 import toti.answers.request.IdentityFactory;
@@ -15,6 +14,7 @@ import toti.answers.response.ResponseContainer;
 import toti.application.register.MappedAction;
 import toti.extensions.TotiExtension;
 import toti.extensions.TranslatorExtension;
+import toti.http.http.StatusCode;
 import toti.extensions.TemplateExtension;
 
 public class TotiAnswer {
@@ -36,8 +36,8 @@ public class TotiAnswer {
 		extensions.forEach(e->e.getListeningUri().forEach(u->this.extensions.put(u, e)));
 	}
 	
-	public ji.socketCommunication.http.structures.Response answer(
-			ji.socketCommunication.http.structures.Request request, Headers requestHeaders,
+	public toti.http.http.structures.Response answer(
+			toti.http.http.structures.Request request, Headers requestHeaders,
 			Identity identity, Headers responseHeaders, String charset
 		) throws ServerException {
 		ObjectBuilder<String> moduleName = new ObjectBuilder<>();
