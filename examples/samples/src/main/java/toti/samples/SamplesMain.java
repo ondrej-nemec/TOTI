@@ -85,7 +85,7 @@ public class SamplesMain {
 		try {
 			TotiServerFactory serverFactory = new TotiServerFactory();
 			serverFactory.setCharset("utf-8");
-			// TODO serverFactory.setCerts(null);
+			// TODO serverFactory.setCerts(null); + to doc
 			serverFactory.setMaxRequestBodySize(20*1024); // 20 kB
 			serverFactory.setPort(8080);
 			serverFactory.setReadTimeout(90000); // 90s

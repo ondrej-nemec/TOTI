@@ -99,7 +99,8 @@ public class HttpServer implements Servant {
 		if ("websocket".equals(request.getHeader("Upgrade"))) {
 			websocket = Optional.of(new WebSocket(os, is, request));
 		}
-		
+		// TODO maybe more virtual hosts (using header)
+		// and application splited by /app/....
 		Object hostname = request.getHeader("Host");
 		if (hostname != null) {
 			String host = hostname.toString().split(":")[0];

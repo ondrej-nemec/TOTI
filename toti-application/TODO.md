@@ -2,53 +2,29 @@
 
 ## Application
 
-### Instalace a inicializace / Spuštění aplikace
-* Gradle
 * Vytvoření tříd
 * Povinné nastavení
 
 * Default nastavení
 * Programové nastavení
 * Nastavení z konfiguračního souboru(ů)
+* První spuštění + def odkazy
 
-* Logování
+vysvětlení
+- moduly
+	- init metoda: env, register, link, task
+- controllery
+- zpracování požadavku - kroky
+	- request
+	- response
+	- identity
+	- translator
 
-### Vysvětlení tříd
-Registr
-Link
-Env
-Router
+- router
+- zapezpečení - sessionUserProvider
 
-### Vysvětlení modulů, tasků, kontrolerů a method, routování
+customize
+- extension
+- customExceptionHandler
 
-### Request
-
-Identity
-Request class
-
-### Zpracování požadavku
-
-Action builder, přerušení zpracování
-
-### Response
-
-Druhy odpovědí
-šablony
-
-### Zabezpečení
-
-## Template
-
-TODO
-
-## UI
-
-TODO
-
-## Databaze
-
-TODO
-
-## Translator
-
-TODO
+logování
