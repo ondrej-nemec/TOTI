@@ -2,8 +2,6 @@ package toti.http.http.structures;
 
 import ji.common.structures.MapDictionary;
 import toti.http.http.HttpMethod;
-import toti.http.http.structures.Exchange;
-import toti.http.http.structures.Protocol;
 import toti.http.http.structures.Request;
 
 public class Request extends Exchange {

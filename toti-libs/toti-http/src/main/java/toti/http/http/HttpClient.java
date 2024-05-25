@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 import ji.common.structures.ThrowingConsumer;
 import toti.http.Client;
 import toti.http.SslCredentials;
-import toti.http.http.HttpMethod;
 import toti.http.http.parsers.ExchangeFactory;
 import toti.http.http.streams.InputStreamWrapper;
 import toti.http.http.structures.Protocol;

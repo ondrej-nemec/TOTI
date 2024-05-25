@@ -10,7 +10,6 @@ import java.util.function.Consumer;
 
 import ji.common.structures.Tuple2;
 import toti.http.http.streams.OutputStreamWrapper;
-import toti.http.http.structures.Exchange;
 
 // https://tools.ietf.org/html/rfc6455#section-5.5.1
 // https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers#format

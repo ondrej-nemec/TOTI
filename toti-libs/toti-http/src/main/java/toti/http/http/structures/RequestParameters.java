@@ -5,7 +5,6 @@ import java.util.Map;
 
 import ji.common.structures.MapDictionary;
 import toti.http.http.structures.RequestParameters;
-import toti.http.http.structures.UploadedFile;
 
 public class RequestParameters extends MapDictionary<String> {
 	

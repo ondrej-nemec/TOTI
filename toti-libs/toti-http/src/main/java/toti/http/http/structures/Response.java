@@ -1,8 +1,6 @@
 package toti.http.http.structures;
 
 import toti.http.http.StatusCode;
-import toti.http.http.structures.Exchange;
-import toti.http.http.structures.Protocol;
 import toti.http.http.structures.Response;
 
 public class Response extends Exchange {

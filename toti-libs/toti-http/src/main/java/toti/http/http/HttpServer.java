@@ -13,8 +13,6 @@ import org.apache.logging.log4j.Logger;
 import toti.http.Servant;
 import toti.http.Server;
 import toti.http.SslCredentials;
-import toti.http.http.ResponseFactory;
-import toti.http.http.StatusCode;
 import toti.http.http.parsers.ExchangeFactory;
 import toti.http.http.profiler.HttpServerProfilerEvent;
 import toti.http.http.streams.InputStreamWrapper;
