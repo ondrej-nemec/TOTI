@@ -104,6 +104,7 @@ public interface Response {
 			case "png": return "image/png";
 			case "giff": return "image/giff";
 			case "gif": return "image/gif";
+			case "svg": return "image/svg+xml";
 			
 			// TODO IMPROVE add more https://wiki.documentfoundation.org/Faq/General/036
 			case "odt": return "application/vnd.oasis.opendocument.text";
