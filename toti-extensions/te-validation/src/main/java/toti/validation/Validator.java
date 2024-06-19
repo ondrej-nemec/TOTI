@@ -94,15 +94,15 @@ public class Validator implements Validate {
 		return this;
 	}
 	
-	public ValidationResult validate(Request request, RequestParameters prop, Translator translator, Identity identity) {
+	public ValidationResult validate(Request request, RequestParameters prop, Translator translator, Identity identity) throws RequestInterruptedException {
 		return validate(request, "%s", prop, translator, identity);
 	}
 	
-	/** INTERNAL */
-	public ValidationResult validate(Request request, String format, RequestParameters prop, Translator translator, Identity identity) {
+	/** INTERNAL **/
+	public ValidationResult validate(Request request, String format, RequestParameters prop, Translator translator, Identity identity) throws RequestInterruptedException {
 		ValidationResult result = new ValidationResult();
 		List<String> names = new ArrayList<>();
-		rules.forEach((rule)->{
+		for (RulesCollection rule : rules) {
 			String newName = iterateRules(request, format, rule.getName(), rule, prop, result, translator, identity);
 			
 			/*
@@ -114,7 +114,7 @@ public class Validator implements Validate {
 				prop.put(newName, prop.remove(rule.getName()));
 			}*/
 			names.add(newName);
-		});
+		}
 		List<String> notChecked = new ArrayList<>(prop.keySet());
 		notChecked.removeAll(names);
 		
@@ -132,14 +132,14 @@ public class Validator implements Validate {
 		);*/
 		if (!strictList && defaultRule.isPresent()) {
 			RulesCollection rule = defaultRule.get();
-			notChecked.forEach((notCheckedName)->{
+			for (String notCheckedName : notChecked) {
 				iterateRules(request, format, notCheckedName, rule, prop, result, translator, identity);
 				/*swichRules(String.format(format, notCheckedName), notCheckedName, rule, errors, prop, translator);
 				Object newValue = rule.getChangeValue().apply(prop.get(notCheckedName));
 				if (newValue != null) {
 					prop.put(notCheckedName, newValue);
 				}*/
-			});
+			}
 		}
 		if (globalFunc.isPresent() && result.isValid()) {
 			globalFunc.get().apply(request, prop, result, translator, identity);
@@ -150,7 +150,7 @@ public class Validator implements Validate {
 	private String iterateRules(
 			Request request, String format, String propertyName,
 			RulesCollection collection, RequestParameters prop,
-			ValidationResult result, Translator translator, Identity identity) {
+			ValidationResult result, Translator translator, Identity identity) throws RequestInterruptedException {
 		ValidationItem item = new ValidationItem(
 			propertyName,
 			prop.getValue(propertyName),

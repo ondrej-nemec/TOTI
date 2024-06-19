@@ -20,6 +20,7 @@ import toti.validation.ValidationResult;
 import toti.validation.Validator;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+import toti.answers.action.RequestInterruptedException;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
 
@@ -30,7 +31,7 @@ public class StructureListRuleTest {
 	@Parameters(method="dataCheck")
 	public void testCheck(Object originValue, Object newValue,
 			boolean canValidate, int errorCalling, int validatorCalling,
-			String propertyName, String format, RequestParameters params) {
+			String propertyName, String format, RequestParameters params) throws RequestInterruptedException {
 		ValidationResult result = mock(ValidationResult.class);
 		Translator translator = mock(Translator.class);
 		Identity identity = mock(Identity.class);

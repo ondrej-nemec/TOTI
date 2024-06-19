@@ -7,6 +7,7 @@ import toti.extensions.Translator;
 import toti.http.http.structures.RequestParameters;
 import toti.validation.ValidationItem;
 import toti.validation.Validator;
+import toti.answers.action.RequestInterruptedException;
 import toti.answers.request.Request;
 
 public class StructureMapRule implements Rule {
@@ -20,7 +21,7 @@ public class StructureMapRule implements Rule {
 	}
 
 	@Override
-	public void check(Request request, String propertyName, String ruleName, ValidationItem item) {
+	public void check(Request request, String propertyName, String ruleName, ValidationItem item) throws RequestInterruptedException {
 		try {
 			RequestParameters fields = new RequestParameters();
 			fields.putAll(new DictionaryValue(item.getOriginValue()).getMap());

@@ -21,6 +21,7 @@ import toti.validation.collections.RulesCollection;
 import toti.validation.rules.Rule;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+import toti.answers.action.RequestInterruptedException;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
 
@@ -76,7 +77,7 @@ public class ValidatorTest {
 			GlobalFunction globalFunction,
 			List<RulesCollection> rules,
 			ValidationResult expectedResult,
-			RequestParameters expectedParameters) {
+			RequestParameters expectedParameters) throws RequestInterruptedException {
 		Translator translator = new Translator() {
 			@Override
 			public String translate(String key) {
