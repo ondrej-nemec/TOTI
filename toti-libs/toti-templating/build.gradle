@@ -3,8 +3,8 @@ plugins {
     id 'java-test-fixtures'
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 17.0
+targetCompatibility = 17.0
 compileTestJava.options.encoding = 'UTF-8'
 
 repositories {

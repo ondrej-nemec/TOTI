@@ -2,8 +2,8 @@ plugins {
     id 'java-library'
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 17.0
+targetCompatibility = 17.0
 compileTestJava.options.encoding = 'UTF-8'
 
 repositories {
@@ -13,7 +13,7 @@ repositories {
 }
 
 ext {
-  JI_version = '3d42d68771'
+  JI_version = 'eb4dd62fab'
 }
 
 dependencies {
