@@ -17,7 +17,6 @@ ext {
 }
 
 dependencies {
-	api project('toti-libs:toti-http')
 	api project('toti-libs:toti-templating')
 	
 	api project('toti-application')

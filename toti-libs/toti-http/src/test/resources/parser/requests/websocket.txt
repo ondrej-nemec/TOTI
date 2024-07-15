@@ -1,5 +1,0 @@
-POST /some/url HTTP/1.1
-some-header: my header value
-Upgrade: websocket
-Origin: me
-Sec-WebSocket-Key: myRequest
