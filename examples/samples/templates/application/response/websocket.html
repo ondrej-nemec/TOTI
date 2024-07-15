@@ -51,7 +51,7 @@
         var scheme = document.location.protocol === "https:" ? "wss" : "ws";
         var port = document.location.port ? (":" + document.location.port) : "";
 
-        connectionUrl.value = scheme + "://" + document.location.hostname + port + "/examples/responses/websocket" ;
+        connectionUrl.value = scheme + "://" + document.location.hostname + port + "/application/response/websocket" ;
 
         function updateState() {
             function disable() {

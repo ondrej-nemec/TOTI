@@ -13,13 +13,14 @@ import org.apache.logging.log4j.Logger;
 import ji.files.text.Text;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
+import toti.answers.response.FinalResponse;
 import toti.answers.response.Response;
 import toti.answers.response.TextResponse;
 import toti.application.register.MappedAction;
 import toti.application.register.Register;
 import toti.answers.response.ResponseContainer;
 import toti.extensions.TranslatorExtension;
-import toti.http.http.StatusCode;
+import toti.http.StatusCode;
 import toti.logging.ExceptionHashCode;
 import toti.logging.FileName;
 
@@ -48,18 +49,17 @@ public class ExceptionAnswer {
 		}
 	}
 
-	public toti.http.http.structures.Response answer(
-			toti.http.http.structures.Request request,
-			Headers requestHeaders,
+	public FinalResponse answer(
+			Request request,
 			StatusCode status, Throwable t,
 			Identity identity, MappedAction mappedAction,
 			Headers responseHeaders,
 			String charset
 		) {
 		
-		return getResponse(request, requestHeaders, status, t, identity, mappedAction, charset)
-		.getResponse(
-			request.getProtocol(), responseHeaders, identity,
+		return getResponse(request, status, t, identity, mappedAction, charset)
+		.prepare(
+			responseHeaders, identity,
 			new ResponseContainer(
 				translator.getTranslator(identity), null, mappedAction, null, null
 			),
@@ -68,8 +68,7 @@ public class ExceptionAnswer {
 	}
 	
 	protected Response getResponse(
-			toti.http.http.structures.Request request,
-			Headers requestHeaders,
+			Request request,
 			StatusCode status, Throwable t, Identity identity, MappedAction mappedAction, String charset) {
 		FileName fileName = getFileName(mappedAction, status, t);
 		String message = "Exception occured %s. URL: %s %s.";
@@ -79,17 +78,17 @@ public class ExceptionAnswer {
 		logger.error(String.format(message, status, request.getMethod(), request.getUri()), t);
 		
 		boolean isDevelopResponseAllowed = developIps.contains(identity.getIP());
-		boolean isAsyncRequest = requestHeaders.isAsyncRequest(); // probably js request
+		boolean isAsyncRequest = request.getHeaders().isAsyncRequest(); // probably js request
 		
 		if (register.getCustomExceptionResponse() != null) {
 			try {
 				return register.getCustomExceptionResponse()
-					.catchException(Request.fromRequest(request, requestHeaders), status, identity, translator, t, isDevelopResponseAllowed, isAsyncRequest);
+					.catchException(request, status, identity, translator, t, isDevelopResponseAllowed, isAsyncRequest);
 			} catch (Throwable t1) {
 				logger.error("CustomExceptionResponse fail, default implementation continue", t1);
 			}
 		}
-		String exceptionDetail = getExceptionDetail(request, requestHeaders, status, t, identity, mappedAction);
+		String exceptionDetail = getExceptionDetail(request, status, t, identity, mappedAction);
 		if (isAsyncRequest) {
 			saveToFile(fileName, exceptionDetail, charset);
 			if (isDevelopResponseAllowed) {
@@ -124,8 +123,8 @@ public class ExceptionAnswer {
 		);
 	}
 
-	protected String getExceptionDetail(toti.http.http.structures.Request request,
-			Headers requestHeaders, StatusCode status, Throwable t, Identity identity, MappedAction mappedAction) {
+	protected String getExceptionDetail(Request request,
+			StatusCode status, Throwable t, Identity identity, MappedAction mappedAction) {
 		String title = String.format("<title>Exception %s</title>", status);
 		String headline = String.format(
 			"<h1>Exception occured: %s %s</h1>"

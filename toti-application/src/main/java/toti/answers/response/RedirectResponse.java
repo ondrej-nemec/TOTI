@@ -3,8 +3,7 @@ package toti.answers.response;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.answers.router.Link;
-import toti.http.http.StatusCode;
-import toti.http.http.structures.Protocol;
+import toti.http.StatusCode;
 
 public class RedirectResponse implements Response {
 
@@ -22,17 +21,14 @@ public class RedirectResponse implements Response {
 	}
 	
 	@Override
-	public toti.http.http.structures.Response getResponse(
-			Protocol protocol,
-			Headers header,
+	public FinalResponse prepare(
+			Headers headers,
 			Identity identity,
 			ResponseContainer container,
 			String charset) {
-		header.addHeader("Location", url);
-		toti.http.http.structures.Response res = new toti.http.http.structures.Response(code, protocol);
-		res.setHeaders(header.getHeaders());
-		res.setHeaders(this.headers.getHeaders());
-		return res;
+		headers.addHeader("Location", url);
+		headers.setHeaders(this.headers.getHeaders());
+		return new FinalResponse(code, headers);
 	}
 
 	@Override

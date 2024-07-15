@@ -9,12 +9,13 @@ import toti.ServerException;
 import toti.answers.request.Identity;
 import toti.answers.request.IdentityFactory;
 import toti.answers.request.Request;
+import toti.answers.response.FinalResponse;
 import toti.answers.response.Response;
 import toti.answers.response.ResponseContainer;
 import toti.application.register.MappedAction;
 import toti.extensions.TotiExtension;
 import toti.extensions.TranslatorExtension;
-import toti.http.http.StatusCode;
+import toti.http.StatusCode;
 import toti.extensions.TemplateExtension;
 
 public class TotiAnswer {
@@ -36,15 +37,15 @@ public class TotiAnswer {
 		extensions.forEach(e->e.getListeningUri().forEach(u->this.extensions.put(u, e)));
 	}
 	
-	public toti.http.http.structures.Response answer(
-			toti.http.http.structures.Request request, Headers requestHeaders,
+	public FinalResponse answer(
+			Request request,
 			Identity identity, Headers responseHeaders, String charset
 		) throws ServerException {
 		ObjectBuilder<String> moduleName = new ObjectBuilder<>();
-		String uri = request.getPlainUri().substring(5);
-		return getResponse(uri, Request.fromRequest(request, requestHeaders), identity, responseHeaders, moduleName)
-				.getResponse(
-					request.getProtocol(), responseHeaders, identity,
+		String uri = request.getUri().substring(5);
+		return getResponse(uri, request, identity, responseHeaders, moduleName)
+				.prepare(
+					responseHeaders, identity,
 					new ResponseContainer(
 						translatorExtension.getTranslator(identity), null,
 						MappedAction.totiAnswer(moduleName.get()),

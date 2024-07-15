@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.function.Function;
 
 import toti.extensions.Translator;
-import toti.http.http.structures.UploadedFile;
+import toti.http.UploadedFile;
 
 public class FileAllowedTypesRule extends SimpleRule<Collection<Object>> {
 

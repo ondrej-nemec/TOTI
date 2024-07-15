@@ -1,7 +1,7 @@
 package toti.samples.application;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 import org.apache.logging.log4j.Logger;
 
 import toti.application.Task;
-import toti.http.http.structures.WebSocket;
+import toti.http.WebSocket;
 
 public class TaskExample implements Task {
 	
@@ -37,15 +37,16 @@ public class TaskExample implements Task {
 		this.websocket = null;
 	}
 	
-	public BiConsumer<Boolean, ByteArrayOutputStream> onMessage() {
+	public BiConsumer<Boolean, ByteBuffer> onMessage() {
 		return (isBinary, message)->{
-			String text = new String(message.toByteArray());
+			String text = new String(message.array());
 			if ("end".equals(text)) {
 				websocket.close();
 				websocket = null;
 				return;
 			}
 			lastMesage = text;
+			count++;
 			try {
 				websocket.send("Thank you");
 			} catch (IOException e) {
@@ -54,7 +55,7 @@ public class TaskExample implements Task {
 		};
 	}
 	
-	public final Consumer<IOException> onError() {
+	public final Consumer<Throwable> onError() {
 		return (e)->{
 			logger.warn("Mesage receiving", e);
 		};

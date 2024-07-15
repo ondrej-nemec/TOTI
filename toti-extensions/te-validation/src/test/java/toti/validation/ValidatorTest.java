@@ -16,7 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import toti.extensions.Translator;
-import toti.http.http.structures.RequestParameters;
+import toti.http.RequestParameters;
 import toti.validation.collections.RulesCollection;
 import toti.validation.rules.Rule;
 import junitparams.JUnitParamsRunner;

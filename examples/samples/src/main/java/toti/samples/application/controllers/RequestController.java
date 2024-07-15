@@ -6,9 +6,9 @@ import toti.answers.action.BodyType;
 import toti.answers.action.ResponseAction;
 import toti.answers.action.ResponseBuilder;
 import toti.answers.response.Response;
-import toti.http.http.HttpMethod;
-import toti.http.http.StatusCode;
-import toti.http.http.structures.UploadedFile;
+import toti.http.HttpMethod;
+import toti.http.StatusCode;
+import toti.http.UploadedFile;
 
 /**
  * This example shows how different type of request are served

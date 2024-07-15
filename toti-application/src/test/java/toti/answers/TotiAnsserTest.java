@@ -27,8 +27,8 @@ import toti.answers.response.TextResponse;
 import toti.application.register.Register;
 import toti.extensions.TotiExtension;
 import toti.extensions.TranslatorExtension;
-import toti.http.http.StatusCode;
-import toti.http.http.structures.RequestParameters;
+import toti.http.StatusCode;
+import toti.http.RequestParameters;
 import toti.extensions.TemplateExtension;
 
 @RunWith(JUnitParamsRunner.class)

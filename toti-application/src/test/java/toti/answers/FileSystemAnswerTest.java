@@ -3,6 +3,8 @@ package toti.answers;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import java.util.Optional;
+
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,11 +13,11 @@ import ji.common.structures.MapDictionary;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import toti.ServerException;
-import toti.http.http.HttpMethod;
-import toti.http.http.StatusCode;
-import toti.http.http.structures.Protocol;
-import toti.http.http.structures.Request;
-import toti.http.http.structures.Response;
+import toti.answers.request.Request;
+import toti.answers.response.FinalResponse;
+import toti.http.HttpMethod;
+import toti.http.RequestParameters;
+import toti.http.StatusCode;
 
 @RunWith(JUnitParamsRunner.class)
 public class FileSystemAnswerTest {
@@ -77,10 +79,9 @@ public class FileSystemAnswerTest {
 		Headers responseHeaders = mock(Headers.class);
 		Request request = createRequest(uri);
 		
-		Response actual = answer.answer(request, responseHeaders, "toti-charset");
+		FinalResponse actual = answer.answer(request, responseHeaders, "toti-charset");
 		
-		Response expected = new Response(StatusCode.OK, Protocol.HTTP_2);
-		expected.setBody("Index content".getBytes());
+		FinalResponse expected = new FinalResponse(StatusCode.OK, mock(Headers.class), "Index content");
 		
 		assertEquals(message, expected, actual);
 		verify(responseHeaders, times(1)).addHeader("Content-Type", "text/plain; charset=toti-charset");
@@ -103,16 +104,16 @@ public class FileSystemAnswerTest {
 		Headers responseHeaders = mock(Headers.class);
 		Request request = createRequest("/subdir");
 		
-		Response actual = answer.answer(request, responseHeaders, "toti-charset");
+		FinalResponse actual = answer.answer(request, responseHeaders, "toti-charset");
 		
-		Response expected = new Response(StatusCode.OK, Protocol.HTTP_2);
-		expected.addHeader("Content-Type", "text/plain"); // headers is default text header and is overrided later
-		expected.setBody((
+		FinalResponse expected = new FinalResponse(
+			StatusCode.OK,
+			new Headers().addHeader("Content-Type", "text/plain"), // headers is default text header and is overrided later
 			"Folder: <br>"
 			+ "<a href='/subdir/..'>..</a><br>"
 			+ "<a href='/subdir/a.txt'>a.txt</a><br>"
 			+ "<a href='/subdir/b.txt'>b.txt</a><br>"
-		).getBytes());
+		);
 		
 		assertEquals(expected, actual);
 		verify(responseHeaders, times(1)).addHeader("Content-Type", "text/html; charset=toti-charset");
@@ -127,10 +128,9 @@ public class FileSystemAnswerTest {
 		Headers responseHeaders = mock(Headers.class);
 		Request request = createRequest("/someFile.txt");
 		
-		Response actual = answer.answer(request, responseHeaders, "toti-charset");
+		FinalResponse actual = answer.answer(request, responseHeaders, "toti-charset");
 		
-		Response expected = new Response(StatusCode.OK, Protocol.HTTP_2);
-		expected.setBody("Some file content".getBytes());
+		FinalResponse expected = new FinalResponse(StatusCode.OK, new Headers(), "Some file content");
 		
 		assertEquals(expected, actual);
 		verify(responseHeaders, times(1)).addHeader("Content-Type", "text/plain; charset=toti-charset");
@@ -143,9 +143,10 @@ public class FileSystemAnswerTest {
 	}
 	
 	private Request createRequest(String uri) {
-		Request request = new Request(HttpMethod.GET, uri, Protocol.HTTP_2);
-		request.setUriParams(uri, MapDictionary.hashMap());
-		return request;
+		return new Request(
+			uri, HttpMethod.GET, new Headers(),
+			MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty()
+		);
 	}
 	
 }

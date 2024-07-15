@@ -15,8 +15,8 @@ import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.answers.response.Response;
 import toti.extensions.Translator;
-import toti.http.http.StatusCode;
-import toti.http.http.structures.RequestParameters;
+import toti.http.StatusCode;
+import toti.http.RequestParameters;
 import toti.validation.collections.RulesCollection;
 import toti.validation.rules.Rule;
 

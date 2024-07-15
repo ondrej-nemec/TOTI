@@ -13,8 +13,8 @@ import toti.answers.action.ResponseAction;
 import toti.answers.action.ResponseBuilder;
 import toti.answers.response.Response;
 import toti.answers.router.Link;
-import toti.http.http.StatusCode;
-import toti.http.http.structures.WebSocket;
+import toti.http.StatusCode;
+import toti.http.WebSocket;
 import toti.samples.application.TaskExample;
 
 @Controller("response")
@@ -32,7 +32,7 @@ public class ResponseController {
 	 * Returns given file, file can be from any path from disk
 	 * Path can be relative or absolute
 	 * Path can be from directory tree or classpath
-	 * @return http://localhost:8080/appication/response/file
+	 * @return http://localhost:8080/application/response/file
 	 */
 	@Action(path="file")
 	public ResponseAction getFile() {
@@ -48,7 +48,7 @@ public class ResponseController {
 
 	/**
 	 * Returns new file generated inside method
-	 * @return http://localhost:8080/appication/response/generate
+	 * @return http://localhost:8080/application/response/generate
 	 */
 	@Action(path="generate")
 	public ResponseAction getGenerated() {
@@ -67,7 +67,7 @@ public class ResponseController {
 
 	/**
 	 * Returns data as JSON. See https://ondrej-nemec.github.io/JI/?file=files-json.html for more about Object->JSON
-	 * @return http://localhost:8080/appication/response/json
+	 * @return http://localhost:8080/application/response/json
 	 */
 	@Action(path="json")
 	public ResponseAction getJson() {
@@ -83,7 +83,7 @@ public class ResponseController {
 
 	/**
 	 * Returns text as response
-	 * @return http://localhost:8080/appication/response/text
+	 * @return http://localhost:8080/application/response/text
 	 */
 	@Action(path="text")
 	public ResponseAction getText() {
@@ -94,7 +94,7 @@ public class ResponseController {
 
 	/**
 	 * Parse given template with paramters to HTML
-	 * @return http://localhost:8080/appication/response/template
+	 * @return http://localhost:8080/application/response/template
 	 */
 	@Action(path="template")
 	public ResponseAction getTemplate() {
@@ -110,7 +110,7 @@ public class ResponseController {
 
 	/**
 	 * Redirect to given relative URL.
-	 * @return http://localhost:8080/appication/response/redirect
+	 * @return http://localhost:8080/application/response/redirect
 	 */
 	@Action(path="redirect")
 	public ResponseAction getRedirect() {
@@ -121,7 +121,7 @@ public class ResponseController {
 
 	/**
 	 * Redirect to given URL. <strong>Open redirection vulnerability</strong>
-	 * @return http://localhost:8080/appication/response/open-redirect
+	 * @return http://localhost:8080/application/response/open-redirect
 	 */
 	@Action(path="open-redirect")
 	public ResponseAction getOpenRedirect() {
@@ -132,17 +132,24 @@ public class ResponseController {
 
 	/**
 	 * Create websocket connection
-	 * @return http://localhost:8080/appication/response/websocket
+	 * @return http://localhost:8080/application/response/websocket
 	 */
 	@Action(path="websocket")
-	public ResponseAction getWebsocket(WebSocket websocket) {
+	public ResponseAction getWebsocket() {
 		return ResponseBuilder.get().createResponse((req, translator, identity)->{
-			 // websocket can be null - means this request is not valid websocket request
-			if (websocket != null) {
-				task.setWebsocket(websocket);
-				return Response.getWebsocket(websocket, task.onMessage(), task.onError(), (x)->task.removeWebsocket());
+			try {
+				// websocket can be empty - means this request is not valid websocket request
+				if (req.getWebsocket().isPresent()) {
+					WebSocket webSocket = req.getWebsocket().get();
+					webSocket.accept(task.onMessage(), task.onError(), (x)->task.removeWebsocket());
+					task.setWebsocket(webSocket);
+					return Response.getWebsocket(webSocket);
+				}
+				return Response.OK().getFile("templates/application/response/websocket.html");
+			} catch (Exception e) {
+				e.printStackTrace();
+				return Response.INTERNAL_SERVER_ERROR().getEmpty();
 			}
-			return Response.OK().getFile("templates/application/response/websockets.html");
 		});
 	}
 }

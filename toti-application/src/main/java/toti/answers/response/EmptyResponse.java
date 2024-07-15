@@ -2,8 +2,7 @@ package toti.answers.response;
 
 import toti.answers.Headers;
 import toti.answers.request.Identity;
-import toti.http.http.StatusCode;
-import toti.http.http.structures.Protocol;
+import toti.http.StatusCode;
 
 public class EmptyResponse implements Response {
 
@@ -16,16 +15,13 @@ public class EmptyResponse implements Response {
 	}
 	
 	@Override
-	public toti.http.http.structures.Response getResponse(
-			Protocol protocol,
+	public FinalResponse prepare(
 			Headers header,
 			Identity identity,
 			ResponseContainer container,
 			String charset) {
-		toti.http.http.structures.Response response = new toti.http.http.structures.Response(code, protocol);
-		response.setHeaders(header.getHeaders());
-		response.setHeaders(this.headers.getHeaders());
-		return response;
+		header.setHeaders(this.headers.getHeaders());
+		return new FinalResponse(code, header);
 	}
 
 	@Override

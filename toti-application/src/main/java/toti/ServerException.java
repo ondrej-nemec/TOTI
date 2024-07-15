@@ -1,7 +1,7 @@
 package toti;
 
 import toti.application.register.MappedAction;
-import toti.http.http.StatusCode;
+import toti.http.StatusCode;
 
 public class ServerException extends Exception {
 	

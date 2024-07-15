@@ -4,7 +4,7 @@ import java.util.function.Function;
 
 import ji.common.structures.DictionaryValue;
 import toti.extensions.Translator;
-import toti.http.http.structures.RequestParameters;
+import toti.http.RequestParameters;
 import toti.validation.ValidationItem;
 import toti.validation.Validator;
 import toti.answers.action.RequestInterruptedException;

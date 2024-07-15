@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import ji.common.structures.DictionaryValue;
@@ -38,6 +39,11 @@ public class Headers {
 	
 	public void setHeaders(Map<String, List<Object>> headers) {
 		this.headers.putAll(headers);
+	}
+	
+	public void setHeader(String name, List<Object> values) {
+		String headerName = name.toLowerCase();
+		headers.put(headerName, values);
 	}
 	
 	public List<Object> getHeaders(String name) {
@@ -83,6 +89,10 @@ public class Headers {
 		return  Optional.empty();
 	}
 
+	public void forEach(BiConsumer<String, List<Object>> consumer) {
+		headers.forEach(consumer);
+	}
+	
 	
 	/**
 	 * Determite if request is brower link or not

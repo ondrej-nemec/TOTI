@@ -1,13 +1,14 @@
 package toti.answers.response;
 
+import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
 import toti.answers.Headers;
 import toti.answers.request.Identity;
-import toti.http.http.StatusCode;
-import toti.http.http.structures.Protocol;
+import toti.http.StatusCode;
 
 public class TemplateResponse implements Response {
 	
@@ -24,9 +25,8 @@ public class TemplateResponse implements Response {
 	}
 
 	@Override
-	public toti.http.http.structures.Response getResponse(
-			Protocol protocol,
-			Headers header, 
+	public FinalResponse prepare(
+			Headers headers, 
 			Identity identity, 
 			ResponseContainer container,
 			String charset) {
@@ -34,8 +34,9 @@ public class TemplateResponse implements Response {
 		params.put("nonce", nonce);
 		params.put("totiIdentity", identity);
 		
-		/* Headers resHeaders = new Headers(new HashMap<>());
-		header.getHeaders().forEach((n, l)->{
+		Headers resHeaders = new Headers(new HashMap<>());
+		resHeaders.setHeaders(this.headers.getHeaders());
+		headers.getHeaders().forEach((n, l)->{
 			l.forEach(v->{
 				if (v != null && v instanceof String) {
 					resHeaders.addHeader(n, v.toString().replace("{nonce}", nonce));
@@ -44,25 +45,9 @@ public class TemplateResponse implements Response {
 				}
 			});
 		});
-		setContentType(fileName, charset, resHeaders);*/
-		toti.http.http.structures.Response response = new toti.http.http.structures.Response(code, protocol);
+		resHeaders.addHeader("Content-Type", getContentType(fileName, charset));
 		
-		// response.setHeaders(resHeaders.getHeaders());
-		header.getHeaders().forEach((n, l)->{
-			l.forEach(v->{
-				if (v != null && v instanceof String) {
-					response.addHeader(n, v.toString().replace("{nonce}", nonce));
-				} else {
-					response.addHeader(n, v);
-				}
-			});
-		});
-		response.addHeader("Content-Type", getContentType(fileName, charset));
-		response.setHeaders(this.headers.getHeaders());
-		
-		
-		response.setBody(createResponse(container).getBytes());
-		return response;
+		return new FinalResponse(code, resHeaders, ByteBuffer.wrap(createResponse(container).getBytes()));
 	}
 	
 	public String createResponse(ResponseContainer container) {

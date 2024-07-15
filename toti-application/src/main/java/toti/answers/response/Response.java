@@ -1,30 +1,19 @@
 package toti.answers.response;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-
 import ji.common.functions.FileExtension;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
-import toti.http.http.StatusCode;
-import toti.http.http.structures.Protocol;
-import toti.http.http.structures.WebSocket;
+import toti.http.StatusCode;
+import toti.http.WebSocket;
 
 public interface Response {
-
-	toti.http.http.structures.Response getResponse(
-			Protocol protocol,
-			Headers responseHeaders,
-			Identity identity,
-			ResponseContainer container,
-			String charset
+	
+	FinalResponse prepare(
+		Headers headers,
+		Identity identity,
+		ResponseContainer container,
+		String charset
 	);
-
-	default toti.http.http.structures.Response getResponse(Protocol protocol, Headers responseHeaders, String charset) {
-		return getResponse(protocol, responseHeaders, null, null, charset);
-	}
 	
 	/***********/
 
@@ -64,11 +53,8 @@ public interface Response {
 	 * @param onError
 	 * @return
 	 */
-	static Response getWebsocket(WebSocket websocket,
-			BiConsumer<Boolean, ByteArrayOutputStream> onMessage,
-			Consumer<IOException> onError,
-			Consumer<String> onClose) {
-		return new WebsocketResponse(new Headers(), websocket, onMessage, onError, onClose);
+	static Response getWebsocket(WebSocket webSocket) {
+		return new WebsocketResponse(webSocket, new Headers());
 	}
 	
 	/***************************/

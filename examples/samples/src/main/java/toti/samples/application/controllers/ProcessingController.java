@@ -8,7 +8,7 @@ import toti.answers.action.RequestInterruptedException;
 import toti.answers.action.ResponseAction;
 import toti.answers.action.ResponseBuilder;
 import toti.answers.response.Response;
-import toti.http.http.StatusCode;
+import toti.http.StatusCode;
 
 @Controller("processing")
 public class ProcessingController {

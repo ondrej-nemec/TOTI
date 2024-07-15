@@ -15,7 +15,7 @@ dependencies {
 	//api project(':toti-libs:toti-templating')
 	api 'com.github.ondrej-nemec.JI:JI:' + JI_version
 	
-	api project(':toti-libs:toti-http')
+	// api project(':toti-libs:toti-http')
 	
 	// compile files("${System.properties['java.home']}/../lib/tools.jar")
 	
@@ -29,7 +29,18 @@ dependencies {
     // https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-server
 	implementation group: 'org.eclipse.jetty', name: 'jetty-server', version: '12.0.10'
 	// https://mvnrepository.com/artifact/org.eclipse.jetty.http2/jetty-http2-server
-	//implementation group: 'org.eclipse.jetty.http2', name: 'jetty-http2-server', version: '12.0.10'
+	implementation group: 'org.eclipse.jetty.http2', name: 'jetty-http2-server', version: '12.0.10'
+	// https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-alpn-server
+	implementation group: 'org.eclipse.jetty', name: 'jetty-alpn-server', version: '12.0.11'
+	// https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-alpn-java-server
+	implementation group: 'org.eclipse.jetty', name: 'jetty-alpn-java-server', version: '12.0.11'
+	// https://mvnrepository.com/artifact/org.eclipse.jetty.websocket/jetty-websocket-jetty-api
+	implementation group: 'org.eclipse.jetty.websocket', name: 'jetty-websocket-jetty-api', version: '12.0.11'
+	// https://mvnrepository.com/artifact/org.eclipse.jetty.websocket/jetty-websocket-jetty-server
+	implementation group: 'org.eclipse.jetty.websocket', name: 'jetty-websocket-jetty-server', version: '12.0.11'
+
+	
+	
 	
 	// TODO temporary
 	// https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api

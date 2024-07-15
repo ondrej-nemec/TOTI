@@ -40,6 +40,7 @@ import toti.answers.request.Identity;
 import toti.answers.request.IdentityFactory;
 import toti.answers.request.Request;
 import toti.answers.response.EmptyResponse;
+import toti.answers.response.FinalResponse;
 import toti.answers.response.Response;
 import toti.answers.response.TextResponse;
 import toti.answers.router.Link;
@@ -50,10 +51,9 @@ import toti.extensions.AuthenticationExtension;
 import toti.extensions.TemplateExtension;
 import toti.extensions.Translator;
 import toti.extensions.TranslatorExtension;
-import toti.http.http.HttpMethod;
-import toti.http.http.StatusCode;
-import toti.http.http.structures.Protocol;
-import toti.http.http.structures.RequestParameters;
+import toti.http.HttpMethod;
+import toti.http.StatusCode;
+import toti.http.RequestParameters;
 
 @RunWith(JUnitParamsRunner.class)
 public class ControllerAnswerTest implements TestCase {
@@ -79,17 +79,21 @@ public class ControllerAnswerTest implements TestCase {
 		));
 		// doReturn(null).when(answer).getMappedAction(any(), any(), any());
 		
-		toti.http.http.structures.Request r = new toti.http.http.structures.Request(HttpMethod.GET, "/a/b/c", Protocol.HTTP_1_1);
-		r.setUriParams("/a/b/c", MapDictionary.hashMap());
+		Request r =  new Request(
+			"/a/b/c", HttpMethod.GET, new Headers(),
+			MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty()
+		);
 		
-		assertNull(answer.answer(r, mock(Identity.class), new Headers(), Optional.empty(), new Headers(), ""));
+		assertNull(answer.answer(r, mock(Identity.class), new Headers(), ""));
 		
-		verify(answer, times(1)).answer(any(), any(), any(), any(), any(), any());
+		verify(answer, times(1)).answer(any(), any(), any(), any());
 		verify(answer, times(1)).getMappedAction(root, new LinkedList<>(Arrays.asList(
 				"a", "b", "c"
-			)),  HttpMethod.GET, new Request(
-			HttpMethod.GET, new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty()
-		));
+			)), HttpMethod.GET, new Request(
+				"/a/b/c", HttpMethod.GET, new Headers(),
+				MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty()
+			)
+		);
 		verify(router, times(1)).getUrlMapping("/a/b/c");
 		verify(answer, times(1)).getUrlParts("/a/b/c");
 		verifyNoMoreInteractions(translator, identityFactory, authenticationExtension, answer, router);
@@ -117,24 +121,26 @@ public class ControllerAnswerTest implements TestCase {
 			authenticationExtension, identityFactory,
 			mock(Link.class), translatorExtension, mock(Logger.class)
 		));
-		toti.http.http.structures.Response rs = mock(toti.http.http.structures.Response.class);
+		FinalResponse finalResponse = mock(FinalResponse.class);
 		Response response = mock(Response.class);
-		when(response.getResponse(any(), any(), any(), any(), any())).thenReturn(rs);
+		when(response.prepare(any(), any(), any(), any())).thenReturn(finalResponse);
 		doReturn(mappedAction).when(answer).getMappedAction(any(), any(), any(), any());
 		doReturn(response).when(answer).run(any(), any(), any(), any());
 
 		Headers responseHeaders = new Headers();
 		
-		toti.http.http.structures.Request r = new toti.http.http.structures.Request(HttpMethod.GET, "/a/b/c", Protocol.HTTP_1_1);
-		r.setUriParams("/a/b/c", MapDictionary.hashMap());
+		Request r = new Request(
+			"/a/b/c", HttpMethod.GET, new Headers(),
+			MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty()
+		);
 		
-		assertEquals(rs, answer.answer(r, identity, new Headers(), Optional.empty(), responseHeaders, ""));
+		assertEquals(finalResponse, answer.answer(r, identity, responseHeaders, ""));
 
 		Request request = new Request(
-			HttpMethod.GET, new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty()
+			"", HttpMethod.GET, new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty()
 		);
 
-		verify(answer, times(1)).answer(any(), any(), any(), any(), any(), any());
+		verify(answer, times(1)).answer(any(), any(), any(), any());
 		verify(answer, times(1)).getMappedAction(root, new LinkedList<>(
 			Arrays.asList("a", "b", "c")
 		), HttpMethod.GET, request);
@@ -179,7 +185,10 @@ public class ControllerAnswerTest implements TestCase {
 			mock(AuthenticationExtension.class), mock(IdentityFactory.class),
 			mock(Link.class), translatorExtension, mock(Logger.class)
 		);
-		Request request = new Request(HttpMethod.GET, new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty());
+		Request request = new Request(
+			"", HttpMethod.GET, new Headers(), MapDictionary.hashMap(),
+			new RequestParameters(), null, Optional.empty()
+		);
 
 		LinkedList<String> urls = new LinkedList<>();
 		if (url.length() > 0) {
@@ -432,7 +441,10 @@ public class ControllerAnswerTest implements TestCase {
 			authenticationExtension, mock(IdentityFactory.class),
 			mock(Link.class), translatorExtension, mock(Logger.class)
 		);
-		Request request = new Request(HttpMethod.GET, new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty());
+		Request request = new Request(
+			"", HttpMethod.GET, new Headers(), MapDictionary.hashMap(),
+			new RequestParameters(), null, Optional.empty()
+		);
 		request.getPathParams().addAll(pathParams);
 		
 		Response actual = answer.run(uri, action, request, identity);
@@ -910,6 +922,7 @@ public class ControllerAnswerTest implements TestCase {
 			mock(Link.class), mock(TranslatorExtension.class), mock(Logger.class)
 		);
 		Request request = new Request(
+			"",
 			HttpMethod.GET, 
 			new Headers(), 
 			MapDictionary.hashMap(),
@@ -937,6 +950,7 @@ public class ControllerAnswerTest implements TestCase {
 			// request contains body in map - nothing change
 			new Object[] {
 				new Request(
+					"",
 					HttpMethod.GET,
 					new Headers(), 
 					MapDictionary.hashMap(),
@@ -955,6 +969,7 @@ public class ControllerAnswerTest implements TestCase {
 			// request contains body with json - allowed - add
 			new Object[] {
 				new Request(
+					"",
 					HttpMethod.GET,
 					new Headers().addHeader("content-type", "application/json"), 
 					MapDictionary.hashMap(),
@@ -973,6 +988,7 @@ public class ControllerAnswerTest implements TestCase {
 			// request contains body with json - not allowed - nothing
 			new Object[] {
 				new Request(
+					"",
 					HttpMethod.GET,
 					new Headers().addHeader("content-type", "application/json"), 
 					MapDictionary.hashMap(),
@@ -988,6 +1004,7 @@ public class ControllerAnswerTest implements TestCase {
 			// request contains body with json - without header - nothing
 			new Object[] {
 				new Request(
+					"",
 					HttpMethod.GET,
 					new Headers(), 
 					MapDictionary.hashMap(),
@@ -1003,6 +1020,7 @@ public class ControllerAnswerTest implements TestCase {
 			// request contains body with json - but list - nothing
 			new Object[] {
 				new Request(
+					"",
 					HttpMethod.GET,
 					new Headers().addHeader("content-type", "application/json"), 
 					MapDictionary.hashMap(),
@@ -1018,6 +1036,7 @@ public class ControllerAnswerTest implements TestCase {
 			// request contains body with xml - allowed - add
 			new Object[] {
 				new Request(
+					"",
 					HttpMethod.GET,
 					new Headers().addHeader("content-type", "application/xml"), 
 					MapDictionary.hashMap(),
@@ -1036,6 +1055,7 @@ public class ControllerAnswerTest implements TestCase {
 			// request contains body with xml - not allowed - nothing
 			new Object[] {
 				new Request(
+					"",
 					HttpMethod.GET,
 					new Headers().addHeader("content-type", "application/xml"), 
 					MapDictionary.hashMap(),
@@ -1051,6 +1071,7 @@ public class ControllerAnswerTest implements TestCase {
 			// request contains body with xml - without header - nothing
 			new Object[] {
 				new Request(
+					"",
 					HttpMethod.GET,
 					new Headers(), 
 					MapDictionary.hashMap(),

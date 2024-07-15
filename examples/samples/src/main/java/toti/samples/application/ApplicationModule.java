@@ -17,7 +17,7 @@ import toti.application.Task;
 import toti.application.register.Register;
 import toti.extension.templating.TemplateExtension;
 import toti.extensions.auth.AuthenticationExtension;
-import toti.http.http.StatusCode;
+import toti.http.StatusCode;
 import toti.extensions.CustomExceptionExtension;
 import toti.extensions.TranslatorExtension;
 import toti.samples.application.controllers.ExceptionsController;

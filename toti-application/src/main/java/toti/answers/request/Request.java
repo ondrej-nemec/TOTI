@@ -8,15 +8,16 @@ import ji.common.structures.DictionaryValue;
 import ji.common.structures.ListDictionary;
 import ji.common.structures.MapDictionary;
 import toti.answers.Headers;
-import toti.http.http.HttpMethod;
-import toti.http.http.structures.RequestParameters;
-import toti.http.http.structures.WebSocket;
+import toti.http.HttpMethod;
+import toti.http.RequestParameters;
+import toti.http.WebSocket;
 
 public class Request {
 
 	private final Headers headers;
 	
 	private final HttpMethod method;
+	private final String uri;
 	private final MapDictionary<String> queryParams;
 	private final ListDictionary pathParams;
 	private final RequestParameters bodyParams;
@@ -25,32 +26,15 @@ public class Request {
 	
 	private final MapDictionary<String> data;
 	
-	public static Request fromRequest(toti.http.http.structures.Request request, Headers requestHeaders) {
-		return fromRequest(request, requestHeaders, Optional.empty());
-	}
-	
-	public static Request fromRequest(
-			toti.http.http.structures.Request request,
-			Headers requestHeaders,
-			Optional<WebSocket> websocket
-		) {
-		return new Request(
-			request.getMethod(),
-			requestHeaders,
-			request.getQueryParameters(),
-			request.getBodyInParameters(),
-			request.getBody(),
-			websocket
-		);
-	}
-	
 	public Request(
+			String uri,
 			HttpMethod method,
 			Headers headers,
 			MapDictionary<String> queryParams,
 			RequestParameters bodyParams,
 			byte[] body, // TODO optional too
 			Optional<WebSocket> websocket) {
+		this.uri = uri;
 		this.method = method;
 		this.queryParams = queryParams;
 		this.headers = headers;
@@ -59,6 +43,10 @@ public class Request {
 		this.data = MapDictionary.hashMap();
 		this.pathParams = ListDictionary.linkedList();
 		this.websocket = websocket;
+	}
+	
+	public String getUri() {
+		return uri;
 	}
 	
 	public HttpMethod getMethod() {
@@ -151,8 +139,10 @@ public class Request {
 		result = prime * result + ((bodyParams == null) ? 0 : bodyParams.hashCode());
 		result = prime * result + ((data == null) ? 0 : data.hashCode());
 		result = prime * result + ((headers == null) ? 0 : headers.hashCode());
+		result = prime * result + ((method == null) ? 0 : method.hashCode());
 		result = prime * result + ((pathParams == null) ? 0 : pathParams.hashCode());
 		result = prime * result + ((queryParams == null) ? 0 : queryParams.hashCode());
+		result = prime * result + ((uri == null) ? 0 : uri.hashCode());
 		result = prime * result + ((websocket == null) ? 0 : websocket.hashCode());
 		return result;
 	}
@@ -193,6 +183,9 @@ public class Request {
 		} else if (!headers.equals(other.headers)) {
 			return false;
 		}
+		if (method != other.method) {
+			return false;
+		}
 		if (pathParams == null) {
 			if (other.pathParams != null) {
 				return false;
@@ -207,6 +200,13 @@ public class Request {
 		} else if (!queryParams.equals(other.queryParams)) {
 			return false;
 		}
+		if (uri == null) {
+			if (other.uri != null) {
+				return false;
+			}
+		} else if (!uri.equals(other.uri)) {
+			return false;
+		}
 		if (websocket == null) {
 			if (other.websocket != null) {
 				return false;
@@ -219,9 +219,17 @@ public class Request {
 
 	@Override
 	public String toString() {
-		return "Request [headers=" + headers + ", queryParams=" + queryParams + ", pathParams=" + pathParams
-				+ ", bodyParams=" + bodyParams + ", body=" + Arrays.toString(body) + ", websocket=" + websocket
-				+ ", data=" + data + "]";
+		return "Request ["
+			+ "method=" + method
+			+ ", uri=" + uri
+			+ ", pathParams=" + pathParams
+			+ ", queryParams=" + queryParams
+			+ ", headers=" + headers
+			+ ", bodyParams=" + bodyParams
+			+ ", body=" + Arrays.toString(body)
+			+ ", websocket=" + websocket
+			+ ", data=" + data
+			+ "]";
 	}
 	
 }

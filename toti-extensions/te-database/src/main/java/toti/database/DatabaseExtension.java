@@ -14,7 +14,7 @@ import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.application.register.Register;
 import toti.extensions.Extension;
-import toti.http.http.structures.RequestParameters;
+import toti.http.RequestParameters;
 
 public class DatabaseExtension implements Extension {
 

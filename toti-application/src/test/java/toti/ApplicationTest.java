@@ -21,7 +21,7 @@ import toti.application.Task;
 import toti.application.register.MappedAction;
 import toti.application.register.Param;
 import toti.extensions.Extension;
-import toti.http.http.HttpMethod;
+import toti.http.HttpMethod;
 
 public class ApplicationTest {
 

@@ -2,6 +2,7 @@ package toti.samples;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 
@@ -13,6 +14,7 @@ import toti.TotiServerFactory;
 import toti.database.DatabaseExtension;
 import toti.extension.templating.TemplateExtension;
 import toti.extensions.auth.AuthenticationExtension;
+import toti.http.SslCredentials;
 import toti.samples.application.ApplicationModule;
 import toti.samples.templating.TemplatingModule;
 import toti.samples.ui.UiModule;
@@ -85,9 +87,14 @@ public class SamplesMain {
 		try {
 			TotiServerFactory serverFactory = new TotiServerFactory();
 			serverFactory.setCharset("utf-8");
-			// TODO serverFactory.setCerts(null); + to doc
+			// TODO to doc
+			SslCredentials cred = new SslCredentials();
+			cred.setCertificateStore("certificates/cert.p12", "betasecret", "PKCS12");
+			cred.setSniHostCheck(false);
+			serverFactory.setCerts(Optional.of(cred));
 			serverFactory.setMaxRequestBodySize(20*1024); // 20 kB
-			serverFactory.setPort(8080);
+			serverFactory.setHttpPort(8080);
+			serverFactory.setHttpsPort(8443);
 			serverFactory.setReadTimeout(90000); // 90s
 			serverFactory.setThreadPool(100);
 			

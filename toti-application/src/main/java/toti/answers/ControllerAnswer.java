@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -27,6 +26,7 @@ import toti.answers.request.AuthMode;
 import toti.answers.request.Identity;
 import toti.answers.request.IdentityFactory;
 import toti.answers.request.Request;
+import toti.answers.response.FinalResponse;
 import toti.answers.response.Response;
 import toti.answers.response.ResponseException;
 import toti.answers.router.Link;
@@ -38,9 +38,8 @@ import toti.extensions.AuthenticationExtension;
 import toti.extensions.TemplateExtension;
 import toti.extensions.Translator;
 import toti.extensions.TranslatorExtension;
-import toti.http.http.HttpMethod;
-import toti.http.http.StatusCode;
-import toti.http.http.structures.WebSocket;
+import toti.http.HttpMethod;
+import toti.http.StatusCode;
 
 public class ControllerAnswer {
 	
@@ -67,41 +66,35 @@ public class ControllerAnswer {
 		this.logger = logger;
 	}
 	
-	public toti.http.http.structures.Response answer(
-			toti.http.http.structures.Request request,
-			Identity identity, Headers requestHeaders, Optional<WebSocket> websocket,
-			Headers responseHeaders, String charset
-		) throws Exception {
-		String uri = request.getPlainUri();
+	public FinalResponse answer(Request request, Identity identity, Headers responseHeaders, String charset) throws Exception {
+		String uri = request.getUri();
 		String routered = router.getUrlMapping(uri);
 		if (routered != null) {
 			uri = routered;
 		}
-		
-		Request totiRequest = Request.fromRequest(request, requestHeaders, websocket);
 		/*
 		MappedAction mapped = getMappedAction(request.getPlainUri(), request.getMethod(), totiRequest);
 		if (mapped == null) {
 			return null;
 		}
 		*/
-		MappedAction mapped = getMappedAction(root, getUrlParts(uri), request.getMethod(), totiRequest);
+		MappedAction mapped = getMappedAction(root, getUrlParts(uri), request.getMethod(), request);
 		if (mapped == null) {
-			totiRequest.getPathParams().clear();
+			request.getPathParams().clear();
 			return null;
 		}
 		try {
-			Response response = run(request.getUri(), mapped, totiRequest, identity);
+			Response response = run(request.getUri(), mapped, request, identity);
 			
 			identityFactory.finalizeIdentity(identity, responseHeaders); // for cookies and custom headers
 			/*************/
-			return response.getResponse(request.getProtocol(), responseHeaders, identity, new ResponseContainer(
+			return response.prepare(responseHeaders, identity, new ResponseContainer(
 				translatorExtension.getTranslator(identity), authenticationExtension, mapped, templateExtension, link
 			), charset);
 		} catch (ServerException e){
 			throw e;
 		} catch (RequestInterruptedException e) {
-			return e.getResponse().getResponse(request.getProtocol(), responseHeaders, charset);
+			return e.getResponse().prepare(responseHeaders, null, null, charset);
 		/*} catch (NotAllowedActionException | AccessDeniedException e) {
 			throw new ServerException(StatusCode.FORBIDDEN, mapped, e);
 		} catch (TemplateException e) {
@@ -205,7 +198,7 @@ public class ControllerAnswer {
 		} catch (RequestInterruptedException e) {
 			return e.getResponse();
 		}
-	}   
+	}
 	
 	protected void checkSecured(MappedAction mapped, Identity identity) throws ServerException {
 		if (mapped.isSecured()) {
@@ -226,12 +219,12 @@ public class ControllerAnswer {
 	}
 	
 	private String getBackLink(String fullUrl) {
-        try {
-             return URLEncoder.encode(fullUrl, StandardCharsets.UTF_8.toString());
-        } catch (UnsupportedEncodingException e) {
-             return fullUrl;
-        }
-    }
+		try {
+			return URLEncoder.encode(fullUrl, StandardCharsets.UTF_8.toString());
+		} catch (UnsupportedEncodingException e) {
+			return fullUrl;
+		}
+	}
 	
 	protected void parseBody(Request request, List<BodyType> allowedTypes, MappedAction mapped) throws ServerException {
 		if (request.getBodyParams().size() > 0) {

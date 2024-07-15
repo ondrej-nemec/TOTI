@@ -16,7 +16,7 @@ import toti.answers.router.UriPattern;
 import toti.application.Module;
 import toti.extensions.CustomExceptionExtension;
 import toti.extensions.Extension;
-import toti.http.http.HttpMethod;
+import toti.http.HttpMethod;
 
 public class Register {
 	

@@ -3,13 +3,13 @@ package toti.answers.response;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import ji.common.functions.InputStreamLoader;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
-import toti.http.http.StatusCode;
-import toti.http.http.structures.Protocol;
+import toti.http.StatusCode;
 
 public class FileResponse implements Response {
 
@@ -40,8 +40,7 @@ public class FileResponse implements Response {
 	}
 
 	@Override
-	public toti.http.http.structures.Response getResponse(
-			Protocol protocol,
+	public FinalResponse prepare(
 			Headers responseHeader,
 			Identity identity,
 			ResponseContainer container,
@@ -51,11 +50,8 @@ public class FileResponse implements Response {
 			//	header.addHeader("Content-Disposition: attachment; filename=\"" + fileName + "\"");
 			responseHeader.addHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
 		}
-		toti.http.http.structures.Response response = new  toti.http.http.structures.Response(code, protocol);
-		response.setHeaders(responseHeader.getHeaders());
-		response.setHeaders(this.headers.getHeaders());
-		response.setBody(binaryContent);
-		return response;
+		responseHeader.setHeaders(this.headers.getHeaders());
+		return new FinalResponse(code, responseHeader, ByteBuffer.wrap(binaryContent));
 	}
 	
 	private static byte[] binaryContent(String name) {

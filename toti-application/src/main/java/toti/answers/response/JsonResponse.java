@@ -1,5 +1,6 @@
 package toti.answers.response;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
 
@@ -8,8 +9,7 @@ import ji.json.OutputJsonStream;
 import ji.json.JsonWritter;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
-import toti.http.http.StatusCode;
-import toti.http.http.structures.Protocol;
+import toti.http.StatusCode;
 
 public class JsonResponse implements Response {
 	
@@ -24,18 +24,14 @@ public class JsonResponse implements Response {
 	}
 
 	@Override
-	public toti.http.http.structures.Response getResponse(
-			Protocol protocol,
-			Headers header,
+	public FinalResponse prepare(
+			Headers headers,
 			Identity identity,
 			ResponseContainer container,
 			String charset) {
-		toti.http.http.structures.Response response = new toti.http.http.structures.Response(code, protocol);
-		response.setHeaders(header.getHeaders());
-		response.addHeader("Content-Type", "application/json; charset=" + charset);
-		response.setBody(createResponse().getBytes());
-		response.setHeaders(this.headers.getHeaders());
-		return response;
+		headers.addHeader("Content-Type", "application/json; charset=" + charset);
+		headers.setHeaders(this.headers.getHeaders());
+		return new FinalResponse(code, headers, ByteBuffer.wrap(createResponse().getBytes()));
 	}
 	
 	private String createResponse() {

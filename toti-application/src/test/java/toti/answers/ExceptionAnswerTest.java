@@ -7,6 +7,7 @@ import static org.mockito.Mockito.*;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Optional;
 
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
@@ -17,6 +18,8 @@ import ji.files.text.Text;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import toti.answers.request.Identity;
+import toti.answers.request.Request;
+import toti.answers.response.FinalResponse;
 import toti.answers.response.Response;
 import toti.answers.response.TextResponse;
 import toti.application.register.MappedAction;
@@ -24,10 +27,9 @@ import toti.application.register.Register;
 import toti.extensions.CustomExceptionExtension;
 import toti.extensions.Translator;
 import toti.extensions.TranslatorExtension;
-import toti.http.http.HttpMethod;
-import toti.http.http.StatusCode;
-import toti.http.http.structures.Protocol;
-import toti.http.http.structures.Request;
+import toti.http.HttpMethod;
+import toti.http.RequestParameters;
+import toti.http.StatusCode;
 import toti.logging.FileName;
 
 @RunWith(JUnitParamsRunner.class)
@@ -38,8 +40,10 @@ public class ExceptionAnswerTest {
 	
 	@Test
 	public void testAnswer() {
-		Request request = new Request(HttpMethod.GET, "/wrong", Protocol.HTTP_2);
-		request.setUriParams("/wrong", MapDictionary.hashMap());
+		Request request = new Request(
+			"/wrong",HttpMethod.GET, new Headers(),
+			MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty()
+		);
 		
 		Identity identity = mock(Identity.class);
 		
@@ -61,14 +65,16 @@ public class ExceptionAnswerTest {
 			mock(Logger.class)
 		));
 		
-		toti.http.http.structures.Response expected
-		= new toti.http.http.structures.Response(StatusCode.I_AM_A_TEAPORT, Protocol.HTTP_2);
-		expected.addHeader("test", "header");
-		expected.addHeader("content-type", "text/plain");
-		expected.setBody("I'm a teapot".getBytes());
+		FinalResponse expected = new FinalResponse(
+			StatusCode.I_AM_A_TEAPORT,
+			new Headers()
+			.addHeader("test", "header")
+			.addHeader("content-type", "text/plain"),
+			"I'm a teapot"
+		);
 		
 		assertEquals(expected, answer.answer(
-			request, reqHeaders, StatusCode.I_AM_A_TEAPORT, new Throwable(), identity, null, resHeaders, "charset"
+			request, StatusCode.I_AM_A_TEAPORT, new Throwable(), identity, null, resHeaders, "charset"
 		));
 		verify(translatorExtension, times(1)).getTranslator(identity);
 		verifyNoMoreInteractions(translator);
@@ -99,7 +105,6 @@ public class ExceptionAnswerTest {
 		
 		Response response = answer.getResponse(
 			mock(Request.class),
-			mock(Headers.class), 
 			StatusCode.I_AM_A_TEAPORT, 
 			mock(Throwable.class),
 			mock(Identity.class),
@@ -121,12 +126,13 @@ public class ExceptionAnswerTest {
 		Headers headers = mock(Headers.class);
 		when(headers.isAsyncRequest()).thenReturn(isAsync);
 		
-		Request request = new Request(HttpMethod.GET, "/a/b/c", Protocol.HTTP_1_1);
-		request.setUriParams(
-			"/a/b/c",
-			new MapDictionary<String>(new HashMap<>()).put("some", "param").put("another", "value")
+		Request request = new Request(
+			"/a/b/c", HttpMethod.GET, new Headers(),
+			new MapDictionary<String>(new HashMap<>()).put("some", "param").put("another", "value"),
+			new RequestParameters(),
+			"some body".getBytes(),
+			Optional.empty()
 		);
-		request.setBody("some body".getBytes());
 		
 		Identity identity = mock(Identity.class);
 		when(identity.getIP()).thenReturn(ip);
@@ -138,7 +144,7 @@ public class ExceptionAnswerTest {
 			mock(TranslatorExtension.class),
 			logger
 		));
-		doReturn("DetailedException").when(answer).getExceptionDetail(any(), any(), any(), any(), any(), any());
+		doReturn("DetailedException").when(answer).getExceptionDetail(any(), any(), any(), any(), any());
 		doReturn("ExceptionInfo").when(answer).getExceptionInfo(any());
 		doReturn(0).when(answer).saveToFile(any(), any(), any(), any());
 		doReturn(new FileName(null, false)).when(answer).getFileName(any(), anyInt(), any(), any(), any());
@@ -146,7 +152,6 @@ public class ExceptionAnswerTest {
 		
 		assertEquals(expected, answer.getResponse(
 			request,
-			headers,
 			StatusCode.I_AM_A_TEAPORT,
 			new Exception("Some Exception", new RuntimeException("Another exception")),
 			identity,

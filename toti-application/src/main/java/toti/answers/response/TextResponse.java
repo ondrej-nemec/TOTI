@@ -1,9 +1,10 @@
 package toti.answers.response;
 
+import java.nio.ByteBuffer;
+
 import toti.answers.Headers;
 import toti.answers.request.Identity;
-import toti.http.http.StatusCode;
-import toti.http.http.structures.Protocol;
+import toti.http.StatusCode;
 
 public class TextResponse implements Response {
 
@@ -18,20 +19,16 @@ public class TextResponse implements Response {
 	}
 	
 	@Override
-	public toti.http.http.structures.Response getResponse(
-			Protocol protocol,
-			Headers header,
+	public FinalResponse prepare(
+			Headers headers,
 			Identity identity,
 			ResponseContainer container,
 			String charset) {
-		toti.http.http.structures.Response response = new toti.http.http.structures.Response(code, protocol);
-		response.setHeaders(header.getHeaders());
-		response.setBody(text.getBytes());
-		if (!response.containsHeader("Content-Type")) {
-			response.addHeader("Content-Type", "text/plain");
+		if (!headers.containsHeader("Content-Type")) {
+			headers.addHeader("Content-Type", "text/plain");
 		}
-		response.setHeaders(this.headers.getHeaders());
-		return response;
+		headers.setHeaders(this.headers.getHeaders());
+		return new FinalResponse(code, headers, ByteBuffer.wrap(text.getBytes()));
 	}
 
 	@Override

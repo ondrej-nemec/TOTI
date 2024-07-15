@@ -3,17 +3,15 @@ package toti.answers;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import toti.ServerException;
 import toti.answers.request.Identity;
 import toti.answers.request.IdentityFactory;
-import toti.http.http.StatusCode;
-import toti.http.http.structures.Request;
-import toti.http.http.structures.Response;
-import toti.http.http.structures.WebSocket;
+import toti.answers.request.Request;
+import toti.answers.response.FinalResponse;
+import toti.http.StatusCode;
 
-public class Answer implements toti.http.http.ResponseFactory {
+public class Answer {
 
 	private final IdentityFactory identityFactory;
 	
@@ -42,25 +40,21 @@ public class Answer implements toti.http.http.ResponseFactory {
 		this.responseHeaders = responseHeaders;
 	}
 
-	@Override
-	public Response accept(
-			Request request, String ipAddress, Optional<WebSocket> webSocket
-		) throws IOException {
-		Headers requestHeaders = new Headers(request.getHeaders());
+	public FinalResponse accept(Request request, String ipAddress) throws IOException {
 		Identity identity = identityFactory.createIdentity(
-			requestHeaders,
-			request.getQueryParameters(),
-			request.getBodyInParameters(),
+			request.getHeaders(),
+			request.getQueryParams(),
+			request.getBodyParams(),
 			ipAddress
 		);
 		
 		Headers responseHeaders = new Headers(this.responseHeaders);
 		try {
 			if (request.getUri().toLowerCase().startsWith("/toti")) {
-				return totiAnswer.answer(request, requestHeaders, identity, responseHeaders, charset);
+				return totiAnswer.answer(request, identity, responseHeaders, charset);
 			}
-			Response response = controllerAnswer.answer(
-				request, identity, requestHeaders, webSocket, responseHeaders, charset
+			FinalResponse response = controllerAnswer.answer(
+				request, identity, responseHeaders, charset
 			);
 			if (response != null) {
 				return response;
@@ -68,13 +62,13 @@ public class Answer implements toti.http.http.ResponseFactory {
 			return fileSystemAnswer.answer(request, responseHeaders, charset);
 		} catch (ServerException e) {
 			return exceptionAnswer.answer(
-				request, requestHeaders,
+				request,
 				e.getStatusCode(), e.getCause() == null ? e : e.getCause(),
 				identity, e.getMappedAction(), responseHeaders, charset
 			);
 		} catch (Throwable t) {
 			return exceptionAnswer.answer(
-				request, requestHeaders,
+				request,
 				StatusCode.INTERNAL_SERVER_ERROR, t,
 				identity, null, responseHeaders, charset
 			);

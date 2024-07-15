@@ -10,7 +10,7 @@ import toti.answers.request.AuthMode;
 import toti.answers.request.Identity;
 import toti.application.register.Register;
 import toti.extensions.Extension;
-import toti.http.http.structures.RequestParameters;
+import toti.http.RequestParameters;
 
 public class AuthenticationExtension implements Extension, toti.extensions.AuthenticationExtension {
 

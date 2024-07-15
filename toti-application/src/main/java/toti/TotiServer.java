@@ -4,32 +4,43 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.websocket.server.ServerWebSocketContainer;
 
 import ji.common.functions.Env;
 import ji.common.structures.ThrowingBiFunction;
-import toti.http.Server;
+import toti.http.Form;
+import toti.http.Payload;
+import toti.http.StreamReader;
+import toti.http.Urlencode;
 
 public class TotiServer {
 	
+	private final MainHandler handler;
 	private final Server server;
-	private final Env env;
-	private final ServerConsumer consumer;
-	
 	private final Logger logger;
+	private final Env env;
 	private final String charset;
 	
 	private final Map<String, Application> applications = new HashMap<>();
 	
 	private boolean isRunning = false;
 	
-	protected TotiServer(
-			Server server, Env env, String charset,
-			ServerConsumer consumer, Logger logger) {
+	public TotiServer(Server server, StreamReader streamReader, Env env, String charset, Logger logger) {
 		this.server = server;
-		this.env = env;
-		this.consumer = consumer;
 		this.logger = logger;
+		this.env = env;
 		this.charset = charset;
+		Payload payload = new Payload();
+		this.handler = new MainHandler(new Form(payload, streamReader), new Urlencode(payload, streamReader), streamReader, logger);
+		
+		// required for websockets
+		ContextHandler contextHandler = new ContextHandler();
+		/*ServerWebSocketContainer container =*/ ServerWebSocketContainer.ensure(server, contextHandler);
+		contextHandler.setHandler(handler);
+		
+		server.setHandler(contextHandler);
 	}
 	
 	public Application addApplication(
@@ -50,7 +61,6 @@ public class TotiServer {
 			if (!stopApplication(appIdentifier, applications.get(appIdentifier))) {
 				return false;
 			}
-			//consumer.removeApplication(hostname);
 			applications.remove(appIdentifier);
 		}
 		return true;
@@ -87,7 +97,7 @@ public class TotiServer {
 			Application application = applications.get(appIdentifier);
 			logger.info("Application is starting: " + appIdentifier);
 			application.start();
-			consumer.addApplication(application.getRequestAnswer(), application.getHostname(), application.getAliases());
+			handler.addApplication(application.getRequestAnswer(), application.getHostname(), application.getAliases());
 			logger.info("Application is running: " + appIdentifier);
 		} catch (Exception e) {
 			logger.error("Application start fail: " + appIdentifier, e);
@@ -97,7 +107,7 @@ public class TotiServer {
 	protected boolean stopApplication(String appIdentifier, Application application) {
 		try {
 			logger.info("Application is stopping: " + appIdentifier);
-			consumer.removeApplication(appIdentifier);
+			handler.removeApplication(appIdentifier);
 			application.stop();
 			logger.info("Application is stopped: " + appIdentifier);
 			return true;

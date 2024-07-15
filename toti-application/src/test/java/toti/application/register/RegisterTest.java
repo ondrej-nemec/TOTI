@@ -21,7 +21,7 @@ import test.ControllerC;
 import test.TestModule;
 import toti.answers.router.UriPattern;
 import toti.extensions.Extension;
-import toti.http.http.HttpMethod;
+import toti.http.HttpMethod;
 
 @RunWith(JUnitParamsRunner.class)
 public class RegisterTest {

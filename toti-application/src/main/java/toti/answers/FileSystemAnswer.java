@@ -6,9 +6,11 @@ import java.io.IOException;
 import org.apache.logging.log4j.Logger;
 
 import toti.ServerException;
+import toti.answers.request.Request;
+import toti.answers.response.FinalResponse;
 import toti.answers.response.Response;
-import toti.http.http.HttpMethod;
-import toti.http.http.StatusCode;
+import toti.http.HttpMethod;
+import toti.http.StatusCode;
 
 public class FileSystemAnswer {
 
@@ -27,11 +29,11 @@ public class FileSystemAnswer {
 		this.dirDefaultFile = dirDefaultFile;
 	}
 	
-	public  toti.http.http.structures.Response answer(
-			 toti.http.http.structures.Request request, Headers responseHeaders, String charset
+	public FinalResponse answer(
+			Request request, Headers responseHeaders, String charset
 			) throws ServerException {
-		return answer(request.getPlainUri(), request.getMethod(), responseHeaders, charset)
-				.getResponse(request.getProtocol(), responseHeaders, charset);
+		return answer(request.getUri(), request.getMethod(), responseHeaders, charset)
+			.prepare(responseHeaders, null, null, charset);
 	}
 	
 	private Response answer(String url, HttpMethod method, Headers responseHeaders, String charset) throws ServerException {

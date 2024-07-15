@@ -28,3 +28,46 @@ customize
 - customExceptionHandler
 
 logování
+
+
+# TOTI TODO list
+
+- [ ] Libraries
+	- [ ] Templating
+		- [ ] DOC
+		- [ ] Tests
+	- [ ] HTTP
+		- [ ] DOC
+		- [ ] Tests
+- [ ] Application
+	- [ ] DOC
+	- [ ] Tests
+	- [x Samples
+- [ ] Extensions
+	- [ ] Auth
+		- [ ] DOC
+		- [ ] Tests
+		- [ ] Samples
+	- [ ] Database
+		- [ ] DOC
+		- [ ] Tests
+		- [ ] Samples
+	- [ ] Templating
+		- [ ] DOC
+		- [ ] Tests
+		- [ ] Samples
+	- [ ] UI
+		- [ ] DOC
+		- [ ] Tests
+		- [ ] Samples
+	- [ ] Validation
+		- [ ] DOC
+		- [ ] Tests
+		- [ ] Samples
+	- [ ] Translator
+		- [ ] DOC
+		- [ ] Tests
+		- [ ] Samples
+
+
+
