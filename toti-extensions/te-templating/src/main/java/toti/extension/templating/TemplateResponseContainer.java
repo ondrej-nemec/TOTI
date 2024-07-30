@@ -2,6 +2,7 @@ package toti.extension.templating;
 
 import java.util.Map;
 
+import toti.answers.request.Identity;
 import toti.answers.response.ResponseContainer;
 import toti.templating.TemplateContainer;
 
@@ -28,6 +29,22 @@ public class TemplateResponseContainer implements TemplateContainer {
 	public String createLink(String controller, String method,
 		Map<String, Object> queryParams, Object...pathParams) {
 		return container.getLink().create(controller, method, queryParams, pathParams);
+	}
+	
+	public String getModuleName() {
+		return container.getCurrent().getMethodName();
+	}
+	
+	public String getClassName() {
+		return container.getCurrent().getClassName();
+	}
+	
+	public String getMethodName() {
+		return container.getCurrent().getMethodName();
+	}
+	
+	public boolean isAllowed(Identity identity, Map<String, Object> data) {
+		return container.getAuth().isAllowed(identity, data);
 	}
 	
 }
