@@ -47,6 +47,10 @@ public class TotiServerFactory {
 		this.env = env;
 	}
 	
+	public Env getEnv() {
+		return env;
+	}
+	
 	public TotiServer create(Logger logger) throws Exception {
 		Env settings = env.getModule("http");
 		String charset = getCharset(settings);
