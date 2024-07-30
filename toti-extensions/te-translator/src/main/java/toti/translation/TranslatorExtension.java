@@ -119,6 +119,14 @@ public class TranslatorExtension implements toti.extensions.TranslatorExtension,
 		return new TranslatorImpl(translator.withLocale(identity.getSessionSpace(this).getString(NAME)));
 	}
 
+	public toti.extensions.Translator getTranslator() {
+		return new TranslatorImpl(translator);
+	}
+	
+	public Translator getOrigin() {
+		return translator;
+	}
+	
 	@Override
 	public void onApplicationStart() throws Exception {}
 
