@@ -12,11 +12,13 @@ repositories {
    // flatDir { dirs 'libs' }
 }
 
-ext {
-  JI_version = 'eb4dd62fab'
-}
-
 dependencies {
+	api project('toti-libs:toti-common')
+	api project('toti-libs:toti-database')
+	api project('toti-libs:toti-files')
+	api project('toti-libs:toti-db-testing')
+	api project('toti-libs:toti-translate')
+	api project('toti-libs:toti-http')
 	api project('toti-libs:toti-templating')
 	
 	api project('toti-application')

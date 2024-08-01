@@ -13,8 +13,8 @@ repositories {
 }
 
 dependencies {
-	 implementation 'com.github.ondrej-nemec.JI:ji-common:' + JI_version
-	 implementation 'com.github.ondrej-nemec.JI:ji-files:' + JI_version
+	api project(':toti-libs:toti-common')
+	api project(':toti-libs:toti-files')
 	
 	// compile files("${System.properties['java.home']}/../lib/tools.jar")
 	// https://mvnrepository.com/artifact/junit/junit

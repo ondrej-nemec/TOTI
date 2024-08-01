@@ -12,8 +12,9 @@ repositories {
 }
 
 dependencies {
-	//api project(':toti-libs:toti-templating')
-	api 'com.github.ondrej-nemec.JI:JI:' + JI_version
+	api project(':toti-libs:toti-common')
+	api project(':toti-libs:toti-http')
+	testImplementation(testFixtures(project(":toti-libs:toti-db-testing")))
 	
 	//implementation group: 'at.favre.lib', name: 'bcrypt', version: '0.9.0'
 	

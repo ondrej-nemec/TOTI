@@ -3,6 +3,7 @@ package toti.ui.backend.grid;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
+import java.sql.Connection;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -13,8 +14,7 @@ import ji.common.structures.MapInit;
 import ji.common.structures.SortedMap;
 import ji.querybuilder.QueryBuilder;
 import ji.querybuilder.builders.SelectBuilder;
-import ji.querybuilder.mysql.MySqlFunctions;
-import ji.querybuilder.mysql.MySqlSelectBuilder;
+import ji.querybuilder.instances.PostgreSqlQueryBuilder;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import toti.ui.backend.Owner;
@@ -28,14 +28,13 @@ public class GridDaoTest {
 			String message,
 			Optional<Owner> owner,
 			SortedMap<String, Filter> filters, String expected) {
-		QueryBuilder builder = mock(QueryBuilder.class);
-		SelectBuilder select = new MySqlSelectBuilder(null, ""); // mock(SelectBuilder.class);
-		when(builder.getSqlFunctions()).thenReturn(new MySqlFunctions());
+		QueryBuilder builder = new QueryBuilder(new PostgreSqlQueryBuilder(), mock(Connection.class));
+		SelectBuilder select = builder.select("42 as x");
 		
 		GridDao dao = new GridDao() {};
 		
 		dao._applyFilters(builder, select, filters, owner);
-		assertEquals(message, "SELECT  " + expected, select.createSql());
+		assertEquals(message, "SELECT 42 as x " + expected, select.createSql());
 	}
 	
 	public Object[] dataApplyFilters() {
@@ -120,12 +119,13 @@ public class GridDaoTest {
 	@Parameters(method = "dataApplySorting")
 	public void testApplySorting(
 			SortedMap<String, Sort> sorting, String expected) {
-		SelectBuilder select = new MySqlSelectBuilder(null, ""); // mock(SelectBuilder.class);
+		QueryBuilder builder = new QueryBuilder(new PostgreSqlQueryBuilder(), mock(Connection.class));
+		SelectBuilder select = builder.select("42 as x");
 		
 		GridDao dao = new GridDao() {};
 		
 		dao._applySorting(select, sorting);
-		assertEquals("SELECT " + expected, select.createSql());
+		assertEquals("SELECT 42 as x" + expected, select.createSql());
 	}
 	
 	public Object[] dataApplySorting() {

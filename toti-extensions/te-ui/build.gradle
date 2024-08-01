@@ -10,36 +10,10 @@ repositories {
 	mavenCentral()
 	maven { url 'https://jitpack.io' }
 }
-//*
-sourceSets {
-    main {
-        java {
-            srcDirs 'src/main/java'
-            
-            srcDirs '../../../javainit/ji-common/src/main/java'
-       //     srcDirs '../../../javainit/ji-communication/src/main/java'
-       //     srcDirs '../../../javainit/ji-database/src/main/java'
-        //    srcDirs '../../../javainit/ji-translate/src/main/java'
-            srcDirs '../../../javainit/ji-files/src/main/java'
-       //     srcDirs '../../../javainit/ji-testing/src/main/java'
-        }
-        resources {
-            srcDir 'src/main/resources'
-        }
-    }
-    test {
-        java {
-            srcDir 'src/test/java'
-        }
-        resources {
-            srcDir 'src/test/resources'
-        }
-    }
-}
-//*/
 
 dependencies {
-  	testImplementation(testFixtures(project(":toti-libs:toti-templating")))
+	api project(':toti-libs:toti-database')
+	testImplementation(testFixtures(project(":toti-libs:toti-templating")))
 	api project(':toti-application')
 	api project(':toti-extensions:te-validation')
 	api project(':toti-extensions:te-templating')

@@ -13,7 +13,7 @@ repositories {
 
 dependencies {
 	api project(':toti-application')
-	 implementation 'com.github.ondrej-nemec.JI:ji-database:' + JI_version
+	api project(':toti-libs:toti-database')
 	
 	// https://mvnrepository.com/artifact/junit/junit
 	testImplementation  group: 'junit', name: 'junit', version: '4.12'
