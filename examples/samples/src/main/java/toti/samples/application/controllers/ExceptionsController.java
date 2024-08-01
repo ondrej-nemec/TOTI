@@ -8,7 +8,7 @@ import toti.answers.action.RequestInterruptedException;
 import toti.answers.action.ResponseAction;
 import toti.answers.action.ResponseBuilder;
 import toti.answers.response.Response;
-import toti.http.HttpMethod;
+import toti.http.enums.HttpMethod;
 
 /**
  * This example shows TOTI reaction on varios exceptions

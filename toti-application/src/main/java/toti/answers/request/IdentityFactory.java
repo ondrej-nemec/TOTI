@@ -5,7 +5,7 @@ import java.util.Collection;
 
 import toti.answers.Headers;
 import toti.extensions.Extension;
-import toti.http.RequestParameters;
+import toti.http.structures.RequestParameters;
 import ji.common.structures.MapDictionary;
 
 public class IdentityFactory {

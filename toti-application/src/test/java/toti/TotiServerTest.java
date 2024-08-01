@@ -26,7 +26,7 @@ import ji.common.structures.MapInit;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import toti.answers.Answer;
-import toti.http.StreamReader;
+import toti.http.parsers.StreamReader;
 
 @RunWith(JUnitParamsRunner.class)
 public class TotiServerTest {

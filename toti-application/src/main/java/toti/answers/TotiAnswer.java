@@ -15,7 +15,7 @@ import toti.answers.response.ResponseContainer;
 import toti.application.register.MappedAction;
 import toti.extensions.TotiExtension;
 import toti.extensions.TranslatorExtension;
-import toti.http.StatusCode;
+import toti.http.enums.StatusCode;
 import toti.extensions.TemplateExtension;
 
 public class TotiAnswer {

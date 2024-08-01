@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
-import toti.http.UploadedFile;
+import toti.http.structures.UploadedFile;
 import toti.validation.ValidationItem;
 
 @RunWith(JUnitParamsRunner.class)

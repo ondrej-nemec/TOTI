@@ -3,7 +3,7 @@ package test;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.answers.action.ResponseAction;
-import toti.http.HttpMethod;
+import toti.http.enums.HttpMethod;
 
 @Controller("controllerA")
 public class ControllerA {

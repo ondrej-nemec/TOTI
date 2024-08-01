@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import toti.answers.request.AuthMode;
-import toti.http.HttpMethod;
+import toti.http.enums.HttpMethod;
 
 public class MappedAction {
 

@@ -3,7 +3,7 @@ package toti.annotations;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import toti.http.HttpMethod;
+import toti.http.enums.HttpMethod;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Action {

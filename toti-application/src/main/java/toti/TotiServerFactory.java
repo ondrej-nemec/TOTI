@@ -21,7 +21,7 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 import ji.common.functions.Env;
 import toti.http.SslCredentials;
-import toti.http.StreamReader;
+import toti.http.parsers.StreamReader;
 
 public class TotiServerFactory {
 	

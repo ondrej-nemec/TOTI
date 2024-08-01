@@ -1,0 +1,9 @@
+------WebKitFormBoundaryBcAD30uSggyegBp6
+Content-Disposition: form-data; name="username"
+
+admin
+------WebKitFormBoundaryBcAD30uSggyegBp6
+Content-Disposition: form-data; name="password"
+
+password
+------WebKitFormBoundaryBcAD30uSggyegBp6--

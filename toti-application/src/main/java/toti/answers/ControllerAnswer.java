@@ -38,8 +38,8 @@ import toti.extensions.AuthenticationExtension;
 import toti.extensions.TemplateExtension;
 import toti.extensions.Translator;
 import toti.extensions.TranslatorExtension;
-import toti.http.HttpMethod;
-import toti.http.StatusCode;
+import toti.http.enums.HttpMethod;
+import toti.http.enums.StatusCode;
 
 public class ControllerAnswer {
 	

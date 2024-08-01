@@ -13,8 +13,8 @@ import toti.answers.action.ResponseAction;
 import toti.answers.action.ResponseBuilder;
 import toti.answers.response.Response;
 import toti.answers.router.Link;
-import toti.http.StatusCode;
-import toti.http.WebSocket;
+import toti.http.enums.StatusCode;
+import toti.http.structures.WebSocket;
 import toti.samples.application.TaskExample;
 
 @Controller("response")

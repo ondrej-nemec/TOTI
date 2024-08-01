@@ -51,9 +51,9 @@ import toti.extensions.AuthenticationExtension;
 import toti.extensions.TemplateExtension;
 import toti.extensions.Translator;
 import toti.extensions.TranslatorExtension;
-import toti.http.HttpMethod;
-import toti.http.StatusCode;
-import toti.http.RequestParameters;
+import toti.http.enums.HttpMethod;
+import toti.http.enums.StatusCode;
+import toti.http.structures.RequestParameters;
 
 @RunWith(JUnitParamsRunner.class)
 public class ControllerAnswerTest implements TestCase {

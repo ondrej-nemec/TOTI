@@ -11,7 +11,7 @@ import toti.application.register.MappedAction;
 import toti.application.register.Param;
 import toti.application.register.Register;
 import toti.extensions.Extension;
-import toti.http.HttpMethod;
+import toti.http.enums.HttpMethod;
 
 public class Application {
 	

@@ -4,7 +4,7 @@ import toti.annotations.Action;
 import toti.annotations.Secured;
 import toti.answers.action.ResponseAction;
 import toti.answers.action.ResponseBuilder;
-import toti.http.HttpMethod;
+import toti.http.enums.HttpMethod;
 
 public class Test {
 	

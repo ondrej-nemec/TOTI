@@ -3,8 +3,8 @@ package toti.answers.response;
 import ji.common.functions.FileExtension;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
-import toti.http.StatusCode;
-import toti.http.WebSocket;
+import toti.http.enums.StatusCode;
+import toti.http.structures.WebSocket;
 
 public interface Response {
 	

@@ -1,7 +1,7 @@
 package toti.logging;
 
 import toti.application.register.MappedAction;
-import toti.http.StatusCode;
+import toti.http.enums.StatusCode;
 
 public class ExceptionHashCode {
 

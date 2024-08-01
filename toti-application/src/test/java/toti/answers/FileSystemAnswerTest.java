@@ -15,9 +15,9 @@ import junitparams.Parameters;
 import toti.ServerException;
 import toti.answers.request.Request;
 import toti.answers.response.FinalResponse;
-import toti.http.HttpMethod;
-import toti.http.RequestParameters;
-import toti.http.StatusCode;
+import toti.http.enums.HttpMethod;
+import toti.http.structures.RequestParameters;
+import toti.http.enums.StatusCode;
 
 @RunWith(JUnitParamsRunner.class)
 public class FileSystemAnswerTest {

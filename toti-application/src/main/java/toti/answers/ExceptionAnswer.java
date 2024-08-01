@@ -20,7 +20,7 @@ import toti.application.register.MappedAction;
 import toti.application.register.Register;
 import toti.answers.response.ResponseContainer;
 import toti.extensions.TranslatorExtension;
-import toti.http.StatusCode;
+import toti.http.enums.StatusCode;
 import toti.logging.ExceptionHashCode;
 import toti.logging.FileName;
 

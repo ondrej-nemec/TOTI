@@ -17,13 +17,13 @@ import toti.answers.Answer;
 import toti.answers.Headers;
 import toti.answers.request.Request;
 import toti.answers.response.FinalResponse;
-import toti.http.Form;
-import toti.http.HttpMethod;
-import toti.http.RequestParameters;
-import toti.http.StatusCode;
-import toti.http.StreamReader;
-import toti.http.Urlencode;
-import toti.http.WebSocket;
+import toti.http.enums.HttpMethod;
+import toti.http.enums.StatusCode;
+import toti.http.parsers.Form;
+import toti.http.parsers.StreamReader;
+import toti.http.parsers.Urlencode;
+import toti.http.structures.RequestParameters;
+import toti.http.structures.WebSocket;
 
 public class MainHandler extends Handler.Abstract {
 	

@@ -5,7 +5,7 @@ import ji.common.structures.MapDictionary;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.extensions.Extension;
-import toti.http.RequestParameters;
+import toti.http.structures.RequestParameters;
 
 public class Extension3 implements Extension {
 

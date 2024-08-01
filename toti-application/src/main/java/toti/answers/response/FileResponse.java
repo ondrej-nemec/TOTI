@@ -9,7 +9,7 @@ import java.util.Arrays;
 import ji.common.functions.InputStreamLoader;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
-import toti.http.StatusCode;
+import toti.http.enums.StatusCode;
 
 public class FileResponse implements Response {
 

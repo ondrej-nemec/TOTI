@@ -14,7 +14,7 @@ import org.junit.runner.RunWith;
 
 import ji.common.structures.MapInit;
 import toti.extensions.Translator;
-import toti.http.RequestParameters;
+import toti.http.structures.RequestParameters;
 import toti.validation.ValidationItem;
 import toti.validation.ValidationResult;
 import toti.validation.Validator;

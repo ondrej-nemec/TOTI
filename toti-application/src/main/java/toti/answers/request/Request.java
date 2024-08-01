@@ -8,9 +8,9 @@ import ji.common.structures.DictionaryValue;
 import ji.common.structures.ListDictionary;
 import ji.common.structures.MapDictionary;
 import toti.answers.Headers;
-import toti.http.HttpMethod;
-import toti.http.RequestParameters;
-import toti.http.WebSocket;
+import toti.http.enums.HttpMethod;
+import toti.http.structures.RequestParameters;
+import toti.http.structures.WebSocket;
 
 public class Request {
 

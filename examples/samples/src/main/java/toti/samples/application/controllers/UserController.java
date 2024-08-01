@@ -7,7 +7,7 @@ import toti.answers.action.ResponseAction;
 import toti.answers.action.ResponseBuilder;
 import toti.answers.request.AuthMode;
 import toti.answers.response.Response;
-import toti.http.StatusCode;
+import toti.http.enums.StatusCode;
 import toti.samples.application.SampleUser;
 import toti.samples.application.SessionUserProviderExample;
 

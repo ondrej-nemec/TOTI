@@ -22,19 +22,6 @@ dependencies {
     implementation group:'org.objenesis',name:'objenesis',version:'2.4'
     implementation group:'net.bytebuddy',name:'byte-buddy',version:'1.8.13'
     implementation group:'net.bytebuddy',name:'byte-buddy-agent',version:'1.8.1'
-    
-    // https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-server
-	implementation group: 'org.eclipse.jetty', name: 'jetty-server', version: '12.0.10'
-	// https://mvnrepository.com/artifact/org.eclipse.jetty.http2/jetty-http2-server
-	implementation group: 'org.eclipse.jetty.http2', name: 'jetty-http2-server', version: '12.0.10'
-	// https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-alpn-server
-	implementation group: 'org.eclipse.jetty', name: 'jetty-alpn-server', version: '12.0.11'
-	// https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-alpn-java-server
-	implementation group: 'org.eclipse.jetty', name: 'jetty-alpn-java-server', version: '12.0.11'
-	// https://mvnrepository.com/artifact/org.eclipse.jetty.websocket/jetty-websocket-jetty-api
-	implementation group: 'org.eclipse.jetty.websocket', name: 'jetty-websocket-jetty-api', version: '12.0.11'
-	// https://mvnrepository.com/artifact/org.eclipse.jetty.websocket/jetty-websocket-jetty-server
-	implementation group: 'org.eclipse.jetty.websocket', name: 'jetty-websocket-jetty-server', version: '12.0.11'
 
 	// https://mvnrepository.com/artifact/org.postgresql/postgresql
 	//testImplementation  group: 'org.postgresql', name: 'postgresql', version: '42.2.16'

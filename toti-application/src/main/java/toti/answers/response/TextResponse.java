@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 
 import toti.answers.Headers;
 import toti.answers.request.Identity;
-import toti.http.StatusCode;
+import toti.http.enums.StatusCode;
 
 public class TextResponse implements Response {
 

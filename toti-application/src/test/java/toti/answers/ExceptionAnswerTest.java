@@ -27,9 +27,9 @@ import toti.application.register.Register;
 import toti.extensions.CustomExceptionExtension;
 import toti.extensions.Translator;
 import toti.extensions.TranslatorExtension;
-import toti.http.HttpMethod;
-import toti.http.RequestParameters;
-import toti.http.StatusCode;
+import toti.http.enums.HttpMethod;
+import toti.http.structures.RequestParameters;
+import toti.http.enums.StatusCode;
 import toti.logging.FileName;
 
 @RunWith(JUnitParamsRunner.class)
