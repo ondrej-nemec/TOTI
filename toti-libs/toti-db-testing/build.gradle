@@ -1,0 +1,34 @@
+plugins {
+    id 'java-library'
+    id 'java-test-fixtures'
+}
+
+sourceCompatibility = 17.0
+targetCompatibility = 17.0
+compileTestJava.options.encoding = 'UTF-8'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+	api project(':toti-libs:toti-common')
+	api project(':toti-libs:toti-database')
+	
+	// https://mvnrepository.com/artifact/junit/junit
+	implementation group: 'junit', name: 'junit', version: '4.12'
+	
+	// https://mvnrepository.com/artifact/org.mockito/mockito-core
+	implementation group: 'org.mockito', name: 'mockito-core', version: '2.19.1'
+	
+	// https://mvnrepository.com/artifact/pl.pragmatists/JUnitParams
+	testImplementation group: 'pl.pragmatists', name: 'JUnitParams', version: '1.1.1'
+
+	// https://mvnrepository.com/artifact/mysql/mysql-connector-java
+	testImplementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.17'
+	// https://mvnrepository.com/artifact/org.postgresql/postgresql
+	testImplementation group: 'org.postgresql', name: 'postgresql', version: '42.2.16'
+	
+}
+

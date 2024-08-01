@@ -1,0 +1,6 @@
+CREATE TABLE insert_table (
+	id INT,
+	name VARCHAR(50),
+	inserted  INT GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
+	PRIMARY KEY (inserted)
+);

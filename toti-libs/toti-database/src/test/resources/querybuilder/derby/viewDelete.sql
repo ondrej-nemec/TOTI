@@ -1,0 +1,1 @@
+CREATE VIEW view_to_delete (text) AS VALUES 'text';

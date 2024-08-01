@@ -1,0 +1,1 @@
+select 'B' as b

@@ -1,0 +1,45 @@
+# version: '3.8'
+services:
+    # TODO adminer nesel - udelat vlastni z php-alpine + copy source
+  mysql:
+    image: mysql:8.0
+    restart: always
+    environment:
+    # username is root
+      MYSQL_ROOT_PASSWORD: SomeP@ssw0rd
+      DB_HOST: mysql
+    ports:
+      - 3307:3306
+  postgres:
+    image: postgres
+    restart: always
+    ports:
+      - 5433:5432
+    volumes:
+      - ./docker/postgres_dump.sql:/docker-entrypoint-initdb.d/dump.sql
+    # set shared memory limit when using docker-compose
+    shm_size: 128mb
+    # ./localfile.sql containername:/container/path/file.sql
+    # or set shared memory limit when deploy via swarm stack
+    #volumes:
+    #  - type: tmpfs
+    #    target: /dev/shm
+    #    tmpfs:
+    #      size: 134217728 # 128*2^20 bytes = 128Mb
+    environment:
+    # username is postgres
+      POSTGRES_PASSWORD: SomeP@ssw0rd
+      DB_HOST: postgres
+      POSTGRES_DB: query_builder
+  sqlserver:
+    # mssql server image isn't available for arm64 architecture, so we use azure-sql instead
+    #image: mcr.microsoft.com/azure-sql-edge:1.0.4
+    # If you really want to use MS SQL Server, uncomment the following line
+    image: mcr.microsoft.com/mssql/server
+    environment:
+      ACCEPT_EULA: "Y"
+      # username is sa
+      MSSQL_SA_PASSWORD: "SomeP@ssw0rd"
+      DB_HOST: sqlserver
+    ports:
+      - 1434:1433

@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<element><first class="class1">Value of element</first>
+	<second class="class2" target="blank"><subelement>Sub-element</subelement>
+	</second>
+</element>
+	
