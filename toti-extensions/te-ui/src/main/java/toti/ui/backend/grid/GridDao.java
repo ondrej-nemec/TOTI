@@ -73,10 +73,10 @@ public interface GridDao {
 		if (owner.isPresent()) {
 			Owner o = owner.get();
 			if (!o.getAllowedValues().isEmpty()) {
-				select.andWhere(o.getColumnName() + " in (:in)")
+				select.where(o.getColumnName() + " in (:in)")
 					.addParameter(":in", o.getAllowedValues());
 			} else {
-				select.andWhere("1=2"); // no results
+				select.where("1=2"); // no results
 			}
 		}
 		select.addParameter(":empty", "");
@@ -110,7 +110,7 @@ public interface GridDao {
 						+ " like :" + filter + "LikeValue"
 						+ " OR " + filter + " = :" + filter + "Value";
 			}*/
-			select.andWhere(where)
+			select.where(where)
 			.addParameter(
 				":" + filter.getName() + "Value",
 				filter.getMode().getFormat() == null ? filter.getValue()

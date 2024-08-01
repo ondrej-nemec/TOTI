@@ -40,20 +40,20 @@ public interface EntityDao {
 	
 	default boolean exists(Database database, String table, String idName, Object id, Map<String, Object> params) throws SQLException {
 		return database.applyBuilder((builder)->{
-			 SelectBuilder select = builder.select(idName)
-					 .from(table);
-			 if (id != null) {
-				 select.where(idName + " != :" + idName)
-					  .addParameter(":" + idName, id);
-			 } else {
-				 select.where("1=1");
-			 }   
-			 params.forEach((name, value)->{
-				 select.andWhere(name + " = :" + name)
-					  .addParameter(":" + name, value);
-			 });
-			 return select.fetchRow() != null;
-		 });
+			SelectBuilder select = builder.select(idName)
+					.from(table);
+			if (id != null) {
+				select.where(idName + " != :" + idName)
+					.addParameter(":" + idName, id);
+			} else {
+				select.where("1=1");
+			}
+			params.forEach((name, value)->{
+				select.where(name + " = :" + name)
+					.addParameter(":" + name, value);
+			});
+			return select.fetchRow() != null;
+		});
 	}
 	
 	default <S> S delete(Database database, String table, String idName, Object id, Class<S> clazz) throws SQLException {
