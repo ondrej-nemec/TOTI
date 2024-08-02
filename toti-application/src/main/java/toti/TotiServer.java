@@ -47,6 +47,7 @@ public class TotiServer {
 			String appIdentifier,
 			ThrowingBiFunction<Env, ApplicationFactory, Application, Exception> init,
 			String hostname, String... alias) throws Exception {
+		Env env = this.env.getModule("applications").getModule(appIdentifier);
 		ApplicationFactory applicationFactory = new ApplicationFactory(appIdentifier, env, charset, hostname, alias);
 		Application application = init.apply(env, applicationFactory);
 		applications.put(appIdentifier, application);

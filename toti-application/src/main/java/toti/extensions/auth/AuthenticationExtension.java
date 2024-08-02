@@ -119,7 +119,11 @@ public class AuthenticationExtension implements Extension, toti.extensions.Authe
 
 	@Override
 	public boolean isAllowed(Object user, Map<String, Object> params) {
-		return sessionUserProvider.isAllowed(LoggedUser.class.cast(user), params);
+		Identity identity = Identity.class.cast(user);
+		if (identity.isAnonymous()) {
+			return false;
+		}
+		return sessionUserProvider.isAllowed(LoggedUser.class.cast(identity.getUser()), params);
 	}
 
 	@Override

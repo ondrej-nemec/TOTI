@@ -67,7 +67,7 @@ public class ApplicationFactory {
 	private AuthenticationExtension authenticationExtension;
 	
 	public ApplicationFactory(String appIdentifier, Env env, String charset, String hostname, String... aliases) {
-		this.env = env.getModule("applications").getModule(appIdentifier);
+		this.env = env;
 		this.appIdentifier = appIdentifier;
 		this.charset = charset;
 		this.aliases = aliases;
@@ -172,7 +172,7 @@ public class ApplicationFactory {
 		if (env != null && env.getValue(key) != null) {
 			return env.getList(key, "\\|");
 		}
-		return Arrays.asList("/127.0.0.1", "/0:0:0:0:0:0:0:1");
+		return Arrays.asList("127.0.0.1", "0:0:0:0:0:0:0:1");
 	}
 	
 	private String getLogsPath(Env env) {

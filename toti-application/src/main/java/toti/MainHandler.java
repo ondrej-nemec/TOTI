@@ -99,7 +99,8 @@ public class MainHandler extends Handler.Abstract {
 			requestBody,
 			websocket.isPresent() ? Optional.of(websocket.get()) : Optional.empty()
 		);
-		String ip = org.eclipse.jetty.server.Request.getRemoteAddr(jettyRequest);
+		String ip = org.eclipse.jetty.server.Request.getRemoteAddr(jettyRequest).substring(1);
+		ip = ip.substring(0, ip.length()-1);
 
 		Answer answer = answers.get(hostname);
 		FinalResponse response = answer.accept(request, ip);

@@ -67,6 +67,10 @@ public class Identity {
 		return clazz.cast(user);
 	}
 	
+	public Object getUser() {
+		return user;
+	}
+	
 	/**
 	 * Returns user IP
 	 * @return

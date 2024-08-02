@@ -53,7 +53,7 @@ public class Urlencode {
 	
 	public RequestParameters decode(String payload) throws UnsupportedEncodingException {
 		RequestParameters data = new RequestParameters();
-		if (payload.isEmpty()) {
+		if (payload == null || payload.isEmpty()) {
 			return data;
 		}
 		BiConsumer<String, Object> addParameter = (name, value)->data.put(name, value);
