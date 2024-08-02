@@ -133,6 +133,7 @@ public class VariableParser implements Parser {
 				));
 			declare.append("}");
 			params.clear();
+			classes.clear();
 		} else if (mode == VarMode.METHOD_NAME) {
 			declare.append(String.format(
 				"Object %s=%s.getClass().getMethod(\"%s\").invoke(%s);",

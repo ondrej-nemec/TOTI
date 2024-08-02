@@ -233,7 +233,29 @@ public class VariableParserTest {
 					+ "return o0_2;"
 					+ "}))",
 					true
-				}
+				},
+			new Object[] {
+				"map.get(\"a\").anotherGet(\"x\")}",
+				true,
+				"o0_2",
+				"Template.escapeHtml(getVariable(()->{"
+				+ "Object o0_0=getVariable(\"map\");"
+				+ "Object o0_1=null;"
+				+ "try{"
+				+ "o0_1=o0_0.getClass().getMethod(\"get\",java.lang.String.class).invoke(o0_0,\"a\");"
+				+ "}catch(NoSuchMethodException e){"
+				+ "o0_1=o0_0.getClass().getMethod(\"get\",Object.class).invoke(o0_0,\"a\");"
+				+ "}"
+				+ "Object o0_2=null;"
+				+ "try{"
+				+ "o0_2=o0_1.getClass().getMethod(\"anotherGet\",java.lang.String.class).invoke(o0_1,\"x\");"
+				+ "}catch(NoSuchMethodException e){"
+				+ "o0_2=o0_1.getClass().getMethod(\"anotherGet\",Object.class).invoke(o0_1,\"x\");"
+				+ "}"
+				+ "return o0_2;"
+				+ "}))",
+				true
+			}
 		};
 	}
 	
