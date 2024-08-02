@@ -430,7 +430,12 @@ class TotiGrid {
 						grid.selectedRow = grid.template.setRowSelected(grid.gridUnique, grid.container, row);
 					}
 				});
-				
+				function evalCondition(condition, evaluate) {
+					if (evaluate) {
+						condition = totiUtils.parametrizedString(condition, rowData);
+					}
+					return totiUtils.execute(condition, [rowData], evaluate);
+				};
 				grid.config.columns.forEach(function(column) {
 					if (column.type === "tree") {
 						var identifier = rowData[column.identifier];
@@ -483,6 +488,9 @@ class TotiGrid {
 							unique: grid.gridUnique,
 							"data-value": rowData[column.identifier]
 						});
+						if (column.hasOwnProperty("condition") && !evalCondition(column.condition, column.evaluate)) {
+							checkbox.disabled = true;
+						}
 						grid.template.addCell(grid.gridUnique, grid.container, row, column.name, checkbox, 1);
 					} else if (column.type === 'buttons') {
 						var buttons = [];

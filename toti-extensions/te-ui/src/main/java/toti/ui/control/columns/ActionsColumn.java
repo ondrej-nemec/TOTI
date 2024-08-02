@@ -9,6 +9,8 @@ public class ActionsColumn implements Column {
 	private final String type;
 	private String title;
 	private String identifier = "id";
+	private String condition = null;
+	private boolean evaluate = false;
 		
 	public ActionsColumn(String name) {
 		this.name = name;
@@ -25,6 +27,12 @@ public class ActionsColumn implements Column {
 		this.identifier = uniqueRowIdentifier;
 		return this;
 	}
+
+	public ActionsColumn setCondition(String condition, boolean evaluate) {
+		this.condition = condition;
+		this.evaluate = evaluate;
+		return this;
+	}
 	
 	@Override
 	public Map<String, Object> getGridSettings() {
@@ -34,6 +42,10 @@ public class ActionsColumn implements Column {
 		json.put("type", type);
 		json.put("title", title);
 		json.put("useSorting", false);
+		if (condition != null) {
+			json.put("condition", condition);
+			json.put("evaluate", evaluate);
+		}
 		return json;
 	}
 	
