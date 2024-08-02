@@ -121,18 +121,18 @@ public class VariableParser implements Parser {
 			));
 		} else if (mode == VarMode.METHOD_NAME && params.size() > 0) {
 			declare.append(String.format("Object %s=null;", current));
-            declare.append("try{");
-            declare.append(String.format(
-                "%s=%s.getClass().getMethod(\"%s\",%s).invoke(%s,%s);",
-                current, last, cache, Implode.implode(",", classes), last, Implode.implode(",", params)
-            ));
-            declare.append("}catch(NoSuchMethodException e){");
-            declare.append(String.format(
-                     "%s=%s.getClass().getMethod(\"%s\",%s).invoke(%s,%s);",
-                     current, last, cache, Implode.implode((o)->"Object.class", ",", classes), last, Implode.implode(",", params)
-                ));
-            declare.append("}");
-            params.clear();
+			declare.append("try{");
+			declare.append(String.format(
+				"%s=%s.getClass().getMethod(\"%s\",%s).invoke(%s,%s);",
+				current, last, cache, Implode.implode(",", classes), last, Implode.implode(",", params)
+			));
+			declare.append("}catch(NoSuchMethodException e){");
+			declare.append(String.format(
+					 "%s=%s.getClass().getMethod(\"%s\",%s).invoke(%s,%s);",
+					 current, last, cache, Implode.implode((o)->"Object.class", ",", classes), last, Implode.implode(",", params)
+				));
+			declare.append("}");
+			params.clear();
 		} else if (mode == VarMode.METHOD_NAME) {
 			declare.append(String.format(
 				"Object %s=%s.getClass().getMethod(\"%s\").invoke(%s);",
