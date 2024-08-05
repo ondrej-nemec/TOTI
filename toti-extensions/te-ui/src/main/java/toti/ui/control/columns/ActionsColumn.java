@@ -27,6 +27,10 @@ public class ActionsColumn implements Column {
 		this.identifier = uniqueRowIdentifier;
 		return this;
 	}
+	
+	public ActionsColumn setCondition(String condition) {
+		return setCondition(condition, false);
+	}
 
 	public ActionsColumn setCondition(String condition, boolean evaluate) {
 		this.condition = condition;
