@@ -25,7 +25,8 @@ public class FirstLine {
 	// response: HTTP/1.1 200 OK
 	public ExchangeResponse createResponse(InputStream bis) throws IOException {
 		return create(bis, (methods)->new ExchangeResponse(
-			StatusCode.valueOf(methods[2].toUpperCase().replace(" ", "_").replace("-", "_")),
+			//StatusCode.valueOf(methods[2].toUpperCase().replace(" ", "_").replace("-", "_")),
+			StatusCode.forCode(Integer.valueOf(methods[1])),
 			Protocol.valueOf(methods[0])
 		));
 	}
