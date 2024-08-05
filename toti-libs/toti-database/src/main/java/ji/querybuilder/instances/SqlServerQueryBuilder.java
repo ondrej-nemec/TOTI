@@ -22,6 +22,12 @@ public class SqlServerQueryBuilder implements DbInstance {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public String trim(String param) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public String cast(String param, ColumnType type) {

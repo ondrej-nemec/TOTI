@@ -47,6 +47,11 @@ public class PostgreSqlQueryBuilder implements DbInstance {
 		builder.append(")");
 		return builder.toString();
 	}
+	
+	@Override
+	public String trim(String param) {
+		return String.format("TRIM(%s)", param);
+	}
 
 	@Override
 	public String cast(String param, ColumnType type) {

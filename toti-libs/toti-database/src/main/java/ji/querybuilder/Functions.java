@@ -32,4 +32,6 @@ public interface Functions {
 	
 	String upper(String param);
 	
+	String trim(String param);
+	
 }
