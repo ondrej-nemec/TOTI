@@ -76,25 +76,25 @@ public class AlterTableBuilderImpl implements AlterTableBuilder, SingleExecute {
 
 	@Override
 	public AlterTableBuilder addColumn(String name, ColumnType type, Object defaultValue, ColumnSetting... settings) {
-		this.addColumns.add(new Column(name, type, defaultValue, settings));
+		this.addColumns.add(Column.create(name, type, defaultValue, settings));
 		return this;
 	}
 
 	@Override
 	public AlterTableBuilder deleteColumn(String name) {
-		this.deleteColumns.add(new Column(name, null, null, null));
+		this.deleteColumns.add(Column.delete(name));
 		return this;
 	}
 
 	@Override
 	public AlterTableBuilder modifyColumnType(String name, ColumnType type) {
-		this.modifyColumns.add(new Column(name, type, null, null));
+		this.modifyColumns.add(Column.modify(name, type));
 		return this;
 	}
 
 	@Override
 	public AlterTableBuilder renameColumn(String originName, String newName, ColumnType type) {
-		this.renameColumns.add(new Column(originName, type, newName, null));
+		this.renameColumns.add(Column.rename(originName, newName, type));
 		return this;
 	}
 
