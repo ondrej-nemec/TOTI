@@ -43,8 +43,7 @@ public class DatabaseExtension implements Extension {
 		Env env = appEnv.getModule("database");
 		if (createDatabase != null) {
 			this.database = createDatabase.apply(migrations, env);
-		}
-		if (env != null && env.getString("type") != null) {
+		} else if (env != null && env.getString("type") != null) {
 			this.database = new Database(new DatabaseConfig(
 				env.getString("type"),
 				env.getString("url"),

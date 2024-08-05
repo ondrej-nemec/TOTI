@@ -167,8 +167,11 @@ public class Validator implements Validate {
 		}
 		if (result.isValid(propertyName) && collection.getChangeValue().isPresent()) {
 			Object newValue = collection.getChangeValue().get().apply(item.getNewValue());
-			item.setNewValue(newValue);
-			prop.put(propertyName, newValue);
+			// set only if origin and new value are not null
+			if (newValue != null && item.getNewValue() != null) {
+				item.setNewValue(newValue);
+				prop.put(propertyName, newValue);
+			}
 		}
 		String newName = collection.getRename().orElse(propertyName);
 		if (prop.containsKey(propertyName)) {
