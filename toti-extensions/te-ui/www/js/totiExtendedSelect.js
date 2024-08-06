@@ -48,7 +48,7 @@ class ExtendedSelect {
 	}
 	
 	addPrompt(title) {
-		/* TODO */
+		this.input.setAttribute('placeholder', title);
 	}
 
 	addOption(value, title, optGroupValue, optGroupTitle, disabled, level) {
@@ -57,7 +57,8 @@ class ExtendedSelect {
 		}
 		var parent = null;
 		if (optGroupValue !== null && this.selectedGroup === null) {
-			if (level === -1) {
+			/* not self or self on main level */
+			if (level === -1 || optGroupTitle !== null) {
 				var key = 'g-' + optGroupValue;
 				if (!this.elements.exists(key)) {
 					var childContainer = this.createHintElement('div');

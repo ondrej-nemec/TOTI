@@ -383,8 +383,9 @@ class TotiGrid {
 			if (clearPrevious) {
 				grid.template.clearBody(grid.gridUnique, grid.container);
 			}
+			/* TODO jen pokud není clear predchoziho */
 			if (response.data.length === 0) {
-				totiDisplay.flash("warn", totiTranslations.gridMessages.noItemsFound);
+				grid.template.showNoItemsMessage(grid.gridUnique, grid.container, totiTranslations.gridMessages.noItemsFound);
 			}
 			var family = {};
 			var sortedFamily = [];
@@ -430,7 +431,6 @@ class TotiGrid {
 						grid.selectedRow = grid.template.setRowSelected(grid.gridUnique, grid.container, row);
 					}
 				});
-				
 				function evalCondition(condition, evaluate) {
 					if (evaluate) {
 						condition = totiUtils.parametrizedString(condition, rowData);
@@ -503,26 +503,28 @@ class TotiGrid {
 						};
 						column.buttons.forEach(function(buttonConf) {
 							if (buttonConf.hasOwnProperty("condition") && !showButton(buttonConf.condition, buttonConf.evaluate)) {
-								return;
-							}
-							var btnConf = totiUtils.clone(buttonConf);
-							btnConf.action.href = totiUtils.parametrizedString(buttonConf.action.href, rowData);
-							if (btnConf.action.hasOwnProperty('submitConfirmation')) {
-								btnConf.action.submitConfirmation = totiUtils.parametrizedString(btnConf.action.submitConfirmation, rowData);
-							}
-							var button = totiControl.button(btnConf, btnConf.action.async);
-							buttons.push(button);
-							var originClick = button.onclick;
-							button.onclick = function(e) {
-								if (originClick === null) {
-									return; /* next part is for async - they have onclick */
+									return;
 								}
-								originClick(e).then(function(res) {
-									if (res) {
-										grid.refreshData(clearPrevious);
+								var btnConf = totiUtils.clone(buttonConf);
+								var href = btnConf.action.href = totiUtils.parametrizedString(buttonConf.action.href, rowData);
+								if (btnConf.action.hasOwnProperty('submitConfirmation')) {
+									btnConf.action.submitConfirmation = totiUtils.parametrizedString(btnConf.action.submitConfirmation, rowData);
+								}
+								btnConf.action = (event)=>{
+									btnConf.action.href = button.href;
+									var result = totiControl.getAction(btnConf.action)(event);
+									if (result == null) {
+										return null;
 									}
-								});
-							};
+									return result.then(function(res) {
+										if (res) {
+											grid.refreshData(clearPrevious);
+										}
+									});
+								};
+								var button = totiControl.button(btnConf, btnConf.action.async);
+								button.href = href;
+								buttons.push(button);
 						});
 						grid.template.addCell(grid.gridUnique, grid.container, row, column.name, buttons, 2);
 					} else if (column.hasOwnProperty("renderer")) {

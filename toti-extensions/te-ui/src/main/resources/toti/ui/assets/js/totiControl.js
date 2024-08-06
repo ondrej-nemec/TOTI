@@ -100,9 +100,15 @@ var totiControl = {
 			input.setAttribute("exclude", true);
 
 			container.set = function() {
-				checkbox.checked = true;
-				input.removeAttribute("disabled");
-				input.removeAttribute("exclude");
+				if (container.value === null) {
+					checkbox.checked = false;
+					input.setAttribute("disabled", true);
+					input.setAttribute("exclude", true);
+				} else {
+					checkbox.checked = true;
+					input.removeAttribute("disabled");
+					input.removeAttribute("exclude");
+				}
 				input.value = container.value;
 			};
 			input.onchange = function() {
@@ -413,18 +419,35 @@ var totiControl = {
 					var missingParent = {};
 					var optCache = [];
 					options.forEach((option)=>{
+						/* TODO same if in not self reference */
+						var groupSubstitution = null;
+						if (depends !== null) {
+							if (depends.classList.contains('toti-hints-input')) {
+								depends = depends.parentElement;
+							}
+							var optGroup = depends.querySelector('[value="' + option.optgroup + '"]');
+							if (optGroup !== null) {
+								groupSubstitution = optGroup.innerText;
+							}
+						} else if (params.groups.hasOwnProperty(option.optgroup)) {
+							groupSubstitution = params.groups[option.optgroup];
+						}
+
 						if (option.optgroup === null || option.optgroup === undefined) {
 							sorted.push(option.value);
 						} else if (optCache.hasOwnProperty(option.optgroup)) {
 							optCache[option.optgroup].childs.push(option.value);
-						} else  {
+						} else if (groupSubstitution === null) {
 							if (!missingParent.hasOwnProperty(option.optgroup)) {
 								missingParent[option.optgroup] = [];
 							}
 							missingParent[option.optgroup].push(option.value);
+						} else {
+							sorted.push(option.value);
 						}
 						optCache[option.value] = {
 							data: option,
+							optGroup: groupSubstitution,
 							childs: []
 						};
 						if (missingParent.hasOwnProperty(option.value)) {
@@ -442,7 +465,7 @@ var totiControl = {
 						});
 					}
 					sorted.forEach((id)=>{
-						iterate(optCache[id], 0, null);
+						iterate(optCache[id], 0, optCache[id].optGroup);
 					})
 				} else {
 					var groupSubstitution = null;
@@ -483,6 +506,8 @@ var totiControl = {
 									delete select.running;
 								});
 							});
+						} else if (params.groups.hasOwnProperty(option.optgroup)) {
+							groupSubstitution = params.groups[option.optgroup];
 						}
 						addOption(select, option, factory, groupSubstitution, -1);
 					});

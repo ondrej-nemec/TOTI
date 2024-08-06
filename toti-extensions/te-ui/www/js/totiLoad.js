@@ -78,6 +78,10 @@ var totiLoad = {
 	- formAttributes: object
 	*/
 	sync: function(url, method, formAttributes = {}, queryParams = {}, bodyData = {}) {
+		if (method.toLowerCase() === "get" || method.toLowerCase() === "head") {
+			window.location = totiLoad.createLink(totiLoad.createLink(url, queryParams), bodyData);
+			return;
+		}
 		var formTosend = document.createElement("form");
 		formTosend.style.display = "none";
 		document.body.appendChild(formTosend);

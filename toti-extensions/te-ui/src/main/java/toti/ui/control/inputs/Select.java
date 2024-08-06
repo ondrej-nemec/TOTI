@@ -15,6 +15,7 @@ public class Select implements Input, Filter {
 	private boolean selfReference = false;
 	private boolean search = false;
 	private String prompt = null;
+	private Map<Object, String> groups = new HashMap<>(); // for optgroup in selfReference
 	
 	private final Wrapper wrapper;
 
@@ -104,6 +105,12 @@ public class Select implements Input, Filter {
 		this.selfReference = selfReference;
 		return this;
 	}
+	
+	public Select setSelfReference(boolean selfReference, Map<Object, String> groups) {
+		this.selfReference = selfReference;
+		this.groups = groups;
+		return this;
+	}
 
 	@Override
 	public Map<String, Object> getFilterSettings() {
@@ -126,6 +133,7 @@ public class Select implements Input, Filter {
 		if (prompt != null) {
 			set.put("prompt", prompt);
 		}
+		set.put("groups", groups);
 		return set;
 	}
 	

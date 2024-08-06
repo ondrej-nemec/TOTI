@@ -100,9 +100,15 @@ var totiControl = {
 			input.setAttribute("exclude", true);
 
 			container.set = function() {
-				checkbox.checked = true;
-				input.removeAttribute("disabled");
-				input.removeAttribute("exclude");
+				if (container.value === null) {
+					checkbox.checked = false;
+					input.setAttribute("disabled", true);
+					input.setAttribute("exclude", true);
+				} else {
+					checkbox.checked = true;
+					input.removeAttribute("disabled");
+					input.removeAttribute("exclude");
+				}
 				input.value = container.value;
 			};
 			input.onchange = function() {

@@ -234,5 +234,9 @@ var totiGridCustomTemplate = {
 		element.querySelectorAll('[toti-grid="page-button"]').forEach(function(row){
 			row.remove();
 		});
+	},
+	showNoItemsMessage: function(gridUnique, container, message) {
+		totiDisplay.flash("warn", message);
+		/* TODO try find item to show? or call func? */
 	}
 };

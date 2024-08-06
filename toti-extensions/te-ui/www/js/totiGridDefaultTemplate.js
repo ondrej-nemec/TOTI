@@ -316,5 +316,18 @@ var totiGridDefaultTemplate = {
 	},
 	clearPageButtons: function(gridUnique, container) {
 		container.querySelector('#toti-grid-page-index').innerHTML = "";
+	},
+	showNoItemsMessage: function(gridUnique, container, message) {
+		var cols = container.querySelector('thead tr').querySelectorAll('th').length;
+
+		var cell = document.createElement('td');
+		cell.innerText = message;
+		cell.setAttribute('colspan', cols);
+
+		var row = document.createElement('tr');
+		row.appendChild(cell);
+
+		var body = container.querySelector('#toti-grid-rows');
+		body.appendChild(row);
 	}
 };
