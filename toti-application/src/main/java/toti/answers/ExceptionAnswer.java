@@ -102,7 +102,7 @@ public class ExceptionAnswer {
 		}
 		saveToFile(fileName, exceptionDetail, charset);
 		
-		return getExceptionResponse(StatusCode.OK, getExceptionInfo(status));
+		return getExceptionResponse(status, getExceptionInfo(status));
 	}
 	
 	protected Response getExceptionResponse(StatusCode status, String message) {
