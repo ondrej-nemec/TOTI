@@ -17,6 +17,7 @@ import toti.answers.response.ResponseException;
 import toti.application.register.Register;
 import toti.extension.templating.parameters.AltParameter;
 import toti.extension.templating.parameters.HrefParameter;
+import toti.extension.templating.parameters.PlaceholderParameter;
 import toti.extension.templating.parameters.SrcParameter;
 import toti.extension.templating.parameters.TitleParameter;
 import toti.extension.templating.tags.IfCurrentTag;
@@ -62,7 +63,8 @@ public class TemplateExtension implements toti.extensions.TemplateExtension, Ext
 			new AltParameter(),
 			new HrefParameter(),
 			new SrcParameter(),
-			new TitleParameter()
+			new TitleParameter(),
+			new PlaceholderParameter()
 		));
 		this.tempPath = tempPath;
 		this.logger = logger;
