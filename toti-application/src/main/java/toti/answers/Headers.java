@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
+import ji.common.functions.Implode;
 import ji.common.structures.DictionaryValue;
 
 public class Headers {
@@ -74,7 +75,7 @@ public class Headers {
 	 */
 	public Optional<String> getCookieValue(String cookieName) {
 		if (containsHeader("Cookie")) {
-			String[] cookiesArray = getHeader("Cookie").toString().split(";");
+			String[] cookiesArray = Implode.implode("", getHeaders("Cookie")).split(";");
 			for (String cookies : cookiesArray) {
 				String[] cookie = cookies.split("=", 2);
 				if (cookie.length == 2 && cookie[0].trim().equals(cookieName)) {
