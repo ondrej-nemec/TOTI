@@ -32,7 +32,7 @@ public class TemplateResponseContainer implements TemplateContainer {
 	}
 	
 	public String getModuleName() {
-		return container.getCurrent().getMethodName();
+		return container.getCurrent().getModuleName();
 	}
 	
 	public String getClassName() {
