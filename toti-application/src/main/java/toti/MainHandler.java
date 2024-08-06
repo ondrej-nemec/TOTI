@@ -103,6 +103,11 @@ public class MainHandler extends Handler.Abstract {
 		ip = ip.substring(0, ip.length()-1);
 
 		Answer answer = answers.get(hostname);
+		if (answer == null) {
+			// TODO improve
+			jettyResponse.setStatus(404);
+			return true;
+		}
 		FinalResponse response = answer.accept(request, ip);
 		
 		if (websocket.isPresent() && websocket.get().isAccepted()) {
