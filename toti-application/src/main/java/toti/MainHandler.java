@@ -27,7 +27,7 @@ import toti.http.structures.WebSocket;
 
 public class MainHandler extends Handler.Abstract {
 	
-	//private final Logger logger;
+	private final Logger logger;
 	private final Map<String, String[]> aliases = new HashMap<>();
 	private final Map<String, Answer> answers = new HashMap<>();
 	
@@ -39,7 +39,7 @@ public class MainHandler extends Handler.Abstract {
 		this.formParser = formParser;
 		this.urlEncode = urlEncode;
 		this.streamReader = streamReader;
-		//this.logger = logger;
+		this.logger = logger;
 	}
 
 	@Override
@@ -53,6 +53,7 @@ public class MainHandler extends Handler.Abstract {
 
 		Object hostname = requestHeaders.getHeader("Host");
 		if (hostname == null) {
+			logger.warn("Request with missing Host header");
 			jettyResponse.setStatus(StatusCode.BAD_REQUEST.getCode());
 			callback.succeeded();
 			return true;
@@ -104,8 +105,10 @@ public class MainHandler extends Handler.Abstract {
 
 		Answer answer = answers.get(hostname);
 		if (answer == null) {
-			// TODO improve
+			logger.warn("Request to unknown application: " + hostname);
+			// TODO some pretty error message?
 			jettyResponse.setStatus(404);
+			callback.succeeded();
 			return true;
 		}
 		FinalResponse response = answer.accept(request, ip);
@@ -130,9 +133,12 @@ public class MainHandler extends Handler.Abstract {
 		return true;
 	}
 	
-	public void addApplication(Answer answer, String hostname, String...alias) {
+	public void addApplication(Answer answer, String hostname, String...aliases) {
 		answers.put(hostname, answer);
-		aliases.put(hostname, alias);
+		this.aliases.put(hostname, aliases);
+		for (String alias : aliases) {
+			this.answers.put(alias, answer);
+		}
 	}
 	
 	public void removeApplication(String hostname) {
