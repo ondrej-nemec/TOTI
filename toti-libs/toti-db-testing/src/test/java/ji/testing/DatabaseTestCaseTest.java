@@ -19,8 +19,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import org.apache.logging.log4j.Logger;
-import ji.common.functions.Env;
 import ji.database.Database;
+import ji.env.PropertiesEnv;
 import ji.testing.entities.Row;
 import ji.testing.entities.Table;
 
@@ -29,7 +29,7 @@ public class DatabaseTestCaseTest extends DatabaseTestCase {
 	private final Database realDatabase;
 	
 	public DatabaseTestCaseTest() {
-		super(new Env(getProperties()), mock(Logger.class));
+		super(new PropertiesEnv(getProperties()), mock(Logger.class));
 		this.realDatabase = new Database(config, mock(Logger.class));
 	}
 	

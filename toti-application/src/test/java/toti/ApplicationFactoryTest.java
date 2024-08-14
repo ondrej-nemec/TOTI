@@ -15,6 +15,7 @@ import org.junit.runner.RunWith;
 
 import ji.common.functions.Env;
 import ji.common.structures.MapInit;
+import ji.env.PropertiesEnv;
 import ji.testing.TestCase;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -37,7 +38,7 @@ public class ApplicationFactoryTest implements TestCase {
 	@Parameters(method="data")
 	@Ignore
 	public void test(Properties properties, Consumer<ApplicationFactory> setFactory) throws Exception {
-		Env env = new Env(properties);
+		Env env = new PropertiesEnv(properties);
 		Env applicationsEnv = mock(Env.class);
 		when(applicationsEnv.getModule(any())).thenReturn(env);
 		Env baseEnv = mock(Env.class);

@@ -1,7 +1,5 @@
 package toti;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -20,6 +18,9 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 import ji.common.functions.Env;
+import ji.env.JsonEnv;
+import ji.env.PropertiesEnv;
+import ji.env.XmlEnv;
 import toti.http.SslCredentials;
 import toti.http.parsers.StreamReader;
 
@@ -36,11 +37,27 @@ public class TotiServerFactory {
 	private final Env env;
 	
 	public TotiServerFactory() {
-		this.env = new Env(new Properties());
+		this.env = new PropertiesEnv(new Properties());
 	}
 	
-	public TotiServerFactory(String configFile) throws FileNotFoundException, IOException {
-		this(new Env(configFile));
+	public TotiServerFactory(String configFile) throws Exception {
+		this(selectEnv(configFile));
+	}
+	
+	private static Env selectEnv(String file) throws Exception {
+		if (file == null) {
+			return new PropertiesEnv(new Properties());
+		}
+		if (file.endsWith(".properties")) {
+			return PropertiesEnv.create(file);
+		}
+		if (file.endsWith(".xml")) {
+			return XmlEnv.create(file);
+		}
+		if (file.endsWith(".json")) {
+			return JsonEnv.create(file);
+		}
+		return new PropertiesEnv(new Properties());
 	}
 
 	public TotiServerFactory(Env env) {

@@ -1,4 +1,4 @@
-package ji.common.functions;
+package ji.env;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -13,11 +13,12 @@ import java.util.Properties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import ji.common.functions.Env;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 
 @RunWith(JUnitParamsRunner.class)
-public class EnvTest {
+public class PropertiesEnvTest {
 	
 	@Test
 	public void testSubEnv() {
@@ -25,7 +26,7 @@ public class EnvTest {
 		properties.put("key", "value");
 		properties.put("submodule.key2", "submodule-value");
 		
-		Env env = new Env(properties);
+		Env env = new PropertiesEnv(properties);
 		assertEquals("value", env.get("key"));
 		assertEquals("submodule-value", env.get("submodule.key2"));
 		assertNull(env.get("key2"));
@@ -38,13 +39,13 @@ public class EnvTest {
 	
 	@Test(expected = IOException.class)
 	public void testConstructorForFilesThrowIfNoFileInDir() throws FileNotFoundException, IOException {
-		new Env("functions/env/not-existing.properties");
+		PropertiesEnv.create("functions/env/not-existing.properties");
 	}
 	
 	@Test
 	@Parameters({"tests/functions/env","functions/env"})
 	public void testConstructorForFilesWorksForClasspathAndPathOnly(String path) throws FileNotFoundException, IOException {
-		new Env(path + "/app.properties");
+		PropertiesEnv.create(path + "/app.properties");
 		assertTrue(true);
 	}
 	
@@ -52,8 +53,8 @@ public class EnvTest {
 	@Parameters
 	public void testConstructorForFileFindCorrectProperties(final String subDir)
 			throws FileNotFoundException, IOException {
-		Env e = new Env("functions/env/env." + subDir + ".properties");
-		assertEquals("value", e.getProperties().getProperty("key"));
+		Env e = PropertiesEnv.create("functions/env/env." + subDir + ".properties");
+		assertEquals("value", e.get("key"));
 	}
 	
 	public Collection<Object[]> parametersForTestConstructorForFileFindCorrectProperties() {
