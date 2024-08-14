@@ -54,6 +54,14 @@ public class GridOptions implements Entity {
 		return sorting.containsKey(name);
 	}
 	
+	public Filter getFilter(String name) {
+		return filters.getValue(name);
+	}
+	
+	public Sort getSorting(String name) {
+		return sorting.getValue(name);
+	}
+	
 	public void addFilter(String name, FilterMode mode, Object value, boolean isCI, boolean isIgnoreDiactritics) {
 		filters.put(name, new Filter(name, mode, value, isCI, isIgnoreDiactritics));
 	}
