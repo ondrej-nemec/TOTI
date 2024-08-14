@@ -313,7 +313,6 @@ public class TemplateFactory {
 	//	tags.add(new LinkTag());
 	//	tags.add(new IfCurrentTag());
 		tags.add(new CallbackTag());
-		tags.add(new DatetimeFormatTag());
 		return tags;
 	}
 	

@@ -1,9 +1,10 @@
-package toti.templating.tags;
+package toti.extension.templating.tags;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
+import toti.extension.templating.TemplateResponseContainer;
 import toti.templating.Tag;
 import toti.templating.TagVariableMode;
 import toti.templating.TemplateException;
@@ -61,7 +62,9 @@ public class DatetimeFormatTag implements Tag {
 		return String.format(
 			"write(Template.escapeHtml(new DictionaryValue(%s)"
 			+ ".getValue(%s.class).format(%s.ofPattern("
-				+ "container.translate(\"%s\")"
+				+ TemplateResponseContainer.class.getCanonicalName()
+				+ ".class.cast(container)"
+				+ ".translate(\"%s\")"
 			+ "))));",
 			params.get("value"),
 			ZonedDateTime.class.getName(), // getClassName(params.get("type")),

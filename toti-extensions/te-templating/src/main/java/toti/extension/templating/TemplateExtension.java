@@ -20,6 +20,7 @@ import toti.extension.templating.parameters.HrefParameter;
 import toti.extension.templating.parameters.PlaceholderParameter;
 import toti.extension.templating.parameters.SrcParameter;
 import toti.extension.templating.parameters.TitleParameter;
+import toti.extension.templating.tags.DatetimeFormatTag;
 import toti.extension.templating.tags.IfCurrentTag;
 import toti.extension.templating.tags.LinkTag;
 import toti.extension.templating.tags.PermissionsTag;
@@ -57,7 +58,8 @@ public class TemplateExtension implements toti.extensions.TemplateExtension, Ext
 			new IfCurrentTag(),
 			new LinkTag(),
 			new PermissionsTag(),
-			new TranslateTag()
+			new TranslateTag(),
+			new DatetimeFormatTag()
 		));
 		this.parameters = new LinkedList<>(Arrays.asList(
 			new AltParameter(),
