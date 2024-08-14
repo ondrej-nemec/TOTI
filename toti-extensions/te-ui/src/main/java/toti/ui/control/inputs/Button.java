@@ -122,6 +122,15 @@ public class Button implements Input {
 		return this;
 	}
 	
+	public Button setRefresh(boolean isRefresh) {
+		this.isRefresh = isRefresh;
+		return this;
+	}
+	
+	public Button setReset(boolean isReset) {
+		this.isReset = isReset;
+		return this;
+	}
 
 	public Map<String, Object> getGlobalSettings() {
 		Map<String, Object> settings = getInputSettings();
