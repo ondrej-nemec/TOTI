@@ -2,7 +2,6 @@ package toti.extension.templating;
 
 import java.util.Map;
 
-import toti.answers.request.Identity;
 import toti.answers.response.ResponseContainer;
 import toti.templating.TemplateContainer;
 
@@ -43,7 +42,7 @@ public class TemplateResponseContainer implements TemplateContainer {
 		return container.getCurrent().getMethodName();
 	}
 	
-	public boolean isAllowed(Identity identity, Map<String, Object> data) {
+	public boolean isAllowed(Object identity, Map<String, Object> data) {
 		return container.getAuth().isAllowed(identity, data);
 	}
 	
