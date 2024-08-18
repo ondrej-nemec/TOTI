@@ -85,10 +85,30 @@ public class XmlObject {
 		this.attributes.put(key, value);
 		return this;
 	}
-	
+
 	public XmlObject addReference(XmlObject reference) {
 		this.references.add(reference);
+		if (!referencesSearch.containsKey(reference.getName())) {
+			referencesSearch.put(reference.getName(), new LinkedList<>());
+		}
+		referencesSearch.get(reference.getName()).add(reference);
 		return this;
 	}
 	
+	 @Override
+	public String toString() {
+		return toString("");
+	}
+	
+	protected String toString(String prefix) {
+		StringBuilder res = new StringBuilder();
+		res.append(String.format("%sXML(%s) [%s]", prefix, name, value));
+		attributes.forEach((key, attr)->{
+			res.append(String.format("\n%s  %s: %s", prefix, key, attr));
+		});
+		references.forEach(ref->{
+			res.append(String.format("\n%s  * %s", prefix, ref.toString(prefix + "  ")));
+		});
+		return res.toString();
+	}
 }
