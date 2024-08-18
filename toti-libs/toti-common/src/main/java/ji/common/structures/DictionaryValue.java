@@ -623,9 +623,16 @@ public class DictionaryValue {
 	 * @return {@link List}
 	 * @throws ClassCastException if all convert and parse mechanism fails
 	 */
-	@SuppressWarnings("unchecked")
-	public List<String> getList(String delimiter) {
-		return parseValue(List.class, a->Arrays.asList(a.split(delimiter)));
+	//@SuppressWarnings("unchecked")
+	public <T> List<T> getList(String delimiter) {
+		if (value == null) {
+			return null;
+		}
+		if (value.toString().isEmpty()) {
+			return new LinkedList<>();
+		}
+		return new DictionaryValue(value.toString().split(delimiter)).getList();
+		// return parseValue(List.class, a->Arrays.asList(a.split(delimiter)));
 	}
 	
 	/**
