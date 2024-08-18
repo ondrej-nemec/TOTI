@@ -1,6 +1,7 @@
 package ji.common.functions;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -74,4 +75,18 @@ public class Implode {
 		}
 		return result.toString();
 	}
+	
+	public static <K, V> String implode(String glue, String delimeter, Map<K, V> map) {
+		StringBuilder result = new StringBuilder();
+		map.forEach((key, value)->{
+			if (!result.toString().isEmpty()) {
+				result.append(glue);
+			}
+			result.append(key.toString());
+			result.append(delimeter);
+			result.append(value.toString());
+		});
+		return result.toString();
+	}
+	
 }
