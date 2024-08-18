@@ -314,6 +314,7 @@ var totiControl = {
 					}
 				};
 				select.setOptions = params.setOptions;
+				factory.getContainer().setOptions = params.setOptions;
 				new Promise(function (resolve, reject) {
 					/* first wait until depends is loaded */
 					/* depends element must be first */
