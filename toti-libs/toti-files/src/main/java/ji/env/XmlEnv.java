@@ -31,7 +31,7 @@ public class XmlEnv implements Env {
 			return object.getAttribute(key);
 		}
 		if (object.containsReference(key)) {
-			return object.getReference(key).getValue();
+			return object.getReference(key).getValue().getValue();
 		}
 		return null;
 	}
