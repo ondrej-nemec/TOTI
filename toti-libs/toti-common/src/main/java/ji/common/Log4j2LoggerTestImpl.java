@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.message.EntryMessage;
+import org.apache.logging.log4j.message.FlowMessageFactory;
 import org.apache.logging.log4j.message.Message;
 import org.apache.logging.log4j.message.MessageFactory;
 import org.apache.logging.log4j.util.MessageSupplier;
@@ -2263,5 +2264,10 @@ public class Log4j2LoggerTestImpl implements Logger {
 	
 	private void print(String severity, Object message, Object ...params) {
 		print(severity, message.toString(), null, params);
+	}
+
+	@Override
+	public FlowMessageFactory getFlowMessageFactory() {
+		return null;
 	}
 }

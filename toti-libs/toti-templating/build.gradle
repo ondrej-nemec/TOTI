@@ -1,6 +1,6 @@
 plugins {
-    id 'java-library'
-    id 'java-test-fixtures'
+	id 'java-library'
+	id 'java-test-fixtures'
 }
 
 sourceCompatibility = 17.0

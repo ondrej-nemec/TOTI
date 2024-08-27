@@ -19,10 +19,10 @@ dependencies {
 	api project(':toti-extensions:te-translator')
 	
 	
-	implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.17.2'
+	implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.23.1'
 	
 	// https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl
-	implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.17.2'
+	implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.23.1'
 	
 	
 	// https://mvnrepository.com/artifact/junit/junit
