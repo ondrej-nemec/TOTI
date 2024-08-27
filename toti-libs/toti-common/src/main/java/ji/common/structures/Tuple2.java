@@ -54,13 +54,20 @@ public class Tuple2<F, S> {
 			return false;
 		}
 		Tuple2<?, ?> t = Tuple2.class.cast(obj);
-		if (!_1.equals(t._1)) {
+		if (!check(_1, t._1)) {
 			return false;
 		}
-		if (!_2.equals(t._2)) {
+		if (!check(_2, t._2)) {
 			return false;
 		}
 		return true;
 	}
-	
+
+	private boolean check(Object a, Object b) {
+		if (a == null) {
+			return b == null;
+		}
+		return a.equals(b);
+	}
+
 }

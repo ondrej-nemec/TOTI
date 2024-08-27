@@ -69,16 +69,23 @@ public class Tuple3<F, S, T> {
 			return false;
 		}
 		Tuple3<?, ?, ?> t = Tuple3.class.cast(obj);
-		if (!_1.equals(t._1)) {
+		if (!check(_1, t._1)) {
 			return false;
 		}
-		if (!_2.equals(t._2)) {
+		if (!check(_2, t._2)) {
 			return false;
 		}
-		if (!_3.equals(t._3)) {
+		if (!check(_3, t._3)) {
 			return false;
 		}
 		return true;
+	}
+
+	private boolean check(Object a, Object b) {
+		if (a == null) {
+			return b == null;
+		}
+		return a.equals(b);
 	}
 	
 }
