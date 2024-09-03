@@ -15,10 +15,11 @@ public class XmlEnv implements Env {
 	private final XmlObject object;
 	
 	public static XmlEnv create(String path) throws XMLStreamException, IOException {
-		return new XmlEnv(new XmlReader().read(Text.get().read(
+		String xml = Text.get().read(
 			br->br.asString(),
 			InputStreamLoader.createInputStream(XmlEnv.class, path)
-		)));
+		);
+		return new XmlEnv(new XmlReader().read(xml));
 	}
 	
 	private XmlEnv(XmlObject object) {

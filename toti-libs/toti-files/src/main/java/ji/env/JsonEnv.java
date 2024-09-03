@@ -15,11 +15,8 @@ public class JsonEnv implements Env {
 	private final Map<String, Object> data;
 	
 	public static JsonEnv create(String path) throws JsonStreamException, IOException {
-		return new JsonEnv(new DictionaryValue(
-			new JsonReader().read(
-				Text.get().read(br->br.asString(), InputStreamLoader.createInputStream(JsonEnv.class, path))
-			)
-		).getMap());
+		String json = Text.get().read(br->br.asString(), InputStreamLoader.createInputStream(JsonEnv.class, path));
+		return new JsonEnv(new DictionaryValue(new JsonReader().read(json)).getMap());
 	}
 	
 	private JsonEnv(Map<String, Object> data) {
