@@ -60,6 +60,9 @@ public interface Response {
 	/***************************/
 	
 	default void setContentType(String fileName, String charset, Headers responseHeaders) {
+		if (responseHeaders.containsHeader("Content-Type")) {
+			return;
+		}
 		String type = getContentType(fileName, charset);
 		if (type != null) {
 			responseHeaders.addHeader("Content-Type", type);

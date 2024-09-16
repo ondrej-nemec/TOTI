@@ -45,7 +45,7 @@ public class TemplateResponse implements Response {
 				}
 			});
 		});
-		resHeaders.addHeader("Content-Type", getContentType(fileName, charset));
+		setContentType(fileName, charset, resHeaders);
 		
 		return new FinalResponse(code, resHeaders, ByteBuffer.wrap(createResponse(container).getBytes()));
 	}
