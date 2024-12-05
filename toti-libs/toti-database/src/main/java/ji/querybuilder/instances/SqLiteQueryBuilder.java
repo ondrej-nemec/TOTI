@@ -4,9 +4,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import ji.common.functions.Implode;
-import ji.common.structures.DictionaryValue;
 import ji.common.structures.ObjectBuilder;
 import ji.common.structures.Tuple2;
 import ji.querybuilder.DbInstance;
@@ -35,7 +35,7 @@ import ji.querybuilder.structures.ForeignKey;
 import ji.querybuilder.structures.Joining;
 import ji.querybuilder.structures.SubSelect;
 
-public class MySqlQueryBuilder implements DbInstance {
+public class SqLiteQueryBuilder implements DbInstance {
 
 	@Override
 	public String concat(String param, String... params) {
@@ -209,37 +209,19 @@ public class MySqlQueryBuilder implements DbInstance {
 	public String createSql(DeleteBuilderImpl delete, boolean create) {
 		StringBuilder sql = new StringBuilder();
 		createWith(delete.getWiths(), sql, create);
-		sql.append("DELETE FROM " + getWithAlias(delete.getTable(), delete.getAlias()));
-		
-		StringBuilder joins = new StringBuilder();
-		StringBuilder wheres = new StringBuilder();
-		delete.getJoins().forEach(join->{
-			if (joins.isEmpty()) {
-				joins.append(" USING ");
-				wheres.append(" WHERE");
-			} else {
-				joins.append(", ");
-				wheres.append(" AND");
-			}
-			joins.append(getWithAlias(
-				String.format(
-					join.getBuilder().wrap() ? "(%s)" : "%s",
-					create ? join.getBuilder().createSql() : join.getBuilder().getSql()
-				),
-				join.getAlias()
-			));
-			wheres.append(" (" + join.getOn() + ")");
-		});
-		delete.getWheres().forEach((where)->{
-			if (wheres.isEmpty()) {
-				wheres.append(" WHERE ");
-			} else {
-				wheres.append(" " + where._2().toString() + " ");
-			}
-			wheres.append("(" + where._1() + ")");
-		});
-		sql.append(joins.toString());
-		sql.append(wheres.toString());
+		sql.append("DELETE FROM " + delete.getTable());
+		if (!delete.getJoins().isEmpty()) {
+			sql.append(" WHERE ROWID IN (");
+			sql.append("SELECT " + (delete.getAlias() == null ? delete.getTable() : delete.getAlias()) + ".ROWID");
+			sql.append(" FROM " + getWithAlias(delete.getTable(), delete.getAlias()));
+			delete.getJoins().forEach(join->{
+				createJoin(join, sql, create);
+			});
+			createWhere(delete.getWheres(), sql, create);
+			sql.append(")");
+		} else {
+			createWhere(delete.getWheres(), sql, create);
+		}
 		return sql.toString();
 	}
 
@@ -308,54 +290,46 @@ public class MySqlQueryBuilder implements DbInstance {
 	}
 
 	@Override
-	public String createSql(AlterTableBuilderImpl alterTable) {
-		// TODO check only one rename at once https://stackoverflow.com/a/74110573/8240462
-		List<String> rows = new LinkedList<>();
-		List<String> constains = new LinkedList<>();
-		iterateList(
-			sql->rows.add(sql), alterTable.getAddColumns(),
-			i->"", i->"", c->"ADD " + getColumn(c, x->constains.add(x))
-		);
-		rows.addAll(constains);
-		createAddForeignKey(alterTable.getAddForeignKeys(), sql->rows.add(sql), "ADD ");
+	public String createSql(AlterTableBuilderImpl alterTable) {		
+		StringBuilder result = new StringBuilder();
+		Supplier<String> alterTablePrefix = ()->"ALTER TABLE " + alterTable.getTable() + " ";
 		
 		iterateList(
-			sql->rows.add(sql), alterTable.getDeleteForeignKeys(),
-			i->"", i->"", fk->"DROP CONSTRAINT " + fk.getColumn()
+			sql->result.append(sql + ";"), alterTable.getAddColumns(),
+			i->alterTablePrefix.get(), i->alterTablePrefix.get(),
+			c->"ADD COLUMN " + getColumn(c, null)
+		);
+		
+		iterateList(
+			sql->result.append(sql + ";"), alterTable.getDeleteColumns(),
+			i->alterTablePrefix.get(), i->alterTablePrefix.get(),
+			c->"DROP COLUMN " + c.getName()
 		);
 		iterateList(
-			sql->rows.add(sql), alterTable.getDeleteColumns(),
-			i->"", i->"", c->"DROP COLUMN " + c.getName()
+			sql->result.append(sql + ";"), alterTable.getRenameColumns(),
+			i->alterTablePrefix.get(), i->alterTablePrefix.get(),
+			c->String.format("RENAME COLUMN %s TO %s", c.getOldName(), c.getNewName())
+		);
+		if (alterTable.getNewName() != null) {
+			result.append(alterTablePrefix.get() + "RENAME TO " + alterTable.getNewName() + ";");
+		}
+		//	createAddForeignKey(alterTable.getAddForeignKeys(), sql->rows.add(sql), "ADD ");
+		/*
+		
+		iterateList(
+			sql->result.append(sql + ";"), alterTable.getDeleteForeignKeys(),
+			i->alterTablePrefix.get(), i->alterTablePrefix.get(),
+			fk->"DROP CONSTRAINT " + fk.getColumn()
 		);
 		iterateList(
-			sql->rows.add(sql), alterTable.getModifyColumnsType(),
-			i->"", i->"", c->{
-				return "ALTER COLUMN " + c.getName() + " TYPE " + toString(c.getType());
+			sql->result.append(sql + ";"), alterTable.getModifyColumnsType(),
+			i->alterTablePrefix.get(), i->alterTablePrefix.get(),c->{
+				return "MODIFY COLUMN " + c.getName() + " " + toString(c.getType());
 			}
 		);
 		iterateList(
-			sql->rows.add(sql), alterTable.getModifyDefault(),
-			i->"", i->"", c->{
-				if (c.getValue().isClear()) {
-					return "ALTER COLUMN " + c.getName() + " DROP DEFAULT";
-				} else {
-					return "ALTER COLUMN " + c.getName() + " SET DEFAULT " + c.getValue().getValue();
-				}
-			}
-		);
-		iterateList(
-			sql->rows.add(sql), alterTable.getModifyNullable(),
-			i->"", i->"", c->{
-				if (new DictionaryValue(c.getValue().getValue()).getBoolean()) {
-					return "ALTER COLUMN " + c.getName() + " SET NOT NULL";
-				} else {
-					return "ALTER COLUMN " + c.getName() + " DROP NOT NULL";
-				}
-			}
-		);
-		iterateList(
-			sql->rows.add(sql), alterTable.getModifyUnique(),
-			i->"", i->"", c->{
+			sql->result.append(sql + ";"), alterTable.getModifyUnique(),
+			i->alterTablePrefix.get(), i->alterTablePrefix.get(), c->{
 				String key = (alterTable.getTable() + "_" + c.getName() + "_key").toLowerCase();
 				if (new DictionaryValue(c.getValue().getValue()).getBoolean()) {
 					return "ADD CONSTRAINT " + key + " UNIQUE (" + c.getName() + ")";
@@ -365,18 +339,45 @@ public class MySqlQueryBuilder implements DbInstance {
 			}
 		);
 		iterateList(
-			sql->rows.add(sql), alterTable.getRenameColumns(),
-			i->"", i->"", c->String.format("RENAME COLUMN %s TO %s", c.getOldName(), c.getNewName())
+			sql->result.append(sql + ";"), alterTable.getModifyDefault(),
+			i->alterTablePrefix.get(), i->alterTablePrefix.get(), c->{
+				if (c.getValue().isClear()) {
+					return "ALTER COLUMN " + c.getName() + " DROP DEFAULT";
+				} else {
+					return "ALTER COLUMN " + c.getName() + " SET DEFAULT " + c.getValue().getValue();
+				}
+			}
 		);
-		
-		StringBuilder sql = new StringBuilder();
-		sql.append("ALTER TABLE ");
-		sql.append(alterTable.getTable());
-		iterateList(sql, rows, i->" ", i->", ", i->i);
-		if (alterTable.getNewName() != null) {
-			sql.append(" RENAME TO " + alterTable.getNewName());
+		iterateList(
+			sql->result.append(sql + ";"), alterTable.getModifyNullable(),
+			i->alterTablePrefix.get(), i->alterTablePrefix.get(), c->{
+				if (new DictionaryValue(c.getValue().getValue()).getBoolean()) {
+					return "ALTER COLUMN " + c.getName() + " SET NOT NULL";
+				} else {
+					return "ALTER COLUMN " + c.getName() + " DROP NOT NULL";
+				}
+			}
+		);*/
+		RuntimeException notSupported = new RuntimeException("Not supported operation");
+		if (!alterTable.getAddForeignKeys().isEmpty()) {
+			throw notSupported;
 		}
-		return sql.toString();
+		if (!alterTable.getDeleteForeignKeys().isEmpty()) {
+			throw notSupported;
+		}
+		if (!alterTable.getModifyColumnsType().isEmpty()) {
+			throw notSupported;
+		}
+		if (!alterTable.getModifyDefault().isEmpty()) {
+			throw notSupported;
+		}
+		if (!alterTable.getModifyNullable().isEmpty()) {
+			throw notSupported;
+		}
+		if (!alterTable.getModifyUnique().isEmpty()) {
+			throw notSupported;
+		}
+		return result.toString();
 	}
 	
 	/****************************/
@@ -394,7 +395,7 @@ public class MySqlQueryBuilder implements DbInstance {
 
 	protected String toString(ColumnSetting settings) {
 		switch (settings) {
-			case AUTO_INCREMENT: return "SERIAL";
+			//case AUTO_INCREMENT: return "SERIAL";
 			case UNIQUE: return "UNIQUE";
 			case NOT_NULL: return "NOT NULL";
 			case NULL: return "NULL";
@@ -465,19 +466,20 @@ public class MySqlQueryBuilder implements DbInstance {
 	private String getColumn(Column column, Consumer<String> onConstaint) {
 		StringBuilder result = new StringBuilder();
 		result.append(column.getName());
-		if (!column.getSettings().contains(ColumnSetting.AUTO_INCREMENT)) {
-			result.append(" ");
-			result.append(toString(column.getType()));
-		}
+		result.append(" ");
+		result.append(toString(column.getType()));
 		if (column.getValue().isSet()) {
 			result.append(" DEFAULT ");
 			result.append(column.getValue().getValue());
 		} else if (column.getValue().isClear()) {
-			// TODO remove default
+			// remove default
+			// alter not suported
 		}
 		
 		for (ColumnSetting settings : column.getSettings()) {
-			if (settings == ColumnSetting.PRIMARY_KEY) {
+			if (settings == ColumnSetting.AUTO_INCREMENT) {
+				// ignore
+			} else if (settings == ColumnSetting.PRIMARY_KEY && onConstaint != null) {
 				onConstaint.accept(String.format("PRIMARY KEY (%s)", column.getName()));
 			} else {
 				result.append(" ");

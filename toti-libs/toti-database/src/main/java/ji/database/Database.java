@@ -77,6 +77,8 @@ public class Database {
 			return new PosgreSql(config.runOnExternalServer, createDatabaseConnectionString(), createProperties(), name, logger);
 		case "sqlserver":
 			return new SqlServer(config.runOnExternalServer, createDatabaseConnectionString(), createProperties(), name, logger);
+		case "sqlite":
+			return new SqLite(config.runOnExternalServer, createDatabaseConnectionString(), createProperties(), name, logger);
 		default:
 			throw new RuntimeException("Unsupported type " + config.type);
 		}

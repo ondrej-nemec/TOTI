@@ -497,7 +497,7 @@ public class QueryBuilderEndToEndTest {
 	public void testExecuteIndexeses() throws Exception {
 		test("indexes", (conn, builder)->{
 			builder.createIndex("index_name", "table1", "id").execute();
-			builder.deleteIndex("index_name").execute();
+			builder.deleteIndex("index_name", "table1").execute();
 		}, Arrays.asList("table1"));
 	}
 	

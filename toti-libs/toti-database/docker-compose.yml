@@ -5,17 +5,23 @@ services:
     image: mysql:8.0
     restart: always
     environment:
+      MYSQL_DATABASE: query_builder
     # username is root
       MYSQL_ROOT_PASSWORD: SomeP@ssw0rd
       DB_HOST: mysql
+    volumes:
+      - ./volumes/mysql:/var/lib/mysql
+      # not persist
+      # - ./docker/mysql_dump.sql:/docker-entrypoint-initdb.d/dump.sql:ro
     ports:
-      - 3307:3306
+      - 3308:3306
   postgres:
-    image: postgres
+    image: postgres:16.4
     restart: always
     ports:
       - 5433:5432
     volumes:
+      - ./volumes/postgres:/var/lib/postgresql/data
       - ./docker/postgres_dump.sql:/docker-entrypoint-initdb.d/dump.sql
     # set shared memory limit when using docker-compose
     shm_size: 128mb
@@ -31,15 +37,41 @@ services:
       POSTGRES_PASSWORD: SomeP@ssw0rd
       DB_HOST: postgres
       POSTGRES_DB: query_builder
-  sqlserver:
-    # mssql server image isn't available for arm64 architecture, so we use azure-sql instead
-    #image: mcr.microsoft.com/azure-sql-edge:1.0.4
-    # If you really want to use MS SQL Server, uncomment the following line
-    image: mcr.microsoft.com/mssql/server
-    environment:
-      ACCEPT_EULA: "Y"
-      # username is sa
-      MSSQL_SA_PASSWORD: "SomeP@ssw0rd"
-      DB_HOST: sqlserver
-    ports:
-      - 1434:1433
+      # not now
+#  sqlserver:
+#    # mssql server image isn't available for arm64 architecture, so we use azure-sql instead
+#    #image: mcr.microsoft.com/azure-sql-edge:1.0.4
+#    # If you really want to use MS SQL Server, uncomment the following line
+#    image: mcr.microsoft.com/mssql/server
+#    environment:
+#      ACCEPT_EULA: "Y"
+#      # username is sa
+#      MSSQL_SA_PASSWORD: "SomeP@ssw0rd"
+#      DB_HOST: sqlserver
+#    ports:
+#      - 1434:1433
+
+# sqlite doesnt need container
+#  sqlite3:
+#    image: nouchka/sqlite3:latest
+#    stdin_open: true
+#    tty: true
+#    command: query_builder.sqlt < /root/dump.sql
+#    volumes:
+#      - ./volumes/sqlite.db/:/root/db/
+#      - ./docker/sqlite_dump.sql:/root/dump.sql
+#      - ./docker/sqlite_dump.sql:/docker-entrypoint-initdb.d/dump.sql:ro
+
+#  adminer:
+#    build:
+#      context: ./docker/php
+#   # image: php:7.4-apache
+#    volumes:
+#      - ./src:/var/www/html
+#    ports:
+#      - "82:80"
+#    restart: always
+ #   networks:
+ #     - default
+   # depends_on:
+   #   - db

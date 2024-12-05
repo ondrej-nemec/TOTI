@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import ji.common.functions.Implode;
+import ji.common.structures.DictionaryValue;
 import ji.common.structures.ObjectBuilder;
 import ji.common.structures.Tuple2;
 import ji.querybuilder.DbInstance;
@@ -283,10 +284,6 @@ public class PostgreSqlQueryBuilder implements DbInstance {
 
 	@Override
 	public String createSql(CreateTableBuilderImpl createTable) {
-		
-		//StringBuilder aux = new StringBuilder();
-		//List<String> rows = new LinkedList<>();
-		
 		StringBuilder sql = new StringBuilder();
 		
 		StringBuilder appendix = new StringBuilder();
@@ -330,21 +327,55 @@ public class PostgreSqlQueryBuilder implements DbInstance {
 			sql->rows.add(sql), alterTable.getDeleteColumns(),
 			i->"", i->"", c->"DROP COLUMN " + c.getName()
 		);
-		
 		iterateList(
-			sql->rows.add(sql), alterTable.getModifyColumns(),
-			i->"", i->"", c->String.format("ALTER COLUMN %s TYPE %s", c.getName(), toString(c.getType()))
+			sql->rows.add(sql), alterTable.getModifyColumnsType(),
+			i->"", i->"", c->{
+				return "ALTER COLUMN " + c.getName() + " TYPE " + toString(c.getType());
+			}
+		);
+		iterateList(
+			sql->rows.add(sql), alterTable.getModifyDefault(),
+			i->"", i->"", c->{
+				if (c.getValue().isClear()) {
+					return "ALTER COLUMN " + c.getName() + " DROP DEFAULT";
+				} else {
+					return "ALTER COLUMN " + c.getName() + " SET DEFAULT " + c.getValue().getValue();
+				}
+			}
+		);
+		iterateList(
+			sql->rows.add(sql), alterTable.getModifyNullable(),
+			i->"", i->"", c->{
+				if (new DictionaryValue(c.getValue().getValue()).getBoolean()) {
+					return "ALTER COLUMN " + c.getName() + " SET NOT NULL";
+				} else {
+					return "ALTER COLUMN " + c.getName() + " DROP NOT NULL";
+				}
+			}
+		);
+		iterateList(
+			sql->rows.add(sql), alterTable.getModifyUnique(),
+			i->"", i->"", c->{
+				String key = (alterTable.getTable() + "_" + c.getName() + "_key").toLowerCase();
+				if (new DictionaryValue(c.getValue().getValue()).getBoolean()) {
+					return "ADD CONSTRAINT " + key + " UNIQUE (" + c.getName() + ")";
+				} else {
+					return "DROP CONSTRAINT " + key; //  + " UNIQUE (" + c.getName() + ")"
+				}
+			}
 		);
 		iterateList(
 			sql->rows.add(sql), alterTable.getRenameColumns(),
 			i->"", i->"", c->String.format("RENAME COLUMN %s TO %s", c.getOldName(), c.getNewName())
 		);
 		
-		
 		StringBuilder sql = new StringBuilder();
 		sql.append("ALTER TABLE ");
 		sql.append(alterTable.getTable());
 		iterateList(sql, rows, i->" ", i->", ", i->i);
+		if (alterTable.getNewName() != null) {
+			sql.append(" RENAME TO " + alterTable.getNewName());
+		}
 		return sql.toString();
 	}
 	
@@ -438,10 +469,13 @@ public class PostgreSqlQueryBuilder implements DbInstance {
 			result.append(" ");
 			result.append(toString(column.getType()));
 		}
-		if (column.getValue() != null) {
+		if (column.getValue().isSet()) {
 			result.append(" DEFAULT ");
-			result.append(column.getValue());
+			result.append(column.getValue().getValue());
+		} else if (column.getValue().isClear()) {
+			// TODO remove default
 		}
+		
 		for (ColumnSetting settings : column.getSettings()) {
 			if (settings == ColumnSetting.PRIMARY_KEY) {
 				onConstaint.accept(String.format("PRIMARY KEY (%s)", column.getName()));
@@ -507,14 +541,27 @@ public class PostgreSqlQueryBuilder implements DbInstance {
 	}
 	
 	private void createWith(List<Tuple2<String, SubSelect>> withs, StringBuilder sql, boolean create) {
-		withs.forEach((with)->{
+		/*withs.forEach((with)->{
 			String subquery = create ? with._2().createSql() : with._2().getSql();
 			boolean isRecursive = subquery.contains(" " + with._1() + " ") || subquery.endsWith(" " + with._1());
 			sql.append(String.format(
 				"WITH" + (isRecursive ? " recursive" : "") + " %s AS (%s)",
 				with._1(), subquery
 			));
-		});
+		});*/
+		iterateList(
+			sql,
+			withs,
+			(item)->"WITH",
+			(with)->",",
+			(with)->{
+				String subquery = create ? with._2().createSql() : with._2().getSql();
+				boolean isRecursive = subquery.contains(" " + with._1() + " ") || subquery.endsWith(" " + with._1());
+				return String.format(
+					(isRecursive ? " recursive" : "") + " %s AS (%s)", with._1(), subquery
+				);
+			}
+		);
 	}
 	
 	private void createWhere(List<Tuple2<String, Where>> wheres, StringBuilder sql, boolean create) {

@@ -54,6 +54,12 @@ public class CreateTableBuilderImpl implements CreateTableBuilder, SingleExecute
 	}
 
 	@Override
+	public CreateTableBuilder addColumn(String name, ColumnType type, ColumnSetting... settings) {
+		this.columns.add(Column.create(name, type, settings));
+		return this;
+	}
+
+	@Override
 	public CreateTableBuilder addColumn(String name, ColumnType type, Object defaultValue, ColumnSetting... settings) {
 		this.columns.add(Column.create(name, type, defaultValue, settings));
 		return this;

@@ -78,7 +78,7 @@ public interface SelectExecute {
 			if (rs.next()) {
 				return new DictionaryValue(_parseValue(rs, 1));
 			}
-			return null;
+			return new DictionaryValue(null);
 		});
 	}
 

@@ -36,6 +36,8 @@ import ji.querybuilder.builders.WithBuilder;
 
 public class QueryBuilder implements QueryBuilderFactory, PreparedQueries {
 
+	// TODO transaction
+	
 	private final DbInstance instance;
 	private final Connection connection;
 	
@@ -168,8 +170,8 @@ public class QueryBuilder implements QueryBuilderFactory, PreparedQueries {
 	}
 
 	@Override
-	public DeleteIndexBuilder deleteIndex(String name) {
-		return new DeleteIndexBuilderImpl(connection, instance, name);
+	public DeleteIndexBuilder deleteIndex(String indexName, String tableName) {
+		return new DeleteIndexBuilderImpl(connection, instance, indexName, tableName);
 	}
 
 	@Override

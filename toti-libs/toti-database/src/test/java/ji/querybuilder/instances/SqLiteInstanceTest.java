@@ -1,20 +1,23 @@
 package ji.querybuilder.instances;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class PostgresSqlInstanceTest extends AbstractInstanceTest {
+import org.junit.BeforeClass;
 
-	public PostgresSqlInstanceTest() {
-		super(new PostgreSqlQueryBuilder());
+public class SqLiteInstanceTest extends AbstractInstanceTest {
+
+	public SqLiteInstanceTest() {
+		super(new SqLiteQueryBuilder());
 	}
 
 	@Override
 	protected String getCreateTable() {
 		return "CREATE TABLE create_table ("
-			+ "Primary_column SERIAL NOT NULL,"
+			+ "Primary_column INT NOT NULL," // AUTOINCREMENT
 			+ " Unique_column INT UNIQUE,"
 			+ " Nullable_column INT DEFAULT 42 NULL,"
 			+ " Bool_column BOOLEAN,"
@@ -49,44 +52,30 @@ public class PostgresSqlInstanceTest extends AbstractInstanceTest {
 
 	@Override
 	protected String getAlterTable(boolean full) {
-		if (!full) {
-			return "ALTER TABLE table_to_alter"
-				+ " ADD Add_column_1 INT NOT NULL,"
-				+ " DROP COLUMN Column_to_delete";
+		if (full) {
+			// sqlite support almost nothing in alter table
+			return null;
 		}
-		return "ALTER TABLE table_to_alter"
-			+ " ADD Add_column_1 INT NOT NULL,"
-			+ " ADD Add_column_2 INT DEFAULT 42 UNIQUE NULL,"
-			+ " ADD CONSTRAINT FK_Add_column_1 FOREIGN KEY (Add_column_1) REFERENCES table_for_index(id),"
-			+ " ADD CONSTRAINT FK_Add_column_2 FOREIGN KEY (Add_column_2)"
-				+ " REFERENCES table_for_index(id) ON DELETE CASCADE ON UPDATE NO ACTION,"
-			+ " DROP CONSTRAINT FK_to_delete,"
-			+ " DROP COLUMN Column_to_delete,"
-
-			+ " ALTER COLUMN Column_to_modify_1 TYPE FLOAT,"
-			+ " ALTER COLUMN Column_to_modify_2 TYPE FLOAT,"
-			
-			+ " ALTER COLUMN Column_to_modify_1 SET DEFAULT 5,"
-			+ " ALTER COLUMN Column_to_modify_2 DROP DEFAULT,"
-			
-			+ " ALTER COLUMN Column_to_modify_1 DROP NOT NULL,"
-			+ " ALTER COLUMN Column_to_modify_2 SET NOT NULL,"
-			
-			+ " DROP CONSTRAINT table_to_alter_column_to_modify_1_key," //  UNIQUE (Column_to_modify_1)
-			+ " ADD CONSTRAINT table_to_alter_column_to_modify_2_key UNIQUE (Column_to_modify_2)"
-			;
+		return "ALTER TABLE table_to_alter ADD COLUMN Add_column_1 INT NOT NULL;"
+		//	+ "ALTER TABLE table_to_alter ADD COLUMN Add_column_2 INT DEFAULT 42 UNIQUE NULL;"
+			+ "ALTER TABLE table_to_alter DROP COLUMN Column_to_delete;"
+		//	+ "ALTER TABLE table_to_alter MODIFY COLUMN Column_to_modify_1 FLOAT;"
+		//	+ "ALTER TABLE table_to_alter MODIFY COLUMN Column_to_modify_2 FLOAT;"
+		//	+ "ALTER TABLE table_to_alter DROP CONSTRAINT table_to_alter_column_to_modify_1_key;"
+		//	+ "ALTER TABLE table_to_alter ADD CONSTRAINT table_to_alter_column_to_modify_2_key UNIQUE (Column_to_modify_2);"
+		;
 	}
 
 	@Override
 	protected String getAlterTableRenameColumn() {
 		return "ALTER TABLE table_to_alter"
-			+ " RENAME COLUMN Column_to_rename TO Renamed_column";
+			+ " RENAME COLUMN Column_to_rename TO Renamed_column;";
 	}
 
 	@Override
 	protected String getAlterTableRenameTable() {
 		return "ALTER TABLE table_to_rename"
-			+ " RENAME TO table_with_another_name";
+			+ " RENAME TO table_with_another_name;";
 	}
 
 	@Override
@@ -258,18 +247,28 @@ public class PostgresSqlInstanceTest extends AbstractInstanceTest {
 
 	@Override
 	protected String getQueryDeleteJoins(boolean create) {
-		return "DELETE FROM table_1 AS t1"
-			+ " USING table_2, table_3 AS t3, (SELECT * FROM table_4) AS st4, table_5, table_6 AS t6, (SELECT * FROM table_7) AS st7"
-			+ " WHERE (t1.id = table_2.id) AND (t1.id = t3.id) AND (t3.id = st4.id)"
-			+ " AND (t1.id = table_5.id) AND (t1.id = t6.id) AND (t1.id = st7.id)"
-			+ " AND (st7.id = 1)";
+		return "DELETE FROM table_1 WHERE ROWID IN ("
+				+ "SELECT t1.ROWID"
+				+ " FROM table_1 AS t1"
+				+ " JOIN table_2 ON t1.id = table_2.id"
+				+ " LEFT JOIN table_3 AS t3 ON t1.id = t3.id"
+				+ " RIGHT JOIN (SELECT * FROM table_4) AS st4 ON t3.id = st4.id"
+				+ " JOIN table_5 ON t1.id = table_5.id"
+				+ " LEFT JOIN table_6 AS t6 ON t1.id = t6.id"
+				+ " RIGHT JOIN (SELECT * FROM table_7) AS st7 ON t1.id = st7.id"
+				+ " WHERE (st7.id = 1)"
+			+ ")";
 	}
 
 	@Override
 	protected String getQueryDeleteWith(boolean create) {
 		return "WITH cte AS (SELECT 1 as id),"
 			+ " cte2 AS (SELECT 1 as id)"
-			+ "DELETE FROM table_1 AS t1 USING cte WHERE (cte.id = t1.id)";
+			+ "DELETE FROM table_1 WHERE ROWID IN ("
+				+ "SELECT t1.ROWID"
+				+ " FROM table_1 AS t1"
+				+ " JOIN cte ON cte.id = t1.id"
+			+ ")";
 	}
 
 	@Override
@@ -403,12 +402,26 @@ public class PostgresSqlInstanceTest extends AbstractInstanceTest {
 
 	@Override
 	protected Connection getConnection() throws SQLException {
+		return createConnection();
+	}
+	
+	private static Connection createConnection() throws SQLException {
 		Properties props = new Properties();
-		props.setProperty("user", "postgres");
-		props.setProperty("password", "SomeP@ssw0rd");
+		//props.setProperty("user", "root");
+		//props.setProperty("password", "SomeP@ssw0rd");
 		props.setProperty("serverTimezone", "Europe/Prague");
+		props.setProperty("create", "true");
 		props.setProperty("allowMultiQueries", "true");
-		return DriverManager.getConnection("jdbc:postgresql://localhost:5433/query_builder", props);
+		return DriverManager.getConnection("jdbc:sqlite:volumes/sqlite/query_builder", props);
+	}
+	
+	@BeforeClass
+	public static void beforeSubClass() throws Exception {
+	//	AbstractInstanceTest.beforeClass();
+		// no container, need prepare dirs
+		new File("volumes/sqlite").mkdirs();
+		// cannot init db in docker-compose
+		execInitFile("docker/sqlite_dump.sql", createConnection());
 	}
 	
 }

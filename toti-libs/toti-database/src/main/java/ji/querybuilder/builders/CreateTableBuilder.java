@@ -9,9 +9,7 @@ import ji.querybuilder.enums.OnAction;
 
 public interface CreateTableBuilder extends Builder {
 
-	default CreateTableBuilder addColumn(String name, ColumnType type, ColumnSetting... settings) {
-		return addColumn(name, type, null, settings);
-	}
+	CreateTableBuilder addColumn(String name, ColumnType type, ColumnSetting... settings);
 
 	CreateTableBuilder addColumn(String name, ColumnType type, Object defaultValue, ColumnSetting... settings);
 	

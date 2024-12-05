@@ -29,8 +29,12 @@ dependencies {
 	testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.19.1'
 	
 	// https://mvnrepository.com/artifact/pl.pragmatists/JUnitParams
-	testImplementation group: 'pl.pragmatists', name: 'JUnitParams', version: '1.1.1'
+	//testImplementation group: 'pl.pragmatists', name: 'JUnitParams', version: '1.1.1'
+	testImplementation 'com.github.Pragmatists:JUnitParams:b8647f177a'
 	
+	
+	// https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
+	testImplementation group: 'org.xerial', name: 'sqlite-jdbc', version: '3.47.0.0'
 	// https://mvnrepository.com/artifact/mysql/mysql-connector-java
 	testImplementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.17'
 	

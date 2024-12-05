@@ -70,7 +70,7 @@ public interface QueryBuilderFactory {
 
 	CreateIndexBuilder createIndex(String name, String table, String... columns);
 
-	DeleteIndexBuilder deleteIndex(String name);
+	DeleteIndexBuilder deleteIndex(String name, String tableName);
 	
 	WithBuilder with(String alias, SelectBuilder builder);
 	

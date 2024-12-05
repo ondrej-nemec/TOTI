@@ -12,16 +12,22 @@ public class DeleteIndexBuilderImpl implements DeleteIndexBuilder, SingleExecute
 	
 	private final Connection connection;
 	private final DbInstance instance;
-	private final String name;
+	private final String indexName;
+	private final String tableName;
 
-	public DeleteIndexBuilderImpl(Connection connection, DbInstance instance, String name) {
+	public DeleteIndexBuilderImpl(Connection connection, DbInstance instance, String indexName, String tableName) {
 		this.connection = connection;
 		this.instance = instance;
-		this.name = name;
+		this.indexName = indexName;
+		this.tableName = tableName;
 	}
 	
 	public String getIndexName() {
-		return name;
+		return indexName;
+	}
+	
+	public String getTable() {
+		return tableName;
 	}
 
 	@Override

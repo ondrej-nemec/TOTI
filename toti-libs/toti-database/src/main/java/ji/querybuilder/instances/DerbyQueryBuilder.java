@@ -16,6 +16,7 @@ import ji.querybuilder.builder_impl.SelectBuilderImpl;
 import ji.querybuilder.builder_impl.UpdateBuilderImpl;
 import ji.querybuilder.enums.ColumnType;
 
+@Deprecated
 public class DerbyQueryBuilder implements DbInstance {
 
 	@Override

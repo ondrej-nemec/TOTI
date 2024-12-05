@@ -6,17 +6,21 @@ import static org.mockito.Mockito.mock;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.function.Function;
 
 import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 import ji.common.functions.Terminal;
 import ji.common.structures.ThrowingConsumer;
+import ji.files.text.Text;
 import ji.querybuilder.Builder;
 import ji.querybuilder.DbInstance;
 import ji.querybuilder.QueryBuilder;
@@ -44,20 +48,49 @@ public abstract class AbstractInstanceTest {
 	
 	private final DbInstance instance;
 	
+	@Rule
+	public ExpectedException expectedException = ExpectedException. none();
+	
 	public AbstractInstanceTest(DbInstance instance) {
 		this.instance = instance;
 	}
 	
 	@BeforeClass
-	public static void beforeClass() {
+	public static void beforeClass() throws Exception {
 		int i = TERMINAL.runCommand(out->System.out.println(out), err->System.err.println(err), "docker-compose up -d");
 		USE_REAL_DB = i == 0;
+		if (USE_REAL_DB) {
+			Thread.sleep(4000); // give time to containers to start up
+		}
 	}
 	
 	@AfterClass
 	public static void afterClass() {
 		if (USE_REAL_DB) {
 			TERMINAL.runCommand(out->System.out.println(out), err->System.err.println(err), "docker-compose stop");
+		}
+	}
+	
+	protected static void execInitFile(String file, Connection con) throws Exception {
+		if (USE_REAL_DB) {
+			try {
+				// try if file was executed
+				con.createStatement().execute("select * from table_for_functions");
+			} catch (SQLException e) {
+				String sqls = Text.get().read(rt->rt.asString(), file);
+				con.setAutoCommit(false);
+				for (String sql : sqls.split(";")) {
+					try (Statement stat = con.createStatement()) {
+						stat.execute(sql);
+					} catch (SQLException ex) {
+						System.err.println(sql);
+						ex.printStackTrace();
+						con.rollback();
+						throw e;
+					}
+				}
+				con.commit();
+			}
 		}
 	}
 	
@@ -196,9 +229,41 @@ public abstract class AbstractInstanceTest {
 					.addForeignKey("Add_column_2", "table_for_index", "id", OnAction.CASCADE, OnAction.NO_ACTION)
 					.deleteColumn("Column_to_delete")
 					.deleteForeingKey("FK_to_delete")
-					.modifyColumnType("Column_to_modify_type", ColumnType.floatType())
+					
+					.modifyColumnType("Column_to_modify_1", ColumnType.floatType())
+					.modifyColumnDefault("Column_to_modify_1", 5)
+					.setColumnNullable("Column_to_modify_1")
+					.removeColumnUnique("Column_to_modify_1")
+
+					.modifyColumnType("Column_to_modify_2", ColumnType.floatType())
+					.removeColumnDefault("Column_to_modify_2")
+					.setColumnNotNull("Column_to_modify_2")
+					.setColumnUnique("Column_to_modify_2")
 				),
-				getAlterTable()	
+				getAlterTable(true)	
+			},
+			new Object[] {
+				// changes supported by sqlite 
+				f(
+					b->b.alterTable("table_to_alter")
+					.addColumn("Add_column_1", ColumnType.integer(), ColumnSetting.NOT_NULL)
+				//	.addColumn("Add_column_2", ColumnType.integer(), 42, ColumnSetting.UNIQUE, ColumnSetting.NULL)
+				//	.addForeignKey("Add_column_1", "table_for_index", "id")
+				//	.addForeignKey("Add_column_2", "table_for_index", "id", OnAction.CASCADE, OnAction.NO_ACTION)
+					.deleteColumn("Column_to_delete")
+				//	.deleteForeingKey("FK_to_delete")
+					
+				//	.modifyColumnType("Column_to_modify_1", ColumnType.floatType())
+				//	.modifyColumnDefault("Column_to_modify_1", 5)
+				//	.setColumnNullable("Column_to_modify_1")
+				//	.removeColumnUnique("Column_to_modify_1")
+
+				//	.modifyColumnType("Column_to_modify_2", ColumnType.floatType())
+				//	.removeColumnDefault("Column_to_modify_2")
+				//	.setColumnNotNull("Column_to_modify_2")
+				//	.setColumnUnique("Column_to_modify_2")
+				),
+				getAlterTable(false)	
 			},
 			new Object[] {
 				// postgres allow only one rename and nothing more
@@ -206,29 +271,23 @@ public abstract class AbstractInstanceTest {
 					b->b.alterTable("table_to_alter")
 					.renameColumn("Column_to_rename", "Renamed_column", ColumnType.integer())
 				),
-				getAlterTableRename()	
+				getAlterTableRenameColumn()	
 			},
-			// full query with all options - not supported by all dbs
-			/*new Object[] {
+			new Object[] {
 				f(
-					b->b.alterTable("table_to_alter")
-					.addColumn("Add_column_1", ColumnType.integer(), ColumnSetting.NOT_NULL)
-					.addColumn("Add_column_2", ColumnType.integer(), 42, ColumnSetting.UNIQUE, ColumnSetting.NULL)
-					.addForeignKey("Add_column_1", "table_for_index", "id")
-					.addForeignKey("Add_column_2", "table_for_index", "id", OnAction.CASCADE, OnAction.NO_ACTION)
-					.deleteColumn("Column_to_delete")
-					.deleteForeingKey("FK_to_delete")
-					.modifyColumnType("Column_to_modify_type", ColumnType.floatType())
-					.renameColumn("Column_to_rename", "Renamed_column", ColumnType.integer())
+					b->b.alterTable("table_to_rename")
+					.renameTable("table_with_another_name")
 				),
-				getAlterTable()	
-			}*/
+				getAlterTableRenameTable()	
+			},
 		};
 	}
 	
-	protected abstract String getAlterTable();
+	protected abstract String getAlterTable(boolean full);
 	
-	protected abstract String getAlterTableRename();
+	protected abstract String getAlterTableRenameColumn();
+	
+	protected abstract String getAlterTableRenameTable();
 
 	@Test
 	public void testDeleteTable() throws Exception {
@@ -450,7 +509,7 @@ public abstract class AbstractInstanceTest {
 
 	@Test
 	public void testDeleteIndex() throws Exception {
-		test(b->b.deleteIndex("index_to_delete"), getDeleteIndex(), b->b.execute()); // VERIFY ?
+		test(b->b.deleteIndex("index_to_delete", "table_for_index"), getDeleteIndex(), b->b.execute()); // VERIFY ?
 	}
 	
 	protected abstract String getDeleteIndex();
@@ -479,6 +538,7 @@ public abstract class AbstractInstanceTest {
 				f(
 					b->b
 					.with("cte", b.select("id, name").from("table_2").where("id = 2"))
+					.with("cte2", b.select("id, name").from("table_2").where("id = 2"))
 					.insert("table_1")
 					.fromSelect(
 						Arrays.asList("id", "name", "typ"),
@@ -541,6 +601,7 @@ public abstract class AbstractInstanceTest {
 				f(
 					b->b
 					.with("cte", b.select("1 as id"))
+					.with("cte2", b.select("1 as id"))
 					.update("table_1", "t1")
 					.set("name = :value").addParameter(":value", 123)
 					.set(f->"typ = " + f.upper("'x'"))
@@ -597,6 +658,7 @@ public abstract class AbstractInstanceTest {
 				f(
 					b->b
 					.with("cte", b.select("1 as id"))
+					.with("cte2", b.select("1 as id"))
 					.delete("table_1", "t1")
 					.join("cte", Join.INNER_JOIN, "cte.id = t1.id")
 				),
@@ -662,6 +724,7 @@ public abstract class AbstractInstanceTest {
 			new Object[] {
 				f(b->b
 					.with("cte", b.select("42 as a"))
+					.with("cte2", b.select("42 as a"))
 					.select("a")
 					.from("cte")
 				),
@@ -676,6 +739,7 @@ public abstract class AbstractInstanceTest {
 						b.multiSelect(b.select("1 AS A"))
 						.union(b.select("2 AS A").from("cte"))
 					)
+					.with("cte2", b.select("42 as a"))
 					.select("A")
 					.from("cte")
 				),
@@ -780,12 +844,39 @@ public abstract class AbstractInstanceTest {
 			String expectedGet, String expectedCreate,
 			ThrowingConsumer<B, Exception> execute
 		) throws Exception {
+		if (expectedGet != null && expectedGet.startsWith("ERROR: ")) {
+			fail(expectedGet);
+		}
 		try (Connection connection = (USE_REAL_DB ? getConnection() : mock(Connection.class))) {
 			QueryBuilder queryBuilder = new QueryBuilder(instance, connection);
 			B actual = create.apply(queryBuilder);
+			
+			if (expectedGet == null) {
+				expectedException.expect(RuntimeException.class);
+		        expectedException.expectMessage("Not supported operation");
+		        actual.getSql();
+		        return;
+			}
+
+			// test expected first, then syntax
+			if (USE_REAL_DB) {
+				try {
+					// check if expected SQL is correct
+					connection.setAutoCommit(false);
+					connection.createStatement().execute(expectedCreate);
+					connection.rollback();
+				} catch(SQLException e) {
+					System.err.println();
+					System.err.println("Incorrect expected SQL");
+					System.err.println(expectedCreate);
+					e.printStackTrace();
+					connection.rollback();
+					throw e;
+				}
+			}
 			assertEquals(expectedGet, actual.getSql());
 			assertEquals(expectedCreate, actual.createSql());
-			
+				
 			if (USE_REAL_DB) {
 				connection.setAutoCommit(false);
 				execute.accept(actual);

@@ -11,6 +11,7 @@ import ji.querybuilder.enums.Join;
 import ji.querybuilder.enums.Where;
 import ji.querybuilder.instances.MySqlQueryBuilder;
 
+@Deprecated
 public class QueryBuilderExamples {
 
 	public static void main(String[] args) {
@@ -68,6 +69,10 @@ public class QueryBuilderExamples {
 			"ALTER TABLE",
 			builder.alterTable("Table3")
 			.addColumn("cost", ColumnType.integer())
+		);
+		printTest(
+			"ALTER TABLE",
+			builder.alterTable("Table3")
 			.renameColumn("is_used", "used", ColumnType.bool())
 		);
 		printTest(
