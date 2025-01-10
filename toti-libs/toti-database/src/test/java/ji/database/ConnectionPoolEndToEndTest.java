@@ -13,7 +13,6 @@ public class ConnectionPoolEndToEndTest {
 		DatabaseConfig config = new DatabaseConfig(
 				"mysql",
 				"//localhost",
-				true,
 				"javainit_database_test",
 				"root",
 				"",

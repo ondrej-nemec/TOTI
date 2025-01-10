@@ -9,9 +9,8 @@ public class DatabaseTransactionTesting {
 
 	public static void main(String[] args) throws SQLException {
 		DatabaseConfig config = new DatabaseConfig(
-				"mysql", 
-				"//localhost", 
-				true,
+				"mysql",
+				"//localhost",
 				"toti", 
 				"root", 
 				"",

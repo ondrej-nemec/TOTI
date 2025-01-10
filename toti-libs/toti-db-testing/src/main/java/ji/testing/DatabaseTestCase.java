@@ -33,15 +33,14 @@ public abstract class DatabaseTestCase {
 
 	public DatabaseTestCase(Env env, Logger logger) {
 		this(new DatabaseConfig(
-                env.getString("database.type"),
-                env.getString("database.url"),
-                env.getBoolean("database.external") == null ? true : env.getBoolean("database.external"),
-                env.getString("database.schema-name"),
-                env.getString("database.login"),
-                env.getString("database.password"),
-                env.getList("database.pathToMigrations", ","),
-                env.getInteger("database.pool-size")
-       ), logger);
+				env.getString("database.type"),
+				env.getString("database.url"),
+				env.getString("database.schema-name"),
+				env.getString("database.login"),
+				env.getString("database.password"),
+				env.getList("database.pathToMigrations", ","),
+				env.getInteger("database.pool-size")
+		), logger);
 	}
 
 	protected abstract List<Table> getDataSet();

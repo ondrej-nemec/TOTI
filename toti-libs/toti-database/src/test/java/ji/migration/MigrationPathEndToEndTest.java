@@ -11,7 +11,7 @@ public class MigrationPathEndToEndTest {
 	public static void main(String[] args) {
 		System.out.println("start");
 		DatabaseConfig config = new DatabaseConfig(
-				"postgresql", "//localhost", true, "paths", 
+				"postgresql", "//localhost", "paths",
 				"postgres", "1234", Arrays.asList(
 					"migration/path_files_src",
 					"migration/path_files_res",

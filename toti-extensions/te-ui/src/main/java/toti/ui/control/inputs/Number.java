@@ -87,6 +87,8 @@ public class Number implements Input, Filter {
 		Map<String, Object> set = wrapper.getFilterSettings();
 		if (step != null) {
 			set.put("step", step);
+		}else {
+			set.put("step", "any"); // nebo jinak umožnit
 		}
 		if (max != null) {
 			set.put("max", max);

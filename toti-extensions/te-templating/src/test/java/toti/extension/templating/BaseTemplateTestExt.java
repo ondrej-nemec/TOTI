@@ -1,7 +1,11 @@
 package toti.extension.templating;
 
+import static org.mockito.Mockito.mock;
+
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.logging.log4j.Logger;
 
 import toti.answers.response.ResponseContainer;
 import toti.application.register.MappedAction;
@@ -27,8 +31,8 @@ public class BaseTemplateTestExt extends BaseTemplateTest {
 				null,
 				null
 			)),
-			new TemplateExtension(null, null).getTags(),
-			new TemplateExtension(null, null).getParameters()
+			new TemplateExtension("", false, false, mock(Logger.class)).getTags(),
+			new TemplateExtension("", false, false, mock(Logger.class)).getParameters()
 		);
 	}
 

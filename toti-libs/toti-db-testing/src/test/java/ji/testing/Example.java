@@ -15,9 +15,8 @@ public class Example extends DatabaseTestCase {
 
 	public Example() {
 		super(new DatabaseConfig(
-			"", 
-			"", 
-			true,
+			"",
+			"",
 			"",
 			"",
 			"",

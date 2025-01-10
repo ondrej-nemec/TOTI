@@ -17,34 +17,20 @@ public class SqLite implements DatabaseInstance {
 	private final Properties property;
 	
 	private final String name;
-
-	//private final boolean runOnExternal;
 	
-	public SqLite(boolean runOnExternal, String connectionString, Properties property, String name, final Logger logger) {
+	public SqLite(String connectionString, Properties property, String name, final Logger logger) {
 	//	this.logger = logger;
-	//	this.runOnExternal = runOnExternal;
 		this.connectionString = connectionString;
 		this.property = property;
 		this.name = name;
-		/*try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-		} catch (ClassNotFoundException e) {
-			this.logger.warn("MySQL driver could not be registered", e);
-		}*/
 	}
-
-	@Override
-	public void startServer() {}
-
-	@Override
-	public void stopServer() {}
 
 	@Override
 	public void createDb() throws SQLException {
 		DriverManager
-    		.getConnection(connectionString, property)
-    		.createStatement()
-    		.executeUpdate("CREATE DATABASE IF NOT EXISTS " + name);
+			.getConnection(connectionString, property)
+		.createStatement()
+			.executeUpdate("CREATE DATABASE IF NOT EXISTS " + name);
 	}
 
 	@Override

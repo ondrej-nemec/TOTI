@@ -29,18 +29,15 @@ public class EndToEndTest {
 	
 	private final String pathToDb;
 	
-	private final boolean isExternalServer;
-	
 	private final String username;
 	
 	private final String password;
 
-	public EndToEndTest(String type, String pathToDb, String username, String password, boolean isExternalServer) {
+	public EndToEndTest(String type, String pathToDb, String username, String password) {
 		this.type = type;
 		this.pathToDb = pathToDb;
 		this.username = username;
 		this.password = password;
-		this.isExternalServer = isExternalServer;
 	}
 
 	@Parameters
@@ -79,7 +76,6 @@ public class EndToEndTest {
 		DatabaseConfig config = new DatabaseConfig(
 				type,
 				pathToDb,
-				isExternalServer,
 				"javainit_database_test",
 				username,
 				password,
@@ -89,9 +85,6 @@ public class EndToEndTest {
 		
 		Logger logger = mock(Logger.class);
 		this.database = new Database(config, logger);
-		if (!isExternalServer) {
-			database.startServer();
-		}
 		database.createDbIfNotExists();
 		loadMigrations(config);
 	}
@@ -117,26 +110,20 @@ public class EndToEndTest {
 	
 	//@After
 	public void after() throws SQLException {
-		try {
-			database.applyQuery((conn)->{
-				Statement stat = conn.createStatement();
-				String[] tables = new String [] {
-						"update_table",
-						"delete_table",
-						"insert_table",
-						"select_table",
-						"joined_table",
-				};
-				for (String table : tables) {
-					stat.executeUpdate("DROP TABLE " + table);
-				}
-				return null;
-			});
-		} finally {
-			if (!isExternalServer) {
-				database.stopServer();
+		database.applyQuery((conn)->{
+			Statement stat = conn.createStatement();
+			String[] tables = new String [] {
+				"update_table",
+				"delete_table",
+				"insert_table",
+				"select_table",
+				"joined_table",
+			};
+			for (String table : tables) {
+				stat.executeUpdate("DROP TABLE " + table);
 			}
-		}
+			return null;
+		});
 	}
 	
 	//@Test

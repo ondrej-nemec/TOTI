@@ -65,34 +65,25 @@ public class Database {
 		switch (config.type) {
 		case "derby":
 			return new Derby(
-					config.runOnExternalServer, 
-					config.pathOrUrlToLocation, 
-					createSchemaConnectionString(),
-					createProperties(),
-					logger
+				config.pathOrUrlToLocation, 
+				createSchemaConnectionString(),
+				createProperties(),
+				logger
 			);
 		case "mysql":
-			return new MySql(config.runOnExternalServer, createDatabaseConnectionString(), createProperties(), name, logger);
+			return new MySql(createDatabaseConnectionString(), createProperties(), name, logger);
 		case "postgresql":
-			return new PosgreSql(config.runOnExternalServer, createDatabaseConnectionString(), createProperties(), name, logger);
+			return new PosgreSql(createDatabaseConnectionString(), createProperties(), name, logger);
 		case "sqlserver":
-			return new SqlServer(config.runOnExternalServer, createDatabaseConnectionString(), createProperties(), name, logger);
+			return new SqlServer(createDatabaseConnectionString(), createProperties(), name, logger);
 		case "sqlite":
-			return new SqLite(config.runOnExternalServer, createDatabaseConnectionString(), createProperties(), name, logger);
+			return new SqLite(createDatabaseConnectionString(), createProperties(), name, logger);
 		default:
 			throw new RuntimeException("Unsupported type " + config.type);
 		}
 	}
 	
 	/************ API ***********/
-	
-	public void startServer() {
-		instance.startServer();
-	}
-	
-	public void stopServer() {
-		instance.stopServer();
-	}
 	
 	public <T> T applyQuery(final ConnectionFunction<T> consumer) throws SQLException {
 		return getDoubleFunction(consumer).get();

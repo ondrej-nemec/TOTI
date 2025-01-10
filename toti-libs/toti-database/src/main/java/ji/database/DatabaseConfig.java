@@ -16,14 +16,11 @@ public class DatabaseConfig {
 	
 	public final List<String> pathToMigrations;
 	
-	public final boolean runOnExternalServer;
-	
 	public final int poolSize;
 	
 	public DatabaseConfig(
 			final String type,
 			final String pathOrUrlToLocation,
-			final boolean runOnExternalServer,
 			final String schemaName,
 			final String login,
 			final String password,
@@ -35,7 +32,6 @@ public class DatabaseConfig {
 		this.login = login;
 		this.password = password;
 		this.pathToMigrations = pathToMigrations;
-		this.runOnExternalServer = runOnExternalServer;
 		this.poolSize = poolSize;
 	}
 

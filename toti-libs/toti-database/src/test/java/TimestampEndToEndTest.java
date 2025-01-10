@@ -41,20 +41,18 @@ if (Timestamp.class.isInstance(object)) {
 		//*/
 		for (DatabaseConfig c : new DatabaseConfig[] {
 				new DatabaseConfig(
-						"mysql", 
-						"//localhost", 
-						true,
-						"timestamps", 
+						"mysql",
+						"//localhost",
+						"timestamps",
 						"root",
 						"", 
 						Arrays.asList(),
 						1
 					),
 				new DatabaseConfig(
-						"postgresql", 
-						"//localhost", 
-						true,
-						"timestamps", 
+						"postgresql",
+						"//localhost",
+						"timestamps",
 						"postgres",
 						"1234",
 						Arrays.asList(),

@@ -47,7 +47,6 @@ public class DatabaseExtension implements Extension {
 			this.database = new Database(new DatabaseConfig(
 				env.getString("type"),
 				env.getString("url"),
-				env.getBoolean("external") == null ? true : env.getBoolean("external"),
 				env.getString("schema-name"),
 				env.getString("login"),
 				env.getString("password"),
@@ -63,18 +62,13 @@ public class DatabaseExtension implements Extension {
 	@Override
 	public void onApplicationStart() throws Exception {
 		if (database != null) {
-			// database.startServer();
 			database.createDbIfNotExists();
 			database.migrate();
 		}
 	}
 
 	@Override
-	public void onApplicationStop() throws Exception {
-		if (database != null) {
-			database.stopServer();
-		}
-	}
+	public void onApplicationStop() throws Exception {}
 	
 	public Database getDatabase() {
 		return database;
