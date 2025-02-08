@@ -25,32 +25,32 @@ public class Application {
 	private boolean isRunning = false;
 	private final Param root;
 	
-	private final String[] aliases;
-	private final String hostname;
+	private final List<String> paths;
+	private final List<String> hostnames;
 	
 	private final Collection<Extension> extensions;
 	
 	public Application(
 			List<Task> tasks, Param root,
 			Link link, Register register, Collection<Extension> appExtensions, Answer answer,
-			boolean autoStart, String hostname, String... aliases) {
+			boolean autoStart, List<String> hostnames, List<String> paths) {
 		this.tasks = tasks;
 		this.link = link;
 		this.register = register;
 		this.answer = answer;
 		this.autoStart = autoStart;
-		this.aliases = aliases;
+		this.hostnames = hostnames;
 		this.root = root;
-		this.hostname = hostname;
+		this.paths = paths;
 		this.extensions = appExtensions;
 	}
 
-	public String[] getAliases() {
-		return aliases;
+	public List<String> getPaths() {
+		return paths;
 	}
 	
-	public String getHostname() {
-		return hostname;
+	public List<String> getHostnames() {
+		return hostnames;
 	}
 
 	public Link getLink() {

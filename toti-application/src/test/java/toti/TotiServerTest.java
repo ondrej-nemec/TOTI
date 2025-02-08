@@ -15,6 +15,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import org.junit.Test;
@@ -144,7 +146,7 @@ public class TotiServerTest {
 		
 		server.addApplication("testId", (e, factory)->{
 			return app;
-		}, "host", "a1", "a2");
+		}, Arrays.asList("host"), Arrays.asList("a1", "a2"));
 		
 		assertEquals(
 			MapInit.create().append("testId", app).toMap(),
@@ -154,7 +156,9 @@ public class TotiServerTest {
 		// called in test
 		verify(server, times(1)).setRunning(anyBoolean());
 		verify(server, times(2)).getApplications();
-		verify(server, times(1)).addApplication(eq("testId"), any(), eq("host"), eq("a1"), eq("a2"));
+		verify(server, times(1)).addApplication(
+			eq("testId"), any(), eq(Arrays.asList("host")), eq(Arrays.asList("a1", "a2"))
+		);
 		verifyNoMoreInteractions(server);
 	}
 
@@ -210,19 +214,18 @@ public class TotiServerTest {
 			mock(Server.class), mock(StreamReader.class), mock(Env.class), "charset", logger
 		);
 		Answer answer = mock(Answer.class);
-		String[] aliases = new String[] {"h1", "h2"};
 		Application app = mock(Application.class);
 		when(app.getRequestAnswer()).thenReturn(answer);
-		when(app.getAliases()).thenReturn(aliases);
-		when(app.getHostname()).thenReturn("host");
+		when(app.getPaths()).thenReturn(Arrays.asList("h1", "h2"));
+		when(app.getHostnames()).thenReturn(Arrays.asList("host"));
 		
 		server.getApplications().put("testId", app);
 		
 		server.startApplication("testId");
 		
 		verify(app, times(1)).start();
-		verify(app, times(1)).getAliases();
-		verify(app, times(1)).getHostname();
+		verify(app, times(1)).getPaths();
+		verify(app, times(1)).getHostnames();
 		verify(app, times(1)).getRequestAnswer();
 	}
 

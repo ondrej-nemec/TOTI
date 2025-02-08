@@ -49,7 +49,7 @@ public class SamplesMain {
 					new UiModule(),
 					new TemplatingModule()
 				), LogManager.getLogger("samples-toti"));
-			}, "localhost", "127.0.0.1");
+			}, Arrays.asList("localhost", "127.0.0.1"), null);
 			server.start();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -76,7 +76,7 @@ public class SamplesMain {
 					new UiModule(),
 					new TemplatingModule()
 				), LogManager.getLogger("samples-toti"));
-			}, "localhost", "127.0.0.1");
+			}, Arrays.asList("localhost", "127.0.0.1"), null);
 			server.start();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -88,10 +88,10 @@ public class SamplesMain {
 			TotiServerFactory serverFactory = new TotiServerFactory();
 			serverFactory.setCharset("utf-8");
 			// TODO to doc
-			SslCredentials cred = new SslCredentials();
+			/* SslCredentials cred = new SslCredentials();
 			cred.setCertificateStore("certificates/cert.p12", "betasecret", "PKCS12");
 			cred.setSniHostCheck(false);
-			serverFactory.setCerts(Optional.of(cred));
+			serverFactory.setCerts(Optional.of(cred));*/
 			serverFactory.setMaxRequestBodySize(20*1024); // 20 kB
 			serverFactory.setHttpPort(8080);
 			serverFactory.setHttpsPort(8443);
@@ -132,7 +132,7 @@ public class SamplesMain {
 					new UiModule(),
 					new TemplatingModule()
 				), LogManager.getLogger("samples-toti"));
-			}, "localhost", "127.0.0.1");
+			}, Arrays.asList("localhost", "127.0.0.1"), null);
 			server.start();
 		} catch (Exception e) {
 			e.printStackTrace();

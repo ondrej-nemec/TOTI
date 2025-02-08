@@ -1,6 +1,7 @@
 package toti;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
@@ -46,9 +47,9 @@ public class TotiServer {
 	public Application addApplication(
 			String appIdentifier,
 			ThrowingBiFunction<Env, ApplicationFactory, Application, Exception> init,
-			String hostname, String... alias) throws Exception {
+			List<String> hostnames, List<String> paths) throws Exception {
 		Env env = this.env.getModule("applications").getModule(appIdentifier);
-		ApplicationFactory applicationFactory = new ApplicationFactory(appIdentifier, env, charset, hostname, alias);
+		ApplicationFactory applicationFactory = new ApplicationFactory(appIdentifier, env, charset, hostnames, paths);
 		Application application = init.apply(env, applicationFactory);
 		applications.put(appIdentifier, application);
 		if (isRunning && application.isAutoStart()) {
@@ -98,7 +99,7 @@ public class TotiServer {
 			Application application = applications.get(appIdentifier);
 			logger.info("Application is starting: " + appIdentifier);
 			application.start();
-			handler.addApplication(application.getRequestAnswer(), application.getHostname(), application.getAliases());
+			handler.addApplication(application.getRequestAnswer(), application.getHostnames(), application.getPaths());
 			logger.info("Application is running: " + appIdentifier);
 		} catch (Exception e) {
 			logger.error("Application start fail: " + appIdentifier, e);
@@ -108,7 +109,7 @@ public class TotiServer {
 	protected boolean stopApplication(String appIdentifier, Application application) {
 		try {
 			logger.info("Application is stopping: " + appIdentifier);
-			handler.removeApplication(appIdentifier);
+			handler.removeApplication(application.getHostnames(), application.getPaths());
 			application.stop();
 			logger.info("Application is stopped: " + appIdentifier);
 			return true;

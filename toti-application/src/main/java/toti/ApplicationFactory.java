@@ -49,8 +49,8 @@ public class ApplicationFactory {
 	private Map<String, List<Object>>  responseHeaders = null;
 	private UriPattern pattern = new UriPattern() {};
 	
-	private String[] aliases;
-	private String hostname;
+	private List<String> paths;
+	private List<String> hostnames;
 	
 	//private Env appEnv;
 	
@@ -66,12 +66,12 @@ public class ApplicationFactory {
 	private TranslatorExtension translatorExtension;
 	private AuthenticationExtension authenticationExtension;
 	
-	public ApplicationFactory(String appIdentifier, Env env, String charset, String hostname, String... aliases) {
+	public ApplicationFactory(String appIdentifier, Env env, String charset, List<String> hostnames, List<String> paths) {
 		this.env = env;
 		this.appIdentifier = appIdentifier;
 		this.charset = charset;
-		this.aliases = aliases;
-		this.hostname = hostname;
+		this.paths = paths;
+		this.hostnames = hostnames;
 		
 		this.extensions = new HashMap<>();
 		this.extensionsTotiResponses = new LinkedList<>();
@@ -135,7 +135,7 @@ public class ApplicationFactory {
 		);
 		return new Application(
 			tasks, root, link, register, extensions.values(),
-			answer, getAutoStart(env), hostname, aliases
+			answer, getAutoStart(env), hostnames, paths
 		);
 	}
 

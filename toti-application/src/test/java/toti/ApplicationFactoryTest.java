@@ -46,7 +46,9 @@ public class ApplicationFactoryTest implements TestCase {
 		
 		Logger totiLogger = mock(Logger.class);
 		
-		ApplicationFactory factory = new ApplicationFactory("appId", env, "charset", "hostName", "alias1", "alias2");
+		ApplicationFactory factory = new ApplicationFactory(
+			"appId", env, "charset", Arrays.asList("hostName"), Arrays.asList("alias1", "alias2")
+		);
 		setFactory.accept(factory);
 		
 		Task task11 = mock(Task.class);
@@ -69,7 +71,7 @@ public class ApplicationFactoryTest implements TestCase {
 		assertNotNull(application.getLink());
 		assertNotNull(application.getRegister());
 		assertNotNull(application.getRequestAnswer());
-		assertArrayEquals(new String[] {"alias1", "alias2"}, application.getAliases());
+		assertEquals(Arrays.asList("alias1", "alias"), application.getPaths());
 		
 		verify(module1).getName();
 		verify(module2).getName();

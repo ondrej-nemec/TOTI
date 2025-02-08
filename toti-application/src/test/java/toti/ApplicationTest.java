@@ -37,7 +37,8 @@ public class ApplicationTest {
 			Arrays.asList(task1, task2),
 			null, null, null,
 			Arrays.asList(ext1, ext2),
-			null, false, null
+			null, false,
+			null, null
 		);
 
 		assertFalse(application.isRunning());
@@ -58,7 +59,7 @@ public class ApplicationTest {
 		Application application = new Application(
 			Arrays.asList(task1, task2),
 			null, null, null,
-			Arrays.asList(), null, false, null
+			Arrays.asList(), null, false, null, null
 		);
 		assertTrue(application.start());
 		verify(task1, times(1)).start();
@@ -74,7 +75,7 @@ public class ApplicationTest {
 		Application application = new Application(
 			Arrays.asList(), null, null, null,
 			Arrays.asList(ext1, ext2),
-			null, false, null
+			null, false, null, null
 		);
 		assertTrue(application.start());
 
@@ -97,7 +98,7 @@ public class ApplicationTest {
 			Arrays.asList(task1, task2),
 			null, null, null,
 			Arrays.asList(ext1, ext2),
-			null, false, null
+			null, false, null, null
 		);
 		
 		try {
@@ -119,7 +120,7 @@ public class ApplicationTest {
 		Application application = new Application(
 			Arrays.asList(task1, task2),
 			null, null, null, Arrays.asList(),
-			null, false, null
+			null, false, null, null
 		);
 		application.stop();
 		verify(task1, times(1)).stop();
@@ -134,7 +135,7 @@ public class ApplicationTest {
 		Application application = new Application(
 			Arrays.asList(), null, null, null,
 			Arrays.asList(ext1, ext2),
-			null, false, null
+			null, false, null, null
 		);
 		application.stop();
 		
@@ -170,7 +171,7 @@ public class ApplicationTest {
 		indexParam.addAction(HttpMethod.GET, MappedAction.test("extra", "indexParam", "GET"));
 		indexParam.addAction(HttpMethod.POST, MappedAction.test("extra", "indexParam", "POST"));
 		
-		Application application = new Application(Arrays.asList(), root, null, null, null, null, false, null);
+		Application application = new Application(Arrays.asList(), root, null, null, null, null, false, null, null);
 		
 		List<String> actual = new LinkedList<>();
 		application.iterate((item)->{

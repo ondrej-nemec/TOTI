@@ -2,8 +2,7 @@ package toti;
 
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.logging.log4j.Logger;
@@ -17,8 +16,9 @@ import toti.answers.Answer;
 import toti.answers.Headers;
 import toti.answers.request.Request;
 import toti.answers.response.FinalResponse;
+import toti.hosts.AnswerWrapper;
+import toti.hosts.Hosts;
 import toti.http.enums.HttpMethod;
-import toti.http.enums.StatusCode;
 import toti.http.parsers.Form;
 import toti.http.parsers.StreamReader;
 import toti.http.parsers.Urlencode;
@@ -26,10 +26,9 @@ import toti.http.structures.RequestParameters;
 import toti.http.structures.WebSocket;
 
 public class MainHandler extends Handler.Abstract {
-	
+
 	private final Logger logger;
-	private final Map<String, String[]> aliases = new HashMap<>();
-	private final Map<String, Answer> answers = new HashMap<>();
+	private final Hosts answers = new Hosts();
 	
 	private final Form formParser;
 	private final Urlencode urlEncode;
@@ -50,15 +49,29 @@ public class MainHandler extends Handler.Abstract {
 				requestHeaders.addHeader(httpField.getName(), value);
 			});
 		});
-
+		
+		String uri = jettyRequest.getHttpURI().getDecodedPath();
 		Object hostname = requestHeaders.getHeader("Host");
-		if (hostname == null) {
-			logger.warn("Request with missing Host header");
-			jettyResponse.setStatus(StatusCode.BAD_REQUEST.getCode());
+		String applicationName = hostname.toString().split(":")[0];
+		String path = "";
+		int index = uri.indexOf("/", 1);
+		if (index != -1) {
+			path = uri.substring(1, index);
+		}
+
+		AnswerWrapper selected = answers.get(applicationName, path);
+		// Answer answer = answers.get(applicationName);
+		if (!selected.isUsed()) {
+			logger.warn("Request to unknown application: " + applicationName);
+			// TODO some pretty error message?
+			jettyResponse.setStatus(404);
 			callback.succeeded();
 			return true;
 		}
-		hostname = hostname.toString().split(":")[0];
+		if (selected.usePath()) {
+			uri = uri.substring(index);
+		}
+		Answer answer = selected.getAnswer();
 		
 		ObjectBuilder<WebSocket> websocket = new ObjectBuilder<>();
 		if ("websocket".equals(requestHeaders.getHeader("Upgrade"))) {
@@ -74,8 +87,6 @@ public class MainHandler extends Handler.Abstract {
 					throw new RuntimeException("Websocket was not upgraded");
 				}
 			}));
-			
-			
 		}
 		
 		byte[] requestBody = null;
@@ -91,8 +102,9 @@ public class MainHandler extends Handler.Abstract {
 				requestBody = streamReader.readData(length, is, 0, (a)->false, false);
 			}
 		}
+
 		Request request = new Request(
-			jettyRequest.getHttpURI().getDecodedPath(),
+			uri,
 			HttpMethod.valueOf(jettyRequest.getMethod().toUpperCase()),
 			requestHeaders,
 			urlEncode.decode(jettyRequest.getHttpURI().getQuery()),
@@ -103,20 +115,12 @@ public class MainHandler extends Handler.Abstract {
 		String ip = org.eclipse.jetty.server.Request.getRemoteAddr(jettyRequest).substring(1);
 		ip = ip.substring(0, ip.length()-1);
 
-		Answer answer = answers.get(hostname);
-		if (answer == null) {
-			logger.warn("Request to unknown application: " + hostname);
-			// TODO some pretty error message?
-			jettyResponse.setStatus(404);
-			callback.succeeded();
-			return true;
-		}
 		FinalResponse response = answer.accept(request, ip);
 		
 		if (websocket.isPresent() && websocket.get().isAccepted()) {
 			return true;
 		}
-		
+
 		jettyResponse.setStatus(response.getStatusCode().getCode());
 		response.getHeaders().forEach((name, values)->{
 			values.forEach((value)->{
@@ -132,21 +136,12 @@ public class MainHandler extends Handler.Abstract {
 		callback.succeeded();
 		return true;
 	}
-	
-	public void addApplication(Answer answer, String hostname, String...aliases) {
-		answers.put(hostname, answer);
-		this.aliases.put(hostname, aliases);
-		for (String alias : aliases) {
-			this.answers.put(alias, answer);
-		}
+
+	public void addApplication(Answer answer, List<String> hostnames, List<String> paths) {
+		answers.add(answer, hostnames, paths);
 	}
 	
-	public void removeApplication(String hostname) {
-		answers.remove(hostname);
-		if (aliases.get(hostname) != null) {
-			for (String alias : aliases.get(hostname)) {
-				answers.remove(alias);
-			}
-		}
+	public void removeApplication(List<String> hostnames, List<String> paths) {
+		answers.remove(hostnames, paths);
 	}
 }
