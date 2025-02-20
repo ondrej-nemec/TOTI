@@ -14,24 +14,20 @@ import toti.http.enums.StatusCode;
 public class FileResponse implements Response {
 
 	private final String fileName;
-	private final boolean download;
+	private final DownloadMode download;
 	private final StatusCode code;
 	private final byte[] binaryContent;
 	private final Headers headers;
 	
-	public FileResponse(StatusCode code, Headers headers, String fileName) {
-		this(code, headers, fileName, binaryContent(fileName), false);
+	public FileResponse(StatusCode code, Headers headers, String fileName, DownloadMode download) {
+		this(code, headers, fileName, binaryContent(fileName), download);
 	}
 	
-	public FileResponse(StatusCode code, Headers headers, String fileName, String source) {
-		this(code, headers, fileName, binaryContent(source), true);
+	public FileResponse(StatusCode code, Headers headers, String fileName, String source, DownloadMode download) {
+		this(code, headers, fileName, binaryContent(source), download);
 	}
 	
-	public FileResponse(StatusCode code, Headers headers, String fileName, byte[] binaryContent) {
-		this(code, headers, fileName, binaryContent, true);
-	}
-	
-	private FileResponse(StatusCode code, Headers headers, String fileName, byte[] binaryContent, boolean download) {
+	public FileResponse(StatusCode code, Headers headers, String fileName, byte[] binaryContent, DownloadMode download) {
 		this.code = code;
 		this.fileName = fileName;
 		this.binaryContent = binaryContent;
@@ -46,9 +42,17 @@ public class FileResponse implements Response {
 			ResponseContainer container,
 			String charset) {
 		setContentType(fileName, charset, responseHeader);
-		if (download) {
-			//	header.addHeader("Content-Disposition: attachment; filename=\"" + fileName + "\"");
-			responseHeader.addHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
+		switch (download) {
+			case DOWNLOAD:
+				responseHeader.addHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
+				break;
+			case FORCE_DOWNLOAD:
+				responseHeader.addHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+				break;
+			case RESPONSE:
+				break;
+			default:
+				break;
 		}
 		responseHeader.setHeaders(this.headers.getHeaders());
 		return new FinalResponse(code, responseHeader, ByteBuffer.wrap(binaryContent));
@@ -74,7 +78,7 @@ public class FileResponse implements Response {
 		int result = 1;
 		result = prime * result + Arrays.hashCode(binaryContent);
 		result = prime * result + ((code == null) ? 0 : code.hashCode());
-		result = prime * result + (download ? 1231 : 1237);
+		result = prime * result + (download.hashCode());
 		result = prime * result + ((fileName == null) ? 0 : fileName.hashCode());
 		result = prime * result + ((headers == null) ? 0 : headers.hashCode());
 		return result;

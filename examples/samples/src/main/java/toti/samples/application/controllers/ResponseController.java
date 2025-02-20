@@ -41,7 +41,8 @@ public class ResponseController {
 			String fileName = "toti/samples/binaryFile.odt"; // Binary file. Browser starts downloading
 			return Response.OK().getFileDownload(
 				fileName,
-				"fileToDownload_" + new Date().getTime() + "." + new FileExtension(fileName).getExtension()
+				"fileToDownload_" + new Date().getTime() + "." + new FileExtension(fileName).getExtension(),
+				true
 			);
 		});
 	}
@@ -61,7 +62,11 @@ public class ResponseController {
 			} catch (IOException e) {
 				// never happends
 			}
-			return Response.OK().getFileDownload("generatedFileToDownload_" + new Date().getTime() + ".odt", bout.toByteArray());
+			return Response.OK().getFileDownload(
+				"generatedFileToDownload_" + new Date().getTime() + ".odt",
+				bout.toByteArray(),
+				true
+			);
 		});
 	}
 

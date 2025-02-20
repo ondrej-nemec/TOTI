@@ -26,7 +26,7 @@ public class ResponseFactory {
 	 * @return
 	 */
 	public Response getFile(String fileName) {
-		return new FileResponse(code, headers, fileName);
+		return new FileResponse(code, headers, fileName, DownloadMode.DOWNLOAD);
 	}
 	
 	/**
@@ -35,8 +35,11 @@ public class ResponseFactory {
 	 * @param fileName specify downloaded file name
 	 * @return
 	 */
-	public Response getFileDownload(String sourceFile, String fileName) {
-		return new FileResponse(code, headers, fileName, sourceFile);
+	public Response getFileDownload(String sourceFile, String fileName, boolean force) {
+		return new FileResponse(
+			code, headers, fileName, sourceFile,
+			force ? DownloadMode.FORCE_DOWNLOAD : DownloadMode.DOWNLOAD
+		);
 	}
 	
 	/**
@@ -45,8 +48,11 @@ public class ResponseFactory {
 	 * @param binaryContent
 	 * @return
 	 */
-	public Response getFileDownload(String fileName, byte[] binaryContent) {
-		return new FileResponse(code, headers, fileName, binaryContent);
+	public Response getFileDownload(String fileName, byte[] binaryContent, boolean force) {
+		return new FileResponse(
+			code, headers, fileName, binaryContent,
+			force ? DownloadMode.FORCE_DOWNLOAD : DownloadMode.DOWNLOAD
+		);
 	}
 	
 	/**

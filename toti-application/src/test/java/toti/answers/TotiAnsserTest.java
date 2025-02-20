@@ -20,6 +20,7 @@ import junitparams.Parameters;
 import toti.answers.request.Identity;
 import toti.answers.request.IdentityFactory;
 import toti.answers.request.Request;
+import toti.answers.response.DownloadMode;
 import toti.answers.response.EmptyResponse;
 import toti.answers.response.FileResponse;
 import toti.answers.response.Response;
@@ -119,7 +120,7 @@ public class TotiAnsserTest {
 			});
 			// index request, develop
 			result.add(new Object[] {
-				"localhost", url, new FileResponse(StatusCode.OK, new Headers(), "toti/assets/index.html")
+				"localhost", url, new FileResponse(StatusCode.OK, new Headers(), "toti/assets/index.html", DownloadMode.RESPONSE)
 			});
 		}
 		String[] wrong = new String[] {
