@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 
 import org.apache.logging.log4j.Logger;
@@ -46,12 +48,14 @@ public abstract class DatabaseTestCase {
 	protected abstract List<Table> getDataSet();
 	
 	@Before
+	@BeforeEach
 	public void before() throws SQLException {
 		database.migrate();
 		applyDataSet();
 	}
 	
 	@After
+	@AfterEach
 	public void after() throws SQLException {
 		database.rollback();
 	}

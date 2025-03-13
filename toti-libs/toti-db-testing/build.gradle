@@ -18,6 +18,9 @@ dependencies {
 	
 	// https://mvnrepository.com/artifact/junit/junit
 	implementation group: 'junit', name: 'junit', version: '4.12'
+	// https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+	implementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.11.4'
+	
 	
 	// https://mvnrepository.com/artifact/org.mockito/mockito-core
 	implementation group: 'org.mockito', name: 'mockito-core', version: '2.19.1'
