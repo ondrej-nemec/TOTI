@@ -51,7 +51,7 @@ public class SortedMap<K, V> implements Dictionary<K> {
 	 * @param key
 	 * @param value
 	 * @return the previous value associated with {@code key}, or
-     *         {@code null} if there was no mapping for {@code key}.
+	 *		 {@code null} if there was no mapping for {@code key}.
 	 */
 	public V put(K key, V value) {
 		if (!data.containsKey(key)) {
@@ -93,6 +93,55 @@ public class SortedMap<K, V> implements Dictionary<K> {
 	public V getValue(K key) {
 		return data.get(key);
 	}
+	
+	@Override
+	public V get(K key) {
+		return getValue(key);
+	}
+	
+	public V getByIndex(int index) {
+		if (order.size() > index) {
+			return get(order.get(index));
+		}
+		return null;
+	}
+	
+	public K getKeyByIndex(int index) {
+		if (order.size() > index) {
+			return order.get(index);
+		}
+		return null;
+	}
+	
+	public V getFirst() {
+		K key = getFirstKey();
+		if (key == null) {
+			return null;
+		}
+		return get(key);
+	}
+
+	public K getFirstKey() {
+		if (this.order.size() > 0) {
+			return this.order.get(0);
+		}
+		return null;
+	}
+
+	public V getLast() {
+		K key = getLastKey();
+		if (key == null) {
+			return null;
+		}
+		return get(key);
+	}
+
+	public K getLastKey() {
+		if (order.size() > 0) {
+			return order.get(order.size() - 1);
+		}
+		return null;
+	}
 
 	@Override
 	public void clear() {
@@ -101,47 +150,47 @@ public class SortedMap<K, V> implements Dictionary<K> {
 	}
 	
 	/**
-     * Returns {@code true} if this map contains a mapping for the specified key.
-     *
-     * @param key key whose presence is to be tested
-     * @return {@code true} if this map contains a mapping for the specified
-     *         key
-     * @throws ClassCastException if the key is of an inappropriate type for
-     *         this map
-     * (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>)
-     * @throws NullPointerException if the specified key is null and this map
-     *         does not permit null keys
-     * (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>)
-     */
+	 * Returns {@code true} if this map contains a mapping for the specified key.
+	 *
+	 * @param key key whose presence is to be tested
+	 * @return {@code true} if this map contains a mapping for the specified
+	 *		 key
+	 * @throws ClassCastException if the key is of an inappropriate type for
+	 *		 this map
+	 * (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>)
+	 * @throws NullPointerException if the specified key is null and this map
+	 *		 does not permit null keys
+	 * (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>)
+	 */
 	public boolean containsKey(K key) {
 		return data.containsKey(key);
 	}
 	
 	 /**
-     * Removes the mapping for a key if it is present
-     * (optional operation).
-     *
-     * <p>Returns the value to which {@link SortedMap} previously associated the key,
-     * or {@code null} if the {@link SortedMap} contained no mapping for the key.
-     *
-     * <p>If this {@link SortedMap} permits null values, then a return value of
-     * {@code null} does not <i>necessarily</i> indicate that the {@link SortedMap}
-     * contained no mapping for the key; it's also possible that the {@link SortedMap}
-     * explicitly mapped the key to {@code null}.
-     *
-     * <p>The {@link SortedMap} will not contain a mapping for the specified key once the
-     * call returns.
-     *
-     * @param key key whose mapping is to be removed from the {@link SortedMap}
-     * @return the previous value associated with {@code key}, or
-     *         {@code null} if there was no mapping for {@code key}.
-     * @throws UnsupportedOperationException if the {@code remove} operation
-     *         is not supported by this map
-     * @throws ClassCastException if the key is of an inappropriate type for
-     *         this map
-     * @throws NullPointerException if the specified key is null and this
-     *         {@link SortedMap} does not permit null keys
-     */
+	 * Removes the mapping for a key if it is present
+	 * (optional operation).
+	 *
+	 * <p>Returns the value to which {@link SortedMap} previously associated the key,
+	 * or {@code null} if the {@link SortedMap} contained no mapping for the key.
+	 *
+	 * <p>If this {@link SortedMap} permits null values, then a return value of
+	 * {@code null} does not <i>necessarily</i> indicate that the {@link SortedMap}
+	 * contained no mapping for the key; it's also possible that the {@link SortedMap}
+	 * explicitly mapped the key to {@code null}.
+	 *
+	 * <p>The {@link SortedMap} will not contain a mapping for the specified key once the
+	 * call returns.
+	 *
+	 * @param key key whose mapping is to be removed from the {@link SortedMap}
+	 * @return the previous value associated with {@code key}, or
+	 *		 {@code null} if there was no mapping for {@code key}.
+	 * @throws UnsupportedOperationException if the {@code remove} operation
+	 *		 is not supported by this map
+	 * @throws ClassCastException if the key is of an inappropriate type for
+	 *		 this map
+	 * @throws NullPointerException if the specified key is null and this
+	 *		 {@link SortedMap} does not permit null keys
+	 */
 	public V remove(K key) {
 		V remove = data.remove(key);
 		if (order.contains(key)) {
@@ -171,10 +220,10 @@ public class SortedMap<K, V> implements Dictionary<K> {
 	 * @throws E expected {@link Exception} specified by <code>clazz</code>
 	 */
 	public <E extends Throwable> void forEach(ThrowingBiConsumer<K, V, E> callback, Class<E> clazz) throws E {
-        for (K key : order) {
-             callback.accept(key, data.get(key));
-        }
-    }
+		for (K key : order) {
+			 callback.accept(key, data.get(key));
+		}
+	}
 
 	/**
 	 * Iterate over all items
@@ -184,11 +233,11 @@ public class SortedMap<K, V> implements Dictionary<K> {
 	 * @throws E expected {@link Exception} specified by <code>clazz</code>
 	 */
 	public <E extends Throwable> void forEach(ThrowingTriConsumer<Integer, K, V, E> callback) throws E {
-        for (int i = 0; i < order.size(); i++) {
-             K key = order.get(i);
-             callback.accept(i, key, data.get(key));
-        }
-    }
+		for (int i = 0; i < order.size(); i++) {
+			 K key = order.get(i);
+			 callback.accept(i, key, data.get(key));
+		}
+	}
 	
 	/**
 	 * Convert to {@link Map}
