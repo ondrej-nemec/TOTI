@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="toti.js"></script>
+	<title>JS test</title>
+</head>
+<body>
+	<div>
+		<nav></nav>
+		<section></section>
+	</div>
+
+	<!--
+	<div>
+		<nav>
+			<a href="#" class="links" id="x">X</a>
+			<a href="#" class="links" id="y">Y</a>
+		</nav>
+		<section>
+			<div class="panels" id="x">XXXXX</div>
+			<div class="panels" id="y">YYYYY</div>
+		</section>
+	</div>
+
+	<script type="text/javascript">
+		var panels = document.querySelectorAll('.panels');
+		panels.forEach((panel, index)=>{
+			if (index > 0) {
+				panel.style.display = 'none';
+			}
+		});
+		document.querySelectorAll('.links').forEach((link)=>{
+			link.onclick = ()=>{
+				panels.forEach((panel)=>{
+					panel.style.display = 'none';
+				});
+				document.querySelector('.panels#' + link.getAttribute('id')).style.display = 'inherit';
+			};
+		});
+	</script>
+-->
+
+	<div style="display: none;" id="control">
+		<div>
+			<div style="display: inline-block; background-color: lightgrey; margin: 5px; padding: 5px">
+				<code id="config"></code>
+			</div>
+			<hr>
+			<div>
+				<input type="text" id="setValue">
+				<button id="set">Set</button>
+				<button id="clear">Clear</button>
+			</div>
+			<div>
+				<button id="read">Read</button>
+				<div id="readPanel" style="display: inline-block; background-color: lightgrey; margin: 5px; padding: 5px"></div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		/*console.log(Toti);
+		console.log(Toti.Form('aaa'));
+		console.log(Toti.Grid('bbb'));*/
+		/*Toti.load({
+			url: '/a/b/c?a=A&b=B',
+			query: 'c=C&d=D'
+		});
+		Toti.load({
+			url: '/a/b/c?a=A&b=B',
+			query: {
+				c: 'C',
+				d: 'D'
+			}
+		});*/
+
+		function createPage(name) {
+			var menu = document.querySelector('nav');
+			var page = document.querySelector('section');
+
+			var menuItem = document.createElement('div');
+			menuItem.innerText = name
+			menuItem.setAttribute('style', 'display: inline-block; margin: 5px; cursor: pointer');
+			menu.appendChild(menuItem);
+
+			var panel = document.createElement('div');
+			panel.classList.add('panel');
+			if (page.childElementCount > 0) {
+				panel.style.display = 'none';
+			}
+			page.appendChild(panel);
+
+			menuItem.onclick = ()=>{
+				document.querySelectorAll('.panel').forEach((p)=>{
+					p.style.display = 'none';
+				});
+				panel.style.display = 'inherit';
+			};
+
+
+			return panel;
+		}
+
+		getConf().forEach((conf)=>{
+			var container = createPage(conf.name);
+			var title = document.createElement('h3');
+			title.innerText = conf.name;
+			container.appendChild(title);
+
+			conf.attributes.forEach((attributes, index)=>{
+				attributes.name = conf.name + "_" + index;
+				attributes.type = conf.type;
+
+				var input = Toti.createInput(attributes);
+				input.onChange((i)=>{
+					console.log(i.getType(), i.getName(), i.getValue());
+				});
+
+
+				var control = document.createElement('div');
+				control.innerHTML = document.getElementById('control').innerHTML;
+				var btnSet = control.querySelector('#set');
+				var txtSet = control.querySelector('#setValue');
+				var btnClear = control.querySelector('#clear');
+				var btnRead = control.querySelector('#read');
+				var pnlRead = control.querySelector('#readPanel');
+				btnClear.addEventListener('click', ()=>{
+					input.clear();
+					pnlRead.innerHTML = "";
+				});
+				btnSet.addEventListener('click', ()=>{
+					input.setValue(txtSet.value);
+					pnlRead.innerHTML = "";
+				});
+				btnRead.addEventListener('click', ()=>{
+					pnlRead.innerHTML = pnlRead.innerHTML
+					 + input.getName() + ":" + input.getValue()
+					  + "<br>";
+				});
+				var configPanel = control.querySelector('#config');
+				for (const[key, value] of Object.entries(attributes)) {
+					configPanel.innerHTML = configPanel.innerHTML + key + ": " + JSON.stringify(value) + "<br>";
+				}
+				
+				var inputCon = document.createElement('div');
+				container.appendChild(inputCon);
+				inputCon.style.display = 'inline-block';
+				inputCon.style['margin-right'] = '1em';
+				inputCon.appendChild(control);
+				inputCon.appendChild(document.createElement('hr'));
+				inputCon.appendChild(input.getContainer());
+			});
+		});
+	function getConf() {
+		return [
+			{
+				type: 'text',
+				name: 'Text',
+				attributes: [
+					{},
+					{
+						value: 'Some text'
+					}
+				]
+			},
+			{
+				type: 'email',
+				name: 'Email',
+				attributes: [
+					{}
+				]
+			},
+			{
+				type: 'number',
+				name: 'Number',
+				attributes: [
+					{}
+				]
+			},
+			{
+				type: 'password',
+				name: 'Password',
+				attributes: [
+					{},
+					{
+						required: true,
+						optional: true
+					},
+					{
+						optional: true
+					}
+				]
+			},
+			{
+				type: 'search',
+				name: 'Search',
+				attributes: [
+					{}
+				]
+			},
+			{
+				type: 'tel',
+				name: 'Tel',
+				attributes: [
+					{}
+				]
+			},
+			{
+				type: 'url',
+				name: 'Url',
+				attributes: [
+					{}
+				]
+			},
+			{
+				type: 'file',
+				name: 'File',
+				attributes: [
+					{}
+				]
+			},
+			{
+				type: 'color',
+				name: 'Color',
+				attributes: [
+					{},
+					{
+						required: true
+					}
+				]
+			},
+			{
+				type: 'hidden',
+				name: 'Hidden',
+				attributes: [
+					{}
+				]
+			},
+			{
+				type: 'date',
+				name: 'Date',
+				attributes: [
+					{}
+				]
+			},
+			{
+				type: 'datetime-local',
+				name: 'Datetime',
+				attributes: [
+					{}
+				]
+			},
+			{
+				type: 'month',
+				name: 'Month',
+				attributes: [
+					{}
+				]
+			},
+			{
+				type: 'time',
+				name: 'Time',
+				attributes: [
+					{}
+				]
+			},
+			{
+				type: 'week',
+				name: 'Week',
+				attributes: [
+					{}
+				]
+			},
+			{
+				type: 'checkbox',
+				name: 'Checkbox',
+				attributes: [
+					{}
+				]
+			},
+			{
+				type: 'radio',
+				name: 'Radio',
+				attributes: [
+					{}
+				]
+			},
+			{
+				type: 'radiolist',
+				name: 'RadioList',
+				attributes: [
+					{
+						radios: []
+					},
+					{
+						radios: [
+							{
+								id: 0,
+								title: 'A',
+								value: 'a'
+							},
+							{
+								id: 1,
+								value: 'b'
+							}
+						]
+					}
+				]
+			},
+			{
+				type: 'range',
+				name: 'Range',
+				attributes: [
+					{},
+					{
+						required: true
+					}
+				]
+			},
+			{
+				type: 'select',
+				name: 'Select',
+				attributes: [
+					{}
+				]
+			},
+			{
+				type: 'option',
+				name: 'Option',
+				attributes: [
+					{}
+				]
+			},
+			{
+				type: 'textarea',
+				name: 'TextArea',
+				attributes: [
+					{}
+				]
+			},
+			{
+				type: 'DynamicList',
+				name: 'DynamicList',
+				attributes: [
+					{}
+				]
+			},
+			{
+				type: 'InputList',
+				name: 'InputList',
+				attributes: [
+					{}
+				]
+			},
+			{
+				type: 'reset',
+				name: 'Reset',
+				attributes: [
+					{}
+				]
+			},
+			{
+				type: 'button',
+				name: 'Button',
+				attributes: [
+					{}
+				]
+			},
+			{
+				type: 'submit',
+				name: 'Submit',
+				attributes: [
+					{}
+				]
+			},
+			{
+				type: 'image',
+				name: 'Image',
+				attributes: [
+					{}
+				]
+			}
+		]
+	}
+	</script>
+</body>
+</html>

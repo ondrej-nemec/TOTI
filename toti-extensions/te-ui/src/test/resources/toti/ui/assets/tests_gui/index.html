@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Page for manual testing</title>
+
+	<script type="text/javascript">
+		var conf = [];
+		function require() {
+			return (spec)=>{
+				conf.push(spec);
+			};
+		}
+	</script>
+
+	<link rel="stylesheet" href="../src/toti.css">
+	<script src="../src/SortedMap.js"></script>
+	<script src="../src/animations.js"></script>
+	<script src="../src/utils.js"></script>
+	<script src="../src/load.js"></script>
+	<script src="../src/inputs.js"></script>
+	<script src="../src/form.js"></script>
+	<script src="../src/grid.js"></script>
+
+	<script src="../src/toti.js"></script>
+
+	<script src="mock.js"></script>
+
+	<style type="text/css">
+		.menu-item {
+			display: inline-block;
+			cursor: pointer;
+			padding: 10px;
+			margin: 5px;
+			border: 1px solid black;
+			border-radius: 10px;
+		}
+		.test {
+			display: inline-block;
+			margin: 1em;
+		}
+		.test-title {
+			font-weight: bold;
+			font-size: 1em;
+		}
+		.test-body {
+			background-color: grey;
+			padding: 10px;
+			display: inline-block;
+		}
+		.output-panel {
+			border: 1px solid black;
+			padding: 5px;
+			margin: 5px;
+		}
+		pre {
+			margin: 0;
+		}
+	</style>
+</head>
+<body>
+
+	<div id="body"></div>
+
+
+	<script src="configs/input.spec.js"></script>
+	<script src="configs/input-options.spec.js"></script>
+	<script src="configs/input-texts.spec.js"></script>
+	<script src="configs/input-numbers.spec.js"></script>
+	<script src="configs/input-boolean.spec.js"></script>
+	<script src="configs/input-others.spec.js"></script>
+	<script src="configs/input-special.spec.js"></script>
+	<script src="configs/input-datetime.spec.js"></script>
+	<script src="configs/input-actions.spec.js"></script>
+
+
+	<script type="text/javascript">
+		function createOutputPanel(title) {
+			var container = document.createElement('fieldset');
+			var legend = document.createElement('legend');
+			legend.innerText = title;
+
+			var content = document.createElement('div');
+			content.setAttribute('id', 'content');
+
+			container.appendChild(legend);
+			container.appendChild(content);
+			container.append = (element)=>{
+				content.appendChild(element);
+			};
+			container.clear = ()=>{
+				content.innerHTML = '';
+			};
+			container.text = (value)=>{
+				content.innerText = value;
+			};
+			// pnReadResult.classList.add('output-panel');
+			return container;
+		}
+		function parseReadedValue(value, prefix = '') {
+			if (value === null) {
+				return '<i>NULL</i>';
+			}
+			if (Array.isArray(value)) {
+				var res = '[';
+				value.forEach((v, i)=>{
+					if (i !== 0) {
+						res += ',';
+					}
+					res += '\n';
+					res += prefix + '  ' + parseReadedValue(v, prefix + '  ');
+				});
+				if (value.length !== 0) {
+					res += '\n' + prefix;
+				}
+				res += ']';
+				return res;
+			}
+			if (typeof value === 'object') {
+				var res = '{';
+				var first = true;
+				for(const[name, v] of Object.entries(value)) {
+					if (first) {
+						first = false;
+					} else {
+						res += ',';
+					}
+					res += '\n';
+					res += prefix + '  ' + name + ": " + parseReadedValue(v, prefix + '  ');
+				}
+				if (Object.keys(value).length !== 0) {
+					res += '\n' + prefix;
+				}
+				res += '}';
+				return res;
+			}
+			return value;
+		}
+		function addInputControl(testContainer, element) {
+			var opnErrors = createOutputPanel('Errors');
+			var opnValue = createOutputPanel('Readed value');
+			var opnFlags = createOutputPanel('Flags');
+			var clearOPN = ()=>{
+				opnErrors.clear();
+				opnValue.clear();
+				opnFlags.clear();
+			};
+
+			// set value
+			var input = document.createElement('input');
+			var btnSubmit = document.createElement('button');
+			btnSubmit.innerText = 'Set';
+			btnSubmit.onclick = (e)=>{
+				e.preventDefault();
+				element.setValue(input.value);
+				input.value = '';
+
+				clearOPN();
+				return false;
+			};
+			var pnSet = document.createElement('div');
+			pnSet.appendChild(input);
+			pnSet.appendChild(btnSubmit);
+			testContainer.appendChild(pnSet);
+
+			// read value
+			var btnRead = document.createElement('button');
+			btnRead.innerText = 'Read input value';
+			btnRead.onclick = (e)=>{
+				e.preventDefault();
+				opnValue.clear();
+				var value = element.getValue();
+				/*if (value === null) {
+					var i = document.createElement('i');
+					i.innerText = 'NULL';
+					opnValue.append(i);
+				} else {*/
+					var pre = document.createElement('pre');
+					pre.innerHTML = parseReadedValue(value);
+					opnValue.append(pre);
+				//}
+				return false;
+			};
+			var pnRead = document.createElement('div');
+			pnRead.appendChild(btnRead);
+			pnRead.appendChild(opnValue);
+			testContainer.appendChild(pnRead);
+
+			var pnValidation = document.createElement('div');
+			testContainer.appendChild(pnValidation);
+			var validationInput = document.createElement('input');
+			testContainer.appendChild(validationInput);
+
+			// set validations
+			var validationButtons = document.createElement('div');
+			testContainer.appendChild(validationButtons);
+			for (const[name, definition] of Object.entries(element.validationValues)) {
+				var button = document.createElement('button');
+				button.innerText = name;
+				button.onclick = ()=>{
+					element[definition.method](validationInput.value);
+					validationInput.value = '';
+				};
+				validationButtons.appendChild(button);
+			}
+
+			// set flags
+			var pnSetFlags = document.createElement('div');
+			var setFlags = {
+				'Disabled': (el, val)=>{el.setDisabled(val);},
+				'Required': (el, val)=>{el.setRequired(val);},
+				'Excluded': (el, val)=>{el.setExcluded(val);}
+			};
+			for (const[name, calling] of Object.entries(setFlags)) {
+				var row = document.createElement('div');
+				[true, false].forEach((val)=>{
+					var btnSetFlag = document.createElement('button');
+					btnSetFlag.innerText = name + ": " + val;
+					btnSetFlag.onclick = (e)=>{
+						e.preventDefault();
+						clearOPN();
+						calling(element, val);
+						return false;
+					};
+					row.appendChild(btnSetFlag);
+				});
+				pnSetFlags.appendChild(row);
+			}
+			testContainer.appendChild(pnSetFlags);
+
+			testContainer.appendChild(document.createElement('hr'));
+			// clear, check
+			var btnClear = document.createElement('button');
+			btnClear.innerText = 'Clear';
+			btnClear.onclick = (e)=>{
+				e.preventDefault();
+				element.clear();
+				clearOPN();
+				return false;
+			};
+			var bntCheck = document.createElement('button');
+			bntCheck.innerText = 'Check';
+			bntCheck.onclick = (e)=>{
+				e.preventDefault();
+				opnFlags.clear();
+				var checks = {
+					'Is valid': (el)=>{return el.isValid() ? 'OK' : 'NOK'},
+					'Is excluded': (el)=>{return el.isExcluded() ? 'YES' : 'NO'},
+					'Is required': (el)=>{return el.isRequired() ? 'YES' : 'NO'},
+					'Is disabled': (el)=>{return el.isDisabled() ? 'YES' : 'NO'},
+				};
+				// TODO custom
+				for (const[name, callback] of Object.entries(checks)) {
+					var row = document.createElement('div');
+					row.innerText = name + ": " + callback(element);
+					opnFlags.append(row);
+				}
+				opnErrors.clear();
+				for (const[message, params] of Object.entries(element.getErrors())) {
+					var row = document.createElement('span')
+					row.innerText = message + ': ' + JSON.stringify(params);
+					opnErrors.append(row);
+				}
+				// TODO use own method
+				//element.getContainer().reportValidity();
+				return false;
+			};
+			var pnControl = document.createElement('div');
+			pnControl.appendChild(btnClear);
+			pnControl.appendChild(bntCheck);
+			testContainer.appendChild(pnControl);
+
+			testContainer.appendChild(opnFlags);
+			testContainer.appendChild(opnErrors);
+			testContainer.appendChild(document.createElement('hr'));
+		}
+		function printTest(item, create) {
+			var container = document.createElement('div');
+			container.classList.add('test');
+
+			var title = document.createElement('div');
+			title.innerText = item.name;
+			title.classList.add('test-title');
+			container.appendChild(title);
+
+			var testContainer = document.createElement('div');
+			testContainer.classList.add('test-body');
+			container.appendChild(testContainer);
+
+			var element = create(Toti.utils.clone(item.conf));
+
+			var content = document.createElement('div');
+			testContainer.appendChild(content);
+			content.appendChild(element.getContainer());
+
+			testContainer.appendChild(document.createElement('hr'));
+			if (element instanceof Input) {
+				addInputControl(testContainer, element);	
+			}
+			var pre = document.createElement('pre');
+			testContainer.appendChild(pre);
+			pre.textContent = JSON.stringify(item.conf, undefined, 2);
+			return container;
+		}
+		function iterateTests(container, spec, index, hashArray, finalHash) {
+			container.setAttribute('data-index', index);
+			var title = document.createElement('h' + index);
+			title.innerText = spec.name;
+			container.appendChild(title);
+
+			var clear = document.createElement('input');
+			clear.setAttribute('type', 'radio');
+			clear.setAttribute('name', finalHash);
+			clear.addEventListener('change', ()=>{
+				window.location.hash = finalHash;
+			});
+			title.appendChild(clear);
+
+			var submenuContainer = document.createElement('div');
+			container.appendChild(submenuContainer);
+
+			var testContainer = document.createElement('div');
+			container.appendChild(testContainer);
+
+
+			var selectedHash = hashArray.shift();
+			spec.tests.forEach((item)=>{
+				if (!item.hasOwnProperty('create')) {
+					item.create = spec.create;
+				}
+				if (!item.hasOwnProperty('type') || item.type === 'group') {
+					var groupContainer = document.createElement('div');
+					container.appendChild(groupContainer);
+					printGroup(item, submenuContainer, groupContainer, index + 1, selectedHash, hashArray, finalHash);
+				} else if (item.type === 'test') {
+					testContainer.appendChild(printTest(item, item.create));
+				}
+			});
+		}
+		function printGroup(spec, menuContainer, testContainer, index, selectedHash, hashArray, finalHash) {
+			var menuCell = document.createElement('div');
+			menuContainer.appendChild(menuCell);
+
+			menuCell.classList.add('menu-item');
+
+			var title = document.createElement('span');
+			title.innerText = spec.name;
+
+			var groupHash = spec.name.replaceAll(' ', '-').replace(':', '-');
+			var fullGroupHash = finalHash + (finalHash === '#' ? '' : '_') + groupHash;
+
+			var lock = document.createElement('input');
+			lock.setAttribute('type', 'radio');
+			lock.setAttribute('name', finalHash);
+			lock.addEventListener('change', ()=>{
+				window.location.hash = fullGroupHash;
+				show([]);
+			});
+			function show(subHashArray) {
+				document.querySelectorAll('[data-index="' + index + '"]').forEach((container)=>{
+					container.innerHTML = '';
+				});
+				iterateTests(testContainer, spec, index, subHashArray, fullGroupHash);
+			}
+			if (selectedHash === groupHash) {
+				show(hashArray);
+				lock.checked = true;
+			}
+			menuCell.onclick = (e)=>{
+				if (e.srcElement === lock) {
+					return;
+				}
+				show([]);
+			};
+			menuCell.appendChild(title);
+			menuCell.appendChild(lock);
+		}
+		var data = {
+			name: 'GUI manual test',
+			tests: conf
+		};
+		iterateTests(document.getElementById('body'), data, 1, window.location.hash.replace('#', '').split('_'), '#');
+	</script>
+</body>
+</html>
