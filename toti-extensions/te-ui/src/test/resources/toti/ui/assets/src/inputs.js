@@ -2343,43 +2343,21 @@ class DynamicInput extends Input {
 		var useRemoveButton = true;
 		var addFirstBlank = true;
 
-		var fSetValue = (instance, element, unique, callbacks)=>{
-			// TODO je problem s default value
+		var fSetValue = (instance, element, unique)=>{
 			var value = instance.getValue();
 			var index = inputs.get(unique).index;
-			console.log('onChange');
-			console.log(value, index, value[index]);
-			console.log(element.getValue());
 			
 			value[index] = element.getValue();
 			instance.setValue(value);
-
-			// TODO
-			/*
-			var value = instance.getValue();
-			var index = inputs.get(unique).index;
-			if (value[index] === elementValue) {
-				return;
-			}
-			console.log('onChange');
-			console.log(value, index);
-			console.log(value[index], "vs", elementValue);
-			value[index] = elementValue;
-		//	instance._callOnChangeCallbacks();
-			*/
 		};
-		var fRemoveValue = (instance, unique, callbacks)=>{
-			// TODO
-			/*var current = instance.getValue();
-			delete current[inputs.get(unique).index];
-			if (callbacks) {
-				instance.setValue(current);
-			} else {
-				instance.value = current;
-			}*/
+		var fRemoveValue = (instance, field)=>{
+			var value = instance.getValue();
+			//delete value[field.index];
+			value.splice(field.index, 1)
+			instance.setValue(value);
 		};
 		/* null index remove last item */
-		var fRemoveField = (instance, unique = null)=>{
+		var fRemoveField = (instance, changeMasterValue, unique = null)=>{
 			// TODO onRemove callback?
 			if (unique === null) {
 				unique = inputs.getLastKey();
@@ -2388,7 +2366,6 @@ class DynamicInput extends Input {
 			if (field === null) {
 				return;
 			}
-			fRemoveValue(instance, unique, false);
 
 			field.container.remove();
 			for (var i = field.index; i < inputs.size(); i++) {
@@ -2396,8 +2373,11 @@ class DynamicInput extends Input {
 				item.index = i;
 				functions.rename(instance, instance.container, item.container, item.getTitle(i));
 			}
+			if (changeMasterValue) {
+				fRemoveValue(instance, field);
+			}
 		}
-		var fAddField = (instance)=>{
+		var fAddField = (instance, addBlanc)=>{
 			// TODO onAdd callback?
 			var unique = Toti.utils.random();
 			var conf = Toti.utils.clone(fieldDefinition);
@@ -2426,7 +2406,7 @@ class DynamicInput extends Input {
 				if (instance.isDisabled()) {
 					return;
 				}
-				fRemoveField(instance, unique);
+				fRemoveField(instance, true, unique);
 			});
 			var field = {
 				input: input,
@@ -2436,7 +2416,10 @@ class DynamicInput extends Input {
 				unique: unique
 			};
 			inputs.put(unique, field);
-			fSetValue(instance, input, unique);
+			/* executed only if called by addButton */
+			if (addBlanc) {
+				fSetValue(instance, input, unique);
+			}
 			return field;
 		};
 
@@ -2466,7 +2449,7 @@ class DynamicInput extends Input {
 					if (instance.isDisabled()) {
 						return;
 					}
-					fAddField(instance);
+					fAddField(instance, true);
 				});
 				for(const[name, value] of Object.entries(createAttributes)) {
 					container.setAttribute(name, value);
@@ -2478,7 +2461,7 @@ class DynamicInput extends Input {
 				values.forEach((value, index)=>{
 					var field = inputs.getByIndex(index);
 					if (field === null) {
-						field = fAddField(instance);
+						field = fAddField(instance, false);
 					}
 					field.input.setValue(value, source);
 					lastIndex = index;
@@ -2487,7 +2470,7 @@ class DynamicInput extends Input {
 					var size = inputs.size();
 					for (var i = lastIndex + 1; i < size; i++) {
 						/* remove last */
-						fRemoveField(instance);
+						fRemoveField(instance, false);
 					}
 				}
 			},
@@ -2521,7 +2504,7 @@ class DynamicInput extends Input {
 		this.fRemoveField = fRemoveField;
 		this.inputs = inputs;
 		if (addFirstBlank && !attributes.hasOwnProperty('value') && this.editable && !this.isDisabled()) {
-			fAddField(this);
+			fAddField(this, true);
 		}
 		this.createValidation('min', min, (instance, value, ruleMin)=>{
 			var res = value.length >= ruleMin;
@@ -2538,30 +2521,18 @@ class DynamicInput extends Input {
 			return res;
 		});
 	}
+	getValue() {
+		return super.getValue();
+	}
 	_isValueMissing() {
-		/*
-			FIX: this.value is not set on input change, this method is called during validation.
-			this.value is nessessary for next validation
-		*/
-		this.value = this.getValue();
 		return this.value.length === 0;
 	}
-	/*getValue() {
-		if (this.inputs === undefined) {
-			return;
-		}
-		var values = [];
-		this.inputs.forEach((unique, field)=>{
-			values.push(field.input.getValue());
-		});
-		return values;
-	}*/
 	addField() {
-		return this.fAddField(this);
+		return this.fAddField(this, true);
 	}
 	/* null index remove last item */
 	removeField(index = null) {
-		this.fRemoveField(this, index === null ? null : this.inputs.getKeyByIndex(index));
+		this.fRemoveField(this, true, index === null ? null : this.inputs.getKeyByIndex(index));
 	}
 	isValid() {
 		var isValid = super.isValid();

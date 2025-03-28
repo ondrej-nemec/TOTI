@@ -276,51 +276,51 @@ specialInputTests.push({
 						], true);
 					}
 				},
-					onChange: async (expect, assert, page, callInstance, callContainer, locator)=>{
-						console.log('A', await callInstance('getChanges'));
+				onChange: async (expect, assert, page, callInstance, callContainer, locator)=>{
+					console.log('A', await callInstance('getChanges'));
 
-						await callInstance('setValue', ['147', '258', '369']);
+					await callInstance('setValue', ['147', '258', '369']);
 
-						console.log('B', await callInstance('getChanges'));
+					console.log('B', await callInstance('getChanges'));
 
-						var childs = await locator.locator('> div');
-						var addButton = await childs.nth(0).locator('> button');
-						await addButton.click();
-						await addButton.click();
-					//	assert.areSame([null, null], await callInstance('getValue'));
+					var childs = await locator.locator('> div');
+					var addButton = await childs.nth(0).locator('> button');
+					await addButton.click();
+					await addButton.click();
+				//	assert.areSame([null, null], await callInstance('getValue'));
 
-						console.log('C', await callInstance('getChanges'));
+					console.log('C', await callInstance('getChanges'));
 
-						var input2 = await childs.nth(2).locator('input');
-						await input2.fill('second');
-						await input2.blur(); // lost focus on input to fire onchange event
-					//	assert.areSame([null, 'second'], await callInstance('getValue
+					var input2 = await childs.nth(2).locator('input');
+					await input2.fill('second');
+					await input2.blur(); // lost focus on input to fire onchange event
+				//	assert.areSame([null, 'second'], await callInstance('getValue
 
-						console.log('D', await callInstance('getChanges'));
+					console.log('D', await callInstance('getChanges'));
 
-						var input1 = await childs.nth(1).locator('input');
-						await input1.fill('first');
-						await input1.blur(); // lost focus on input to fire onchange event
-					//	assert.areSame(['first', 'second'], await callInstance('getValue'));
+					var input1 = await childs.nth(1).locator('input');
+					await input1.fill('first');
+					await input1.blur(); // lost focus on input to fire onchange event
+				//	assert.areSame(['first', 'second'], await callInstance('getValue'));
 
-						console.log('E', await callInstance('getChanges'));
+					console.log('E', await callInstance('getChanges'));
 
-						await callInstance('setValue', 'complete wrong value');
+					await callInstance('setValue', 'complete wrong value');
 
-						console.log('F', await callInstance('getChanges'));
+					console.log('F', await callInstance('getChanges'));
 
-						await input1.fill('value');
-						await input1.blur(); // lost focus on input to fire onchange event
-					//	assert.areSame(['first', 'second'], await callInstance('getValue'));
+					await input1.fill('value');
+					await input1.blur(); // lost focus on input to fire onchange event
+				//	assert.areSame(['first', 'second'], await callInstance('getValue'));
 
-						console.log('G', await callInstance('getChanges'));
-						// TODO remove button
+					console.log('G', await callInstance('getChanges'));
+					// TODO remove button
 
-						throw new Error('Not implemented');
-					}
+					throw new Error('Not implemented');
 				}
-			},
-			{
+			}
+		},
+		{
 				name: 'Default values',
 				type: 'test',
 				conf: {
