@@ -276,47 +276,88 @@ specialInputTests.push({
 						], true);
 					}
 				},
-				onChange: async (expect, assert, page, callInstance, callContainer, locator)=>{
-					console.log('A', await callInstance('getChanges'));
+				onChangeSetValue: async (expect, assert, page, callInstance, callContainer, locator)=>{
+					assert.areSame([null], await callInstance('getValue'));
+					assert.areSame(
+						'undefined_[]_[null]',
+						await callInstance('getChanges')
+					);
 
 					await callInstance('setValue', ['147', '258', '369']);
 
-					console.log('B', await callInstance('getChanges'));
+					assert.areSame(['147', '258', '369'], await callInstance('getValue'));
+					console.log(await callInstance('getChanges'));
+					assert.areSame(
+						'undefined_[]_[null]_["147","258","369"]',
+						await callInstance('getChanges')
+					);
+				},
+				onChangeAddButton: async (expect, assert, page, callInstance, callContainer, locator)=>{
+					assert.areSame(
+						'undefined_[]_[null]',
+						await callInstance('getChanges')
+					);
 
 					var childs = await locator.locator('> div');
 					var addButton = await childs.nth(0).locator('> button');
 					await addButton.click();
 					await addButton.click();
-				//	assert.areSame([null, null], await callInstance('getValue'));
-
-					console.log('C', await callInstance('getChanges'));
+					assert.areSame([null, null, null], await callInstance('getValue'));
+					assert.areSame(
+						'undefined_[]_[null]_[null,null]_[null,null,null]',
+						await callInstance('getChanges')
+					);
+				},
+				onChangeFillAddedInputs: async (expect, assert, page, callInstance, callContainer, locator)=>{
+					var childs = await locator.locator('> div');
+					var addButton = await childs.nth(0).locator('> button');
+					await addButton.click();
 
 					var input2 = await childs.nth(2).locator('input');
 					await input2.fill('second');
 					await input2.blur(); // lost focus on input to fire onchange event
-				//	assert.areSame([null, 'second'], await callInstance('getValue
-
-					console.log('D', await callInstance('getChanges'));
+					assert.areSame([null, 'second'], await callInstance('getValue'));
+					assert.areSame(
+						'undefined_[]_[null]_[null,null]_[null,"second"]',
+						await callInstance('getChanges')
+					);
 
 					var input1 = await childs.nth(1).locator('input');
 					await input1.fill('first');
 					await input1.blur(); // lost focus on input to fire onchange event
-				//	assert.areSame(['first', 'second'], await callInstance('getValue'));
-
-					console.log('E', await callInstance('getChanges'));
+					assert.areSame(['first', 'second'], await callInstance('getValue'));
+					assert.areSame(
+						'undefined_[]_[null]_[null,null]_[null,"second"]_["first","second"]',
+						await callInstance('getChanges')
+					);
+				},
+				onChangeWrongValue: async (expect, assert, page, callInstance, callContainer, locator)=>{
+					await callInstance('setValue', ['147', '258', '369']);
+					assert.areSame(['147', '258', '369'], await callInstance('getValue'));
+					assert.areSame(
+						'undefined_[]_[null]_["147","258","369"]',
+						await callInstance('getChanges')
+					);
 
 					await callInstance('setValue', 'complete wrong value');
+					assert.areSame([], await callInstance('getValue'));
+					assert.areSame(
+						'undefined_[]_[null]_["147","258","369"]_[]',
+						await callInstance('getChanges')
+					);
+				},
+				onChangeRemoveButton: async (expect, assert, page, callInstance, callContainer, locator)=>{
+					await callInstance('setValue', ['147', '258', '369']);
 
-					console.log('F', await callInstance('getChanges'));
+					var childs = await locator.locator('> div');
+					var removeButton = await childs.nth(2).locator('button');
+					await removeButton.click();
 
-					await input1.fill('value');
-					await input1.blur(); // lost focus on input to fire onchange event
-				//	assert.areSame(['first', 'second'], await callInstance('getValue'));
-
-					console.log('G', await callInstance('getChanges'));
-					// TODO remove button
-
-					throw new Error('Not implemented');
+					assert.areSame(['147', '369'], await callInstance('getValue'));
+					assert.areSame(
+						'undefined_[]_[null]_["147","258","369"]_["147","369"]',
+						await callInstance('getChanges')
+					);
 				}
 			}
 		},

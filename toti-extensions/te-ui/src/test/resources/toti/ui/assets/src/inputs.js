@@ -2344,14 +2344,14 @@ class DynamicInput extends Input {
 		var addFirstBlank = true;
 
 		var fSetValue = (instance, element, unique)=>{
-			var value = instance.getValue();
+			var value = Toti.utils.clone(instance.getValue());
 			var index = inputs.get(unique).index;
 			
 			value[index] = element.getValue();
 			instance.setValue(value);
 		};
 		var fRemoveValue = (instance, field)=>{
-			var value = instance.getValue();
+			var value = Toti.utils.clone(instance.getValue());
 			//delete value[field.index];
 			value.splice(field.index, 1)
 			instance.setValue(value);
