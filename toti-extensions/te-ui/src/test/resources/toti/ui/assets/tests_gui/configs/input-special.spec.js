@@ -1005,7 +1005,8 @@ specialInputTests.push({
 						type: 'test-standart',
 						name: "text2"
 					}
-				]
+				],
+				onChange: ['onInputListChange']
 			},
 			verify: {
 				base: async (expect, assert, page, callInstance, callContainer, locator)=>{
@@ -1138,7 +1139,60 @@ specialInputTests.push({
 					}, await callInstance('getValue'));
 				},
 				onChange: async (expect, assert, page, callInstance, callContainer, locator)=>{
-					throw new Error('Not implemented');
+					assert.areSame(
+						'undefined_{"text1":null,"text2":null}',
+						await callInstance('getChanges')
+					);
+
+					await callInstance('setValue', {
+						text1: 'aaa',
+						text2: 'bbb'
+					});
+					assert.areSame(
+						'undefined_{"text1":null,"text2":null}_{"text1":"aaa","text2":"bbb"}',
+						await callInstance('getChanges')
+					);
+
+					var childs = await locator.locator('> div');
+					var input1 = await childs.nth(0).locator('input');
+					var input2 = await childs.nth(1).locator('input');
+
+
+					await input2.fill('second');
+					await input2.blur(); // lost focus on input to fire onchange event
+					assert.areSame({
+						text1: 'aaa',
+						text2: 'second'
+					}, await callInstance('getValue'));
+					assert.areSame(
+						'undefined_{"text1":null,"text2":null}_{"text1":"aaa","text2":"bbb"}'
+						+ '_{"text1":"aaa","text2":"second"}',
+						await callInstance('getChanges')
+					);
+
+					await input1.fill('first');
+					await input1.blur(); // lost focus on input to fire onchange event
+					assert.areSame({
+						text1: 'first',
+						text2: 'second'
+					}, await callInstance('getValue'));
+					assert.areSame(
+						'undefined_{"text1":null,"text2":null}_{"text1":"aaa","text2":"bbb"}'
+						+ '_{"text1":"aaa","text2":"second"}_{"text1":"first","text2":"second"}',
+						await callInstance('getChanges')
+					);
+
+					await callInstance('setValue', 'complete wrong value');
+					assert.areSame({
+						text1: null,
+						text2: null
+					}, await callInstance('getValue'));
+					assert.areSame(
+						'undefined_{"text1":null,"text2":null}_{"text1":"aaa","text2":"bbb"}'
+						+ '_{"text1":"aaa","text2":"second"}_{"text1":"first","text2":"second"}'
+						+ '_{"text1":null,"text2":null}',
+						await callInstance('getChanges')
+					);
 				}
 			}
 		},
@@ -1319,6 +1373,43 @@ specialInputTests.push({
 					'text1': 'value1',
 					1: 'value2'
 				}
+			},
+			verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
+				await verifyInputList(expect, assert, page, callInstance, callContainer, locator, 'input-list', [
+					{
+						name: 'input-list[text1]',
+						value: 'value1',
+						disabled: false
+					},
+					{
+						name: 'input-list[1]',
+						value: 'value2',
+						disabled: false
+					}
+				]);
+				assert.areSame({
+					text1: 'value1',
+					1: 'value2'
+				}, await callInstance('getValue'));
+			}
+		},
+		{
+			name: 'Inputs default value',
+			type: 'test',
+			conf: {
+				type: 'inputList',
+				name: 'input-list',
+				fields: [
+					{
+						type: 'test-standart',
+						name: "text1",
+						value: 'value1'
+					},
+					{
+						type: 'test-standart',
+						value: 'value2'
+					}
+				]
 			},
 			verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
 				await verifyInputList(expect, assert, page, callInstance, callContainer, locator, 'input-list', [

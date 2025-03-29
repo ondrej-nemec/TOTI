@@ -357,7 +357,11 @@ var onChangeCallback = (index = null)=>{
 				return instance[variable];
 			};
 		}
-		instance[variable] = instance[variable] + '_' + instance.getValue();
+		var current = instance.getValue();
+		if (typeof current === 'object') {
+			current = JSON.stringify(current);
+		}
+		instance[variable] = instance[variable] + '_' + current;
 	};
 }
 // need to be here - function must be available during constructor
@@ -384,6 +388,7 @@ var onSelectDependsTree2Change = onChangeCallback();
 var onSelectDependsTree3Change = onChangeCallback();
 
 var onDynamicChange = onChangeCallback();
+var onInputListChange = onChangeCallback();
 
 var animationOrigin = Toti.animations;
 animationOrigin.inputLoading = (parentContainer)=>{

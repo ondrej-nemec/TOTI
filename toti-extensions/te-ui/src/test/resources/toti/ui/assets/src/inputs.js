@@ -2521,9 +2521,6 @@ class DynamicInput extends Input {
 			return res;
 		});
 	}
-	getValue() {
-		return super.getValue();
-	}
 	_isValueMissing() {
 		return this.value.length === 0;
 	}
@@ -2582,12 +2579,24 @@ class InputList extends Input {
 			};
 		}
 
+		var source = 'inputList';
+
 		var inputs = null;
 		var fields = {};
+
+		var inputsValue = {};
 		super('InputList', attributes, {
 			parseValue: (value)=>{
+				function parseObject(object) {
+					Object.keys(fields).forEach((key)=>{
+						if (!object.hasOwnProperty(key)) {
+							object[key] = null;
+						}
+					})
+					return object;
+				}
 				if (value === null) {
-					return {};
+					return parseObject({});
 				}
 				if (typeof value === 'string' || value instanceof String) {
 					try {
@@ -2595,12 +2604,12 @@ class InputList extends Input {
 				    } catch (e) { /*nothing*/ }
 				}
 				if (Array.isArray(value)) {
-					return value;
+					return parseObject(value);
 				}
 				if (typeof value === 'object') {
-					return value;
+					return parseObject(value);
 				}
-				return {};
+				return parseObject({});
 			},
 			create: (instance, editable, createAttributes)=>{
 				if (inputs === null) {
@@ -2620,6 +2629,12 @@ class InputList extends Input {
 					fields[fieldName] = input;
 
 					functions.createInputRow(instance, container, input);
+					input.onChange((element, oldValue)=>{
+						var value = Toti.utils.clone(instance.getValue());
+						value[fieldName] = input.getValue();
+						instance.setValue(value);
+					}, source);
+					inputsValue[fieldName] = input.getValue();
 				});
 				for(const[name, value] of Object.entries(createAttributes)) {
 					container.setAttribute(name, value);
@@ -2630,7 +2645,7 @@ class InputList extends Input {
 				var setNames = Object.keys(fields);
 				for (const[name, value] of Object.entries(values)) {
 					if (fields.hasOwnProperty(name)) {
-						fields[name].setValue(value);
+						fields[name].setValue(value, source);
 						/* https://stackoverflow.com/a/5767357/8240462 */
 						const index = setNames.indexOf(name);
   						setNames.splice(index, 1);
@@ -2638,7 +2653,7 @@ class InputList extends Input {
 				}
 				if (setNames.length > 0) {
 					setNames.forEach((name)=>{
-						fields[name].setValue(null);
+						fields[name].setValue(null, source);
 					});
 				}
 			},
@@ -2651,17 +2666,13 @@ class InputList extends Input {
 				inputs = value;
 			}
 		});
+		if (Object.keys(this.value).length === 0) {
+			this.setValue(inputsValue);
+		}
 		this.fields = fields;
 	}
 	_isValueMissing() {
 		return Object.keys(this.fields).length === 0;
-	}
-	getValue() {
-		var value = {};
-		for (const[unique, input] of Object.entries(this.fields)) {
-			value[unique] = input.getValue();
-		}
-		return value;
 	}
 	isValid() {
 		var isValid = super.isValid();
@@ -2814,13 +2825,6 @@ class LoadedList extends Input {
 	}
 	_isValueMissing() {
 		return Object.keys(this.fields).length === 0;
-	}
-	getValue() {
-		var value = {};
-		for (const[unique, input] of Object.entries(this.fields)) {
-			value[unique] = input.getValue();
-		}
-		return value;
 	}
 	isValid() {
 		var isValid = this.loaded && super.isValid();
