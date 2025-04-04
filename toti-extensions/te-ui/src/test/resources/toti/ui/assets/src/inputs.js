@@ -2578,21 +2578,25 @@ class InputList extends Input {
 				return control;
 			};
 		}
-
 		var source = 'inputList';
-
 		var inputs = null;
 		var fields = {};
-
 		var inputsValue = {};
+		var initial = true;
 		super('InputList', attributes, {
 			parseValue: (value)=>{
 				function parseObject(object) {
 					Object.keys(fields).forEach((key)=>{
-						if (!object.hasOwnProperty(key)) {
+						if (object.hasOwnProperty(key)) {
+							return;
+						}
+						if (initial && inputsValue.hasOwnProperty(key)) {
+							object[key] = inputsValue[key];
+						} else {
 							object[key] = null;
 						}
-					})
+					});
+					initial = false;
 					return object;
 				}
 				if (value === null) {
@@ -2666,9 +2670,6 @@ class InputList extends Input {
 				inputs = value;
 			}
 		});
-		if (Object.keys(this.value).length === 0) {
-			this.setValue(inputsValue);
-		}
 		this.fields = fields;
 	}
 	_isValueMissing() {
