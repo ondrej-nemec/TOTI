@@ -813,20 +813,55 @@ specialInputTests.push({
 					min: 5
 				},
 				verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
+					async function verifyButtons(count, enabled) {
+						var addButton = await locator.locator('.toti-dynamic-add');
+						await expect(addButton).toBeEnabled();
+						var buttons = await locator.locator('.toti-dynamic-remove');
+						await expect(buttons).toHaveCount(count);
+						for (var i = 0; i < count; i++) {
+							if (enabled) {
+								await expect(buttons.nth(i)).toBeEnabled();
+							} else {
+								await expect(buttons.nth(i)).toBeDisabled();
+							}
+						}
+					}
+					// automaticly added
+					assert.isTrue(await callInstance('isValid'));
+					assert.areSame({}, await callInstance('getErrors'));
+					await verifyButtons(5, false);
+
+					// clear
+					await callInstance('clear');
 					assert.isFalse(await callInstance('isValid'));
-					assert.areSame({"input.dynamicMinLenght":{"m":5,"l":1}}, await callInstance('getErrors'));
+					assert.areSame({"input.dynamicMinLenght":{"m":5,"l":0}}, await callInstance('getErrors'));
+					await verifyButtons(0, null);
 
 					await callInstance('addField');
+					await verifyButtons(1, false);
 					await callInstance('addField');
+					await verifyButtons(2, false);
 					await callInstance('addField');
+					await verifyButtons(3, false);
 					await callInstance('addField');
+					await verifyButtons(4, false);
+					await callInstance('addField');
+					await verifyButtons(5, false);
 
 					assert.isTrue(await callInstance('isValid'));
 					assert.areSame({}, await callInstance('getErrors'));
 
 					await callInstance('removeField');
+					await verifyButtons(4, false);
 					assert.isFalse(await callInstance('isValid'));
 					assert.areSame({"input.dynamicMinLenght":{"m":5,"l":4}}, await callInstance('getErrors'));
+
+					await callInstance('addField');
+					await verifyButtons(5, false);
+					assert.isTrue(await callInstance('isValid'));
+					assert.areSame({}, await callInstance('getErrors'));
+					await callInstance('addField');
+					await verifyButtons(6, true);
 				}
 			},
 			{
@@ -843,20 +878,46 @@ specialInputTests.push({
 					max: 5
 				},
 				verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
+					async function verifyButtons(enabled, count) {
+						var addButton = await locator.locator('.toti-dynamic-add');
+						if (enabled) {
+							await expect(addButton).toBeEnabled();
+						} else {
+							await expect(addButton).toBeDisabled();
+						}
+						var buttons = await locator.locator('.toti-dynamic-remove');
+						await expect(buttons).toHaveCount(count);
+						for (var i = 0; i < count; i++) {
+							await expect(buttons.nth(i)).toBeEnabled();
+						}
+					}
+
 					assert.isTrue(await callInstance('isValid'));
 					assert.areSame({}, await callInstance('getErrors'));
+					await verifyButtons(true, 1);
 
 					await callInstance('addField');
+					await verifyButtons(true, 2);
 					await callInstance('addField');
+					await verifyButtons(true, 3);
 					await callInstance('addField');
+					await verifyButtons(true, 4);
 					await callInstance('addField');
+					await verifyButtons(false, 5);
 					await callInstance('addField');
+					await verifyButtons(false, 6);
+
 					assert.isFalse(await callInstance('isValid'));
 					assert.areSame({"input.dynamicMaxLenght":{"m":5,"l":6}}, await callInstance('getErrors'));
 
 					await callInstance('removeField');
 					assert.isTrue(await callInstance('isValid'));
 					assert.areSame({}, await callInstance('getErrors'));
+					await verifyButtons(false, 5);
+					console.log(8);
+
+					await callInstance('removeField');
+					await verifyButtons(true, 4);
 				}
 			},
 			{
@@ -874,8 +935,10 @@ specialInputTests.push({
 					min: 5
 				},
 				verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
+					// clear
+					await callInstance('clear');
 					assert.isFalse(await callInstance('isValid'));
-					assert.areSame({"input.dynamicMinLenght":{"m":5,"l":1}}, await callInstance('getErrors'));
+					assert.areSame({"input.dynamicMinLenght":{"m":5,"l":0}}, await callInstance('getErrors'));
 
 					await callInstance('addField');
 					await callInstance('addField');

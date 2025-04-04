@@ -2336,6 +2336,30 @@ class DynamicInput extends Input {
 				inputContainer.querySelector('.toti-dynamic-title').innerText = title;
 			};
 		}
+		if (!functions.hasOwnProperty('changeAdd')) {
+			functions.changeAdd = (instance, container, use)=>{
+				var addButton = container.querySelector('.toti-dynamic-add');
+				if (addButton === null) {
+					return;
+				}
+				if (use) {
+					addButton.removeAttribute('disabled');
+				} else {
+					addButton.setAttribute('disabled', true);
+				}
+			};
+		}
+		if (!functions.hasOwnProperty('changeRemove')) {
+			functions.changeRemove = (instance, container, use)=>{
+				container.querySelectorAll('.toti-dynamic-remove').forEach((removeButton)=>{
+					if (use) {
+						removeButton.removeAttribute('disabled');
+					} else {
+						removeButton.setAttribute('disabled', true);
+					}
+				});
+			};
+		}
 
 		var inputs = new SortedMap();
 		var fieldDefinition = null;
@@ -2343,6 +2367,8 @@ class DynamicInput extends Input {
 		var useRemoveButton = true;
 		var addFirstBlank = true;
 
+		var max = null;
+		var min = null;
 		var fSetValue = (instance, element, unique)=>{
 			var value = Toti.utils.clone(instance.getValue());
 			var index = inputs.get(unique).index;
@@ -2352,10 +2378,17 @@ class DynamicInput extends Input {
 		};
 		var fRemoveValue = (instance, field)=>{
 			var value = Toti.utils.clone(instance.getValue());
-			//delete value[field.index];
 			value.splice(field.index, 1)
 			instance.setValue(value);
 		};
+		var checkMaxMin = (instance)=>{
+			if (min !== null) {
+				functions.changeRemove(instance, instance.container, min < inputs.size());
+			}
+			if (max !== null) {
+				functions.changeAdd(instance, instance.container, max > inputs.size());
+			}
+		}
 		/* null index remove last item */
 		var fRemoveField = (instance, changeMasterValue, unique = null)=>{
 			// TODO onRemove callback?
@@ -2376,6 +2409,7 @@ class DynamicInput extends Input {
 			if (changeMasterValue) {
 				fRemoveValue(instance, field);
 			}
+			checkMaxMin(instance);
 		}
 		var fAddField = (instance, addBlanc)=>{
 			// TODO onAdd callback?
@@ -2420,12 +2454,9 @@ class DynamicInput extends Input {
 			if (addBlanc) {
 				fSetValue(instance, input, unique);
 			}
+			checkMaxMin(instance);
 			return field;
 		};
-
-		// TODO automaticky pridat min a nedovolit pridat max - krome setValue
-		var max = null;
-		var min = null;
 		super('DynamicList', attributes, {
 			parseValue: (value)=>{
 				if (value === null) {
@@ -2503,9 +2534,16 @@ class DynamicInput extends Input {
 		this.fAddField = fAddField;
 		this.fRemoveField = fRemoveField;
 		this.inputs = inputs;
-		if (addFirstBlank && !attributes.hasOwnProperty('value') && this.editable && !this.isDisabled()) {
-			fAddField(this, true);
+		if (!attributes.hasOwnProperty('value') && this.editable && !this.isDisabled()) {
+			if (min !== null) {
+				for (var i = 0; i < min; i++) {
+					fAddField(this, true);
+				}
+			} else if (addFirstBlank) {
+				fAddField(this, true);
+			}
 		}
+		
 		this.createValidation('min', min, (instance, value, ruleMin)=>{
 			var res = value.length >= ruleMin;
 			if (!res) {
