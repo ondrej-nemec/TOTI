@@ -389,6 +389,7 @@ var onSelectDependsTree3Change = onChangeCallback();
 
 var onDynamicChange = onChangeCallback();
 var onInputListChange = onChangeCallback();
+var onLoadedListChange = onChangeCallback();
 
 var animationOrigin = Toti.animations;
 animationOrigin.inputLoading = (parentContainer)=>{

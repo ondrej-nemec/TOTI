@@ -157,7 +157,7 @@ class Input {
 		this._callOnChangeCallbacks(oldValue, source);
 	}
 	parseValue(rawValue) {
-		return this.callbacks.parseValue(rawValue);
+		return this.callbacks.parseValue(rawValue, this);
 	}
 
 	clear(source = null) {
@@ -2586,6 +2586,11 @@ class InputList extends Input {
 		super('InputList', attributes, {
 			parseValue: (value)=>{
 				function parseObject(object) {
+					Object.keys(object).forEach((key)=>{
+						if (!fields.hasOwnProperty(key)) {
+							delete object[key];
+						}
+					});
 					Object.keys(fields).forEach((key)=>{
 						if (object.hasOwnProperty(key)) {
 							return;
@@ -2722,14 +2727,37 @@ class LoadedList extends Input {
 				return control;
 			};
 		}
+		var source = 'loadedList';
 
 		var fieldDefinition = null;
 		var load = null;
 		var fields = {};
+		var initial = true;
 		super('LoadedList', attributes, {
-			parseValue: (value)=>{
+			parseValue: (value, instance)=>{
+				function parseObject(object) {
+					Object.keys(object).forEach((key)=>{
+						if (!fields.hasOwnProperty(key)) {
+							delete object[key];
+						}
+					});
+					Object.keys(fields).forEach((key)=>{
+						if (object.hasOwnProperty(key)) {
+							return;
+						}
+						if (initial && fieldDefinition.hasOwnProperty('value')) {
+							object[key] = fieldDefinition.value;
+						} else {
+							object[key] = null;
+						}
+					});
+					if (instance.loaded) {
+						initial = false;
+					}
+					return object;
+				}
 				if (value === null) {
-					return {};
+					return parseObject({});
 				}
 				if (typeof value === 'string' || value instanceof String) {
 					try {
@@ -2737,12 +2765,12 @@ class LoadedList extends Input {
 				    } catch (e) { /*nothing*/ }
 				}
 				if (Array.isArray(value)) {
-					return {}; /* array is not supported */
+					return parseObject({}); /* array is not supported */
 				}
 				if (typeof value === 'object') {
-					return value;
+					return parseObject(value);
 				}
-				return {};
+				return parseObject({});
 			},
 			create: (instance, editable, createAttributes)=>{
 				if (fieldDefinition === null) {
@@ -2776,14 +2804,17 @@ class LoadedList extends Input {
 						if (typeof input['parentChanged'] === 'function') {
 							input.parentChanged(rowUnique);
 						}
+						input.onChange((element, oldValue)=>{
+							var value = Toti.utils.clone(instance.getValue());
+							value[rowUnique] = input.getValue();
+							instance.setValue(value);
+						}, source);
 						fields[rowUnique] = input;
 
 						functions.createInputRow(instance, container, input);
 					});
 				}).then(()=>{
-					if (attributes.hasOwnProperty('value')) {
-						instance.setValue(attributes.value);
-					}
+					instance.setValue(attributes.value);
 					animation.remove();
 				}).catch((error)=>{
 					animation.failure();
@@ -2798,7 +2829,7 @@ class LoadedList extends Input {
 				var setNames = Object.keys(fields);
 				for (const[name, value] of Object.entries(values)) {
 					if (fields.hasOwnProperty(name)) {
-						fields[name].setValue(value);
+						fields[name].setValue(value, source);
 						/* https://stackoverflow.com/a/5767357/8240462 */
 						const index = setNames.indexOf(name);
   						setNames.splice(index, 1);
@@ -2806,7 +2837,7 @@ class LoadedList extends Input {
 				}
 				if (setNames.length > 0) {
 					setNames.forEach((name)=>{
-						fields[name].setValue(null);
+						fields[name].setValue(null, source);
 					});
 				}
 			},

@@ -1155,6 +1155,30 @@ specialInputTests.push({
 						text2: null
 					}, await callInstance('getValue'));
 				},
+				setNotExisting: async (expect, assert, page, callInstance, callContainer, locator)=>{
+					// set
+					await callInstance('setValue', {
+						text1: 'aaa',
+						text2: 'bbb',
+						text3: 'ccc'
+					});
+					await verifyInputList(expect, assert, page, callInstance, callContainer, locator, 'input-list', [
+						{
+							name: 'input-list[text1]',
+							value: 'aaa',
+							disabled: false
+						},
+						{
+							name: 'input-list[text2]',
+							value: 'bbb',
+							disabled: false
+						}
+					]);
+					assert.areSame({
+						text1: 'aaa',
+						text2: 'bbb'
+					}, await callInstance('getValue'));
+				},
 				fillValue: async (expect, assert, page, callInstance, callContainer, locator)=>{
 					assert.areSame({
 						text1: null,
@@ -1855,7 +1879,8 @@ specialInputTests.push({
 				},
 				field: {
 					type: 'test-standart'
-				}
+				},
+				onChange: ['onLoadedListChange']
 			},
 			verify: {
 				base: async (expect, assert, page, callInstance, callContainer, locator)=>{
@@ -1897,11 +1922,19 @@ specialInputTests.push({
 						b: 'Y'
 					});
 					await verifyLoadedList(expect, assert, page, callInstance, callContainer, locator, 'LoadedList', []);
-
+					assert.areSame({}, await callInstance('getValue'));
 
 					// sleep
 					await new Promise(resolve => setTimeout(resolve, 12000));
+					assert.areSame({
+						a: null,
+						b: null
+					}, await callInstance('getValue'));
 
+					await callInstance('setValue', {
+						a: 'X',
+						b: 'Y'
+					});
 					// check
 					assert.areSame({
 						a: 'X',
@@ -1944,11 +1977,128 @@ specialInputTests.push({
 					}, await callInstance('getValue'));
 
 				},
+				setNotExisting: async (expect, assert, page, callInstance, callContainer, locator)=>{
+					assert.areSame({}, await callInstance('getValue'));
+					await verifyLoadedList(expect, assert, page, callInstance, callContainer, locator, 'LoadedList', []);
+					
+					// sleep
+					await new Promise(resolve => setTimeout(resolve, 12000));
+
+					await callInstance('setValue', {
+						a: 'X',
+						b: 'Y',
+						c: 'Z'
+					});
+					// check
+					assert.areSame({
+						a: 'X',
+						b: 'Y'
+					}, await callInstance('getValue'));
+					await verifyLoadedList(expect, assert, page, callInstance, callContainer, locator, 'LoadedList', [
+						{
+							name: 'LoadedList[a]',
+							disabled: false,
+							value: 'X',
+							title: null
+						},
+						{
+							name: 'LoadedList[b]',
+							disabled: false,
+							value: 'Y',
+							title: null
+						}
+					]);
+
+				},
 				fillValue: async (expect, assert, page, callInstance, callContainer, locator)=>{
-					throw new Error('Not implemented');
+					// sleep
+					await new Promise(resolve => setTimeout(resolve, 12000));
+
+					assert.areSame({
+						a: null,
+						b: null
+					}, await callInstance('getValue'));
+
+					var childs = await locator.locator('> div');
+					var input1 = await childs.nth(0).locator('input');
+					var input2 = await childs.nth(1).locator('input');
+
+					await input1.fill('val1');
+					await input1.blur();
+					assert.areSame({
+						a: 'val1',
+						b: null
+					}, await callInstance('getValue'));
+
+					await input2.fill('val2');
+					await input2.blur();
+					assert.areSame({
+						a: 'val1',
+						b: 'val2'
+					}, await callInstance('getValue'));
 				},
 				onChange: async (expect, assert, page, callInstance, callContainer, locator)=>{
-					throw new Error('Not implemented');
+					assert.areSame(
+						'undefined_{}',
+						await callInstance('getChanges')
+					);
+
+					// sleep
+					await new Promise(resolve => setTimeout(resolve, 12000));
+					assert.areSame(
+						'undefined_{}_{"a":null,"b":null}',
+						await callInstance('getChanges')
+					);
+
+					await callInstance('setValue', {
+						a: 'aaa',
+						b: 'bbb'
+					});
+					assert.areSame(
+						'undefined_{}_{"a":null,"b":null}_{"a":"aaa","b":"bbb"}',
+						await callInstance('getChanges')
+					);
+
+					var childs = await locator.locator('> div');
+					var input1 = await childs.nth(0).locator('input');
+					var input2 = await childs.nth(1).locator('input');
+
+
+					await input2.fill('second');
+					await input2.blur(); // lost focus on input to fire onchange event
+					assert.areSame({
+						a: 'aaa',
+						b: 'second'
+					}, await callInstance('getValue'));
+					assert.areSame(
+						'undefined_{}_{"a":null,"b":null}_{"a":"aaa","b":"bbb"}'
+						+ '_{"a":"aaa","b":"second"}',
+						await callInstance('getChanges')
+					);
+
+					await input1.fill('first');
+					await input1.blur(); // lost focus on input to fire onchange event
+					assert.areSame({
+						a: 'first',
+						b: 'second'
+					}, await callInstance('getValue'));
+					assert.areSame(
+						'undefined_{}_{"a":null,"b":null}_{"a":"aaa","b":"bbb"}'
+						+ '_{"a":"aaa","b":"second"}_{"a":"first","b":"second"}',
+						await callInstance('getChanges')
+					);
+
+					await callInstance('setValue', 'complete wrong value');
+					assert.areSame({
+						a: null,
+						b: null
+					}, await callInstance('getValue'));
+					assert.areSame(
+						'undefined_{}_{"a":null,"b":null}_{"a":"aaa","b":"bbb"}'
+						+ '_{"a":"aaa","b":"second"}_{"a":"first","b":"second"}'
+						+ '_{"a":null,"b":null}',
+						await callInstance('getChanges')
+					);
 				}
 			}
 		},
@@ -2029,6 +2179,49 @@ specialInputTests.push({
 						title: null
 					}
 				]);
+			}
+		},
+		{
+			name: 'With text and input def value',
+			type: 'test',
+			conf: {
+				type: 'loadedList',
+				name: 'LoadedList',
+				load: {
+					url: '/inputs/loadedList',
+					method: 'get',
+					params: {}
+				},
+				field: {
+					type: 'test-standart',
+					value: 'something'
+				}
+			},
+			verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
+				await verifyLoadedList(expect, assert, page, callInstance, callContainer, locator, 'LoadedList', []);
+				assert.areSame({}, await callInstance('getValue'));
+
+				// sleep
+				await new Promise(resolve => setTimeout(resolve, 6000));
+				
+				await verifyLoadedList(expect, assert, page, callInstance, callContainer, locator, 'LoadedList', [
+					{
+						name: 'LoadedList[a]',
+						disabled: false,
+						value: 'something',
+						title: null
+					},
+					{
+						name: 'LoadedList[b]',
+						disabled: false,
+						value: 'something',
+						title: null
+					}
+				]);
+				assert.areSame({
+					a: 'something',
+					b: 'something'
+				}, await callInstance('getValue'));
 			}
 		},
 		{
