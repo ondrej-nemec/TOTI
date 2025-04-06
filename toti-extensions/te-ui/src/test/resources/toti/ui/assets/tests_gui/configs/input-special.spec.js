@@ -2226,7 +2226,7 @@ specialInputTests.push({
 				await verifyLoadedList(expect, assert, page, callInstance, callContainer, locator, 'LoadedList', []);
 
 				// sleep
-				await new Promise(resolve => setTimeout(resolve, 6000));
+				await new Promise(resolve => setTimeout(resolve, 12000));
 				
 				await verifyLoadedList(expect, assert, page, callInstance, callContainer, locator, 'LoadedList', [
 					{

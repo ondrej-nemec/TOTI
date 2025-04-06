@@ -2771,6 +2771,7 @@ class LoadedList extends Input {
 		var load = null;
 		var fields = {};
 		var initial = true;
+		var originalValue = attributes.hasOwnProperty('value') ? Toti.utils.clone(attributes.value) : undefined;
 		super('LoadedList', attributes, {
 			parseValue: (value, instance)=>{
 				function parseObject(object) {
@@ -2852,7 +2853,7 @@ class LoadedList extends Input {
 						functions.createInputRow(instance, container, input);
 					});
 				}).then(()=>{
-					instance.setValue(attributes.value);
+					instance.setValue(originalValue);
 					animation.remove();
 				}).catch((error)=>{
 					animation.failure();

@@ -95,9 +95,9 @@ var booleanInputs = [];
 			},
 			verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
 				assert.areSame('SPAN', await callContainer('tagName'));
-				expect(locator).toBeAttached();
-				expect(locator).toBeVisible();
-				expect(locator).toHaveText('false');
+				await expect(locator).toBeAttached();
+				await expect(locator).toBeVisible();
+				await expect(locator).toHaveText('false');
 			},
 		},
 		{
@@ -111,9 +111,9 @@ var booleanInputs = [];
 			},
 			verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
 				assert.areSame('SPAN', await callContainer('tagName'));
-				expect(locator).toBeAttached();
-				expect(locator).toBeVisible();
-				expect(locator).toHaveText('true');
+				await expect(locator).toBeAttached();
+				await expect(locator).toBeVisible();
+				await expect(locator).toHaveText('true');
 			},
 		},
 		{
@@ -131,9 +131,9 @@ var booleanInputs = [];
 			},
 			verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
 				assert.areSame('SPAN', await callContainer('tagName'));
-				expect(locator).toBeAttached();
-				expect(locator).toBeVisible();
-				expect(locator).toHaveText('Yes');
+				await expect(locator).toBeAttached();
+				await expect(locator).toBeVisible();
+				await expect(locator).toHaveText('Yes');
 			},
 		}
 	];
