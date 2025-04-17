@@ -15,14 +15,19 @@ public class Table {
 	}
 	
 	public Table(final String name) {
-        this(name, new LinkedList<>());
-    }
+		this(name, new LinkedList<>());
+	}
 
-    public Table addRow(Row row) {
-        rows.add(row);
-        return this;
-    }
-    
+	public Table addRow(Row row) {
+		rows.add(row);
+		return this;
+	}
+
+	public Table addAllRow(List<Row> rows) {
+		this.rows.addAll(rows);
+		return this;
+	}
+	
 	public String getName() {
 		return name;
 	}
