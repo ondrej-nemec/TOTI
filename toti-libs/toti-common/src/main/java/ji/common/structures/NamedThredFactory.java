@@ -32,14 +32,19 @@ public class NamedThredFactory implements ThreadFactory {
 	 * @param name String prefix 
 	 */
 	public NamedThredFactory(String name) {
-		SecurityManager s = System.getSecurityManager();
-		group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+		//SecurityManager s = System.getSecurityManager();
+		group = /*(s != null) ? s.getThreadGroup() :*/ Thread.currentThread().getThreadGroup();
 		namePrefix = "" + name + "-"; //;"pool-" + name +  "-thread-";
 	}
 
 	@Override
 	public Thread newThread(Runnable r) {
-		Thread t = new MonitoredThread(group, r, namePrefix + threadNumber.getAndIncrement(), 0, LocalDateTime.now());
+		String name = namePrefix;
+		if (r instanceof NamedRunnable) {
+			name += ((NamedRunnable)r).getName() + "-";
+		}
+		name += threadNumber.getAndIncrement();
+		Thread t = new MonitoredThread(group, r, name, 0, LocalDateTime.now());
 		if (t.isDaemon())
 			t.setDaemon(false);
 		if (t.getPriority() != Thread.NORM_PRIORITY)
