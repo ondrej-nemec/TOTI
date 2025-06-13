@@ -2,6 +2,13 @@ Toti.load = (...configurations)=>{
 	return Toti.utils.sleep(3000).then(()=>{
 		var url = configurations[0].url;
 		switch (url) {
+			case '/inputs/submit':
+			case '/inputs/button':
+				return {
+					a: 'x',
+					b: 42,
+					c: true
+				};
 			case '/inputs/text':
 				return [
 					'Loaded Option',
@@ -390,6 +397,26 @@ var onSelectDependsTree3Change = onChangeCallback();
 var onDynamicChange = onChangeCallback();
 var onInputListChange = onChangeCallback();
 var onLoadedListChange = onChangeCallback();
+
+var onControlClick = (isSuccess)=>{
+	return (instance, result)=>{
+		if (isSuccess) {
+			console.log("Success", result);
+		} else {
+			console.error(result);
+		}
+		instance.success = ()=>{
+			return isSuccess ? result : null;
+		};
+		instance.failure = ()=>{
+			return isSuccess ? null : result;
+		};
+	};
+}
+var onSubmitSuccess = onControlClick(true);
+var onSubmitFailure = onControlClick(false);
+var onButtonSuccess = onControlClick(true);
+var onButtonFailure = onControlClick(false);
 
 var animationOrigin = Toti.animations;
 animationOrigin.inputLoading = (parentContainer)=>{

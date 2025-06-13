@@ -16,6 +16,7 @@
 
 	<link rel="stylesheet" href="../src/toti.css">
 	<script src="../src/SortedMap.js"></script>
+	<script src="../src/dialog.js"></script>
 	<script src="../src/animations.js"></script>
 	<script src="../src/utils.js"></script>
 	<script src="../src/load.js"></script>
@@ -289,7 +290,7 @@
 			container.appendChild(testContainer);
 
 			var element = create(Toti.utils.clone(item.conf));
-
+			
 			var content = document.createElement('div');
 			testContainer.appendChild(content);
 			content.appendChild(element.getContainer());

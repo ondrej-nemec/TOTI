@@ -9,9 +9,9 @@ function createGrid(configuration) {
 		/*
 	z url a z cache nacist filtry a sortovani
 	beforeRender calblack
+		sortovani a filtry
 	- iterovat sloupce a pridavat je (metodou?)
-
-		- buttons (reset, reload)
+		- buttons (reset, reload), condition bude implementovano zde?
 		- checkbox
 		- value
 		- secondRow
@@ -23,6 +23,7 @@ function createGrid(configuration) {
 	pridat page size
 	after render callback
 		*/
+
 		render() {}
 /*
 // TODO
@@ -31,6 +32,7 @@ function createGrid(configuration) {
 		sortBy(name, direction, refresh = true) {}
 		nextSort(name, refresh = true) {}
 		filterBy(name, value, refresh = true) {}
+		resetFilters(refresh = true) {}
 		setPageIndex(pageIndex, refresh = true) {}
 		addNextPage(refresh = true) {}
 		setPageSize(pageSize, refresh = true) {}

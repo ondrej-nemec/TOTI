@@ -169,7 +169,11 @@ class Input {
 			this.onChangeCallbacks[key] = [];
 		}
 		this.onChangeCallbacks[key].push((instance, oldValue)=>{
-			Toti.utils.execute(callback, [instance, oldValue]);
+			try {
+				Toti.utils.execute(callback, [instance, oldValue]);
+			} catch(e) {
+				console.error(e);
+			}
 		});
 	}
 	_callOnChangeCallbacks(oldValue, source) {
@@ -2913,29 +2917,53 @@ class LoadedList extends Input {
 		}
 	}*/
 }
+const SubmitPolicy = Object.freeze({
+    EXCLUDE: 'EXCLUDE',
+    INCLUDE: 'INCLUDE',
+	INCLUDE_ON_CLICK: 'INCLUDE_ON_CLICK'
+});
 class SubmitInput extends Input {
+	redirect = null;
+	onSuccess = null;
+	onFailure = null;
+	async = null;
+	submitPolicy = null;
+	submitConfiguration = null;
+	submitElement = null;
 	constructor(type, attributes) {
 		var confirmation = null;
 		var redirect = null;
-		var onSuccess = null;
-		var onFailure = null;
+		var onSuccess = [];
+		var onFailure = [];
+		var async = false;
+		var submitPolicy = SubmitPolicy.EXCLUDE;
+		var submitConfiguration = null; /* for tests only */
 		super(type, attributes, {
 			parseValue: (value)=>{
 				return value;
 			},
 			create: (instance, editable, createAttributes)=>{
 				if (!editable) {
-					return null;
+					return document.createElement("span");
 				}
 				var container = document.createElement("input");
 				container.setAttribute("type", type);
 				if (instance.getTitle() !== null) {
 					container.setAttribute('value', instance.getTitle());
 				}
-				container.addEventListener('click', ()=>{
-					// TODO
-					console.log("TODO submit");
-					console.log('confirmation', configuration);
+				container.addEventListener('click', (e)=>{
+					e.preventDefault();
+					var confirm = new Promise((resolve)=>{
+						resolve(true);
+					});
+					if (confirmation !== null) {
+						confirm = Toti.dialog.confirm(confirmation);
+					}
+					confirm.then((isConfirmed)=>{
+						if (isConfirmed) {
+							instance.submit()
+						}
+					});
 				});
 				for(const[name, value] of Object.entries(createAttributes)) {
 					container.setAttribute(name, value);
@@ -2956,49 +2984,123 @@ class SubmitInput extends Input {
 				confirmation = value;
 			},
 			redirect: (value)=>{
-				confirmation = value;
+				redirect = value;
 			},
 			onSuccess: (value)=>{
-				confirmation = value;
+				onSuccess = value;
 			},
 			onFailure: (value)=>{
-				confirmation = value;
+				onFailure = value;
+			},
+			async: (value)=>{
+				async = value;
+			},
+			submitPolicy: (value)=>{
+				submitPolicy = value;
+			},
+			/* for tests */
+			submitConfiguration: (value)=>{
+				submitConfiguration = value;
 			}
 		});
-/*
-submit
-	private String redirect;
-	private String confirmation;
-	private boolean async = true;
-	private String onFailure = null;
-	private String onSuccess = null;
-	private Object value = null;
-	private SubmitPolicy submitPolicy = SubmitPolicy.EXCLUDE;
+		this.redirect = redirect;
+		this.onSuccess = onSuccess;
+		this.onFailure = onFailure;
+		this.async = async;
+		this.submitPolicy = submitPolicy;
+		this.submitConfiguration = submitConfiguration;
+	}
+	getSubmitPolicy() {
+		return this.submitPolicy;
+	}
+	setSubmit(submitConfiguration, submitElement) {
+		this.submitConfiguration = submitConfiguration;
+		this.submitElement = submitElement;
+	}
+	submit() {
+		if (this.submitConfiguration === null) {
+			console.warn('Missing submit configuration');
+			return;
+		}
+		var animation = Toti.animations.inputLoading(
+			this.submitElement === null ? this.container.parentElement : this.submitElement
+		);
+		if (this.async) {
+			this.setDisabled(true);
+			var instance = this;
+			Toti.load(this.submitConfiguration)
+			.then((res)=>{
+				instance.onSuccess.forEach((onSuccess)=>{
+					try {
+						Toti.utils.execute(onSuccess, [instance, res]);
+					} catch (e) {
+						console.error(e);
+					}
+				});
+				if (instance.redirect !== null) {
+					var redirect = instance.redirect;
+					if (typeof result === 'object') {
+						redirect = Toti.utils.parametrizedString(redirect, result);
+					}
+					window.location = redirect;
+				}
+			})
+			.catch((xhr)=>{
+				instance.onFailure.forEach((onFailure)=>{
+					try {
+						Toti.utils.execute(onFailure, [instance, xhr]);
+					} catch (e) {
+						console.error(e);
+					}
+				});
+			})
+			.then(()=>{
+				animation.remove();
+				this.setDisabled(false);
+			});
+		} else {
+			/*
+			if (method.toLowerCase() === "get" || method.toLowerCase() === "head") {
+				window.location = totiLoad.createLink(totiLoad.createLink(url, queryParams), bodyData);
+				return;
+			}
+			var formTosend = document.createElement("form");
+			formTosend.style.display = "none";
+			document.body.appendChild(formTosend);
 
-	private boolean disabled = false;
-	private final String type;
-	private final String name;
-	private final String title;
-	private final Map<String, String> params = new HashMap<>();
-
-image
-	src
-	
-*/
+			formTosend.setAttribute("action", totiLoad.createLink(url, queryParams));
+			formTosend.setAttribute("method", method);
+			for(const[name, value] of Object.entries(formAttributes)) {
+				formTosend.setAttribute(name, value);
+			}
+			totiLoad.iterateParams(bodyData, (name, value)=>{
+				var hidden = document.createElement("input");
+				hidden.name = name;
+				hidden.value = value;
+				formTosend.appendChild(hidden);
+			});
+			formTosend.submit();
+			formTosend.remove();
+			*/
+			console.log("TODO sync", this.submitConfiguration, this.onSuccess, this.onFailure, this.redirect);
+			animation.remove();
+			this.setDisabled(false);
+		}
 	}
 }
 class Button extends Input {
-	constructor(type, attributes) {
-		var url = null;
-		var method = null;
-		var params = null;
-		var onFailure = null;
-		var onSuccess = null;
-		var async = null;
-		var condition = null;
+	onClick = [];
+	requestConfiguration = null;
+	onFailure = null;
+	onSuccess = null;
+	constructor(attributes) {
+		var requestConfiguration = null;
+		var link = null;
+		var onSuccess = [];
+		var onFailure = [];
 		var icon = null;
 		var confirmation = null;
-		super(type, attributes, {
+		super('button', attributes, {
 			parseValue: (value)=>{
 				return value;
 			},
@@ -3006,15 +3108,40 @@ class Button extends Input {
 				if (!editable) {
 					return null;
 				}
-				var container = document.createElement("input");
-				container.setAttribute("type", type);
-				if (instance.getTitle() !== null) {
-					container.setAttribute('value', instance.getTitle());
+				var container = null;
+				if (link === null) {
+					container = document.createElement("button");
+				} else {
+					container = document.createElement("a");
+					container.setAttribute('href', link);
 				}
-				container.addEventListener('click', ()=>{
-					// TODO
-					console.log("TODO submit");
-					console.log('confirmation', configuration);
+				
+				if (instance.getTitle() !== null) {
+					container.innerText = instance.getTitle();
+				}
+				if (icon !== null) {
+					var i = document.createElement("i");
+					i.setAttribute("class", icon);
+					container.append(i);
+				}
+				container.addEventListener('click', (e)=>{
+					if (link === null) {
+						e.preventDefault();
+					}
+					var confirm = new Promise((resolve)=>{
+						resolve(true);
+					});
+					if (confirmation !== null) {
+						confirm = Toti.dialog.confirm(confirmation);
+					}
+					return confirm.then((isConfirmed)=>{
+						if (isConfirmed) {
+							instance.click();
+							return link !== null;
+						}
+						e.preventDefault();
+						return false;
+					});
 				});
 				for(const[name, value] of Object.entries(createAttributes)) {
 					container.setAttribute(name, value);
@@ -3031,14 +3158,8 @@ class Button extends Input {
 				/* not required */
 			}
 		}, {
-			url: (value)=>{
-				url = value;
-			},
-			method: (value)=>{
-				method = value;
-			},
-			params: (value)=>{
-				params = value;
+			requestConfiguration: (value)=>{
+				requestConfiguration = value;
 			},
 			onFailure: (value)=>{
 				onFailure = value;
@@ -3046,11 +3167,8 @@ class Button extends Input {
 			onSuccess: (value)=>{
 				onSuccess = value;
 			},
-			async: (value)=>{
-				async = value;
-			},
-			condition: (value)=>{
-				condition = value;
+			link: (value)=>{
+				link = value;
 			},
 			icon: (value)=>{
 				icon = value;
@@ -3059,14 +3177,52 @@ class Button extends Input {
 				confirmation = value;
 			}
 		});
-		// TODO use? private boolean evaluate = false;
-		// TODO private List<String> classes = new LinkedList<>();
+		this.requestConfiguration = requestConfiguration;
+		this.onFailure = onFailure;
+		this.onSuccess = onSuccess;
 	}
-/* // TODO grid only
-	private boolean isReset = false;
-	private boolean isRefresh = false;
-	private boolean addFilters = false;
-*/
+	onClick(callback) {
+		this.onClick.push(onClick);
+	}
+	click() {
+		var instance = this;
+		var animation = Toti.animations.inputLoading(this.container.parentElement);
+		this.setDisabled(true);
+		this.onClick.forEach((onClick)=>{
+			try {
+				Toti.utils.execute(onClick, [instance]);
+			} catch (e) {
+				console.error(e);
+			}
+		});
+		if (this.requestConfiguration !== null) {
+			Toti.load(this.requestConfiguration)
+			.then((res)=>{
+				instance.onSuccess.forEach((onSuccess)=>{
+					try {
+						Toti.utils.execute(onSuccess, [instance, res]);
+					} catch (e) {
+						console.error(e);
+					}
+				});
+			})
+			.catch((xhr)=>{
+				instance.onFailure.forEach((onFailure)=>{
+					try {
+						Toti.utils.execute(onFailure, [instance, xhr]);
+					} catch (e) {
+						console.error(e);
+					}
+				});
+			}).then(()=>{
+				animation.remove();
+				this.setDisabled(false);
+			});
+		} else {
+			animation.remove();
+			this.setDisabled(false);
+		}
+	}
 }
 
 
@@ -3159,7 +3315,7 @@ function _createInput(attributes, configuration) {
 		case 'reset':
 			console.warn('Reset in fact not working');
 		case 'button':
-			return new Button(type, attributes);
+			return new Button(attributes);
 		case 'submit':
 		case 'image':
 			return new SubmitInput(type, attributes);
