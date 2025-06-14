@@ -3039,8 +3039,8 @@ class SubmitInput extends Input {
 				});
 				if (instance.redirect !== null) {
 					var redirect = instance.redirect;
-					if (typeof result === 'object') {
-						redirect = Toti.utils.parametrizedString(redirect, result);
+					if (typeof res === 'object') {
+						redirect = Toti.utils.parametrizedString(redirect, res);
 					}
 					window.location = redirect;
 				}
@@ -3059,6 +3059,7 @@ class SubmitInput extends Input {
 				this.setDisabled(false);
 			});
 		} else {
+			// TODO
 			/*
 			if (method.toLowerCase() === "get" || method.toLowerCase() === "head") {
 				window.location = totiLoad.createLink(totiLoad.createLink(url, queryParams), bodyData);
@@ -3082,9 +3083,9 @@ class SubmitInput extends Input {
 			formTosend.submit();
 			formTosend.remove();
 			*/
+			var form = document.createElement("form");
+
 			console.log("TODO sync", this.submitConfiguration, this.onSuccess, this.onFailure, this.redirect);
-			animation.remove();
-			this.setDisabled(false);
 		}
 	}
 }
@@ -3106,7 +3107,7 @@ class Button extends Input {
 			},
 			create: (instance, editable, createAttributes)=>{
 				if (!editable) {
-					return null;
+					return document.createElement("span");
 				}
 				var container = null;
 				if (link === null) {
@@ -3151,7 +3152,13 @@ class Button extends Input {
 			setValue: (instance, container, value, editable)=>{},
 			setDisabled: (instance, container, isDisabled, editable)=>{
 				if (editable) {
-					container.disabled = isDisabled;
+					if (link === null) {
+						container.disabled = isDisabled;
+					} else if (isDisabled) {
+						container.setAttribute('href', '#');
+					} else {
+						container.setAttribute('href', link);
+					}
 				}
 			},
 			setRule: (instance, container, name, rule)=>{

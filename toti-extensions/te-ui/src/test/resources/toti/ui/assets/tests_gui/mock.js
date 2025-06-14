@@ -400,16 +400,11 @@ var onLoadedListChange = onChangeCallback();
 
 var onControlClick = (isSuccess)=>{
 	return (instance, result)=>{
-		if (isSuccess) {
-			console.log("Success", result);
-		} else {
-			console.error(result);
-		}
 		instance.success = ()=>{
-			return isSuccess ? result : null;
+			return isSuccess ? 1 : 0;
 		};
 		instance.failure = ()=>{
-			return isSuccess ? null : result;
+			return isSuccess ? 0 : 1;
 		};
 	};
 }

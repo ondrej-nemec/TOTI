@@ -26,7 +26,19 @@ var actionInputTests = [];
 					type: input.type
 				}),
 				verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
-					throw new Error('Not implemented');
+					page.on('dialog', dialog => console.log(dialog.message()));
+
+					assert.areSame('INPUT', await callContainer('tagName'));
+					await expect(locator).toBeEnabled();
+					await expect(locator).toBeVisible();
+					await expect(locator).toBeAttached();
+					await expect(locator).toHaveAttribute('type', input.type);
+					if (input.src) {
+						await expect(locator).toHaveAttribute('src', 'icon.png');
+					} else {
+						await expect(locator).not.toHaveAttribute('src');
+					}
+					await locator.click(); // with onDialog and no dialog handling, test fails if dialog appears
 				}
 			},
 			{
@@ -37,7 +49,11 @@ var actionInputTests = [];
 					editable: false
 				}),
 				verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
-					throw new Error('Not implemented');
+					assert.areSame('SPAN', await callContainer('tagName'));
+					await expect(locator).toBeEnabled();
+					await expect(locator).toBeHidden();
+					await expect(locator).toBeAttached();
+					await expect(locator).toHaveText('');
 				}
 			},
 			{
@@ -48,7 +64,10 @@ var actionInputTests = [];
 					disabled: true
 				}),
 				verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
-					throw new Error('Not implemented');
+					assert.areSame('INPUT', await callContainer('tagName'));
+					await expect(locator).toBeDisabled();
+					await expect(locator).toBeVisible();
+					await expect(locator).toBeAttached();
 				}
 			},
 			{
@@ -59,7 +78,17 @@ var actionInputTests = [];
 					confirmation: 'Confirmation message'
 				}),
 				verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
-					throw new Error('Not implemented');
+					page.on('dialog', async(dialog)=>{
+						 await dialog.dismiss();
+					});
+
+					assert.areSame('INPUT', await callContainer('tagName'));
+					await expect(locator).toBeEnabled();
+					await expect(locator).toBeVisible();
+					await expect(locator).toBeAttached();
+
+					await locator.click(); // TODO verify confirm
+					// await expect(locator).toBeDisabled();
 				}
 			},
 			{
@@ -70,7 +99,12 @@ var actionInputTests = [];
 					title: 'Send to clouds'
 				}),
 				verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
-					throw new Error('Not implemented');
+					assert.areSame('INPUT', await callContainer('tagName'));
+					await expect(locator).toBeEnabled();
+					await expect(locator).toBeVisible();
+					await expect(locator).toBeAttached();
+					await expect(locator).toHaveValue('Send to clouds');
+					assert.isNull(await callInstance('getValue'));
 				}
 			},
 			{
@@ -81,12 +115,18 @@ var actionInputTests = [];
 					value: 'OK'
 				}),
 				verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
-					throw new Error('Not implemented');
+					assert.areSame('INPUT', await callContainer('tagName'));
+					await expect(locator).toBeEnabled();
+					await expect(locator).toBeVisible();
+					await expect(locator).toBeAttached();
+
+					await expect(locator).toHaveValue('');
+					assert.areSame('OK', await callInstance('getValue'));
 				}
 			},
 			// submit policy - no tests
 			{
-				name: 'Submit Sync TODO',
+				name: 'Submit Sync',
 				type: 'test',
 				conf: conf({
 					type: input.type,
@@ -95,7 +135,15 @@ var actionInputTests = [];
 					}
 				}),
 				verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
-					throw new Error('Not implemented');
+					await expect(locator).toBeEnabled();
+					await expect(locator).toBeVisible();
+					await expect(locator).toBeAttached();
+
+					var pageUrl = page.url();
+
+					await locator.click();
+					// TODO
+					assert.areSame(pageUrl.replace('test.html', "redirect.html#42"), page.url());
 				}
 			},
 			{
@@ -110,7 +158,20 @@ var actionInputTests = [];
 					onSuccess: ['onSubmitSuccess']
 				}),
 				verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
-					throw new Error('Not implemented');
+					await expect(locator).toBeEnabled();
+					await expect(locator).toBeVisible();
+					await expect(locator).toBeAttached();
+
+					await locator.click();
+					await expect(locator).toBeDisabled();
+
+					// sleep
+					await new Promise(resolve => setTimeout(resolve, 6000));
+
+					await expect(locator).toBeEnabled();
+
+					assert.areSame(1, await callInstance('success'));
+					assert.areSame(0, await callInstance('failure'));
 				}
 			},
 			{
@@ -123,10 +184,24 @@ var actionInputTests = [];
 						url: '/inputs/submit'
 					},
 					onSuccess: ['onSubmitSuccess'],
-					redirect: 'index.html#{b}'
+					redirect: 'redirect.html#{b}'
 				}),
 				verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
-					throw new Error('Not implemented');
+					await expect(locator).toBeEnabled();
+					await expect(locator).toBeVisible();
+					await expect(locator).toBeAttached();
+
+					var pageUrl = await page.url();
+
+					await locator.click();
+					await expect(locator).toBeDisabled();
+
+					// sleep
+					await new Promise(resolve => setTimeout(resolve, 6000));
+					/*await expect(locator).toBeDisabled();
+					assert.areSame(1, await callInstance('success'));
+					assert.areSame(0, await callInstance('failure'));*/
+					await page.waitForURL(pageUrl.replace('test.html', "redirect.html#42"));
 				}
 			},
 			{
@@ -141,7 +216,20 @@ var actionInputTests = [];
 					onFailure: ['onSubmitFailure']
 				}),
 				verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
-					throw new Error('Not implemented');
+					await expect(locator).toBeEnabled();
+					await expect(locator).toBeVisible();
+					await expect(locator).toBeAttached();
+
+					await locator.click();
+					await expect(locator).toBeDisabled();
+
+					// sleep
+					await new Promise(resolve => setTimeout(resolve, 6000));
+
+					await expect(locator).toBeEnabled();
+
+					assert.areSame(0, await callInstance('success'));
+					assert.areSame(1, await callInstance('failure'));
 				}
 			},
 			{
@@ -154,10 +242,23 @@ var actionInputTests = [];
 						url: '/inputs/submit-not-existing'
 					},
 					onFailure: ['onSubmitFailure'],
-					redirect: 'index.html'
+					redirect: 'redirect.html'
 				}),
 				verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
-					throw new Error('Not implemented');
+					await expect(locator).toBeEnabled();
+					await expect(locator).toBeVisible();
+					await expect(locator).toBeAttached();
+
+					await locator.click();
+					await expect(locator).toBeDisabled();
+
+					// sleep
+					await new Promise(resolve => setTimeout(resolve, 6000));
+
+					await expect(locator).toBeEnabled();
+
+					assert.areSame(0, await callInstance('success'));
+					assert.areSame(1, await callInstance('failure'));
 				}
 			}
 		]
@@ -172,10 +273,27 @@ var buttonTests = [];
 			type: 'button'
 		},
 		verifyAsync: async (expect, assert, page, callInstance, callContainer, locator)=>{
-			throw new Error('Not implemented');
+			// page.on('dialog', dialog => console.log(dialog.message()));
+			page.on('dialog', dialog=>dialog.dismiss());
+
+			assert.areSame('BUTTON', await callContainer('tagName'));
+			await expect(locator).toBeEnabled();
+			await expect(locator).toBeVisible();
+			await expect(locator).toBeAttached();
+
+			await locator.click();
 		},
 		verifySync: async (expect, assert, page, callInstance, callContainer, locator)=>{
-			throw new Error('Not implemented');
+			// page.on('dialog', dialog => console.log(dialog.message()));
+			page.on('dialog', dialog=>dialog.dismiss());
+
+			assert.areSame('A', await callContainer('tagName'));
+			await expect(locator).toBeEnabled();
+			await expect(locator).toBeHidden();
+			await expect(locator).toBeAttached();
+			await expect(locator).toHaveAttribute('href', 'test.html');
+
+			await locator.click();
 		}
 	},
 	{
@@ -185,26 +303,43 @@ var buttonTests = [];
 			title: 'Magic button'
 		},
 		verifyAsync: async (expect, assert, page, callInstance, callContainer, locator)=>{
-			throw new Error('Not implemented');
+			assert.areSame('BUTTON', await callContainer('tagName'));
+			await expect(locator).toBeEnabled();
+			await expect(locator).toBeVisible();
+			await expect(locator).toBeAttached();
+			await expect(locator).toHaveText('Magic button');
 		},
 		verifySync: async (expect, assert, page, callInstance, callContainer, locator)=>{
-			throw new Error('Not implemented');
+			assert.areSame('A', await callContainer('tagName'));
+			await expect(locator).toBeEnabled();
+			await expect(locator).toBeVisible();
+			await expect(locator).toBeAttached();
+			await expect(locator).toHaveAttribute('href', 'test.html');
+			await expect(locator).toHaveText('Magic button');
 		}
 	},
-	// not editable is not displayed
-	/*{
+	{
 		name: 'Not editable',
 		conf: {
 			type: 'button',
 			editable: false
 		},
 		verifyAsync: async (expect, assert, page, callInstance, callContainer, locator)=>{
-			throw new Error('Not implemented');
+			assert.areSame('SPAN', await callContainer('tagName'));
+			await expect(locator).toBeEnabled();
+			await expect(locator).toBeHidden();
+			await expect(locator).toBeAttached();
+			await expect(locator).toHaveText('');
 		},
 		verifySync: async (expect, assert, page, callInstance, callContainer, locator)=>{
-			throw new Error('Not implemented');
+			assert.areSame('SPAN', await callContainer('tagName'));
+			await expect(locator).toBeEnabled();
+			await expect(locator).toBeHidden();
+			await expect(locator).toBeAttached();
+			await expect(locator).not.toHaveAttribute('href');
+			await expect(locator).toHaveText('');
 		}
-	},*/
+	},
 	{
 		name: 'Disabled',
 		conf: {
@@ -213,10 +348,24 @@ var buttonTests = [];
 			disabled: true
 		},
 		verifyAsync: async (expect, assert, page, callInstance, callContainer, locator)=>{
-			throw new Error('Not implemented');
+			assert.areSame('BUTTON', await callContainer('tagName'));
+			await expect(locator).toBeDisabled();
+			await expect(locator).toBeVisible();
+			await expect(locator).toBeAttached();
+			await expect(locator).toHaveText('Magic button');
 		},
 		verifySync: async (expect, assert, page, callInstance, callContainer, locator)=>{
-			throw new Error('Not implemented');
+			assert.areSame('A', await callContainer('tagName'));
+			await expect(locator).toBeEnabled();
+			await expect(locator).toBeVisible();
+			await expect(locator).toBeAttached();
+			await expect(locator).toHaveAttribute('href', '#');
+			await expect(locator).toHaveText('Magic button');
+
+			await callInstance('setDisabled', false);
+			await expect(locator).toHaveAttribute('href', 'test.html');
+			await callInstance('setDisabled', true);
+			await expect(locator).toHaveAttribute('href', '#');
 		}
 	},
 	{
@@ -227,10 +376,29 @@ var buttonTests = [];
 			confirmation: 'Confirmation message'
 		},
 		verifyAsync: async (expect, assert, page, callInstance, callContainer, locator)=>{
-			throw new Error('Not implemented');
+			page.on('dialog', dialog=>dialog.dismiss());
+
+			assert.areSame('BUTTON', await callContainer('tagName'));
+			await expect(locator).toBeEnabled();
+			await expect(locator).toBeVisible();
+			await expect(locator).toBeAttached();
+			await expect(locator).toHaveText('Magic button');
+
+			await locator.click(); // TODO verify confirm
+			// await expect(locator).toBeDisabled();
 		},
 		verifySync: async (expect, assert, page, callInstance, callContainer, locator)=>{
-			throw new Error('Not implemented');
+			page.on('dialog', dialog=>dialog.dismiss());
+
+			assert.areSame('A', await callContainer('tagName'));
+			await expect(locator).toBeEnabled();
+			await expect(locator).toBeVisible();
+			await expect(locator).toBeAttached();
+			await expect(locator).toHaveAttribute('href', 'test.html');
+			await expect(locator).toHaveText('Magic button');
+
+			await locator.click(); // TODO verify confirm
+			// await expect(locator).toBeDisabled();
 		}
 	},
 	{
@@ -240,10 +408,26 @@ var buttonTests = [];
 			icon: 'bi bi-pen'
 		},
 		verifyAsync: async (expect, assert, page, callInstance, callContainer, locator)=>{
-			throw new Error('Not implemented');
+			assert.areSame('BUTTON', await callContainer('tagName'));
+			await expect(locator).toBeEnabled();
+			await expect(locator).toBeVisible();
+			await expect(locator).toBeAttached();
+
+			var icon = await locator.locator('i');
+			await expect(icon).toBeAttached();
+			await expect(icon).toHaveClass('bi bi-pen');
+
 		},
 		verifySync: async (expect, assert, page, callInstance, callContainer, locator)=>{
-			throw new Error('Not implemented');
+			assert.areSame('A', await callContainer('tagName'));
+			await expect(locator).toBeEnabled();
+			await expect(locator).toBeHidden();
+			await expect(locator).toBeAttached();
+			await expect(locator).toHaveAttribute('href', 'test.html');
+
+			var icon = await locator.locator('i');
+			await expect(icon).toBeAttached();
+			await expect(icon).toHaveClass('bi bi-pen');
 		}
 	},
 	{
@@ -254,10 +438,21 @@ var buttonTests = [];
 			tooltip: 'Magic button Tooltip'
 		},
 		verifyAsync: async (expect, assert, page, callInstance, callContainer, locator)=>{
-			throw new Error('Not implemented');
+			assert.areSame('BUTTON', await callContainer('tagName'));
+			await expect(locator).toBeEnabled();
+			await expect(locator).toBeVisible();
+			await expect(locator).toBeAttached();
+			await expect(locator).toHaveText('Magic button');
+			await expect(locator).toHaveAttribute('title', 'Magic button Tooltip');
 		},
 		verifySync: async (expect, assert, page, callInstance, callContainer, locator)=>{
-			throw new Error('Not implemented');
+			assert.areSame('A', await callContainer('tagName'));
+			await expect(locator).toBeEnabled();
+			await expect(locator).toBeVisible();
+			await expect(locator).toBeAttached();
+			await expect(locator).toHaveAttribute('href', 'test.html');
+			await expect(locator).toHaveText('Magic button');
+			await expect(locator).toHaveAttribute('title', 'Magic button Tooltip');
 		}
 	}
 ].forEach((test)=>{
@@ -292,7 +487,20 @@ buttonTests.push({
 		onSuccess: ['onButtonSuccess']
 	},
 	verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
-		throw new Error('Not implemented');
+		await expect(locator).toBeEnabled();
+		await expect(locator).toBeVisible();
+		await expect(locator).toBeAttached();
+
+		await locator.click();
+		await expect(locator).toBeDisabled();
+
+		// sleep
+		await new Promise(resolve => setTimeout(resolve, 6000));
+
+		await expect(locator).toBeEnabled();
+
+		assert.areSame(1, await callInstance('success'));
+		assert.areSame(0, await callInstance('failure'));
 	}
 });
 buttonTests.push({
@@ -307,7 +515,20 @@ buttonTests.push({
 		onFailure: ['onButtonFailure']
 	},
 	verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
-		throw new Error('Not implemented');
+		await expect(locator).toBeEnabled();
+		await expect(locator).toBeVisible();
+		await expect(locator).toBeAttached();
+
+		await locator.click();
+		await expect(locator).toBeDisabled();
+
+		// sleep
+		await new Promise(resolve => setTimeout(resolve, 6000));
+
+		await expect(locator).toBeEnabled();
+
+		assert.areSame(0, await callInstance('success'));
+		assert.areSame(1, await callInstance('failure'));
 	}
 });
 actionInputTests.push({
@@ -326,10 +547,10 @@ actionInputTests.push({
 			type: 'test',
 			conf: {
 				type: 'reset'
-			},
+			}/*,
 			verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
 				throw new Error('Not implemented');
-			}
+			}*/
 		},
 		{
 			name: 'Not editable',
@@ -337,10 +558,10 @@ actionInputTests.push({
 			conf: {
 				type: 'reset',
 				editable: false
-			},
+			}/*,
 			verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
 				throw new Error('Not implemented');
-			}
+			}*/
 		},
 		{
 			name: 'Disabled',
@@ -348,10 +569,10 @@ actionInputTests.push({
 			conf: {
 				type: 'reset',
 				disabled: true
-			},
+			}/*,
 			verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
 				throw new Error('Not implemented');
-			}
+			}*/
 		}
 	]
 });

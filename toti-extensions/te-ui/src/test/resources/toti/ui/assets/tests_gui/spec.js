@@ -94,10 +94,15 @@ module.exports = (conf)=>{
 
           var callInstance = (method, ...params)=>{
             return page.evaluate((data)=>{
-              /*if (!data.handler.hasOwnProperty(data.method)) {
-                  throw new Error('Handler miss method: ' + data.method);
-              }*/
-              return data.handler[data.method](...data.params);
+              try {
+                /*if (!data.handler.hasOwnProperty(data.method)) {
+                    throw new Error('Handler miss method: ' + data.method);
+                }*/
+                return data.handler[data.method](...data.params);
+              } catch(e) {
+                console.log('Instance method calling: ' + data.method, data.params, data.handler);
+                throw e;
+              }
             }, {
               handler: instance,
               method: method,
