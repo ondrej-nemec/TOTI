@@ -869,11 +869,13 @@ class OptionsInput extends Input {
 			parseValue: (value)=>{
 				if (!allowedValues.hasOwnProperty(value)) {
 					selectedOption.selected = null;
+					console.warn("Value '" + value + "' not allowed");
 					return null;
 				}
 				var option = allowedValues[value];
 				if (!option.isSelectable()) {
 					selectedOption.selected = null;
+					console.warn("Value '" + value + "' is not selectable");
 					return null;
 				}
 				selectedOption.selected = option;
@@ -978,11 +980,11 @@ class TextAreaInput extends Input {
 		var input = null;
 		var info = null;
 		var setInfoCount = (instance)=>{
-			var maxLength = null; // ;
+			var maxLength = null;
 			if (instance.validationValues.hasOwnProperty('maxlength')) {
 				maxLength = instance.validationValues.maxlength.value;
 			}
-			var minLength = null; //0;
+			var minLength = null;
 			if (instance.validationValues.hasOwnProperty('minlength')) {
 				minLength = instance.validationValues.minlength.value;
 			}
@@ -1315,6 +1317,7 @@ class FileInput extends Input {
 					return null;
 				}
 				if (!Array.isArray(value)) {
+					console.warn("Value '" + value + "' is not array");
 					return null;
 				}
 				var files = [];
@@ -1438,6 +1441,7 @@ class ColorInput extends Input {
 				if (value === null || !value.match('^#(?:[0-9a-fA-F]{3}){1,2}$')) {
 					/* input default value */
 					//return '#000000';
+					console.warn("Value '" + value + "' cannot be converted to color");
 					return null;
 				}
 				return value;
@@ -1615,6 +1619,9 @@ class Timestamp {
 }
 
 function parseDatetime(type, value) {
+	if (value === null) {
+		return null;
+	}
 	function matches(r, indexes) {
 		const matches = r.exec(value);
 		var res = new Timestamp(type);
@@ -1670,6 +1677,7 @@ function parseDatetime(type, value) {
 			nano: 11
 		});
 	}
+	console.warn("Value '" + value + "' cannot be converted to Datetime");
 	return null;
 }
 /* for jest unit test */
@@ -2474,6 +2482,7 @@ class DynamicInput extends Input {
 				if (Array.isArray(value)) {
 					return value;
 				}
+				console.warn("Value '" + value + "' cannot be used as DynamicList");
 				return [];
 			},
 			create: (instance, editable, createAttributes)=>{
@@ -2660,6 +2669,7 @@ class InputList extends Input {
 				if (typeof value === 'object') {
 					return parseObject(value);
 				}
+				console.warn("Value '" + value + "' cannot be used as InputList");
 				return parseObject({});
 			},
 			create: (instance, editable, createAttributes)=>{
