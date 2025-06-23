@@ -53,13 +53,13 @@ const Toti = function () {
 			/* include inputs.js */
 			return createInput(attributes, conf.get('inputs'));
 		},
-		Form: (conf)=>{
+		Form: (attributes)=>{
 			/* include form.js */
-			return createForm(conf);
+			return createForm(attributes, conf.get('form'));
 		},
-		Grid: (conf)=>{
+		Grid: (attributes)=>{
 			/* include grid.js */
-			return createGrid(conf)
+			return createGrid(attributes, conf.get('grid'))
 		},
 		load(...configurations) {
 			/* include load.js */
