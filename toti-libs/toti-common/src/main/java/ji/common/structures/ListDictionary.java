@@ -14,7 +14,7 @@ import java.util.function.Consumer;
  * 
  * @author Ondřej Němec
  */
-public class ListDictionary implements Dictionary<Integer> {
+public class ListDictionary implements Dictionary<Integer>, Iterable<Tuple2<Integer, Object>> {
 	
 	private final Collection<Object> collection;
 	
@@ -174,11 +174,11 @@ public class ListDictionary implements Dictionary<Integer> {
 	 * @param action {@link ThrowingConsumer} applied on each item, the parameter is item
 	 * @throws E expected {@link Exception}
 	 */
-	public <E extends Throwable> void forEach(ThrowingConsumer<DictionaryValue, E> action) throws E {
+	/*public <E extends Throwable> void forEach(ThrowingConsumer<DictionaryValue, E> action) throws E {
 		for (Object s : collection) {
 			action.accept(new DictionaryValue(s));
 		}
-	}
+	}*/
 	
 	/**
 	 * Iterate over all items. The ginve action is applied on each item.
@@ -211,7 +211,7 @@ public class ListDictionary implements Dictionary<Integer> {
 		Iterator<?> targetIt = dictionary.collection.iterator();
 		for (Object item : collection) {
 			if (!item.equals(targetIt.next())) {
-			    return false;	
+				return false;	
 			}
 		}
 		return true;
@@ -221,6 +221,27 @@ public class ListDictionary implements Dictionary<Integer> {
 	@Override
 	public void clear() {
 		collection.clear();
+	}
+
+	@Override
+	public Iterator<Tuple2<Integer, Object>> iterator() {
+		return new Iterator<Tuple2<Integer, Object>>() {
+			private int index = 0;
+			private List<Object> values = new ArrayList<>(collection);
+			@Override
+			public boolean hasNext() {
+				return index < collection.size();
+			}
+
+			@Override
+			public Tuple2<Integer, Object> next() {
+				Object value = values.get(index);
+				int i = index;
+				index++;
+				return new Tuple2<>(i, value);
+			}
+			
+		};
 	}
 
 }

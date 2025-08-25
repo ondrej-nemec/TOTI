@@ -1,7 +1,10 @@
 package ji.common.structures;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -17,7 +20,7 @@ import ji.common.functions.Mapper;
  *
  * @param <K> the type of key
  */
-public class MapDictionary<K> implements Dictionary<K> {
+public class MapDictionary<K> implements Dictionary<K>, Iterable<Tuple2<K, Object>> {
 	
 	private final Map<K, Object> map;
 	
@@ -221,6 +224,29 @@ public class MapDictionary<K> implements Dictionary<K> {
 	@Override
 	public void clear() {
 		map.clear();
+	}
+
+	@Override
+	public Iterator<Tuple2<K, Object>> iterator() {
+		return new Iterator<Tuple2<K, Object>>() {
+			private int index = 0;
+			private List<K> keys = new ArrayList<>(map.keySet());
+			
+			@Override
+			public boolean hasNext() {
+				return index < keys.size();
+			}
+
+			@Override
+			public Tuple2<K, Object> next() {
+				K key = keys.get(index);
+				Object value = map.get(key);
+				// int i = index;
+				index++;
+				return new Tuple2<>(key, value);
+			}
+			
+		};
 	}
 	
 }

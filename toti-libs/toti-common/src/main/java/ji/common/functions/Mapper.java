@@ -212,7 +212,7 @@ public class Mapper {
 			Tuple2<Class<?>, Type> types = getGenericClass(generic, 0);
 			Class<?> collectionItemClass = types._1();
 			Method m = getMethod("add", clazz, Object.class);
-			parameterValue.getDictionaryList().forEach((item)->{
+			parameterValue.getDictionaryList().forEach((index, item)->{
 				m.invoke(target, read(collectionItemClass, item.getValue(), only, null, types._2(), onValue));
 			});
 		} else if (Map.class.isAssignableFrom(clazz) || MapDictionary.class.isAssignableFrom(clazz)) {

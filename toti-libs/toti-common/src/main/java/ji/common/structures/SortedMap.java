@@ -2,6 +2,7 @@ package ji.common.structures;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,7 @@ import java.util.function.BiConsumer;
  * @param <K> the type of key
  * @param <V> the type of value
  */
-public class SortedMap<K, V> implements Dictionary<K> {
+public class SortedMap<K, V> implements Dictionary<K>, Iterable<Tuple3<K, V, Integer>> {
 
 	private final List<K> order;
 	private final Map<K, V> data;
@@ -309,6 +310,27 @@ public class SortedMap<K, V> implements Dictionary<K> {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public Iterator<Tuple3<K, V, Integer>> iterator() {
+		return new Iterator<Tuple3<K, V, Integer>>() {
+			private int index = 0;
+			@Override
+			public boolean hasNext() {
+				return index < order.size();
+			}
+
+			@Override
+			public Tuple3<K, V, Integer> next() {
+				K k = order.get(index);
+				V v = data.get(k);
+				int i = index;
+				index++;
+				return new Tuple3<>(k, v, i);
+			}
+			
+		};
 	}
 	
 }
