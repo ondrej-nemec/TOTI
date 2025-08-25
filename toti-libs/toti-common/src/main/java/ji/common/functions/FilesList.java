@@ -6,6 +6,7 @@ import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -119,7 +120,9 @@ public class FilesList {
 				}
 			} else if ("file".equals(url.getProtocol())){
 				File file = new File(URLDecoder.decode(url.getPath(), "UTF-8"));
-				addFileName(files, file, file + File.separator, recursive);
+				files.addAll(
+					addFileName(file, file + File.separator, recursive)
+				);
 			}
 		}
 		return files;
@@ -162,28 +165,29 @@ public class FilesList {
 		if (url == null) {
 			File f = new File(folder);
 			this.url = f.toURI().toURL();
-			List<String> files = new LinkedList<>();
-			addFileName(files, f, f.getAbsolutePath() + File.separator, recursive);
-			return files;
+			return addFileName(f, f.getAbsolutePath() + File.separator, recursive);
 		}
 		String path = url.getPath();
 		File dir = new File(path);
 		this.url = dir.toURI().toURL();
-		List<String> files = new LinkedList<>();
-		addFileName(files, dir, dir + File.separator, recursive);
-		return files;
+		return addFileName(dir, dir + File.separator, recursive);
 	}
 
-	private void addFileName(List<String> files, File dir, String replacement, boolean recursive) {
+	private List<String> addFileName(File dir, String replacement, boolean recursive) {
+		List<String> files = new LinkedList<>();
 		for (File f : dir.listFiles()) {
 			if (f.isDirectory()) {
 				if (recursive) {
-					addFileName(files, f, replacement, recursive);
+					files.addAll(
+						addFileName(f, replacement, recursive)
+					);
 				}
 			} else {
 				files.add(f.getAbsolutePath().replace(replacement, "").replaceAll("\\\\", "/"));
 			}
 		}
+		Collections.sort(files);
+		return files;
 	}
 
 }
