@@ -26,6 +26,8 @@ public interface TestCase {
 	default <T, R, E extends Exception> ThrowingFunction<T, R, E> throwingFunction(ThrowingFunction<T, R, E> function) {
 		return function;
 	}
+	
+	/**************************/
 
 	default void assertEquals(Map<?, ?> expected, Map<?, ?> actual) {
 		assertEquals(null, expected, actual);
@@ -70,6 +72,59 @@ public interface TestCase {
 			assertEquals(message, expected, actual);
 		} catch (Error e) {
 			assertEquals(
+				message,
+				expected == null ? "NULL" : expected.toString(),
+				actual == null ? "NULL" : expected.toString()
+			);
+			throw e;
+		}
+	}
+	
+	/*********************************/
+
+	default void assertNotEquals(Map<?, ?> expected, Map<?, ?> actual) {
+		assertNotEquals(null, expected, actual);
+	}
+	
+	default void assertNotEquals(String message, Map<?, ?> expected, Map<?, ?> actual) {
+		try {
+			assertNotEquals(message, expected, actual);
+		} catch (Error e) {
+			assertNotEquals(
+				message,
+				expected == null ? "NULL" : Implode.implode("\n", ":", expected),
+				actual == null ? "NULL" : Implode.implode("\n", ":", actual)
+			);
+			throw e;
+		}
+	}
+	
+	default void assertNotEquals(Collection<?> expected, Collection<?> actual) {
+		assertEquals(null, expected, actual);
+	}
+
+	default void assertNotEquals(String message, Collection<?> expected, Collection<?> actual) {
+		try {
+			assertNotEquals(message, expected, actual);
+		} catch (Error e) {
+			assertNotEquals(
+				message,
+				expected == null ? "NULL" : Implode.implode("\n", expected),
+				actual == null ? "NULL" : Implode.implode("\n", actual)
+			);
+			throw e;
+		}
+	}
+
+	default void assertNotEquals(Object expected, Object actual) {
+		assertNotEquals(null, expected, actual);
+	}
+
+	default void assertNotEquals(String message, Object expected, Object actual) {
+		try {
+			assertNotEquals(message, expected, actual);
+		} catch (Error e) {
+			assertNotEquals(
 				message,
 				expected == null ? "NULL" : expected.toString(),
 				actual == null ? "NULL" : expected.toString()
