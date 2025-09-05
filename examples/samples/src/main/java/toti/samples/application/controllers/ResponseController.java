@@ -10,7 +10,6 @@ import ji.common.structures.MapInit;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.answers.action.ResponseAction;
-import toti.answers.action.ResponseBuilder;
 import toti.answers.response.Response;
 import toti.answers.router.Link;
 import toti.http.enums.StatusCode;
@@ -36,7 +35,7 @@ public class ResponseController {
 	 */
 	@Action(path="file")
 	public ResponseAction getFile() {
-		return ResponseBuilder.get().createResponse((req, translator, identity)->{
+		return (req, translator, identity)->{
 			//	String fileName = "samples/plainTextFile.txt"; // Plain text file. Browser probably display instead of downloading.
 			String fileName = "toti/samples/binaryFile.odt"; // Binary file. Browser starts downloading
 			return Response.OK().getFileDownload(
@@ -44,7 +43,7 @@ public class ResponseController {
 				"fileToDownload_" + new Date().getTime() + "." + new FileExtension(fileName).getExtension(),
 				true
 			);
-		});
+		};
 	}
 
 	/**
@@ -53,7 +52,7 @@ public class ResponseController {
 	 */
 	@Action(path="generate")
 	public ResponseAction getGenerated() {
-		return ResponseBuilder.get().createResponse((req, translator, identity)->{
+		return (req, translator, identity)->{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			try {
 				bout.write("Generated".getBytes());
@@ -67,7 +66,7 @@ public class ResponseController {
 				bout.toByteArray(),
 				true
 			);
-		});
+		};
 	}
 
 	/**
@@ -76,14 +75,14 @@ public class ResponseController {
 	 */
 	@Action(path="json")
 	public ResponseAction getJson() {
-		return ResponseBuilder.get().createResponse((req, translator, identity)->{
+		return (req, translator, identity)->{
 			Map<String, Object> json = new MapInit<String, Object>()
 					.append("first", "value")
 					.append("second", false)
 					.toMap();
 				
 				return Response.OK().getJson(json);
-		});
+		};
 	}
 
 	/**
@@ -92,9 +91,9 @@ public class ResponseController {
 	 */
 	@Action(path="text")
 	public ResponseAction getText() {
-		return ResponseBuilder.get().createResponse((req, translator, identity)->{
+		return (req, translator, identity)->{
 			return Response.OK().getText("Working");
-		});
+		};
 	}
 
 	/**
@@ -103,14 +102,14 @@ public class ResponseController {
 	 */
 	@Action(path="template")
 	public ResponseAction getTemplate() {
-		return ResponseBuilder.get().createResponse((req, translator, identity)->{
+		return (req, translator, identity)->{
 			Map<String, Object> params = new MapInit<String, Object>()
 					.append("title", "Page title")
 					.append("number", 42)
 					.toMap();
 				String template = "/template.jsp";
 				return Response.OK().getTemplate(template, params);
-		});
+		};
 	}
 
 	/**
@@ -119,9 +118,9 @@ public class ResponseController {
 	 */
 	@Action(path="redirect")
 	public ResponseAction getRedirect() {
-		return ResponseBuilder.get().createResponse((req, translator, identity)->{
+		return (req, translator, identity)->{
 			return Response.create(StatusCode.TEMPORARY_REDIRECT).getRedirect(link.create(getClass(), c->c.getText()));
-		});
+		};
 	}
 
 	/**
@@ -130,9 +129,9 @@ public class ResponseController {
 	 */
 	@Action(path="open-redirect")
 	public ResponseAction getOpenRedirect() {
-		return ResponseBuilder.get().createResponse((req, translator, identity)->{
+		return (req, translator, identity)->{
 			return Response.create(StatusCode.TEMPORARY_REDIRECT).getRedirect("https://github.com/", true);
-		});
+		};
 	}
 
 	/**
@@ -141,7 +140,7 @@ public class ResponseController {
 	 */
 	@Action(path="websocket")
 	public ResponseAction getWebsocket() {
-		return ResponseBuilder.get().createResponse((req, translator, identity)->{
+		return (req, translator, identity)->{
 			try {
 				// websocket can be empty - means this request is not valid websocket request
 				if (req.getWebsocket().isPresent()) {
@@ -155,6 +154,6 @@ public class ResponseController {
 				e.printStackTrace();
 				return Response.INTERNAL_SERVER_ERROR().getEmpty();
 			}
-		});
+		};
 	}
 }

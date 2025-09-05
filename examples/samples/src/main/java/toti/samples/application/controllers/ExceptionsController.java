@@ -4,9 +4,7 @@ import ji.common.exceptions.LogicException;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Secured;
-import toti.answers.action.RequestInterruptedException;
 import toti.answers.action.ResponseAction;
-import toti.answers.action.ResponseBuilder;
 import toti.answers.response.Response;
 import toti.http.enums.HttpMethod;
 
@@ -25,9 +23,9 @@ public class ExceptionsController {
 	 */
 	@Action(path="method")
 	public ResponseAction inMethod() {
-		return ResponseBuilder.get().createResponse((req, translator, identity)->{
+		return (req, translator, identity)->{
 			throw new RuntimeException(new LogicException("Example of logic exception"));
-		});
+		};
 	}
 
 	/**
@@ -39,22 +37,9 @@ public class ExceptionsController {
 	@Action(path="secured")
 	@Secured()
 	public ResponseAction secured() {
-		return ResponseBuilder.get().createResponse((req, translator, identity)->{
+		return (req, translator, identity)->{
 			return Response.OK().getText("This text should not be displayed");
-		});
-	}
-
-	/**
-	 * RequestInterruptedException throwed
-	 * @throws RequestInterruptedException
-	 * @return http://localhost:8080/application/exceptions/interrupt
-	 */
-	@Action(path="interrupt")
-	@Secured()
-	public ResponseAction requestInterrupt() {
-		return ResponseBuilder.get().createResponse((req, translator, identity)->{
-			throw new RequestInterruptedException(Response.OK().getText("Request interrupted"));
-		});
+		};
 	}
 
 	/**
@@ -65,9 +50,9 @@ public class ExceptionsController {
 	 */
 	@Action(path="post", methods = HttpMethod.POST)
 	public ResponseAction wrongHttpMethod() {
-		return ResponseBuilder.get().createResponse((req, translator, identity)->{
+		return (req, translator, identity)->{
 			return Response.OK().getText("This text should not be displayed");
-		});
+		};
 	}
 
 	/**
@@ -77,9 +62,9 @@ public class ExceptionsController {
 	 */
 	@Action(path="catched")
 	public ResponseAction catched() {
-		return ResponseBuilder.get().createResponse((req, translator, identity)->{
+		return (req, translator, identity)->{
 			throw new LogicException("Example of logic exception");
-		});
+		};
 	}
 	
 }

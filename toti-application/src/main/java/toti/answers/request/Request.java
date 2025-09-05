@@ -24,8 +24,6 @@ public class Request {
 	private final byte[] body;
 	private final Optional<WebSocket> websocket;
 	
-	private final MapDictionary<String> data;
-	
 	public Request(
 			String uri,
 			HttpMethod method,
@@ -40,7 +38,6 @@ public class Request {
 		this.headers = headers;
 		this.bodyParams = bodyParams;
 		this.body = body;
-		this.data = MapDictionary.hashMap();
 		this.pathParams = ListDictionary.linkedList();
 		this.websocket = websocket;
 	}
@@ -109,27 +106,6 @@ public class Request {
 	public boolean isWebsocketRequest() {
 		return websocket.isPresent();
 	}
-	
-	/**
-	 * User custom data
-	 * Structure is used for transfering information between ResponseBuilder steps
-	 * @return {@link MapDictionary}
-	 */
-	public MapDictionary<String> getData() {
-		return data;
-	}
-	
-	public DictionaryValue getData(String name) {
-		return data.getDictionaryValue(name);
-	}
-	
-	public <T> T getData(String name, Class<T> clazz) {
-		return data.getDictionaryValue(name).getValue(clazz);
-	}
-	
-	public void setData(String name, Object value) {
-		data.put(name, value);
-	}
 
 	@Override
 	public int hashCode() {
@@ -137,7 +113,6 @@ public class Request {
 		int result = 1;
 		result = prime * result + Arrays.hashCode(body);
 		result = prime * result + ((bodyParams == null) ? 0 : bodyParams.hashCode());
-		result = prime * result + ((data == null) ? 0 : data.hashCode());
 		result = prime * result + ((headers == null) ? 0 : headers.hashCode());
 		result = prime * result + ((method == null) ? 0 : method.hashCode());
 		result = prime * result + ((pathParams == null) ? 0 : pathParams.hashCode());
@@ -167,13 +142,6 @@ public class Request {
 				return false;
 			}
 		} else if (!bodyParams.equals(other.bodyParams)) {
-			return false;
-		}
-		if (data == null) {
-			if (other.data != null) {
-				return false;
-			}
-		} else if (!data.equals(other.data)) {
 			return false;
 		}
 		if (headers == null) {
@@ -228,7 +196,6 @@ public class Request {
 			+ ", bodyParams=" + bodyParams
 			+ ", body=" + Arrays.toString(body)
 			+ ", websocket=" + websocket
-			+ ", data=" + data
 			+ "]";
 	}
 	

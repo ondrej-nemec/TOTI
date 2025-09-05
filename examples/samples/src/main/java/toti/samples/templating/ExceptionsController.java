@@ -5,7 +5,6 @@ import java.util.HashMap;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.answers.action.ResponseAction;
-import toti.answers.action.ResponseBuilder;
 import toti.answers.response.Response;
 
 /**
@@ -24,9 +23,9 @@ public class ExceptionsController {
 	 */
 	@Action(path="notemplate")
 	public ResponseAction noTemplate() {
-		return ResponseBuilder.get().createResponse((req, translator, identity)->{
+		return (req, translator, identity)->{
 			return Response.OK().getTemplate("/exceptions/missing-template.jsp", new HashMap<>());
-		});
+		};
 	}
 	
 	/**
@@ -37,9 +36,9 @@ public class ExceptionsController {
 	 */
 	@Action(path="intemplate")
 	public ResponseAction inTemplate() {
-		return ResponseBuilder.get().createResponse((req, translator, identity)->{
+		return (req, translator, identity)->{
 			return Response.OK().getTemplate("/exceptions/inTemplate.jsp", null);
-		});
+		};
 	}
 	
 	/**
@@ -50,9 +49,9 @@ public class ExceptionsController {
 	 */
 	@Action(path="syntax")
 	public ResponseAction templateSyntax() {
-		return ResponseBuilder.get().createResponse((req, translator, identity)->{
+		return (req, translator, identity)->{
 			return Response.OK().getTemplate("/exceptions/syntax.jsp", new HashMap<>());
-		});
+		};
 	}
 	
 }

@@ -2,9 +2,7 @@ package toti.samples.application.controllers;
 
 import toti.annotations.Action;
 import toti.annotations.Controller;
-import toti.answers.action.BodyType;
 import toti.answers.action.ResponseAction;
-import toti.answers.action.ResponseBuilder;
 import toti.answers.response.Response;
 import toti.http.enums.HttpMethod;
 import toti.http.enums.StatusCode;
@@ -24,10 +22,9 @@ public class RequestController {
 	 */
 	@Action(path="basic")
 	public ResponseAction get() {
-		return ResponseBuilder.get()
-		.createResponse((request, translator, identity)->{
+		return (request, translator, identity)->{
 			return Response.create(StatusCode.OK).getText("Working: GET");
-		});
+		};
 	}
 
 	/**
@@ -36,10 +33,9 @@ public class RequestController {
 	 */
 	@Action(path="basic")
 	public ResponseAction get(String parameter) {
-		return ResponseBuilder.get()
-		.createResponse((request, translator, identity)->{
+		return (request, translator, identity)->{
 			return Response.create(StatusCode.OK).getText("Working: GET " + parameter);
-		});
+		};
 	}
 
 	/**
@@ -48,10 +44,9 @@ public class RequestController {
 	 */
 	@Action(path="post", methods=HttpMethod.POST)
 	public ResponseAction post() {
-		return ResponseBuilder.get()
-		.createResponse((request, translator, identity)->{
+		return (request, translator, identity)->{
 			return Response.create(StatusCode.OK).getText("Working: POST");
-		});
+		};
 	}
 
 	/**
@@ -60,10 +55,9 @@ public class RequestController {
 	 */
 	@Action(path="get-or-post", methods= {HttpMethod.POST, HttpMethod.GET})
 	public ResponseAction getOrPost() {
-		return ResponseBuilder.get()
-		.createResponse((request, translator, identity)->{
+		return (request, translator, identity)->{
 			return Response.create(StatusCode.OK).getText("Working: GET or POST " + request.getMethod());
-		});
+		};
 	}
 	
 	/**
@@ -72,22 +66,21 @@ public class RequestController {
 	 */
 	@Action(path="query")
 	public ResponseAction query() {
-		return ResponseBuilder.get()
-		.createResponse((request, translator, identity)->{
+		return (request, translator, identity)->{
 			return Response.create(StatusCode.OK).getJson(request.getQueryParams().toMap());
-		});
+		};
 	}
 	
 	/**
 	 * Accepting only selected body type
 	 * @return http://localhost:8080/application/request/body-type
 	 */
+	// TODO set body type json
 	@Action(path="body-type")
 	public ResponseAction bodyType() {
-		return ResponseBuilder.get(BodyType.JSON)
-		.createResponse((request, translator, identity)->{
+		return (request, translator, identity)->{
 			return Response.create(StatusCode.OK).getJson(request.getBodyParams());
-		});
+		};
 	}
 	
 	/**
@@ -97,11 +90,10 @@ public class RequestController {
 	 */
 	@Action(path="file")
 	public ResponseAction file() {
-		return ResponseBuilder.get()
-		.createResponse((request, translator, identity)->{
+		return (request, translator, identity)->{
 			UploadedFile file = request.getBodyParams().getUploadedFile("file");
 			return Response.create(StatusCode.OK).getText("Uploaded file: " + file.toString());
-		});
+		};
 	}
 
 }

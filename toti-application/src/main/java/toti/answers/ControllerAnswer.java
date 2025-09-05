@@ -20,7 +20,6 @@ import ji.xml.XmlObject;
 import ji.xml.XmlReader;
 import toti.ServerException;
 import toti.answers.action.BodyType;
-import toti.answers.action.RequestInterruptedException;
 import toti.answers.action.ResponseAction;
 import toti.answers.request.AuthMode;
 import toti.answers.request.Identity;
@@ -93,8 +92,6 @@ public class ControllerAnswer {
 			), charset);
 		} catch (ServerException e){
 			throw e;
-		} catch (RequestInterruptedException e) {
-			return e.getResponse().prepare(responseHeaders, null, null, charset);
 		/*} catch (NotAllowedActionException | AccessDeniedException e) {
 			throw new ServerException(StatusCode.FORBIDDEN, mapped, e);
 		} catch (TemplateException e) {
@@ -171,33 +168,24 @@ public class ControllerAnswer {
 		ResponseAction action = (ResponseAction)mapped.getAction().invoke(controller, params);
 		//*/
 		Translator trans = translatorExtension.getTranslator(identity);
-		parseBody(request, action.getAllowedBody(), mapped);
 		try {
-			try {
-				checkSecured(mapped, identity);
-			} catch (ServerException e) {
-				if (mapped.getSecurityMode() == AuthMode.HEADER || authenticationExtension == null) {
-					throw e;
-				}
-				logger.debug(uri + " Redirect to login page: " + e.getMessage());
-				String backlink = "";
-				if (!uri.equals("/")) {
-					backlink = "?backlink=" + getBackLink(uri);
-				}
-				return Response.create(StatusCode.TEMPORARY_REDIRECT).getRedirect(
-					authenticationExtension.getNotLoggedUserRedirect(backlink)
-				);
+			checkSecured(mapped, identity);
+		} catch (ServerException e) {
+			if (mapped.getSecurityMode() == AuthMode.HEADER || authenticationExtension == null) {
+				throw e;
 			}
-			// prevalidate can be interrupted by exception
-			action.getPrevalidate().prevalidate(request, trans, identity);
-			// authorize can be interrupted by exception
-			action.getAuthorize().authorize(request, trans, identity);
-			// validate can be interrupted by exception
-			action.getValidate().validate(request, trans, identity);
-			return action.getCreate().create(request, trans, identity);
-		} catch (RequestInterruptedException e) {
-			return e.getResponse();
+			logger.debug(uri + " Redirect to login page: " + e.getMessage());
+			String backlink = "";
+			if (!uri.equals("/")) {
+				backlink = "?backlink=" + getBackLink(uri);
+			}
+			return Response.create(StatusCode.TEMPORARY_REDIRECT).getRedirect(
+				authenticationExtension.getNotLoggedUserRedirect(backlink)
+			);
 		}
+		// TODO jeste bude potreba zavolat parse body
+		// typ body mozna pridat do @action
+		return action.create(request, trans, identity);
 	}
 	
 	protected void checkSecured(MappedAction mapped, Identity identity) throws ServerException {
