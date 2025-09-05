@@ -27,6 +27,7 @@ public class TagsEndToEndTest extends BaseTemplateTest {
 			.append("included", "includedFile.jsp")
 			.append("blockName", "myBlock")
 			.append("parameter", "value")
+			.append("valueToSet", "Success")
 			.append("caseValue", 132)
 			.append("switchValue", 123)
 			.append("exceptionClass", Exception.class)
@@ -169,7 +170,7 @@ public class TagsEndToEndTest extends BaseTemplateTest {
 				"variables", "setReturning.jsp", "Set: text"
 			},
 			new Object[] {
-				"variables", "setVariable.jsp", "Set: some.key"
+				"variables", "setVariable.jsp", "Set: Success"
 			},
 			// if + else if + else
 			new Object[] {
