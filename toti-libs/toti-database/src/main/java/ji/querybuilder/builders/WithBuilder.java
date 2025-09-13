@@ -3,6 +3,7 @@ package ji.querybuilder.builders;
 import java.sql.Connection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 import ji.common.structures.Tuple2;
@@ -50,11 +51,19 @@ public class WithBuilder {
 	}
 
 	public InsertBuilder insert(String table) {
-		return insert(table, null);
+		return insert(table, null, Optional.empty());
+	}
+	
+	public InsertBuilder insert(String table, String alias) {
+		return insert(table, alias, Optional.empty());
 	}
 
-	public InsertBuilder insert(String table, String alias) {
-		return new InsertBuilderImpl(connection, instance, table, alias, withs);
+	public InsertBuilder insert(String table, Optional<String> idName) {
+		return insert(table, null, idName);
+	}
+
+	public InsertBuilder insert(String table, String alias, Optional<String> idName) {
+		return new InsertBuilderImpl(connection, instance, table, alias, idName, withs);
 	}
 
 	public UpdateBuilder update(String table) {

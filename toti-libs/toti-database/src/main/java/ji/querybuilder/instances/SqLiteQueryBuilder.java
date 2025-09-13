@@ -1,5 +1,6 @@
 package ji.querybuilder.instances;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -12,6 +13,7 @@ import ji.common.structures.Tuple2;
 import ji.querybuilder.DbInstance;
 import ji.querybuilder.builder_impl.AlterTableBuilderImpl;
 import ji.querybuilder.builder_impl.AlterViewBuilderImpl;
+import ji.querybuilder.builder_impl.CallProcedureBuilderImpl;
 import ji.querybuilder.builder_impl.CreateIndexBuilderImpl;
 import ji.querybuilder.builder_impl.CreateTableBuilderImpl;
 import ji.querybuilder.builder_impl.CreateViewBuilderImpl;
@@ -60,9 +62,13 @@ public class SqLiteQueryBuilder implements DbInstance {
 	}
 
 	@Override
-	public String groupConcat(String param, String delimeter) {
-		return String.format("STRING_AGG(%s, '%s')", param, delimeter);
+	public String groupConcat(String param, String delimeter, String orderBy) {
+		return String.format(
+			"STRING_AGG(%s, '%s'%s)",
+			param, delimeter, orderBy == null ? "" : " ORDER BY " + orderBy
+		);
 	}
+	
 	
 	@Override
 	public String max(String param) {
@@ -102,6 +108,15 @@ public class SqLiteQueryBuilder implements DbInstance {
 	/*************/
 
 	@Override
+	public String createSql(CallProcedureBuilderImpl callProcedure, boolean create) {
+		throw new RuntimeException("Not supported operation");
+		/* return "{? = call "
+			 + callProcedure.getProcedure() + "("
+			 + Implode.implode(", ", callProcedure.getParameters())
+			 + ")}";*/
+	}
+
+	@Override
 	public String createSql(DeleteIndexBuilderImpl deleteIndex) {
 		return "DROP INDEX " + deleteIndex.getIndexName();
 	}
@@ -136,7 +151,7 @@ public class SqLiteQueryBuilder implements DbInstance {
 	}
 
 	@Override
-	public String createSql(InsertBuilderImpl insert, boolean create) {
+	public List<String> createSql(InsertBuilderImpl insert, boolean create) {
 		StringBuilder sql = new StringBuilder();
 		createWith(insert.getWiths(), sql, create);
 		sql.append("INSERT INTO " + getWithAlias(insert.getTable(), insert.getAlias()) + " ");
@@ -167,7 +182,14 @@ public class SqLiteQueryBuilder implements DbInstance {
 			sql.append(" VALUES ");
 			sql.append(values);
 		}
-		return sql.toString();
+		if (insert.getIdName().isPresent()) {
+			/*
+UPDATE sqlite_sequence 
+SET seq = (SELECT IFNULL(MAX(id),0) FROM table_name) 
+WHERE name = 'table_name';
+			*/
+		}
+		return Arrays.asList(sql.toString());
 	}
 
 	@Override
@@ -290,7 +312,7 @@ public class SqLiteQueryBuilder implements DbInstance {
 	}
 
 	@Override
-	public String createSql(AlterTableBuilderImpl alterTable) {		
+	public List<String> createSql(AlterTableBuilderImpl alterTable) {		
 		StringBuilder result = new StringBuilder();
 		Supplier<String> alterTablePrefix = ()->"ALTER TABLE " + alterTable.getTable() + " ";
 		
@@ -377,7 +399,7 @@ public class SqLiteQueryBuilder implements DbInstance {
 		if (!alterTable.getModifyUnique().isEmpty()) {
 			throw notSupported;
 		}
-		return result.toString();
+		return Arrays.asList(result.toString());
 	}
 	
 	/****************************/
@@ -389,6 +411,7 @@ public class SqLiteQueryBuilder implements DbInstance {
 			case CHAR:
 				return String.format("CHAR(%s)", type.getSize());
 			case DATETIME: return "TIMESTAMP";
+			case INT: return "INTEGER";
 			default: return type.getType().toString();
 		}
 	}
@@ -479,6 +502,7 @@ public class SqLiteQueryBuilder implements DbInstance {
 		for (ColumnSetting settings : column.getSettings()) {
 			if (settings == ColumnSetting.AUTO_INCREMENT) {
 				// ignore
+				//result.append(" AUTOINCREMENT");
 			} else if (settings == ColumnSetting.PRIMARY_KEY && onConstaint != null) {
 				onConstaint.accept(String.format("PRIMARY KEY (%s)", column.getName()));
 			} else {

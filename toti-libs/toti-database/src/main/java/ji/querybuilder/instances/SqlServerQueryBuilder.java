@@ -1,8 +1,19 @@
 package ji.querybuilder.instances;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
+import ji.common.functions.Implode;
+import ji.common.structures.DictionaryValue;
+import ji.common.structures.ObjectBuilder;
+import ji.common.structures.Tuple2;
 import ji.querybuilder.DbInstance;
 import ji.querybuilder.builder_impl.AlterTableBuilderImpl;
 import ji.querybuilder.builder_impl.AlterViewBuilderImpl;
+import ji.querybuilder.builder_impl.CallProcedureBuilderImpl;
 import ji.querybuilder.builder_impl.CreateIndexBuilderImpl;
 import ji.querybuilder.builder_impl.CreateTableBuilderImpl;
 import ji.querybuilder.builder_impl.CreateViewBuilderImpl;
@@ -14,152 +25,581 @@ import ji.querybuilder.builder_impl.InsertBuilderImpl;
 import ji.querybuilder.builder_impl.MultipleSelectBuilderImpl;
 import ji.querybuilder.builder_impl.SelectBuilderImpl;
 import ji.querybuilder.builder_impl.UpdateBuilderImpl;
+import ji.querybuilder.builder_impl.share.SelectImpl;
+import ji.querybuilder.enums.ColumnSetting;
 import ji.querybuilder.enums.ColumnType;
+import ji.querybuilder.enums.Join;
+import ji.querybuilder.enums.OnAction;
+import ji.querybuilder.enums.SelectJoin;
+import ji.querybuilder.enums.Where;
+import ji.querybuilder.structures.Column;
+import ji.querybuilder.structures.ForeignKey;
+import ji.querybuilder.structures.Joining;
+import ji.querybuilder.structures.SubSelect;
 
 public class SqlServerQueryBuilder implements DbInstance {
+
 	@Override
 	public String concat(String param, String... params) {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder builder = new StringBuilder("CONCAT(");
+		builder.append(param);
+		for (String p : params) {
+			builder.append(", ");
+			builder.append(p);
+		}
+		builder.append(")");
+		return builder.toString();
 	}
 	
 	@Override
 	public String trim(String param) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("TRIM(%s)", param);
 	}
 
 	@Override
 	public String cast(String param, ColumnType type) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("CAST(%s AS %s)", param, toString(type));
 	}
 
 	@Override
-	public String groupConcat(String param, String delimeter) {
-		// TODO Auto-generated method stub
-		return null;
+	public String groupConcat(String param, String delimeter, String orderBy) {
+		return String.format(
+			"STRING_AGG(%s, '%s'%s)",
+			param, delimeter, orderBy == null ? "" : " ORDER BY" + orderBy
+		);
 	}
 	
 	@Override
 	public String max(String param) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("MAX(%s)", param);
 	}
 	
 	@Override
 	public String min(String param) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("MIN(%s)", param);
 	}
 	
 	@Override
 	public String avg(String param) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("AVG(%s)", param);
 	}
 	
 	@Override
 	public String sum(String param) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("SUM(%s)", param);
 	}
 	
 	@Override
 	public String count(String param) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("COUNT(%s)", param);
 	}
 	
 	@Override
 	public String lower(String param) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("LOWER(%s)", param);
 	}
 	
 	@Override
 	public String upper(String param) {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("UPPER(%s)", param);
 	}
 	
 	/*************/
+	
+	@Override
+	public String createSql(CallProcedureBuilderImpl callProcedure, boolean create) {
+		return "{? = call "
+			 + callProcedure.getProcedure() + "("
+			 + Implode.implode(", ", callProcedure.getParameters())
+			 + ")}";
+	}
 
 	@Override
 	public String createSql(DeleteIndexBuilderImpl deleteIndex) {
-		// TODO Auto-generated method stub
-		return null;
+		return "DROP INDEX " + deleteIndex.getIndexName() + " ON " + deleteIndex.getTable();
 	}
 
 	@Override
 	public String createSql(CreateIndexBuilderImpl createIndex) {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder sql = new StringBuilder();
+		sql.append("CREATE INDEX ");
+		sql.append(createIndex.getIndexName());
+		sql.append(" ON ");
+		sql.append(createIndex.getTable());
+		sql.append("(");
+		String[] columns = createIndex.getColumns();
+		for (int i = 0; i < columns.length; i++) {
+			if (i > 0) {
+				sql.append(", ");
+			}
+			sql.append(columns[i]);
+		}
+		sql.append(")");
+		return sql.toString();
 	}
 
 	@Override
-	public String createSql(InsertBuilderImpl insert, boolean create) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<String> createSql(InsertBuilderImpl insert, boolean create) {
+		StringBuilder sql = new StringBuilder();
+		if (insert.getIdName().isPresent()) {
+			/*
+SET IDENTITY_INSERT table_name ON;
+
+INSERT INTO table_name (id, col1, col2)
+VALUES (123, 'foo', 'bar');
+
+SET IDENTITY_INSERT table_name OFF;
+DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_name));
+			*/
+		}
+		createWith(insert.getWiths(), sql, create);
+		sql.append("INSERT INTO " + getWithAlias(insert.getTable(), insert.getAlias()) + " ");
+		if (insert.getValues().isEmpty()) {
+			// insert from select
+			sql.append("(");
+			sql.append(Implode.implode(", ", insert.getColumns()));
+			sql.append(") ");
+			sql.append(create ? insert.getSelect().createSql() : insert.getSelect().getSql());
+		} else {
+			StringBuilder columns = new StringBuilder();
+			StringBuilder values = new StringBuilder();
+			insert.getValues().forEach((val)->{
+				if (!columns.toString().isEmpty()) {
+					columns.append(", ");
+					values.append(", ");
+				} else {
+					columns.append("(");
+					values.append("(");
+				}
+				columns.append(val._1());
+				values.append(val._2());
+			});
+			columns.append(")");
+			values.append(")");
+			
+			sql.append(columns);
+			sql.append(" VALUES ");
+			sql.append(values);
+		}
+		return Arrays.asList(sql.toString());
 	}
 
 	@Override
 	public String createSql(UpdateBuilderImpl updateBuilder, boolean create) {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder sql = new StringBuilder();
+		createWith(updateBuilder.getWiths(), sql, create);
+		sql.append("UPDATE ");
+		sql.append(getWithAlias(updateBuilder.getTable(), updateBuilder.getAlias()));
+		ObjectBuilder<Boolean> firstSet = new ObjectBuilder<>(true);
+		updateBuilder.getSets().forEach(set->{
+			if (firstSet.get()) {
+				firstSet.set(false);
+				sql.append(" SET ");
+			} else {
+				sql.append(", ");
+			}
+			sql.append(set);
+		});
+		LinkedList<Tuple2<String, Where>> wheres = new LinkedList<>(updateBuilder.getWheres());
+		ObjectBuilder<Boolean> firstJoin = new ObjectBuilder<>(true);
+		updateBuilder.getJoins().forEach(join->{
+			if (firstJoin.get()) {
+				firstJoin.set(false);
+				sql.append(" FROM ");
+				sql.append(getWithAlias(
+					create ? join.getBuilder().createSql() : join.getBuilder().getSql(),
+					join.getAlias()
+				));
+				wheres.addFirst(new Tuple2<>(join.getOn(), null));
+			} else {
+				createJoin(join, sql, create);
+			}
+		});
+		createWhere(wheres, sql, create);
+		return sql.toString();
 	}
 
 	@Override
 	public String createSql(DeleteBuilderImpl delete, boolean create) {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder sql = new StringBuilder();
+		createWith(delete.getWiths(), sql, create);
+		sql.append("DELETE FROM " + getWithAlias(delete.getTable(), delete.getAlias()));
+		
+		StringBuilder joins = new StringBuilder();
+		StringBuilder wheres = new StringBuilder();
+		delete.getJoins().forEach(join->{
+			if (joins.isEmpty()) {
+				joins.append(" USING ");
+				wheres.append(" WHERE");
+			} else {
+				joins.append(", ");
+				wheres.append(" AND");
+			}
+			joins.append(getWithAlias(
+				String.format(
+					join.getBuilder().wrap() ? "(%s)" : "%s",
+					create ? join.getBuilder().createSql() : join.getBuilder().getSql()
+				),
+				join.getAlias()
+			));
+			wheres.append(" (" + join.getOn() + ")");
+		});
+		delete.getWheres().forEach((where)->{
+			if (wheres.isEmpty()) {
+				wheres.append(" WHERE ");
+			} else {
+				wheres.append(" " + where._2().toString() + " ");
+			}
+			wheres.append("(" + where._1() + ")");
+		});
+		sql.append(joins.toString());
+		sql.append(wheres.toString());
+		return sql.toString();
 	}
 
 	@Override
 	public String createSql(SelectBuilderImpl select, boolean create) {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder sql = new StringBuilder();
+		createWith(select.getWiths(), sql, create);
+		createPlainSelect(select, sql, create);
+		return sql.toString();
 	}
 
 	@Override
 	public String createSql(MultipleSelectBuilderImpl multipleSelect, boolean create) {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder sql = new StringBuilder();
+		iterateList(
+			sql, multipleSelect.getSelects(),
+			i->"", i->" " + toString(i._2()) + " ",  i->create ? i._1().createSql() : i._1().getSql()
+		);
+		iterateList(
+			sql, multipleSelect.getOrderBy(),
+			i->" ORDER BY ", i->", ", i->i
+		);
+		return sql.toString();
 	}
 
 	@Override
 	public String createSql(CreateViewBuilderImpl createView, boolean create) {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder sql = new StringBuilder();
+		sql.append("CREATE VIEW " + createView.getView() + " AS ");
+		createPlainSelect(createView, sql, create);
+		return sql.toString();
 	}
 
 	@Override
 	public String createSql(AlterViewBuilderImpl alterView, boolean create) {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder sql = new StringBuilder();
+		sql.append("DROP VIEW " + alterView.getView() + "; ");
+		sql.append("CREATE VIEW " + alterView.getView() + " AS ");
+		createPlainSelect(alterView, sql, create);
+		return sql.toString();
 	}
 
 	@Override
 	public String createSql(DeleteViewBuilderImpl deleteView) {
-		// TODO Auto-generated method stub
-		return null;
+		return "DROP VIEW " + deleteView.getView();
 	}
 
 	@Override
 	public String createSql(CreateTableBuilderImpl createTable) {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder sql = new StringBuilder();
+		
+		StringBuilder appendix = new StringBuilder();
+		
+		sql.append("CREATE TABLE ");
+		sql.append(createTable.getTable());
+		sql.append(" (");
+		
+		iterateList(
+			sql, createTable.getColumns(),
+			i->"", i->", ", c->getColumn(c, x->appendix.append(", " + x))
+		);
+		
+		sql.append(appendix.toString());
+		if (createTable.getPrimaryKey() != null) {
+			sql.append(String.format(", PRIMARY KEY (%s)", Implode.implode(", ", createTable.getPrimaryKey())));
+		}
+		createAddForeignKey(createTable.getForeignKeys(), s->sql.append(s), ", ");
+		
+		sql.append(")");
+		return sql.toString();
 	}
 
 	@Override
-	public String createSql(AlterTableBuilderImpl alterTable) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<String> createSql(AlterTableBuilderImpl alterTable) {
+		List<String> rows = new LinkedList<>();
+		List<String> constains = new LinkedList<>();
+		iterateList(
+			sql->rows.add(sql), alterTable.getAddColumns(),
+			i->"", i->"", c->"ADD " + getColumn(c, x->constains.add(x))
+		);
+		rows.addAll(constains);
+		createAddForeignKey(alterTable.getAddForeignKeys(), sql->rows.add(sql), "ADD ");
+		
+		iterateList(
+			sql->rows.add(sql), alterTable.getDeleteForeignKeys(),
+			i->"", i->"", fk->"DROP CONSTRAINT " + fk.getColumn()
+		);
+		iterateList(
+			sql->rows.add(sql), alterTable.getDeleteColumns(),
+			i->"", i->"", c->"DROP COLUMN " + c.getName()
+		);
+		iterateList(
+			sql->rows.add(sql), alterTable.getModifyColumnsType(),
+			i->"", i->"", c->{
+				return "ALTER COLUMN " + c.getName() + " TYPE " + toString(c.getType());
+			}
+		);
+		iterateList(
+			sql->rows.add(sql), alterTable.getModifyDefault(),
+			i->"", i->"", c->{
+				if (c.getValue().isClear()) {
+					return "ALTER COLUMN " + c.getName() + " DROP DEFAULT";
+				} else {
+					return "ALTER COLUMN " + c.getName() + " SET DEFAULT " + c.getValue().getValue();
+				}
+			}
+		);
+		iterateList(
+			sql->rows.add(sql), alterTable.getModifyNullable(),
+			i->"", i->"", c->{
+				if (new DictionaryValue(c.getValue().getValue()).getBoolean()) {
+					return "ALTER COLUMN " + c.getName() + " SET NOT NULL";
+				} else {
+					return "ALTER COLUMN " + c.getName() + " DROP NOT NULL";
+				}
+			}
+		);
+		iterateList(
+			sql->rows.add(sql), alterTable.getModifyUnique(),
+			i->"", i->"", c->{
+				String key = (alterTable.getTable() + "_" + c.getName() + "_key").toLowerCase();
+				if (new DictionaryValue(c.getValue().getValue()).getBoolean()) {
+					return "ADD CONSTRAINT " + key + " UNIQUE (" + c.getName() + ")";
+				} else {
+					return "DROP CONSTRAINT " + key; //  + " UNIQUE (" + c.getName() + ")"
+				}
+			}
+		);
+		iterateList(
+			sql->rows.add(sql), alterTable.getRenameColumns(),
+			i->"", i->"", c->String.format("RENAME COLUMN %s TO %s", c.getOldName(), c.getNewName())
+		);
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append("ALTER TABLE ");
+		sql.append(alterTable.getTable());
+		iterateList(sql, rows, i->" ", i->", ", i->i);
+		if (alterTable.getNewName() != null) {
+			sql.append(" RENAME TO " + alterTable.getNewName());
+		}
+		return Arrays.asList(sql.toString());
 	}
 
 	@Override
 	public String createSql(DeleteTableBuilderImpl deleteTable) {
-		// TODO Auto-generated method stub
-		return null;
+		return "DROP TABLE " + deleteTable.getTable();
+	}
+
+	/************************************************/
+
+	protected String toString(ColumnType type) {
+		switch (type.getType()) {
+			case STRING:
+				return String.format("VARCHAR(%s)", type.getSize());
+			case CHAR:
+				return String.format("CHAR(%s)", type.getSize());
+			case BOOLEAN: return "BIT";
+			default: return type.getType().toString();
+		}
+	}
+	
+	protected String toString(Join join) {
+		switch(join) {
+			case FULL_OUTER_JOIN: throw new RuntimeException("Full Outer Join is not supported by mysql");
+			case INNER_JOIN: return "JOIN";
+			case LEFT_OUTER_JOIN: return "LEFT JOIN";
+			case RIGHT_OUTER_JOIN: return "RIGHT JOIN";
+			default: throw new RuntimeException("Not implemented join: " + join);
+		}
+	}
+
+	protected String toString(SelectJoin join) {
+		switch(join) {
+			case UNION_ALL: return "UNION ALL";
+			default: return join.toString();
+		}
+	}
+
+	protected String toString(ColumnSetting settings) {
+		switch (settings) {
+			case AUTO_INCREMENT: return "IDENTITY(1,1)";
+			case UNIQUE: return "UNIQUE";
+			case NOT_NULL: return "NOT NULL";
+			case NULL: return "NULL";
+			// never happends: case PRIMARY_KEY: return "";
+			default: return "";
+		}
+	}
+
+	protected String toString(OnAction action) {
+		switch (action) {
+			case RESTRICT: return "RESTRICT";
+			case CASCADE: return "CASCADE";
+			case SET_NULL: return "SET NULL";
+			case NO_ACTION: return "NO ACTION";
+			case SET_DEFAULT: return "SET DEFAULT";
+			default: throw new RuntimeException("Not implemented action: " + action);
+		}
+	}
+	
+	/*****************************/
+	
+	private String getColumn(Column column, Consumer<String> onConstaint) {
+		StringBuilder result = new StringBuilder();
+		result.append(column.getName());
+		if (!column.getSettings().contains(ColumnSetting.AUTO_INCREMENT)) {
+			result.append(" ");
+			result.append(toString(column.getType()));
+		}
+		if (column.getValue().isSet()) {
+			result.append(" DEFAULT ");
+			result.append(column.getValue().getValue());
+		} else if (column.getValue().isClear()) {
+			// TODO remove default
+		}
+		
+		for (ColumnSetting settings : column.getSettings()) {
+			if (settings == ColumnSetting.PRIMARY_KEY) {
+				onConstaint.accept(String.format("PRIMARY KEY (%s)", column.getName()));
+			} else {
+				result.append(" ");
+				result.append(toString(settings));
+			}
+			
+		}
+		return result.toString();
+	}
+	
+	private void createAddForeignKey(List<ForeignKey> keys, Consumer<String> add, String prefix) {
+		iterateList(
+			add, keys,
+			i->"", i->"", i->"" + String.format(
+				prefix + "CONSTRAINT FK_%s FOREIGN KEY (%s) REFERENCES %s(%s)%s%s",
+				i.getColumn(), i.getColumn(),
+				i.getReferedTable(), i.getReferedColumn(),
+				i.getOnDelete() == null ? "" : " ON DELETE " + toString(i.getOnDelete()),
+				i.getOnUpdate() == null ? "" : " ON UPDATE " + toString(i.getOnUpdate())
+			)
+		);
+	}
+	
+	private void createPlainSelect(SelectImpl<?> builder, StringBuilder sql, boolean create) {
+		iterateList(
+			sql, builder.getSelects(),
+			i->"SELECT ", i->", ", i->i
+		);
+		if (builder.getFrom() != null) {
+			sql.append(" FROM ");
+			sql.append(getWithAlias(
+				String.format(
+					builder.getFrom()._1().wrap() ? "(%s)" : "%s",
+					create ? builder.getFrom()._1().createSql() : builder.getFrom()._1().getSql()
+				),
+				builder.getFrom()._2()
+			));
+		}
+		builder.getJoins().forEach(join->{
+			createJoin(join, sql, create);
+		});
+		createWhere(builder.getWheres(), sql, create);
+		iterateList(
+			sql, builder.getGroupBy(),
+			i->" GROUP BY ", i->", ", i->i
+		);
+		iterateList(
+			sql, builder.getHaving(),
+			i->" HAVING ", i->" AND ", i->i
+		);
+		iterateList(
+			sql, builder.getOrderBy(),
+			i->" ORDER BY ", i->", ", i->i
+		);
+		if (builder.getOffset() != null) {
+			sql.append(" OFFSET " + builder.getOffset() + " ROWS");
+		}
+		if (builder.getLimit() != null) {
+			sql.append(" FETCH NEXT " + builder.getLimit() + " ROWS ONLY");
+		}
+	}
+	
+	private void createWhere(List<Tuple2<String, Where>> wheres, StringBuilder sql, boolean create) {
+		iterateList(
+			sql, wheres,
+			w->" WHERE ", w->" " + w._2().toString() + " ", w->"(" + w._1() + ")"
+		);
+	}
+	
+	private void createJoin(Joining join, StringBuilder sql, boolean create) {
+		sql.append(" ");
+		sql.append(toString(join.getJoin()));
+		sql.append(" ");
+		sql.append(getWithAlias(
+			String.format(
+				join.getBuilder().wrap() ? "(%s)" : "%s",
+				create ? join.getBuilder().createSql() : join.getBuilder().getSql()
+			),
+			join.getAlias()
+		));
+		sql.append(" ON " + join.getOn());
+	}
+	
+	private String getWithAlias(String table, String alias) {
+		StringBuilder result = new StringBuilder();
+		result.append(table);
+		if (alias != null) {
+			result.append(" AS " + alias);
+		}
+		return result.toString();
+	}
+
+	private void createWith(List<Tuple2<String, SubSelect>> withs, StringBuilder sql, boolean create) {
+		iterateList(
+			sql,
+			withs,
+			(item)->"WITH",
+			(with)->",",
+			(with)->{
+				String subquery = create ? with._2().createSql() : with._2().getSql();
+				//boolean isRecursive = subquery.contains(" " + with._1() + " ") || subquery.endsWith(" " + with._1());
+				return String.format(
+					" %s AS (%s)", with._1(), subquery
+				);
+			}
+		);
+		if (withs.size() > 0) {
+			sql.append(" ");
+		}
+	}
+	
+	private <T> void iterateList(
+			StringBuilder sql, List<T> list,
+			Function<T, String> onFirst, Function<T, String> onOthers, Function<T, String> otherwise) {
+		iterateList(s->sql.append(s), list, onFirst, onOthers, otherwise);
+	}
+	
+	private <T> void iterateList(
+			Consumer<String> add, List<T> list,
+			Function<T, String> onFirst, Function<T, String> onOthers, Function<T, String> otherwise) {
+		ObjectBuilder<Boolean> first = new ObjectBuilder<>(true);
+		list.forEach(item->{
+			if (first.get()) {
+				first.set(false);
+				add.accept(onFirst.apply(item) + otherwise.apply(item));
+			} else {
+				add.accept(onOthers.apply(item) + otherwise.apply(item));
+			}
+		});
 	}
 }

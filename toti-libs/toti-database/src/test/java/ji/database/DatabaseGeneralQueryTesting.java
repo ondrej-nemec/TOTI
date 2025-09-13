@@ -19,19 +19,19 @@ public class DatabaseGeneralQueryTesting {
 		List<DatabaseConfig> configs = Arrays.asList(
 			//*
 			new DatabaseConfig(
-				"mysql", "//localhost", dbName,
+				"mysql", "//localhost", dbName, 
 				"root", "", migrationPath, 5
 			),
 			//*/
 			//*
 			new DatabaseConfig(
-				"derby", "C:\\software\\DerbyDB\\bin", dbName,
+				"derby", "C:\\software\\DerbyDB\\bin", dbName, 
 				"root", "", migrationPath, 5
 			),
 			//*/
 			//*	
 			new DatabaseConfig(
-				"postgresql", "//localhost", dbName,
+				"postgresql", "//localhost", dbName, 
 				"postgres", "1234", migrationPath, 5
 			)
 			//*/

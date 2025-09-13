@@ -10,7 +10,11 @@ public interface Functions {
 	 */
 	String concat(String param, String ...params);
 	
-	String groupConcat(String param, String delimeter);
+	default String groupConcat(String param, String delimeter) {
+		return groupConcat(param, delimeter, null);
+	}
+	
+	String groupConcat(String param, String delimeter, String orderBy);
 	
 	/**
 	 * Param(s) must be column name or escaped value - you can use parameters

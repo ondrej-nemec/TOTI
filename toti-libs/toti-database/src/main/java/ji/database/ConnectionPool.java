@@ -1,5 +1,6 @@
 package ji.database;
 
+import java.io.Closeable;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -14,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 import ji.database.support.SqlQueryProfiler;
 import ji.database.wrappers.ConnectionWrapper;
 
-public class ConnectionPool {
+public class ConnectionPool implements AutoCloseable {
 	
 	private final static int WAIT_TIME = 30; // miliseconds
 	private final static int VALID_TIMEOUT = 3; // seconds
@@ -126,6 +127,7 @@ public class ConnectionPool {
 	//	System.err.println(String.format("Return connection: A: %s, B: %s", available.size(), borrowed.size()));
 	}
 
+	@Override
 	public void close() throws SQLException {
 		returnAllConnections();
 		for (Connection c : available) {

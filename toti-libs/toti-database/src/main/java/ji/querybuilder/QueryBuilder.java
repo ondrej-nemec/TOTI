@@ -2,11 +2,13 @@ package ji.querybuilder;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Optional;
 import java.util.function.Function;
 
 import ji.querybuilder.builder_impl.AlterTableBuilderImpl;
 import ji.querybuilder.builder_impl.AlterViewBuilderImpl;
 import ji.querybuilder.builder_impl.BatchBuilderImpl;
+import ji.querybuilder.builder_impl.CallProcedureBuilderImpl;
 import ji.querybuilder.builder_impl.CreateIndexBuilderImpl;
 import ji.querybuilder.builder_impl.CreateTableBuilderImpl;
 import ji.querybuilder.builder_impl.CreateViewBuilderImpl;
@@ -21,6 +23,7 @@ import ji.querybuilder.builder_impl.UpdateBuilderImpl;
 import ji.querybuilder.builders.AlterTableBuilder;
 import ji.querybuilder.builders.AlterViewBuilder;
 import ji.querybuilder.builders.BatchBuilder;
+import ji.querybuilder.builders.CallProcedureBuilder;
 import ji.querybuilder.builders.CreateIndexBuilder;
 import ji.querybuilder.builders.CreateTableBuilder;
 import ji.querybuilder.builders.CreateViewBuilder;
@@ -104,14 +107,14 @@ public class QueryBuilder implements QueryBuilderFactory, PreparedQueries {
 	}
 
 	@Override
-	public InsertBuilder insert(String table) {
+	public InsertBuilder insert(String table, Optional<String> idName) {
 		// return insert(table, null); // cannot select between preparedQuery.insert and this.insert
-		return new InsertBuilderImpl(connection, instance, table, null);
+		return new InsertBuilderImpl(connection, instance, table, null, idName);
 	}
 	
 	@Override
-	public InsertBuilder insert(String table, String alias) {
-		return new InsertBuilderImpl(connection, instance, table, alias);
+	public InsertBuilder insert(String table, String alias, Optional<String> idName) {
+		return new InsertBuilderImpl(connection, instance, table, alias, idName);
 	}
 
 	@Override
@@ -182,6 +185,11 @@ public class QueryBuilder implements QueryBuilderFactory, PreparedQueries {
 	@Override
 	public WithBuilder with(String alias, MultipleSelectBuilder builder) {
 		return new WithBuilder(instance, connection, alias, builder);
+	}
+
+	@Override
+	public CallProcedureBuilder call(String procedure) {
+		return new CallProcedureBuilderImpl(connection, instance, procedure);
 	}
 
 }

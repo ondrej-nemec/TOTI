@@ -1,9 +1,5 @@
 package ji.querybuilder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -20,16 +16,15 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.AfterEach;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.mockito.Mockito;
 
-import org.apache.logging.log4j.Logger;
 import ji.common.functions.Terminal;
 import ji.common.structures.ThrowingBiConsumer;
 import ji.database.support.DatabaseRow;
@@ -45,7 +40,7 @@ import ji.querybuilder.instances.MySqlQueryBuilder;
 import ji.querybuilder.instances.PostgreSqlQueryBuilder;
 import ji.querybuilder.instances.SqlServerQueryBuilder;
 
-@RunWith(Parameterized.class)
+@Deprecated
 public class QueryBuilderEndToEndTest {
 	
 	private final static String DB_NAME = "javainit_database_querybuilder";
@@ -73,7 +68,7 @@ public class QueryBuilderEndToEndTest {
 		this.type = type;
 	}
 
-	@Parameters
+	//@Parameters
 	public static Collection<Object[]> parameters() {
 		Terminal terminal = new Terminal(Mockito.mock(Logger.class));
 		
@@ -220,12 +215,12 @@ public class QueryBuilderEndToEndTest {
 	
 	/***************************************/
 
-	@Before
+	@BeforeEach
 	public void before() throws SQLException, IOException {
 		startDbAndCreateSchema.accept(null);
 	}
 	
-	@After
+	@AfterEach
 	public void after() throws SQLException {
 		stopDb.accept(null);
 	}
@@ -298,7 +293,7 @@ public class QueryBuilderEndToEndTest {
 
 	/*************************************/
 
-	@Test
+	// @Test
 	public void testExecuteUpdate() throws Exception {
 		test("update", (conn, builder)-> {
 			builder.update("update_table")
@@ -333,7 +328,7 @@ public class QueryBuilderEndToEndTest {
 		assertEquals(name, res.getString("name"));
 	}
 
-	@Test
+	// @Test
 	public void testExecuteDelete() throws Exception {
 		test("delete", (conn, builder)->{
 			int code = builder
@@ -362,7 +357,7 @@ public class QueryBuilderEndToEndTest {
 		}, Arrays.asList("delete_table"));
 	}
 	
-	@Test
+	// @Test
 	public void testExecuteInsert() throws Exception {
 		test("insert", (conn, builder)->{
 			Object code = builder
@@ -385,8 +380,8 @@ public class QueryBuilderEndToEndTest {
 		}, Arrays.asList("insert_table"));
 	}
 	
-	@Test
-	@Ignore
+	// @Test
+	@Disabled
 	public void testExecuteSelectWithoutGroupBy() throws Exception {
 		test("select", (conn, builder) -> {
 			SelectBuilder res = builder
@@ -422,7 +417,7 @@ public class QueryBuilderEndToEndTest {
 		}, Arrays.asList("select_table", "joined_table"));
 	}
 		
-	@Test
+	// @Test
 	public void testExecuteSelect() throws Exception {
 		test("select", (conn, builder) -> {
 			SelectBuilder res = builder
@@ -461,7 +456,7 @@ public class QueryBuilderEndToEndTest {
 		}, Arrays.asList("select_table", "joined_table"));
 	}
 	
-	@Test
+	// @Test
 	public void testExecuteDeleteTable() throws Exception {
 		test("tableDelete", (conn, builder)->{
 			builder
@@ -477,7 +472,7 @@ public class QueryBuilderEndToEndTest {
 		}, Arrays.asList("table_to_delete"));
 	}
 	
-	@Test
+	// @Test
 	public void testExecuteDeleteView() throws Exception {
 		test("viewDelete", (conn, builder)->{			
 			builder
@@ -493,7 +488,7 @@ public class QueryBuilderEndToEndTest {
 		}, Arrays.asList("view_to_delete"));
 	}
 	
-	@Test
+	// @Test
 	public void testExecuteIndexeses() throws Exception {
 		test("indexes", (conn, builder)->{
 			builder.createIndex("index_name", "table1", "id").execute();
@@ -501,7 +496,7 @@ public class QueryBuilderEndToEndTest {
 		}, Arrays.asList("table1"));
 	}
 	
-	@Test
+	// @Test
 	public void testCreateTable() throws Exception {
 		test("createTable", (conn, builder)->{
 		    builder
@@ -516,7 +511,7 @@ public class QueryBuilderEndToEndTest {
 		}, Arrays.asList("create_table", "SecondTable"));
 	}
 	
-	@Test
+	// @Test
 	public void testAlterTable() throws Exception {
 		test("alterTable", (conn, builder)->{
     		// builder.alterTable("alter_table").modifyColumnType("id", ColumnType.bool()).execute();
@@ -540,7 +535,7 @@ public class QueryBuilderEndToEndTest {
 		}, Arrays.asList("alter_table", "table_fk"));
 	}
 	
-	@Test
+	// @Test
 	public void testCreateView() throws Exception {
 		test(
 			"createView",
@@ -574,7 +569,7 @@ public class QueryBuilderEndToEndTest {
 		);
 	}
 	
-	@Test
+	// @Test
 	public void testAlterView() throws Exception {
 		test("alterView", (conn, builder)->{
 		    builder.alterView("test_view")

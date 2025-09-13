@@ -13,7 +13,7 @@ import ji.querybuilder.instances.PostgreSqlQueryBuilder;
 
 public class PosgreSql implements DatabaseInstance {
 	
-	private final String connectionString;
+	private final String baseConnectionString;
 	
 	private final Properties property;
 	
@@ -21,21 +21,42 @@ public class PosgreSql implements DatabaseInstance {
 	
 	private final Logger logger;
 	
-	public PosgreSql(String connectionString, Properties property, String name, Logger logger) {
-		this.connectionString = connectionString;
+	public PosgreSql(String baseConnectionString, Properties property, String name, Logger logger) {
+		if (!baseConnectionString.endsWith("/")) {
+			baseConnectionString += "/";
+		}
+		this.baseConnectionString = baseConnectionString;
 		this.property = property;
 		this.logger = logger;
 		this.name = name;
 		try {
-			Class.forName("org.postgresql.Driver");
-		} catch (ClassNotFoundException e) {
-			this.logger.warn("MySQL driver could not be registered", e);
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+        	this.logger.warn("MySQL driver could not be registered", e);
+        }
+	}
+/*
+	@Override
+	public void startServer() {
+		if (runOnExternal) {
+			logger.info("Signal Start DB server not sended because server is not under app manage");
+		} else {
+			throw new NotImplementedYet(); // TODO start postgres server if not external
 		}
 	}
 
 	@Override
+	public void stopServer() {
+		if (runOnExternal) {
+			logger.info("Signal Stop DB server not sended because server is not under app manage");
+		} else {
+			throw new NotImplementedYet(); // TODO stop postgres server if not external
+		}
+	}
+*/
+	@Override
 	public void createDb() throws SQLException {
-		try (Connection con = DriverManager.getConnection(connectionString, property)) {
+		try (Connection con = DriverManager.getConnection(baseConnectionString, property)) {
 			PreparedStatement stmt = con.prepareStatement("SELECT FROM pg_database WHERE datname = ?");
 			stmt.setString(1, name);
 			ResultSet rs = stmt.executeQuery();
@@ -48,6 +69,11 @@ public class PosgreSql implements DatabaseInstance {
 	@Override
 	public DbInstance getBuilderInstance() {
 		return new PostgreSqlQueryBuilder();
+	}
+
+	@Override
+	public String getConnectionString() {
+		return this.baseConnectionString + name;
 	}
 
 }

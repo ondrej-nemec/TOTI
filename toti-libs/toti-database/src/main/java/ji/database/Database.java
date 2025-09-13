@@ -2,20 +2,20 @@ package ji.database;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.ZoneId;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.logging.log4j.Logger;
+
 import ji.database.support.ConnectionFunction;
 import ji.database.support.DoubleConsumer;
+import ji.database.support.QueryBuilderConsumer;
 import ji.database.support.QueryBuilderFunction;
 import ji.database.support.SqlQueryProfiler;
 import ji.database.wrappers.ConnectionWrapper;
 import ji.migration.MigrationTool;
 import ji.querybuilder.QueryBuilder;
 
-public class Database {
+public class Database implements AutoCloseable {
 	
 	private SqlQueryProfiler profiler;
 	
@@ -39,8 +39,8 @@ public class Database {
 		this.config = config;
 		this.logger = logger;
 		this.profiler = profiler == null ? createEmptyProfiler() : profiler;
-		this.pool = new ConnectionPool(createSchemaConnectionString(), createProperties(), config.poolSize, logger, isTemp, this.profiler);
 		this.instance = createInstance(config.schemaName, logger);
+		this.pool = new ConnectionPool(instance.getConnectionString(), config.getProperties(), config.poolSize, logger, isTemp, this.profiler);
 	}
 
 	protected Database(DatabaseConfig config, DatabaseInstance instance, ConnectionPool pool, Logger logger) {
@@ -63,28 +63,36 @@ public class Database {
 	
 	private DatabaseInstance createInstance(String name, Logger logger) {
 		switch (config.type) {
-		case "derby":
-			return new Derby(
-				config.pathOrUrlToLocation, 
-				createSchemaConnectionString(),
-				createProperties(),
-				logger
-			);
+		/*case "derby":
+			return new Derby( 
+					config.pathOrUrlToLocation, 
+					createSchemaConnectionString(),
+					createProperties(),
+					logger
+			);*/
 		case "mysql":
-			return new MySql(createDatabaseConnectionString(), createProperties(), name, logger);
+			return new MySql(createDatabaseConnectionString(), config.getProperties(), name, logger);
 		case "postgresql":
-			return new PosgreSql(createDatabaseConnectionString(), createProperties(), name, logger);
+			return new PosgreSql(createDatabaseConnectionString(), config.getProperties(), name, logger);
 		case "sqlserver":
-			return new SqlServer(createDatabaseConnectionString(), createProperties(), name, logger);
+			return new SqlServer(createDatabaseConnectionString(), config.getProperties(), name, logger);
 		case "sqlite":
-			return new SqLite(createDatabaseConnectionString(), createProperties(), name, logger);
+			return new SqLite(createDatabaseConnectionString(), config.getProperties(), name, logger);
 		default:
 			throw new RuntimeException("Unsupported type " + config.type);
 		}
 	}
 	
 	/************ API ***********/
+/*
+	public void startServer() {
+		instance.startServer();
+	}
 	
+	public void stopServer() {
+		instance.stopServer();
+	}
+*/
 	public <T> T applyQuery(final ConnectionFunction<T> consumer) throws SQLException {
 		return getDoubleFunction(consumer).get();
 	}
@@ -92,6 +100,13 @@ public class Database {
 	public <T> T applyBuilder(final QueryBuilderFunction<T> consumer) throws SQLException {
 		return getDoubleFunction((con)->{
 			return consumer.apply(getQueryBuilder(con));
+		}).get();
+	}
+	
+	public void applyBuilder(final QueryBuilderConsumer consumer) throws SQLException {
+		getDoubleFunction((con)->{
+			consumer.accept(getQueryBuilder(con));
+			return null;
 		}).get();
 	}
 	
@@ -104,6 +119,11 @@ public class Database {
 			}
 		};
 	}
+
+    @Override
+    public void close() throws SQLException {
+		pool.close();
+    }
 
 	/***************************/
 	
@@ -127,13 +147,13 @@ public class Database {
 	/********* CONNECTION STRING **********/
 	
 	private String createDatabaseConnectionString() {
-		return "jdbc:" + config.type + ":" + config.pathOrUrlToLocation + "/";
+		return "jdbc:" + config.type + ":" + config.pathOrUrlToLocation;
 	}
-	
+/*
 	private String createSchemaConnectionString() {
 		return createDatabaseConnectionString() + config.schemaName;
 	}
-	
+
 	private Properties createProperties() {
 		Properties props = new Properties();
 		props.setProperty("user", config.login);
@@ -143,7 +163,7 @@ public class Database {
 		props.setProperty("allowMultiQueries", "true");
 		return props;
 	}
-	
+*/
 	private QueryBuilder getQueryBuilder(Connection connection) {
 		return new QueryBuilder(instance.getBuilderInstance(), connection);
 	}

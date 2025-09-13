@@ -60,7 +60,9 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 			+ " ALTER COLUMN Column_to_modify_2 DROP DEFAULT,"
 			
 			+ " ALTER COLUMN Column_to_modify_1 DROP NOT NULL,"
-			+ " ALTER COLUMN Column_to_modify_2 SET NOT NULL"
+			+ " ALTER COLUMN Column_to_modify_2 SET NOT NULL;"
+			+ "ALTER TABLE table_to_alter"
+			+ " RENAME COLUMN Column_to_rename TO Renamed_column"
 			;
 		/*return "ALTER TABLE table_to_alter"
 			+ " ADD Add_column_2 INT DEFAULT 42 UNIQUE NULL,"
@@ -71,12 +73,6 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 			+ " DROP CONSTRAINT table_to_alter_column_to_modify_1_key,"
 			+ " ADD CONSTRAINT table_to_alter_column_to_modify_2_key UNIQUE (Column_to_modify_2)"
 			;*/
-	}
-
-	@Override
-	protected String getAlterTableRenameColumn() {
-		return "ALTER TABLE table_to_alter"
-			+ " RENAME COLUMN Column_to_rename TO Renamed_column";
 	}
 
 	@Override
@@ -188,7 +184,7 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 
 	@Override
 	protected String getDeleteView() {
-		return "DROP VIEW view_to_delete";
+		return "DROP VIEW IF EXISTS view_to_delete";
 	}
 
 	@Override
@@ -198,7 +194,7 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 
 	@Override
 	protected String getDeleteIndex() {
-		return "DROP INDEX index_to_delete";
+		return "DROP INDEX index_to_delete ON table_for_index";
 	}
 
 	@Override
@@ -215,6 +211,11 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 	}
 
 	@Override
+	protected String getQueryInsertOverrideAI() {
+		return "INSERT INTO table_ai (id, name, typ) VALUES (123, 'Item 123', 'X')";
+	}
+
+	@Override
 	protected String getQueryUpdateBasic(boolean create) {
 		String id = create ? "1" : ":id";
 		return "UPDATE table_1"
@@ -223,26 +224,32 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 	}
 
 	@Override
+	protected boolean useQueryUpdateJoinsAlias() {
+		return true;
+	}
+
+	@Override
 	protected String getQueryUpdateJoins(boolean create) {
-		return "UPDATE table_1 AS t1"
+		return "UPDATE t1"
 			+ " SET name = " + (create ? "123" : ":value") + ", typ = UPPER('x')"
-			+ " FROM table_2"
+			+ " FROM table_1 AS t1"
+			+ " JOIN table_2 ON table_2.id = t1.id"
 			+ " LEFT JOIN table_3 AS t3 ON table_2.id = t3.id"
 			+ " RIGHT JOIN (SELECT * FROM table_4) AS st4 ON t3.id = st4.id"
 			+ " JOIN table_5 ON table_2.id = table_5.id"
 			+ " LEFT JOIN table_6 AS t6 ON table_2.id = t6.id"
 			+ " RIGHT JOIN (SELECT * FROM table_7) AS st7 ON table_2.id = st7.id"
-			+ " WHERE (table_2.id = t1.id) AND (t1.id = 1)";
+			+ " WHERE (t1.id = 1)";
 	}
 
 	@Override
 	protected String getQueryUpdateWith(boolean create) {
 		return "WITH cte AS (SELECT 1 as id),"
 			+  " cte2 AS (SELECT 1 as id)"
-			+ "UPDATE table_1 AS t1"
+			+ " UPDATE t1"
 			+ " SET name = " + (create ? "123" : ":value") + ", typ = UPPER('x')"
-			+ " FROM cte"
-			+ " WHERE (cte.id = t1.id)";
+			+ " FROM table_1 AS t1"
+			+ " JOIN cte ON cte.id = t1.id";
 	}
 
 	@Override
@@ -287,14 +294,14 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 	protected String getQuerySelect_with(boolean create) {
 		return "WITH cte AS (SELECT 42 as a),"
 			+ " cte2 AS (SELECT 42 as a)"
-			+ "SELECT a FROM cte";
+			+ " SELECT a FROM cte";
 	}
 	
 	@Override
 	protected String getQuerySelect_withRecursive(boolean create) {
-		return "WITH recursive cte AS (SELECT 1 AS A UNION SELECT 2 AS A FROM cte),"
+		return "WITH cte AS (SELECT 1 AS A UNION ALL SELECT 2 AS A FROM cte),"
 			+ " cte2 AS (SELECT 42 as a)"
-			+ "SELECT A FROM cte";
+			+ " SELECT A FROM cte";
 	}
 
 	@Override
@@ -322,7 +329,7 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 					: " HAVING :a != :b AND MAX(t1.id) < :max_id"
 			)
 			+ " ORDER BY t1.id, MAX(t1.id)"
-			+ " LIMIT 10 OFFSET 15";
+			+ " OFFSET 15 ROWS FETCH NEXT 10 ROWS ONLY";
 	}
 
 	@Override
@@ -345,6 +352,16 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 				+ " SELECT " + (create ? "123" : ":id") + ", '" + (create ? "1" : ":x") + "' as b;";
 	}
 
+	@Override
+	protected String getCallProcedureInt() {
+		return "{? = call procedure_int('some', ?, 123, ?, false)}";
+	}
+
+	@Override
+	protected String getCallProcedureVoid() {
+		return "{? = call procedure_void('some', ?, 123, ?, false)}";
+	}
+
 	/***********************/
 	
 	@Override
@@ -355,6 +372,11 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 	@Override
 	protected String getFunctions_groupConcat() {
 		return "SELECT STRING_AGG(name, ',') FROM table_for_functions GROUP BY name";
+	}
+
+	@Override
+	protected String getFunctions_groupConcatOrderBy() {
+		return "SELECT STRING_AGG(name, ',' ORDER BY id) FROM table_for_functions GROUP BY name";
 	}
 
 	@Override
@@ -401,10 +423,11 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 	protected Connection getConnection() throws SQLException {
 		Properties props = new Properties();
 		props.setProperty("user", "root");
-		props.setProperty("password", "SomeP@ssw0rd");
+		props.setProperty("password", PASSWORD);
 		props.setProperty("serverTimezone", "Europe/Prague");
 		props.setProperty("create", "true");
 		props.setProperty("allowMultiQueries", "true");
-		return DriverManager.getConnection("jdbc:sqlserver://localhost:1434/query_builder", props);
+		//return DriverManager.getConnection("jdbc:sqlserver://sqlserver:1434;databaseName=query_builder", props);
+		return DriverManager.getConnection("jdbc:sqlserver://localhost:19050;databaseName=query_builder", props);
 	}
 }

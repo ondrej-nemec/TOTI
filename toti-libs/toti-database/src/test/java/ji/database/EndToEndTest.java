@@ -1,9 +1,5 @@
 package ji.database;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
-
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,9 +8,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import org.junit.runners.Parameterized.Parameters;
 
 import org.apache.logging.log4j.Logger;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+
 import ji.database.support.DatabaseRow;
 import ji.files.text.Text;
 import ji.querybuilder.builders.SelectBuilder;
@@ -22,25 +21,28 @@ import ji.querybuilder.enums.Join;
 import ji.querybuilder.enums.Where;
 import ji.querybuilder.instances.MySqlQueryBuilder;
 
-//@RunWith(Parameterized.class)
+@Deprecated
 public class EndToEndTest {
 	
 	private final String type;
 	
 	private final String pathToDb;
 	
+	private final boolean isExternalServer;
+	
 	private final String username;
 	
 	private final String password;
 
-	public EndToEndTest(String type, String pathToDb, String username, String password) {
+	public EndToEndTest(String type, String pathToDb, String username, String password, boolean isExternalServer) {
 		this.type = type;
 		this.pathToDb = pathToDb;
 		this.username = username;
 		this.password = password;
+		this.isExternalServer = isExternalServer;
 	}
 
-	@Parameters
+	//@Parameters
 	public static Collection<Object[]> parameters() {
 		List<Object[]> result = new LinkedList<>();
 		result.add(new Object[] {
@@ -113,11 +115,11 @@ public class EndToEndTest {
 		database.applyQuery((conn)->{
 			Statement stat = conn.createStatement();
 			String[] tables = new String [] {
-				"update_table",
-				"delete_table",
-				"insert_table",
-				"select_table",
-				"joined_table",
+					"update_table",
+					"delete_table",
+					"insert_table",
+					"select_table",
+					"joined_table",
 			};
 			for (String table : tables) {
 				stat.executeUpdate("DROP TABLE " + table);

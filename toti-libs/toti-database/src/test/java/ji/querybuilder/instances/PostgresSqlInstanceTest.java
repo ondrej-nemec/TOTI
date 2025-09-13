@@ -73,14 +73,10 @@ public class PostgresSqlInstanceTest extends AbstractInstanceTest {
 			+ " ALTER COLUMN Column_to_modify_2 SET NOT NULL,"
 			
 			+ " DROP CONSTRAINT table_to_alter_column_to_modify_1_key," //  UNIQUE (Column_to_modify_1)
-			+ " ADD CONSTRAINT table_to_alter_column_to_modify_2_key UNIQUE (Column_to_modify_2)"
+			+ " ADD CONSTRAINT table_to_alter_column_to_modify_2_key UNIQUE (Column_to_modify_2);"
+			+ "ALTER TABLE table_to_alter"
+			+ " RENAME COLUMN Column_to_rename TO Renamed_column"
 			;
-	}
-
-	@Override
-	protected String getAlterTableRenameColumn() {
-		return "ALTER TABLE table_to_alter"
-			+ " RENAME COLUMN Column_to_rename TO Renamed_column";
 	}
 
 	@Override
@@ -192,7 +188,7 @@ public class PostgresSqlInstanceTest extends AbstractInstanceTest {
 
 	@Override
 	protected String getDeleteView() {
-		return "DROP VIEW view_to_delete";
+		return "DROP VIEW IF EXISTS view_to_delete";
 	}
 
 	@Override
@@ -219,11 +215,22 @@ public class PostgresSqlInstanceTest extends AbstractInstanceTest {
 	}
 
 	@Override
+	protected String getQueryInsertOverrideAI() {
+		return "INSERT INTO table_ai (id, name, typ) VALUES (123, 'Item 123', 'X');"
+			+ "SELECT setval('table_ai_id_seq', COALESCE((SELECT MAX(id)+1 FROM table_ai), 1), false)";
+	}
+
+	@Override
 	protected String getQueryUpdateBasic(boolean create) {
 		String id = create ? "1" : ":id";
 		return "UPDATE table_1"
 			+ " SET name = " + (create ? "123" : ":value") + ", typ = UPPER('x')"
 			+ " WHERE (id = " + id + ") OR (id = " + id + ") AND (id = " + id + ") OR (id = " + id + ")";
+	}
+
+	@Override
+	protected boolean useQueryUpdateJoinsAlias() {
+		return false;
 	}
 
 	@Override
@@ -362,6 +369,11 @@ public class PostgresSqlInstanceTest extends AbstractInstanceTest {
 	}
 
 	@Override
+	protected String getFunctions_groupConcatOrderBy() {
+		return "SELECT STRING_AGG(name, ',' ORDER BY id) FROM table_for_functions GROUP BY name";
+	}
+
+	@Override
 	protected String getFunctions_cast() {
 		return "SELECT CAST(id AS FLOAT) FROM table_for_functions";
 	}
@@ -402,13 +414,23 @@ public class PostgresSqlInstanceTest extends AbstractInstanceTest {
 	}
 
 	@Override
+	protected String getCallProcedureInt() {
+		return "{? = call procedure_int('some', ?, 123, ?, false)}";
+	}
+
+	@Override
+	protected String getCallProcedureVoid() {
+		return "{? = call procedure_void('some', ?, 123, ?, false)}";
+	}
+	@Override
 	protected Connection getConnection() throws SQLException {
 		Properties props = new Properties();
 		props.setProperty("user", "postgres");
-		props.setProperty("password", "SomeP@ssw0rd");
+		props.setProperty("password", PASSWORD);
 		props.setProperty("serverTimezone", "Europe/Prague");
 		props.setProperty("allowMultiQueries", "true");
-		return DriverManager.getConnection("jdbc:postgresql://localhost:5433/query_builder", props);
+		// return DriverManager.getConnection("jdbc:postgresql://postgres:5432/query_builder", props);
+		return DriverManager.getConnection("jdbc:postgresql://localhost:19060/query_builder", props);
 	}
 	
 }

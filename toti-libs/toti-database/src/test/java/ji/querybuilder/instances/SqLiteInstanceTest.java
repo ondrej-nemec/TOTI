@@ -1,12 +1,11 @@
 package ji.querybuilder.instances;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
-
-import org.junit.BeforeClass;
 
 public class SqLiteInstanceTest extends AbstractInstanceTest {
 
@@ -17,9 +16,9 @@ public class SqLiteInstanceTest extends AbstractInstanceTest {
 	@Override
 	protected String getCreateTable() {
 		return "CREATE TABLE create_table ("
-			+ "Primary_column INT NOT NULL," // AUTOINCREMENT
-			+ " Unique_column INT UNIQUE,"
-			+ " Nullable_column INT DEFAULT 42 NULL,"
+			+ "Primary_column INTEGER NOT NULL," // AUTOINCREMENT
+			+ " Unique_column INTEGER UNIQUE,"
+			+ " Nullable_column INTEGER DEFAULT 42 NULL,"
 			+ " Bool_column BOOLEAN,"
 			+ " Float_column FLOAT,"
 			+ " Double_column FLOAT,"
@@ -27,10 +26,10 @@ public class SqLiteInstanceTest extends AbstractInstanceTest {
 			+ " Text_column TEXT,"
 			+ " String_column VARCHAR(10),"
 			+ " DateTime_column TIMESTAMP,"
-			+ " FK_column_1 INT,"
-			+ " FK_column_2 INT,"
-			+ " FK_column_3 INT,"
-			+ " FK_column_4 INT,"
+			+ " FK_column_1 INTEGER,"
+			+ " FK_column_2 INTEGER,"
+			+ " FK_column_3 INTEGER,"
+			+ " FK_column_4 INTEGER,"
 			+ " PRIMARY KEY (Primary_column),"
 			+ " CONSTRAINT FK_FK_column_1 FOREIGN KEY (FK_column_1) REFERENCES table_for_index(id),"
 			+ " CONSTRAINT FK_FK_column_2 FOREIGN KEY (FK_column_2) REFERENCES table_for_index(id) ON DELETE CASCADE ON UPDATE NO ACTION,"
@@ -63,13 +62,9 @@ public class SqLiteInstanceTest extends AbstractInstanceTest {
 		//	+ "ALTER TABLE table_to_alter MODIFY COLUMN Column_to_modify_2 FLOAT;"
 		//	+ "ALTER TABLE table_to_alter DROP CONSTRAINT table_to_alter_column_to_modify_1_key;"
 		//	+ "ALTER TABLE table_to_alter ADD CONSTRAINT table_to_alter_column_to_modify_2_key UNIQUE (Column_to_modify_2);"
+			+ "ALTER TABLE table_to_alter"
+			+ " RENAME COLUMN Column_to_rename TO Renamed_column;"
 		;
-	}
-
-	@Override
-	protected String getAlterTableRenameColumn() {
-		return "ALTER TABLE table_to_alter"
-			+ " RENAME COLUMN Column_to_rename TO Renamed_column;";
 	}
 
 	@Override
@@ -181,7 +176,7 @@ public class SqLiteInstanceTest extends AbstractInstanceTest {
 
 	@Override
 	protected String getDeleteView() {
-		return "DROP VIEW view_to_delete";
+		return "DROP VIEW IF EXISTS view_to_delete";
 	}
 
 	@Override
@@ -208,11 +203,21 @@ public class SqLiteInstanceTest extends AbstractInstanceTest {
 	}
 
 	@Override
+	protected String getQueryInsertOverrideAI() {
+		return "INSERT INTO table_ai (id, name, typ) VALUES (123, 'Item 123', 'X')";
+	}
+
+	@Override
 	protected String getQueryUpdateBasic(boolean create) {
 		String id = create ? "1" : ":id";
 		return "UPDATE table_1"
 			+ " SET name = " + (create ? "123" : ":value") + ", typ = UPPER('x')"
 			+ " WHERE (id = " + id + ") OR (id = " + id + ") AND (id = " + id + ") OR (id = " + id + ")";
+	}
+
+	@Override
+	protected boolean useQueryUpdateJoinsAlias() {
+		return true;
 	}
 
 	@Override
@@ -361,6 +366,11 @@ public class SqLiteInstanceTest extends AbstractInstanceTest {
 	}
 
 	@Override
+	protected String getFunctions_groupConcatOrderBy() {
+		return "SELECT STRING_AGG(name, ',' ORDER BY id) FROM table_for_functions GROUP BY name";
+	}
+
+	@Override
 	protected String getFunctions_cast() {
 		return "SELECT CAST(id AS FLOAT) FROM table_for_functions";
 	}
@@ -401,6 +411,18 @@ public class SqLiteInstanceTest extends AbstractInstanceTest {
 	}
 
 	@Override
+	protected String getCallProcedureVoid() {
+		return null; // not supported by sqlite
+		// return "{? = call procedure_void('some', ?, 123, ?, false)}";
+	}
+	
+	@Override
+	protected String getCallProcedureInt() {
+		return null; // not supported by sqlite
+		// return "{? = call procedure_int('some', ?, 123, ?, false)}";
+	}
+
+	@Override
 	protected Connection getConnection() throws SQLException {
 		return createConnection();
 	}
@@ -412,16 +434,16 @@ public class SqLiteInstanceTest extends AbstractInstanceTest {
 		props.setProperty("serverTimezone", "Europe/Prague");
 		props.setProperty("create", "true");
 		props.setProperty("allowMultiQueries", "true");
-		return DriverManager.getConnection("jdbc:sqlite:volumes/sqlite/query_builder", props);
-	}
-	
-	@BeforeClass
-	public static void beforeSubClass() throws Exception {
-	//	AbstractInstanceTest.beforeClass();
-		// no container, need prepare dirs
-		new File("volumes/sqlite").mkdirs();
-		// cannot init db in docker-compose
-		execInitFile("docker/sqlite_dump.sql", createConnection());
+		File path = new File("../../volumes/sqlite/query_builder.db");
+		try {
+			return DriverManager.getConnection(
+				"jdbc:sqlite:" + path.getCanonicalPath(),
+				props
+			);
+		} catch (IOException e) {
+			throw new SQLException(e);
+		}
+		//return DriverManager.getConnection("jdbc:sqlite:volumes/sqlite/query_builder.db", props);
 	}
 	
 }

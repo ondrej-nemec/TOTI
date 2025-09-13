@@ -1,26 +1,20 @@
 package ji.querybuilder.instances;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.function.Function;
 
-import org.apache.logging.log4j.Logger;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import ji.common.functions.Terminal;
 import ji.common.structures.ThrowingConsumer;
-import ji.files.text.Text;
 import ji.querybuilder.Builder;
 import ji.querybuilder.DbInstance;
 import ji.querybuilder.QueryBuilder;
@@ -37,68 +31,45 @@ import ji.querybuilder.enums.ColumnType;
 import ji.querybuilder.enums.Join;
 import ji.querybuilder.enums.OnAction;
 import ji.querybuilder.enums.Where;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
+import ji.querybuilder.structures.ProcedureResult;
 
-@RunWith(JUnitParamsRunner.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractInstanceTest {
 	
-	private final static Terminal TERMINAL = new Terminal(mock(Logger.class));
-	private static boolean USE_REAL_DB = true;
+	public static final String PASSWORD = "Strong!Passw0rd";
 	
 	private final DbInstance instance;
-	
-	@Rule
-	public ExpectedException expectedException = ExpectedException. none();
 	
 	public AbstractInstanceTest(DbInstance instance) {
 		this.instance = instance;
 	}
-	
-	@BeforeClass
-	public static void beforeClass() throws Exception {
-		int i = TERMINAL.runCommand(out->System.out.println(out), err->System.err.println(err), "docker-compose up -d");
-		USE_REAL_DB = i == 0;
-		if (USE_REAL_DB) {
-			Thread.sleep(4000); // give time to containers to start up
-		}
-	}
-	
-	@AfterClass
-	public static void afterClass() {
-		if (USE_REAL_DB) {
-			TERMINAL.runCommand(out->System.out.println(out), err->System.err.println(err), "docker-compose stop");
-		}
-	}
-	
+	/*
 	protected static void execInitFile(String file, Connection con) throws Exception {
-		if (USE_REAL_DB) {
-			try {
-				// try if file was executed
-				con.createStatement().execute("select * from table_for_functions");
-			} catch (SQLException e) {
-				String sqls = Text.get().read(rt->rt.asString(), file);
-				con.setAutoCommit(false);
-				for (String sql : sqls.split(";")) {
-					try (Statement stat = con.createStatement()) {
-						stat.execute(sql);
-					} catch (SQLException ex) {
-						System.err.println(sql);
-						ex.printStackTrace();
-						con.rollback();
-						throw e;
-					}
+		try {
+			// try if file was executed
+			con.createStatement().execute("select * from table_for_functions");
+		} catch (SQLException e) {
+			String sqls = Text.get().read(rt->rt.asString(), file);
+			con.setAutoCommit(false);
+			for (String sql : sqls.split(";")) {
+				try (Statement stat = con.createStatement()) {
+					stat.execute(sql);
+				} catch (SQLException ex) {
+					System.err.println(sql);
+					ex.printStackTrace();
+					con.rollback();
+					throw e;
 				}
-				con.commit();
 			}
+			con.commit();
 		}
 	}
-	
+	*/
 	// TODO improve tests - more for real db
 		// all enums will be tested during queries
 	
-	@Test
-	@Parameters(method="dataFunctions")
+	@ParameterizedTest
+	@MethodSource("dataFunctions")
 	public void testFunctions(Function<QueryBuilder, SelectBuilder> create, String expected) throws Exception {
 		test(create, expected, expected, b->b.fetchAll());
 	}
@@ -110,6 +81,9 @@ public abstract class AbstractInstanceTest {
 			},
 			new Object[] {
 				f(b->b.select(f->f.groupConcat("name", ",")).from("table_for_functions").groupBy("name")), getFunctions_groupConcat()
+			},
+			new Object[] {
+				f(b->b.select(f->f.groupConcat("name", ",", "id")).from("table_for_functions").groupBy("name")), getFunctions_groupConcatOrderBy()
 			},
 			new Object[] {
 				f(b->b.select(f->f.cast("id", ColumnType.floatType())).from("table_for_functions")), getFunctions_cast()
@@ -142,6 +116,8 @@ public abstract class AbstractInstanceTest {
 
 	protected abstract String getFunctions_groupConcat();
 
+	protected abstract String getFunctions_groupConcatOrderBy();
+
 	protected abstract String getFunctions_cast();
 
 	protected abstract String getFunctions_max();
@@ -160,8 +136,8 @@ public abstract class AbstractInstanceTest {
 
 	/********* TABLE **************/
 	
-	@Test
-	@Parameters(method="dataCreateTable")
+	@ParameterizedTest
+	@MethodSource("dataCreateTable")
 	public void testCreateTable(Function<QueryBuilder, CreateTableBuilder> create, String getSql) throws Exception {
 		test(create, getSql, b->b.execute()); // VERIFY ?
 	}
@@ -211,8 +187,8 @@ public abstract class AbstractInstanceTest {
 
 	protected abstract String getCreateTableWithPrimary();
 	
-	@Test
-	@Parameters(method="dataAlterTable")
+	@ParameterizedTest
+	@MethodSource("dataAlterTable")
 	public void testAlterTable(Function<QueryBuilder, AlterTableBuilder> create, String getSql) throws Exception {
 		test(create, getSql, b->b.execute()); // VERIFY ?
 		
@@ -239,8 +215,16 @@ public abstract class AbstractInstanceTest {
 					.removeColumnDefault("Column_to_modify_2")
 					.setColumnNotNull("Column_to_modify_2")
 					.setColumnUnique("Column_to_modify_2")
+					.renameColumn("Column_to_rename", "Renamed_column", ColumnType.integer())
 				),
 				getAlterTable(true)	
+			},
+			new Object[] {
+				f(
+					b->b.alterTable("table_to_rename")
+					.renameTable("table_with_another_name")
+				),
+				getAlterTableRenameTable()	
 			},
 			new Object[] {
 				// changes supported by sqlite 
@@ -265,27 +249,10 @@ public abstract class AbstractInstanceTest {
 				),
 				getAlterTable(false)	
 			},
-			new Object[] {
-				// postgres allow only one rename and nothing more
-				f(
-					b->b.alterTable("table_to_alter")
-					.renameColumn("Column_to_rename", "Renamed_column", ColumnType.integer())
-				),
-				getAlterTableRenameColumn()	
-			},
-			new Object[] {
-				f(
-					b->b.alterTable("table_to_rename")
-					.renameTable("table_with_another_name")
-				),
-				getAlterTableRenameTable()	
-			},
 		};
 	}
 	
 	protected abstract String getAlterTable(boolean full);
-	
-	protected abstract String getAlterTableRenameColumn();
 	
 	protected abstract String getAlterTableRenameTable();
 
@@ -302,8 +269,8 @@ public abstract class AbstractInstanceTest {
 	
 	/********* VIEW **************/
 
-	@Test
-	@Parameters(method="dataCreateView")
+	@ParameterizedTest
+	@MethodSource("dataCreateView")
 	public void testCreateView(
 			Function<QueryBuilder, CreateViewBuilder> create, String getSql, String createSql
 		) throws Exception {
@@ -391,8 +358,8 @@ public abstract class AbstractInstanceTest {
 	protected abstract String getCreateView_fromMultiSelect(boolean create);
 	protected abstract String getCreateView(boolean create);
 
-	@Test
-	@Parameters(method="dataAlterView")
+	@ParameterizedTest
+	@MethodSource("dataAlterView")
 	public void testAlterView(
 			Function<QueryBuilder, AlterViewBuilder> alter, String getSql, String createSql
 		) throws Exception {
@@ -516,15 +483,16 @@ public abstract class AbstractInstanceTest {
 	
 	/********* QUERING **************/
 
-	@Test
-	@Parameters(method="dataQueryInsert")
-	public void testQueryInsert(Function<QueryBuilder, InsertBuilder> alter, String getSql, String createSql) throws Exception {
-		test(alter, getSql, createSql, b->b.execute()); // VERIFY ?
+	@ParameterizedTest
+	@MethodSource("dataQueryInsert")
+	public void testQueryInsert(String message, Function<QueryBuilder, InsertBuilder> alter, String getSql, String createSql) throws Exception {
+		test(alter, getSql, createSql, b->b.execute()); // VERIFY ? result + next id
 	}
 	
 	public Object[] dataQueryInsert() {
 		return new Object[] {
 			new Object[] {
+				"Query Insert",
 				f(
 					b->b.insert("table_1")
 					.addValue("id", 123)
@@ -535,6 +503,7 @@ public abstract class AbstractInstanceTest {
 				getQueryInsert()
 			},
 			new Object[] {
+				"Query Insert from Select",
 				f(
 					b->b
 					.with("cte", b.select("id, name").from("table_2").where("id = 2"))
@@ -549,6 +518,19 @@ public abstract class AbstractInstanceTest {
 				),
 				getQueryInsertFromSelect(false),
 				getQueryInsertFromSelect(true)
+			},
+			new Object[] {
+				"Query Insert check Auto Increment",
+				// check autoincrement
+				f(
+					b->b
+					.insert("table_ai", Optional.of("id"))
+					.addValue("id", 123)
+					.addValue("name", "Item 123")
+					.addValue("typ", 'X')
+				),
+				getQueryInsertOverrideAI(),
+				getQueryInsertOverrideAI()
 			}
 		};
 	}
@@ -557,15 +539,19 @@ public abstract class AbstractInstanceTest {
 	
 	protected abstract String getQueryInsertFromSelect(boolean create);
 
-	@Test
-	@Parameters(method="dataQueryUpdate")
-	public void testQueryUpdate(Function<QueryBuilder, UpdateBuilder> alter, String getSql, String createSql) throws Exception {
+	protected abstract String getQueryInsertOverrideAI();
+
+	@ParameterizedTest
+	@MethodSource("dataQueryUpdate")
+	public void testQueryUpdate(String message, Function<QueryBuilder, UpdateBuilder> alter, String getSql, String createSql) throws Exception {
 		test(alter, getSql, createSql, b->b.execute()); // VERIFY ?
 	}
 	
 	public Object[] dataQueryUpdate() {
+		boolean useAlias = useQueryUpdateJoinsAlias();
 		return new Object[] {
 			new Object[] {
+				"Update Basic",
 				f(
 					b->b.update("table_1")
 					.set("name = :value").addParameter(":value", 123)
@@ -580,10 +566,11 @@ public abstract class AbstractInstanceTest {
 				getQueryUpdateBasic(true)
 			},
 			new Object[] {
+				"Update Joins",
 				f(
 					b->b.update("table_1", "t1")
-					.set("name = :value").addParameter(":value", 123)
-					.set(f->"typ = " + f.upper("'x'"))
+					.set((useAlias ? "t1." : "") + "name = :value").addParameter(":value", 123)
+					.set(f->(useAlias ? "t1." : "") + "typ = " + f.upper("'x'"))
 
 					.join("table_2", Join.INNER_JOIN, "table_2.id = t1.id")
 					.join("table_3", "t3", Join.LEFT_OUTER_JOIN, "table_2.id = t3.id")
@@ -598,6 +585,7 @@ public abstract class AbstractInstanceTest {
 				getQueryUpdateJoins(true)
 			},
 			new Object[] {
+				"Update With",
 				f(
 					b->b
 					.with("cte", b.select("1 as id"))
@@ -614,13 +602,15 @@ public abstract class AbstractInstanceTest {
 	}
 	
 	protected abstract String getQueryUpdateBasic(boolean create);
+	
+	protected abstract boolean useQueryUpdateJoinsAlias();
 
 	protected abstract String getQueryUpdateJoins(boolean create);
 	
 	protected abstract String getQueryUpdateWith(boolean create);
 
-	@Test
-	@Parameters(method="dataQueryDelete")
+	@ParameterizedTest
+	@MethodSource("dataQueryDelete")
 	public void testQueryDelete(Function<QueryBuilder, DeleteBuilder> alter, String getSql, String createSql) throws Exception {
 		test(alter, getSql, createSql, b->b.execute()); // VERIFY ?
 	}
@@ -674,8 +664,8 @@ public abstract class AbstractInstanceTest {
 
 	protected abstract String getQueryDeleteWith(boolean create);
 
-	@Test
-	@Parameters(method="dataQuerySelect")
+	@ParameterizedTest
+	@MethodSource("dataQuerySelect")
 	public void testQuerySelect(Function<QueryBuilder, SelectBuilder> alter, String getSql, String createSql) throws Exception {
 		test(alter, getSql, createSql, b->b.fetchAll()); // VERIFY?
 	}
@@ -815,6 +805,56 @@ public abstract class AbstractInstanceTest {
 	}
 	
 	protected abstract String getQueryMultipleSelect(boolean create);
+	
+	@Test
+	public void testCallProcedureReturning() throws Exception {
+		test(f(
+			b->b.call("procedure_int")
+			.addInputParameter("some")
+			.addOutputParameter("output1", String.class)
+			.addInputParameter(123)
+			.addOutputParameter("output2", Integer.class)
+			.addInputParameter(false)
+		), getCallProcedureInt(), b->{
+			ProcedureResult actual = b.execute();
+			
+			ProcedureResult expected = new ProcedureResult(1);
+			expected.addOutput("output1", "something");
+			expected.addOutput("output2", 42);
+			try {
+				assertEquals(expected, actual);
+			} catch (Error e) {
+				assertEquals(expected.toString(), actual.toString());
+			}
+		});
+	}
+
+	protected abstract String getCallProcedureInt();
+	
+	@Test
+	public void testCallProcedureVoid() throws Exception {
+		test(f(
+			b->b.call("procedure_void")
+			.addInputParameter("some")
+			.addOutputParameter("output1", String.class)
+			.addInputParameter(123)
+			.addOutputParameter("output2", Integer.class)
+			.addInputParameter(false)
+		), getCallProcedureVoid(), b->{
+			ProcedureResult actual = b.execute();
+			
+			ProcedureResult expected = new ProcedureResult(0);
+			expected.addOutput("output1", "something");
+			expected.addOutput("output2", 42);
+			try {
+				assertEquals(expected, actual);
+			} catch (Error e) {
+				assertEquals(expected.toString(), actual.toString());
+			}
+		});
+	}
+
+	protected abstract String getCallProcedureVoid();
 
 	/********* OTHER **************/
 
@@ -847,19 +887,20 @@ public abstract class AbstractInstanceTest {
 		if (expectedGet != null && expectedGet.startsWith("ERROR: ")) {
 			fail(expectedGet);
 		}
-		try (Connection connection = (USE_REAL_DB ? getConnection() : mock(Connection.class))) {
+		try (Connection connection = getConnection()) {
 			QueryBuilder queryBuilder = new QueryBuilder(instance, connection);
 			B actual = create.apply(queryBuilder);
 			
 			if (expectedGet == null) {
-				expectedException.expect(RuntimeException.class);
-		        expectedException.expectMessage("Not supported operation");
-		        actual.getSql();
-		        return;
+				RuntimeException ex = assertThrows(RuntimeException.class, ()->{
+					actual.getSql();
+				});
+				assertEquals("Not supported operation", ex.getMessage());
+				return;
 			}
 
 			// test expected first, then syntax
-			if (USE_REAL_DB) {
+			if (!expectedCreate.contains("?")) {
 				try {
 					// check if expected SQL is correct
 					connection.setAutoCommit(false);
@@ -876,20 +917,16 @@ public abstract class AbstractInstanceTest {
 			}
 			assertEquals(expectedGet, actual.getSql());
 			assertEquals(expectedCreate, actual.createSql());
-				
-			if (USE_REAL_DB) {
-				connection.setAutoCommit(false);
-				execute.accept(actual);
-				connection.rollback();
-			} else {
-				fail("Read db was not tested");
-			}
+	
+			connection.setAutoCommit(false);
+			execute.accept(actual);
+			connection.rollback();
 		}
 	}
 	
 	protected abstract Connection getConnection() throws SQLException;
 
-	private <B extends Builder> Function<QueryBuilder, B> f(Function<QueryBuilder, B> f) {
+	private static <B extends Builder> Function<QueryBuilder, B> f(Function<QueryBuilder, B> f) {
 		return f;
 	}
 	

@@ -67,12 +67,14 @@ public class BatchBuilderImpl implements BatchBuilder, ParametrizedSql {
 	public void execute() throws SQLException {
 		try (Statement stat = connection.createStatement();) {
 			for (Builder b : batches) {
-				String query = parse(b.createSql(), parameters);
-				if (stat instanceof StatementWrapper) {
-					StatementWrapper w = StatementWrapper.class.cast(stat);
-					w.getProfiler().builderQuery(w.ID, b.getSql(), query, parameters);
+				for (String sql : b.createSqls()) {
+					String query = parse(sql, parameters);
+					if (stat instanceof StatementWrapper) {
+						StatementWrapper w = StatementWrapper.class.cast(stat);
+						w.getProfiler().builderQuery(w.ID, b.getSql(), sql, parameters);
+					}
+					stat.addBatch(query);
 				}
-				stat.addBatch(query);
 			}
 			stat.executeBatch();
 		}

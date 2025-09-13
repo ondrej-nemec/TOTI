@@ -1,5 +1,6 @@
 package ji.querybuilder.instances;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -8,10 +9,13 @@ import java.util.function.Function;
 import ji.common.functions.Implode;
 import ji.common.structures.DictionaryValue;
 import ji.common.structures.ObjectBuilder;
+import ji.common.structures.SortedMap;
 import ji.common.structures.Tuple2;
+import ji.common.structures.Tuple3;
 import ji.querybuilder.DbInstance;
 import ji.querybuilder.builder_impl.AlterTableBuilderImpl;
 import ji.querybuilder.builder_impl.AlterViewBuilderImpl;
+import ji.querybuilder.builder_impl.CallProcedureBuilderImpl;
 import ji.querybuilder.builder_impl.CreateIndexBuilderImpl;
 import ji.querybuilder.builder_impl.CreateTableBuilderImpl;
 import ji.querybuilder.builder_impl.CreateViewBuilderImpl;
@@ -60,9 +64,13 @@ public class MySqlQueryBuilder implements DbInstance {
 	}
 
 	@Override
-	public String groupConcat(String param, String delimeter) {
-		return String.format("STRING_AGG(%s, '%s')", param, delimeter);
+	public String groupConcat(String param, String delimeter, String orderBy) {
+		return String.format(
+			"STRING_AGG(%s, '%s'%s)",
+			param, delimeter, orderBy == null ? "" : " ORDER BY " + orderBy
+		);
 	}
+	
 	
 	@Override
 	public String max(String param) {
@@ -102,6 +110,14 @@ public class MySqlQueryBuilder implements DbInstance {
 	/*************/
 
 	@Override
+	public String createSql(CallProcedureBuilderImpl callProcedure, boolean create) {
+		 return "{? = call "
+			 + callProcedure.getProcedure() + "("
+			 + Implode.implode(", ", callProcedure.getParameters())
+			 + ")}";
+	}
+
+	@Override
 	public String createSql(DeleteIndexBuilderImpl deleteIndex) {
 		return "DROP INDEX " + deleteIndex.getIndexName();
 	}
@@ -136,9 +152,13 @@ public class MySqlQueryBuilder implements DbInstance {
 	}
 
 	@Override
-	public String createSql(InsertBuilderImpl insert, boolean create) {
+	public List<String> createSql(InsertBuilderImpl insert, boolean create) {
 		StringBuilder sql = new StringBuilder();
-		createWith(insert.getWiths(), sql, create);
+		SortedMap<String, String> withs = new SortedMap<>();
+		insert.getWiths().forEach(with->{
+			withs.put(with._1(), create ? with._2().createSql() : with._2().getSql());
+		});
+		//createWith(insert.getWiths(), sql, create);
 		sql.append("INSERT INTO " + getWithAlias(insert.getTable(), insert.getAlias()) + " ");
 		if (insert.getValues().isEmpty()) {
 			// insert from select
@@ -167,7 +187,24 @@ public class MySqlQueryBuilder implements DbInstance {
 			sql.append(" VALUES ");
 			sql.append(values);
 		}
-		return sql.toString();
+		String insertSql = sql.toString();
+		for (Tuple3<String, String, Integer> entry : withs) {
+			String subQuery = " (" + entry._2() + ") AS " + entry._1();
+			insertSql = insertSql.replace(" " + entry._1() + " ", subQuery + " ");
+			if (insertSql.endsWith(" " + entry._1())) {
+				insertSql = insertSql.substring(0, insertSql.length() - (entry._1().length() + 1)) + subQuery;
+			}
+		}
+		
+		List<String> result = new LinkedList<>();
+		result.add(insertSql);
+		// not needed?
+		/*
+		if (insert.getIdName().isPresent()) {
+ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_name);
+		}
+		*/
+		return result;
 	}
 
 	@Override
@@ -176,6 +213,11 @@ public class MySqlQueryBuilder implements DbInstance {
 		createWith(updateBuilder.getWiths(), sql, create);
 		sql.append("UPDATE ");
 		sql.append(getWithAlias(updateBuilder.getTable(), updateBuilder.getAlias()));
+
+		updateBuilder.getJoins().forEach(join->{
+			createJoin(join, sql, create);
+		});
+
 		ObjectBuilder<Boolean> firstSet = new ObjectBuilder<>(true);
 		updateBuilder.getSets().forEach(set->{
 			if (firstSet.get()) {
@@ -186,22 +228,7 @@ public class MySqlQueryBuilder implements DbInstance {
 			}
 			sql.append(set);
 		});
-		LinkedList<Tuple2<String, Where>> wheres = new LinkedList<>(updateBuilder.getWheres());
-		ObjectBuilder<Boolean> firstJoin = new ObjectBuilder<>(true);
-		updateBuilder.getJoins().forEach(join->{
-			if (firstJoin.get()) {
-				firstJoin.set(false);
-				sql.append(" FROM ");
-				sql.append(getWithAlias(
-					create ? join.getBuilder().createSql() : join.getBuilder().getSql(),
-					join.getAlias()
-				));
-				wheres.addFirst(new Tuple2<>(join.getOn(), null));
-			} else {
-				createJoin(join, sql, create);
-			}
-		});
-		createWhere(wheres, sql, create);
+		createWhere(updateBuilder.getWheres(), sql, create);
 		return sql.toString();
 	}
 
@@ -209,35 +236,17 @@ public class MySqlQueryBuilder implements DbInstance {
 	public String createSql(DeleteBuilderImpl delete, boolean create) {
 		StringBuilder sql = new StringBuilder();
 		createWith(delete.getWiths(), sql, create);
-		sql.append("DELETE FROM " + getWithAlias(delete.getTable(), delete.getAlias()));
+		sql.append("DELETE " + (delete.getAlias() == null ? delete.getTable() : delete.getAlias()));
+		sql.append(" FROM " + getWithAlias(delete.getTable(), delete.getAlias()));
 		
 		StringBuilder joins = new StringBuilder();
 		StringBuilder wheres = new StringBuilder();
+
 		delete.getJoins().forEach(join->{
-			if (joins.isEmpty()) {
-				joins.append(" USING ");
-				wheres.append(" WHERE");
-			} else {
-				joins.append(", ");
-				wheres.append(" AND");
-			}
-			joins.append(getWithAlias(
-				String.format(
-					join.getBuilder().wrap() ? "(%s)" : "%s",
-					create ? join.getBuilder().createSql() : join.getBuilder().getSql()
-				),
-				join.getAlias()
-			));
-			wheres.append(" (" + join.getOn() + ")");
+			createJoin(join, sql, create);
 		});
-		delete.getWheres().forEach((where)->{
-			if (wheres.isEmpty()) {
-				wheres.append(" WHERE ");
-			} else {
-				wheres.append(" " + where._2().toString() + " ");
-			}
-			wheres.append("(" + where._1() + ")");
-		});
+		createWhere(delete.getWheres(), sql, create);
+		
 		sql.append(joins.toString());
 		sql.append(wheres.toString());
 		return sql.toString();
@@ -308,8 +317,7 @@ public class MySqlQueryBuilder implements DbInstance {
 	}
 
 	@Override
-	public String createSql(AlterTableBuilderImpl alterTable) {
-		// TODO check only one rename at once https://stackoverflow.com/a/74110573/8240462
+	public List<String> createSql(AlterTableBuilderImpl alterTable) {
 		List<String> rows = new LinkedList<>();
 		List<String> constains = new LinkedList<>();
 		iterateList(
@@ -376,7 +384,7 @@ public class MySqlQueryBuilder implements DbInstance {
 		if (alterTable.getNewName() != null) {
 			sql.append(" RENAME TO " + alterTable.getNewName());
 		}
-		return sql.toString();
+		return Arrays.asList(sql.toString());
 	}
 	
 	/****************************/

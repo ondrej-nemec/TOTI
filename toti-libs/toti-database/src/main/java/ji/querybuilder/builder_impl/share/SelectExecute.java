@@ -1,28 +1,19 @@
 package ji.querybuilder.builder_impl.share;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-
 import ji.common.structures.DictionaryValue;
 import ji.common.structures.ThrowingFunction;
 import ji.database.support.DatabaseRow;
 import ji.database.wrappers.StatementWrapper;
+import ji.querybuilder.Escape;
 
 public interface SelectExecute {
 
@@ -42,12 +33,15 @@ public interface SelectExecute {
 	default DatabaseRow _parseRow(ResultSet res) throws SQLException {
 		DatabaseRow row = new DatabaseRow();
 		for (int i = 1; i <= res.getMetaData().getColumnCount(); i++) {
-			row.addValue(res.getMetaData().getColumnLabel(i), _parseValue(res, i));
+			row.addValue(
+				res.getMetaData().getColumnLabel(i),
+				Escape.parseValue(res, i) // _parseValue(res, i)
+			);
 		}
 		return row;
 	}
 	
-	/** INTERNAL */
+	/** INTERNAL *//*
 	default Object _parseValue(ResultSet rs, int index) throws SQLException {
 		Object value = rs.getObject(index);
 		if (value instanceof Date) {
@@ -70,13 +64,13 @@ public interface SelectExecute {
 		}
 		return value;
 	}
-	
+	*/
 	/************/
 	
 	default DictionaryValue fetchSingle(Connection connection, String query, Map<String, String> parameters) throws SQLException {
 		return _execute(connection, query, parameters, (rs)->{
 			if (rs.next()) {
-				return new DictionaryValue(_parseValue(rs, 1));
+				return new DictionaryValue(Escape.parseValue(rs, 1)); // _parseValue(rs, 1)
 			}
 			return new DictionaryValue(null);
 		});

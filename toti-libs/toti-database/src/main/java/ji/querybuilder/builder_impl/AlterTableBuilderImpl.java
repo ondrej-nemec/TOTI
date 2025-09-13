@@ -9,16 +9,15 @@ import java.util.function.Function;
 
 import ji.common.structures.SortedMap;
 import ji.querybuilder.DbInstance;
-import ji.querybuilder.builder_impl.share.SingleExecute;
+import ji.querybuilder.builder_impl.share.MultipleExecute;
 import ji.querybuilder.builders.AlterTableBuilder;
-import ji.querybuilder.builders.alterTable.AlterTableBuilderBase;
 import ji.querybuilder.enums.ColumnSetting;
 import ji.querybuilder.enums.ColumnType;
 import ji.querybuilder.enums.OnAction;
 import ji.querybuilder.structures.Column;
 import ji.querybuilder.structures.ForeignKey;
 
-public class AlterTableBuilderImpl implements AlterTableBuilder, SingleExecute {
+public class AlterTableBuilderImpl implements AlterTableBuilder, MultipleExecute {
 
 	private final Connection connection;
 	private final DbInstance instance;
@@ -97,6 +96,11 @@ public class AlterTableBuilderImpl implements AlterTableBuilder, SingleExecute {
 
 	@Override
 	public String getSql() {
+		return _toString(getSqls());
+	}
+	
+	@Override
+	public List<String> getSqls() {
 		return instance.createSql(this);
 	}
 
@@ -137,25 +141,25 @@ public class AlterTableBuilderImpl implements AlterTableBuilder, SingleExecute {
 	}
 
 	@Override
-	public AlterTableBuilderBase setColumnNotNull(String column) {
+	public AlterTableBuilder setColumnNotNull(String column) {
 		modifyColumn(modifyNullable, column, c->c.withValue(true));
 		return this;
 	}
 	
 	@Override
-	public AlterTableBuilderBase setColumnNullable(String column) {
+	public AlterTableBuilder setColumnNullable(String column) {
 		modifyColumn(modifyNullable, column, c->c.withValue(false));
 		return this;
 	}
 	
 	@Override
-	public AlterTableBuilderBase setColumnUnique(String column) {
+	public AlterTableBuilder setColumnUnique(String column) {
 		modifyColumn(modifyUnique, column, c->c.withValue(true));
 		return this;
 	}
 	
 	@Override
-	public AlterTableBuilderBase removeColumnUnique(String column) {
+	public AlterTableBuilder removeColumnUnique(String column) {
 		modifyColumn(modifyUnique, column, c->c.withValue(false));
 		return this;
 	}
@@ -194,7 +198,7 @@ public class AlterTableBuilderImpl implements AlterTableBuilder, SingleExecute {
 
 	@Override
 	public void execute() throws SQLException {
-		execute(connection, createSql(), new HashMap<>());
+		execute(connection, getSqls(), new HashMap<>());
 	}
 
 }

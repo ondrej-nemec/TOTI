@@ -12,6 +12,7 @@ import ji.common.structures.Tuple2;
 import ji.querybuilder.DbInstance;
 import ji.querybuilder.builder_impl.AlterTableBuilderImpl;
 import ji.querybuilder.builder_impl.AlterViewBuilderImpl;
+import ji.querybuilder.builder_impl.CallProcedureBuilderImpl;
 import ji.querybuilder.builder_impl.CreateIndexBuilderImpl;
 import ji.querybuilder.builder_impl.CreateTableBuilderImpl;
 import ji.querybuilder.builder_impl.CreateViewBuilderImpl;
@@ -60,9 +61,13 @@ public class PostgreSqlQueryBuilder implements DbInstance {
 	}
 
 	@Override
-	public String groupConcat(String param, String delimeter) {
-		return String.format("STRING_AGG(%s, '%s')", param, delimeter);
+	public String groupConcat(String param, String delimeter, String orderBy) {
+		return String.format(
+			"STRING_AGG(%s, '%s'%s)",
+			param, delimeter, orderBy == null ? "" : " ORDER BY " + orderBy
+		);
 	}
+	
 	
 	@Override
 	public String max(String param) {
@@ -102,6 +107,14 @@ public class PostgreSqlQueryBuilder implements DbInstance {
 	/*************/
 
 	@Override
+	public String createSql(CallProcedureBuilderImpl callProcedure, boolean create) {
+		return "{? = call "
+			 + callProcedure.getProcedure() + "("
+			 + Implode.implode(", ", callProcedure.getParameters())
+			 + ")}";
+	}
+
+	@Override
 	public String createSql(DeleteIndexBuilderImpl deleteIndex) {
 		return "DROP INDEX " + deleteIndex.getIndexName();
 	}
@@ -132,11 +145,11 @@ public class PostgreSqlQueryBuilder implements DbInstance {
 
 	@Override
 	public String createSql(DeleteViewBuilderImpl deleteView) {
-		return "DROP VIEW " + deleteView.getView();
+		return "DROP VIEW IF EXISTS " + deleteView.getView();
 	}
 
 	@Override
-	public String createSql(InsertBuilderImpl insert, boolean create) {
+	public List<String> createSql(InsertBuilderImpl insert, boolean create) {
 		StringBuilder sql = new StringBuilder();
 		createWith(insert.getWiths(), sql, create);
 		sql.append("INSERT INTO " + getWithAlias(insert.getTable(), insert.getAlias()) + " ");
@@ -167,7 +180,16 @@ public class PostgreSqlQueryBuilder implements DbInstance {
 			sql.append(" VALUES ");
 			sql.append(values);
 		}
-		return sql.toString();
+		List<String> result = new LinkedList<>();
+		result.add(sql.toString());
+		if (insert.getIdName().isPresent()) {
+			String id = insert.getIdName().get();
+			result.add(String.format(
+				"SELECT setval('%s_%s_seq', COALESCE((SELECT MAX(%s)+1 FROM %s), 1), false)", 
+				insert.getTable(), id, id, insert.getTable()
+			));
+		}
+		return result;
 	}
 
 	@Override
@@ -308,8 +330,7 @@ public class PostgreSqlQueryBuilder implements DbInstance {
 	}
 
 	@Override
-	public String createSql(AlterTableBuilderImpl alterTable) {
-		// TODO check only one rename at once https://stackoverflow.com/a/74110573/8240462
+	public List<String> createSql(AlterTableBuilderImpl alterTable) {
 		List<String> rows = new LinkedList<>();
 		List<String> constains = new LinkedList<>();
 		iterateList(
@@ -364,19 +385,25 @@ public class PostgreSqlQueryBuilder implements DbInstance {
 				}
 			}
 		);
-		iterateList(
-			sql->rows.add(sql), alterTable.getRenameColumns(),
-			i->"", i->"", c->String.format("RENAME COLUMN %s TO %s", c.getOldName(), c.getNewName())
-		);
+		String alterTablePrefix = "ALTER TABLE " + alterTable.getTable();
 		
-		StringBuilder sql = new StringBuilder();
-		sql.append("ALTER TABLE ");
-		sql.append(alterTable.getTable());
-		iterateList(sql, rows, i->" ", i->", ", i->i);
-		if (alterTable.getNewName() != null) {
-			sql.append(" RENAME TO " + alterTable.getNewName());
+		List<String> result = new LinkedList<>();
+		if (!rows.isEmpty()) {
+			StringBuilder main = new StringBuilder();
+			main.append(alterTablePrefix);
+			iterateList(main, rows, i->" ", i->", ", i->i);
+			result.add(main.toString());
 		}
-		return sql.toString();
+		// only one rename at once https://stackoverflow.com/a/74110573/8240462
+		iterateList(
+			sql->result.add(sql), alterTable.getRenameColumns(),
+			i->alterTablePrefix, i->alterTablePrefix,
+			c->String.format(" RENAME COLUMN %s TO %s", c.getOldName(), c.getNewName())
+		);
+		if (alterTable.getNewName() != null) {
+			result.add(alterTablePrefix + " RENAME TO " + alterTable.getNewName());
+		}
+		return result;
 	}
 	
 	/****************************/

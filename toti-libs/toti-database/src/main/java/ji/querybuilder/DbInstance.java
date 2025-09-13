@@ -1,7 +1,10 @@
 package ji.querybuilder;
 
+import java.util.List;
+
 import ji.querybuilder.builder_impl.AlterTableBuilderImpl;
 import ji.querybuilder.builder_impl.AlterViewBuilderImpl;
+import ji.querybuilder.builder_impl.CallProcedureBuilderImpl;
 import ji.querybuilder.builder_impl.CreateIndexBuilderImpl;
 import ji.querybuilder.builder_impl.CreateTableBuilderImpl;
 import ji.querybuilder.builder_impl.CreateViewBuilderImpl;
@@ -20,7 +23,7 @@ public interface DbInstance extends Functions {
 
 	String createSql(CreateIndexBuilderImpl createIndex);
 
-	String createSql(InsertBuilderImpl insert, boolean create);
+	List<String> createSql(InsertBuilderImpl insert, boolean create);
 
 	String createSql(UpdateBuilderImpl updateBuilder, boolean create);
 
@@ -38,8 +41,10 @@ public interface DbInstance extends Functions {
 
 	String createSql(CreateTableBuilderImpl createTable);
 
-	String createSql(AlterTableBuilderImpl alterTable);
+	List<String> createSql(AlterTableBuilderImpl alterTable);
 
 	String createSql(DeleteTableBuilderImpl deleteTable);
+
+	String createSql(CallProcedureBuilderImpl callProcedure, boolean create);
 	
 }

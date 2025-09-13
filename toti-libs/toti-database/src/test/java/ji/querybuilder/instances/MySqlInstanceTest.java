@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import ji.querybuilder.enums.Join;
+
 public class MySqlInstanceTest extends AbstractInstanceTest {
 
 	private static final String TRANSACTION_NOT_WORKING_ERROR = "Transaction for structures is not working";
@@ -81,11 +83,6 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 			+ " ADD CONSTRAINT table_to_alter_column_to_modify_2_key UNIQUE (Column_to_modify_2)"
 			;
 		*/
-	}
-
-	@Override
-	protected String getAlterTableRenameColumn() {
-		return TRANSACTION_NOT_WORKING_ERROR;
 		/*
 		return "ALTER TABLE table_to_alter"
 			+ " RENAME COLUMN Column_to_rename TO Renamed_column"; // INT
@@ -263,10 +260,21 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 
 	@Override
 	protected String getQueryInsertFromSelect(boolean create) {
+		// mysql not suport WITH in INSERT
+		/*
 		return "WITH cte AS (SELECT id, name FROM table_2 WHERE (id = 2)),"
 			+ " cte2 AS (SELECT id, name FROM table_2 WHERE (id = 2))"
-			+ "INSERT INTO table_1 (id, name, typ)"
+			+ " INSERT INTO table_1 (id, name, typ)"
 			+ " SELECT id, name, " + (create ? "'X'" : ":type") + " FROM cte";
+		*/
+		return "INSERT INTO table_1 (id, name, typ)"
+			+ " SELECT id, name, " + (create ? "'X'" : ":type")
+			+ " FROM (SELECT id, name FROM table_2 WHERE (id = 2)) AS cte";
+	}
+
+	@Override
+	protected String getQueryInsertOverrideAI() {
+		return "INSERT INTO table_ai (id, name, typ) VALUES (123, 'Item 123', 'X')";
 	}
 
 	@Override
@@ -277,6 +285,11 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 			+ " WHERE (id = " + id + ") OR (id = " + id + ") AND (id = " + id + ") OR (id = " + id + ")";
 	}
 
+	@Override
+	protected boolean useQueryUpdateJoinsAlias() {
+		return true;
+	}
+	
 	@Override
 	protected String getQueryUpdateJoins(boolean create) {
 		return "UPDATE table_1 AS t1"
@@ -302,24 +315,46 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 	@Override
 	protected String getQueryDeleteBasic(boolean create) {
 		String id = create ? "1" : ":id";
-		return "DELETE FROM table_1"
+		return "DELETE table_1 FROM table_1"
 			+ " WHERE (id = " + id + ") OR (id = " + id + ") AND (id = " + id + ") OR (id = " + id + ")";
 	}
 
 	@Override
 	protected String getQueryDeleteJoins(boolean create) {
-		return "DELETE FROM table_1 AS t1"
-			+ " USING table_2, table_3 AS t3, (SELECT * FROM table_4) AS st4, table_5, table_6 AS t6, (SELECT * FROM table_7) AS st7"
-			+ " WHERE (t1.id = table_2.id) AND (t1.id = t3.id) AND (t3.id = st4.id)"
-			+ " AND (t1.id = table_5.id) AND (t1.id = t6.id) AND (t1.id = st7.id)"
-			+ " AND (st7.id = 1)";
+		/*
+		DELETE posts
+FROM posts
+INNER JOIN projects ON projects.project_id = posts.project_id
+WHERE projects.client_id = :client_id
+
+b->b.delete("table_1", "t1")
+					.join("table_2", Join.INNER_JOIN, "t1.id = table_2.id")
+					.join("table_3", "t3", Join.LEFT_OUTER_JOIN, "t1.id = t3.id")
+					.join(b.select("*").from("table_4"), "st4", Join.RIGHT_OUTER_JOIN, "t3.id = st4.id")
+					.join("table_5", Join.INNER_JOIN, f->"t1.id = table_5.id")
+					.join("table_6", "t6", Join.LEFT_OUTER_JOIN, f->"t1.id = t6.id")
+					.join(b.select("*").from("table_7"), "st7", Join.RIGHT_OUTER_JOIN, f->"t1.id = st7.id")
+					
+					.where("st7.id = 1")
+		*/
+		return "DELETE t1"
+			+ " FROM table_1 AS t1"
+			+ " JOIN table_2 ON t1.id = table_2.id"
+			+ " LEFT JOIN table_3 AS t3 ON t1.id = t3.id"
+			+ " RIGHT JOIN (SELECT * FROM table_4) AS st4 ON t3.id = st4.id"
+			+ " JOIN table_5 ON t1.id = table_5.id"
+			+ " LEFT JOIN table_6 AS t6 ON t1.id = t6.id"
+			+ " RIGHT JOIN (SELECT * FROM table_7) AS st7 ON t1.id = st7.id"
+			+ " WHERE (st7.id = 1)";
 	}
 
 	@Override
 	protected String getQueryDeleteWith(boolean create) {
 		return "WITH cte AS (SELECT 1 as id),"
 			+ " cte2 AS (SELECT 1 as id)"
-			+ "DELETE FROM table_1 AS t1 USING cte WHERE (cte.id = t1.id)";
+			+ "DELETE t1"
+			+ " FROM table_1 AS t1"
+			+ " JOIN cte ON cte.id = t1.id";
 	}
 
 	@Override
@@ -399,6 +434,16 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 				+ " SELECT " + (create ? "123" : ":id") + ", '" + (create ? "1" : ":x") + "' as b;";
 	}
 
+	@Override
+	protected String getCallProcedureInt() {
+		return "{? = call procedure_int('some', ?, 123, ?, false)}";
+	}
+
+	@Override
+	protected String getCallProcedureVoid() {
+		return "{? = call procedure_void('some', ?, 123, ?, false)}";
+	}
+
 	/***********************/
 	
 	@Override
@@ -409,6 +454,11 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 	@Override
 	protected String getFunctions_groupConcat() {
 		return "SELECT STRING_AGG(name, ',') FROM table_for_functions GROUP BY name";
+	}
+
+	@Override
+	protected String getFunctions_groupConcatOrderBy() {
+		return "SELECT STRING_AGG(name, ',' ORDER BY id) FROM table_for_functions GROUP BY name";
 	}
 
 	@Override
@@ -455,10 +505,12 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 	protected Connection getConnection() throws SQLException {
 		Properties props = new Properties();
 		props.setProperty("user", "root");
-		props.setProperty("password", "SomeP@ssw0rd");
+		props.setProperty("password", PASSWORD);
 		props.setProperty("serverTimezone", "Europe/Prague");
 		props.setProperty("create", "true");
 		props.setProperty("allowMultiQueries", "true");
-		return DriverManager.getConnection("jdbc:mysql://localhost:3308/query_builder", props);
+	//	return DriverManager.getConnection("jdbc:mysql://mysql:3306/query_builder", props);
+		return DriverManager.getConnection("jdbc:mysql://localhost:19070/query_builder", props);
 	}
+
 }

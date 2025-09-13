@@ -1,10 +1,24 @@
 package ji.querybuilder;
 
+import java.sql.CallableStatement;
+import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
+
+import org.apache.commons.lang3.StringUtils;
 
 import ji.common.functions.Implode;
 import ji.common.structures.DictionaryValue;
 import ji.common.structures.ListDictionary;
+import ji.common.structures.ThrowingSupplier;
 
 public class Escape {
 
@@ -14,7 +28,7 @@ public class Escape {
 		}
 		if (value instanceof Iterable<?>) {
 			Iterable<?> iterable = Iterable.class.cast(value);
-			return Implode.implode(item->escapeScalar(item), ",", iterable);
+			return Implode.implode(item->escapeScalar(item), ",", iterable) ;
 		} else if (value instanceof ListDictionary) {
 			ListDictionary iterable = ListDictionary.class.cast(value);
 			return Implode.implode(item->escapeScalar(item), ",", iterable.toList());
@@ -35,7 +49,12 @@ public class Escape {
 		} else if (clazz.isPrimitive() && !(clazz.isAssignableFrom(byte.class) || clazz.isAssignableFrom(char.class))) {
 			return value.toString();
 		} else if (value instanceof Temporal) {
-			return escapeString(value.toString().replace("T", " "));
+			String string = value.toString().replace("T", " ");
+			int index = string.indexOf(".");
+			if (index > -1) {
+				string = string.substring(0, index + 4);
+			}
+			return escapeString(string);
 		} else {
 			return escapeString(value.toString());
 		}
@@ -44,6 +63,42 @@ public class Escape {
 	private static String escapeString(String sql) {
 		// maybe??  * @ - _ + . /
 		return String.format("'%s'", sql.replaceAll("\\'", "''"));
+	}
+
+	/******************************************/
+
+	public static Object parseValue(ResultSet rs, int index) throws SQLException {
+		return parseValue(()->rs.getObject(index), ()->rs.getString(index));
+	}
+
+	public static Object parseValue(CallableStatement stmt, int index) throws SQLException {
+		return parseValue(()->stmt.getObject(index), ()->stmt.getString(index));
+	}
+	
+	private static Object parseValue(
+		ThrowingSupplier<Object, SQLException> getObject,
+		ThrowingSupplier<String, SQLException> getString
+	) throws SQLException {
+		Object value = getObject.get();
+		if (value instanceof Date) {
+			return LocalDate.parse(value.toString());
+		}
+		if (value instanceof Time) {
+			return LocalTime.parse(value.toString());
+		}
+		if (value instanceof Timestamp) {
+			String text = getString.get();
+			text = text.replaceFirst(" ", "T").replaceFirst(" ", "");
+			if (text.contains("+") || StringUtils.countMatches(text, "-") > 3) {
+				if (StringUtils.countMatches(text, ":") == 2) {
+					text += ":00";
+				}
+				return ZonedDateTime.parse(text, DateTimeFormatter.ISO_ZONED_DATE_TIME);
+			} else {
+				return LocalDateTime.parse(text, DateTimeFormatter.ISO_DATE_TIME);
+			}
+		}
+		return value;
 	}
 	
 }

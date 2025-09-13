@@ -2,10 +2,14 @@ package ji.migration;
 
 import java.util.List;
 
-import ji.querybuilder.QueryBuilder;
+import ji.common.structures.SortedMap;
+import ji.migration.migrations.MigrationInternal;
 
 public interface MigrationProcess {
 
-	void process(List<String> filesToMigrate, SingleMigrationTool tool, QueryBuilder builder) throws Exception;
+	List<MigrationInternal> getFilesToMigrate(
+		SortedMap<String, MigrationInternal> filesMigrations,
+		List<String> savedMirations
+	) throws Exception;
 	
 }

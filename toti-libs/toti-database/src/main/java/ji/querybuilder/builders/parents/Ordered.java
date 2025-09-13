@@ -6,11 +6,10 @@ import ji.querybuilder.Functions;
 
 public interface Ordered<P> {
 
-	
 	default P orderBy(String orderBy) {
 		return orderBy(f->orderBy);
 	}
 	
 	P orderBy(Function<Functions, String> orderBy);
-	
+
 }

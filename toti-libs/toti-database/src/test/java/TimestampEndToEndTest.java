@@ -41,18 +41,18 @@ if (Timestamp.class.isInstance(object)) {
 		//*/
 		for (DatabaseConfig c : new DatabaseConfig[] {
 				new DatabaseConfig(
-						"mysql",
-						"//localhost",
-						"timestamps",
+						"mysql", 
+						"//localhost", 
+						"timestamps", 
 						"root",
 						"", 
 						Arrays.asList(),
 						1
 					),
 				new DatabaseConfig(
-						"postgresql",
-						"//localhost",
-						"timestamps",
+						"postgresql", 
+						"//localhost", 
+						"timestamps", 
 						"postgres",
 						"1234",
 						Arrays.asList(),
@@ -105,6 +105,11 @@ if (Timestamp.class.isInstance(object)) {
 				});
 			} catch (SQLException e) {
 				System.err.println(e.getMessage());
+				e.printStackTrace();
+			}
+			try {
+				db.close();
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
