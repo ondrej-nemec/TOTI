@@ -1,0 +1,91 @@
+# version: '3.8'
+services:
+  dev:
+    build:
+      context: ./docker/java_vscode
+      dockerfile: Dockerfile
+    container_name: toti
+    ports:
+      - "19010:88" # VS Code
+    volumes:
+      - .:/home/coder/project
+      - ./vscode-config:/home/coder/.local/share/code-server
+    restart: always
+  mysql:
+    image: mysql:8.0
+    restart: always
+    container_name: toti_mysql
+    environment:
+    #  MYSQL_DATABASE: query_builder
+    # username is root
+      MYSQL_ROOT_PASSWORD: "Strong!Passw0rd"
+    #  DB_HOST: mysql
+    volumes:
+      - ./volumes/mysql:/var/lib/mysql
+      # not persist
+      - ./toti-libs/toti-database/sql/mysql_dump.sql:/docker-entrypoint-initdb.d/query_builder.sql:ro
+    ports:
+      - 19070:3306
+  postgres:
+    image: postgres:16.4
+    restart: always
+    container_name: toti_postgres
+    ports:
+      - 19060:5432
+    volumes:
+      - ./volumes/postgres:/var/lib/postgresql/data
+      - ./toti-libs/toti-database/sql/postgres_dump.sql:/docker-entrypoint-initdb.d/query_builder.sql
+    # set shared memory limit when using docker-compose
+    shm_size: 128mb
+    environment:
+    # username is postgres
+      POSTGRES_PASSWORD: "Strong!Passw0rd"
+     # DB_HOST: postgres
+     # POSTGRES_DB: query_builder
+
+  sqlserver:
+    # image: mcr.microsoft.com/mssql/server:2019-CU21-ubuntu-20.04
+    build:
+      context: ./docker/sqlserver
+      dockerfile: Dockerfile
+    container_name: toti_sqlserver
+    environment:
+      SA_PASSWORD: "Strong!Passw0rd"
+      # username is sa
+      ACCEPT_EULA: "Y"
+      # DB_HOST: sqlserver
+    ports:
+      - "19050:1433"
+    volumes:
+      - ./volumes/sqlserver:/var/opt/mssql
+      - ./toti-libs/toti-database/sql/sqlserver_dump.sql:/init-db/query_builder.sql:ro
+
+  sqlite:
+    image: nouchka/sqlite3:latest
+    container_name: toti_sqlite
+    stdin_open: true
+    tty: true
+    command: query_builder.sqlt < /root/dump.sql
+    volumes:
+      - ./volumes/sqlite/:/root/db/
+      - ./docker/sqlite/init.sh:/init-sqlite.sh:ro
+      # - ./docker/sqlite_dump.sql:/root/dump.sql
+      - ./toti-libs/toti-database/sql/sqlite_dump.sql:/docker-entrypoint-initdb.d/query_builder.sql:ro
+    entrypoint: ["/bin/sh", "/init-sqlite.sh"]
+
+  adminer:
+  #  image: adminer
+    build:
+      context: ./docker/adminer
+      dockerfile: Dockerfile
+    restart: always
+    container_name: toti_adminer
+    volumes:
+      - ./volumes/sqlite/:/root/sqlite/
+    ports:
+      - 19040:8080
+    depends_on:
+      - postgres
+      - sqlserver 
+      - mysql
+      - sqlite

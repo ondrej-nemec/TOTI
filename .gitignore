@@ -2,11 +2,15 @@
 /.gradle/
 /build
 
-# eclipse
+# docker
+/volumes
+
+# IDE
 /bin/
 /.classpath
 /.project
 /.settings
+/vscode-config
 
 # toti
 /temp
