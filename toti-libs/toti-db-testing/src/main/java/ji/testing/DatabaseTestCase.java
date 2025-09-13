@@ -58,6 +58,7 @@ public abstract class DatabaseTestCase {
 	@AfterEach
 	public void after() throws SQLException {
 		database.rollback();
+		database.close();
 	}
 	
 	public Database getDatabase() {

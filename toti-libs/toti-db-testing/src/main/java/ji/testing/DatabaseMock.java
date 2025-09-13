@@ -54,7 +54,7 @@ public class DatabaseMock extends Database {
 	
 	private Builder applyRow(QueryBuilderFactory builder, BatchBuilder batch, String table, Row row) {
 		if (row.isInsert()) {
-			InsertBuilder insert = builder.insert(table);
+			InsertBuilder insert = builder.insert(table, row.getIdName());
 			row.getColumns().forEach((key, value)->{
 				insert.addValue(key, value);
 			});

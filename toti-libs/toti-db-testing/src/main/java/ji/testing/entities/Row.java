@@ -2,18 +2,29 @@ package ji.testing.entities;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class Row {
 
-	private Map<String, Object> columns;
-	private String idName;
-	private Object idValue;
+	private final Map<String, Object> columns;
+	private final String idName;
+	private final Object idValue;
 	
 	public static Row insert() {
 		return new Row(null, null);
 	}
 	
+	public static Row insert(String name) {
+		return new Row(name, null);
+	}
+	
 	public static Row update(String name, Object value) {
+		if (value == null) {
+			throw new RuntimeException("Update Row cannot have null value");
+		}
+		if (name == null) {
+			throw new RuntimeException("Update Row cannot have null name");
+		}
 		return new Row(name, value);
 	}
 	
@@ -33,11 +44,14 @@ public class Row {
 	}
 	
 	public boolean isInsert() {
-		return idName == null;
+		return idValue == null;
 	}
 
-	public String getIdName() {
-		return idName;
+	public Optional<String> getIdName() {
+		if (idName == null) {
+			return Optional.empty();
+		}
+		return Optional.of(idName);
 	}
 
 	public Object getIdValue() {
