@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import ji.common.functions.Implode;
 import ji.common.structures.ObjectBuilder;
@@ -147,7 +146,7 @@ public class SqLiteQueryBuilder implements DbInstance {
 
 	@Override
 	public String createSql(DeleteViewBuilderImpl deleteView) {
-		return "DROP VIEW " + deleteView.getView();
+		return "DROP VIEW IF EXISTS " + deleteView.getView();
 	}
 
 	@Override
@@ -313,73 +312,28 @@ WHERE name = 'table_name';
 
 	@Override
 	public List<String> createSql(AlterTableBuilderImpl alterTable) {		
-		StringBuilder result = new StringBuilder();
-		Supplier<String> alterTablePrefix = ()->"ALTER TABLE " + alterTable.getTable() + " ";
+		List<String> result = new LinkedList<>();
+		String alterTablePrefix = "ALTER TABLE " + alterTable.getTable() + " ";
 		
 		iterateList(
-			sql->result.append(sql + ";"), alterTable.getAddColumns(),
-			i->alterTablePrefix.get(), i->alterTablePrefix.get(),
+			sql->result.add(sql), alterTable.getAddColumns(),
+			i->alterTablePrefix, i->alterTablePrefix,
 			c->"ADD COLUMN " + getColumn(c, null)
 		);
 		
 		iterateList(
-			sql->result.append(sql + ";"), alterTable.getDeleteColumns(),
-			i->alterTablePrefix.get(), i->alterTablePrefix.get(),
+			sql->result.add(sql), alterTable.getDeleteColumns(),
+			i->alterTablePrefix, i->alterTablePrefix,
 			c->"DROP COLUMN " + c.getName()
 		);
 		iterateList(
-			sql->result.append(sql + ";"), alterTable.getRenameColumns(),
-			i->alterTablePrefix.get(), i->alterTablePrefix.get(),
+			sql->result.add(sql), alterTable.getRenameColumns(),
+			i->alterTablePrefix, i->alterTablePrefix,
 			c->String.format("RENAME COLUMN %s TO %s", c.getOldName(), c.getNewName())
 		);
 		if (alterTable.getNewName() != null) {
-			result.append(alterTablePrefix.get() + "RENAME TO " + alterTable.getNewName() + ";");
+			result.add(alterTablePrefix + "RENAME TO " + alterTable.getNewName());
 		}
-		//	createAddForeignKey(alterTable.getAddForeignKeys(), sql->rows.add(sql), "ADD ");
-		/*
-		
-		iterateList(
-			sql->result.append(sql + ";"), alterTable.getDeleteForeignKeys(),
-			i->alterTablePrefix.get(), i->alterTablePrefix.get(),
-			fk->"DROP CONSTRAINT " + fk.getColumn()
-		);
-		iterateList(
-			sql->result.append(sql + ";"), alterTable.getModifyColumnsType(),
-			i->alterTablePrefix.get(), i->alterTablePrefix.get(),c->{
-				return "MODIFY COLUMN " + c.getName() + " " + toString(c.getType());
-			}
-		);
-		iterateList(
-			sql->result.append(sql + ";"), alterTable.getModifyUnique(),
-			i->alterTablePrefix.get(), i->alterTablePrefix.get(), c->{
-				String key = (alterTable.getTable() + "_" + c.getName() + "_key").toLowerCase();
-				if (new DictionaryValue(c.getValue().getValue()).getBoolean()) {
-					return "ADD CONSTRAINT " + key + " UNIQUE (" + c.getName() + ")";
-				} else {
-					return "DROP CONSTRAINT " + key; //  + " UNIQUE (" + c.getName() + ")"
-				}
-			}
-		);
-		iterateList(
-			sql->result.append(sql + ";"), alterTable.getModifyDefault(),
-			i->alterTablePrefix.get(), i->alterTablePrefix.get(), c->{
-				if (c.getValue().isClear()) {
-					return "ALTER COLUMN " + c.getName() + " DROP DEFAULT";
-				} else {
-					return "ALTER COLUMN " + c.getName() + " SET DEFAULT " + c.getValue().getValue();
-				}
-			}
-		);
-		iterateList(
-			sql->result.append(sql + ";"), alterTable.getModifyNullable(),
-			i->alterTablePrefix.get(), i->alterTablePrefix.get(), c->{
-				if (new DictionaryValue(c.getValue().getValue()).getBoolean()) {
-					return "ALTER COLUMN " + c.getName() + " SET NOT NULL";
-				} else {
-					return "ALTER COLUMN " + c.getName() + " DROP NOT NULL";
-				}
-			}
-		);*/
 		RuntimeException notSupported = new RuntimeException("Not supported operation");
 		if (!alterTable.getAddForeignKeys().isEmpty()) {
 			throw notSupported;
@@ -399,7 +353,7 @@ WHERE name = 'table_name';
 		if (!alterTable.getModifyUnique().isEmpty()) {
 			throw notSupported;
 		}
-		return Arrays.asList(result.toString());
+		return result;
 	}
 	
 	/****************************/

@@ -52,7 +52,9 @@ public class PostgresSqlInstanceTest extends AbstractInstanceTest {
 		if (!full) {
 			return "ALTER TABLE table_to_alter"
 				+ " ADD Add_column_1 INT NOT NULL,"
-				+ " DROP COLUMN Column_to_delete";
+				+ " DROP COLUMN Column_to_delete;"
+				+ "ALTER TABLE table_to_alter"
+				+ " RENAME COLUMN Column_to_rename TO Renamed_column";
 		}
 		return "ALTER TABLE table_to_alter"
 			+ " ADD Add_column_1 INT NOT NULL,"
@@ -352,8 +354,9 @@ public class PostgresSqlInstanceTest extends AbstractInstanceTest {
 
 	@Override
 	protected String getBatch(boolean create) {
-		return "SELECT " + (create ? "123" : ":id") + ", ':x' as a;"
-				+ " SELECT " + (create ? "123" : ":id") + ", '" + (create ? "1" : ":x") + "' as b;";
+		return "UPDATE table_1 SET name = ':x' WHERE (id > " + (create ? "4" : ":id") + ");"
+			+ " UPDATE table_2 SET name = " + ( create ? "'NAME'" : ":x")
+				+ " WHERE (id > " + (create ? "4" : ":id") + ");";
 	}
 
 	/***********************/

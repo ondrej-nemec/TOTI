@@ -5,8 +5,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import ji.querybuilder.enums.Join;
-
 public class MySqlInstanceTest extends AbstractInstanceTest {
 
 	private static final String TRANSACTION_NOT_WORKING_ERROR = "Transaction for structures is not working";
@@ -430,8 +428,9 @@ b->b.delete("table_1", "t1")
 
 	@Override
 	protected String getBatch(boolean create) {
-		return "SELECT " + (create ? "123" : ":id") + ", ':x' as a;"
-				+ " SELECT " + (create ? "123" : ":id") + ", '" + (create ? "1" : ":x") + "' as b;";
+		return "UPDATE table_1 SET name = ':x' WHERE (id > " + (create ? "4" : ":id") + ");"
+			+ " UPDATE table_2 SET name = " + ( create ? "'NAME'" : ":x")
+				+ " WHERE (id > " + (create ? "4" : ":id") + ");";
 	}
 
 	@Override

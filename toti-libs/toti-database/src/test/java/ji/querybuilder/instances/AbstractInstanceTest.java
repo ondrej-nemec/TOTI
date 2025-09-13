@@ -246,6 +246,7 @@ public abstract class AbstractInstanceTest {
 				//	.removeColumnDefault("Column_to_modify_2")
 				//	.setColumnNotNull("Column_to_modify_2")
 				//	.setColumnUnique("Column_to_modify_2")
+					.renameColumn("Column_to_rename", "Renamed_column", ColumnType.integer())
 				),
 				getAlterTable(false)	
 			},
@@ -863,9 +864,9 @@ public abstract class AbstractInstanceTest {
 		test(f(
 			b->b
 			.batch()
-			.addBatch(b.select(":id, ':x' as a"))
-			.addBatch(b.select(":id, ':x' as b").addParameter(":x", 1))
-			.addParameter(":id", 123)
+			.addBatch(b.update("table_1").set("name = ':x'").where("id > :id"))
+			.addBatch(b.update("table_2").set("name = :x").where("id > :id").addParameter(":x", "NAME"))
+			.addParameter(":id", 4)
 		), getBatch(false), getBatch(true), b->b.execute()); // VERIFY ?
 	}
 	

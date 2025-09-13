@@ -41,9 +41,9 @@ public class SqLiteInstanceTest extends AbstractInstanceTest {
 	@Override
 	protected String getCreateTableWithPrimary() {
 		return "CREATE TABLE create_table ("
-			+ "Primary_column_1 INT,"
-			+ " Primary_column_2 INT,"
-			+ " Primary_column_3 INT,"
+			+ "Primary_column_1 INTEGER,"
+			+ " Primary_column_2 INTEGER,"
+			+ " Primary_column_3 INTEGER,"
 			+ " PRIMARY KEY (Primary_column_1, Primary_column_2, Primary_column_3),"
 			+ " CONSTRAINT FK_Primary_column_3 FOREIGN KEY (Primary_column_3) REFERENCES table_for_index(id)"
 		+ ")";
@@ -55,22 +55,22 @@ public class SqLiteInstanceTest extends AbstractInstanceTest {
 			// sqlite support almost nothing in alter table
 			return null;
 		}
-		return "ALTER TABLE table_to_alter ADD COLUMN Add_column_1 INT NOT NULL;"
-		//	+ "ALTER TABLE table_to_alter ADD COLUMN Add_column_2 INT DEFAULT 42 UNIQUE NULL;"
+		return "ALTER TABLE table_to_alter ADD COLUMN Add_column_1 INTEGER NOT NULL;"
+		//	+ "ALTER TABLE table_to_alter ADD COLUMN Add_column_2 INTEGER DEFAULT 42 UNIQUE NULL;"
 			+ "ALTER TABLE table_to_alter DROP COLUMN Column_to_delete;"
 		//	+ "ALTER TABLE table_to_alter MODIFY COLUMN Column_to_modify_1 FLOAT;"
 		//	+ "ALTER TABLE table_to_alter MODIFY COLUMN Column_to_modify_2 FLOAT;"
 		//	+ "ALTER TABLE table_to_alter DROP CONSTRAINT table_to_alter_column_to_modify_1_key;"
 		//	+ "ALTER TABLE table_to_alter ADD CONSTRAINT table_to_alter_column_to_modify_2_key UNIQUE (Column_to_modify_2);"
 			+ "ALTER TABLE table_to_alter"
-			+ " RENAME COLUMN Column_to_rename TO Renamed_column;"
+			+ " RENAME COLUMN Column_to_rename TO Renamed_column"
 		;
 	}
 
 	@Override
 	protected String getAlterTableRenameTable() {
 		return "ALTER TABLE table_to_rename"
-			+ " RENAME TO table_with_another_name;";
+			+ " RENAME TO table_with_another_name";
 	}
 
 	@Override
@@ -217,7 +217,7 @@ public class SqLiteInstanceTest extends AbstractInstanceTest {
 
 	@Override
 	protected boolean useQueryUpdateJoinsAlias() {
-		return true;
+		return false;
 	}
 
 	@Override
@@ -349,8 +349,9 @@ public class SqLiteInstanceTest extends AbstractInstanceTest {
 
 	@Override
 	protected String getBatch(boolean create) {
-		return "SELECT " + (create ? "123" : ":id") + ", ':x' as a;"
-				+ " SELECT " + (create ? "123" : ":id") + ", '" + (create ? "1" : ":x") + "' as b;";
+		return "UPDATE table_1 SET name = ':x' WHERE (id > " + (create ? "4" : ":id") + ");"
+			+ " UPDATE table_2 SET name = " + ( create ? "'NAME'" : ":x")
+				+ " WHERE (id > " + (create ? "4" : ":id") + ");";
 	}
 
 	/***********************/
