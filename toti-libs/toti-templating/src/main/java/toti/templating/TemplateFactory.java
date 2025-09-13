@@ -5,18 +5,15 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
-
-import javax.tools.JavaCompiler;
-import javax.tools.StandardJavaFileManager;
-import javax.tools.ToolProvider;
 
 import org.apache.logging.log4j.Logger;
 import ji.common.exceptions.LogicException;
 import ji.common.functions.FileExtension;
+import ji.common.functions.compiling.Compiler;
 import ji.common.structures.ThrowingFunction;
 import ji.common.structures.Tuple2;
 import toti.templating.parsing.TemplateParser;
@@ -32,7 +29,7 @@ public class TemplateFactory {
 	private final String tempPath;
 	private final boolean deleteAuxJavaClass;
 	private final boolean minimalize;
-	private final JavaCompiler compiler; // = ToolProvider.getSystemJavaCompiler();
+	private final Compiler compiler;
 	private final String templatePath;
 	private final Map<String, TemplateFactory> modules;
 	private final String module;
@@ -77,15 +74,7 @@ public class TemplateFactory {
 		this.module = module;
 		this.modulePath = clear(modulePath);
 		this.logger = logger;
-		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		if (compiler == null) {
-			try {
-				compiler = (JavaCompiler)Class.forName("com.sun.tools.javac.api.JavacTool").getDeclaredConstructor().newInstance();
-			} catch (Exception e) {
-				logger.fatal("Cannot load compiler", e);
-			}
-		}
-		this.compiler = compiler;
+		this.compiler = new Compiler(logger);
 	}
 	
 	private String clear(String modulePath) {
@@ -225,23 +214,23 @@ public class TemplateFactory {
 		file.setWritable(true, false);
 		
 		/*
-		
-		compiler.run(null, null, null, file.getPath()); // streamy, kam se zapisuje
-		
-		/*/
-		
 		//System.err.println(System.getProperty("java.class.path"));
 		TemplateDiagnostic diagnostic = new TemplateDiagnostic(namespace, templateFile);
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostic, null, null);
 		List<String> optionList = new ArrayList<String>();
 		optionList.addAll(Arrays.asList("-classpath", System.getProperty("java.class.path")));
 		compiler.getTask(diagnostic, null, diagnostic, optionList, null, fileManager.getJavaFileObjects(file)).call();
+		
 		if (diagnostic.isError()) {
 			throw new TemplateException(diagnostic.getError());
 		//	System.err.println(diagnostic.getError());
 		//	throw new TemplateException("Some unknow syntax error in " + templateFile);
 		}
-		
+		/*/
+		Optional<String> res = compiler.compile(file, namespace, templateFile);
+		if (res.isPresent()) {
+			throw new TemplateException(res.get());
+		}
 		//*/
 		File auxFile = new File(javaTempFile.replace("java", "class"));
 		auxFile.setExecutable(true, false);
