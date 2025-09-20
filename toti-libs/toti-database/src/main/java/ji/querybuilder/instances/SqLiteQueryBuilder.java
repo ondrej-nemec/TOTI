@@ -39,9 +39,9 @@ import ji.querybuilder.structures.SubSelect;
 public class SqLiteQueryBuilder implements DbInstance {
 
 	@Override
-	public String concat(String param, String... params) {
+	public String concat(String param1, String param2, String... params) {
 		StringBuilder builder = new StringBuilder("CONCAT(");
-		builder.append(param);
+		builder.append(param1 + ", " + param2);
 		for (String p : params) {
 			builder.append(", ");
 			builder.append(p);

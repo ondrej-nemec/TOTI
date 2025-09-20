@@ -23,7 +23,7 @@ import ji.querybuilder.enums.ColumnType;
 public class DerbyQueryBuilder implements DbInstance {
 
 	@Override
-	public String concat(String param, String... params) {
+	public String concat(String param1, String param2, String... params) {
 		// TODO Auto-generated method stub
 		return null;
 	}

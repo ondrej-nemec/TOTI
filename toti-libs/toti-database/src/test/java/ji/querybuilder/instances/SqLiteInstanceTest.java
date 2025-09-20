@@ -14,7 +14,7 @@ public class SqLiteInstanceTest extends AbstractInstanceTest {
 	}
 
 	@Override
-	protected String getCreateTable() {
+	protected String getCreateTable(boolean withRestrict) {
 		return "CREATE TABLE create_table ("
 			+ "Primary_column INTEGER NOT NULL," // AUTOINCREMENT
 			+ " Unique_column INTEGER UNIQUE,"

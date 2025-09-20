@@ -70,43 +70,54 @@ public abstract class AbstractInstanceTest {
 	
 	@ParameterizedTest
 	@MethodSource("dataFunctions")
-	public void testFunctions(Function<QueryBuilder, SelectBuilder> create, String expected) throws Exception {
+	public void testFunctions(String message, Function<QueryBuilder, SelectBuilder> create, String expected) throws Exception {
 		test(create, expected, expected, b->b.fetchAll());
 	}
 	
 	public Object[] dataFunctions() {
 		return new Object[] {
 			new Object[] {
-				f(b->b.select(f->f.concat("'", "name", "'")).from("table_for_functions")), getFunctions_concat()
+				"Concat",
+				f(b->b.select(f->f.concat("'\"'", "name", "'\"'")).from("table_for_functions")), getFunctions_concat()
 			},
 			new Object[] {
+				"Group concat",
 				f(b->b.select(f->f.groupConcat("name", ",")).from("table_for_functions").groupBy("name")), getFunctions_groupConcat()
 			},
 			new Object[] {
+				"Group concat over",
 				f(b->b.select(f->f.groupConcat("name", ",", "id")).from("table_for_functions").groupBy("name")), getFunctions_groupConcatOrderBy()
 			},
 			new Object[] {
+				"Cast",
 				f(b->b.select(f->f.cast("id", ColumnType.floatType())).from("table_for_functions")), getFunctions_cast()
 			},
 			new Object[] {
+				"Max",
 				f(b->b.select(f->f.max("id")).from("table_for_functions")), getFunctions_max()
 			},
 			new Object[] {
+				"Min",
 				f(b->b.select(f->f.min("id")).from("table_for_functions")), getFunctions_min()
 			},
 			new Object[] {
+				"Avg",
 				f(b->b.select(f->f.avg("id")).from("table_for_functions")), getFunctions_avg()
 			},
 			new Object[] {
+				"sum",
 				f(b->b.select(f->f.sum("id")).from("table_for_functions")), getFunctions_sum()
 			},
 			new Object[] {
+				"Count",
 				f(b->b.select(f->f.count("id")).from("table_for_functions")), getFunctions_count()
 			},
 			new Object[] {
+				"Lower",
 				f(b->b.select(f->f.lower("name")).from("table_for_functions")), getFunctions_lower()
 			},
 			new Object[] {
+				"Upper",
 				f(b->b.select(f->f.upper("name")).from("table_for_functions")), getFunctions_upper()
 			}
 		};
@@ -138,13 +149,14 @@ public abstract class AbstractInstanceTest {
 	
 	@ParameterizedTest
 	@MethodSource("dataCreateTable")
-	public void testCreateTable(Function<QueryBuilder, CreateTableBuilder> create, String getSql) throws Exception {
+	public void testCreateTable(String message, Function<QueryBuilder, CreateTableBuilder> create, String getSql) throws Exception {
 		test(create, getSql, b->b.execute()); // VERIFY ?
 	}
 	
 	public Object[] dataCreateTable() {
 		return new Object[] {
 			new Object[] {
+				"Full",
 				f(b->b.createTable("create_table")
 					.addColumn("Primary_column", ColumnType.integer(), ColumnSetting.PRIMARY_KEY, ColumnSetting.AUTO_INCREMENT, ColumnSetting.NOT_NULL)
 					.addColumn("Unique_column", ColumnType.integer(), ColumnSetting.UNIQUE)
@@ -168,9 +180,37 @@ public abstract class AbstractInstanceTest {
 					.addForeignKey("FK_column_3", "table_for_index", "id", OnAction.RESTRICT, OnAction.SET_DEFAULT)
 					.addForeignKey("FK_column_4", "table_for_index", "id", OnAction.SET_NULL, null)
 				),
-				getCreateTable()
+				getCreateTable(true)
 			},
 			new Object[] {
+				"Without restrict",
+				f(b->b.createTable("create_table")
+					.addColumn("Primary_column", ColumnType.integer(), ColumnSetting.PRIMARY_KEY, ColumnSetting.AUTO_INCREMENT, ColumnSetting.NOT_NULL)
+					.addColumn("Unique_column", ColumnType.integer(), ColumnSetting.UNIQUE)
+					.addColumn("Nullable_column", ColumnType.integer(), 42, ColumnSetting.NULL)
+					
+					.addColumn("Bool_column", ColumnType.bool())
+					.addColumn("Float_column", ColumnType.floatType())
+					.addColumn("Double_column", ColumnType.doubleType())
+					.addColumn("Char_column", ColumnType.charType(1))
+					.addColumn("Text_column", ColumnType.text())
+					.addColumn("String_column", ColumnType.string(10))
+					.addColumn("DateTime_column", ColumnType.datetime())
+
+					.addColumn("FK_column_1", ColumnType.integer())
+					.addColumn("FK_column_2", ColumnType.integer())
+					.addColumn("FK_column_3", ColumnType.integer())
+					.addColumn("FK_column_4", ColumnType.integer())
+					
+					.addForeignKey("FK_column_1", "table_for_index", "id")
+					.addForeignKey("FK_column_2", "table_for_index", "id", OnAction.CASCADE, OnAction.NO_ACTION)
+					.addForeignKey("FK_column_3", "table_for_index", "id", OnAction.SET_NULL, OnAction.SET_DEFAULT)
+					.addForeignKey("FK_column_4", "table_for_index", "id", OnAction.SET_NULL, null)
+				),
+				getCreateTable(false)
+			},
+			new Object[] {
+				"Multiple primary",
 				f(b->b.createTable("create_table")
 					.addColumn("Primary_column_1", ColumnType.integer())
 					.addColumn("Primary_column_2", ColumnType.integer())
@@ -183,13 +223,13 @@ public abstract class AbstractInstanceTest {
 		};
 	}
 
-	protected abstract String getCreateTable();
+	protected abstract String getCreateTable(boolean withRestrict);
 
 	protected abstract String getCreateTableWithPrimary();
 	
 	@ParameterizedTest
 	@MethodSource("dataAlterTable")
-	public void testAlterTable(Function<QueryBuilder, AlterTableBuilder> create, String getSql) throws Exception {
+	public void testAlterTable(String message, Function<QueryBuilder, AlterTableBuilder> create, String getSql) throws Exception {
 		test(create, getSql, b->b.execute()); // VERIFY ?
 		
 	}
@@ -197,6 +237,7 @@ public abstract class AbstractInstanceTest {
 	public Object[] dataAlterTable() {
 		return new Object[] {
 			new Object[] {
+				"All",
 				f(
 					b->b.alterTable("table_to_alter")
 					.addColumn("Add_column_1", ColumnType.integer(), ColumnSetting.NOT_NULL)
@@ -220,6 +261,7 @@ public abstract class AbstractInstanceTest {
 				getAlterTable(true)	
 			},
 			new Object[] {
+				"Rename table",
 				f(
 					b->b.alterTable("table_to_rename")
 					.renameTable("table_with_another_name")
@@ -227,6 +269,7 @@ public abstract class AbstractInstanceTest {
 				getAlterTableRenameTable()	
 			},
 			new Object[] {
+				"Simplified",
 				// changes supported by sqlite 
 				f(
 					b->b.alterTable("table_to_alter")
@@ -667,13 +710,14 @@ public abstract class AbstractInstanceTest {
 
 	@ParameterizedTest
 	@MethodSource("dataQuerySelect")
-	public void testQuerySelect(Function<QueryBuilder, SelectBuilder> alter, String getSql, String createSql) throws Exception {
+	public void testQuerySelect(String message, Function<QueryBuilder, SelectBuilder> alter, String getSql, String createSql) throws Exception {
 		test(alter, getSql, createSql, b->b.fetchAll()); // VERIFY?
 	}
 	
 	public Object[] dataQuerySelect() {
 		return new Object[] {
 			new Object[] {
+				"From string",
 				f(b->b
 					.select("id, name, typ")
 					.from("table_1")
@@ -682,6 +726,7 @@ public abstract class AbstractInstanceTest {
 				getQuerySelect_fromString(true)
 			},
 			new Object[] {
+				"From string alias",
 				f(b->b
 					.select("id, name, typ")
 					.from("table_1", "a")
@@ -690,6 +735,7 @@ public abstract class AbstractInstanceTest {
 				getQuerySelect_fromStringAlias(true)
 			},
 			new Object[] {
+				"From select",
 				f(b->b
 					.select("A")
 					.from(
@@ -701,6 +747,7 @@ public abstract class AbstractInstanceTest {
 				getQuerySelect_fromSelect(true)
 			},
 			new Object[] {
+				"Multi select",
 				f(b->b
 					.select("A")
 					.from(
@@ -713,6 +760,7 @@ public abstract class AbstractInstanceTest {
 				getQuerySelect_fromMultiSelect(true)
 			},
 			new Object[] {
+				"With",
 				f(b->b
 					.with("cte", b.select("42 as a"))
 					.with("cte2", b.select("42 as a"))
@@ -723,6 +771,7 @@ public abstract class AbstractInstanceTest {
 				getQuerySelect_with(true)
 			},
 			new Object[] {
+				"With Recursive",
 				// this is recursive
 				f(b->b
 					.with(
@@ -738,6 +787,7 @@ public abstract class AbstractInstanceTest {
 				getQuerySelect_withRecursive(true)
 			},
 			new Object[] {
+				"Full",
 				f(b->b
 					.select("t1.id")
 					.select("t1.name")

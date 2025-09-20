@@ -12,7 +12,7 @@ public class PostgresSqlInstanceTest extends AbstractInstanceTest {
 	}
 
 	@Override
-	protected String getCreateTable() {
+	protected String getCreateTable(boolean withRestrict) {
 		return "CREATE TABLE create_table ("
 			+ "Primary_column SERIAL NOT NULL,"
 			+ " Unique_column INT UNIQUE,"

@@ -14,7 +14,7 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 	}
 
 	@Override
-	protected String getCreateTable() {
+	protected String getCreateTable(boolean withRestrict) {
 		return TRANSACTION_NOT_WORKING_ERROR;
 		/*
 		return "CREATE TABLE create_table ("
@@ -319,22 +319,6 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 
 	@Override
 	protected String getQueryDeleteJoins(boolean create) {
-		/*
-		DELETE posts
-FROM posts
-INNER JOIN projects ON projects.project_id = posts.project_id
-WHERE projects.client_id = :client_id
-
-b->b.delete("table_1", "t1")
-					.join("table_2", Join.INNER_JOIN, "t1.id = table_2.id")
-					.join("table_3", "t3", Join.LEFT_OUTER_JOIN, "t1.id = t3.id")
-					.join(b.select("*").from("table_4"), "st4", Join.RIGHT_OUTER_JOIN, "t3.id = st4.id")
-					.join("table_5", Join.INNER_JOIN, f->"t1.id = table_5.id")
-					.join("table_6", "t6", Join.LEFT_OUTER_JOIN, f->"t1.id = t6.id")
-					.join(b.select("*").from("table_7"), "st7", Join.RIGHT_OUTER_JOIN, f->"t1.id = st7.id")
-					
-					.where("st7.id = 1")
-		*/
 		return "DELETE t1"
 			+ " FROM table_1 AS t1"
 			+ " JOIN table_2 ON t1.id = table_2.id"

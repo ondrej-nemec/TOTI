@@ -12,12 +12,16 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 	}
 
 	@Override
-	protected String getCreateTable() {
+	protected String getCreateTable(boolean withRestrict) {
+		if (withRestrict) {
+			return null; // restrict not supported
+		}
+		// TODO vice table for index
 		return "CREATE TABLE create_table ("
-			+ "Primary_column SERIAL NOT NULL,"
+			+ "Primary_column INT IDENTITY(1, 1) NOT NULL,"
 			+ " Unique_column INT UNIQUE,"
 			+ " Nullable_column INT DEFAULT 42 NULL,"
-			+ " Bool_column BOOLEAN,"
+			+ " Bool_column BIT,"
 			+ " Float_column FLOAT,"
 			+ " Double_column FLOAT,"
 			+ " Char_column CHAR(1),"
@@ -31,7 +35,7 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 			+ " PRIMARY KEY (Primary_column),"
 			+ " CONSTRAINT FK_FK_column_1 FOREIGN KEY (FK_column_1) REFERENCES table_for_index(id),"
 			+ " CONSTRAINT FK_FK_column_2 FOREIGN KEY (FK_column_2) REFERENCES table_for_index(id) ON DELETE CASCADE ON UPDATE NO ACTION,"
-			+ " CONSTRAINT FK_FK_column_3 FOREIGN KEY (FK_column_3) REFERENCES table_for_index(id) ON DELETE RESTRICT ON UPDATE SET DEFAULT,"
+			+ " CONSTRAINT FK_FK_column_3 FOREIGN KEY (FK_column_3) REFERENCES table_for_index(id) ON DELETE NO ACTION ON UPDATE SET DEFAULT,"
 			+ " CONSTRAINT FK_FK_column_4 FOREIGN KEY (FK_column_4) REFERENCES table_for_index(id) ON DELETE SET NULL"
 		+ ")";
 	}
@@ -49,8 +53,20 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 
 	@Override
 	protected String getAlterTable(boolean full) {
+		if (!full) {
+			return "ALTER TABLE table_to_alter"
+				+ " ADD Add_column_1 INT NOT NULL,"
+				+ " DROP COLUMN Column_to_delete;"
+				+ "ALTER TABLE table_to_alter"
+				+ " RENAME COLUMN Column_to_rename TO Renamed_column";
+		}
 		return "ALTER TABLE table_to_alter"
 			+ " ADD Add_column_1 INT NOT NULL,"
+			+ " ADD Add_column_2 INT DEFAULT 42 UNIQUE NULL,"
+			+ " ADD CONSTRAINT FK_Add_column_1 FOREIGN KEY (Add_column_1) REFERENCES table_for_index(id),"
+			+ " ADD CONSTRAINT FK_Add_column_2 FOREIGN KEY (Add_column_2)"
+				+ " REFERENCES table_for_index(id) ON DELETE CASCADE ON UPDATE NO ACTION,"
+			+ " DROP CONSTRAINT FK_to_delete,"
 			+ " DROP COLUMN Column_to_delete,"
 
 			+ " ALTER COLUMN Column_to_modify_1 TYPE FLOAT,"
@@ -60,9 +76,13 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 			+ " ALTER COLUMN Column_to_modify_2 DROP DEFAULT,"
 			
 			+ " ALTER COLUMN Column_to_modify_1 DROP NOT NULL,"
-			+ " ALTER COLUMN Column_to_modify_2 SET NOT NULL;"
+			+ " ALTER COLUMN Column_to_modify_2 SET NOT NULL,"
+			
+			+ " DROP CONSTRAINT table_to_alter_column_to_modify_1_key," //  UNIQUE (Column_to_modify_1)
+			+ " ADD CONSTRAINT table_to_alter_column_to_modify_2_key UNIQUE (Column_to_modify_2);"
 			+ "ALTER TABLE table_to_alter"
-			+ " RENAME COLUMN Column_to_rename TO Renamed_column"
+		
+			+ "EXEC sp_rename 'table_to_alter.Column_to_rename', 'Renamed_column', 'COLUMN'"
 			;
 		/*return "ALTER TABLE table_to_alter"
 			+ " ADD Add_column_2 INT DEFAULT 42 UNIQUE NULL,"
@@ -77,8 +97,7 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 
 	@Override
 	protected String getAlterTableRenameTable() {
-		return "ALTER TABLE table_to_rename"
-			+ " RENAME TO table_with_another_name";
+		return "EXEC sp_rename 'table_to_rename', 'table_with_another_name'";
 	}
 
 	@Override
@@ -128,27 +147,27 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 					: " HAVING :a != :b AND MAX(t1.id) < :max_id"
 			)
 			+ " ORDER BY t1.id, MAX(t1.id)"
-			+ " LIMIT 10 OFFSET 15";
+			+ " OFFSET 15 ROWS FETCH NEXT 10 ROWS ONLY";
 	}
 
 	@Override
 	protected String getAlterView_fromString(boolean create) {
-		return "DROP VIEW view_to_alter; CREATE VIEW view_to_alter AS SELECT id FROM table_1";
+		return "ALTER VIEW view_to_alter AS SELECT id FROM table_1";
 	}
 
 	@Override
 	protected String getAlterView_fromStringAlias(boolean create) {
-		return "DROP VIEW view_to_alter; CREATE VIEW view_to_alter AS SELECT id FROM table_1 AS a";
+		return "ALTER VIEW view_to_alter AS SELECT id FROM table_1 AS a";
 	}
 
 	@Override
 	protected String getAlterView_fromSelect(boolean create) {
-		return "DROP VIEW view_to_alter; CREATE VIEW view_to_alter AS SELECT A FROM (SELECT 1 AS A) AS a";
+		return "ALTER VIEW view_to_alter AS SELECT A FROM (SELECT 1 AS A) AS a";
 	}
 
 	@Override
 	protected String getAlterView_fromMultiSelect(boolean create) {
-		return "DROP VIEW view_to_alter; CREATE VIEW view_to_alter AS"
+		return "ALTER VIEW view_to_alter AS"
 			+ " SELECT A"
 			+ " FROM ("
 				+ "SELECT 1 AS A"
@@ -159,7 +178,7 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 
 	@Override
 	protected String getAlterView(boolean create) {
-		return "DROP VIEW view_to_alter; CREATE VIEW view_to_alter AS"
+		return "ALTER VIEW view_to_alter AS"
 			+ " SELECT t1.id, t1.name, MAX(t1.id) as max_id"
 			+ " FROM table_1 AS t1"
 			
@@ -179,7 +198,7 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 					: " HAVING :a != :b AND MAX(t1.id) < :max_id"
 			)
 			+ " ORDER BY t1.id, MAX(t1.id)"
-			+ " LIMIT 10 OFFSET 15";
+			+ " OFFSET 15 ROWS FETCH NEXT 10 ROWS ONLY";
 	}
 
 	@Override
@@ -206,13 +225,20 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 	protected String getQueryInsertFromSelect(boolean create) {
 		return "WITH cte AS (SELECT id, name FROM table_2 WHERE (id = 2)),"
 			+ " cte2 AS (SELECT id, name FROM table_2 WHERE (id = 2))"
-			+ "INSERT INTO table_1 (id, name, typ)"
+			+ " INSERT INTO table_1 (id, name, typ)"
 			+ " SELECT id, name, " + (create ? "'X'" : ":type") + " FROM cte";
 	}
 
 	@Override
 	protected String getQueryInsertOverrideAI() {
-		return "INSERT INTO table_ai (id, name, typ) VALUES (123, 'Item 123', 'X')";
+		return "SET IDENTITY_INSERT table_ai ON;"
+			+ "INSERT INTO table_ai (id, name, typ) VALUES (123, 'Item 123', 'X');"
+			+ "SET IDENTITY_INSERT table_ai OFF;"
+			//+ "DBCC CHECKIDENT ('table_ai', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_ai))"
+			+"DECLARE @nextId INT;"
+			+ "SELECT @nextId = ISNULL(MAX(id), 0) FROM table_ai;"
+			+ "DBCC CHECKIDENT ('table_ai', RESEED, @nextId)"
+			;
 	}
 
 	@Override
@@ -231,7 +257,7 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 	@Override
 	protected String getQueryUpdateJoins(boolean create) {
 		return "UPDATE t1"
-			+ " SET name = " + (create ? "123" : ":value") + ", typ = UPPER('x')"
+			+ " SET t1.name = " + (create ? "123" : ":value") + ", t1.typ = UPPER('x')"
 			+ " FROM table_1 AS t1"
 			+ " JOIN table_2 ON table_2.id = t1.id"
 			+ " LEFT JOIN table_3 AS t3 ON table_2.id = t3.id"
@@ -255,24 +281,30 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 	@Override
 	protected String getQueryDeleteBasic(boolean create) {
 		String id = create ? "1" : ":id";
-		return "DELETE FROM table_1"
+		return "DELETE table_1 FROM table_1"
 			+ " WHERE (id = " + id + ") OR (id = " + id + ") AND (id = " + id + ") OR (id = " + id + ")";
 	}
 
 	@Override
 	protected String getQueryDeleteJoins(boolean create) {
-		return "DELETE FROM table_1 AS t1"
-			+ " USING table_2, table_3 AS t3, (SELECT * FROM table_4) AS st4, table_5, table_6 AS t6, (SELECT * FROM table_7) AS st7"
-			+ " WHERE (t1.id = table_2.id) AND (t1.id = t3.id) AND (t3.id = st4.id)"
-			+ " AND (t1.id = table_5.id) AND (t1.id = t6.id) AND (t1.id = st7.id)"
-			+ " AND (st7.id = 1)";
+		return "DELETE t1"
+			+ " FROM table_1 AS t1"
+			+ " JOIN table_2 ON t1.id = table_2.id"
+			+ " LEFT JOIN table_3 AS t3 ON t1.id = t3.id"
+			+ " RIGHT JOIN (SELECT * FROM table_4) AS st4 ON t3.id = st4.id"
+			+ " JOIN table_5 ON t1.id = table_5.id"
+			+ " LEFT JOIN table_6 AS t6 ON t1.id = t6.id"
+			+ " RIGHT JOIN (SELECT * FROM table_7) AS st7 ON t1.id = st7.id"
+			+ " WHERE (st7.id = 1)";
 	}
 
 	@Override
 	protected String getQueryDeleteWith(boolean create) {
 		return "WITH cte AS (SELECT 1 as id),"
 			+ " cte2 AS (SELECT 1 as id)"
-			+ "DELETE FROM table_1 AS t1 USING cte WHERE (cte.id = t1.id)";
+			+ " DELETE t1"
+			+ " FROM table_1 AS t1"
+			+ " JOIN cte ON cte.id = t1.id";
 	}
 
 	@Override
@@ -348,8 +380,9 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 
 	@Override
 	protected String getBatch(boolean create) {
-		return "SELECT " + (create ? "123" : ":id") + ", ':x' as a;"
-				+ " SELECT " + (create ? "123" : ":id") + ", '" + (create ? "1" : ":x") + "' as b;";
+		return "UPDATE table_1 SET name = ':x' WHERE (id > " + (create ? "4" : ":id") + ");"
+			+ " UPDATE table_2 SET name = " + ( create ? "'NAME'" : ":x")
+				+ " WHERE (id > " + (create ? "4" : ":id") + ");";
 	}
 
 	@Override
@@ -366,7 +399,7 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 	
 	@Override
 	protected String getFunctions_concat() {
-		return "SELECT CONCAT(', name, ') FROM table_for_functions";
+		return "SELECT CONCAT('\"', name, '\"') FROM table_for_functions";
 	}
 
 	@Override
@@ -376,7 +409,7 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 
 	@Override
 	protected String getFunctions_groupConcatOrderBy() {
-		return "SELECT STRING_AGG(name, ',' ORDER BY id) FROM table_for_functions GROUP BY name";
+		return "SELECT STRING_AGG(name, ',') WITHIN GROUP (ORDER BY id) FROM table_for_functions GROUP BY name";
 	}
 
 	@Override
@@ -422,7 +455,7 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 	@Override
 	protected Connection getConnection() throws SQLException {
 		Properties props = new Properties();
-		props.setProperty("user", "root");
+		props.setProperty("user", "sa");
 		props.setProperty("password", PASSWORD);
 		props.setProperty("serverTimezone", "Europe/Prague");
 		props.setProperty("create", "true");

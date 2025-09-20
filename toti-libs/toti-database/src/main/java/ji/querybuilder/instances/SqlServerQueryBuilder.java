@@ -40,9 +40,9 @@ import ji.querybuilder.structures.SubSelect;
 public class SqlServerQueryBuilder implements DbInstance {
 
 	@Override
-	public String concat(String param, String... params) {
+	public String concat(String param1, String param2, String... params) {
 		StringBuilder builder = new StringBuilder("CONCAT(");
-		builder.append(param);
+		builder.append(param1 + ", " + param2);
 		for (String p : params) {
 			builder.append(", ");
 			builder.append(p);
@@ -64,8 +64,8 @@ public class SqlServerQueryBuilder implements DbInstance {
 	@Override
 	public String groupConcat(String param, String delimeter, String orderBy) {
 		return String.format(
-			"STRING_AGG(%s, '%s'%s)",
-			param, delimeter, orderBy == null ? "" : " ORDER BY" + orderBy
+			"STRING_AGG(%s, '%s')%s",
+			param, delimeter, orderBy == null ? "" : " WITHIN GROUP (ORDER BY " + orderBy + ")"
 		);
 	}
 	
@@ -140,18 +140,11 @@ public class SqlServerQueryBuilder implements DbInstance {
 
 	@Override
 	public List<String> createSql(InsertBuilderImpl insert, boolean create) {
-		StringBuilder sql = new StringBuilder();
+		List<String> result = new LinkedList<>();
 		if (insert.getIdName().isPresent()) {
-			/*
-SET IDENTITY_INSERT table_name ON;
-
-INSERT INTO table_name (id, col1, col2)
-VALUES (123, 'foo', 'bar');
-
-SET IDENTITY_INSERT table_name OFF;
-DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_name));
-			*/
+			result.add("SET IDENTITY_INSERT " + insert.getTable() + " ON");
 		}
+		StringBuilder sql = new StringBuilder();
 		createWith(insert.getWiths(), sql, create);
 		sql.append("INSERT INTO " + getWithAlias(insert.getTable(), insert.getAlias()) + " ");
 		if (insert.getValues().isEmpty()) {
@@ -181,7 +174,26 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 			sql.append(" VALUES ");
 			sql.append(values);
 		}
-		return Arrays.asList(sql.toString());
+		result.add(sql.toString());
+		if (insert.getIdName().isPresent()) {
+			result.add("SET IDENTITY_INSERT " + insert.getTable() + " OFF");
+			result.add(String.format(
+				"DECLARE @nextId INT;"
+				+ "SELECT @nextId = ISNULL(MAX(%s), 0) FROM %s;"
+				+ "DBCC CHECKIDENT ('%s', RESEED, @nextId)",
+				insert.getIdName().get(), insert.getTable(), insert.getTable()
+			));
+			/*result.add(String.format(
+				"DBCC CHECKIDENT ('%s', RESEED, (SELECT ISNULL(MAX(%s), 0) FROM %s))",
+				insert.getTable(), insert.getIdName().get(), insert.getTable()
+			));*/
+			/*
+
+SET IDENTITY_INSERT table_name OFF;
+DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_name));
+			*/
+		}
+		return result;
 	}
 
 	@Override
@@ -189,7 +201,11 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 		StringBuilder sql = new StringBuilder();
 		createWith(updateBuilder.getWiths(), sql, create);
 		sql.append("UPDATE ");
-		sql.append(getWithAlias(updateBuilder.getTable(), updateBuilder.getAlias()));
+		if (updateBuilder.getJoins().isEmpty()) {
+			sql.append(updateBuilder.getTable());
+		} else {
+			sql.append(updateBuilder.getAlias() == null ? updateBuilder.getTable() : updateBuilder.getAlias());
+		}
 		ObjectBuilder<Boolean> firstSet = new ObjectBuilder<>(true);
 		updateBuilder.getSets().forEach(set->{
 			if (firstSet.get()) {
@@ -200,22 +216,15 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 			}
 			sql.append(set);
 		});
-		LinkedList<Tuple2<String, Where>> wheres = new LinkedList<>(updateBuilder.getWheres());
-		ObjectBuilder<Boolean> firstJoin = new ObjectBuilder<>(true);
+		if (!updateBuilder.getJoins().isEmpty()) {
+			sql.append(" FROM ");
+			sql.append(getWithAlias(updateBuilder.getTable(), updateBuilder.getAlias()));
+			
+		}
 		updateBuilder.getJoins().forEach(join->{
-			if (firstJoin.get()) {
-				firstJoin.set(false);
-				sql.append(" FROM ");
-				sql.append(getWithAlias(
-					create ? join.getBuilder().createSql() : join.getBuilder().getSql(),
-					join.getAlias()
-				));
-				wheres.addFirst(new Tuple2<>(join.getOn(), null));
-			} else {
-				createJoin(join, sql, create);
-			}
+			createJoin(join, sql, create);
 		});
-		createWhere(wheres, sql, create);
+		createWhere(updateBuilder.getWheres(), sql, create);
 		return sql.toString();
 	}
 
@@ -223,35 +232,17 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 	public String createSql(DeleteBuilderImpl delete, boolean create) {
 		StringBuilder sql = new StringBuilder();
 		createWith(delete.getWiths(), sql, create);
-		sql.append("DELETE FROM " + getWithAlias(delete.getTable(), delete.getAlias()));
+		sql.append("DELETE " + (delete.getAlias() == null ? delete.getTable() : delete.getAlias()));
+		sql.append(" FROM " + getWithAlias(delete.getTable(), delete.getAlias()));
 		
 		StringBuilder joins = new StringBuilder();
 		StringBuilder wheres = new StringBuilder();
+
 		delete.getJoins().forEach(join->{
-			if (joins.isEmpty()) {
-				joins.append(" USING ");
-				wheres.append(" WHERE");
-			} else {
-				joins.append(", ");
-				wheres.append(" AND");
-			}
-			joins.append(getWithAlias(
-				String.format(
-					join.getBuilder().wrap() ? "(%s)" : "%s",
-					create ? join.getBuilder().createSql() : join.getBuilder().getSql()
-				),
-				join.getAlias()
-			));
-			wheres.append(" (" + join.getOn() + ")");
+			createJoin(join, sql, create);
 		});
-		delete.getWheres().forEach((where)->{
-			if (wheres.isEmpty()) {
-				wheres.append(" WHERE ");
-			} else {
-				wheres.append(" " + where._2().toString() + " ");
-			}
-			wheres.append("(" + where._1() + ")");
-		});
+		createWhere(delete.getWheres(), sql, create);
+		
 		sql.append(joins.toString());
 		sql.append(wheres.toString());
 		return sql.toString();
@@ -290,15 +281,15 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 	@Override
 	public String createSql(AlterViewBuilderImpl alterView, boolean create) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("DROP VIEW " + alterView.getView() + "; ");
-		sql.append("CREATE VIEW " + alterView.getView() + " AS ");
+		// sql.append("DROP VIEW " + alterView.getView() + "; ");
+		sql.append("ALTER VIEW " + alterView.getView() + " AS ");
 		createPlainSelect(alterView, sql, create);
 		return sql.toString();
 	}
 
 	@Override
 	public String createSql(DeleteViewBuilderImpl deleteView) {
-		return "DROP VIEW " + deleteView.getView();
+		return "DROP VIEW IF EXISTS " + deleteView.getView();
 	}
 
 	@Override
@@ -445,7 +436,8 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 
 	protected String toString(OnAction action) {
 		switch (action) {
-			case RESTRICT: return "RESTRICT";
+			case RESTRICT: throw new RuntimeException("SQL server not support RESTRICT");
+				//return "RESTRICT";
 			case CASCADE: return "CASCADE";
 			case SET_NULL: return "SET NULL";
 			case NO_ACTION: return "NO ACTION";
