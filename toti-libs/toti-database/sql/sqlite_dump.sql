@@ -8,6 +8,10 @@ create table table_to_rename (
 
 create table table_for_index (
 	id INTEGER PRIMARY KEY,
+	id1 int,
+	id2 int,
+	id3 int,
+	id4 int,
 	name varchar(10)
 );
 create index index_to_delete ON table_for_index(id);

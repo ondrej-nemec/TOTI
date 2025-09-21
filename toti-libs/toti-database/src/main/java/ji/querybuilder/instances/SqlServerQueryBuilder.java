@@ -436,7 +436,7 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 
 	protected String toString(OnAction action) {
 		switch (action) {
-			case RESTRICT: throw new RuntimeException("SQL server not support RESTRICT");
+			case RESTRICT: throw new RuntimeException("Not supported operation");
 				//return "RESTRICT";
 			case CASCADE: return "CASCADE";
 			case SET_NULL: return "SET NULL";

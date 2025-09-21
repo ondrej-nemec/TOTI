@@ -33,10 +33,10 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 			+ " FK_column_3 INT,"
 			+ " FK_column_4 INT,"
 			+ " PRIMARY KEY (Primary_column),"
-			+ " CONSTRAINT FK_FK_column_1 FOREIGN KEY (FK_column_1) REFERENCES table_for_index(id),"
-			+ " CONSTRAINT FK_FK_column_2 FOREIGN KEY (FK_column_2) REFERENCES table_for_index(id) ON DELETE CASCADE ON UPDATE NO ACTION,"
-			+ " CONSTRAINT FK_FK_column_3 FOREIGN KEY (FK_column_3) REFERENCES table_for_index(id) ON DELETE NO ACTION ON UPDATE SET DEFAULT,"
-			+ " CONSTRAINT FK_FK_column_4 FOREIGN KEY (FK_column_4) REFERENCES table_for_index(id) ON DELETE SET NULL"
+			+ " CONSTRAINT FK_FK_column_1 FOREIGN KEY (FK_column_1) REFERENCES table_for_index(id1),"
+			+ " CONSTRAINT FK_FK_column_2 FOREIGN KEY (FK_column_2) REFERENCES table_for_index(id2) ON DELETE CASCADE ON UPDATE NO ACTION,"
+			+ " CONSTRAINT FK_FK_column_3 FOREIGN KEY (FK_column_3) REFERENCES table_for_index(id3) ON DELETE NO ACTION ON UPDATE SET DEFAULT,"
+			+ " CONSTRAINT FK_FK_column_4 FOREIGN KEY (FK_column_4) REFERENCES table_for_index(id4) ON DELETE SET NULL"
 		+ ")";
 	}
 
@@ -55,32 +55,47 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 	protected String getAlterTable(boolean full) {
 		if (!full) {
 			return "ALTER TABLE table_to_alter"
-				+ " ADD Add_column_1 INT NOT NULL,"
-				+ " DROP COLUMN Column_to_delete;"
+				+ " ADD Add_column_1 INT NOT NULL;"
 				+ "ALTER TABLE table_to_alter"
-				+ " RENAME COLUMN Column_to_rename TO Renamed_column";
+				+ " DROP COLUMN Column_to_delete;"
+				+ "EXEC sp_rename 'table_to_alter.Column_to_rename', 'Renamed_column', 'COLUMN'";
 		}
 		return "ALTER TABLE table_to_alter"
 			+ " ADD Add_column_1 INT NOT NULL,"
-			+ " ADD Add_column_2 INT DEFAULT 42 UNIQUE NULL,"
-			+ " ADD CONSTRAINT FK_Add_column_1 FOREIGN KEY (Add_column_1) REFERENCES table_for_index(id),"
-			+ " ADD CONSTRAINT FK_Add_column_2 FOREIGN KEY (Add_column_2)"
-				+ " REFERENCES table_for_index(id) ON DELETE CASCADE ON UPDATE NO ACTION,"
-			+ " DROP CONSTRAINT FK_to_delete,"
-			+ " DROP COLUMN Column_to_delete,"
+			+ " Add_column_2 INT DEFAULT 42 UNIQUE NULL;"
 
-			+ " ALTER COLUMN Column_to_modify_1 TYPE FLOAT,"
-			+ " ALTER COLUMN Column_to_modify_2 TYPE FLOAT,"
-			
-			+ " ALTER COLUMN Column_to_modify_1 SET DEFAULT 5,"
-			+ " ALTER COLUMN Column_to_modify_2 DROP DEFAULT,"
-			
-			+ " ALTER COLUMN Column_to_modify_1 DROP NOT NULL,"
-			+ " ALTER COLUMN Column_to_modify_2 SET NOT NULL,"
-			
-			+ " DROP CONSTRAINT table_to_alter_column_to_modify_1_key," //  UNIQUE (Column_to_modify_1)
-			+ " ADD CONSTRAINT table_to_alter_column_to_modify_2_key UNIQUE (Column_to_modify_2);"
 			+ "ALTER TABLE table_to_alter"
+			+ " ALTER COLUMN Column_to_modify_1 FLOAT;"
+
+			+ "ALTER TABLE table_to_alter"
+			+ " ALTER COLUMN Column_to_modify_2 FLOAT;"
+			
+			// add default
+			+ "ALTER TABLE table_to_alter"
+			+ " ADD CONSTRAINT DF_table_to_alter_Column_to_modify_1 DEFAULT 5 FOR Column_to_modify_1;"
+			
+			// remove default
+			+ "ALTER TABLE table_to_alter"
+			+ " DROP CONSTRAINT DF_table_to_alter_Column_to_modify_2;"
+			
+			+ "ALTER TABLE table_to_alter"
+			+ " ALTER COLUMN Column_to_modify_1 INT NOT NULL;"
+			
+			+ "ALTER TABLE table_to_alter"
+			+ " ALTER COLUMN Column_to_modify_2 INT NOT NULL;"
+			
+			+ "ALTER TABLE table_to_alter"
+			+ " ADD CONSTRAINT FK_Add_column_1 FOREIGN KEY (Add_column_1) REFERENCES table_for_index(id),"
+			+ " CONSTRAINT FK_Add_column_2 FOREIGN KEY (Add_column_2)"
+				+ " REFERENCES table_for_index(id) ON DELETE CASCADE ON UPDATE NO ACTION,"
+			+ " CONSTRAINT table_to_alter_column_to_modify_2_key UNIQUE (Column_to_modify_2);"
+			
+			+ "ALTER TABLE table_to_alter"
+			+ " DROP COLUMN Column_to_delete;"
+			
+			+ "ALTER TABLE table_to_alter"
+			+ " DROP CONSTRAINT FK_to_delete,"
+			+ " CONSTRAINT table_to_alter_column_to_modify_1_key;" //  UNIQUE (Column_to_modify_1)
 		
 			+ "EXEC sp_rename 'table_to_alter.Column_to_rename', 'Renamed_column', 'COLUMN'"
 			;

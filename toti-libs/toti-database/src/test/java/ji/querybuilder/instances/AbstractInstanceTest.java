@@ -175,10 +175,10 @@ public abstract class AbstractInstanceTest {
 					.addColumn("FK_column_3", ColumnType.integer())
 					.addColumn("FK_column_4", ColumnType.integer())
 					
-					.addForeignKey("FK_column_1", "table_for_index", "id")
-					.addForeignKey("FK_column_2", "table_for_index", "id", OnAction.CASCADE, OnAction.NO_ACTION)
-					.addForeignKey("FK_column_3", "table_for_index", "id", OnAction.RESTRICT, OnAction.SET_DEFAULT)
-					.addForeignKey("FK_column_4", "table_for_index", "id", OnAction.SET_NULL, null)
+					.addForeignKey("FK_column_1", "table_for_index", "id1")
+					.addForeignKey("FK_column_2", "table_for_index", "id2", OnAction.CASCADE, OnAction.NO_ACTION)
+					.addForeignKey("FK_column_3", "table_for_index", "id3", OnAction.RESTRICT, OnAction.SET_DEFAULT)
+					.addForeignKey("FK_column_4", "table_for_index", "id4", OnAction.SET_NULL, null)
 				),
 				getCreateTable(true)
 			},
@@ -202,10 +202,10 @@ public abstract class AbstractInstanceTest {
 					.addColumn("FK_column_3", ColumnType.integer())
 					.addColumn("FK_column_4", ColumnType.integer())
 					
-					.addForeignKey("FK_column_1", "table_for_index", "id")
-					.addForeignKey("FK_column_2", "table_for_index", "id", OnAction.CASCADE, OnAction.NO_ACTION)
-					.addForeignKey("FK_column_3", "table_for_index", "id", OnAction.SET_NULL, OnAction.SET_DEFAULT)
-					.addForeignKey("FK_column_4", "table_for_index", "id", OnAction.SET_NULL, null)
+					.addForeignKey("FK_column_1", "table_for_index", "id1")
+					.addForeignKey("FK_column_2", "table_for_index", "id2", OnAction.CASCADE, OnAction.NO_ACTION)
+					.addForeignKey("FK_column_3", "table_for_index", "id3", OnAction.SET_NULL, OnAction.SET_DEFAULT)
+					.addForeignKey("FK_column_4", "table_for_index", "id4", OnAction.SET_NULL, null)
 				),
 				getCreateTable(false)
 			},

@@ -29,10 +29,11 @@ public class PostgresSqlInstanceTest extends AbstractInstanceTest {
 			+ " FK_column_3 INT,"
 			+ " FK_column_4 INT,"
 			+ " PRIMARY KEY (Primary_column),"
-			+ " CONSTRAINT FK_FK_column_1 FOREIGN KEY (FK_column_1) REFERENCES table_for_index(id),"
-			+ " CONSTRAINT FK_FK_column_2 FOREIGN KEY (FK_column_2) REFERENCES table_for_index(id) ON DELETE CASCADE ON UPDATE NO ACTION,"
-			+ " CONSTRAINT FK_FK_column_3 FOREIGN KEY (FK_column_3) REFERENCES table_for_index(id) ON DELETE RESTRICT ON UPDATE SET DEFAULT,"
-			+ " CONSTRAINT FK_FK_column_4 FOREIGN KEY (FK_column_4) REFERENCES table_for_index(id) ON DELETE SET NULL"
+			+ " CONSTRAINT FK_FK_column_1 FOREIGN KEY (FK_column_1) REFERENCES table_for_index(id1),"
+			+ " CONSTRAINT FK_FK_column_2 FOREIGN KEY (FK_column_2) REFERENCES table_for_index(id2) ON DELETE CASCADE ON UPDATE NO ACTION,"
+			+ " CONSTRAINT FK_FK_column_3 FOREIGN KEY (FK_column_3) REFERENCES table_for_index(id3)"
+				+ " ON DELETE " + (withRestrict ? "RESTRICT" : "SET NULL") + " ON UPDATE SET DEFAULT,"
+			+ " CONSTRAINT FK_FK_column_4 FOREIGN KEY (FK_column_4) REFERENCES table_for_index(id4) ON DELETE SET NULL"
 		+ ")";
 	}
 
@@ -363,7 +364,7 @@ public class PostgresSqlInstanceTest extends AbstractInstanceTest {
 	
 	@Override
 	protected String getFunctions_concat() {
-		return "SELECT CONCAT(', name, ') FROM table_for_functions";
+		return "SELECT CONCAT('\"', name, '\"') FROM table_for_functions";
 	}
 
 	@Override

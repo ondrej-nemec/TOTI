@@ -8,7 +8,7 @@ public interface Functions {
 	 * Param(s) must be column name or escaped value - you can use parameters
 	 * @return
 	 */
-	String concat(String param, String ...params);
+	String concat(String param1, String param2, String ...params);
 	
 	default String groupConcat(String param, String delimeter) {
 		return groupConcat(param, delimeter, null);
