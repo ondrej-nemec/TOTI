@@ -5,13 +5,14 @@ public class ColumnType {
 	public enum Type {
 		BOOLEAN,
 		INT,
+		FLOAT,
+		CHAR,
 		STRING,
 		TEXT,
-		DATETIME,
-		DATE,
 		TIME,
-		CHAR,
-		FLOAT
+		DATE,
+		DATETIME,
+		DATETIME_ZONED
 	}
 
 	public static ColumnType bool() {
@@ -42,8 +43,24 @@ public class ColumnType {
 		return new ColumnType(Type.STRING, size);
 	}
 	
+	public static ColumnType time() {
+		return time(0);
+	}
+	
+	public static ColumnType time(int size) {
+		return new ColumnType(Type.TIME, size);
+	}
+	
+	public static ColumnType date() {
+		return new ColumnType(Type.DATE);
+	}
+	
 	public static ColumnType datetime() {
 		return new ColumnType(Type.DATETIME);
+	}
+	
+	public static ColumnType datetimeZoned() {
+		return new ColumnType(Type.DATETIME_ZONED);
 	}
 	
 	private int size;

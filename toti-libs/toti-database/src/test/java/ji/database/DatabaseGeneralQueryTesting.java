@@ -11,6 +11,7 @@ import ji.common.Log4j2LoggerTestImpl;
 import ji.querybuilder.builders.SelectBuilder;
 import ji.querybuilder.enums.ColumnType;
 
+@Deprecated
 public class DatabaseGeneralQueryTesting {
 
 	public static void main(String[] args) throws SQLException {

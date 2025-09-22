@@ -1,9 +1,9 @@
 package ji.querybuilder.instances;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
+
+import ji.database.Connections;
 
 public class PostgresSqlInstanceTest extends AbstractInstanceTest {
 
@@ -426,15 +426,10 @@ public class PostgresSqlInstanceTest extends AbstractInstanceTest {
 	protected String getCallProcedureVoid() {
 		return "{? = call procedure_void('some', ?, 123, ?, false)}";
 	}
+
 	@Override
-	protected Connection getConnection() throws SQLException {
-		Properties props = new Properties();
-		props.setProperty("user", "postgres");
-		props.setProperty("password", PASSWORD);
-		props.setProperty("serverTimezone", "Europe/Prague");
-		props.setProperty("allowMultiQueries", "true");
-		// return DriverManager.getConnection("jdbc:postgresql://postgres:5432/query_builder", props);
-		return DriverManager.getConnection("jdbc:postgresql://localhost:19060/query_builder", props);
+	protected Connection getConnection(Connections connections) throws SQLException {
+		return connections.postgres();
 	}
 	
 }

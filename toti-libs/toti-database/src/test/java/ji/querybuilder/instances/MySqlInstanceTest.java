@@ -1,9 +1,9 @@
 package ji.querybuilder.instances;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
+
+import ji.database.Connections;
 
 public class MySqlInstanceTest extends AbstractInstanceTest {
 
@@ -485,15 +485,8 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 	}
 
 	@Override
-	protected Connection getConnection() throws SQLException {
-		Properties props = new Properties();
-		props.setProperty("user", "root");
-		props.setProperty("password", PASSWORD);
-		props.setProperty("serverTimezone", "Europe/Prague");
-		props.setProperty("create", "true");
-		props.setProperty("allowMultiQueries", "true");
-	//	return DriverManager.getConnection("jdbc:mysql://mysql:3306/query_builder", props);
-		return DriverManager.getConnection("jdbc:mysql://localhost:19070/query_builder", props);
+	protected Connection getConnection(Connections connections) throws SQLException {
+		return connections.mysql();
 	}
 
 }

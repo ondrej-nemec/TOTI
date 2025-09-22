@@ -1,3 +1,10 @@
+create table escape_table (
+	col_time time,
+	col_date date,
+	col_datetime timestamp,
+	col_datetime_zoned timestamptz
+);
+
 create table table_to_delete (
 	id INTEGER
 );

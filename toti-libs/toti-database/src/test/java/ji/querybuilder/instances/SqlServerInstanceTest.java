@@ -1,9 +1,9 @@
 package ji.querybuilder.instances;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
+
+import ji.database.Connections;
 
 public class SqlServerInstanceTest extends AbstractInstanceTest {
 
@@ -468,14 +468,7 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 	}
 
 	@Override
-	protected Connection getConnection() throws SQLException {
-		Properties props = new Properties();
-		props.setProperty("user", "sa");
-		props.setProperty("password", PASSWORD);
-		props.setProperty("serverTimezone", "Europe/Prague");
-		props.setProperty("create", "true");
-		props.setProperty("allowMultiQueries", "true");
-		//return DriverManager.getConnection("jdbc:sqlserver://sqlserver:1434;databaseName=query_builder", props);
-		return DriverManager.getConnection("jdbc:sqlserver://localhost:19050;databaseName=query_builder", props);
+	protected Connection getConnection(Connections connections) throws SQLException {
+		return connections.sqlserver();
 	}
 }

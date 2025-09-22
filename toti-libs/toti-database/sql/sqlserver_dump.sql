@@ -4,6 +4,13 @@ GO
 
 USE query_builder;
 
+create table escape_table (
+	col_time time(6),
+	col_date date,
+	col_datetime datetime2,
+	col_datetime_zoned datetimeoffset
+);
+
 create table table_to_delete (
 	id int
 );

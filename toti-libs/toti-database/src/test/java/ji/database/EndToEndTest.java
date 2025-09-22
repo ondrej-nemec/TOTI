@@ -28,8 +28,6 @@ public class EndToEndTest {
 	
 	private final String pathToDb;
 	
-	private final boolean isExternalServer;
-	
 	private final String username;
 	
 	private final String password;
@@ -39,7 +37,6 @@ public class EndToEndTest {
 		this.pathToDb = pathToDb;
 		this.username = username;
 		this.password = password;
-		this.isExternalServer = isExternalServer;
 	}
 
 	//@Parameters

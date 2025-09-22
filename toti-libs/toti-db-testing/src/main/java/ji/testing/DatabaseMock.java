@@ -77,6 +77,11 @@ public class DatabaseMock extends Database {
 		};
 	}
 	
+	@Override
+	public Connection getConnection() throws SQLException {
+		return connection;
+	}
+	
 	protected void rollback() throws SQLException {
 		connection.rollback();
 		//pool.close();

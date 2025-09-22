@@ -7,6 +7,7 @@ import java.util.concurrent.Executors;
 
 import ji.common.Log4j2LoggerTestImpl;
 
+@Deprecated
 public class ConnectionPoolEndToEndTest {
 
 	public static void main(String[] args) {

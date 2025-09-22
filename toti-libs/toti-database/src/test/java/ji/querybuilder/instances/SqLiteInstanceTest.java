@@ -1,11 +1,9 @@
 package ji.querybuilder.instances;
 
-import java.io.File;
-import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
+
+import ji.database.Connections;
 
 public class SqLiteInstanceTest extends AbstractInstanceTest {
 
@@ -425,27 +423,8 @@ public class SqLiteInstanceTest extends AbstractInstanceTest {
 	}
 
 	@Override
-	protected Connection getConnection() throws SQLException {
-		return createConnection();
-	}
-	
-	private static Connection createConnection() throws SQLException {
-		Properties props = new Properties();
-		//props.setProperty("user", "root");
-		//props.setProperty("password", "SomeP@ssw0rd");
-		props.setProperty("serverTimezone", "Europe/Prague");
-		props.setProperty("create", "true");
-		props.setProperty("allowMultiQueries", "true");
-		File path = new File("../../volumes/sqlite/query_builder.db");
-		try {
-			return DriverManager.getConnection(
-				"jdbc:sqlite:" + path.getCanonicalPath(),
-				props
-			);
-		} catch (IOException e) {
-			throw new SQLException(e);
-		}
-		//return DriverManager.getConnection("jdbc:sqlite:volumes/sqlite/query_builder.db", props);
+	protected Connection getConnection(Connections connections) throws SQLException {
+		return connections.sqlite();
 	}
 	
 }

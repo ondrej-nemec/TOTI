@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import ji.common.Log4j2LoggerTestImpl;
 
+@Deprecated
 public class DatabaseTransactionTesting {
 
 	public static void main(String[] args) throws SQLException {

@@ -50,10 +50,10 @@ public class Escape {
 			return value.toString();
 		} else if (value instanceof Temporal) {
 			String string = value.toString().replace("T", " ");
-			int index = string.indexOf(".");
+			/*int index = string.indexOf(".");
 			if (index > -1) {
 				string = string.substring(0, index + 4);
-			}
+			}*/
 			return escapeString(string);
 		} else {
 			return escapeString(value.toString());

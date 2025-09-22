@@ -2,6 +2,13 @@ create database query_builder;
 
 USE query_builder;
 
+create table escape_table (
+	col_time time(6),
+	col_date date,
+	col_datetime datetime,
+	col_datetime_zoned datetime
+);
+
 create table table_to_delete (
 	id int
 );

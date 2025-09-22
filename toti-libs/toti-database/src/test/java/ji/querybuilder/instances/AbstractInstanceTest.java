@@ -15,6 +15,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import ji.common.structures.ThrowingConsumer;
+import ji.database.Connections;
 import ji.querybuilder.Builder;
 import ji.querybuilder.DbInstance;
 import ji.querybuilder.QueryBuilder;
@@ -36,12 +37,12 @@ import ji.querybuilder.structures.ProcedureResult;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractInstanceTest {
 	
-	public static final String PASSWORD = "Strong!Passw0rd";
-	
 	private final DbInstance instance;
+	private final Connections connections;
 	
 	public AbstractInstanceTest(DbInstance instance) {
 		this.instance = instance;
+		this.connections = Connections.QUERY_BUILDER();
 	}
 	/*
 	protected static void execInitFile(String file, Connection con) throws Exception {
@@ -168,7 +169,11 @@ public abstract class AbstractInstanceTest {
 					.addColumn("Char_column", ColumnType.charType(1))
 					.addColumn("Text_column", ColumnType.text())
 					.addColumn("String_column", ColumnType.string(10))
+					.addColumn("Time_column", ColumnType.time())
+					.addColumn("Time2_column", ColumnType.time(6))
+					.addColumn("Date_column", ColumnType.date())
 					.addColumn("DateTime_column", ColumnType.datetime())
+					.addColumn("DateTime_Zoned_column", ColumnType.datetimeZoned())
 
 					.addColumn("FK_column_1", ColumnType.integer())
 					.addColumn("FK_column_2", ColumnType.integer())
@@ -196,6 +201,7 @@ public abstract class AbstractInstanceTest {
 					.addColumn("Text_column", ColumnType.text())
 					.addColumn("String_column", ColumnType.string(10))
 					.addColumn("DateTime_column", ColumnType.datetime())
+					.addColumn("DateTime_Zoned_column", ColumnType.datetimeZoned())
 
 					.addColumn("FK_column_1", ColumnType.integer())
 					.addColumn("FK_column_2", ColumnType.integer())
@@ -938,7 +944,7 @@ public abstract class AbstractInstanceTest {
 		if (expectedGet != null && expectedGet.startsWith("ERROR: ")) {
 			fail(expectedGet);
 		}
-		try (Connection connection = getConnection()) {
+		try (Connection connection = getConnection(connections)) {
 			QueryBuilder queryBuilder = new QueryBuilder(instance, connection);
 			B actual = create.apply(queryBuilder);
 			
@@ -975,7 +981,7 @@ public abstract class AbstractInstanceTest {
 		}
 	}
 	
-	protected abstract Connection getConnection() throws SQLException;
+	protected abstract Connection getConnection(Connections connections) throws SQLException;
 
 	private static <B extends Builder> Function<QueryBuilder, B> f(Function<QueryBuilder, B> f) {
 		return f;
