@@ -56,11 +56,19 @@ public class ColumnType {
 	}
 	
 	public static ColumnType datetime() {
-		return new ColumnType(Type.DATETIME);
+		return datetime(6);
+	}
+	
+	public static ColumnType datetime(int size) {
+		return new ColumnType(Type.DATETIME, size);
 	}
 	
 	public static ColumnType datetimeZoned() {
-		return new ColumnType(Type.DATETIME_ZONED);
+		return datetimeZoned(6);
+	}
+	
+	public static ColumnType datetimeZoned(int size) {
+		return new ColumnType(Type.DATETIME_ZONED, size);
 	}
 	
 	private int size;
