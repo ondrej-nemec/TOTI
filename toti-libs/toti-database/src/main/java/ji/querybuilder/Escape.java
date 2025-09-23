@@ -49,11 +49,7 @@ public class Escape {
 		} else if (clazz.isPrimitive() && !(clazz.isAssignableFrom(byte.class) || clazz.isAssignableFrom(char.class))) {
 			return value.toString();
 		} else if (value instanceof Temporal) {
-			String string = value.toString().replace("T", " ");
-			/*int index = string.indexOf(".");
-			if (index > -1) {
-				string = string.substring(0, index + 4);
-			}*/
+			String string = value.toString().replace("[UTC]", " ").replace("T", " ");
 			return escapeString(string);
 		} else {
 			return escapeString(value.toString());
@@ -84,12 +80,12 @@ public class Escape {
 			return LocalDate.parse(value.toString());
 		}
 		if (value instanceof Time) {
-			return LocalTime.parse(value.toString());
+			return LocalTime.parse(getString.get());
 		}
-		if (value instanceof Timestamp) {
+		if (value instanceof Timestamp || value.getClass().getName().equals("microsoft.sql.DateTimeOffset")) {
 			String text = getString.get();
 			text = text.replaceFirst(" ", "T").replaceFirst(" ", "");
-			if (text.contains("+") || StringUtils.countMatches(text, "-") > 3) {
+			if (text.contains("+") || StringUtils.countMatches(text, "-") > 3 || text.contains("Z")) {
 				if (StringUtils.countMatches(text, ":") == 2) {
 					text += ":00";
 				}

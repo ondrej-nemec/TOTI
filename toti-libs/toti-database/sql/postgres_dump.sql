@@ -5,8 +5,8 @@ create database query_builder;
 create table escape_table (
 	col_time time(6),
 	col_date date,
-	col_datetime timestamp,
-	col_datetime_zoned timestamptz
+	col_datetime timestamp(6),
+	col_datetime_zoned timestamptz(6)
 );
 
 create table table_to_delete (

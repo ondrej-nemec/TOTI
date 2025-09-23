@@ -81,16 +81,18 @@ public class EscapeTest {
 		}
 	}
 	
+	// TODO je potreba, aby to spravne ukladalo.
+	// TODO spravne parsovani - vyuzit DictionaryValue
 	public static Object[] dataParseValueWorksWithDateTime() {
 		return new Object[] {
 			new Object[] {
-				Time.valueOf(LocalTime.of(10, 12)), "", LocalTime.of(10, 12)
+				Time.valueOf(LocalTime.of(10, 12)), "10:12", LocalTime.of(10, 12)
 			},
 			new Object[] {
-				Time.valueOf(LocalTime.of(10, 12, 45)), "", LocalTime.of(10, 12, 45)
+				Time.valueOf(LocalTime.of(10, 12, 45)), "10:12:45", LocalTime.of(10, 12, 45)
 			},
 			new Object[] {
-				Time.valueOf(LocalTime.of(10, 12, 45, 123)), "", LocalTime.of(10, 12, 45)
+				Time.valueOf(LocalTime.of(10, 12, 45, 123)), "10:12:45.000123", LocalTime.of(10, 12, 45)
 			},
 			new Object[] {
 				java.sql.Date.valueOf(LocalDate.of(2021, 8, 20)), "", LocalDate.of(2021, 8, 20)
@@ -135,31 +137,30 @@ public class EscapeTest {
 
 	@ParameterizedTest
 	@MethodSource("dataE2E")
-	public void testE2EMysql(String name, Object value, String expectedAsString, Object expectedParsed) throws SQLException {
-		testE2E(()->CONNECTIONS.mysql(), name, value, expectedAsString, expectedParsed);
+	public void testE2EMysql(String name, Object value, Object expectedValue) throws SQLException {
+		testE2E(()->CONNECTIONS.mysql(), name, value, expectedValue);
 	}
 
 	@ParameterizedTest
 	@MethodSource("dataE2E")
-	public void testE2EPostgres(String name, Object value, String expectedAsString, Object expectedParsed) throws SQLException {
-		testE2E(()->CONNECTIONS.postgres(), name, value, expectedAsString, expectedParsed);
+	public void testE2EPostgres(String name, Object value, Object expectedValue) throws SQLException {
+		testE2E(()->CONNECTIONS.postgres(), name, value, expectedValue);
 	}
 
 	@ParameterizedTest
 	@MethodSource("dataE2E")
-	public void testE2ESqlite(String name, Object value, String expectedAsString, Object expectedParsed) throws SQLException {
-		testE2E(()->CONNECTIONS.sqlite(), name, value, expectedAsString, expectedParsed);
+	public void testE2ESqlite(String name, Object value, Object expectedValue) throws SQLException {
+		testE2E(()->CONNECTIONS.sqlite(), name, value, expectedValue);
 	}
 
 	@ParameterizedTest
 	@MethodSource("dataE2E")
-	public void testE2ESqlserver(String name, Object value, String expectedAsString, Object expectedParsed) throws SQLException {
-		testE2E(()->CONNECTIONS.sqlserver(), name, value, expectedAsString, expectedParsed);
+	public void testE2ESqlserver(String name, Object value, Object expectedValue) throws SQLException {
+		testE2E(()->CONNECTIONS.sqlserver(), name, value, expectedValue);
 	}
 
 	private void testE2E(
-		ThrowingSupplier<Connection, SQLException> getConnection, String name, Object value,
-		String expectedAsString, Object expectedParsed
+		ThrowingSupplier<Connection, SQLException> getConnection, String name, Object value, Object expectedValue
 	) throws SQLException {
 		try (Connection con = getConnection.get()) {
 			try {
@@ -168,7 +169,10 @@ public class EscapeTest {
 					stmt.execute(
 						"insert into escape_table (" + name + ") values (" + Escape.escape(value) + ")"
 					);
-				}
+				}/* catch (Exception e) {
+					System.out.println(name + " '" + value + "' " + Escape.escape(value));
+					throw e;
+				}*/
 				try (Statement stmt = con.createStatement(); ResultSet rs = stmt.executeQuery("select " + name + " from escape_table");) {
 					rs.next();
 					
@@ -177,10 +181,12 @@ public class EscapeTest {
 					Object rawValue = rs.getObject(1);
 					//assertValue(expectedRaw, rawValue, "RAW");
 					Object parsedValue = Escape.parseValue(rs, 1);
+					
 					assertValue(
-						value, parsedValue,
+						expectedValue, parsedValue,
 						"String: '" + stringValue + "', Raw: "
 						+ (rawValue == null ? "NULL" : "'" + rawValue + "'" + rawValue.getClass())
+						+ "\n"
 					);
 				}
 			} finally {
@@ -202,72 +208,95 @@ public class EscapeTest {
 	}
 
 	public static Object[] dataE2E() {
-		// TODO pridat sloupce bez nastaveni (6) a zapsat
 		return new Object[] {
 			new Object[] {
-				"col_time", LocalTime.of(10, 12), "10:12:00", ""
+				"col_time", LocalTime.of(10, 12), LocalTime.of(10, 12)
 			},
 			new Object[] {
-				"col_time", LocalTime.of(10, 12, 45), "10:12:45", ""
+				"col_time", LocalTime.of(10, 12, 45), LocalTime.of(10, 12, 45)
 			},
 			new Object[] {
-				"col_time", LocalTime.of(10, 12, 45, 123), "", ""
+				"col_time", LocalTime.of(10, 12, 45, 123), LocalTime.of(10, 12, 45, 0)
 			},
 			new Object[] {
-				"col_time", LocalTime.of(10, 12, 45, 100_000_000), "", ""
+				"col_time", LocalTime.of(10, 12, 45, 123_456), LocalTime.of(10, 12, 45, 123_000)
 			},
 			new Object[] {
-				"col_time", LocalTime.of(10, 12, 45, 821_364_000), "", ""
+				"col_time", LocalTime.of(10, 12, 45, 123_456_444), LocalTime.of(10, 12, 45, 123_456_000)
 			},
 			new Object[] {
-				"col_date", LocalDate.of(2021, 8, 20), "", ""
+				"col_time", LocalTime.of(10, 12, 45, 123_456_789), LocalTime.of(10, 12, 45, 123_457_000)
+			},
+			/*******************************************/
+			new Object[] {
+				"col_date", LocalDate.of(2021, 8, 20), LocalDate.of(2021, 8, 20)
+			},
+			/*******************************************/
+			new Object[] {
+				"col_datetime", LocalDateTime.of(2021, 8, 12, 4, 17), LocalDateTime.of(2021, 8, 12, 4, 17)
 			},
 			new Object[] {
-				"col_datetime", LocalDateTime.of(2021, 8, 12, 4, 17),
-				"", ""
+				"col_datetime", LocalDateTime.of(2021, 8, 12, 4, 17, 22), LocalDateTime.of(2021, 8, 12, 4, 17, 22)
 			},
 			new Object[] {
-				"col_datetime", LocalDateTime.of(2021, 8, 12, 4, 17, 22),
-				"", ""
-			},
-			new Object[] {
-				"col_datetime", LocalDateTime.of(2021, 8, 12, 4, 17, 22, 0),
-				"", ""
-			},
-			new Object[] {
-				"col_datetime",
-				LocalDateTime.of(2021, 8, 12, 4, 17, 22, 4527),
-				"", ""
+				"col_datetime", LocalDateTime.of(2021, 8, 12, 4, 17, 22, 0), LocalDateTime.of(2021, 8, 12, 4, 17, 22, 0)
 			},
 			new Object[] {
 				"col_datetime",
-				LocalDateTime.of(2021, 8, 12, 4, 17, 22, 100000000),
-				"", ""
+				LocalDateTime.of(2021, 8, 12, 4, 17, 22, 123),
+				LocalDateTime.of(2021, 8, 12, 4, 17, 22, 0)
 			},
 			new Object[] {
 				"col_datetime",
-				LocalDateTime.of(2021, 8, 12, 4, 17, 22, 821364000),
-				"", ""
+				LocalDateTime.of(2021, 8, 12, 4, 17, 22, 123_456),
+				LocalDateTime.of(2021, 8, 12, 4, 17, 22, 123_000)
+			},
+			new Object[] {
+				"col_datetime",
+				LocalDateTime.of(2021, 8, 12, 4, 17, 22, 123_456_789),
+				LocalDateTime.of(2021, 8, 12, 4, 17, 22, 123_457_000)
+			},
+			new Object[] {
+				"col_datetime",
+				LocalDateTime.of(2021, 8, 12, 4, 17, 22, 123_456_444),
+				LocalDateTime.of(2021, 8, 12, 4, 17, 22, 123_456_000)
+			},
+			/*******************************************/
+			// database convert to UTF, on select it used database timezone
+			new Object[] {
+				"col_datetime_zoned",
+				ZonedDateTime.of(2021, 8, 12, 4, 17, 22, 0, ZoneId.of("+5")),
+				ZonedDateTime.of(2021, 8, 12, 1, 17, 22, 0, ZoneId.of("+2"))
 			},
 			new Object[] {
 				"col_datetime_zoned",
-				ZonedDateTime.of(2021, 8, 12, 4, 17, 22, 821364000, ZoneId.of("+1")),
-				"", ""
+				ZonedDateTime.of(2021, 8, 12, 4, 17, 22, 123, ZoneId.of("+5")),
+				ZonedDateTime.of(2021, 8, 12, 1, 17, 22, 0, ZoneId.of("+2"))
 			},
 			new Object[] {
 				"col_datetime_zoned",
-				ZonedDateTime.of(2021, 8, 12, 4, 17, 22, 821364000, ZoneId.of("-1")),
-				"", ""
+				ZonedDateTime.of(2021, 8, 12, 4, 17, 22, 123_456_789, ZoneId.of("+5")),
+				ZonedDateTime.of(2021, 8, 12, 4, 17, 22, 123_457_000, ZoneId.of("+5"))
 			},
 			new Object[] {
 				"col_datetime_zoned",
-				ZonedDateTime.of(2021, 8, 12, 4, 17, 22, 821364000, ZoneId.of("UTC")),
-				"", ""
+				ZonedDateTime.of(2021, 8, 12, 4, 17, 22, 123_456_789, ZoneId.of("-5")),
+				ZonedDateTime.of(2021, 8, 12, 4, 17, 22, 123_457_000, ZoneId.of("-5"))
 			},
 			new Object[] {
 				"col_datetime_zoned",
-				ZonedDateTime.of(2021, 8, 12, 4, 17, 22, 821364000, ZoneOffset.UTC),
-				"", ""
+				ZonedDateTime.of(2021, 8, 12, 4, 17, 22, 123_456_789, ZoneId.of("+0")),
+				ZonedDateTime.of(2021, 8, 12, 4, 17, 22, 123_457_000, ZoneId.of("+0"))
+			},
+			new Object[] {
+				"col_datetime_zoned",
+				ZonedDateTime.of(2021, 8, 12, 4, 17, 22, 123_456_789, ZoneId.of("UTC")),
+				ZonedDateTime.of(2021, 8, 12, 4, 17, 22, 123_457_000, ZoneId.of("UTC"))
+			},
+			new Object[] {
+				"col_datetime_zoned",
+				ZonedDateTime.of(2021, 8, 12, 4, 17, 22, 123_456_789, ZoneOffset.UTC),
+				ZonedDateTime.of(2021, 8, 12, 4, 17, 22, 123_457_000, ZoneOffset.UTC)
 			}
 		};
 	}
