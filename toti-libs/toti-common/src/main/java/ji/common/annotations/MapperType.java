@@ -34,14 +34,6 @@ public @interface MapperType {
 	String key() default "";
 	
 	/**
-	 * Define {@link LocalDate}, {@link LocalTime}, {@link LocalDateTime} or {@link ZonedDateTime} format.
-	 * Only for deserialzation.
-	 * 
-	 * @return
-	 */
-	String dateTimeFormat() default "";
-	
-	/**
 	 * If true, parameter will be ignored during serializatin if is null.
 	 * 
 	 * @return
