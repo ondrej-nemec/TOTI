@@ -45,7 +45,6 @@ public class DictionaryValue {
 	};
 	private Function<String, Object> fromStringToListCallback = stringMapping;
 	private Function<String, Object> fromStringToMapCallback = stringMapping;
-	private String dateTimePattern = null;
 	private ZoneId zoneId = ZoneId.systemDefault();
 	private String onlyKey = null;
 	
@@ -77,18 +76,6 @@ public class DictionaryValue {
 	 */
 	public DictionaryValue addMapCallback(Function<String, Object> fromStringToMapCallback) {
 		this.fromStringToMapCallback = fromStringToMapCallback;
-		return this;
-	}
-
-	/**
-	 * Override default pattern for parsing {@link LocalDate}, {@link LocalTime}, {@link LocalDateTime}
-	 *  and {@link ZonedDateTime} from string
-	 * 
-	 * @param dateTimePattern {@link String}
-	 * @return {@link DictionaryValue} self
-	 */
-	public DictionaryValue withDateTimeFormat(String dateTimePattern) {
-		this.dateTimePattern = dateTimePattern;
 		return this;
 	}
 
@@ -440,21 +427,9 @@ public class DictionaryValue {
 	 * @throws ClassCastException if all convert and parse mechanism fails
 	 */
 	public LocalTime getTime() {
-		return getTime(dateTimePattern); // dateTimePattern == null ? "HH:mm:ss" : 
-	}
-
-	/**
-	 * Get value as {@link LocalTime}
-	 * 
-	 * @param pattern {@link String} pattern for parsing from string. Override default or {@link DictionaryValue#withDateTimeFormat}
-	 * @return {@link LocalTime} or null if value is null
-	 * @throws ClassCastException if all convert and parse mechanism fails
-	 */
-	public LocalTime getTime(String pattern) {
 		return getTimestamp(
 			LocalTime.class, 
-			time->LocalTime.from(time),
-			pattern
+			time->LocalTime.from(time)
 		);
 	}
 
@@ -465,21 +440,9 @@ public class DictionaryValue {
 	 * @throws ClassCastException if all convert and parse mechanism fails
 	 */
 	public LocalDate getDate() {
-		return getDate(dateTimePattern); // dateTimePattern == null ? "yyyy-MM-dd" : 
-	}
-
-	/**
-	 * Get value as {@link LocalDate}
-	 * 
-	 * @param pattern {@link String} pattern for parsing from string. Override default or {@link DictionaryValue#withDateTimeFormat}
-	 * @return {@link LocalDate} or null if value is null
-	 * @throws ClassCastException if all convert and parse mechanism fails
-	 */
-	public LocalDate getDate(String pattern) {
 		return getTimestamp(
 			LocalDate.class, 
-			time->LocalDate.from(time),
-			pattern
+			time->LocalDate.from(time)
 		);
 	}
 
@@ -490,21 +453,9 @@ public class DictionaryValue {
 	 * @throws ClassCastException if all convert and parse mechanism fails
 	 */
 	public LocalDateTime getDateTime() {
-		return getDateTime(dateTimePattern); // dateTimePattern == null ? "yyyy-MM-dd'T'HH-mm-ss.SSS" : 
-	}
-
-	/**
-	 * Get value as {@link LocalDateTime}
-	 * 
-	 * @param pattern {@link String} pattern for parsing from string. Override default or {@link DictionaryValue#withDateTimeFormat}
-	 * @return {@link LocalDateTime} or null if value is null
-	 * @throws ClassCastException if all convert and parse mechanism fails
-	 */
-	public LocalDateTime getDateTime(String pattern) {
 		return getTimestamp(
 			LocalDateTime.class, 
-			time->LocalDateTime.from(time),
-			pattern
+			time->LocalDateTime.from(time)
 		);
 	}
 
@@ -515,32 +466,20 @@ public class DictionaryValue {
 	 * @throws ClassCastException if all convert and parse mechanism fails
 	 */
 	public ZonedDateTime getDateTimeZone() {
-		return getDateTimeZone(dateTimePattern); // dateTimePattern == null ? "yyyy-MM-dd'T'HH:mm:ss.SSSXXX" : 
-	}
-
-	/**
-	 * Get value as {@link ZonedDateTime}
-	 * 
-	 * @param pattern {@link String} pattern for parsing from string. Override default or {@link DictionaryValue#withDateTimeFormat}
-	 * @return {@link ZonedDateTime} or null if value is null
-	 * @throws ClassCastException if all convert and parse mechanism fails
-	 */
-	public ZonedDateTime getDateTimeZone(String pattern) {
 		return getTimestamp(
 			ZonedDateTime.class, 
-			time->ZonedDateTime.from(time), 
-			pattern
+			time->ZonedDateTime.from(time)
 		);
 	}
 	
-	private <T> T getTimestamp(Class<T> clazz, Function<TemporalAccessor, T> fromTime, String pattern) {
+	private <T> T getTimestamp(Class<T> clazz, Function<TemporalAccessor, T> fromTime) {
 		return parseValue(
 			clazz,
 			(string)->{
 				if (string.isEmpty()) {
 					return null;
 				}
-				return getTimestampFromString(string, clazz, pattern);
+				return getTimestampFromString(string, clazz);
 			},
 			(object)->{
 				if (Long.class.isInstance(object) || long.class.isInstance(object)) {
@@ -556,7 +495,7 @@ public class DictionaryValue {
 				if (Date.class.isInstance(object)) {
 					return fromTime.apply(Date.class.cast(object).toInstant().atZone(zoneId));
 				}
-				return getTimestampFromString(object.toString(), clazz, pattern);
+				return getTimestampFromString(object.toString(), clazz);
 				// return fromString.apply(object.toString());
 			}
 		);
@@ -578,19 +517,19 @@ public class DictionaryValue {
 		return null;
 	}
 	
-	private <T> TemporalAccessor getTimestampFromString(String stringValue, Class<T> expected, String pattern) {
+	private <T> TemporalAccessor getTimestampFromString(String stringValue, Class<T> expected) {
 		Map<Class<?>, Function<String, TemporalAccessor>> available = new HashMap<>();
 		available.put(LocalTime.class, string->{
-			return LocalTime.parse(string, pattern == null ? DateTimeFormatter.ISO_TIME : DateTimeFormatter.ofPattern(pattern));
+			return LocalTime.parse(string, DateTimeFormatter.ISO_TIME);
 		});
 		available.put(LocalDate.class, string->{
-			return LocalDate.parse(string, pattern == null ? DateTimeFormatter.ISO_DATE : DateTimeFormatter.ofPattern(pattern));
+			return LocalDate.parse(string, DateTimeFormatter.ISO_DATE);
 		});
 		available.put(LocalDateTime.class, (string)->{
-			return LocalDateTime.parse(string, pattern == null ? DateTimeFormatter.ISO_DATE_TIME : DateTimeFormatter.ofPattern(pattern));
+			return LocalDateTime.parse(string, DateTimeFormatter.ISO_DATE_TIME);
 		});
 		available.put(ZonedDateTime.class, (string)->{
-			return ZonedDateTime.parse(string, pattern == null ? DateTimeFormatter.ISO_ZONED_DATE_TIME : DateTimeFormatter.ofPattern(pattern));
+			return ZonedDateTime.parse(string, DateTimeFormatter.ISO_ZONED_DATE_TIME);
 		});
 		RuntimeException result = null;
 		try {

@@ -136,6 +136,14 @@ public class DictionaryValueTest {
 				LocalTime.class, LocalTime.of(12, 45)
 			},
 			new Object[] {
+				"LocalTime from LocalTime string 2", "12:45:35.123456789",
+				LocalTime.class, LocalTime.of(12, 45, 35, 123_456_789)
+			},
+			new Object[] {
+				"LocalTime from LocalTime string 2", "12:45:35.123",
+				LocalTime.class, LocalTime.of(12, 45, 35, 123_000_000)
+			},
+			new Object[] {
 				"LocalTime from LocalDate object", LocalDate.of(2023, 4, 10),
 				LocalTime.class, LocalTime.of(0, 0)
 			},
@@ -230,6 +238,10 @@ public class DictionaryValueTest {
 				ZonedDateTime.class, ZonedDateTime.of(2023, 4, 10, 12, 45, 0, 0, zoneId)
 			},
 			new Object[] {
+				"ZonedDateTime from ZonedDateTime string 3", "2023-04-10 12:45:35.123456789+05:00", 
+				ZonedDateTime.class, ZonedDateTime.of(2023, 4, 10, 12, 45, 35, 123_456_789, ZoneId.of("+5"))
+			},
+			new Object[] {
 				"ZonedDateTime from LocalTime object", LocalTime.of(12, 45),
 				ZonedDateTime.class, ZonedDateTime.of(1970, 1, 1, 12, 45, 0, 0, zoneId)
 			},
@@ -256,6 +268,18 @@ public class DictionaryValueTest {
 			new Object[] {
 				"ZonedDateTime from LocalDateTime string 2", "2023-04-10 12:45:00", 
 				ZonedDateTime.class, ZonedDateTime.of(2023, 4, 10, 12, 45, 0, 0, zoneId)
+			},
+			new Object[] {
+				"ZonedDateTime from ZonedDateTime string Zone 1", "2023-04-10 12:45:35.123456789+00:00", 
+				ZonedDateTime.class, ZonedDateTime.of(2023, 4, 10, 12, 45, 35, 123_456_789, ZoneId.of("Z"))
+			},
+			/*new Object[] {
+				"ZonedDateTime from ZonedDateTime string Zone 2", "2023-04-10 12:45:35.123456789[UTC]", 
+				ZonedDateTime.class, ZonedDateTime.of(2023, 4, 10, 12, 45, 35, 123_456_789, ZoneId.of("UTC"))
+			},*/
+			new Object[] {
+				"ZonedDateTime from ZonedDateTime string Zone 3", "2023-04-10 12:45:35.123456789Z", 
+				ZonedDateTime.class, ZonedDateTime.of(2023, 4, 10, 12, 45, 35, 123_456_789, ZoneId.of("Z"))
 			},
 		};
 	}

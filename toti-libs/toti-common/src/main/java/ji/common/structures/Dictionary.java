@@ -151,16 +151,6 @@ public interface Dictionary<S> {
 	}
 
 	/**
-	 * See {@link DictionaryValue#getTime(String)}
-	 * 
-	 * @param key S identifier
-	 * @return {@link LocalTime} or null
-	 */
-	default LocalTime getTime(S key, String pattern) {
-		return getDictionaryValue(key).getTime(pattern);
-	}
-
-	/**
 	 * See {@link DictionaryValue#getDate()}
 	 * 
 	 * @param key S identifier
@@ -168,16 +158,6 @@ public interface Dictionary<S> {
 	 */
 	default LocalDate getDate(S key) {
 		return getDictionaryValue(key).getDate();
-	}
-
-	/**
-	 * See {@link DictionaryValue#getDate(String)}
-	 * 
-	 * @param key S identifier
-	 * @return {@link LocalDate} or null
-	 */
-	default LocalDate getDate(S key, String pattern) {
-		return getDictionaryValue(key).getDate(pattern);
 	}
 
 	/**
@@ -191,16 +171,6 @@ public interface Dictionary<S> {
 	}
 
 	/**
-	 * See {@link DictionaryValue#getDateTime(String)}
-	 * 
-	 * @param key S identifier
-	 * @return {@link LocalDateTime} or null
-	 */
-	default LocalDateTime getDateTime(S key, String pattern) {
-		return getDictionaryValue(key).getDateTime(pattern);
-	}
-
-	/**
 	 * See {@link DictionaryValue#getDateTimeZone()}
 	 * 
 	 * @param key S identifier
@@ -208,16 +178,6 @@ public interface Dictionary<S> {
 	 */
 	default ZonedDateTime getDateTimeZone(S key) {
 		return getDictionaryValue(key).getDateTimeZone();
-	}
-
-	/**
-	 * See {@link DictionaryValue#getDateTimeZone(String)}
-	 * 
-	 * @param key S identifier
-	 * @return {@link ZonedDateTime} or null
-	 */
-	default ZonedDateTime getDateTimeZone(S key, String pattern) {
-		return getDictionaryValue(key).getDateTimeZone(pattern);
 	}
 
 	/**
