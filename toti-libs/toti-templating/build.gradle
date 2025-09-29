@@ -15,6 +15,7 @@ repositories {
 dependencies {
 	api project(':toti-libs:toti-common')
 	api project(':toti-libs:toti-files')
+	testImplementation(testFixtures(project))
 	
 	// compile files("${System.properties['java.home']}/../lib/tools.jar")
 	// https://mvnrepository.com/artifact/junit/junit
