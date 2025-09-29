@@ -6,6 +6,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.junit.jupiter.api.Assertions;
+
 import ji.common.functions.Implode;
 import ji.common.structures.ThrowingFunction;
 
@@ -30,51 +32,51 @@ public interface TestCase {
 	/**************************/
 
 	default void assertEquals(Map<?, ?> expected, Map<?, ?> actual) {
-		assertEquals(null, expected, actual);
+		assertEquals(expected, actual, null);
 	}
 	
-	default void assertEquals(String message, Map<?, ?> expected, Map<?, ?> actual) {
+	default void assertEquals(Map<?, ?> expected, Map<?, ?> actual, String message) {
 		try {
-			assertEquals(message, expected, actual);
+			Assertions.assertEquals(expected, actual, message);
 		} catch (Error e) {
-			assertEquals(
-				message,
+			Assertions.assertEquals(
 				expected == null ? "NULL" : Implode.implode("\n", ":", expected),
-				actual == null ? "NULL" : Implode.implode("\n", ":", actual)
+				actual == null ? "NULL" : Implode.implode("\n", ":", actual),
+				message
 			);
 			throw e;
 		}
 	}
 	
 	default void assertEquals(Collection<?> expected, Collection<?> actual) {
-		assertEquals(null, expected, actual);
+		assertEquals(expected, actual, null);
 	}
 
-	default void assertEquals(String message, Collection<?> expected, Collection<?> actual) {
+	default void assertEquals(Collection<?> expected, Collection<?> actual, String message) {
 		try {
-			assertEquals(message, expected, actual);
+			Assertions.assertEquals(expected, actual, message);
 		} catch (Error e) {
-			assertEquals(
-				message,
+			Assertions.assertEquals(
 				expected == null ? "NULL" : Implode.implode("\n", expected),
-				actual == null ? "NULL" : Implode.implode("\n", actual)
+				actual == null ? "NULL" : Implode.implode("\n", actual),
+				message
 			);
 			throw e;
 		}
 	}
 
 	default void assertEquals(Object expected, Object actual) {
-		assertEquals(null, expected, actual);
+		assertEquals(expected, actual, null);
 	}
 
-	default void assertEquals(String message, Object expected, Object actual) {
+	default void assertEquals(Object expected, Object actual, String message) {
 		try {
-			assertEquals(message, expected, actual);
+			Assertions.assertEquals(expected, actual, message);
 		} catch (Error e) {
-			assertEquals(
-				message,
+			Assertions.assertEquals(
 				expected == null ? "NULL" : expected.toString(),
-				actual == null ? "NULL" : expected.toString()
+				actual == null ? "NULL" : expected.toString(),
+				message
 			);
 			throw e;
 		}
@@ -83,51 +85,51 @@ public interface TestCase {
 	/*********************************/
 
 	default void assertNotEquals(Map<?, ?> expected, Map<?, ?> actual) {
-		assertNotEquals(null, expected, actual);
+		assertNotEquals(expected, actual, null);
 	}
 	
-	default void assertNotEquals(String message, Map<?, ?> expected, Map<?, ?> actual) {
+	default void assertNotEquals(Map<?, ?> expected, Map<?, ?> actual, String message) {
 		try {
-			assertNotEquals(message, expected, actual);
+			Assertions.assertNotEquals(expected, actual, message);
 		} catch (Error e) {
-			assertNotEquals(
-				message,
+			Assertions.assertNotEquals(
 				expected == null ? "NULL" : Implode.implode("\n", ":", expected),
-				actual == null ? "NULL" : Implode.implode("\n", ":", actual)
+				actual == null ? "NULL" : Implode.implode("\n", ":", actual),
+				message
 			);
 			throw e;
 		}
 	}
 	
 	default void assertNotEquals(Collection<?> expected, Collection<?> actual) {
-		assertEquals(null, expected, actual);
+		assertEquals(expected, actual, null);
 	}
 
-	default void assertNotEquals(String message, Collection<?> expected, Collection<?> actual) {
+	default void assertNotEquals(Collection<?> expected, Collection<?> actual, String message) {
 		try {
-			assertNotEquals(message, expected, actual);
+			Assertions.assertNotEquals(expected, actual, message);
 		} catch (Error e) {
-			assertNotEquals(
-				message,
+			Assertions.assertNotEquals(
 				expected == null ? "NULL" : Implode.implode("\n", expected),
-				actual == null ? "NULL" : Implode.implode("\n", actual)
+				actual == null ? "NULL" : Implode.implode("\n", actual),
+				message
 			);
 			throw e;
 		}
 	}
 
 	default void assertNotEquals(Object expected, Object actual) {
-		assertNotEquals(null, expected, actual);
+		assertNotEquals(expected, actual, null);
 	}
 
-	default void assertNotEquals(String message, Object expected, Object actual) {
+	default void assertNotEquals(Object expected, Object actual, String message) {
 		try {
-			assertNotEquals(message, expected, actual);
+			Assertions.assertNotEquals(expected, actual, message);
 		} catch (Error e) {
-			assertNotEquals(
-				message,
+			Assertions.assertNotEquals(
 				expected == null ? "NULL" : expected.toString(),
-				actual == null ? "NULL" : expected.toString()
+				actual == null ? "NULL" : expected.toString(),
+				message
 			);
 			throw e;
 		}
