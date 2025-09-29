@@ -6,14 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
-
-import org.apache.commons.lang3.StringUtils;
 
 import ji.common.functions.Implode;
 import ji.common.structures.DictionaryValue;
@@ -76,23 +69,17 @@ public class Escape {
 		ThrowingSupplier<String, SQLException> getString
 	) throws SQLException {
 		Object value = getObject.get();
+		if (value == null) {
+			return null;
+		}
 		if (value instanceof Date) {
-			return LocalDate.parse(value.toString());
+			return value.toString();
 		}
 		if (value instanceof Time) {
-			return LocalTime.parse(getString.get());
+			return getString.get();
 		}
 		if (value instanceof Timestamp || value.getClass().getName().equals("microsoft.sql.DateTimeOffset")) {
-			String text = getString.get();
-			text = text.replaceFirst(" ", "T").replaceFirst(" ", "");
-			if (text.contains("+") || StringUtils.countMatches(text, "-") > 3 || text.contains("Z")) {
-				if (StringUtils.countMatches(text, ":") == 2) {
-					text += ":00";
-				}
-				return ZonedDateTime.parse(text, DateTimeFormatter.ISO_ZONED_DATE_TIME);
-			} else {
-				return LocalDateTime.parse(text, DateTimeFormatter.ISO_DATE_TIME);
-			}
+			return getString.get().replaceFirst(" ", "T").replaceFirst(" ", "");
 		}
 		return value;
 	}
