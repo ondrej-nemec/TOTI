@@ -42,7 +42,7 @@ public class Escape {
 		} else if (clazz.isPrimitive() && !(clazz.isAssignableFrom(byte.class) || clazz.isAssignableFrom(char.class))) {
 			return value.toString();
 		} else if (value instanceof Temporal) {
-			String string = value.toString().replace("[UTC]", " ").replace("T", " ");
+			String string = value.toString().replace("[UTC]", "").replace("T", " ").replace("Z", "+00:00");
 			return escapeString(string);
 		} else {
 			return escapeString(value.toString());
@@ -76,12 +76,38 @@ public class Escape {
 			return value.toString();
 		}
 		if (value instanceof Time) {
-			return getString.get();
+			return parseTimeNanos(getString.get());
 		}
 		if (value instanceof Timestamp || value.getClass().getName().equals("microsoft.sql.DateTimeOffset")) {
-			return getString.get().replaceFirst(" ", "T").replaceFirst(" ", "");
+			return parseTimeNanos(getString.get().replaceFirst(" ", "T").replace(" ", ""));
 		}
 		return value;
+	}
+	
+	private static String parseTimeNanos(String origin) {
+		int dotIndex = origin.lastIndexOf(".");
+		int plusIndex = origin.lastIndexOf("+");
+		
+		String base = "";
+		String timeZone = "";
+		String nanos = "";
+		if (dotIndex < 0 && plusIndex < 0) {
+			base = origin;
+		} else if (dotIndex < 0 && plusIndex >= 0) {
+			base = origin.substring(0, plusIndex);
+			timeZone = origin.substring(plusIndex);
+		} else if (dotIndex >= 0 && plusIndex < 0) {
+			base = origin.substring(0, dotIndex);
+			nanos = origin.substring(dotIndex + 1);
+		} else {
+			base = origin.substring(0, dotIndex);
+			timeZone = origin.substring(plusIndex);
+			nanos = origin.substring(dotIndex + 1, plusIndex);
+		}
+		for (int i = nanos.length(); i < 9; i++) {
+			nanos += "0";
+		}
+		return base + "." + nanos + timeZone;
 	}
 	
 }

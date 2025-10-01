@@ -48,15 +48,16 @@ public class EscapeTest {
 			new Object[] { Arrays.asList("a", "b", "c"), "'a','b','c'" },
 			new Object[] { LocalTime.of(14, 47), "'14:47'" },
 			new Object[] { LocalTime.of(14, 47, 22), "'14:47:22'" },
-			new Object[] { LocalTime.of(14, 47, 22, 123), "'14:47:22.000'" },
-			new Object[] { LocalTime.of(14, 47, 22, 123456789), "'14:47:123456'" },
+			new Object[] { LocalTime.of(14, 47, 22, 123), "'14:47:22.000000123'" },
+			new Object[] { LocalTime.of(14, 47, 22, 123456), "'14:47:22.000123456'" },
+			new Object[] { LocalTime.of(14, 47, 22, 123456789), "'14:47:22.123456789'" },
 			new Object[] { LocalDate.of(2025, 9, 22), "'2025-09-22'" },
 			new Object[] { LocalDateTime.of(2021, 10, 23, 19, 18), "'2021-10-23 19:18'" },
-			new Object[] { LocalDateTime.of(2021, 10, 23, 19, 18, 45, 150), "'2021-10-23 19:18:45.000'" },
-			new Object[] { LocalDateTime.of(2021, 10, 23, 19, 18, 45, 123456789), "'2021-10-23 19:18:45.150'" },
+			new Object[] { LocalDateTime.of(2021, 10, 23, 19, 18, 45, 150), "'2021-10-23 19:18:45.000000150'" },
+			new Object[] { LocalDateTime.of(2021, 10, 23, 19, 18, 45, 123456789), "'2021-10-23 19:18:45.123456789'" },
 			new Object[] {
 				ZonedDateTime.of(2021, 10, 23, 19, 18, 45, 123456789, ZoneId.of("+1")),
-				"'2021-10-23 19:18:45.150+01:00'"
+				"'2021-10-23 19:18:45.123456789+01:00'"
 			},
 			new Object[] { "not-escaped", "'not-escaped'" },
 			new Object[] { "single'quote", "'single''quote'" }
@@ -85,39 +86,99 @@ public class EscapeTest {
 			new Object[] { "", "''", "" },
 			new Object[] { "some text", "'some text'", "some text" },
 			new Object[] {
-				Time.valueOf(LocalTime.of(10, 12, 45)), "10:12:45", "10:12:45"
+				Time.valueOf(LocalTime.of(10, 12, 45, 123)), "10:12:45.123456789", "10:12:45.123456789"
+			},
+			new Object[] {
+				Time.valueOf(LocalTime.of(10, 12, 45)), "10:12:45.123456", "10:12:45.000123456"
+			},
+			new Object[] {
+				Time.valueOf(LocalTime.of(10, 12, 0)), "10:12:45.123", "10:12:45.000000123"
+			},
+			new Object[] {
+				Time.valueOf(LocalTime.of(10, 0, 0)), "10:12:45", "10:12:45.000000000"
+			},
+			new Object[] {
+				Time.valueOf(LocalTime.of(10, 0, 0)), "10:12", "10:12"
 			},
 			new Object[] {
 				java.sql.Date.valueOf(LocalDate.of(2021, 8, 20)), "2021-08-20", "2021-08-20"
 			},
 			new Object[] {
-				new Timestamp(0), "2021-08-12 04:17", "2021-08-12 04:17"
+				new Timestamp(0), "2021-08-12 04:17:45.123456789", "2021-08-12T04:17:45.123456789"
+			},
+			new Object[] {
+				new Timestamp(0), "2021-08-12 04:17:45.123456", "2021-08-12T04:17:45.000123456"
+			},
+			new Object[] {
+				new Timestamp(0), "2021-08-12 04:17:45.123", "2021-08-12T04:17:45.000000123"
+			},
+			new Object[] {
+				new Timestamp(0), "2021-08-12 04:17:45", "2021-08-12T04:17:45"
+			},
+			new Object[] {
+				new Timestamp(0), "2021-08-12 04:17", "2021-08-12T04:17"
+			},
+			new Object[] {
+				new Timestamp(0), "2021-08-12 04:17:45.123456789+05:00", "2021-08-12T04:17:45.123456789+05:00"
+			},
+			new Object[] {
+				new Timestamp(0), "2021-08-12 04:17:45.123456", "2021-08-12T04:17:45.000123456+05:00"
+			},
+			new Object[] {
+				new Timestamp(0), "2021-08-12 04:17:45.123", "2021-08-12T04:17:45.000000123+05:00"
+			},
+			new Object[] {
+				new Timestamp(0), "2021-08-12 04:17:45", "2021-08-12T04:17:45+05:00"
+			},
+			new Object[] {
+				new Timestamp(0), "2021-08-12 04:17", "2021-08-12T04:17+05:00"
+			},
+			new Object[] {
+				new Timestamp(0), "2021-08-12 04:17:45.123456789Z", "2021-08-12T04:17:45.123456789+00:00"
+			},
+			new Object[] {
+				new Timestamp(0), "2021-08-12 04:17:45.123456789[UTC]", "2021-08-12T04:17:45.123456789+00:00"
+			},
+			new Object[] {
+				new Timestamp(0), "2021-08-12 04:17:45.123456789Z[UTC]", "2021-08-12T04:17:45.123456789+00:00"
 			}
 		};
 	}
 
 	@ParameterizedTest
 	@MethodSource("dataE2E")
-	public void testE2EMysql(String name, Object value, Object expectedValue) throws SQLException {
-		testE2E(()->CONNECTIONS.mysql(), name, value, expectedValue);
+	public void testE2EMysql(
+		String name, Object value,
+		Object mysql, Object postgres, Object sqlServer, Object sqlite
+	) throws SQLException {
+		testE2E(()->CONNECTIONS.mysql(), name, value, mysql);
 	}
 
 	@ParameterizedTest
 	@MethodSource("dataE2E")
-	public void testE2EPostgres(String name, Object value, Object expectedValue) throws SQLException {
-		testE2E(()->CONNECTIONS.postgres(), name, value, expectedValue);
+	public void testE2EPostgres(
+		String name, Object value,
+		Object mysql, Object postgres, Object sqlServer, Object sqlite
+	) throws SQLException {
+		testE2E(()->CONNECTIONS.postgres(), name, value, postgres);
 	}
 
 	@ParameterizedTest
 	@MethodSource("dataE2E")
-	public void testE2ESqlite(String name, Object value, Object expectedValue) throws SQLException {
-		testE2E(()->CONNECTIONS.sqlite(), name, value, expectedValue);
+	public void testE2ESqlite(
+		String name, Object value,
+		Object mysql, Object postgres, Object sqlServer, Object sqlite
+	) throws SQLException {
+		testE2E(()->CONNECTIONS.sqlite(), name, value, sqlite);
 	}
 
 	@ParameterizedTest
 	@MethodSource("dataE2E")
-	public void testE2ESqlserver(String name, Object value, Object expectedValue) throws SQLException {
-		testE2E(()->CONNECTIONS.sqlserver(), name, value, expectedValue);
+	public void testE2ESqlserver(
+		String name, Object value,
+		Object mysql, Object postgres, Object sqlServer, Object sqlite
+	) throws SQLException {
+		testE2E(()->CONNECTIONS.sqlserver(), name, value, sqlServer);
 	}
 
 	private void testE2E(
@@ -130,10 +191,10 @@ public class EscapeTest {
 					stmt.execute(
 						"insert into escape_table (" + name + ") values (" + Escape.escape(value) + ")"
 					);
-				}/* catch (Exception e) {
+				} catch (Exception e) {
 					System.out.println(name + " '" + value + "' " + Escape.escape(value));
 					throw e;
-				}*/
+				}
 				try (Statement stmt = con.createStatement(); ResultSet rs = stmt.executeQuery("select " + name + " from escape_table");) {
 					rs.next();
 					
@@ -158,46 +219,89 @@ public class EscapeTest {
 
 	public static Object[] dataE2E() {
 		return new Object[] {
-			new Object[] {
-				"col_time", LocalTime.of(10, 12, 45, 123_456_789), "10:12:45.123457"
-				// sqlite 10:12:45.123456789
+			/*new Object[] {
+				"col_time", LocalTime.of(10, 12, 45, 123),
+				"10:12:45.000000000", // mysql
+				"10:12:45.000000000", // postgres
+				"10:12:45.000000000", // sqlServer
+				"10:12:45.000000123" // sqlite
 			},
 			new Object[] {
-				"col_date", LocalDate.of(2021, 8, 20), "2021-08-20"
+				"col_time", LocalTime.of(10, 12, 45, 123_456),
+				"10:12:45.000124000", // mysql
+				"10:12:45.000123000", // postgres
+				"10:12:45.000123000", // sqlServer
+				"10:12:45.000123456" // sqlite
+			},*/
+			new Object[] {
+				"col_time", LocalTime.of(10, 12, 45, 123_456_789),
+				"10:12:45.123457000", // mysql
+				"10:12:45.123457000", // postgres
+				"10:12:45.123457000", // sqlServer
+				"10:12:45.123456789" // sqlite
+			},
+			new Object[] {
+				"col_date", LocalDate.of(2021, 8, 20),
+				"2021-08-20", // mysql
+				"2021-08-20", // postgres
+				"2021-08-20", // sqlServer
+				"2021-08-20" // sqlite
 			},
 			new Object[] {
 				"col_datetime",
 				LocalDateTime.of(2021, 8, 20, 10, 12, 45, 123_456_789),
-				"2021-08-20 10:12:45.123457"
-				// sqlite 2021-08-20 10:12:45.123456789
+				"2021-08-20T10:12:45.123457000", // mysql
+				"2021-08-20T10:12:45.123457000", // postgres
+				"2021-08-20T10:12:45.123457000", // sqlServer
+				"2021-08-20 10:12:45.123456789" // sqlite
+			},
+			/*new Object[] {
+				"col_datetime_zoned",
+				ZonedDateTime.of(2021, 8, 20, 10, 12, 45, 123, ZoneId.of("+5")),
+				"2021-08-20T05:12:45.000000000", // mysql
+				"2021-08-20T07:12:45.000000000+02", // postgres
+				"2021-08-20T10:12:45.000000000+05:00", // sqlServer
+				"2021-08-20 10:12:45.000000123+05:00" // sqlite 
 			},
 			new Object[] {
 				"col_datetime_zoned",
+				ZonedDateTime.of(2021, 8, 20, 10, 12, 45, 123_456, ZoneId.of("+5")),
+				"2021-08-20T05:12:45.000123000", // mysql
+				"2021-08-20T07:12:45.000123000+02", // postgres
+				"2021-08-20T10:12:45.000123000+05:00", // sqlServer
+				"2021-08-20 10:12:45.000123456+05:00" // sqlite 
+			},*/
+			new Object[] {
+				"col_datetime_zoned",
 				ZonedDateTime.of(2021, 8, 20, 10, 12, 45, 123_456_789, ZoneId.of("+5")),
-				"2021-08-20 07:12:45.123457+02"
-				// sqlsrv 2021-08-20 10:12:45.123457 +05:00
-				// sqlite 2021-08-20 10:12:45.123456789+05:00
+				"2021-08-20T05:12:45.123457000", // mysql
+				"2021-08-20T07:12:45.123457000+02", // postgres
+				"2021-08-20T10:12:45.123457000+05:00", // sqlServer
+				"2021-08-20 10:12:45.123456789+05:00" // sqlite 
 			},
 			new Object[] {
 				"col_datetime_zoned",
 				ZonedDateTime.of(2021, 8, 20, 10, 12, 45, 123_456_789, ZoneId.of("+0")),
-				"2021-08-20 12:12:45.123457+02"
-				// sqlsrv 2021-08-20 10:12:45.123457 +00:00
-				// sqlite 2021-08-20 10:12:45.123456789Z
+				"2021-08-20T10:12:45.123457000", // mysql
+				"2021-08-20T12:12:45.123457000+02", // postgres
+				"2021-08-20T10:12:45.123457000+00:00", // sqlServer
+				"2021-08-20 10:12:45.123456789+00:00" // sqlite 
 			},
 			new Object[] {
 				"col_datetime_zoned",
 				ZonedDateTime.of(2021, 8, 20, 10, 12, 45, 123_456_789, ZoneId.of("UTC")),
-				"2021-08-20 12:12:45.123457+02"
-				// sqlsrv 2021-08-20 10:12:45.123457 +00:00
-				// sqlite 2021-08-20 10:12:45.123456789Z
+				"2021-08-20T10:12:45.123457000", // mysql
+				"2021-08-20T12:12:45.123457000+02", // postgres
+				"2021-08-20T10:12:45.123457000+00:00", // sqlServer
+				"2021-08-20 10:12:45.123456789+00:00" // sqlite 
 			},
 			new Object[] {
 				"col_datetime_zoned",
-				ZonedDateTime.of(2021, 8, 12, 10, 12, 45, 123_456_789, ZoneOffset.UTC),
-				"2021-08-20 12:12:45.123457+02"
-				// sqlsrv 2021-08-20 10:12:45.123457 +00:00
-				// sqlite 2021-08-20 10:12:45.123456789Z
+				ZonedDateTime.of(2021, 8, 20, 10, 12, 45, 123_456_789, ZoneOffset.UTC),
+				"2021-08-20T10:12:45.123457000", // mysql
+				"2021-08-20T12:12:45.123457000+02", // postgres
+				"2021-08-20T10:12:45.123457000+00:00", // sqlServer
+				"2021-08-20 10:12:45.123456789+00:00" // sqlite 
 			}
 		};
 	}
