@@ -104,10 +104,13 @@ public class Escape {
 			timeZone = origin.substring(plusIndex);
 			nanos = origin.substring(dotIndex + 1, plusIndex);
 		}
-		for (int i = nanos.length(); i < 9; i++) {
-			nanos += "0";
+		if (dotIndex > 0) {
+			for (int i = nanos.length(); i < 9; i++) {
+				nanos += "0";
+			}
+			nanos = "." + nanos;
 		}
-		return base + "." + nanos + timeZone;
+		return base + nanos + timeZone;
 	}
 	
 }
