@@ -364,8 +364,22 @@ WHERE name = 'table_name';
 				return String.format("VARCHAR(%s)", type.getSize());
 			case CHAR:
 				return String.format("CHAR(%s)", type.getSize());
-			case DATETIME: return "TIMESTAMP";
 			case INT: return "INTEGER";
+			case TIME:
+				if (type.getSize() == null) {
+					return "TIME";
+				}
+				return String.format("TIME(%s)", type.getSize());
+			case DATETIME:
+				if (type.getSize() == null) {
+					return "TIMESTAMP";
+				}
+				return String.format("TIMESTAMP(%s)", type.getSize());
+			case DATETIME_ZONED:
+				if (type.getSize() == null) {
+					return "TIMESTAMPTZ";
+				}
+				return String.format("TIMESTAMPTZ(%s)", type.getSize());
 			default: return type.getType().toString();
 		}
 	}

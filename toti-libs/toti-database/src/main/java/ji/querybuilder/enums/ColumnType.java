@@ -44,7 +44,7 @@ public class ColumnType {
 	}
 	
 	public static ColumnType time() {
-		return time(0);
+		return new ColumnType(Type.TIME, null);
 	}
 	
 	public static ColumnType time(int size) {
@@ -56,7 +56,7 @@ public class ColumnType {
 	}
 	
 	public static ColumnType datetime() {
-		return datetime(6);
+		return new ColumnType(Type.DATETIME);
 	}
 	
 	public static ColumnType datetime(int size) {
@@ -64,14 +64,14 @@ public class ColumnType {
 	}
 	
 	public static ColumnType datetimeZoned() {
-		return datetimeZoned(6);
+		return new ColumnType(Type.DATETIME_ZONED, null);
 	}
 	
 	public static ColumnType datetimeZoned(int size) {
 		return new ColumnType(Type.DATETIME_ZONED, size);
 	}
 	
-	private int size;
+	private Integer size;
 	
 	private final Type type;
 	
@@ -79,7 +79,7 @@ public class ColumnType {
 		this.type = type;
 	}
 	
-	private ColumnType(Type type, int size) {
+	private ColumnType(Type type, Integer size) {
 		this.type = type;
 		this.size = size;
 	}
@@ -88,7 +88,7 @@ public class ColumnType {
 		return type;
 	}
 	
-	public int getSize() {
+	public Integer getSize() {
 		return size;
 	}
 

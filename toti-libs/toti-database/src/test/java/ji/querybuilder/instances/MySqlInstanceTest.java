@@ -1,7 +1,14 @@
 package ji.querybuilder.instances;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 import ji.database.Connections;
 
@@ -27,16 +34,22 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 			+ " Char_column CHAR(1),"
 			+ " Text_column TEXT,"
 			+ " String_column VARCHAR(10),"
+			+ " Time_column TIME,"
+			+ " Time2_column TIME(6),"
+			+ " Date_column DATE,"
 			+ " DateTime_column TIMESTAMP,"
+			+ " DateTime2_column TIMESTAMP(6),"
+			+ " DateTime_Zoned_column TIMESTAMPTZ,"
+			+ " DateTime_Zoned2_column TIMESTAMPTZ(6),"
 			+ " FK_column_1 INT,"
 			+ " FK_column_2 INT,"
 			+ " FK_column_3 INT,"
 			+ " FK_column_4 INT,"
 			+ " PRIMARY KEY (Primary_column),"
-			+ " CONSTRAINT FK_FK_column_1 FOREIGN KEY (FK_column_1) REFERENCES table_for_index(id),"
-			+ " CONSTRAINT FK_FK_column_2 FOREIGN KEY (FK_column_2) REFERENCES table_for_index(id) ON DELETE CASCADE ON UPDATE NO ACTION,"
-			+ " CONSTRAINT FK_FK_column_3 FOREIGN KEY (FK_column_3) REFERENCES table_for_index(id) ON DELETE RESTRICT ON UPDATE SET DEFAULT,"
-			+ " CONSTRAINT FK_FK_column_4 FOREIGN KEY (FK_column_4) REFERENCES table_for_index(id) ON DELETE SET NULL"
+			+ " CONSTRAINT FK_FK_column_1 FOREIGN KEY (FK_column_1) REFERENCES table_for_index_1(id),"
+			+ " CONSTRAINT FK_FK_column_2 FOREIGN KEY (FK_column_2) REFERENCES table_for_index_2(id) ON DELETE CASCADE ON UPDATE NO ACTION,"
+			+ " CONSTRAINT FK_FK_column_3 FOREIGN KEY (FK_column_3) REFERENCES table_for_index_3(id) ON DELETE RESTRICT ON UPDATE SET DEFAULT,"
+			+ " CONSTRAINT FK_FK_column_4 FOREIGN KEY (FK_column_4) REFERENCES table_for_index_4(id) ON DELETE SET NULL"
 		+ ")";
 		*/
 	}
@@ -50,7 +63,7 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 			+ " Primary_column_2 INT,"
 			+ " Primary_column_3 INT,"
 			+ " PRIMARY KEY (Primary_column_1, Primary_column_2, Primary_column_3),"
-			+ " CONSTRAINT FK_Primary_column_3 FOREIGN KEY (Primary_column_3) REFERENCES table_for_index(id)"
+			+ " CONSTRAINT FK_Primary_column_3 FOREIGN KEY (Primary_column_3) REFERENCES table_for_index_1(id)"
 		+ ")";
 		*/
 	}
@@ -62,9 +75,9 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 		return "ALTER TABLE table_to_alter"
 			+ " ADD Add_column_1 INT NOT NULL,"
 			+ " ADD Add_column_2 INT DEFAULT 42 UNIQUE NULL,"
-			+ " ADD CONSTRAINT FK_Add_column_1 FOREIGN KEY (Add_column_1) REFERENCES table_for_index(id),"
+			+ " ADD CONSTRAINT FK_Add_column_1 FOREIGN KEY (Add_column_1) REFERENCES table_for_index_1(id),"
 			+ " ADD CONSTRAINT FK_Add_column_2 FOREIGN KEY (Add_column_2)"
-				+ " REFERENCES table_for_index(id) ON DELETE CASCADE ON UPDATE NO ACTION,"
+				+ " REFERENCES table_for_index_2(id) ON DELETE CASCADE ON UPDATE NO ACTION,"
 			+ " DROP CONSTRAINT FK_to_delete,"
 			+ " DROP COLUMN Column_to_delete,"
 
@@ -239,7 +252,7 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 	protected String getCreateIndex() {
 		return TRANSACTION_NOT_WORKING_ERROR;
 		/*
-		return "CREATE INDEX index_name ON table_for_index(id, name)";
+		return "CREATE INDEX index_name ON table_for_index_1(id, name)";
 		*/
 	}
 
@@ -247,7 +260,7 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 	protected String getDeleteIndex() {
 		return TRANSACTION_NOT_WORKING_ERROR;
 		/*
-		return "DROP INDEX index_to_delete ON table_for_index";
+		return "DROP INDEX index_to_delete ON table_for_index_1";
 		*/
 	}
 
@@ -489,4 +502,38 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 		return connections.mysql();
 	}
 
+	@BeforeAll
+	public static void before() {
+		String sourceDb = Connections.QUERY_BUILDER_TABLE + "_origin";
+		String targetDb = Connections.QUERY_BUILDER_TABLE;
+		
+		try (Connection conn = Connections.mysqlBase()) {
+			try (Statement st1 = conn.createStatement(); Statement st2 = conn.createStatement()) {
+				st1.execute("CREATE DATABASE IF NOT EXISTS " + targetDb);
+				ResultSet rs = st1.executeQuery(
+					"SELECT table_name FROM information_schema.tables WHERE table_schema='" + sourceDb + "'"
+				);
+				while (rs.next()) {
+					String table = rs.getString(1);
+					st2.execute("CREATE TABLE " + targetDb + "." + table + " LIKE " + sourceDb + "." + table);
+					st2.execute("INSERT INTO " + targetDb + "." + table + " SELECT * FROM " + sourceDb + "." + table);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Database clone fails");
+		}
+	}
+	
+	@AfterAll
+	public static void after() {
+		try (Connection conn = Connections.mysqlBase();
+			Statement st = conn.createStatement()) {
+			st.execute("DROP DATABASE " + Connections.QUERY_BUILDER_TABLE);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Database delete fails");
+		}
+	}
+	
 }

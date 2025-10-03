@@ -23,17 +23,23 @@ public class SqLiteInstanceTest extends AbstractInstanceTest {
 			+ " Char_column CHAR(1),"
 			+ " Text_column TEXT,"
 			+ " String_column VARCHAR(10),"
+			+ " Time_column TIME,"
+			+ " Time2_column TIME(6),"
+			+ " Date_column DATE,"
 			+ " DateTime_column TIMESTAMP,"
+			+ " DateTime2_column TIMESTAMP(6),"
+			+ " DateTime_Zoned_column TIMESTAMPTZ,"
+			+ " DateTime_Zoned2_column TIMESTAMPTZ(6),"
 			+ " FK_column_1 INTEGER,"
 			+ " FK_column_2 INTEGER,"
 			+ " FK_column_3 INTEGER,"
 			+ " FK_column_4 INTEGER,"
 			+ " PRIMARY KEY (Primary_column),"
-			+ " CONSTRAINT FK_FK_column_1 FOREIGN KEY (FK_column_1) REFERENCES table_for_index(id1),"
-			+ " CONSTRAINT FK_FK_column_2 FOREIGN KEY (FK_column_2) REFERENCES table_for_index(id2) ON DELETE CASCADE ON UPDATE NO ACTION,"
-			+ " CONSTRAINT FK_FK_column_3 FOREIGN KEY (FK_column_3) REFERENCES table_for_index(id3)"
+			+ " CONSTRAINT FK_FK_column_1 FOREIGN KEY (FK_column_1) REFERENCES table_for_index_1(id),"
+			+ " CONSTRAINT FK_FK_column_2 FOREIGN KEY (FK_column_2) REFERENCES table_for_index_2(id) ON DELETE CASCADE ON UPDATE NO ACTION,"
+			+ " CONSTRAINT FK_FK_column_3 FOREIGN KEY (FK_column_3) REFERENCES table_for_index_3(id)"
 				+ " ON DELETE " + (withRestrict ? "RESTRICT" : "SET NULL") + " ON UPDATE SET DEFAULT,"
-			+ " CONSTRAINT FK_FK_column_4 FOREIGN KEY (FK_column_4) REFERENCES table_for_index(id4) ON DELETE SET NULL"
+			+ " CONSTRAINT FK_FK_column_4 FOREIGN KEY (FK_column_4) REFERENCES table_for_index_4(id) ON DELETE SET NULL"
 		+ ")";
 	}
 
@@ -44,7 +50,7 @@ public class SqLiteInstanceTest extends AbstractInstanceTest {
 			+ " Primary_column_2 INTEGER,"
 			+ " Primary_column_3 INTEGER,"
 			+ " PRIMARY KEY (Primary_column_1, Primary_column_2, Primary_column_3),"
-			+ " CONSTRAINT FK_Primary_column_3 FOREIGN KEY (Primary_column_3) REFERENCES table_for_index(id)"
+			+ " CONSTRAINT FK_Primary_column_3 FOREIGN KEY (Primary_column_3) REFERENCES table_for_index_1(id)"
 		+ ")";
 	}
 
@@ -180,7 +186,7 @@ public class SqLiteInstanceTest extends AbstractInstanceTest {
 
 	@Override
 	protected String getCreateIndex() {
-		return "CREATE INDEX index_name ON table_for_index(id, name)";
+		return "CREATE INDEX index_name ON table_for_index_1(id, name)";
 	}
 
 	@Override

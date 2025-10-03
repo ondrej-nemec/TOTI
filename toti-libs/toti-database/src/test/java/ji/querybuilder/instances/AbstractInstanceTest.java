@@ -2,6 +2,7 @@ package ji.querybuilder.instances;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Function;
@@ -44,30 +45,6 @@ public abstract class AbstractInstanceTest {
 		this.instance = instance;
 		this.connections = Connections.QUERY_BUILDER();
 	}
-	/*
-	protected static void execInitFile(String file, Connection con) throws Exception {
-		try {
-			// try if file was executed
-			con.createStatement().execute("select * from table_for_functions");
-		} catch (SQLException e) {
-			String sqls = Text.get().read(rt->rt.asString(), file);
-			con.setAutoCommit(false);
-			for (String sql : sqls.split(";")) {
-				try (Statement stat = con.createStatement()) {
-					stat.execute(sql);
-				} catch (SQLException ex) {
-					System.err.println(sql);
-					ex.printStackTrace();
-					con.rollback();
-					throw e;
-				}
-			}
-			con.commit();
-		}
-	}
-	*/
-	// TODO improve tests - more for real db
-		// all enums will be tested during queries
 	
 	@ParameterizedTest
 	@MethodSource("dataFunctions")
@@ -173,17 +150,19 @@ public abstract class AbstractInstanceTest {
 					.addColumn("Time2_column", ColumnType.time(6))
 					.addColumn("Date_column", ColumnType.date())
 					.addColumn("DateTime_column", ColumnType.datetime())
+					.addColumn("DateTime2_column", ColumnType.datetime(6))
 					.addColumn("DateTime_Zoned_column", ColumnType.datetimeZoned())
+					.addColumn("DateTime_Zoned2_column", ColumnType.datetimeZoned(6))
 
 					.addColumn("FK_column_1", ColumnType.integer())
 					.addColumn("FK_column_2", ColumnType.integer())
 					.addColumn("FK_column_3", ColumnType.integer())
 					.addColumn("FK_column_4", ColumnType.integer())
 					
-					.addForeignKey("FK_column_1", "table_for_index", "id1")
-					.addForeignKey("FK_column_2", "table_for_index", "id2", OnAction.CASCADE, OnAction.NO_ACTION)
-					.addForeignKey("FK_column_3", "table_for_index", "id3", OnAction.RESTRICT, OnAction.SET_DEFAULT)
-					.addForeignKey("FK_column_4", "table_for_index", "id4", OnAction.SET_NULL, null)
+					.addForeignKey("FK_column_1", "table_for_index_1", "id")
+					.addForeignKey("FK_column_2", "table_for_index_2", "id", OnAction.CASCADE, OnAction.NO_ACTION)
+					.addForeignKey("FK_column_3", "table_for_index_3", "id", OnAction.RESTRICT, OnAction.SET_DEFAULT)
+					.addForeignKey("FK_column_4", "table_for_index_4", "id", OnAction.SET_NULL, null)
 				),
 				getCreateTable(true)
 			},
@@ -200,18 +179,23 @@ public abstract class AbstractInstanceTest {
 					.addColumn("Char_column", ColumnType.charType(1))
 					.addColumn("Text_column", ColumnType.text())
 					.addColumn("String_column", ColumnType.string(10))
+					.addColumn("Time_column", ColumnType.time())
+					.addColumn("Time2_column", ColumnType.time(6))
+					.addColumn("Date_column", ColumnType.date())
 					.addColumn("DateTime_column", ColumnType.datetime())
+					.addColumn("DateTime2_column", ColumnType.datetime(6))
 					.addColumn("DateTime_Zoned_column", ColumnType.datetimeZoned())
+					.addColumn("DateTime_Zoned2_column", ColumnType.datetimeZoned(6))
 
 					.addColumn("FK_column_1", ColumnType.integer())
 					.addColumn("FK_column_2", ColumnType.integer())
 					.addColumn("FK_column_3", ColumnType.integer())
 					.addColumn("FK_column_4", ColumnType.integer())
 					
-					.addForeignKey("FK_column_1", "table_for_index", "id1")
-					.addForeignKey("FK_column_2", "table_for_index", "id2", OnAction.CASCADE, OnAction.NO_ACTION)
-					.addForeignKey("FK_column_3", "table_for_index", "id3", OnAction.SET_NULL, OnAction.SET_DEFAULT)
-					.addForeignKey("FK_column_4", "table_for_index", "id4", OnAction.SET_NULL, null)
+					.addForeignKey("FK_column_1", "table_for_index_1", "id")
+					.addForeignKey("FK_column_2", "table_for_index_2", "id", OnAction.CASCADE, OnAction.NO_ACTION)
+					.addForeignKey("FK_column_3", "table_for_index_3", "id", OnAction.SET_NULL, OnAction.SET_DEFAULT)
+					.addForeignKey("FK_column_4", "table_for_index_4", "id", OnAction.SET_NULL, null)
 				),
 				getCreateTable(false)
 			},
@@ -222,7 +206,7 @@ public abstract class AbstractInstanceTest {
 					.addColumn("Primary_column_2", ColumnType.integer())
 					.addColumn("Primary_column_3", ColumnType.integer())
 					.setPrimaryKey("Primary_column_1", "Primary_column_2", "Primary_column_3")
-					.addForeignKey("Primary_column_3", "table_for_index", "id")
+					.addForeignKey("Primary_column_3", "table_for_index_1", "id")
 				),
 				getCreateTableWithPrimary()
 			}
@@ -248,8 +232,8 @@ public abstract class AbstractInstanceTest {
 					b->b.alterTable("table_to_alter")
 					.addColumn("Add_column_1", ColumnType.integer(), ColumnSetting.NOT_NULL)
 					.addColumn("Add_column_2", ColumnType.integer(), 42, ColumnSetting.UNIQUE, ColumnSetting.NULL)
-					.addForeignKey("Add_column_1", "table_for_index", "id")
-					.addForeignKey("Add_column_2", "table_for_index", "id", OnAction.CASCADE, OnAction.NO_ACTION)
+					.addForeignKey("Add_column_1", "table_for_index_1", "id")
+					.addForeignKey("Add_column_2", "table_for_index_2", "id", OnAction.CASCADE, OnAction.NO_ACTION)
 					.deleteColumn("Column_to_delete")
 					.deleteForeingKey("FK_to_delete")
 					
@@ -519,14 +503,14 @@ public abstract class AbstractInstanceTest {
 
 	@Test
 	public void testCreateIndex() throws Exception {
-		test(b->b.createIndex("index_name", "table_for_index", "id", "name"), getCreateIndex(), b->b.execute()); // VERIFY ?
+		test(b->b.createIndex("index_name", "table_for_index_1", "id", "name"), getCreateIndex(), b->b.execute()); // VERIFY ?
 	}
 	
 	protected abstract String getCreateIndex();
 
 	@Test
 	public void testDeleteIndex() throws Exception {
-		test(b->b.deleteIndex("index_to_delete", "table_for_index"), getDeleteIndex(), b->b.execute()); // VERIFY ?
+		test(b->b.deleteIndex("index_to_delete", "table_for_index_1"), getDeleteIndex(), b->b.execute()); // VERIFY ?
 	}
 	
 	protected abstract String getDeleteIndex();
@@ -958,10 +942,10 @@ public abstract class AbstractInstanceTest {
 
 			// test expected first, then syntax
 			if (!expectedCreate.contains("?")) {
-				try {
-					// check if expected SQL is correct
-					connection.setAutoCommit(false);
-					connection.createStatement().execute(expectedCreate);
+				connection.setAutoCommit(false);
+				// check if expected SQL is correct
+				try (Statement stmt = connection.createStatement()) {
+					stmt.execute(expectedCreate);
 					connection.rollback();
 				} catch(SQLException e) {
 					System.err.println();

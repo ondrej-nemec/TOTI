@@ -414,7 +414,21 @@ public class PostgreSqlQueryBuilder implements DbInstance {
 				return String.format("VARCHAR(%s)", type.getSize());
 			case CHAR:
 				return String.format("CHAR(%s)", type.getSize());
-			case DATETIME: return "TIMESTAMP";
+			case TIME:
+				if (type.getSize() == null) {
+					return "TIME";
+				}
+				return String.format("TIME(%s)", type.getSize());
+			case DATETIME:
+				if (type.getSize() == null) {
+					return "DATETIME2";
+				}
+				return String.format("DATETIME2(%s)", type.getSize());
+			case DATETIME_ZONED:
+				if (type.getSize() == null) {
+					return "TIMESTAMPTZ";
+				}
+				return String.format("TIMESTAMPTZ(%s)", type.getSize());
 			default: return type.getType().toString();
 		}
 	}
@@ -568,14 +582,6 @@ public class PostgreSqlQueryBuilder implements DbInstance {
 	}
 	
 	private void createWith(List<Tuple2<String, SubSelect>> withs, StringBuilder sql, boolean create) {
-		/*withs.forEach((with)->{
-			String subquery = create ? with._2().createSql() : with._2().getSql();
-			boolean isRecursive = subquery.contains(" " + with._1() + " ") || subquery.endsWith(" " + with._1());
-			sql.append(String.format(
-				"WITH" + (isRecursive ? " recursive" : "") + " %s AS (%s)",
-				with._1(), subquery
-			));
-		});*/
 		iterateList(
 			sql,
 			withs,

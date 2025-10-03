@@ -1,6 +1,5 @@
 package ji.querybuilder.instances;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -319,31 +318,34 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 
 	@Override
 	public List<String> createSql(AlterTableBuilderImpl alterTable) {
-		List<String> rows = new LinkedList<>();
-		List<String> constains = new LinkedList<>();
+		String prefix = "ALTER TABLE " + alterTable.getTable() + " ";
+		List<String> result = new LinkedList<>();
+		
+		StringBuilder addCol = new StringBuilder(prefix);
 		iterateList(
-			sql->rows.add(sql), alterTable.getAddColumns(),
-			i->"", i->"", c->"ADD " + getColumn(c, x->constains.add(x))
+			sql->result.add(prefix + sql), alterTable.getAddColumns(),
+			i->"ADD ", i->", ", c->getColumn(c, x->addCol.append(x))
 		);
-		rows.addAll(constains);
-		createAddForeignKey(alterTable.getAddForeignKeys(), sql->rows.add(sql), "ADD ");
 		
 		iterateList(
-			sql->rows.add(sql), alterTable.getDeleteForeignKeys(),
+			sql->result.add(prefix + sql), alterTable.getDeleteColumns(),
+			i->"DROP COLUMN ", i->", ", c->c.getName()
+		);
+
+		createAddForeignKey(alterTable.getAddForeignKeys(), sql->result.add(sql), "ADD ");
+		
+		iterateList(
+			sql->result.add(sql), alterTable.getDeleteForeignKeys(),
 			i->"", i->"", fk->"DROP CONSTRAINT " + fk.getColumn()
 		);
 		iterateList(
-			sql->rows.add(sql), alterTable.getDeleteColumns(),
-			i->"", i->"", c->"DROP COLUMN " + c.getName()
-		);
-		iterateList(
-			sql->rows.add(sql), alterTable.getModifyColumnsType(),
+			sql->result.add(sql), alterTable.getModifyColumnsType(),
 			i->"", i->"", c->{
 				return "ALTER COLUMN " + c.getName() + " TYPE " + toString(c.getType());
 			}
 		);
 		iterateList(
-			sql->rows.add(sql), alterTable.getModifyDefault(),
+			sql->result.add(sql), alterTable.getModifyDefault(),
 			i->"", i->"", c->{
 				if (c.getValue().isClear()) {
 					return "ALTER COLUMN " + c.getName() + " DROP DEFAULT";
@@ -353,7 +355,7 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 			}
 		);
 		iterateList(
-			sql->rows.add(sql), alterTable.getModifyNullable(),
+			sql->result.add(sql), alterTable.getModifyNullable(),
 			i->"", i->"", c->{
 				if (new DictionaryValue(c.getValue().getValue()).getBoolean()) {
 					return "ALTER COLUMN " + c.getName() + " SET NOT NULL";
@@ -363,7 +365,7 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 			}
 		);
 		iterateList(
-			sql->rows.add(sql), alterTable.getModifyUnique(),
+			sql->result.add(sql), alterTable.getModifyUnique(),
 			i->"", i->"", c->{
 				String key = (alterTable.getTable() + "_" + c.getName() + "_key").toLowerCase();
 				if (new DictionaryValue(c.getValue().getValue()).getBoolean()) {
@@ -373,19 +375,19 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 				}
 			}
 		);
-		iterateList(
-			sql->rows.add(sql), alterTable.getRenameColumns(),
-			i->"", i->"", c->String.format("RENAME COLUMN %s TO %s", c.getOldName(), c.getNewName())
-		);
 		
-		StringBuilder sql = new StringBuilder();
-		sql.append("ALTER TABLE ");
-		sql.append(alterTable.getTable());
-		iterateList(sql, rows, i->" ", i->", ", i->i);
+		iterateList(
+			sql->result.add(sql), alterTable.getRenameColumns(),
+			i->"", i->"", c->String.format(
+				"EXEC sp_rename '%s.%s', '%s', 'COLUMN'", alterTable.getTable(), c.getOldName(), c.getNewName()
+			)
+		);
 		if (alterTable.getNewName() != null) {
-			sql.append(" RENAME TO " + alterTable.getNewName());
+			result.add(String.format(
+				"EXEC sp_rename '%s', '%s'", alterTable.getTable(), alterTable.getNewName()
+			));
 		}
-		return Arrays.asList(sql.toString());
+		return result;
 	}
 
 	@Override
@@ -402,6 +404,21 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 			case CHAR:
 				return String.format("CHAR(%s)", type.getSize());
 			case BOOLEAN: return "BIT";
+			case TIME:
+				if (type.getSize() == null) {
+					return "TIME";
+				}
+				return String.format("TIME(%s)", type.getSize());
+			case DATETIME:
+				if (type.getSize() == null) {
+					return "DATETIME2";
+				}
+				return String.format("DATETIME2(%s)", type.getSize());
+			case DATETIME_ZONED:
+				if (type.getSize() == null) {
+					return "DATETIMEOFFSET";
+				}
+				return String.format("DATETIMEOFFSET(%s)", type.getSize());
 			default: return type.getType().toString();
 		}
 	}
@@ -451,10 +468,8 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 	private String getColumn(Column column, Consumer<String> onConstaint) {
 		StringBuilder result = new StringBuilder();
 		result.append(column.getName());
-		if (!column.getSettings().contains(ColumnSetting.AUTO_INCREMENT)) {
-			result.append(" ");
-			result.append(toString(column.getType()));
-		}
+		result.append(" ");
+		result.append(toString(column.getType()));
 		if (column.getValue().isSet()) {
 			result.append(" DEFAULT ");
 			result.append(column.getValue().getValue());
@@ -564,7 +579,11 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 			(with)->",",
 			(with)->{
 				String subquery = create ? with._2().createSql() : with._2().getSql();
-				//boolean isRecursive = subquery.contains(" " + with._1() + " ") || subquery.endsWith(" " + with._1());
+				// sql server needs UNION ALL
+				/*boolean isRecursive = subquery.contains(" " + with._1() + " ") || subquery.endsWith(" " + with._1());
+				if (isRecursive) {
+					subquery = subquery.replaceFirst(" UNION ", "")
+				}*/
 				return String.format(
 					" %s AS (%s)", with._1(), subquery
 				);
