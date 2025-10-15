@@ -119,6 +119,13 @@ Toti.load = (...configurations)=>{
 						title: 'Z'
 					}
 				];
+			case '/form/bind':
+				return {
+					a: 'A',
+					b: 'B'
+				};
+			case '/form/submit':
+				return {};
 			/*case '/inputs/loadedList':
 				return [
 					{
