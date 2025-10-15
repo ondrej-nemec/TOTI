@@ -140,6 +140,41 @@
 			}
 			return value;
 		}
+		function addFormControl(testContainer, element) {
+			var opnValues = createOutputPanel('Values');
+			var opnErrors = createOutputPanel('Errors');
+
+			var btnRead = document.createElement('button');
+			btnRead.innerText = 'Read values';
+			btnRead.onclick = (e)=>{
+				e.preventDefault();
+				opnValues.clear();
+				var values = element._getValues();
+				var pre = document.createElement('pre');
+				pre.innerHTML = parseReadedValue(values);
+				opnValues.append(pre);
+			};
+
+			var btnErrors = document.createElement('button');
+			btnErrors.innerText = 'Errors';
+			btnErrors.onclick = (e)=>{
+				e.preventDefault();
+				opnErrors.clear();
+				var errors = element._getErrors();
+				var pre = document.createElement('pre');
+				pre.innerHTML = parseReadedValue(errors);
+				opnErrors.append(pre);
+			};
+
+			var pnControl = document.createElement('div');
+			pnControl.appendChild(btnRead);
+			pnControl.appendChild(btnErrors);
+			testContainer.appendChild(pnControl);
+
+			testContainer.appendChild(opnValues);
+			testContainer.appendChild(opnErrors);
+			testContainer.appendChild(document.createElement('hr'));
+		}
 		function addInputControl(testContainer, element) {
 			var opnErrors = createOutputPanel('Errors');
 			var opnValue = createOutputPanel('Readed value');
@@ -300,6 +335,9 @@
 			testContainer.appendChild(document.createElement('hr'));
 			if (element instanceof Input) {
 				addInputControl(testContainer, element);	
+			}
+			if (element instanceof Form) {
+				addFormControl(testContainer, element);
 			}
 			var pre = document.createElement('pre');
 			testContainer.appendChild(pre);

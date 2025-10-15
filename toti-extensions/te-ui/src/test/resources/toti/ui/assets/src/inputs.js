@@ -2679,6 +2679,9 @@ class InputList extends Input {
 				var container = functions.createContainer(instance);
 				inputs.forEach((inputAttributes, index)=>{
 					var subAttributes = Toti.utils.clone(inputAttributes);
+					if (!subAttributes.hasOwnProperty('disabled') && attributes.hasOwnProperty('disabled')) {
+						subAttributes.disabled = attributes.disabled;
+					}
 					var fieldName = inputAttributes.name;
 					if (fieldName === null || fieldName === undefined || fieldName === '') {
 						fieldName = index;
@@ -3035,10 +3038,11 @@ class SubmitInput extends Input {
 		var animation = Toti.animations.inputLoading(
 			this.submitElement === null ? this.container.parentElement : this.submitElement
 		);
+		var submitConfiguration = this.submitConfiguration();
 		if (this.async) {
 			this.setDisabled(true);
 			var instance = this;
-			Toti.load(this.submitConfiguration)
+			Toti.load(submitConfiguration)
 			.then((res)=>{
 				instance.onSuccess.forEach((onSuccess)=>{
 					try {
@@ -3095,7 +3099,7 @@ class SubmitInput extends Input {
 			*/
 			var form = document.createElement("form");
 
-			console.log("TODO sync", this.submitConfiguration, this.onSuccess, this.onFailure, this.redirect);
+			console.log("TODO sync", submitConfiguration, this.onSuccess, this.onFailure, this.redirect);
 		}
 	}
 }
@@ -3116,9 +3120,7 @@ class Button extends Input {
 				return value;
 			},
 			create: (instance, editable, createAttributes)=>{
-				if (!editable) {
-					return document.createElement("span");
-				}
+				/* editable has no evect */
 				var container = null;
 				if (link === null) {
 					container = document.createElement("button");
@@ -3161,14 +3163,12 @@ class Button extends Input {
 			},
 			setValue: (instance, container, value, editable)=>{},
 			setDisabled: (instance, container, isDisabled, editable)=>{
-				if (editable) {
-					if (link === null) {
-						container.disabled = isDisabled;
-					} else if (isDisabled) {
-						container.setAttribute('href', '#');
-					} else {
-						container.setAttribute('href', link);
-					}
+				if (link === null) {
+					container.disabled = isDisabled;
+				} else if (isDisabled) {
+					container.setAttribute('href', '#');
+				} else {
+					container.setAttribute('href', link);
 				}
 			},
 			setRule: (instance, container, name, rule)=>{

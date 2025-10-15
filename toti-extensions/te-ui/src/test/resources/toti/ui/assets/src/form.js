@@ -1,45 +1,37 @@
-/*
-	nejaka metoda, co udela render, placeholders a bind
-- render
-	- before a after callbacks
-	- template|functions callbacks
-	- action a method, pripadně enctype
-	- iterovat existujici prvky a pridavat do containeru - pres metodu
-
-- bind
-	- nacist hodnoty a postupne dodat
-
-- submit - TODO nejak navazat na submity
-	- submit uz v sobe ma confirmation
-	- projit vsechny inputy a vytvorit object dat
-		- exclude, editable, ....
-		- isValid, getErrors
-		- submit - policy
-	- beforesubmit callbacky (customhandler - muze zrusit odeslani) 
-	- submit - sync|async
-	- onSuccess
-		- afterSubmit
-		- submit ma v sobe onSuccess a redirect - skloubit
-	- onError
-		- pokud 400 a je to json - vykreslit chyby
-		- submit ma na sobe onFailure
-		- chybovou hlasku podle response 400, 403, ostatni
-
-*/
 class Form {
 	container = null;
 	inputs = null;
 	callbacks = null;
 	editable = true;
+	errors = null; /* errors not related to any input */
+	submitConfiguration = null;
+	bindConfiguration = null;
 	constructor(attributes, configuration) {
-		// TODO callbacks - gui - default, template, js set
 		if (!attributes.hasOwnProperty('inputs')) {
 			throw new Error("Missing attribute 'inputs'");
 		}
 		if (attributes.hasOwnProperty('editable')) {
 			this.editable = attributes.editable;
 		}
+		if (attributes.hasOwnProperty('submit')) {
+			this.submitConfiguration = attributes.submit;
+		} else {
+			console.warn("Form is missing submit configuration");
+		}
+		if (attributes.hasOwnProperty('bind')) {
+			this.bindConfiguration = attributes.bind;
+		}
+/*
+	
+	private String onBindFailure;
+	private String beforeBind;
+	private String afterBind;
+	private String beforeRender;
+	private String afterRender;
+	private String beforeSubmit;
+	private String afterSubmit;
 
+*/
 		this.inputs = new SortedMap();
 		this.callbacks = configuration;
 		if (!this.callbacks.hasOwnProperty('createContainer')) {
@@ -122,6 +114,11 @@ class Form {
 				return row;
 			};
 		}
+		if (!this.callbacks.hasOwnProperty('addHidden')) {
+			this.callbacks.addHidden = (container, inputContainer, input)=>{
+				container.querySelector('.toti-form-body').appendChild(inputContainer);
+			};
+		}
 		if (!this.callbacks.hasOwnProperty('inputErrors')) {
 			this.callbacks.inputErrors = (row, isValid, errors, input)=>{
 				var container = row.querySelector('.toti-form-input-errors');
@@ -149,6 +146,9 @@ class Form {
 		for(const inputAttribute of attributes.inputs) {
 			this._addInput(inputAttribute);
 		}
+		if (this.bindConfiguration !== null) {
+			this.loadBind(this.bindConfiguration);
+		}
 	}
 	getContainer() {
 		return this.container;
@@ -164,14 +164,26 @@ class Form {
 		}
 		var element = Toti.createInput(fieldConf);
 		if (element instanceof HiddenInput) {
-			return;
+			if (this.editable) {
+				this.callbacks.addHidden(this.container, element.getContainer(), element);
+			} else {
+				return;
+			}
 		}
 		var row = null;
 		if (element instanceof DynamicInput || element instanceof InputList || element instanceof LoadedList) {
 			row = this.callbacks.createSpecialInputBundle(
 				this.container, element.getTitle(), element.getContainer(), element
 			);
-		} else if (element instanceof Button || element instanceof SubmitInput) {
+		} else if (element instanceof SubmitInput) {
+			// TODO corrent submit
+			if (this.submitConfiguration !== null) {
+				element.setSubmit(this.submitConfiguration, this.container);
+			}
+			row = this.callbacks.createActionInputBundle(
+				this.container, element.getTitle(), element.getContainer(), element
+			);
+		} else if (element instanceof Button) {
 			row = this.callbacks.createActionInputBundle(
 				this.container, element.getTitle(), element.getContainer(), element
 			);
@@ -197,31 +209,38 @@ class Form {
 			return this.inputs.get(name).element;
 		}
 	}
-	/*
-	// deprecated
-	loadPlaceholders(loadConfig) {}
-	// deprecated
-	placeholers(values) {}
-	*/
 	loadBind(loadConfig) {
-		// TODO
+		var object = this;
+		Toti.load(loadConfig)
+		.then((data)=>{
+			object.bind(data);
+		});
 	}
 	bind(values) {
 		for(const[name, value] of Object.entries(values)) {
-			if (this.inputs.hasOwnProperty(key)) {
-				this.inputs.get(key).element.setValue(value);
+			if (this.inputs.exists(name)) {
+				this.inputs.get(name).element.setValue(value);
 			} else {
-				console.warning("Unknown input '" + key + "'");
+				console.warn("Unknown input '" + name + "'");
 			}
 		}
 	}
 	submit() {
+		this.errors = null;
 		// TODO
+		// isValid
+		// submitConfiguration + getValues
 	}
+/*
+TODO pro nasleduji metody
+		- exclude, editable, ....
+		- isValid, getErrors
+		- submit - policy
+	*/
 	_getValues() {
 		var values = {};
 		this.inputs.forEach((key, input)=>{
-			values[key] = input.getValue();
+			values[key] = input.element.getValue();
 		});
 		return values;
 	}
@@ -231,6 +250,16 @@ class Form {
 			isValid = isValid && input.element.isValid();
 		});
 		return isValid;
+	}
+	_getErrors() {
+		var errors = {};
+		if (this.errors !== null) {
+			errors['_form'] = this.errors;
+		}
+		this.inputs.forEach((key, input)=>{
+			errors[key] = input.element.getErrors();
+		});
+		return errors;
 	}
 }
 function createForm(configuration, settings) {

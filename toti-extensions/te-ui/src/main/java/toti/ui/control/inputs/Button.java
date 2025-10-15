@@ -16,7 +16,7 @@ public class Button implements Input {
 	private String title = null;
 	private String tooltip = null;
 	private String icon = null;
-	private boolean async = false;
+	private Boolean async = false; // TODO if null, then js func
 	private String method = "get";
 	private Map<String, String> requestParams = new HashMap<>();
 	private final Map<String, Object> params = new HashMap<>();

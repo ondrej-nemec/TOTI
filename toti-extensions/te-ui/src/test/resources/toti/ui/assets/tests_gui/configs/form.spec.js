@@ -74,12 +74,14 @@ var formEditableTests = [];
 					type: "text",
 					title: "Min length",
 					value: "Some text",
+					name: "min-length",
 					minlength: 5
 				},
 				{
 					type: "text",
 					title: "Max length",
 					value: "Some text",
+					name: "max-length",
 					maxlength: 7
 				},
 			]
@@ -92,7 +94,7 @@ var formEditableTests = [];
 		},
 	},
 	{
-		name: "Bind TODO",
+		name: "Bind",
 		conf: {
 			inputs: [
 				{
@@ -105,7 +107,11 @@ var formEditableTests = [];
 					title: "B",
 					name: "b"
 				},
-			]
+			],
+			bind: {
+				url: '/form/bind',
+				method: 'POST'
+			}
 		},
 		eVerify: async (expect, assert, page, callInstance, callContainer, locator)=>{
 			throw new Error("TODO");
@@ -115,7 +121,7 @@ var formEditableTests = [];
 		},
 	},
 	{
-		name: "Submit TODO",
+		name: "Submit",
 		conf: {
 			inputs: [
 				{
@@ -131,7 +137,11 @@ var formEditableTests = [];
 				{
 					type: "submit"
 				},
-			]
+			],
+			bind: {
+				url: '/form/submit',
+				method: 'POST'
+			}
 		},
 		eVerify: async (expect, assert, page, callInstance, callContainer, locator)=>{
 			throw new Error("TODO");
@@ -148,7 +158,8 @@ var formEditableTests = [];
 		conf: {
 			inputs: [
 				{
-					type: "hidden"
+					type: "hidden",
+					name: "hidden-input"
 				},
 			]
 		},

@@ -1447,6 +1447,84 @@ specialInputTests.push({
 			}
 		},
 		{
+			name: 'Disabled',
+			type: 'test',
+			conf: {
+				type: 'inputList',
+				name: 'input-list',
+				disabled: true,
+				fields: [
+					{
+						type: 'test-standart',
+						name: "not set"
+					},
+					{
+						type: 'test-standart',
+						name: "forced disabled",
+						disabled: true
+					},
+					{
+						type: 'test-standart',
+						name: "forced enabled",
+						disabled: false
+					}
+				]
+			},
+			verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
+				await verifyInputList(expect, assert, page, callInstance, callContainer, locator, 'input-list', [
+					{
+						name: 'input-list[text1]',
+						value: '',
+						disabled: true
+					},
+					{
+						name: 'input-list[text2]',
+						value: '',
+						disabled: true
+					}
+				]);
+			}
+		},
+		{
+			name: 'Force enabled',
+			type: 'test',
+			conf: {
+				type: 'inputList',
+				name: 'input-list',
+				disabled: false,
+				fields: [
+					{
+						type: 'test-standart',
+						name: "not set"
+					},
+					{
+						type: 'test-standart',
+						name: "forced disabled",
+						disabled: true
+					},
+					{
+						type: 'test-standart',
+						name: "forced enabled",
+						disabled: false
+					}
+				]
+			},
+			verify: async (expect, assert, page, callInstance, callContainer, locator)=>{
+				await verifyInputList(expect, assert, page, callInstance, callContainer, locator, 'input-list', [
+					{
+						name: 'input-list[text1]',
+						value: '',
+						disabled: true
+					},
+					{
+						name: 'input-list[text2]',
+						value: '',
+						disabled: true
+					}
+				]);
+			}
+		},
+		{
 			name: 'Input has rules',
 			type: 'test',
 			conf: {

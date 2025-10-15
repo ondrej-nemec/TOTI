@@ -322,6 +322,7 @@ var buttonTests = [];
 		name: 'Not editable',
 		conf: {
 			type: 'button',
+			title: 'Magic button',
 			editable: false
 		},
 		verifyAsync: async (expect, assert, page, callInstance, callContainer, locator)=>{
