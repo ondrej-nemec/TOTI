@@ -91,6 +91,7 @@ public class TotiServer {
 		logger.info("Server stopped");
 	}
 	
+	// TODO run win thread
 	protected void startApplication(String appIdentifier) {
 		if (!applications.containsKey(appIdentifier)) {
 			logger.warn("Unknown application: " + appIdentifier);
@@ -100,7 +101,7 @@ public class TotiServer {
 			logger.info("Application is starting: " + appIdentifier);
 			application.start();
 			handler.addApplication(application.getRequestAnswer(), application.getHostnames(), application.getPaths());
-			logger.info("Application is running: " + appIdentifier);
+			logger.info("Application is running: " + appIdentifier + " ON " + application.getHostnames() + " AS " + application.getPaths());
 		} catch (Exception e) {
 			logger.error("Application start fail: " + appIdentifier, e);
 		}
