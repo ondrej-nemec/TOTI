@@ -17,15 +17,24 @@ create table table_to_rename (
 	id int
 );
 
-create table table_for_index (
+create table table_for_index_1 (
 	id int PRIMARY KEY,
-	id1 int,
-	id2 int,
-	id3 int,
-	id4 int,
 	name varchar(10)
 );
-create index index_to_delete ON table_for_index(id);
+create table table_for_index_2 (
+	id int PRIMARY KEY,
+	name varchar(10)
+);
+create table table_for_index_3 (
+	id int PRIMARY KEY,
+	name varchar(10)
+);
+create table table_for_index_4 (
+	id int PRIMARY KEY,
+	name varchar(10)
+);
+
+create index index_to_delete ON table_for_index_1(id);
 
 create table table_to_alter (
 	id int,
@@ -33,8 +42,8 @@ create table table_to_alter (
 	Column_to_modify_2 int DEFAULT 1 NULL,
 	Column_to_rename int,
 	Column_to_delete int,
-	CONSTRAINT FK_id FOREIGN KEY (id) REFERENCES table_for_index(id),
-	CONSTRAINT FK_to_delete FOREIGN KEY (id) REFERENCES table_for_index(id)
+	CONSTRAINT FK_id FOREIGN KEY (id) REFERENCES table_for_index_1(id),
+	CONSTRAINT FK_to_delete FOREIGN KEY (id) REFERENCES table_for_index_1(id)
 );
 
 create view view_to_delete AS select 1 as a;
