@@ -175,6 +175,9 @@ public class FilesList {
 
 	private List<String> addFileName(File dir, String replacement, boolean recursive) {
 		List<String> files = new LinkedList<>();
+		if (!dir.exists()) {
+			return files;
+		}
 		for (File f : dir.listFiles()) {
 			if (f.isDirectory()) {
 				if (recursive) {
