@@ -188,8 +188,13 @@ public class MapDictionary<K> implements Dictionary<K>, Iterable<Tuple2<K, Objec
 	
 	@Override
 	public boolean equals(Object obj) {
-		if ( ! (obj instanceof MapDictionary) )
+		if ( !(obj instanceof MapDictionary)  && !(obj instanceof Map)) {
 			return false;
+		}
+		if (obj instanceof Map) {
+			Map<?, ?> convertedMap = (Map<?, ?>)obj;
+			return map.equals(convertedMap);
+		}
 		MapDictionary<?> dictionary = (MapDictionary<?>)obj;
 		return map.equals(dictionary.map);
 	}

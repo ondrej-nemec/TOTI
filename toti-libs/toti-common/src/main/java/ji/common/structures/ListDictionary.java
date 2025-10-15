@@ -201,8 +201,12 @@ public class ListDictionary implements Dictionary<Integer>, Iterable<Tuple2<Inte
 	
 	@Override
 	public boolean equals(Object obj) {
-		if ( ! (obj instanceof ListDictionary) ) {
+		if ( !(obj instanceof ListDictionary) && !(obj instanceof List)) {
 			return false;
+		}
+		if (obj instanceof List) {
+			List<?> convertedList = (List<?>)obj;
+			return collection.equals(convertedList);
 		}
 		ListDictionary dictionary = (ListDictionary)obj;
 		if (collection.size() != dictionary.collection.size()) {
