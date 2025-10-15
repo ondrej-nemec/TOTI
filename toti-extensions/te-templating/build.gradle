@@ -13,7 +13,7 @@ repositories {
 
 dependencies {
 	api project(':toti-libs:toti-templating')
-	//testImplementation(testFixtures(project(":toti-libs:toti-templating")))
+	testImplementation(testFixtures(project(':toti-libs:toti-templating')))
 	api project(':toti-application')
 	
 	// https://mvnrepository.com/artifact/junit/junit

@@ -15,6 +15,7 @@ repositories {
 dependencies {
 	api project(':toti-libs:toti-common')
 	api project(':toti-libs:toti-database')
+	testImplementation(testFixtures(project))
 	
 	// https://mvnrepository.com/artifact/junit/junit
 	implementation group: 'junit', name: 'junit', version: '4.12'
