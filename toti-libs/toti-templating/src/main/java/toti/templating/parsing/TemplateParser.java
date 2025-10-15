@@ -176,8 +176,8 @@ public class TemplateParser {
 		node.append("write(\"");
 		while((actual = (char)br.read()) != (char)-1) {
 			if (actual == '\n') {
-                info.addLine();
-            }
+				info.addLine();
+			}
 			ParserWrapper last = parsers.size() > 0 ? parsers.getLast() : null;
 			if (last != null) {
 				if (actual == '"' && previous != '\\' && !last.isSingleQuoted()) {
