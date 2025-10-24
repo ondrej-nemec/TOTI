@@ -47,14 +47,13 @@ public class MigrationTool {
 		List<String> savedMirations
 	) throws MigrationException {
 		List<MigrationInternal> toMigrate = new LinkedList<>();
-		List<MigrationInternal> alwaysMigrations = new LinkedList<>();
 		int index = 0;
 		for (String savedMigration : savedMirations) {
 			MigrationInternal migration = null;
 			while(migration == null && index < filesMigrations.size()) {
 				MigrationInternal step = filesMigrations.getByIndex(index++);
 				if (step.isAlways()) {
-					alwaysMigrations.add(step);
+					toMigrate.add(step);
 				} else {
 					migration = step;
 				}
@@ -71,7 +70,6 @@ public class MigrationTool {
 		for (int i = index; i < filesMigrations.size(); i++) {
 			toMigrate.add(filesMigrations.getByIndex(i));
 		}
-		toMigrate.addAll(alwaysMigrations);
 		return toMigrate;
 	}
 	
