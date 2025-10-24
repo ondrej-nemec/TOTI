@@ -421,9 +421,9 @@ public class PostgreSqlQueryBuilder implements DbInstance {
 				return String.format("TIME(%s)", type.getSize());
 			case DATETIME:
 				if (type.getSize() == null) {
-					return "DATETIME2";
+					return "TIMESTAMP";
 				}
-				return String.format("DATETIME2(%s)", type.getSize());
+				return String.format("TIMESTAMP(%s)", type.getSize());
 			case DATETIME_ZONED:
 				if (type.getSize() == null) {
 					return "TIMESTAMPTZ";
