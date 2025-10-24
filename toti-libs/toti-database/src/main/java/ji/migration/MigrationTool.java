@@ -1,8 +1,6 @@
 package ji.migration;
 
 import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -110,17 +108,15 @@ public class MigrationTool {
 	protected void process(List<String> folders, boolean isRevert, QueryBuilder builder, MigrationProcess process) throws Exception {
 		for (String folder : folders) {
 			FilesList filesList = FilesList.get(folder, false);
-			try (URLClassLoader loader = new URLClassLoader(new URL[]{filesList.getURL()})) {
-				List<MigrationInternal> toMigrate = getFowardMigrations(
-					processFiles(
-						folder, filesList.getFiles(), loader
-					),
-					selectMigrations(builder, folder)
-				);
-				for (MigrationInternal migrationFile : toMigrate) {
-					transaction(migrationFile, builder, isRevert);
-				}
-	    	}
+			List<MigrationInternal> toMigrate = getFowardMigrations(
+				processFiles(
+					folder, filesList.getFiles(), Thread.currentThread().getContextClassLoader()
+				),
+				selectMigrations(builder, folder)
+			);
+			for (MigrationInternal migrationFile : toMigrate) {
+				transaction(migrationFile, builder, isRevert);
+			}
 		}
 	}
 
