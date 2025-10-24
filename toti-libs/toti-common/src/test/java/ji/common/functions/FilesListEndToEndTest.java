@@ -7,7 +7,7 @@ public class FilesListEndToEndTest {
 			try {
 				System.out.println("-- Folder: " + folder);
 				FilesList l = FilesList.get(folder, true);
-				System.out.println(l.getURL());
+				//System.out.println(l.getURL());
 				l.getFiles().forEach((file)->{
 					System.out.println("* " + file);
 				});

@@ -30,5 +30,6 @@ dependencies {
 	// https://mvnrepository.com/artifact/pl.pragmatists/JUnitParams
 	testImplementation group: 'pl.pragmatists', name: 'JUnitParams', version: '1.1.1'
 
+	testImplementation files('tests/filesList.jar')
 }
 

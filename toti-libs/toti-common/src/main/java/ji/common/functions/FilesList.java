@@ -5,8 +5,7 @@ import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLDecoder;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,8 +20,9 @@ import java.util.jar.JarFile;
  *
  */
 public class FilesList {
+	
+	// TODO maybe improve. use file extension, inputstream loader
 
-	private URL url;
 	private final List<String> files;
 
 	/**
@@ -52,46 +52,79 @@ public class FilesList {
 		return files;
 	}
 
-	/**
-	 * Resource directory {@link URL}
-	 * <p>
-	 * Is null if directory is out of classpath
-	 * 
-	 * @return {@link URL}
-	 */
-	public URL getURL() {
-		return url;
-	}
-
-	/**************/
 	private List<String> getFiles(String folder, boolean recursive) throws Exception {
-		URL url = getClass().getResource("/" + getClassName().replaceAll("\\.", "/") + ".class");
-
-		// rsrc - resources - export
-		if (url.toString().startsWith("rsrc:")) { // || url.toString().startsWith("jar:")
-			this.url = getClass().getResource("/" + folder);
-			return rsrc(folder, recursive);
-		// jar - in separated jar - gradle build
-		} else if (url.toString().startsWith("jar:") || url.toString().startsWith("jrt:")) {
-			this.url = getClass().getResource("/" + folder);
-			return jar(folder, recursive);
-		} else if (url.toString().startsWith("file:")) {
-			return dirTree(folder, recursive);
-		} else {
-			throw new IOException("Folder not foud neither in classpath neider in dir tree: " + url);
+		List<String> result = new LinkedList<>();
+		Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources(folder);
+		while (urls.hasMoreElements()) {
+			URL url = urls.nextElement();
+			if (url.toString().startsWith("rsrc:")) {
+				throw new IOException("Unsupported protocol: " + url);
+			// jar - in separated jar - gradle build
+			} else if (url.toString().startsWith("jar:") || url.toString().startsWith("jrt:")) {
+				URLConnection con = url.openConnection();
+				List<String> files = new LinkedList<>();
+				if (con instanceof JarURLConnection) {
+					JarURLConnection connection = (JarURLConnection) url.openConnection();
+					JarFile file = connection.getJarFile();
+					Enumeration<JarEntry> entries = file.entries();
+					List<String> dirs = new LinkedList<>();
+					while (entries.hasMoreElements()) {
+						JarEntry e = entries.nextElement();
+						if (e.getName().equals(folder)) {
+							continue;
+						} else if (e.getName().startsWith(folder)) {
+							if (e.getName().endsWith("/")) {
+								if (!recursive) {
+									dirs.add(e.getName());
+								}
+							} else {
+								if (recursive || !dirs.contains(e.getName())) {
+									files.add(e.getName().replace(folder + "/", ""));
+								}
+							}
+						}
+					}
+				}
+				result.addAll(files);
+			} else if (url.toString().startsWith("file:")) {
+				String path = url.getPath();
+				File dir = new File(path);
+				result.addAll(addFileName(dir, dir + File.separator, recursive));
+			} else {
+				throw new IOException("Unsupported protocol: " + url);
+			}
 		}
+		File external = new File(folder);
+		if (external.exists() && external.isDirectory()) {
+			result.addAll(addFileName(external, external.getAbsolutePath() + File.separator, recursive));
+		}
+		result.sort(Comparator.naturalOrder());
+		return result;
 	}
-
-	private String getClassName() {
-		StackTraceElement trace[] = Thread.currentThread().getStackTrace();
-		if (trace.length > 0) {
-			return trace[trace.length - 1].getClassName();
+	
+	private List<String> addFileName(File dir, String replacement, boolean recursive) {
+		List<String> result = new LinkedList<>();
+		File[] files = dir.listFiles();
+		if (files == null) {
+			return result;
 		}
-		return getClass().getCanonicalName();
+		for (File f : files) {
+			if (f.isDirectory()) {
+				if (recursive) {
+					result.addAll(
+						addFileName(f, replacement, recursive)
+					);
+				}
+			} else {
+				result.add(f.getAbsolutePath().replace(replacement, "").replaceAll("\\\\", "/"));
+			}
+		}
+		//Collections.sort(files);
+		return result;
 	}
 
 	/*******************/
-
+/*
 	private List<String> jar(String expectedNamespace, boolean recursive) throws Exception {
 		List<String> files = new LinkedList<>();
 		for (URL url : new URL[] { ClassLoader.getSystemResource(expectedNamespace) }) {
@@ -156,8 +189,6 @@ public class FilesList {
 		return files;
 	}
 
-	/*************/
-
 	private List<String> dirTree(String folder, boolean recursive) throws Exception {
 		folder = folder.startsWith("/") ? folder.substring(1) : folder;
 		ClassLoader loader = getClass().getClassLoader();
@@ -172,25 +203,6 @@ public class FilesList {
 		this.url = dir.toURI().toURL();
 		return addFileName(dir, dir + File.separator, recursive);
 	}
-
-	private List<String> addFileName(File dir, String replacement, boolean recursive) {
-		List<String> files = new LinkedList<>();
-		if (!dir.exists()) {
-			return files;
-		}
-		for (File f : dir.listFiles()) {
-			if (f.isDirectory()) {
-				if (recursive) {
-					files.addAll(
-						addFileName(f, replacement, recursive)
-					);
-				}
-			} else {
-				files.add(f.getAbsolutePath().replace(replacement, "").replaceAll("\\\\", "/"));
-			}
-		}
-		Collections.sort(files);
-		return files;
-	}
+*/
 
 }
