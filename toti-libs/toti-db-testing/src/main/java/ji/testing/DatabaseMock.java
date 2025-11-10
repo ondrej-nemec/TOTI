@@ -65,8 +65,8 @@ public class DatabaseMock extends Database {
 			update.set(key + " = :" + key)
 			.addParameter(":" + key, value);
 		});
-		update.where(row.getIdName() + " = :" + row.getIdName())
-			.addParameter(":" + row.getIdName(), row.getIdValue());
+		String idName = row.getIdName().get();
+		update.where(idName + " = :" + idName).addParameter(":" + idName, row.getIdValue());
 		return update;
 	}
 	
