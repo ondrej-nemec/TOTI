@@ -1,5 +1,7 @@
 package toti.validation.rules;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
@@ -26,6 +28,7 @@ public class StructureSortedMapRule implements Rule {
 	public void check(Request request, String propertyName, String ruleName, ValidationItem item) {
 		try {
 			RequestParameters fields = new RequestParameters();
+			List<String> order = new LinkedList<>();
 			for (Object value : new DictionaryValue(item.getOriginValue()).getList()) {
 				DictionaryValue dvItem = new DictionaryValue(value);
 				if (!dvItem.is(Map.class) || dvItem.getMap().size() != 1) {
@@ -34,11 +37,16 @@ public class StructureSortedMapRule implements Rule {
 				}
 				Entry<Object, Object> entryItem = dvItem.getMap().entrySet().iterator().next();
 				fields.put(entryItem.getKey().toString(), entryItem.getValue());
+				order.add(entryItem.getKey().toString());
 			}
 			item.addSubResult(validator.validate(
 				request, propertyName + "[%s]", fields, item.getTranslator(), item.getIdentity()
 			));
-			item.setNewValue(new SortedMap<String, Object>().putAll(fields.toMap()));
+			SortedMap<String, Object> result = new SortedMap<>();
+			order.forEach(key->{
+				result.append(key, fields.get(key));
+			});
+			item.setNewValue(result);
 		} catch (Exception e) {
 			item.addError(propertyName, onError);
 		}
