@@ -10,7 +10,7 @@
 /.classpath
 /.project
 /.settings
-/vscode-config
+/.vscode-config
 
 # toti
 /temp

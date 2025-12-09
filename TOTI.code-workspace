@@ -1,0 +1,59 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "editor.insertSpaces": false,
+        "workbench.startupEditor": "none",
+        "workbench.colorTheme": "Default Dark Modern",
+        "remote.autoForwardPortsSource": "hybrid",
+        "diffEditor.ignoreTrimWhitespace": true,
+        "editor.renderWhitespace": "all",
+        "explorer.autoReveal": false,
+        "git.ignoreLimitWarning": true,
+        "git.repositoryScanMaxDepth": 5,
+        "git.autoRepositoryDetection": "subFolders",
+        "intelephense.codeLens.implementations.enable": true,
+        "intelephense.codeLens.overrides.enable": true,
+        "intelephense.codeLens.parent.enable": true,
+        "intelephense.codeLens.references.enable": true,
+        "intelephense.codeLens.usages.enable": true,
+        "redhat.telemetry.enabled": false,
+        "jdk.telemetry.enabled": false,
+        "java.referencesCodeLens.enabled": true,
+        "java.configuration.updateBuildConfiguration": "automatic",
+        "java.configuration.detectJdksAtStart": true,
+        "java.import.gradle.java.home": "/opt/openjdk21",
+        "java.configuration.runtimes": [
+            {
+                "name": "JavaSE-21",
+                "path": "/opt/openjdk21",
+                "default": true
+            }
+        ],
+        "gradle.java.home": "/opt/openjdk21"
+    },
+    "launch": {
+        "configurations": [
+            {
+                "type": "java",
+                "name": "Current File",
+                "request": "launch",
+                "mainClass": "${file}"
+            },
+            {
+                "type": "java",
+                "name": "XXXX",
+                "request": "launch",
+                "mainClass": "XXXX",
+                "projectName": "XXXX",
+                "console": "internalConsole"
+            }
+        ],
+        "defaults": {
+            "console": "internalConsole"
+        }
+    }
+}
