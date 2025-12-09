@@ -47,8 +47,8 @@ public class Connections {
 		props.setProperty("password", PASSWORD);
 		props.setProperty("serverTimezone", "Europe/Prague");
 		props.setProperty("allowMultiQueries", "true");
-		// return DriverManager.getConnection("jdbc:postgresql://postgres:5432/" + tableName, props);
-		return DriverManager.getConnection("jdbc:postgresql://localhost:19060/" + tableName, props);
+		 return DriverManager.getConnection("jdbc:postgresql://postgres:5432/" + tableName, props);
+		//return DriverManager.getConnection("jdbc:postgresql://localhost:19060/" + tableName, props);
 	}
 	
 	public Connection sqlserver() throws SQLException {
@@ -58,8 +58,9 @@ public class Connections {
 		props.setProperty("serverTimezone", "Europe/Prague");
 		props.setProperty("create", "true");
 		props.setProperty("allowMultiQueries", "true");
-		//return DriverManager.getConnection("jdbc:sqlserver://sqlserver:1434;databaseName=" + tableName, props);
-		return DriverManager.getConnection("jdbc:sqlserver://localhost:19050;databaseName=" + tableName, props);
+		props.setProperty("Encrypt", "false");
+		return DriverManager.getConnection("jdbc:sqlserver://sqlserver:1433;databaseName=" + tableName, props);
+		//return DriverManager.getConnection("jdbc:sqlserver://localhost:19050;databaseName=" + tableName, props);
 	}
 	
 	public Connection mysql() throws SQLException {
@@ -77,8 +78,8 @@ public class Connections {
 		props.setProperty("serverTimezone", "Europe/Prague");
 		props.setProperty("create", "true");
 		props.setProperty("allowMultiQueries", "true");
-	//	return DriverManager.getConnection("jdbc:mysql://mysql:3306/" + tableName, props);
-		return DriverManager.getConnection("jdbc:mysql://localhost:19070" + tableName, props);
+		return DriverManager.getConnection("jdbc:mysql://mysql:3306" + tableName, props);
+		//return DriverManager.getConnection("jdbc:mysql://localhost:19070" + tableName, props);
 	}
 	
 }
