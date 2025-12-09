@@ -47,4 +47,8 @@ public interface DbInstance extends Functions {
 
 	String createSql(CallProcedureBuilderImpl callProcedure, boolean create);
 	
+	default Escape getEscape() {
+		return new Escape();
+	}
+
 }

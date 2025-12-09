@@ -14,7 +14,6 @@ import ji.common.structures.ObjectBuilder;
 import ji.common.structures.ThrowingConsumer;
 import ji.common.structures.Tuple2;
 import ji.querybuilder.DbInstance;
-import ji.querybuilder.Escape;
 import ji.querybuilder.builder_impl.share.MultipleExecute;
 import ji.querybuilder.builders.InsertBuilder;
 import ji.querybuilder.structures.SubSelect;
@@ -102,7 +101,7 @@ public class InsertBuilderImpl implements InsertBuilder, MultipleExecute {
 		if (this.select != null) {
 			throw new RuntimeException("Cannot use addValue if fromSelect is used");
 		}
-		this.values.add(new Tuple2<>(columnName, Escape.escape(value)));
+		this.values.add(new Tuple2<>(columnName, instance.getEscape().escape(value)));
 		return this;
 	}
 

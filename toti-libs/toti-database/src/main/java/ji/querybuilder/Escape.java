@@ -15,16 +15,16 @@ import ji.common.structures.ThrowingSupplier;
 
 public class Escape {
 
-	public static String escape(Object value) {
+	public String escape(Object value) {
 		if (value == null) {
-			return "null";
+			return escapeNull();
 		}
-		if (value instanceof Iterable<?>) {
-			Iterable<?> iterable = Iterable.class.cast(value);
-			return Implode.implode(item->escapeScalar(item), ",", iterable) ;
-		} else if (value instanceof ListDictionary) {
+		if (value instanceof ListDictionary) {
 			ListDictionary iterable = ListDictionary.class.cast(value);
 			return Implode.implode(item->escapeScalar(item), ",", iterable.toList());
+		} else if (value instanceof Iterable<?>) {
+			Iterable<?> iterable = Iterable.class.cast(value);
+			return Implode.implode(item->escapeScalar(item), ",", iterable);
 		} else if (value instanceof DictionaryValue) {
 			return escapeScalar(DictionaryValue.class.cast(value).getValue());
 		} else {
@@ -32,26 +32,47 @@ public class Escape {
 		}
 	}
 
-	private static String escapeScalar(Object value) {
+	protected String escapeScalar(Object value) {
+		System.out.println("Es " + value + " " + value.getClass());
 		Class<?> clazz = value.getClass();
 		if (clazz.isAssignableFrom(Boolean.class) || clazz.isAssignableFrom(boolean.class)) {
-			//  value ? "1" : "0"
-			return value.toString();
+			return escapeBoolean(value);
 		} else if (value instanceof Number) {
-			return value.toString();
-		} else if (clazz.isPrimitive() && !(clazz.isAssignableFrom(byte.class) || clazz.isAssignableFrom(char.class))) {
-			return value.toString();
+			return escapeNumber(value);
+		// never happends - always converted to Object
+		/*} else if (clazz.isPrimitive() && !clazz.isAssignableFrom(char.class)) {
+			return escapeNumericPrimitives(value);*/
 		} else if (value instanceof Temporal) {
-			String string = value.toString().replace("[UTC]", "").replace("T", " ").replace("Z", "+00:00");
-			return escapeString(string);
+			return escapeDateAndTime(value);
 		} else {
-			return escapeString(value.toString());
+			return escapeString(value);
 		}
 	}
 
-	private static String escapeString(String sql) {
+	protected String escapeNull() {
+		return "null";
+	}
+
+	protected String escapeBoolean(Object value) {
+		return value.toString();
+	}
+
+	protected String escapeNumber(Object value) {
+		return value.toString();
+	}
+
+	protected String escapeNumericPrimitives(Object value) {
+		return value.toString();
+	}
+
+	protected String escapeDateAndTime(Object value) {
+		String string = value.toString().replace("[UTC]", "").replace("T", " ").replace("Z", "+00:00");
+		return escapeString(string);
+	}
+
+	protected String escapeString(Object sql) {
 		// maybe??  * @ - _ + . /
-		return String.format("'%s'", sql.replaceAll("\\'", "''"));
+		return String.format("'%s'", sql.toString().replaceAll("\\'", "''"));
 	}
 
 	/******************************************/
@@ -88,7 +109,7 @@ public class Escape {
 		int dotIndex = origin.lastIndexOf(".");
 		int plusIndex = origin.lastIndexOf("+");
 		
-		String base = "";
+		String base;
 		String timeZone = "";
 		String nanos = "";
 		if (dotIndex < 0 && plusIndex < 0) {

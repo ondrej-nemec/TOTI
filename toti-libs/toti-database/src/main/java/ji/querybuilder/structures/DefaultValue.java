@@ -38,8 +38,8 @@ public class DefaultValue {
 		return mode != null && !mode;
 	}
 	
-	public String getValue() {
-		return Escape.escape(value);
+	public String getValue(Escape escape) {
+		return escape.escape(value);
 	}
 	
 	// for rename column

@@ -360,14 +360,14 @@ public class PostgreSqlQueryBuilder implements DbInstance {
 				if (c.getValue().isClear()) {
 					return "ALTER COLUMN " + c.getName() + " DROP DEFAULT";
 				} else {
-					return "ALTER COLUMN " + c.getName() + " SET DEFAULT " + c.getValue().getValue();
+					return "ALTER COLUMN " + c.getName() + " SET DEFAULT " + c.getValue().getValue(getEscape());
 				}
 			}
 		);
 		iterateList(
 			sql->rows.add(sql), alterTable.getModifyNullable(),
 			i->"", i->"", c->{
-				if (new DictionaryValue(c.getValue().getValue()).getBoolean()) {
+				if (new DictionaryValue(c.getValue().getValue(getEscape())).getBoolean()) {
 					return "ALTER COLUMN " + c.getName() + " SET NOT NULL";
 				} else {
 					return "ALTER COLUMN " + c.getName() + " DROP NOT NULL";
@@ -378,7 +378,7 @@ public class PostgreSqlQueryBuilder implements DbInstance {
 			sql->rows.add(sql), alterTable.getModifyUnique(),
 			i->"", i->"", c->{
 				String key = (alterTable.getTable() + "_" + c.getName() + "_key").toLowerCase();
-				if (new DictionaryValue(c.getValue().getValue()).getBoolean()) {
+				if (new DictionaryValue(c.getValue().getValue(getEscape())).getBoolean()) {
 					return "ADD CONSTRAINT " + key + " UNIQUE (" + c.getName() + ")";
 				} else {
 					return "DROP CONSTRAINT " + key; //  + " UNIQUE (" + c.getName() + ")"
@@ -512,7 +512,7 @@ public class PostgreSqlQueryBuilder implements DbInstance {
 		}
 		if (column.getValue().isSet()) {
 			result.append(" DEFAULT ");
-			result.append(column.getValue().getValue());
+			result.append(column.getValue().getValue(getEscape()));
 		} else if (column.getValue().isClear()) {
 			// TODO remove default
 		}

@@ -461,7 +461,7 @@ WHERE name = 'table_name';
 		result.append(toString(column.getType()));
 		if (column.getValue().isSet()) {
 			result.append(" DEFAULT ");
-			result.append(column.getValue().getValue());
+			result.append(column.getValue().getValue(getEscape()));
 		} else if (column.getValue().isClear()) {
 			// remove default
 			// alter not suported

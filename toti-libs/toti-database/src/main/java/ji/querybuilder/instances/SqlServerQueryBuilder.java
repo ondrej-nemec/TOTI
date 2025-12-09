@@ -10,6 +10,7 @@ import ji.common.structures.DictionaryValue;
 import ji.common.structures.ObjectBuilder;
 import ji.common.structures.Tuple2;
 import ji.querybuilder.DbInstance;
+import ji.querybuilder.Escape;
 import ji.querybuilder.builder_impl.AlterTableBuilderImpl;
 import ji.querybuilder.builder_impl.AlterViewBuilderImpl;
 import ji.querybuilder.builder_impl.CallProcedureBuilderImpl;
@@ -37,6 +38,17 @@ import ji.querybuilder.structures.Joining;
 import ji.querybuilder.structures.SubSelect;
 
 public class SqlServerQueryBuilder implements DbInstance {
+
+	@Override
+	public Escape getEscape() {
+		return new Escape() {
+            @Override
+            protected String escapeBoolean(Object value) {
+                return Boolean.class.cast(value) ? "1" : "0";
+            }
+			
+		};
+	}
 
 	@Override
 	public String concat(String param1, String param2, String... params) {
@@ -350,14 +362,14 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 				if (c.getValue().isClear()) {
 					return "ALTER COLUMN " + c.getName() + " DROP DEFAULT";
 				} else {
-					return "ALTER COLUMN " + c.getName() + " SET DEFAULT " + c.getValue().getValue();
+					return "ALTER COLUMN " + c.getName() + " SET DEFAULT " + c.getValue().getValue(getEscape());
 				}
 			}
 		);
 		iterateList(
 			sql->result.add(sql), alterTable.getModifyNullable(),
 			i->"", i->"", c->{
-				if (new DictionaryValue(c.getValue().getValue()).getBoolean()) {
+				if (new DictionaryValue(c.getValue().getValue(getEscape())).getBoolean()) {
 					return "ALTER COLUMN " + c.getName() + " SET NOT NULL";
 				} else {
 					return "ALTER COLUMN " + c.getName() + " DROP NOT NULL";
@@ -368,7 +380,7 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 			sql->result.add(sql), alterTable.getModifyUnique(),
 			i->"", i->"", c->{
 				String key = (alterTable.getTable() + "_" + c.getName() + "_key").toLowerCase();
-				if (new DictionaryValue(c.getValue().getValue()).getBoolean()) {
+				if (new DictionaryValue(c.getValue().getValue(getEscape())).getBoolean()) {
 					return "ADD CONSTRAINT " + key + " UNIQUE (" + c.getName() + ")";
 				} else {
 					return "DROP CONSTRAINT " + key; //  + " UNIQUE (" + c.getName() + ")"
@@ -472,7 +484,7 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 		result.append(toString(column.getType()));
 		if (column.getValue().isSet()) {
 			result.append(" DEFAULT ");
-			result.append(column.getValue().getValue());
+			result.append(column.getValue().getValue(getEscape()));
 		} else if (column.getValue().isClear()) {
 			// TODO remove default
 		}

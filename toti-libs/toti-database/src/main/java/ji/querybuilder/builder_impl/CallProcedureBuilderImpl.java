@@ -55,7 +55,7 @@ public class CallProcedureBuilderImpl implements CallProcedureBuilder {
 
 	@Override
 	public CallProcedureBuilder addInputParameter(Object value) {
-		this.parameters.add(Escape.escape(value));
+		this.parameters.add(instance.getEscape().escape(value));
 		return this;
 	}
 

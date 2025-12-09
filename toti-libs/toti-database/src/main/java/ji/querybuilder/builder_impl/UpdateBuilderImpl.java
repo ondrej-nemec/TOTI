@@ -10,7 +10,6 @@ import java.util.function.Function;
 
 import ji.common.structures.Tuple2;
 import ji.querybuilder.DbInstance;
-import ji.querybuilder.Escape;
 import ji.querybuilder.Functions;
 import ji.querybuilder.builder_impl.share.ParametrizedSql;
 import ji.querybuilder.builder_impl.share.SingleExecute;
@@ -106,7 +105,7 @@ public class UpdateBuilderImpl implements UpdateBuilder, SingleExecute, Parametr
 
 	@Override
 	public UpdateBuilder addParameter(String name, Object value) {
-		parameters.put(name, Escape.escape(value));
+		parameters.put(name, instance.getEscape().escape(value));
 		return this;
 	}
 	@Override

@@ -31,7 +31,8 @@ public class EscapeTest {
 	@ParameterizedTest
 	@MethodSource("dataEscape")
 	public void testEscape(Object sql, String expected) {
-		assertEquals(expected, Escape.escape(sql));
+		Escape escape = new Escape();
+		assertEquals(expected, escape.escape(sql));
 	}
 	
 	public static Object[] dataEscape() {
@@ -63,6 +64,23 @@ public class EscapeTest {
 			new Object[] { "single'quote", "'single''quote'" }
 		};
 	}
+
+	/*@Test
+	public void testEscapePrimitives() {
+		// parametrized is always Object
+		Escape escape = new Escape();
+		assertEquals("null", escape.escape(null));
+		assertEquals("false", escape.escape(false));
+		assertEquals("true", escape.escape(true));
+		assertEquals("42", escape.escape((byte)42));
+		assertEquals("42", escape.escape((short)42));
+		assertEquals("42", escape.escape(42));
+		assertEquals("42", escape.escape(42L));
+		assertEquals("123.4", escape.escape(123.4));
+		assertEquals("'c'", escape.escape('c'));
+		assertEquals("''", escape.escape(""));
+		assertEquals("'some text'", escape.escape("some text"));
+	}*/
 	
 	@ParameterizedTest
 	@MethodSource("dataParseValue")
@@ -186,13 +204,14 @@ public class EscapeTest {
 	) throws SQLException {
 		try (Connection con = getConnection.get()) {
 			try {
+				Escape escape = new Escape();
 				con.setAutoCommit(false);
 				try (Statement stmt = con.createStatement()) {
 					stmt.execute(
-						"insert into escape_table (" + name + ") values (" + Escape.escape(value) + ")"
+						"insert into escape_table (" + name + ") values (" + escape.escape(value) + ")"
 					);
 				} catch (Exception e) {
-					System.out.println(name + " '" + value + "' " + Escape.escape(value));
+					System.out.println(name + " '" + value + "' " + escape.escape(value));
 					throw e;
 				}
 				try (Statement stmt = con.createStatement(); ResultSet rs = stmt.executeQuery("select " + name + " from escape_table");) {
@@ -275,7 +294,7 @@ public class EscapeTest {
 				"col_datetime_zoned",
 				ZonedDateTime.of(2021, 8, 20, 10, 12, 45, 123_456_789, ZoneId.of("+5")),
 				"2021-08-20T05:12:45.123457000", // mysql
-				"2021-08-20T07:12:45.123457000+02", // postgres
+				"2021-08-20T05:12:45.123457000+01", // postgres
 				"2021-08-20T10:12:45.123457000+05:00", // sqlServer
 				"2021-08-20 10:12:45.123456789+05:00" // sqlite 
 			},

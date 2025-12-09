@@ -12,7 +12,6 @@ import java.util.function.Function;
 import ji.database.wrappers.StatementWrapper;
 import ji.querybuilder.Builder;
 import ji.querybuilder.DbInstance;
-import ji.querybuilder.Escape;
 import ji.querybuilder.builder_impl.share.ParametrizedSql;
 import ji.querybuilder.builders.BatchBuilder;
 
@@ -20,6 +19,7 @@ public class BatchBuilderImpl implements BatchBuilder, ParametrizedSql {
 	
 	private final List<Builder> batches;
 	private final Connection connection;
+	private final DbInstance instance;
 	
 	private final Map<String, String> parameters;
 
@@ -27,6 +27,7 @@ public class BatchBuilderImpl implements BatchBuilder, ParametrizedSql {
 		this.batches = new LinkedList<>();
 		this.parameters = new HashMap<>();
 		this.connection = connection;
+		this.instance = instance;
 	}
 
 	@Override
@@ -53,7 +54,7 @@ public class BatchBuilderImpl implements BatchBuilder, ParametrizedSql {
 
 	@Override
 	public BatchBuilder addParameter(String name, Object value) {
-		parameters.put(name, Escape.escape(value));
+		parameters.put(name, instance.getEscape().escape(value));
 		return this;
 	}
 

@@ -9,7 +9,6 @@ import java.util.function.Function;
 import ji.common.structures.Tuple2;
 import ji.querybuilder.Builder;
 import ji.querybuilder.DbInstance;
-import ji.querybuilder.Escape;
 import ji.querybuilder.Functions;
 import ji.querybuilder.enums.Join;
 import ji.querybuilder.enums.Where;
@@ -133,7 +132,7 @@ public abstract class SelectImpl<P> implements SingleExecute, ParametrizedSql, B
 	}
 
 	public P addParameter(String name, Object value) {
-		parameters.put(name, Escape.escape(value));
+		parameters.put(name, instance.getEscape().escape(value));
 		return getThis();
 	}
 
