@@ -19,7 +19,7 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 		return "CREATE TABLE create_table ("
 			+ "Primary_column INT IDENTITY(1,1) NOT NULL,"
 			+ " Unique_column INT UNIQUE,"
-			+ " Nullable_column INT DEFAULT 42 NULL,"
+			+ " Nullable_column INT NULL DEFAULT 42,"
 			+ " Bool_column BIT,"
 			+ " Float_column FLOAT,"
 			+ " Double_column FLOAT,"
@@ -67,7 +67,7 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 		}
 		return "ALTER TABLE table_to_alter"
 			+ " ADD Add_column_1 INT NOT NULL,"
-			+ " Add_column_2 INT DEFAULT 42 UNIQUE NULL;"
+			+ " Add_column_2 INT NULL UNIQUE DEFAULT 42;"
 
 			+ "ALTER TABLE table_to_alter"
 			+ " ALTER COLUMN Column_to_modify_1 FLOAT;"
@@ -98,9 +98,9 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 			+ "ALTER TABLE table_to_alter"
 			+ " DROP COLUMN Column_to_delete;"
 			
-			+ "ALTER TABLE table_to_alter"
-			+ " DROP CONSTRAINT FK_to_delete,"
-			+ " CONSTRAINT table_to_alter_column_to_modify_1_key;" //  UNIQUE (Column_to_modify_1)
+			+ "ALTER TABLE table_to_alter DROP CONSTRAINT FK_to_delete;"
+
+			+ "ALTER TABLE table_to_alter ADD CONSTRAINT table_to_alter_column_to_modify_1_key UNIQUE (Column_to_modify_1);"
 		
 			+ "EXEC sp_rename 'table_to_alter.Column_to_rename', 'Renamed_column', 'COLUMN'"
 			;
@@ -344,7 +344,7 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 	protected String getQuerySelect_withRecursive(boolean create) {
 		return "WITH cte AS (SELECT 1 AS A UNION ALL SELECT 2 AS A FROM cte),"
 			+ " cte2 AS (SELECT 42 as a)"
-			+ " SELECT A FROM cte";
+			+ " SELECT TOP 2 A FROM cte";
 	}
 
 	@Override
@@ -376,6 +376,21 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 	}
 
 	@Override
+    protected String getQuerySelect_limit(boolean create) {
+        return "SELECT TOP 10 * FROM table_1";
+    }
+
+	@Override
+	protected String getQuerySelect_limitOffset(boolean create) {
+        return "SELECT * FROM table_1 ORDER BY (SELECT null) OFFSET 15 ROWS FETCH NEXT 10 ROWS ONLY";
+	}
+
+    @Override
+    protected String getQuerySelect_limitOffsetOrderBy(boolean create) {
+        return "SELECT * FROM table_1 ORDER BY id OFFSET 15 ROWS FETCH NEXT 10 ROWS ONLY";
+    }
+
+	@Override
 	protected String getQueryMultipleSelect(boolean create) {
 		return "SELECT " + (create ? "321" : ":id") + " as id, name FROM table_5"
 			+ " UNION"
@@ -398,12 +413,12 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 
 	@Override
 	protected String getCallProcedureInt() {
-		return "{? = call procedure_int('some', ?, 123, ?, false)}";
+		return "{? = call procedure_int('some', ?, 123, ?, 0)}";
 	}
 
 	@Override
 	protected String getCallProcedureVoid() {
-		return "{? = call procedure_void('some', ?, 123, ?, false)}";
+		return "{? = call procedure_void('some', ?, 123, ?, 0)}";
 	}
 
 	/***********************/

@@ -1,13 +1,12 @@
 package ji.querybuilder.instances;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.junit.jupiter.api.AfterAll;
+import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeAll;
 
 import ji.database.Connections;
@@ -408,6 +407,21 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 			+ " ORDER BY t1.id, MAX(t1.id)"
 			+ " LIMIT 10 OFFSET 15";
 	}
+
+	@Override
+    protected String getQuerySelect_limit(boolean create) {
+        return "SELECT * FROM table_1 LIMIT 10";
+    }
+
+	@Override
+	protected String getQuerySelect_limitOffset(boolean create) {
+        return "SELECT * FROM table_1 LIMIT 10 OFFSET 15";
+	}
+
+    @Override
+    protected String getQuerySelect_limitOffsetOrderBy(boolean create) {
+        return "SELECT * FROM table_1 ORDER BY LIMIT 10 OFFSET 15";
+    }
 
 	@Override
 	protected String getQueryMultipleSelect(boolean create) {

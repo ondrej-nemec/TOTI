@@ -314,7 +314,8 @@ public class PostgresSqlInstanceTest extends AbstractInstanceTest {
 	protected String getQuerySelect_withRecursive(boolean create) {
 		return "WITH recursive cte AS (SELECT 1 AS A UNION SELECT 2 AS A FROM cte),"
 			+ " cte2 AS (SELECT 42 as a)"
-			+ "SELECT A FROM cte";
+			+ "SELECT A FROM cte"
+			+ " LIMIT 2";
 	}
 
 	@Override
@@ -344,6 +345,21 @@ public class PostgresSqlInstanceTest extends AbstractInstanceTest {
 			+ " ORDER BY t1.id, MAX(t1.id)"
 			+ " LIMIT 10 OFFSET 15";
 	}
+
+	@Override
+    protected String getQuerySelect_limit(boolean create) {
+        return "SELECT * FROM table_1 LIMIT 10";
+    }
+
+	@Override
+	protected String getQuerySelect_limitOffset(boolean create) {
+        return "SELECT * FROM table_1 LIMIT 10 OFFSET 15";
+	}
+
+    @Override
+    protected String getQuerySelect_limitOffsetOrderBy(boolean create) {
+        return "SELECT * FROM table_1 ORDER BY id LIMIT 10 OFFSET 15";
+    }
 
 	@Override
 	protected String getQueryMultipleSelect(boolean create) {

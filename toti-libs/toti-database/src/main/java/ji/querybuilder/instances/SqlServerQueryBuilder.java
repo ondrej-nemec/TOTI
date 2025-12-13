@@ -482,6 +482,14 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 		result.append(column.getName());
 		result.append(" ");
 		result.append(toString(column.getType()));
+
+		
+		for (ColumnSetting settings : column.getSettings()) {
+			if (settings != ColumnSetting.PRIMARY_KEY) {
+				result.append(" ");
+				result.append(toString(settings));
+			}
+		}
 		if (column.getValue().isSet()) {
 			result.append(" DEFAULT ");
 			result.append(column.getValue().getValue(getEscape()));
@@ -492,11 +500,7 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 		for (ColumnSetting settings : column.getSettings()) {
 			if (settings == ColumnSetting.PRIMARY_KEY) {
 				onConstaint.accept(String.format("PRIMARY KEY (%s)", column.getName()));
-			} else {
-				result.append(" ");
-				result.append(toString(settings));
 			}
-			
 		}
 		return result.toString();
 	}
@@ -517,7 +521,13 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 	private void createPlainSelect(SelectImpl<?> builder, StringBuilder sql, boolean create) {
 		iterateList(
 			sql, builder.getSelects(),
-			i->"SELECT ", i->", ", i->i
+			i->{
+				String res = "SELECT ";
+				if (builder.getOffset() == null && builder.getLimit() != null) {
+					res += "TOP " + builder.getLimit() + " ";
+				}
+				return res;
+			}, i->", ", i->i
 		);
 		if (builder.getFrom() != null) {
 			sql.append(" FROM ");
@@ -545,10 +555,11 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 			sql, builder.getOrderBy(),
 			i->" ORDER BY ", i->", ", i->i
 		);
-		if (builder.getOffset() != null) {
+		if (builder.getOffset() != null && builder.getLimit() != null) {
+			if (builder.getOrderBy().isEmpty()) {
+				sql.append(" ORDER BY (SELECT null)");
+			}
 			sql.append(" OFFSET " + builder.getOffset() + " ROWS");
-		}
-		if (builder.getLimit() != null) {
 			sql.append(" FETCH NEXT " + builder.getLimit() + " ROWS ONLY");
 		}
 	}
@@ -592,10 +603,10 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 			(with)->{
 				String subquery = create ? with._2().createSql() : with._2().getSql();
 				// sql server needs UNION ALL
-				/*boolean isRecursive = subquery.contains(" " + with._1() + " ") || subquery.endsWith(" " + with._1());
+				boolean isRecursive = subquery.contains(" " + with._1() + " ") || subquery.endsWith(" " + with._1());
 				if (isRecursive) {
-					subquery = subquery.replaceFirst(" UNION ", "")
-				}*/
+					subquery = subquery.replaceFirst(" UNION ", " UNION ALL ");
+				}
 				return String.format(
 					" %s AS (%s)", with._1(), subquery
 				);

@@ -38,6 +38,8 @@ import ji.querybuilder.structures.ProcedureResult;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractInstanceTest {
 	
+	// TODO escape columns https://stackoverflow.com/questions/2901453/sql-standard-to-escape-column-names
+	
 	private final DbInstance instance;
 	private final Connections connections;
 	
@@ -772,6 +774,7 @@ public abstract class AbstractInstanceTest {
 					.with("cte2", b.select("42 as a"))
 					.select("A")
 					.from("cte")
+					.limit(2)
 				),
 				getQuerySelect_withRecursive(false),
 				getQuerySelect_withRecursive(true)
@@ -812,6 +815,37 @@ public abstract class AbstractInstanceTest {
 				),
 				getQuerySelect(false),
 				getQuerySelect(true)
+			},
+			new Object[] {
+				"Limit",
+				f(b->b
+					.select("*")
+					.from("table_1")
+					.limit(10)
+				),
+				getQuerySelect_limit(false),
+				getQuerySelect_limit(true)
+			},
+			new Object[] {
+				"LimitAndOffset",
+				f(b->b
+					.select("*")
+					.from("table_1")
+					.limit(10, 15)
+				),
+				getQuerySelect_limitOffset(false),
+				getQuerySelect_limitOffset(true)
+			},
+			new Object[] {
+				"LimitAndOffsetOrderBy",
+				f(b->b
+					.select("*")
+					.from("table_1")
+					.orderBy("id")
+					.limit(10, 15)
+				),
+				getQuerySelect_limitOffsetOrderBy(false),
+				getQuerySelect_limitOffsetOrderBy(true)
 			}
 		};
 	}
@@ -829,6 +863,12 @@ public abstract class AbstractInstanceTest {
 	protected abstract String getQuerySelect_fromMultiSelect(boolean create);
 
 	protected abstract String getQuerySelect(boolean create);
+
+	protected abstract String getQuerySelect_limit(boolean create);
+
+	protected abstract String getQuerySelect_limitOffset(boolean create);
+
+	protected abstract String getQuerySelect_limitOffsetOrderBy(boolean create);
 
 	@Test
 	public void testQueryMultipleSelect() throws Exception{
