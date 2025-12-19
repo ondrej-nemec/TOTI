@@ -7,16 +7,12 @@ import ji.database.Connections;
 
 public class MySqlInstanceTest extends AbstractInstanceTest {
 
-	private static final String TRANSACTION_NOT_WORKING_ERROR = "Transaction for structures is not working";
-	
 	public MySqlInstanceTest() {
 		super(new MySqlQueryBuilder());
 	}
 
 	@Override
 	protected String getCreateTable(boolean withRestrict) {
-		return TRANSACTION_NOT_WORKING_ERROR;
-		/*
 		return "CREATE TABLE create_table ("
 			+ "Primary_column INT AUTO INCREMENT NOT NULL,"
 			+ " Unique_column INT UNIQUE,"
@@ -32,8 +28,8 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 			+ " Date_column DATE,"
 			+ " DateTime_column TIMESTAMP,"
 			+ " DateTime2_column TIMESTAMP(6),"
-			+ " DateTime_Zoned_column TIMESTAMPTZ,"
-			+ " DateTime_Zoned2_column TIMESTAMPTZ(6),"
+			+ " DateTime_Zoned_column TIMESTAMP,"
+			+ " DateTime_Zoned2_column TIMESTAMP(6),"
 			+ " FK_column_1 INT,"
 			+ " FK_column_2 INT,"
 			+ " FK_column_3 INT,"
@@ -41,16 +37,15 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 			+ " PRIMARY KEY (Primary_column),"
 			+ " CONSTRAINT FK_FK_column_1 FOREIGN KEY (FK_column_1) REFERENCES table_for_index_1(id),"
 			+ " CONSTRAINT FK_FK_column_2 FOREIGN KEY (FK_column_2) REFERENCES table_for_index_2(id) ON DELETE CASCADE ON UPDATE NO ACTION,"
-			+ " CONSTRAINT FK_FK_column_3 FOREIGN KEY (FK_column_3) REFERENCES table_for_index_3(id) ON DELETE RESTRICT ON UPDATE SET DEFAULT,"
+			+ " CONSTRAINT FK_FK_column_3 FOREIGN KEY (FK_column_3) REFERENCES table_for_index_3(id) ON DELETE "
+			+ (withRestrict ? "RESTRICT" : "SET NULL")
+			+ " ON UPDATE SET DEFAULT,"
 			+ " CONSTRAINT FK_FK_column_4 FOREIGN KEY (FK_column_4) REFERENCES table_for_index_4(id) ON DELETE SET NULL"
 		+ ")";
-		*/
 	}
 
 	@Override
 	protected String getCreateTableWithPrimary() {
-		return TRANSACTION_NOT_WORKING_ERROR;
-		/*
 		return "CREATE TABLE create_table ("
 			+ "Primary_column_1 INT,"
 			+ " Primary_column_2 INT,"
@@ -58,13 +53,16 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 			+ " PRIMARY KEY (Primary_column_1, Primary_column_2, Primary_column_3),"
 			+ " CONSTRAINT FK_Primary_column_3 FOREIGN KEY (Primary_column_3) REFERENCES table_for_index_1(id)"
 		+ ")";
-		*/
 	}
 
 	@Override
 	protected String getAlterTable(boolean full) {
-		return TRANSACTION_NOT_WORKING_ERROR;
-		/*
+		if (!full) {
+			return "ALTER TABLE table_to_alter"
+				+ " ADD Add_column_1 INT NOT NULL,"
+				+ " DROP COLUMN Column_to_delete,"
+				+ " RENAME COLUMN Column_to_rename TO Renamed_column";
+		}
 		return "ALTER TABLE table_to_alter"
 			+ " ADD Add_column_1 INT NOT NULL,"
 			+ " ADD Add_column_2 INT DEFAULT 42 UNIQUE NULL,"
@@ -86,7 +84,6 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 			+ " DROP CONSTRAINT table_to_alter_column_to_modify_1_key," //  UNIQUE (Column_to_modify_1)
 			+ " ADD CONSTRAINT table_to_alter_column_to_modify_2_key UNIQUE (Column_to_modify_2)"
 			;
-		*/
 		/*
 		return "ALTER TABLE table_to_alter"
 			+ " RENAME COLUMN Column_to_rename TO Renamed_column"; // INT
@@ -95,56 +92,39 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 
 	@Override
 	protected String getAlterTableRenameTable() {
-		return TRANSACTION_NOT_WORKING_ERROR;
-		/*
 		return "ALTER TABLE table_to_rename"
 			+ " RENAME TO table_with_another_name";
-		*/
 	}
 
 	@Override
 	protected String getDeleteTable() {
-		return TRANSACTION_NOT_WORKING_ERROR;
-		/*
 		return "DROP TABLE table_to_delete";
-		*/
 	}
 
 	@Override
 	protected String getCreateView_fromString(boolean create) {
-		return TRANSACTION_NOT_WORKING_ERROR;
-		/*
-		return "CREATE VIEW some_view AS SELECT 1 as A";
-		*/
+		return "CREATE VIEW some_view_1 AS SELECT 1 as A";
 	}
 
 	@Override
 	protected String getCreateView_fromSelect(boolean create) {
-		return TRANSACTION_NOT_WORKING_ERROR;
-		/*
-		return "CREATE VIEW some_view AS SELECT A FROM (SELECT 1 AS A) AS a";
-		*/
+		return "CREATE VIEW some_view_2 AS SELECT A FROM (SELECT 1 AS A) AS a";
 	}
 
 	@Override
 	protected String getCreateView_fromMultiSelect(boolean create) {
-		return TRANSACTION_NOT_WORKING_ERROR;
-		/*
-		return "CREATE VIEW some_view AS"
+		return "CREATE VIEW some_view_3 AS"
 			+ " SELECT A"
 			+ " FROM ("
 				+ "SELECT 1 AS A"
 				+ " UNION"
 				+ " SELECT 2 AS A"
 			+ ") AS a";
-		*/
 	}
 
 	@Override
 	protected String getCreateView(boolean create) {
-		return TRANSACTION_NOT_WORKING_ERROR;
-		/*
-		return "CREATE VIEW some_view AS"
+		return "CREATE VIEW some_view_4 AS"
 			+ " SELECT t1.id, t1.name, MAX(t1.id) as max_id"
 			+ " FROM table_1 AS t1"
 			
@@ -164,37 +144,25 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 			)
 			+ " ORDER BY t1.id, MAX(t1.id)"
 			+ " LIMIT 10 OFFSET 15";
-			*/
 	}
 
 	@Override
 	protected String getAlterView_fromString(boolean create) {
-		return TRANSACTION_NOT_WORKING_ERROR;
-		/*
 		return "DROP VIEW view_to_alter; CREATE VIEW view_to_alter AS SELECT id FROM table_1";
-		*/
 	}
 
 	@Override
 	protected String getAlterView_fromStringAlias(boolean create) {
-		return TRANSACTION_NOT_WORKING_ERROR;
-		/*
 		return "DROP VIEW view_to_alter; CREATE VIEW view_to_alter AS SELECT id FROM table_1 AS a";
-		*/
 	}
 
 	@Override
 	protected String getAlterView_fromSelect(boolean create) {
-		return TRANSACTION_NOT_WORKING_ERROR;
-		/*
 		return "DROP VIEW view_to_alter; CREATE VIEW view_to_alter AS SELECT A FROM (SELECT 1 AS A) AS a";
-		*/
 	}
 
 	@Override
 	protected String getAlterView_fromMultiSelect(boolean create) {
-		return TRANSACTION_NOT_WORKING_ERROR;
-		/*
 		return "DROP VIEW view_to_alter; CREATE VIEW view_to_alter AS"
 			+ " SELECT A"
 			+ " FROM ("
@@ -202,13 +170,10 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 				+ " UNION"
 				+ " SELECT 2 AS A"
 			+ ") AS a";
-		*/
 	}
 
 	@Override
 	protected String getAlterView(boolean create) {
-		return TRANSACTION_NOT_WORKING_ERROR;
-		/*
 		return "DROP VIEW view_to_alter; CREATE VIEW view_to_alter AS"
 			+ " SELECT t1.id, t1.name, MAX(t1.id) as max_id"
 			+ " FROM table_1 AS t1"
@@ -230,31 +195,21 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 			)
 			+ " ORDER BY t1.id, MAX(t1.id)"
 			+ " LIMIT 10 OFFSET 15";
-		*/
 	}
 
 	@Override
 	protected String getDeleteView() {
-		return TRANSACTION_NOT_WORKING_ERROR;
-		/*
 		return "DROP VIEW view_to_delete";
-		*/
 	}
 
 	@Override
 	protected String getCreateIndex() {
-		return TRANSACTION_NOT_WORKING_ERROR;
-		/*
 		return "CREATE INDEX index_name ON table_for_index_1(id, name)";
-		*/
 	}
 
 	@Override
 	protected String getDeleteIndex() {
-		return TRANSACTION_NOT_WORKING_ERROR;
-		/*
 		return "DROP INDEX index_to_delete ON table_for_index_1";
-		*/
 	}
 
 	@Override
@@ -371,7 +326,8 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 	protected String getQuerySelect_withRecursive(boolean create) {
 		return "WITH recursive cte AS (SELECT 1 AS A UNION SELECT 2 AS A FROM cte),"
 			+ " cte2 AS (SELECT 42 as a)"
-			+ "SELECT A FROM cte";
+			+ "SELECT A FROM cte"
+			+ " LIMIT 2";
 	}
 
 	@Override
@@ -414,7 +370,7 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 
     @Override
     protected String getQuerySelect_limitOffsetOrderBy(boolean create) {
-        return "SELECT * FROM table_1 ORDER BY LIMIT 10 OFFSET 15";
+        return "SELECT * FROM table_1 ORDER BY id LIMIT 10 OFFSET 15";
     }
 
 	@Override
@@ -440,29 +396,29 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 
 	@Override
 	protected String getCallProcedureInt() {
-		return "{? = call procedure_int('some', ?, 123, ?, false)}";
+		return null;
 	}
 
 	@Override
 	protected String getCallProcedureVoid() {
-		return "{? = call procedure_void('some', ?, 123, ?, false)}";
+		return "{CALL procedure_void('some', ?, 123, ?, false)}";
 	}
 
 	/***********************/
 	
 	@Override
 	protected String getFunctions_concat() {
-		return "SELECT CONCAT(', name, ') FROM table_for_functions";
+		return "SELECT CONCAT('\"', name, '\"') FROM table_for_functions";
 	}
 
 	@Override
 	protected String getFunctions_groupConcat() {
-		return "SELECT STRING_AGG(name, ',') FROM table_for_functions GROUP BY name";
+		return "SELECT GROUP_CONCAT(name, ',') FROM table_for_functions GROUP BY name";
 	}
 
 	@Override
 	protected String getFunctions_groupConcatOrderBy() {
-		return "SELECT STRING_AGG(name, ',' ORDER BY id) FROM table_for_functions GROUP BY name";
+		return "SELECT GROUP_CONCAT(name ORDER BY id SEPARATOR ',') FROM table_for_functions GROUP BY name";
 	}
 
 	@Override

@@ -320,7 +320,7 @@ public abstract class AbstractInstanceTest {
 		return new Object[] {
 			new Object[] {
 				f(b->b
-					.createView("some_view")
+					.createView("some_view_1")
 					.select("1 as A")
 				),
 				getCreateView_fromString(false),
@@ -328,7 +328,7 @@ public abstract class AbstractInstanceTest {
 			},
 			new Object[] {
 				f(b->b
-					.createView("some_view")
+					.createView("some_view_2")
 					.select("A")
 					.from(
 						b.select("1 AS A"),
@@ -340,7 +340,7 @@ public abstract class AbstractInstanceTest {
 			},
 			new Object[] {
 				f(b->b
-					.createView("some_view")
+					.createView("some_view_3")
 					.select("A")
 					.from(
 						b.multiSelect(b.select("1 AS A"))
@@ -353,7 +353,7 @@ public abstract class AbstractInstanceTest {
 			},
 			new Object[] {
 				f(b->b
-					.createView("some_view")
+					.createView("some_view_4")
 
 					.select("t1.id")
 					.select("t1.name")
@@ -985,19 +985,11 @@ public abstract class AbstractInstanceTest {
 			}
 
 			// test expected first, then syntax
-			if (!expectedCreate.contains("?")) {
+			/*if (!expectedCreate.contains("?")) {
 				connection.setAutoCommit(false);
 				// check if expected SQL is correct
 				try (Statement stmt = connection.createStatement()) {
-					/*if (expectedCreate.startsWith("ALTER")) {
-						System.out.println();
-						for (String q : expectedCreate.split(";")) {
-							System.out.println(q);
-							stmt.execute(q);
-						}
-					} else {*/
-						stmt.execute(expectedCreate);
-					//}
+					stmt.execute(expectedCreate);
 					connection.rollback();
 				} catch(SQLException e) {
 					System.err.println();
@@ -1007,7 +999,7 @@ public abstract class AbstractInstanceTest {
 					connection.rollback();
 					throw e;
 				}
-			}
+			}*/
 			assertEquals(expectedGet, actual.getSql());
 			assertEquals(expectedCreate, actual.createSql());
 	

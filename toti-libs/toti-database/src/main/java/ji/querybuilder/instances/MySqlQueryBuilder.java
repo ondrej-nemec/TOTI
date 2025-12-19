@@ -65,9 +65,15 @@ public class MySqlQueryBuilder implements DbInstance {
 
 	@Override
 	public String groupConcat(String param, String delimeter, String orderBy) {
+		if (orderBy == null) {
+			return String.format(
+				"GROUP_CONCAT(%s, '%s')",
+				param, delimeter
+			);
+		}
 		return String.format(
-			"STRING_AGG(%s, '%s'%s)",
-			param, delimeter, orderBy == null ? "" : " ORDER BY " + orderBy
+			"GROUP_CONCAT(%s ORDER BY %s SEPARATOR '%s')",
+			param, orderBy, delimeter
 		);
 	}
 	
@@ -111,7 +117,10 @@ public class MySqlQueryBuilder implements DbInstance {
 
 	@Override
 	public String createSql(CallProcedureBuilderImpl callProcedure, boolean create) {
-		 return "{? = call "
+		if (callProcedure.isOutput()) {
+			throw new RuntimeException("Not supported operation");
+		}
+		 return "{CALL "
 			 + callProcedure.getProcedure() + "("
 			 + Implode.implode(", ", callProcedure.getParameters())
 			 + ")}";
@@ -119,7 +128,7 @@ public class MySqlQueryBuilder implements DbInstance {
 
 	@Override
 	public String createSql(DeleteIndexBuilderImpl deleteIndex) {
-		return "DROP INDEX " + deleteIndex.getIndexName();
+		return "DROP INDEX " + deleteIndex.getIndexName() + " ON " + deleteIndex.getTable();
 	}
 
 	@Override
@@ -277,7 +286,9 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 	@Override
 	public String createSql(CreateViewBuilderImpl createView, boolean create) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("CREATE VIEW " + createView.getView() + " AS ");
+		sql.append("CREATE VIEW ");
+		sql.append(createView.getView());
+		sql.append(" AS ");
 		createPlainSelect(createView, sql, create);
 		return sql.toString();
 	}
@@ -285,8 +296,11 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 	@Override
 	public String createSql(AlterViewBuilderImpl alterView, boolean create) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("DROP VIEW " + alterView.getView() + "; ");
-		sql.append("CREATE VIEW " + alterView.getView() + " AS ");
+		sql.append("DROP VIEW ");
+		sql.append(alterView.getView());
+		sql.append("; CREATE VIEW ");
+		sql.append(alterView.getView());
+		sql.append(" AS ");
 		createPlainSelect(alterView, sql, create);
 		return sql.toString();
 	}
@@ -395,14 +409,28 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 				return String.format("VARCHAR(%s)", type.getSize());
 			case CHAR:
 				return String.format("CHAR(%s)", type.getSize());
-			case DATETIME: return "TIMESTAMP";
+			case TIME:
+				if (type.getSize() == null) {
+					return "TIME";
+				}
+				return String.format("TIME(%s)", type.getSize());
+			case DATETIME:
+				if (type.getSize() == null) {
+					return "TIMESTAMP";
+				}
+				return String.format("TIMESTAMP(%s)", type.getSize());
+			case DATETIME_ZONED:
+				if (type.getSize() == null) {
+					return "TIMESTAMP";
+				}
+				return String.format("TIMESTAMP(%s)", type.getSize());
 			default: return type.getType().toString();
 		}
 	}
 
 	protected String toString(ColumnSetting settings) {
 		switch (settings) {
-			case AUTO_INCREMENT: return "SERIAL";
+			case AUTO_INCREMENT: return "AUTO INCREMENT";
 			case UNIQUE: return "UNIQUE";
 			case NOT_NULL: return "NOT NULL";
 			case NULL: return "NULL";
@@ -473,10 +501,8 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 	private String getColumn(Column column, Consumer<String> onConstaint) {
 		StringBuilder result = new StringBuilder();
 		result.append(column.getName());
-		if (!column.getSettings().contains(ColumnSetting.AUTO_INCREMENT)) {
-			result.append(" ");
-			result.append(toString(column.getType()));
-		}
+		result.append(" ");
+		result.append(toString(column.getType()));
 		if (column.getValue().isSet()) {
 			result.append(" DEFAULT ");
 			result.append(column.getValue().getValue(getEscape()));

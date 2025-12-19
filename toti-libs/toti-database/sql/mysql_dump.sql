@@ -215,7 +215,22 @@ insert into table_7 (id, name, typ) VALUES
 
 -- separator --
 
-CREATE PROCEDURE procedure_int(
+CREATE PROCEDURE procedure_void(
+	IN i_string varchar(20),
+	OUT o_string varchar(20),
+	IN i_integer int,
+	OUT o_integer int,
+	IN i_bool boolean
+)
+BEGIN
+  SELECT 42 INTO o_integer;
+  SELECT 'something' INTO o_string;
+END;
+
+-- separator --
+
+-- return not supported
+/*CREATE PROCEDURE procedure_int(
 	IN i_string varchar(20),
 	OUT o_string varchar(20),
 	IN i_integer int,
@@ -226,18 +241,4 @@ BEGIN
   SELECT 42 INTO o_integer;
   SELECT 'someting' INTO o_string;
   return 1;
-END;
-
--- separator --
-
-CREATE PROCEDURE procedure_void(
-	IN i_string varchar(20),
-	OUT o_string varchar(20),
-	IN i_integer int,
-	OUT o_integer int,
-	IN i_bool boolean
-)
-BEGIN
-  SELECT 42 INTO o_integer;
-  SELECT 'someting' INTO o_string;
-END;
+END;*/

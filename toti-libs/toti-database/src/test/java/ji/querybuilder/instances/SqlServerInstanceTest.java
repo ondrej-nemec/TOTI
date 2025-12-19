@@ -118,17 +118,17 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 
 	@Override
 	protected String getCreateView_fromString(boolean create) {
-		return "CREATE VIEW some_view AS SELECT 1 as A";
+		return "CREATE VIEW some_view_1 AS SELECT 1 as A";
 	}
 
 	@Override
 	protected String getCreateView_fromSelect(boolean create) {
-		return "CREATE VIEW some_view AS SELECT A FROM (SELECT 1 AS A) AS a";
+		return "CREATE VIEW some_view_2 AS SELECT A FROM (SELECT 1 AS A) AS a";
 	}
 
 	@Override
 	protected String getCreateView_fromMultiSelect(boolean create) {
-		return "CREATE VIEW some_view AS"
+		return "CREATE VIEW some_view_3 AS"
 			+ " SELECT A"
 			+ " FROM ("
 				+ "SELECT 1 AS A"
@@ -139,7 +139,7 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 
 	@Override
 	protected String getCreateView(boolean create) {
-		return "CREATE VIEW some_view AS"
+		return "CREATE VIEW some_view_4 AS"
 			+ " SELECT t1.id, t1.name, MAX(t1.id) as max_id"
 			+ " FROM table_1 AS t1"
 			
