@@ -110,6 +110,11 @@ public abstract class SelectImpl<P> implements SingleExecute, ParametrizedSql, B
 		return getThis();
 	}
 
+	public P limit(int limit) {
+		this.limit = limit;
+		return getThis();
+	}
+
 	public P limit(int limit, int offset) {
 		this.limit = limit;
 		this.offset = offset;

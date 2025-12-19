@@ -20,9 +20,9 @@ services:
     # username is root
       MYSQL_ROOT_PASSWORD: "Strong!Passw0rd"
     #  DB_HOST: mysql
-    volumes:
+    #volumes:
       #- ./volumes/mysql:/var/lib/mysql
-      - ./toti-libs/toti-database/sql/mysql_dump.sql:/docker-entrypoint-initdb.d/query_builder.sql:ro
+      #- ./toti-libs/toti-database/sql/mysql_dump.sql:/docker-entrypoint-initdb.d/query_builder.sql:ro
     ports:
       - 19070:3306
   postgres:
@@ -31,9 +31,9 @@ services:
     container_name: toti_postgres
     ports:
       - 19060:5432
-    volumes:
+    #volumes:
       #- ./volumes/postgres:/var/lib/postgresql/data
-      - ./toti-libs/toti-database/sql/postgres_dump.sql:/docker-entrypoint-initdb.d/query_builder.sql
+      #- ./toti-libs/toti-database/sql/postgres_dump.sql:/docker-entrypoint-initdb.d/query_builder.sql
     # set shared memory limit when using docker-compose
     shm_size: 128mb
     environment:
@@ -55,9 +55,9 @@ services:
       # DB_HOST: sqlserver
     ports:
       - "19050:1433"
-    volumes:
+    #volumes:
       #- ./volumes/sqlserver:/var/opt/mssql
-      - ./toti-libs/toti-database/sql/sqlserver_dump.sql:/init-db/query_builder.sql:ro
+      #- ./toti-libs/toti-database/sql/sqlserver_dump.sql:/init-db/query_builder.sql:ro
 
   sqlite:
     image: nouchka/sqlite3:latest
@@ -69,7 +69,7 @@ services:
       - ./volumes/sqlite/:/root/db/
       - ./docker/sqlite/init.sh:/init-sqlite.sh:ro
       # - ./docker/sqlite_dump.sql:/root/dump.sql
-      - ./toti-libs/toti-database/sql/sqlite_dump.sql:/docker-entrypoint-initdb.d/query_builder.sql:ro
+      #- ./toti-libs/toti-database/sql/sqlite_dump.sql:/docker-entrypoint-initdb.d/query_builder.sql:ro
     entrypoint: ["/bin/sh", "/init-sqlite.sh"]
 
   adminer:

@@ -413,12 +413,12 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 
 	@Override
 	protected String getCallProcedureInt() {
-		return "{? = call procedure_int('some', ?, 123, ?, 0)}";
+		return "{? = CALL procedure_int('some', ?, 123, ?, 0)}";
 	}
 
 	@Override
 	protected String getCallProcedureVoid() {
-		return "{? = call procedure_void('some', ?, 123, ?, 0)}";
+		return "{CALL procedure_void('some', ?, 123, ?, 0)}";
 	}
 
 	/***********************/
@@ -481,5 +481,15 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 	@Override
 	protected Connection getConnection(Connections connections) throws SQLException {
 		return connections.sqlserver();
+	}
+
+	@Override
+	protected Connection getBaseConnection(Connections connections) throws SQLException {
+		return connections.sqlserverBase();
+	}
+
+	@Override
+	protected String getFilename() {
+		return "sqlserver";
 	}
 }

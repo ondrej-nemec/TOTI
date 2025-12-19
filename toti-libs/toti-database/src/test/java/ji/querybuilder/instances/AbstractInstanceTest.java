@@ -10,6 +10,7 @@ import java.util.function.Function;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,6 +18,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import ji.common.structures.ThrowingConsumer;
 import ji.database.Connections;
+import ji.files.text.Text;
 import ji.querybuilder.Builder;
 import ji.querybuilder.DbInstance;
 import ji.querybuilder.QueryBuilder;
@@ -42,6 +44,7 @@ public abstract class AbstractInstanceTest {
 	
 	private final DbInstance instance;
 	private final Connections connections;
+	private boolean isInit = false;
 	
 	public AbstractInstanceTest(DbInstance instance) {
 		this.instance = instance;
@@ -896,6 +899,7 @@ public abstract class AbstractInstanceTest {
 			.addInputParameter(123)
 			.addOutputParameter("output2", Integer.class)
 			.addInputParameter(false)
+			.registerProcedureOutput()
 		), getCallProcedureInt(), b->{
 			ProcedureResult actual = b.execute();
 			
@@ -985,7 +989,15 @@ public abstract class AbstractInstanceTest {
 				connection.setAutoCommit(false);
 				// check if expected SQL is correct
 				try (Statement stmt = connection.createStatement()) {
-					stmt.execute(expectedCreate);
+					/*if (expectedCreate.startsWith("ALTER")) {
+						System.out.println();
+						for (String q : expectedCreate.split(";")) {
+							System.out.println(q);
+							stmt.execute(q);
+						}
+					} else {*/
+						stmt.execute(expectedCreate);
+					//}
 					connection.rollback();
 				} catch(SQLException e) {
 					System.err.println();
@@ -1007,8 +1019,46 @@ public abstract class AbstractInstanceTest {
 	
 	protected abstract Connection getConnection(Connections connections) throws SQLException;
 
+	protected abstract Connection getBaseConnection(Connections connections) throws SQLException;
+
+	protected abstract String getFilename();
+
 	private static <B extends Builder> Function<QueryBuilder, B> f(Function<QueryBuilder, B> f) {
 		return f;
+	}
+
+	@BeforeEach
+	public void initDb() throws Exception {
+		if (isInit) {
+			return;
+		}
+		initEmptyDb(connections);
+		this.isInit = true;
+		String[] commands = Text.get().read(br->{
+			return br.asString();
+		}, "sql/" + getFilename() + "_dump.sql").split("\n-- separator --\n");
+		try (Connection conn = getConnection(connections)) {
+			for (String command : commands) {
+				try (Statement stmt = conn.createStatement();) {
+					stmt.execute(command);
+				} catch (SQLException e) {
+					throw new SQLException("INIT command: " + command, e);
+				}
+			}
+		}
+	}
+
+	protected void initEmptyDb(Connections connections) throws SQLException {
+		try (Connection conn = getBaseConnection(connections)) {
+			try (Statement stmt = conn.createStatement()) {
+				stmt.execute("DROP DATABASE " + Connections.QUERY_BUILDER_DATABASE);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			try (Statement stmt = conn.createStatement();) {
+				stmt.execute("CREATE DATABASE " + Connections.QUERY_BUILDER_DATABASE);
+			}
+		}
 	}
 	
 }

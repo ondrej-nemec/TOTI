@@ -10,6 +10,7 @@ import java.time.LocalTime;
 import java.util.LinkedList;
 import java.util.List;
 
+import ji.common.structures.IntegerBuilder;
 import ji.common.structures.SortedMap;
 import ji.querybuilder.DbInstance;
 import ji.querybuilder.Escape;
@@ -24,6 +25,7 @@ public class CallProcedureBuilderImpl implements CallProcedureBuilder {
 	
 	private final List<String> parameters;
 	private final SortedMap<String, Class<?>> outputs;
+	private boolean isOutput = false;
 	
 	public CallProcedureBuilderImpl(Connection connection, DbInstance instance, String procedure) {
 		this.connection = connection;
@@ -39,6 +41,10 @@ public class CallProcedureBuilderImpl implements CallProcedureBuilder {
 	
 	public List<String> getParameters() {
 		return parameters;
+	}
+
+	public boolean isOutput() {
+		return isOutput;
 	}
 	
 	@Override
@@ -62,23 +68,34 @@ public class CallProcedureBuilderImpl implements CallProcedureBuilder {
 	@Override
 	public CallProcedureBuilder addOutputParameter(String name, Class<?> type) {
 		this.parameters.add("?");
-		this.outputs.put(name,type);
+		this.outputs.put(name, type);
+		return this;
+	}
+
+	@Override
+	public CallProcedureBuilder registerProcedureOutput() {
+		this.isOutput = true;
 		return this;
 	}
 
 	@Override
 	public ProcedureResult execute() throws SQLException {
 		try (CallableStatement stmt = connection.prepareCall(createSql())) {
-			// call result
-            stmt.registerOutParameter(1, getType(null));
+			IntegerBuilder prefixIndex = new IntegerBuilder(1);
+			if (isOutput) {
+				// call result
+				stmt.registerOutParameter(prefixIndex.getIncrease(), Types.INTEGER);
+			}
             outputs.forEach((index, parameterName, clazz)->{
-            	stmt.registerOutParameter(index + 2, getType(clazz));
+				int type = getType(clazz);
+				stmt.setNull(index + prefixIndex.get(), type);
+            	stmt.registerOutParameter(index + prefixIndex.get(), type);
             });
             stmt.execute();
             
-            ProcedureResult result = new ProcedureResult(stmt.getObject(1));
+            ProcedureResult result = new ProcedureResult(isOutput ? stmt.getObject(1) : 0);
             outputs.forEach((index, parameterName, clazz)->{
-	           	 result.addOutput(parameterName, Escape.parseValue(stmt, index + 2));
+	           	 result.addOutput(parameterName, Escape.parseValue(stmt, index + prefixIndex.get()));
 	        });
             return result;
 		}

@@ -42,6 +42,8 @@ public interface PlainSelect<P> extends Wheres<P>, Parametrized<P>, Joins<P>, Or
 	
 	P having(Function<Functions, String> having);
 	
+	P limit(int limit);
+	
 	P limit(int limit, int offset);
 	
 }

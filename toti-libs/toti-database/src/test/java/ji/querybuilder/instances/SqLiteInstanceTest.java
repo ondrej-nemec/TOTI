@@ -447,5 +447,20 @@ public class SqLiteInstanceTest extends AbstractInstanceTest {
 	protected Connection getConnection(Connections connections) throws SQLException {
 		return connections.sqlite();
 	}
+
+	@Override
+	protected Connection getBaseConnection(Connections connections) throws SQLException {
+		return null;
+	}
+
+    @Override
+    protected void initEmptyDb(Connections connections) throws SQLException {
+        connections.getSqliteFile().delete();
+    }
+
+	@Override
+	protected String getFilename() {
+		return "sqlite";
+	}
 	
 }

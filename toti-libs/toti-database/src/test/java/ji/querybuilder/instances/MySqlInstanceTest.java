@@ -1,13 +1,7 @@
 package ji.querybuilder.instances;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-
-import org.junit.jupiter.api.AfterAll;
-import static org.junit.jupiter.api.Assertions.fail;
-import org.junit.jupiter.api.BeforeAll;
 
 import ji.database.Connections;
 
@@ -516,38 +510,14 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 		return connections.mysql();
 	}
 
-	@BeforeAll
-	public static void before() {
-		String sourceDb = Connections.QUERY_BUILDER_TABLE + "_origin";
-		String targetDb = Connections.QUERY_BUILDER_TABLE;
-		
-		try (Connection conn = Connections.mysqlBase()) {
-			try (Statement st1 = conn.createStatement(); Statement st2 = conn.createStatement()) {
-				st1.execute("CREATE DATABASE IF NOT EXISTS " + targetDb);
-				ResultSet rs = st1.executeQuery(
-					"SELECT table_name FROM information_schema.tables WHERE table_schema='" + sourceDb + "'"
-				);
-				while (rs.next()) {
-					String table = rs.getString(1);
-					st2.execute("CREATE TABLE " + targetDb + "." + table + " LIKE " + sourceDb + "." + table);
-					st2.execute("INSERT INTO " + targetDb + "." + table + " SELECT * FROM " + sourceDb + "." + table);
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Database clone fails");
-		}
+	@Override
+	protected Connection getBaseConnection(Connections connections) throws SQLException {
+		return connections.mysqlBase();
 	}
-	
-	@AfterAll
-	public static void after() {
-		try (Connection conn = Connections.mysqlBase();
-			Statement st = conn.createStatement()) {
-			st.execute("DROP DATABASE " + Connections.QUERY_BUILDER_TABLE);
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Database delete fails");
-		}
+
+	@Override
+	protected String getFilename() {
+		return "mysql";
 	}
 	
 }

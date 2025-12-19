@@ -119,10 +119,12 @@ public class SqlServerQueryBuilder implements DbInstance {
 	
 	@Override
 	public String createSql(CallProcedureBuilderImpl callProcedure, boolean create) {
-		return "{? = call "
-			 + callProcedure.getProcedure() + "("
-			 + Implode.implode(", ", callProcedure.getParameters())
-			 + ")}";
+		return "{"
+			+ (callProcedure.isOutput() ? "? = " : "")
+			+ "CALL "
+			+ callProcedure.getProcedure() + "("
+			+ Implode.implode(", ", callProcedure.getParameters())
+			+ ")}";
 	}
 
 	@Override

@@ -10,6 +10,8 @@ public interface CallProcedureBuilder extends Builder {
 	CallProcedureBuilder addInputParameter(Object value);
 	
 	CallProcedureBuilder addOutputParameter(String name, Class<?> type);
+
+	CallProcedureBuilder registerProcedureOutput();
 	
 	ProcedureResult execute() throws SQLException;
 

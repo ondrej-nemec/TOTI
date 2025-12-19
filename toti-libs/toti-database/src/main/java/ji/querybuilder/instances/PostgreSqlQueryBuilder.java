@@ -108,10 +108,18 @@ public class PostgreSqlQueryBuilder implements DbInstance {
 
 	@Override
 	public String createSql(CallProcedureBuilderImpl callProcedure, boolean create) {
-		return "{? = call "
+		if (callProcedure.isOutput()) {
+			throw new RuntimeException("Not supported operation");
+		}
+		return "CALL "
 			 + callProcedure.getProcedure() + "("
-			 + Implode.implode(", ", callProcedure.getParameters())
-			 + ")}";
+			 + Implode.implode(r->{
+				if (r.startsWith("'")) {
+					return r + "::varchar";
+				}
+				return r;
+			}, ", ", callProcedure.getParameters())
+			 + ")";
 	}
 
 	@Override
@@ -615,7 +623,8 @@ public class PostgreSqlQueryBuilder implements DbInstance {
 			),
 			join.getAlias()
 		));
-		sql.append(" ON " + join.getOn());
+		sql.append(" ON ");
+		sql.append(join.getOn());
 	}
 	
 }

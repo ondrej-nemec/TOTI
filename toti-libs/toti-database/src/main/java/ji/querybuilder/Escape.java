@@ -33,7 +33,6 @@ public class Escape {
 	}
 
 	protected String escapeScalar(Object value) {
-		System.out.println("Es " + value + " " + value.getClass());
 		Class<?> clazz = value.getClass();
 		if (clazz.isAssignableFrom(Boolean.class) || clazz.isAssignableFrom(boolean.class)) {
 			return escapeBoolean(value);
