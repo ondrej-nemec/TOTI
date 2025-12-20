@@ -12,7 +12,7 @@ public class SqLiteInstanceTest extends AbstractInstanceTest {
 	}
 
 	@Override
-	protected String getCreateTable(boolean withRestrict) {
+	protected String getCreateTable(boolean withRestrict, boolean withSetDefault) {
 		return "CREATE TABLE create_table ("
 			+ "Primary_column INTEGER NOT NULL," // AUTOINCREMENT
 			+ " Unique_column INTEGER UNIQUE,"
@@ -36,16 +36,18 @@ public class SqLiteInstanceTest extends AbstractInstanceTest {
 			+ " FK_column_4 INTEGER,"
 			+ " PRIMARY KEY (Primary_column),"
 			+ " CONSTRAINT FK_FK_column_1 FOREIGN KEY (FK_column_1) REFERENCES table_for_index_1(id),"
-			+ " CONSTRAINT FK_FK_column_2 FOREIGN KEY (FK_column_2) REFERENCES table_for_index_2(id) ON DELETE CASCADE ON UPDATE NO ACTION,"
+			+ " CONSTRAINT FK_FK_column_2 FOREIGN KEY (FK_column_2) REFERENCES table_for_index_2(id)"
+				+ " ON DELETE CASCADE ON UPDATE NO ACTION,"
 			+ " CONSTRAINT FK_FK_column_3 FOREIGN KEY (FK_column_3) REFERENCES table_for_index_3(id)"
-				+ " ON DELETE " + (withRestrict ? "RESTRICT" : "SET NULL") + " ON UPDATE SET DEFAULT,"
+				+ " ON DELETE " + (withRestrict ? "RESTRICT" : "NO ACTION")
+				+ " ON UPDATE " + (withSetDefault ? "SET DEFAULT" : "NO ACTION") + ","
 			+ " CONSTRAINT FK_FK_column_4 FOREIGN KEY (FK_column_4) REFERENCES table_for_index_4(id) ON DELETE SET NULL"
 		+ ")";
 	}
 
 	@Override
 	protected String getCreateTableWithPrimary() {
-		return "CREATE TABLE create_table ("
+		return "CREATE TABLE create_table_2 ("
 			+ "Primary_column_1 INTEGER,"
 			+ " Primary_column_2 INTEGER,"
 			+ " Primary_column_3 INTEGER,"

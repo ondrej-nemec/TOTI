@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -136,89 +138,66 @@ public abstract class AbstractInstanceTest {
 		test(create, getSql, b->b.execute()); // VERIFY ?
 	}
 	
-	public Object[] dataCreateTable() {
+	public Collection<Object[]> dataCreateTable() {
+		Collection<Object[]> result = new LinkedList<>();
+		result.add(_createTable("Full", true, true));
+		result.add(_createTable("Without restrict", false, true));
+		result.add(_createTable("Without set default", true, false));
+		result.add(new Object[] {
+			"Multiple primary",
+			f(b->b.createTable("create_table_2")
+				.addColumn("Primary_column_1", ColumnType.integer())
+				.addColumn("Primary_column_2", ColumnType.integer())
+				.addColumn("Primary_column_3", ColumnType.integer())
+				.setPrimaryKey("Primary_column_1", "Primary_column_2", "Primary_column_3")
+				.addForeignKey("Primary_column_3", "table_for_index_1", "id")
+			),
+			getCreateTableWithPrimary()
+		});
+		return result;
+	}
+
+	private Object[] _createTable(String name, boolean withRestrict, boolean withSetDefault) {
 		return new Object[] {
-			new Object[] {
-				"Full",
-				f(b->b.createTable("create_table")
-					.addColumn("Primary_column", ColumnType.integer(), ColumnSetting.PRIMARY_KEY, ColumnSetting.AUTO_INCREMENT, ColumnSetting.NOT_NULL)
-					.addColumn("Unique_column", ColumnType.integer(), ColumnSetting.UNIQUE)
-					.addColumn("Nullable_column", ColumnType.integer(), 42, ColumnSetting.NULL)
-					
-					.addColumn("Bool_column", ColumnType.bool())
-					.addColumn("Float_column", ColumnType.floatType())
-					.addColumn("Double_column", ColumnType.doubleType())
-					.addColumn("Char_column", ColumnType.charType(1))
-					.addColumn("Text_column", ColumnType.text())
-					.addColumn("String_column", ColumnType.string(10))
-					.addColumn("Time_column", ColumnType.time())
-					.addColumn("Time2_column", ColumnType.time(6))
-					.addColumn("Date_column", ColumnType.date())
-					.addColumn("DateTime_column", ColumnType.datetime())
-					.addColumn("DateTime2_column", ColumnType.datetime(6))
-					.addColumn("DateTime_Zoned_column", ColumnType.datetimeZoned())
-					.addColumn("DateTime_Zoned2_column", ColumnType.datetimeZoned(6))
-
-					.addColumn("FK_column_1", ColumnType.integer())
-					.addColumn("FK_column_2", ColumnType.integer())
-					.addColumn("FK_column_3", ColumnType.integer())
-					.addColumn("FK_column_4", ColumnType.integer())
-					
-					.addForeignKey("FK_column_1", "table_for_index_1", "id")
-					.addForeignKey("FK_column_2", "table_for_index_2", "id", OnAction.CASCADE, OnAction.NO_ACTION)
-					.addForeignKey("FK_column_3", "table_for_index_3", "id", OnAction.RESTRICT, OnAction.SET_DEFAULT)
-					.addForeignKey("FK_column_4", "table_for_index_4", "id", OnAction.SET_NULL, null)
-				),
-				getCreateTable(true)
-			},
-			new Object[] {
-				"Without restrict",
-				f(b->b.createTable("create_table")
-					.addColumn("Primary_column", ColumnType.integer(), ColumnSetting.PRIMARY_KEY, ColumnSetting.AUTO_INCREMENT, ColumnSetting.NOT_NULL)
-					.addColumn("Unique_column", ColumnType.integer(), ColumnSetting.UNIQUE)
-					.addColumn("Nullable_column", ColumnType.integer(), 42, ColumnSetting.NULL)
-					
-					.addColumn("Bool_column", ColumnType.bool())
-					.addColumn("Float_column", ColumnType.floatType())
-					.addColumn("Double_column", ColumnType.doubleType())
-					.addColumn("Char_column", ColumnType.charType(1))
-					.addColumn("Text_column", ColumnType.text())
-					.addColumn("String_column", ColumnType.string(10))
-					.addColumn("Time_column", ColumnType.time())
-					.addColumn("Time2_column", ColumnType.time(6))
-					.addColumn("Date_column", ColumnType.date())
-					.addColumn("DateTime_column", ColumnType.datetime())
-					.addColumn("DateTime2_column", ColumnType.datetime(6))
-					.addColumn("DateTime_Zoned_column", ColumnType.datetimeZoned())
-					.addColumn("DateTime_Zoned2_column", ColumnType.datetimeZoned(6))
-
-					.addColumn("FK_column_1", ColumnType.integer())
-					.addColumn("FK_column_2", ColumnType.integer())
-					.addColumn("FK_column_3", ColumnType.integer())
-					.addColumn("FK_column_4", ColumnType.integer())
-					
-					.addForeignKey("FK_column_1", "table_for_index_1", "id")
-					.addForeignKey("FK_column_2", "table_for_index_2", "id", OnAction.CASCADE, OnAction.NO_ACTION)
-					.addForeignKey("FK_column_3", "table_for_index_3", "id", OnAction.SET_NULL, OnAction.SET_DEFAULT)
-					.addForeignKey("FK_column_4", "table_for_index_4", "id", OnAction.SET_NULL, null)
-				),
-				getCreateTable(false)
-			},
-			new Object[] {
-				"Multiple primary",
-				f(b->b.createTable("create_table")
-					.addColumn("Primary_column_1", ColumnType.integer())
-					.addColumn("Primary_column_2", ColumnType.integer())
-					.addColumn("Primary_column_3", ColumnType.integer())
-					.setPrimaryKey("Primary_column_1", "Primary_column_2", "Primary_column_3")
-					.addForeignKey("Primary_column_3", "table_for_index_1", "id")
-				),
-				getCreateTableWithPrimary()
-			}
+			name,
+			f(b->b.createTable("create_table")
+				.addColumn("Primary_column", ColumnType.integer(), ColumnSetting.PRIMARY_KEY, ColumnSetting.AUTO_INCREMENT, ColumnSetting.NOT_NULL)
+				.addColumn("Unique_column", ColumnType.integer(), ColumnSetting.UNIQUE)
+				.addColumn("Nullable_column", ColumnType.integer(), 42, ColumnSetting.NULL)
+				
+				.addColumn("Bool_column", ColumnType.bool())
+				.addColumn("Float_column", ColumnType.floatType())
+				.addColumn("Double_column", ColumnType.doubleType())
+				.addColumn("Char_column", ColumnType.charType(1))
+				.addColumn("Text_column", ColumnType.text())
+				.addColumn("String_column", ColumnType.string(10))
+				.addColumn("Time_column", ColumnType.time())
+				.addColumn("Time2_column", ColumnType.time(6))
+				.addColumn("Date_column", ColumnType.date())
+				.addColumn("DateTime_column", ColumnType.datetime())
+				.addColumn("DateTime2_column", ColumnType.datetime(6))
+				.addColumn("DateTime_Zoned_column", ColumnType.datetimeZoned())
+				.addColumn("DateTime_Zoned2_column", ColumnType.datetimeZoned(6))
+				.addColumn("FK_column_1", ColumnType.integer())
+				.addColumn("FK_column_2", ColumnType.integer())
+				.addColumn("FK_column_3", ColumnType.integer())
+				.addColumn("FK_column_4", ColumnType.integer())
+				
+				.addForeignKey("FK_column_1", "table_for_index_1", "id")
+				.addForeignKey("FK_column_2", "table_for_index_2", "id", OnAction.CASCADE, OnAction.NO_ACTION)
+				.addForeignKey(
+					"FK_column_3", "table_for_index_3",
+					"id",
+					withRestrict ? OnAction.RESTRICT : OnAction.NO_ACTION,
+					withSetDefault ? OnAction.SET_DEFAULT : OnAction.NO_ACTION
+				)
+				.addForeignKey("FK_column_4", "table_for_index_4", "id", OnAction.SET_NULL, null)
+			),
+			getCreateTable(withRestrict, withSetDefault)
 		};
 	}
 
-	protected abstract String getCreateTable(boolean withRestrict);
+	protected abstract String getCreateTable(boolean withRestrict, boolean withSetDefault);
 
 	protected abstract String getCreateTableWithPrimary();
 	

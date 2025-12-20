@@ -352,16 +352,16 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 		iterateList(
 			sql->rows.add(sql), alterTable.getModifyColumnsType(),
 			i->"", i->"", c->{
-				return "ALTER COLUMN " + c.getName() + " TYPE " + toString(c.getType());
+				return "MODIFY COLUMN " + c.getName() + " TYPE " + toString(c.getType());
 			}
 		);
 		iterateList(
 			sql->rows.add(sql), alterTable.getModifyDefault(),
 			i->"", i->"", c->{
 				if (c.getValue().isClear()) {
-					return "ALTER COLUMN " + c.getName() + " DROP DEFAULT";
+					return "MODIFY COLUMN " + c.getName() + " DROP DEFAULT";
 				} else {
-					return "ALTER COLUMN " + c.getName() + " SET DEFAULT " + c.getValue().getValue(getEscape());
+					return "MODIFY COLUMN " + c.getName() + " SET DEFAULT " + c.getValue().getValue(getEscape());
 				}
 			}
 		);
@@ -396,7 +396,8 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 		sql.append(alterTable.getTable());
 		iterateList(sql, rows, i->" ", i->", ", i->i);
 		if (alterTable.getNewName() != null) {
-			sql.append(" RENAME TO " + alterTable.getNewName());
+			sql.append(" RENAME TO ");
+			sql.append(alterTable.getNewName());
 		}
 		return Arrays.asList(sql.toString());
 	}
@@ -430,7 +431,7 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 
 	protected String toString(ColumnSetting settings) {
 		switch (settings) {
-			case AUTO_INCREMENT: return "AUTO INCREMENT";
+			case AUTO_INCREMENT: return "AUTO_INCREMENT";
 			case UNIQUE: return "UNIQUE";
 			case NOT_NULL: return "NOT NULL";
 			case NULL: return "NULL";
@@ -445,7 +446,7 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 			case CASCADE: return "CASCADE";
 			case SET_NULL: return "SET NULL";
 			case NO_ACTION: return "NO ACTION";
-			case SET_DEFAULT: return "SET DEFAULT";
+			case SET_DEFAULT: throw new RuntimeException("Not supported operation");
 			default: throw new RuntimeException("Not implemented action: " + action);
 		}
 	}
@@ -616,7 +617,8 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 			),
 			join.getAlias()
 		));
-		sql.append(" ON " + join.getOn());
+		sql.append(" ON ");
+		sql.append(join.getOn());
 	}
 	
 }

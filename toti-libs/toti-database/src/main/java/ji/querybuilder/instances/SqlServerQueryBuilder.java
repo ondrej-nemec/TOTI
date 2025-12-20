@@ -334,32 +334,30 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 	public List<String> createSql(AlterTableBuilderImpl alterTable) {
 		String prefix = "ALTER TABLE " + alterTable.getTable() + " ";
 		List<String> result = new LinkedList<>();
-		
-		StringBuilder addCol = new StringBuilder(prefix);
-		iterateList(
-			sql->result.add(prefix + sql), alterTable.getAddColumns(),
-			i->"ADD ", i->", ", c->getColumn(c, x->addCol.append(x))
-		);
-		
-		iterateList(
-			sql->result.add(prefix + sql), alterTable.getDeleteColumns(),
-			i->"DROP COLUMN ", i->", ", c->c.getName()
-		);
 
+		iterateAlterTable(result, prefix, addCol->iterateList(
+			sql->addCol.append(sql), alterTable.getAddColumns(),
+			i->prefix + "ADD ", i->", ", c->getColumn(c, x->{})
+		));
+		iterateAlterTable(result, prefix, dropCol->iterateList(
+			sql->dropCol.append(sql), alterTable.getDeleteColumns(),
+			i->prefix + "DROP COLUMN ", i->", ", c->c.getName()
+		));
 		createAddForeignKey(alterTable.getAddForeignKeys(), sql->result.add(sql), "ADD ");
-		
+
+
 		iterateList(
-			sql->result.add(sql), alterTable.getDeleteForeignKeys(),
+			sql->result.add(prefix + sql), alterTable.getDeleteForeignKeys(),
 			i->"", i->"", fk->"DROP CONSTRAINT " + fk.getColumn()
 		);
 		iterateList(
-			sql->result.add(sql), alterTable.getModifyColumnsType(),
+			sql->result.add(prefix + sql), alterTable.getModifyColumnsType(),
 			i->"", i->"", c->{
 				return "ALTER COLUMN " + c.getName() + " TYPE " + toString(c.getType());
 			}
 		);
 		iterateList(
-			sql->result.add(sql), alterTable.getModifyDefault(),
+			sql->result.add(prefix + sql), alterTable.getModifyDefault(),
 			i->"", i->"", c->{
 				if (c.getValue().isClear()) {
 					return "ALTER COLUMN " + c.getName() + " DROP DEFAULT";
@@ -369,7 +367,7 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 			}
 		);
 		iterateList(
-			sql->result.add(sql), alterTable.getModifyNullable(),
+			sql->result.add(prefix + sql), alterTable.getModifyNullable(),
 			i->"", i->"", c->{
 				if (new DictionaryValue(c.getValue().getValue(getEscape())).getBoolean()) {
 					return "ALTER COLUMN " + c.getName() + " SET NOT NULL";
@@ -379,7 +377,7 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 			}
 		);
 		iterateList(
-			sql->result.add(sql), alterTable.getModifyUnique(),
+			sql->result.add(prefix + sql), alterTable.getModifyUnique(),
 			i->"", i->"", c->{
 				String key = (alterTable.getTable() + "_" + c.getName() + "_key").toLowerCase();
 				if (new DictionaryValue(c.getValue().getValue(getEscape())).getBoolean()) {
@@ -402,6 +400,14 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 			));
 		}
 		return result;
+	}
+
+	private void iterateAlterTable(List<String> result, String prefix, Consumer<StringBuilder> iterate) {
+		StringBuilder sql = new StringBuilder();
+		iterate.accept(sql);
+		if (!sql.isEmpty()) {
+			result.add(sql.toString());
+		}
 	}
 
 	@Override

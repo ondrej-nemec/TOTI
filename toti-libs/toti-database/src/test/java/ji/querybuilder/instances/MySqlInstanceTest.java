@@ -12,9 +12,12 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 	}
 
 	@Override
-	protected String getCreateTable(boolean withRestrict) {
+	protected String getCreateTable(boolean withRestrict, boolean withSetDefault) {
+		if (withSetDefault) {
+			return null;
+		}
 		return "CREATE TABLE create_table ("
-			+ "Primary_column INT AUTO INCREMENT NOT NULL,"
+			+ "Primary_column INT AUTO_INCREMENT NOT NULL,"
 			+ " Unique_column INT UNIQUE,"
 			+ " Nullable_column INT DEFAULT 42 NULL,"
 			+ " Bool_column BOOLEAN,"
@@ -36,17 +39,17 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 			+ " FK_column_4 INT,"
 			+ " PRIMARY KEY (Primary_column),"
 			+ " CONSTRAINT FK_FK_column_1 FOREIGN KEY (FK_column_1) REFERENCES table_for_index_1(id),"
-			+ " CONSTRAINT FK_FK_column_2 FOREIGN KEY (FK_column_2) REFERENCES table_for_index_2(id) ON DELETE CASCADE ON UPDATE NO ACTION,"
-			+ " CONSTRAINT FK_FK_column_3 FOREIGN KEY (FK_column_3) REFERENCES table_for_index_3(id) ON DELETE "
-			+ (withRestrict ? "RESTRICT" : "SET NULL")
-			+ " ON UPDATE SET DEFAULT,"
+			+ " CONSTRAINT FK_FK_column_2 FOREIGN KEY (FK_column_2) REFERENCES table_for_index_2(id)"
+				+ " ON DELETE CASCADE ON UPDATE NO ACTION,"
+			+ " CONSTRAINT FK_FK_column_3 FOREIGN KEY (FK_column_3) REFERENCES table_for_index_3(id)"
+				+ " ON DELETE " + (withRestrict ? "RESTRICT" : "NO ACTION") + " ON UPDATE NO ACTION,"
 			+ " CONSTRAINT FK_FK_column_4 FOREIGN KEY (FK_column_4) REFERENCES table_for_index_4(id) ON DELETE SET NULL"
 		+ ")";
 	}
 
 	@Override
 	protected String getCreateTableWithPrimary() {
-		return "CREATE TABLE create_table ("
+		return "CREATE TABLE create_table_2 ("
 			+ "Primary_column_1 INT,"
 			+ " Primary_column_2 INT,"
 			+ " Primary_column_3 INT,"
@@ -65,7 +68,8 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 		}
 		return "ALTER TABLE table_to_alter"
 			+ " ADD Add_column_1 INT NOT NULL,"
-			+ " ADD Add_column_2 INT DEFAULT 42 UNIQUE NULL,"
+			+ " ADD Add_column_2 INT DEFAULT 42 NULL,"
+			+ " ADD UNIQUE Add_column_2"
 			+ " ADD CONSTRAINT FK_Add_column_1 FOREIGN KEY (Add_column_1) REFERENCES table_for_index_1(id),"
 			+ " ADD CONSTRAINT FK_Add_column_2 FOREIGN KEY (Add_column_2)"
 				+ " REFERENCES table_for_index_2(id) ON DELETE CASCADE ON UPDATE NO ACTION,"
@@ -75,14 +79,15 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 			+ " MODIFY COLUMN Column_to_modify_1 FLOAT,"
 			+ " MODIFY COLUMN Column_to_modify_2 FLOAT,"
 			
-			+ " ALTER COLUMN Column_to_modify_1 SET DEFAULT 5,"
-			+ " ALTER COLUMN Column_to_modify_2 DROP DEFAULT,"
+			+ " MODIFY COLUMN Column_to_modify_1 SET DEFAULT 5,"
+			+ " MODIFY COLUMN Column_to_modify_2 DROP DEFAULT,"
 			
-			+ " ALTER COLUMN Column_to_modify_1 DROP NOT NULL,"
-			+ " ALTER COLUMN Column_to_modify_2 SET NOT NULL,"
+			+ " MODIFY COLUMN Column_to_modify_1 DROP NOT NULL,"
+			+ " MODIFY COLUMN Column_to_modify_2 SET NOT NULL,"
 			
-			+ " DROP CONSTRAINT table_to_alter_column_to_modify_1_key," //  UNIQUE (Column_to_modify_1)
-			+ " ADD CONSTRAINT table_to_alter_column_to_modify_2_key UNIQUE (Column_to_modify_2)"
+			+ " DROP FOREIGN KEY table_to_alter_column_to_modify_1_key," //  UNIQUE (Column_to_modify_1)
+			+ " ADD CONSTRAINT table_to_alter_column_to_modify_2_key UNIQUE (Column_to_modify_2),"
+			+ " RENAME COLUMN Column_to_rename TO Renamed_column"
 			;
 		/*
 		return "ALTER TABLE table_to_alter"
