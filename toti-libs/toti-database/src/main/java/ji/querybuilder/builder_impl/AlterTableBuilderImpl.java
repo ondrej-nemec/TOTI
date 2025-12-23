@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 import ji.common.structures.SortedMap;
 import ji.querybuilder.DbInstance;
@@ -16,6 +16,7 @@ import ji.querybuilder.enums.ColumnType;
 import ji.querybuilder.enums.OnAction;
 import ji.querybuilder.structures.Column;
 import ji.querybuilder.structures.ForeignKey;
+import ji.querybuilder.structures.ModifyColumn;
 
 public class AlterTableBuilderImpl implements AlterTableBuilder, MultipleExecute {
 
@@ -26,10 +27,7 @@ public class AlterTableBuilderImpl implements AlterTableBuilder, MultipleExecute
 	private final List<Column> addColumns;
 	private final List<Column> deleteColumns;
 	private final List<Column> renameColumns;
-	private final SortedMap<String, Column> modifyColumns;
-	private final SortedMap<String, Column> modifyDefault;
-	private final SortedMap<String, Column> modifyUnique;
-	private final SortedMap<String, Column> modifyNullable;
+	private final SortedMap<String, ModifyColumn> modifyColumns;
 	private final List<ForeignKey> addForeignKeys;
 	private final List<ForeignKey> deleteForeignKeys;
 	private String newName;
@@ -45,9 +43,6 @@ public class AlterTableBuilderImpl implements AlterTableBuilder, MultipleExecute
 		this.modifyColumns = new SortedMap<>();
 		this.addForeignKeys = new LinkedList<>();
 		this.deleteForeignKeys = new LinkedList<>();
-		this.modifyDefault = new SortedMap<>();
-		this.modifyUnique = new SortedMap<>();
-		this.modifyNullable = new SortedMap<>();
 	}
 	
 	public String getTable() {
@@ -66,20 +61,8 @@ public class AlterTableBuilderImpl implements AlterTableBuilder, MultipleExecute
 		return renameColumns;
 	}
 	
-	public List<Column> getModifyColumnsType() {
+	public List<ModifyColumn> getModifyColumns() {
 		return modifyColumns.toList();
-	}
-	
-	public List<Column> getModifyDefault() {
-		return modifyDefault.toList();
-	}
-	
-	public List<Column> getModifyNullable() {
-		return modifyNullable.toList();
-	}
-	
-	public List<Column> getModifyUnique() {
-		return modifyUnique.toList();
 	}
 	
 	public List<ForeignKey> getAddForeignKeys() {
@@ -121,55 +104,16 @@ public class AlterTableBuilderImpl implements AlterTableBuilder, MultipleExecute
 		this.deleteColumns.add(Column.delete(name));
 		return this;
 	}
-
-	@Override
-	public AlterTableBuilder modifyColumnType(String column, ColumnType type) {
-		modifyColumn(modifyColumns, column, c->c.withType(type));
-		return this;
-	}
-
-	@Override
-	public AlterTableBuilder modifyColumnDefault(String column, Object value) {
-		modifyColumn(modifyDefault, column, c->c.withValue(value));
-		return this;
-	}
-
-	@Override
-	public AlterTableBuilder removeColumnDefault(String column) {
-		modifyColumn(modifyDefault, column, c->c.removeValue());
-		return this;
-	}
-
-	@Override
-	public AlterTableBuilder setColumnNotNull(String column) {
-		modifyColumn(modifyNullable, column, c->c.withValue(true));
-		return this;
-	}
 	
 	@Override
-	public AlterTableBuilder setColumnNullable(String column) {
-		modifyColumn(modifyNullable, column, c->c.withValue(false));
-		return this;
-	}
-	
-	@Override
-	public AlterTableBuilder setColumnUnique(String column) {
-		modifyColumn(modifyUnique, column, c->c.withValue(true));
-		return this;
-	}
-	
-	@Override
-	public AlterTableBuilder removeColumnUnique(String column) {
-		modifyColumn(modifyUnique, column, c->c.withValue(false));
-		return this;
-	}
-	
-	private <T> void modifyColumn(SortedMap<String, T> colums, String columnName, Function<Column, T> modify) {
-		Column column = modifyColumns.getValue(columnName);
+	public AlterTableBuilder modifyColumn(String columnName, Consumer<ModifyColumn> modify) {
+		ModifyColumn column = modifyColumns.getValue(columnName);
 		if (column == null) {
-			column = Column.modify(columnName);
+			column = new ModifyColumn(columnName);
+			modifyColumns.put(columnName, column);
 		}
-		colums.put(columnName, modify.apply(column));
+		modify.accept(column);
+		return this;
 	}
 
 	@Override

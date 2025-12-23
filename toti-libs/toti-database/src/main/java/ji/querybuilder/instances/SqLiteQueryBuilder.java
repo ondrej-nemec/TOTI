@@ -341,16 +341,7 @@ WHERE name = 'table_name';
 		if (!alterTable.getDeleteForeignKeys().isEmpty()) {
 			throw notSupported;
 		}
-		if (!alterTable.getModifyColumnsType().isEmpty()) {
-			throw notSupported;
-		}
-		if (!alterTable.getModifyDefault().isEmpty()) {
-			throw notSupported;
-		}
-		if (!alterTable.getModifyNullable().isEmpty()) {
-			throw notSupported;
-		}
-		if (!alterTable.getModifyUnique().isEmpty()) {
+		if (!alterTable.getModifyColumns().isEmpty()) {
 			throw notSupported;
 		}
 		return result;
@@ -459,12 +450,9 @@ WHERE name = 'table_name';
 		result.append(column.getName());
 		result.append(" ");
 		result.append(toString(column.getType()));
-		if (column.getValue().isSet()) {
+		if (column.getValue() != null) {
 			result.append(" DEFAULT ");
 			result.append(column.getValue().getValue(getEscape()));
-		} else if (column.getValue().isClear()) {
-			// remove default
-			// alter not suported
 		}
 		
 		for (ColumnSetting settings : column.getSettings()) {

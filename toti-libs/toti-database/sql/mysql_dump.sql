@@ -53,8 +53,12 @@ create index index_to_delete ON table_for_index_1(id);
 
 create table table_to_alter (
 	id int,
-	Column_to_modify_1 int DEFAULT 0 NOT NULL UNIQUE,
-	Column_to_modify_2 int DEFAULT 1 NULL,
+	Column_to_modify_1 int NOT NULL,
+	Column_to_modify_2 int NULL,
+	Column_to_remove_unique int UNIQUE,
+	Column_to_modify_default int DEFAULT 0,
+	Column_to_remove_default int DEFAULT 0,
+	Column_to_set_default int,
 	Column_to_rename int,
 	Column_to_delete int,
 	CONSTRAINT FK_id FOREIGN KEY (id) REFERENCES table_for_index_1(id),

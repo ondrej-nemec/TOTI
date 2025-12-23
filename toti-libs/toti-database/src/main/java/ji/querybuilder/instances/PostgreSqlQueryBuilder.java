@@ -2,6 +2,7 @@ package ji.querybuilder.instances;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -32,6 +33,7 @@ import ji.querybuilder.enums.OnAction;
 import ji.querybuilder.enums.SelectJoin;
 import ji.querybuilder.enums.Where;
 import ji.querybuilder.structures.Column;
+import ji.querybuilder.structures.DefaultValue;
 import ji.querybuilder.structures.ForeignKey;
 import ji.querybuilder.structures.Joining;
 import ji.querybuilder.structures.SubSelect;
@@ -356,43 +358,37 @@ public class PostgreSqlQueryBuilder implements DbInstance {
 			sql->rows.add(sql), alterTable.getDeleteColumns(),
 			i->"", i->"", c->"DROP COLUMN " + c.getName()
 		);
-		iterateList(
-			sql->rows.add(sql), alterTable.getModifyColumnsType(),
-			i->"", i->"", c->{
-				return "ALTER COLUMN " + c.getName() + " TYPE " + toString(c.getType());
+
+		alterTable.getModifyColumns().forEach(c->{
+			if (c.getColumnType() != null) {
+				rows.add("ALTER COLUMN " + c.getName() + " TYPE " + toString(c.getColumnType()));
 			}
-		);
-		iterateList(
-			sql->rows.add(sql), alterTable.getModifyDefault(),
-			i->"", i->"", c->{
-				if (c.getValue().isClear()) {
-					return "ALTER COLUMN " + c.getName() + " DROP DEFAULT";
-				} else {
-					return "ALTER COLUMN " + c.getName() + " SET DEFAULT " + c.getValue().getValue(getEscape());
+			Optional<DefaultValue> defValue = c.getDefValue();
+			if (defValue != null) {
+				if (defValue.isEmpty()) {
+					rows.add("ALTER COLUMN " + c.getName() + " DROP DEFAULT");
+				}
+				if (defValue.isPresent()) {
+					rows.add("ALTER COLUMN " + c.getName() + " SET DEFAULT " + defValue.get().getValue(getEscape()));
 				}
 			}
-		);
-		iterateList(
-			sql->rows.add(sql), alterTable.getModifyNullable(),
-			i->"", i->"", c->{
-				if (new DictionaryValue(c.getValue().getValue(getEscape())).getBoolean()) {
-					return "ALTER COLUMN " + c.getName() + " SET NOT NULL";
+			if (c.getIsNullable() != null) {
+				if (c.getIsNullable()) {
+					rows.add("ALTER COLUMN " + c.getName() + " DROP NOT NULL");
 				} else {
-					return "ALTER COLUMN " + c.getName() + " DROP NOT NULL";
+					rows.add("ALTER COLUMN " + c.getName() + " SET NOT NULL");
 				}
 			}
-		);
-		iterateList(
-			sql->rows.add(sql), alterTable.getModifyUnique(),
-			i->"", i->"", c->{
+			if (c.getIsUnique() != null) {
 				String key = (alterTable.getTable() + "_" + c.getName() + "_key").toLowerCase();
-				if (new DictionaryValue(c.getValue().getValue(getEscape())).getBoolean()) {
-					return "ADD CONSTRAINT " + key + " UNIQUE (" + c.getName() + ")";
+				if (c.getIsUnique()) {
+					rows.add("ADD CONSTRAINT " + key + " UNIQUE (" + c.getName() + ")");
 				} else {
-					return "DROP CONSTRAINT " + key; //  + " UNIQUE (" + c.getName() + ")"
+					rows.add("DROP CONSTRAINT " + key);
 				}
 			}
-		);
+		});
+
 		String alterTablePrefix = "ALTER TABLE " + alterTable.getTable();
 		
 		List<String> result = new LinkedList<>();
@@ -518,11 +514,9 @@ public class PostgreSqlQueryBuilder implements DbInstance {
 			result.append(" ");
 			result.append(toString(column.getType()));
 		}
-		if (column.getValue().isSet()) {
+		if (column.getValue()!= null) {
 			result.append(" DEFAULT ");
 			result.append(column.getValue().getValue(getEscape()));
-		} else if (column.getValue().isClear()) {
-			// TODO remove default
 		}
 		
 		for (ColumnSetting settings : column.getSettings()) {

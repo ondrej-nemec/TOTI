@@ -15,23 +15,19 @@ public class Column {
 	private final List<ColumnSetting> settings;
 	
 	public static Column create(String name, ColumnType type, Object value, ColumnSetting[] settings) {
-		return new Column(name, type, DefaultValue.set(value), settings);
+		return new Column(name, type, new DefaultValue(value, false), settings);
 	}
 
 	public static Column create(String name, ColumnType type, ColumnSetting[] settings) {
-		return new Column(name, type, DefaultValue.notUse(), settings);
+		return new Column(name, type, null, settings);
 	}
 	
 	public static Column rename(String oldName, String newName, ColumnType type) {
-		return new Column(oldName, type, DefaultValue.set(newName), new LinkedList<>());
-	}
-	
-	public static Column modify(String name) {
-		return new Column(name, null, DefaultValue.notUse(), new LinkedList<>());
+		return new Column(oldName, type, new DefaultValue(newName, false), new LinkedList<>());
 	}
 
 	public static Column delete(String name) {
-		return new Column(name, null, DefaultValue.notUse(), new LinkedList<>());
+		return new Column(name, null, null, new LinkedList<>());
 	}
 
 	private Column(String name, ColumnType type, DefaultValue value, ColumnSetting[] settings) {
@@ -68,9 +64,13 @@ public class Column {
 	public String getNewName() {
 		return value.get().toString();
 	}
-	
+	/*
 	public Column withType(ColumnType type) {
 		return new Column(name, type, value, settings);
+	}
+	
+	public Column withValue(Object value, boolean alter) {
+		return new Column(name, type, alter ? DefaultValue.modify(value) : DefaultValue.add(value), settings);
 	}
 	
 	public Column withValue(Object value) {
@@ -80,7 +80,7 @@ public class Column {
 	public Column removeValue() {
 		return new Column(name, type, DefaultValue.clear(), settings);
 	}
-
+*/
 	@Override
 	public String toString() {
 		return "Column [name=" + name + ", type=" + type + ", value=" + value + ", settings=" + settings + "]";

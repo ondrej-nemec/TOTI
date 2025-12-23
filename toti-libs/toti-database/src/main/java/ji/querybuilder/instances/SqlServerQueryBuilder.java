@@ -2,11 +2,11 @@ package ji.querybuilder.instances;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 import ji.common.functions.Implode;
-import ji.common.structures.DictionaryValue;
 import ji.common.structures.ObjectBuilder;
 import ji.common.structures.Tuple2;
 import ji.querybuilder.DbInstance;
@@ -33,6 +33,7 @@ import ji.querybuilder.enums.OnAction;
 import ji.querybuilder.enums.SelectJoin;
 import ji.querybuilder.enums.Where;
 import ji.querybuilder.structures.Column;
+import ji.querybuilder.structures.DefaultValue;
 import ji.querybuilder.structures.ForeignKey;
 import ji.querybuilder.structures.Joining;
 import ji.querybuilder.structures.SubSelect;
@@ -318,7 +319,7 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 		
 		iterateList(
 			sql, createTable.getColumns(),
-			i->"", i->", ", c->getColumn(c, x->appendix.append(", ").append(x))
+			i->"", i->", ", c->getColumn(createTable.getTable(), c, x->appendix.append(", ").append(x))
 		);
 		
 		sql.append(appendix.toString());
@@ -338,55 +339,57 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 
 		iterateAlterTable(result, addCol->iterateList(
 			sql->addCol.append(sql), alterTable.getAddColumns(),
-			i->prefix + "ADD ", i->", ", c->getColumn(c, x->{})
+			i->prefix + "ADD ", i->", ", c->getColumn(alterTable.getTable(), c, x->{})
 		));
 		iterateAlterTable(result, dropCol->iterateList(
 			sql->dropCol.append(sql), alterTable.getDeleteColumns(),
 			i->prefix + "DROP COLUMN ", i->", ", c->c.getName()
 		));
-		createAddForeignKey(alterTable.getAddForeignKeys(), sql->result.add(sql), "ADD ");
 
 
+		alterTable.getModifyColumns().forEach(c->{
+			Optional<DefaultValue> defValue = c.getDefValue();
+			if (defValue != null) {
+				if (defValue.isEmpty() || defValue.get().isModify()) {
+					result.add(String.format(
+						prefix + "DROP CONSTRAINT DF_%s_%s",
+						alterTable.getTable(), c.getName()
+					));
+				}
+				if (defValue.isPresent()) {
+					result.add(String.format(
+						prefix + "ADD CONSTRAINT DF_%s_%s DEFAULT %s FOR %s",
+						alterTable.getTable(), c.getName(), defValue.get().getValue(getEscape()), c.getName()
+					));
+				}
+			}
+			if (c.getColumnType() != null) {
+				result.add(
+					prefix + "ALTER COLUMN " + c.getName() + " " + toString(c.getColumnType())
+					+ (c.getIsNullable() == null ? "" : c.getIsNullable() ? " NULL" : " NOT NULL")
+				);
+			} else if (c.getIsNullable() != null) {
+				throw new RuntimeException("SQL Server not support change null / not null without data type.");
+			}
+			if (c.getIsUnique() != null) {
+				String key = "UQ_" + alterTable.getTable() + "_" + c.getName();
+				if (c.getIsUnique()) {
+					result.add(
+						prefix + "ADD CONSTRAINT " + key + " UNIQUE (" + c.getName() + ")"
+					);
+				} else {
+					result.add(
+						prefix + "DROP CONSTRAINT " + key
+					);
+				}
+			}
+		});
+
+		
+		createAddForeignKey(alterTable.getAddForeignKeys(), sql->result.add(prefix + sql), "ADD ");
 		iterateList(
 			sql->result.add(prefix + sql), alterTable.getDeleteForeignKeys(),
 			i->"", i->"", fk->"DROP CONSTRAINT " + fk.getColumn()
-		);
-		iterateList(
-			sql->result.add(prefix + sql), alterTable.getModifyColumnsType(),
-			i->"", i->"", c->{
-				return "ALTER COLUMN " + c.getName() + " TYPE " + toString(c.getType());
-			}
-		);
-		iterateList(
-			sql->result.add(prefix + sql), alterTable.getModifyDefault(),
-			i->"", i->"", c->{
-				if (c.getValue().isClear()) {
-					return "ALTER COLUMN " + c.getName() + " DROP DEFAULT";
-				} else {
-					return "ALTER COLUMN " + c.getName() + " SET DEFAULT " + c.getValue().getValue(getEscape());
-				}
-			}
-		);
-		iterateList(
-			sql->result.add(prefix + sql), alterTable.getModifyNullable(),
-			i->"", i->"", c->{
-				if (new DictionaryValue(c.getValue().getValue(getEscape())).getBoolean()) {
-					return "ALTER COLUMN " + c.getName() + " SET NOT NULL";
-				} else {
-					return "ALTER COLUMN " + c.getName() + " DROP NOT NULL";
-				}
-			}
-		);
-		iterateList(
-			sql->result.add(prefix + sql), alterTable.getModifyUnique(),
-			i->"", i->"", c->{
-				String key = (alterTable.getTable() + "_" + c.getName() + "_key").toLowerCase();
-				if (new DictionaryValue(c.getValue().getValue(getEscape())).getBoolean()) {
-					return "ADD CONSTRAINT " + key + " UNIQUE (" + c.getName() + ")";
-				} else {
-					return "DROP CONSTRAINT " + key; //  + " UNIQUE (" + c.getName() + ")"
-				}
-			}
 		);
 		
 		iterateList(
@@ -487,30 +490,38 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 	
 	/*****************************/
 	
-	private String getColumn(Column column, Consumer<String> onConstaint) {
+	private String getColumn(String tableName, Column column, Consumer<String> onConstaint) {
 		StringBuilder result = new StringBuilder();
 		result.append(column.getName());
 		result.append(" ");
 		result.append(toString(column.getType()));
 
-		
-		for (ColumnSetting settings : column.getSettings()) {
-			if (settings != ColumnSetting.PRIMARY_KEY) {
-				result.append(" ");
-				result.append(toString(settings));
+		// need order
+		for (ColumnSetting settings : new ColumnSetting[] {
+			ColumnSetting.AUTO_INCREMENT, ColumnSetting.NOT_NULL, ColumnSetting.NULL, ColumnSetting.UNIQUE
+		}) {
+			if (!column.getSettings().contains(settings)) {
+				continue;
+			}
+			switch (settings) {
+				case UNIQUE -> {
+					result.append(String.format(" CONSTRAINT UQ_%s_%s UNIQUE", tableName, column.getName()));
+				}
+				default -> {
+					result.append(" ");
+					result.append(toString(settings));
+				}
 			}
 		}
-		if (column.getValue().isSet()) {
-			result.append(" DEFAULT ");
-			result.append(column.getValue().getValue(getEscape()));
-		} else if (column.getValue().isClear()) {
-			// TODO remove default
+		if (column.getValue() != null) {
+			result.append(String.format(
+				" CONSTRAINT DF_%s_%s DEFAULT %s",
+				tableName, column.getName(), column.getValue().getValue(getEscape())
+			));
 		}
 		
-		for (ColumnSetting settings : column.getSettings()) {
-			if (settings == ColumnSetting.PRIMARY_KEY) {
-				onConstaint.accept(String.format("PRIMARY KEY (%s)", column.getName()));
-			}
+		if (column.getSettings().contains(ColumnSetting.PRIMARY_KEY)){
+			onConstaint.accept(String.format("PRIMARY KEY (%s)", column.getName()));
 		}
 		return result.toString();
 	}

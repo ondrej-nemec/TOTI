@@ -3,6 +3,7 @@ package ji.querybuilder.instances;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -35,6 +36,7 @@ import ji.querybuilder.enums.OnAction;
 import ji.querybuilder.enums.SelectJoin;
 import ji.querybuilder.enums.Where;
 import ji.querybuilder.structures.Column;
+import ji.querybuilder.structures.DefaultValue;
 import ji.querybuilder.structures.ForeignKey;
 import ji.querybuilder.structures.Joining;
 import ji.querybuilder.structures.SubSelect;
@@ -349,43 +351,26 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 			sql->rows.add(sql), alterTable.getDeleteColumns(),
 			i->"", i->"", c->"DROP COLUMN " + c.getName()
 		);
-		iterateList(
-			sql->rows.add(sql), alterTable.getModifyColumnsType(),
-			i->"", i->"", c->{
-				return "MODIFY COLUMN " + c.getName() + " TYPE " + toString(c.getType());
+		alterTable.getModifyColumns().forEach(c->{
+			Optional<DefaultValue> defValue = c.getDefValue();
+			if (c.getColumnType() != null) {
+				rows.add(
+					"MODIFY COLUMN " + c.getName() + " " + c.getColumnType()
+					+ (defValue.isEmpty() ? "" : " DEFAULT" + defValue.get().getValue(getEscape()))
+					+ (c.getIsNullable() == null ? "" : " " + (c.getIsNullable() ? "NULL" : "NOT NULL"))
+				);
+			} else if (c.getIsNullable() != null || defValue != null) {
+				throw new RuntimeException("Column modify nullable or default value requires column type");
 			}
-		);
-		iterateList(
-			sql->rows.add(sql), alterTable.getModifyDefault(),
-			i->"", i->"", c->{
-				if (c.getValue().isClear()) {
-					return "MODIFY COLUMN " + c.getName() + " DROP DEFAULT";
-				} else {
-					return "MODIFY COLUMN " + c.getName() + " SET DEFAULT " + c.getValue().getValue(getEscape());
-				}
-			}
-		);
-		iterateList(
-			sql->rows.add(sql), alterTable.getModifyNullable(),
-			i->"", i->"", c->{
-				if (new DictionaryValue(c.getValue().getValue(getEscape())).getBoolean()) {
-					return "ALTER COLUMN " + c.getName() + " SET NOT NULL";
-				} else {
-					return "ALTER COLUMN " + c.getName() + " DROP NOT NULL";
-				}
-			}
-		);
-		iterateList(
-			sql->rows.add(sql), alterTable.getModifyUnique(),
-			i->"", i->"", c->{
+			if (c.getIsUnique() != null) {
 				String key = (alterTable.getTable() + "_" + c.getName() + "_key").toLowerCase();
-				if (new DictionaryValue(c.getValue().getValue(getEscape())).getBoolean()) {
-					return "ADD CONSTRAINT " + key + " UNIQUE (" + c.getName() + ")";
+				if (c.getIsUnique()) {
+					rows.add("DROP CONSTRAINT " + key); //  + " UNIQUE (" + c.getName() + ")"
 				} else {
-					return "DROP CONSTRAINT " + key; //  + " UNIQUE (" + c.getName() + ")"
+					rows.add("ADD CONSTRAINT " + key + " UNIQUE (" + c.getName() + ")");
 				}
 			}
-		);
+		});
 		iterateList(
 			sql->rows.add(sql), alterTable.getRenameColumns(),
 			i->"", i->"", c->String.format("RENAME COLUMN %s TO %s", c.getOldName(), c.getNewName())
@@ -504,11 +489,9 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 		result.append(column.getName());
 		result.append(" ");
 		result.append(toString(column.getType()));
-		if (column.getValue().isSet()) {
+		if (column.getValue() != null) {
 			result.append(" DEFAULT ");
 			result.append(column.getValue().getValue(getEscape()));
-		} else if (column.getValue().isClear()) {
-			// TODO remove default
 		}
 		
 		for (ColumnSetting settings : column.getSettings()) {

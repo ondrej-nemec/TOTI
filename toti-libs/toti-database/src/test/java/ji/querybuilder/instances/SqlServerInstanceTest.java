@@ -18,8 +18,8 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 		}
 		return "CREATE TABLE create_table ("
 			+ "Primary_column INT IDENTITY(1,1) NOT NULL,"
-			+ " Unique_column INT UNIQUE,"
-			+ " Nullable_column INT NULL DEFAULT 42,"
+			+ " Unique_column INT CONSTRAINT UQ_create_table_Unique_column UNIQUE,"
+			+ " Nullable_column INT NULL CONSTRAINT DF_create_table_Nullable_column DEFAULT 42,"
 			+ " Bool_column BIT,"
 			+ " Float_column FLOAT,"
 			+ " Double_column FLOAT,"
@@ -69,40 +69,35 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 		}
 		return "ALTER TABLE table_to_alter"
 			+ " ADD Add_column_1 INT NOT NULL,"
-			+ " Add_column_2 INT NULL UNIQUE DEFAULT 42;"
-
-			+ "ALTER TABLE table_to_alter"
-			+ " ALTER COLUMN Column_to_modify_1 FLOAT;"
-
-			+ "ALTER TABLE table_to_alter"
-			+ " ALTER COLUMN Column_to_modify_2 FLOAT;"
+			+ " Add_column_2 INT NULL CONSTRAINT UQ_table_to_alter_Add_column_2 UNIQUE"
+			+ " CONSTRAINT DF_table_to_alter_Add_column_2 DEFAULT 42;"
 			
-			// add default
-			+ "ALTER TABLE table_to_alter"
-			+ " ADD CONSTRAINT DF_table_to_alter_Column_to_modify_1 DEFAULT 5 FOR Column_to_modify_1;"
-			
+			+ "ALTER TABLE table_to_alter DROP COLUMN Column_to_delete;"
+
+			+ "ALTER TABLE table_to_alter ALTER COLUMN Column_to_modify_1 FLOAT NULL;"
+
+			+ "ALTER TABLE table_to_alter ALTER COLUMN Column_to_modify_2 FLOAT NOT NULL;"
+
+			+ "ALTER TABLE table_to_alter ADD CONSTRAINT UQ_table_to_alter_Column_to_modify_2 UNIQUE (Column_to_modify_2);"
+
+			+ "ALTER TABLE table_to_alter DROP CONSTRAINT UQ_table_to_alter_Column_to_remove_unique;"
+
 			// remove default
-			+ "ALTER TABLE table_to_alter"
-			+ " DROP CONSTRAINT DF_table_to_alter_Column_to_modify_2;"
+			+ "ALTER TABLE table_to_alter DROP CONSTRAINT DF_table_to_alter_Column_to_remove_default;"
+			// modify default
+			+ "ALTER TABLE table_to_alter DROP CONSTRAINT DF_table_to_alter_Column_to_modify_default;"
+			+ "ALTER TABLE table_to_alter ADD CONSTRAINT DF_table_to_alter_Column_to_modify_default DEFAULT 5 FOR Column_to_modify_default;"			
+			// add default
+			+ "ALTER TABLE table_to_alter ADD CONSTRAINT DF_table_to_alter_Column_to_set_default DEFAULT 42 FOR Column_to_set_default;"
 			
 			+ "ALTER TABLE table_to_alter"
-			+ " ALTER COLUMN Column_to_modify_1 INT NOT NULL;"
-			
+			+ " ADD CONSTRAINT FK_Add_column_1 FOREIGN KEY (Add_column_1) REFERENCES table_for_index_1(id);"
+
 			+ "ALTER TABLE table_to_alter"
-			+ " ALTER COLUMN Column_to_modify_2 INT NOT NULL;"
-			
-			+ "ALTER TABLE table_to_alter"
-			+ " ADD CONSTRAINT FK_Add_column_1 FOREIGN KEY (Add_column_1) REFERENCES table_for_index_1(id),"
-			+ " CONSTRAINT FK_Add_column_2 FOREIGN KEY (Add_column_2)"
-				+ " REFERENCES table_for_index_2(id) ON DELETE CASCADE ON UPDATE NO ACTION,"
-			+ " CONSTRAINT table_to_alter_column_to_modify_2_key UNIQUE (Column_to_modify_2);"
-			
-			+ "ALTER TABLE table_to_alter"
-			+ " DROP COLUMN Column_to_delete;"
+			+ " ADD CONSTRAINT FK_Add_column_2 FOREIGN KEY (Add_column_2)"
+				+ " REFERENCES table_for_index_2(id) ON DELETE CASCADE ON UPDATE NO ACTION;"
 			
 			+ "ALTER TABLE table_to_alter DROP CONSTRAINT FK_to_delete;"
-
-			+ "ALTER TABLE table_to_alter ADD CONSTRAINT table_to_alter_column_to_modify_1_key UNIQUE (Column_to_modify_1);"
 		
 			+ "EXEC sp_rename 'table_to_alter.Column_to_rename', 'Renamed_column', 'COLUMN'"
 			;

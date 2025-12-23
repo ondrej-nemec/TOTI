@@ -75,16 +75,21 @@ public class PostgresSqlInstanceTest extends AbstractInstanceTest {
 			+ " DROP COLUMN Column_to_delete,"
 
 			+ " ALTER COLUMN Column_to_modify_1 TYPE FLOAT,"
-			+ " ALTER COLUMN Column_to_modify_2 TYPE FLOAT,"
-			
-			+ " ALTER COLUMN Column_to_modify_1 SET DEFAULT 5,"
-			+ " ALTER COLUMN Column_to_modify_2 DROP DEFAULT,"
-			
 			+ " ALTER COLUMN Column_to_modify_1 DROP NOT NULL,"
+
+			+ " ALTER COLUMN Column_to_modify_2 TYPE FLOAT,"
 			+ " ALTER COLUMN Column_to_modify_2 SET NOT NULL,"
 			
-			+ " DROP CONSTRAINT table_to_alter_column_to_modify_1_key," //  UNIQUE (Column_to_modify_1)
-			+ " ADD CONSTRAINT table_to_alter_column_to_modify_2_key UNIQUE (Column_to_modify_2);"
+
+			+ " ADD CONSTRAINT table_to_alter_column_to_modify_2_key UNIQUE (Column_to_modify_2),"
+			+ " DROP CONSTRAINT table_to_alter_column_to_remove_unique_key," //  UNIQUE (Column_to_modify_1)
+
+			+ " ALTER COLUMN Column_to_remove_default DROP DEFAULT,"
+
+			+ " ALTER COLUMN Column_to_modify_default SET DEFAULT 5,"
+
+			+ " ALTER COLUMN Column_to_set_default SET DEFAULT 42;"
+
 			+ "ALTER TABLE table_to_alter"
 			+ " RENAME COLUMN Column_to_rename TO Renamed_column"
 			;

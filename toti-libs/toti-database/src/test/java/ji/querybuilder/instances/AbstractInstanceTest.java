@@ -222,14 +222,18 @@ public abstract class AbstractInstanceTest {
 					.deleteForeingKey("FK_to_delete")
 					
 					.modifyColumnType("Column_to_modify_1", ColumnType.floatType())
-					.modifyColumnDefault("Column_to_modify_1", 5)
 					.setColumnNullable("Column_to_modify_1")
-					.removeColumnUnique("Column_to_modify_1")
 
 					.modifyColumnType("Column_to_modify_2", ColumnType.floatType())
-					.removeColumnDefault("Column_to_modify_2")
 					.setColumnNotNull("Column_to_modify_2")
 					.setColumnUnique("Column_to_modify_2")
+
+					.removeColumnUnique("Column_to_remove_unique")
+
+					.removeColumnDefault("Column_to_remove_default")
+					.modifyColumnDefault("Column_to_modify_default", 5)
+					.addColumnDefault("Column_to_set_default", 42)
+
 					.renameColumn("Column_to_rename", "Renamed_column", ColumnType.integer())
 				),
 				getAlterTable(true)	
@@ -943,6 +947,7 @@ public abstract class AbstractInstanceTest {
 		test(create, expected, expected, execute);
 	}
 	
+	@SuppressWarnings("CallToPrintStackTrace")
 	private <B extends Builder> void test(
 			Function<QueryBuilder, B> create,
 			String expectedGet, String expectedCreate,
@@ -964,10 +969,14 @@ public abstract class AbstractInstanceTest {
 			}
 
 			// test expected first, then syntax
-			/*if (!expectedCreate.contains("?")) {
+			//*
+			if (!expectedCreate.contains("?")) {
 				connection.setAutoCommit(false);
 				// check if expected SQL is correct
 				try (Statement stmt = connection.createStatement()) {
+					//for (String query : expectedCreate.split(";")) {
+					//	stmt.execute(query);
+					//}
 					stmt.execute(expectedCreate);
 					connection.rollback();
 				} catch(SQLException e) {
@@ -978,14 +987,19 @@ public abstract class AbstractInstanceTest {
 					connection.rollback();
 					throw e;
 				}
-			}*/
-			assertEquals(expectedGet, actual.getSql());
-			assertEquals(expectedCreate, actual.createSql());
+			}
+			//*/
+			assertSql(expectedGet, actual.getSql());
+			assertSql(expectedCreate, actual.createSql());
 	
 			connection.setAutoCommit(false);
 			execute.accept(actual);
 			connection.rollback();
 		}
+	}
+
+	private void assertSql(String expected, String actual) {
+		assertEquals(expected.replace(";", "\n"), actual.replace(";", "\n"));
 	}
 	
 	protected abstract Connection getConnection(Connections connections) throws SQLException;
@@ -1019,6 +1033,7 @@ public abstract class AbstractInstanceTest {
 		}
 	}
 
+	@SuppressWarnings("CallToPrintStackTrace")
 	protected void initEmptyDb(Connections connections) throws SQLException {
 		try (Connection conn = getBaseConnection(connections)) {
 			try (Statement stmt = conn.createStatement()) {

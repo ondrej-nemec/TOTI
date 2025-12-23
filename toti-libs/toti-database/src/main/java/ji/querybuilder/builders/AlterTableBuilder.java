@@ -1,11 +1,13 @@
 package ji.querybuilder.builders;
 
 import java.sql.SQLException;
+import java.util.function.Consumer;
 
 import ji.querybuilder.Builder;
 import ji.querybuilder.enums.ColumnSetting;
 import ji.querybuilder.enums.ColumnType;
 import ji.querybuilder.enums.OnAction;
+import ji.querybuilder.structures.ModifyColumn;
 
 public interface AlterTableBuilder extends Builder {
 	
@@ -19,21 +21,41 @@ public interface AlterTableBuilder extends Builder {
 
 	AlterTableBuilder renameColumn(String originName, String newName, ColumnType type);
 
-	AlterTableBuilder modifyColumnType(String column, ColumnType type);
+	default AlterTableBuilder modifyColumnType(String column, ColumnType type) {
+		return modifyColumn(column, c->c.setColumnType(type));
+	}
+
+	default AlterTableBuilder addColumnDefault(String column, Object value) {
+		return modifyColumn(column, c->c.addDefault(value));
+	}
+
+	default AlterTableBuilder modifyColumnDefault(String column, Object value) {
+		return modifyColumn(column, c->c.modifyDefault(value));
+	}
+
+	default AlterTableBuilder removeColumnDefault(String column) {
+		return modifyColumn(column, c->c.removeDefault());
+	}
+
+	default AlterTableBuilder setColumnNotNull(String column) {
+		return modifyColumn(column, c->c.setIsNullable(false));
+	}
 	
-	AlterTableBuilder modifyColumnDefault(String column, Object value);
+	default AlterTableBuilder setColumnNullable(String column) {
+		return modifyColumn(column, c->c.setIsNullable(true));
+	}
 	
-	AlterTableBuilder removeColumnDefault(String column);
+	default AlterTableBuilder setColumnUnique(String column) {
+		return modifyColumn(column, c->c.setUnique(true));
+	}
 	
-	AlterTableBuilder setColumnNullable(String column);
-	
-	AlterTableBuilder setColumnNotNull(String column);
-	
-	AlterTableBuilder setColumnUnique(String column);
+	default AlterTableBuilder removeColumnUnique(String column) {
+		return modifyColumn(column, c->c.setUnique(false));
+	}
+
+	AlterTableBuilder modifyColumn(String columnName, Consumer<ModifyColumn> modify);
 	
 	AlterTableBuilder deleteColumn(String name);
-	
-	AlterTableBuilder removeColumnUnique(String column);
 	
 	default AlterTableBuilder addForeignKey(String column, String referedTable, String referedColumn) {
 		return addForeignKey(column, referedTable, referedColumn, null, null);
