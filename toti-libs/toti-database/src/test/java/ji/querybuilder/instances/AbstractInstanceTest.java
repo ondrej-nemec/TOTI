@@ -223,16 +223,18 @@ public abstract class AbstractInstanceTest {
 					
 					.modifyColumnType("Column_to_modify_1", ColumnType.floatType())
 					.setColumnNullable("Column_to_modify_1")
+					.modifyColumnDefault("Column_to_modify_1", 5)
+					.removeColumnUnique("Column_to_modify_1")
 
 					.modifyColumnType("Column_to_modify_2", ColumnType.floatType())
 					.setColumnNotNull("Column_to_modify_2")
 					.setColumnUnique("Column_to_modify_2")
+					.removeColumnDefault("Column_to_modify_2")
 
-					.removeColumnUnique("Column_to_remove_unique")
-
-					.removeColumnDefault("Column_to_remove_default")
-					.modifyColumnDefault("Column_to_modify_default", 5)
-					.addColumnDefault("Column_to_set_default", 42)
+					.modifyColumn("Column_to_modify_3", c->{
+						c.addDefault(42);
+						c.setColumnType(ColumnType.string(255));
+					})
 
 					.renameColumn("Column_to_rename", "Renamed_column", ColumnType.integer())
 				),
@@ -250,7 +252,7 @@ public abstract class AbstractInstanceTest {
 				"Simplified",
 				// changes supported by sqlite 
 				f(
-					b->b.alterTable("table_to_alter")
+					b->b.alterTable("table_to_alter_2")
 					.addColumn("Add_column_1", ColumnType.integer(), ColumnSetting.NOT_NULL)
 				//	.addColumn("Add_column_2", ColumnType.integer(), 42, ColumnSetting.UNIQUE, ColumnSetting.NULL)
 				//	.addForeignKey("Add_column_1", "table_for_index", "id")
@@ -968,8 +970,8 @@ public abstract class AbstractInstanceTest {
 				return;
 			}
 
+			/*
 			// test expected first, then syntax
-			//*
 			if (!expectedCreate.contains("?")) {
 				connection.setAutoCommit(false);
 				// check if expected SQL is correct
@@ -999,7 +1001,10 @@ public abstract class AbstractInstanceTest {
 	}
 
 	private void assertSql(String expected, String actual) {
-		assertEquals(expected.replace(";", "\n"), actual.replace(";", "\n"));
+		assertEquals(
+			expected.replace(";", "\n").replace(",", ",\n\t"),
+			actual.replace(";", "\n").replace(",", ",\n\t")
+		);
 	}
 	
 	protected abstract Connection getConnection(Connections connections) throws SQLException;

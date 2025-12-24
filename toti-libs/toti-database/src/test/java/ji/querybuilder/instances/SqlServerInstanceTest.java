@@ -61,11 +61,11 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 	@Override
 	protected String getAlterTable(boolean full) {
 		if (!full) {
-			return "ALTER TABLE table_to_alter"
+			return "ALTER TABLE table_to_alter_2"
 				+ " ADD Add_column_1 INT NOT NULL;"
-				+ "ALTER TABLE table_to_alter"
+				+ "ALTER TABLE table_to_alter_2"
 				+ " DROP COLUMN Column_to_delete;"
-				+ "EXEC sp_rename 'table_to_alter.Column_to_rename', 'Renamed_column', 'COLUMN'";
+				+ "EXEC sp_rename 'table_to_alter_2.Column_to_rename', 'Renamed_column', 'COLUMN'";
 		}
 		return "ALTER TABLE table_to_alter"
 			+ " ADD Add_column_1 INT NOT NULL,"
@@ -74,22 +74,18 @@ public class SqlServerInstanceTest extends AbstractInstanceTest {
 			
 			+ "ALTER TABLE table_to_alter DROP COLUMN Column_to_delete;"
 
+			+ "ALTER TABLE table_to_alter DROP CONSTRAINT DF_table_to_alter_Column_to_modify_1;"
+			+ "ALTER TABLE table_to_alter DROP CONSTRAINT UQ_table_to_alter_Column_to_modify_1;"
 			+ "ALTER TABLE table_to_alter ALTER COLUMN Column_to_modify_1 FLOAT NULL;"
+			+ "ALTER TABLE table_to_alter ADD CONSTRAINT DF_table_to_alter_Column_to_modify_1 DEFAULT 5 FOR Column_to_modify_1;"
 
+			+ "ALTER TABLE table_to_alter DROP CONSTRAINT DF_table_to_alter_Column_to_modify_2;"
 			+ "ALTER TABLE table_to_alter ALTER COLUMN Column_to_modify_2 FLOAT NOT NULL;"
-
 			+ "ALTER TABLE table_to_alter ADD CONSTRAINT UQ_table_to_alter_Column_to_modify_2 UNIQUE (Column_to_modify_2);"
 
-			+ "ALTER TABLE table_to_alter DROP CONSTRAINT UQ_table_to_alter_Column_to_remove_unique;"
+			+ "ALTER TABLE table_to_alter ALTER COLUMN Column_to_modify_3 VARCHAR(255);"
+			+ "ALTER TABLE table_to_alter ADD CONSTRAINT DF_table_to_alter_Column_to_modify_3 DEFAULT 42 FOR Column_to_modify_3;"
 
-			// remove default
-			+ "ALTER TABLE table_to_alter DROP CONSTRAINT DF_table_to_alter_Column_to_remove_default;"
-			// modify default
-			+ "ALTER TABLE table_to_alter DROP CONSTRAINT DF_table_to_alter_Column_to_modify_default;"
-			+ "ALTER TABLE table_to_alter ADD CONSTRAINT DF_table_to_alter_Column_to_modify_default DEFAULT 5 FOR Column_to_modify_default;"			
-			// add default
-			+ "ALTER TABLE table_to_alter ADD CONSTRAINT DF_table_to_alter_Column_to_set_default DEFAULT 42 FOR Column_to_set_default;"
-			
 			+ "ALTER TABLE table_to_alter"
 			+ " ADD CONSTRAINT FK_Add_column_1 FOREIGN KEY (Add_column_1) REFERENCES table_for_index_1(id);"
 

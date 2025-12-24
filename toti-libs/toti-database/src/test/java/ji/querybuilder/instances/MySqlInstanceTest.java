@@ -18,7 +18,7 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 		}
 		return "CREATE TABLE create_table ("
 			+ "Primary_column INT AUTO_INCREMENT NOT NULL,"
-			+ " Unique_column INT UNIQUE,"
+			+ " Unique_column INT,"
 			+ " Nullable_column INT DEFAULT 42 NULL,"
 			+ " Bool_column BOOLEAN,"
 			+ " Float_column FLOAT,"
@@ -38,6 +38,7 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 			+ " FK_column_3 INT,"
 			+ " FK_column_4 INT,"
 			+ " PRIMARY KEY (Primary_column),"
+			+ " CONSTRAINT UQ_create_table_Unique_column UNIQUE (Unique_column),"
 			+ " CONSTRAINT FK_FK_column_1 FOREIGN KEY (FK_column_1) REFERENCES table_for_index_1(id),"
 			+ " CONSTRAINT FK_FK_column_2 FOREIGN KEY (FK_column_2) REFERENCES table_for_index_2(id)"
 				+ " ON DELETE CASCADE ON UPDATE NO ACTION,"
@@ -61,7 +62,7 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 	@Override
 	protected String getAlterTable(boolean full) {
 		if (!full) {
-			return "ALTER TABLE table_to_alter"
+			return "ALTER TABLE table_to_alter_2"
 				+ " ADD Add_column_1 INT NOT NULL,"
 				+ " DROP COLUMN Column_to_delete,"
 				+ " RENAME COLUMN Column_to_rename TO Renamed_column";
@@ -69,24 +70,24 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 		return "ALTER TABLE table_to_alter"
 			+ " ADD Add_column_1 INT NOT NULL,"
 			+ " ADD Add_column_2 INT DEFAULT 42 NULL,"
-			+ " ADD UNIQUE Add_column_2"
+			+ " ADD CONSTRAINT UQ_table_to_alter_Add_column_2 UNIQUE (Add_column_2),"
+			// + " ADD UNIQUE INDEX UQ_table_to_alter_Add_column_2 (Add_column_2),"
+			// + " ADD UNIQUE Add_column_2"
 			+ " ADD CONSTRAINT FK_Add_column_1 FOREIGN KEY (Add_column_1) REFERENCES table_for_index_1(id),"
 			+ " ADD CONSTRAINT FK_Add_column_2 FOREIGN KEY (Add_column_2)"
 				+ " REFERENCES table_for_index_2(id) ON DELETE CASCADE ON UPDATE NO ACTION,"
 			+ " DROP CONSTRAINT FK_to_delete,"
 			+ " DROP COLUMN Column_to_delete,"
 
-			+ " MODIFY COLUMN Column_to_modify_1 FLOAT,"
-			+ " MODIFY COLUMN Column_to_modify_2 FLOAT,"
+			+ " MODIFY COLUMN Column_to_modify_1 FLOAT DEFAULT 5 NULL,"
+	 		+ " DROP INDEX UQ_table_to_alter_Column_to_modify_1,"
+
+			+ " MODIFY COLUMN Column_to_modify_2 FLOAT NOT NULL,"
+			+ " ADD UNIQUE INDEX UQ_table_to_alter_Column_to_modify_2 (Column_to_modify_2),"
+
+			+ " MODIFY COLUMN Column_to_modify_3 VARCHAR(255) DEFAULT 42,"
 			
-			+ " MODIFY COLUMN Column_to_modify_1 SET DEFAULT 5,"
-			+ " MODIFY COLUMN Column_to_modify_2 DROP DEFAULT,"
-			
-			+ " MODIFY COLUMN Column_to_modify_1 DROP NOT NULL,"
-			+ " MODIFY COLUMN Column_to_modify_2 SET NOT NULL,"
-			
-			+ " DROP FOREIGN KEY table_to_alter_column_to_modify_1_key," //  UNIQUE (Column_to_modify_1)
-			+ " ADD CONSTRAINT table_to_alter_column_to_modify_2_key UNIQUE (Column_to_modify_2),"
+			//+ " ADD CONSTRAINT table_to_alter_column_to_modify_2_key UNIQUE (Column_to_modify_2),"
 			+ " RENAME COLUMN Column_to_rename TO Renamed_column"
 			;
 		/*

@@ -63,6 +63,18 @@ create table table_to_alter (
 
 -- separator --
 
+create table table_to_alter_2 (
+	id INTEGER,
+	Column_to_modify_1 INTEGER DEFAULT 0 NOT NULL UNIQUE,
+	Column_to_modify_2 INTEGER DEFAULT 1 NULL,
+	Column_to_rename INTEGER,
+	Column_to_delete INTEGER,
+	CONSTRAINT FK_id FOREIGN KEY (id) REFERENCES table_for_index_1(id),
+	CONSTRAINT FK_to_delete FOREIGN KEY (id) REFERENCES table_for_index_1(id)
+);
+
+-- separator --
+
 create view view_to_delete AS select 1 as a;
 
 -- separator --

@@ -349,19 +349,14 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 
 		alterTable.getModifyColumns().forEach(c->{
 			Optional<DefaultValue> defValue = c.getDefValue();
-			if (defValue != null) {
-				if (defValue.isEmpty() || defValue.get().isModify()) {
-					result.add(String.format(
-						prefix + "DROP CONSTRAINT DF_%s_%s",
-						alterTable.getTable(), c.getName()
-					));
-				}
-				if (defValue.isPresent()) {
-					result.add(String.format(
-						prefix + "ADD CONSTRAINT DF_%s_%s DEFAULT %s FOR %s",
-						alterTable.getTable(), c.getName(), defValue.get().getValue(getEscape()), c.getName()
-					));
-				}
+			String uniqueKey = "UQ_" + alterTable.getTable() + "_" + c.getName();
+			String defaultKey = "DF_" + alterTable.getTable() + "_" + c.getName();
+
+			if (defValue != null && (defValue.isEmpty() || defValue.get().isModify())) {
+				result.add(prefix + "DROP CONSTRAINT " + defaultKey);
+			}
+			if (c.getIsUnique() != null && !c.getIsUnique()) {
+				result.add(prefix + "DROP CONSTRAINT " + uniqueKey);
 			}
 			if (c.getColumnType() != null) {
 				result.add(
@@ -371,21 +366,17 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 			} else if (c.getIsNullable() != null) {
 				throw new RuntimeException("SQL Server not support change null / not null without data type.");
 			}
-			if (c.getIsUnique() != null) {
-				String key = "UQ_" + alterTable.getTable() + "_" + c.getName();
-				if (c.getIsUnique()) {
-					result.add(
-						prefix + "ADD CONSTRAINT " + key + " UNIQUE (" + c.getName() + ")"
-					);
-				} else {
-					result.add(
-						prefix + "DROP CONSTRAINT " + key
-					);
-				}
+			if (c.getIsUnique() != null && c.getIsUnique()) {
+				result.add(prefix + "ADD CONSTRAINT " + uniqueKey + " UNIQUE (" + c.getName() + ")");
+			}
+			if (defValue != null && defValue.isPresent()) {
+				result.add(String.format(
+					prefix + "ADD CONSTRAINT %s DEFAULT %s FOR %s",
+					defaultKey, defValue.get().getValue(getEscape()), c.getName()
+				));
 			}
 		});
 
-		
 		createAddForeignKey(alterTable.getAddForeignKeys(), sql->result.add(prefix + sql), "ADD ");
 		iterateList(
 			sql->result.add(prefix + sql), alterTable.getDeleteForeignKeys(),

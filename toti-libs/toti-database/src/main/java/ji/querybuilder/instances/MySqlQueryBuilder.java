@@ -8,7 +8,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import ji.common.functions.Implode;
-import ji.common.structures.DictionaryValue;
 import ji.common.structures.ObjectBuilder;
 import ji.common.structures.SortedMap;
 import ji.common.structures.Tuple2;
@@ -319,7 +318,7 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 		
 		iterateList(
 			sql, createTable.getColumns(),
-			i->"", i->", ", c->getColumn(c, x->appendix.append(", " + x))
+			i->"", i->", ", c->getColumn(createTable.getTable(), c, x->appendix.append(", " + x))
 		);
 		
 		sql.append(appendix.toString());
@@ -338,7 +337,7 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 		List<String> constains = new LinkedList<>();
 		iterateList(
 			sql->rows.add(sql), alterTable.getAddColumns(),
-			i->"", i->"", c->"ADD " + getColumn(c, x->constains.add(x))
+			i->"", i->"", c->"ADD " + getColumn(alterTable.getTable(), c, x->constains.add("ADD " + x))
 		);
 		rows.addAll(constains);
 		createAddForeignKey(alterTable.getAddForeignKeys(), sql->rows.add(sql), "ADD ");
@@ -355,19 +354,19 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 			Optional<DefaultValue> defValue = c.getDefValue();
 			if (c.getColumnType() != null) {
 				rows.add(
-					"MODIFY COLUMN " + c.getName() + " " + c.getColumnType()
-					+ (defValue.isEmpty() ? "" : " DEFAULT" + defValue.get().getValue(getEscape()))
+					"MODIFY COLUMN " + c.getName() + " " + toString(c.getColumnType())
+					+ (defValue.isEmpty() ? "" : " DEFAULT " + defValue.get().getValue(getEscape()))
 					+ (c.getIsNullable() == null ? "" : " " + (c.getIsNullable() ? "NULL" : "NOT NULL"))
 				);
 			} else if (c.getIsNullable() != null || defValue != null) {
 				throw new RuntimeException("Column modify nullable or default value requires column type");
 			}
 			if (c.getIsUnique() != null) {
-				String key = (alterTable.getTable() + "_" + c.getName() + "_key").toLowerCase();
+				String key = "UQ_" + (alterTable.getTable() + "_" + c.getName());
 				if (c.getIsUnique()) {
-					rows.add("DROP CONSTRAINT " + key); //  + " UNIQUE (" + c.getName() + ")"
+					rows.add("ADD UNIQUE INDEX " + key + " (" + c.getName() + ")");
 				} else {
-					rows.add("ADD CONSTRAINT " + key + " UNIQUE (" + c.getName() + ")");
+					rows.add("DROP INDEX " + key); //  + " UNIQUE (" + c.getName() + ")"
 				}
 			}
 		});
@@ -484,7 +483,7 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 		return result.toString();
 	}
 	
-	private String getColumn(Column column, Consumer<String> onConstaint) {
+	private String getColumn(String tableName, Column column, Consumer<String> onConstaint) {
 		StringBuilder result = new StringBuilder();
 		result.append(column.getName());
 		result.append(" ");
@@ -497,6 +496,11 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 		for (ColumnSetting settings : column.getSettings()) {
 			if (settings == ColumnSetting.PRIMARY_KEY) {
 				onConstaint.accept(String.format("PRIMARY KEY (%s)", column.getName()));
+			} else if (settings == ColumnSetting.UNIQUE) {
+				onConstaint.accept(String.format(
+					"CONSTRAINT UQ_%s_%s UNIQUE (%s)",
+					tableName, column.getName(), column.getName()
+				));
 			} else {
 				result.append(" ");
 				result.append(toString(settings));

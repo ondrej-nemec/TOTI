@@ -53,16 +53,22 @@ create index index_to_delete ON table_for_index_1(id);
 
 create table table_to_alter (
 	id int,
-	Column_to_modify_1 int NOT NULL,
-	Column_to_modify_2 int NULL,
-	Column_to_remove_unique int UNIQUE,
-	Column_to_modify_default int DEFAULT 0,
-	Column_to_remove_default int DEFAULT 0,
-	Column_to_set_default int,
+	Column_to_modify_1 int NOT NULL DEFAULT 0,
+	Column_to_modify_2 int NULL DEFAULT 0,
+	Column_to_modify_3 char,
 	Column_to_rename int,
 	Column_to_delete int,
+	CONSTRAINT UQ_table_to_alter_Column_to_modify_1 UNIQUE (Column_to_modify_1),
 	CONSTRAINT FK_id FOREIGN KEY (id) REFERENCES table_for_index_1(id),
 	CONSTRAINT FK_to_delete FOREIGN KEY (id) REFERENCES table_for_index_1(id)
+);
+
+-- separator --
+
+create table table_to_alter_2 (
+	id int,
+	Column_to_rename int,
+	Column_to_delete int
 );
 
 -- separator --

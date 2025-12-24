@@ -62,14 +62,14 @@ public class SqLiteInstanceTest extends AbstractInstanceTest {
 			// sqlite support almost nothing in alter table
 			return null;
 		}
-		return "ALTER TABLE table_to_alter ADD COLUMN Add_column_1 INTEGER NOT NULL;"
+		return "ALTER TABLE table_to_alter_2 ADD COLUMN Add_column_1 INTEGER NOT NULL;"
 		//	+ "ALTER TABLE table_to_alter ADD COLUMN Add_column_2 INTEGER DEFAULT 42 UNIQUE NULL;"
-			+ "ALTER TABLE table_to_alter DROP COLUMN Column_to_delete;"
+			+ "ALTER TABLE table_to_alter_2 DROP COLUMN Column_to_delete;"
 		//	+ "ALTER TABLE table_to_alter MODIFY COLUMN Column_to_modify_1 FLOAT;"
 		//	+ "ALTER TABLE table_to_alter MODIFY COLUMN Column_to_modify_2 FLOAT;"
 		//	+ "ALTER TABLE table_to_alter DROP CONSTRAINT table_to_alter_column_to_modify_1_key;"
 		//	+ "ALTER TABLE table_to_alter ADD CONSTRAINT table_to_alter_column_to_modify_2_key UNIQUE (Column_to_modify_2);"
-			+ "ALTER TABLE table_to_alter"
+			+ "ALTER TABLE table_to_alter_2"
 			+ " RENAME COLUMN Column_to_rename TO Renamed_column"
 		;
 	}
