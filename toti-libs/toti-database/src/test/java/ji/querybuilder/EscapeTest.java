@@ -222,7 +222,7 @@ public class EscapeTest {
 					Object rawValue = rs.getObject(1);
 					//assertValue(expectedRaw, rawValue, "RAW");
 					Object parsedValue = Escape.parseValue(rs, 1);
-					
+
 					assertValue(
 						expectedValue, parsedValue,
 						"String: '" + stringValue + "', Raw: "
@@ -294,7 +294,7 @@ public class EscapeTest {
 				"col_datetime_zoned",
 				ZonedDateTime.of(2021, 8, 20, 10, 12, 45, 123_456_789, ZoneId.of("+5")),
 				"2021-08-20T05:12:45.123457000", // mysql
-				"2021-08-20T05:12:45.123457000+01", // postgres
+				"2021-08-20T05:12:45.123457000+00", // postgres
 				"2021-08-20T10:12:45.123457000+05:00", // sqlServer
 				"2021-08-20 10:12:45.123456789+05:00" // sqlite 
 			},
@@ -302,7 +302,7 @@ public class EscapeTest {
 				"col_datetime_zoned",
 				ZonedDateTime.of(2021, 8, 20, 10, 12, 45, 123_456_789, ZoneId.of("+0")),
 				"2021-08-20T10:12:45.123457000", // mysql
-				"2021-08-20T12:12:45.123457000+02", // postgres
+				"2021-08-20T10:12:45.123457000+00", // postgres
 				"2021-08-20T10:12:45.123457000+00:00", // sqlServer
 				"2021-08-20 10:12:45.123456789+00:00" // sqlite 
 			},
@@ -310,7 +310,7 @@ public class EscapeTest {
 				"col_datetime_zoned",
 				ZonedDateTime.of(2021, 8, 20, 10, 12, 45, 123_456_789, ZoneId.of("UTC")),
 				"2021-08-20T10:12:45.123457000", // mysql
-				"2021-08-20T12:12:45.123457000+02", // postgres
+				"2021-08-20T10:12:45.123457000+00", // postgres
 				"2021-08-20T10:12:45.123457000+00:00", // sqlServer
 				"2021-08-20 10:12:45.123456789+00:00" // sqlite 
 			},
@@ -318,7 +318,7 @@ public class EscapeTest {
 				"col_datetime_zoned",
 				ZonedDateTime.of(2021, 8, 20, 10, 12, 45, 123_456_789, ZoneOffset.UTC),
 				"2021-08-20T10:12:45.123457000", // mysql
-				"2021-08-20T12:12:45.123457000+02", // postgres
+				"2021-08-20T10:12:45.123457000+00", // postgres
 				"2021-08-20T10:12:45.123457000+00:00", // sqlServer
 				"2021-08-20 10:12:45.123456789+00:00" // sqlite 
 			}

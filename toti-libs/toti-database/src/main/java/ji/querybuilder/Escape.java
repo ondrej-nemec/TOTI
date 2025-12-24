@@ -93,7 +93,8 @@ public class Escape {
 			return null;
 		}
 		if (value instanceof Date) {
-			return value.toString();
+			// return value.toString(); // mysql returns another day as raw
+			return getString.get();
 		}
 		if (value instanceof Time) {
 			return parseTimeNanos(getString.get());
