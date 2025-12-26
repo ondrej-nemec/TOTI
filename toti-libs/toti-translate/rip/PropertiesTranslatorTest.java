@@ -1,6 +1,6 @@
 package translator;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
@@ -8,13 +8,13 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 
 import common.Logger;
 import common.structures.MapInit;
 import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @RunWith(JUnitParamsRunner.class)
 public class PropertiesTranslatorTest {
@@ -32,7 +32,7 @@ public class PropertiesTranslatorTest {
 	}
 */
 	@Test
-	@Parameters(method = "dataTranslateReplaceVariable")
+	@MethodSource("dataTranslateReplaceVariable")
 	public void testTranslateReplaceVariable(String expected, String key, Map<String, Object> params) {
 		PropertiesTranslator t = PropertiesTranslator.create( mock(Logger.class), "messages");
 		assertEquals(expected, t.translate(key, params, Locale.getDefault().toString()));
@@ -56,7 +56,7 @@ public class PropertiesTranslatorTest {
 	}
 
 	@Test
-	@Parameters(method = "dataTranslateUseCorrectLocale")
+	@MethodSource("dataTranslateUseCorrectLocale")
 	public void testTranslateUseCorrectLocale(String expected, Locale locale) {
 		PropertiesTranslator t = PropertiesTranslator.create(mock(Logger.class), "langs/messages");
 		assertEquals(expected, t.translate("key", locale.toString()));
@@ -84,7 +84,7 @@ public class PropertiesTranslatorTest {
 	}
 
 	@Test
-	@Parameters(method = "dataTranslateSelectTransFileByPrefix")
+	@MethodSource("dataTranslateSelectTransFileByPrefix")
 	public void testTranslateSelectTransFileByPrefix(String key, String expected) {
 		PropertiesTranslator t = PropertiesTranslator.create(
 				mock(Logger.class),

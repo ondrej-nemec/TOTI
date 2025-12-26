@@ -170,7 +170,7 @@ public class ApplicationFactory {
 		}
 		String key = "ip";
 		if (env != null && env.getValue(key) != null) {
-			return env.getList(key, "\\|");
+			return env.getList(key);
 		}
 		return Arrays.asList("127.0.0.1", "0:0:0:0:0:0:0:1");
 	}
@@ -185,8 +185,8 @@ public class ApplicationFactory {
 		}
 		Headers headers = new Headers();
 		if (env.getValue("headers") != null) {
-			env.getList("headers", "\\|").forEach(h->{
-				String[] hds = h.split(":", 2);
+			env.getList("headers").forEach(h->{
+				String[] hds = h.toString().split(":", 2);
 				if (hds.length == 1) {
 					headers.addHeader(hds[0].trim(), "");
 				} else {

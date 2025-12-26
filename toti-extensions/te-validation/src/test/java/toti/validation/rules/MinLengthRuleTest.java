@@ -1,29 +1,26 @@
 package toti.validation.rules;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import toti.validation.ValidationItem;
 
-@RunWith(JUnitParamsRunner.class)
 public class MinLengthRuleTest {
 
-	@Test
-	@Parameters(method="dataIsErrorToShow")
+	@ParameterizedTest
+	@MethodSource("dataIsErrorToShow")
 	public void testIsErrorToShow(Object value, Integer bond, boolean expected) {
 		MinLengthRule rule = new MinLengthRule(null, null);
 		assertEquals(expected, rule.isErrorToShow(bond, value));
 	}
 	
-	public Object[] dataIsErrorToShow() {
+	public static Object[] dataIsErrorToShow() {
 		Map<Object, Object> map = new HashMap<>();
 		map.put("a", "a");
 		map.put("b", "b");

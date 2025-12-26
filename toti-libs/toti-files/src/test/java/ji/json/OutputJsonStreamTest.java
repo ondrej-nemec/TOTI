@@ -1,20 +1,16 @@
 package ji.json;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import ji.common.structures.ThrowingConsumer;
 import ji.json.providers.OutputStringProvider;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 
-@RunWith(JUnitParamsRunner.class)
 public class OutputJsonStreamTest {
 
-	@Test
-	@Parameters(method = "dataOutputJsonStreamReturnsCorrectJson")
+	@ParameterizedTest
+	@MethodSource("dataOutputJsonStreamReturnsCorrectJson")
 	public void testOutputJsonStreamReturnsCorrectJson(
 			String json,
 			ThrowingConsumer<OutputJsonStream, JsonStreamException> createStream,
@@ -25,7 +21,7 @@ public class OutputJsonStreamTest {
 		assertEquals(json, provider.getJson());
 	}
 	
-	public Object[] dataOutputJsonStreamReturnsCorrectJson() {
+	public static Object[] dataOutputJsonStreamReturnsCorrectJson() {
 		return new Object[] {
 				new Object[] {
 						"{}",
@@ -239,7 +235,7 @@ public class OutputJsonStreamTest {
 		};
 	}
 	
-	private ThrowingConsumer<OutputJsonStream, JsonStreamException> c(ThrowingConsumer<OutputJsonStream, JsonStreamException> createStream) {
+	private static ThrowingConsumer<OutputJsonStream, JsonStreamException> c(ThrowingConsumer<OutputJsonStream, JsonStreamException> createStream) {
 		return createStream;
 	}
 	

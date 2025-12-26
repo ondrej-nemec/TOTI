@@ -1,12 +1,12 @@
 package ji.common;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class DateTimeTest {
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testFormatReturnsCorrectString() {
 		// assertEquals("", DateTime.format("", LocalDateTime.from(temporal)));
 	}

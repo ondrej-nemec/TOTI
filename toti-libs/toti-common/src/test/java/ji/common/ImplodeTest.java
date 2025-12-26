@@ -1,26 +1,23 @@
 package ji.common;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Arrays;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import ji.common.functions.Implode;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 
-@RunWith(JUnitParamsRunner.class)
 public class ImplodeTest {
 
-	@Test
-	@Parameters(method = "dataImplodeReturnsCorrectResult")
+	@ParameterizedTest
+	@MethodSource("dataImplodeReturnsCorrectResult")
 	public void testImplodeReturnsCorrectResult(String expected, String glue, String[] data) {
 		assertEquals(expected, Implode.implode(glue, data));
 	}
 	
-	public Object[] dataImplodeReturnsCorrectResult() {
+	public static Object[] dataImplodeReturnsCorrectResult() {
 		String[] array = new String[] {"a", "b", "c","d"};
 		return new Object[] {
 			new Object[] {

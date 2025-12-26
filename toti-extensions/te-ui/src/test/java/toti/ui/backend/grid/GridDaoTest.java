@@ -1,29 +1,25 @@
 package toti.ui.backend.grid;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
-
 import java.sql.Connection;
 import java.util.Arrays;
 import java.util.Optional;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import static org.mockito.Mockito.mock;
 
 import ji.common.structures.MapInit;
 import ji.common.structures.SortedMap;
 import ji.querybuilder.QueryBuilder;
 import ji.querybuilder.builders.SelectBuilder;
 import ji.querybuilder.instances.PostgreSqlQueryBuilder;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import toti.ui.backend.Owner;
 
-@RunWith(JUnitParamsRunner.class)
 public class GridDaoTest {
 	
-	@Test
-	@Parameters(method = "dataApplyFilters")
+	@ParameterizedTest
+	@MethodSource("dataApplyFilters")
 	public void testApplyFilters(
 			String message,
 			Optional<Owner> owner,
@@ -37,7 +33,7 @@ public class GridDaoTest {
 		assertEquals(message, "SELECT 42 as x " + expected, select.createSql());
 	}
 	
-	public Object[] dataApplyFilters() {
+	public static Object[] dataApplyFilters() {
 		return new Object[] {
 			// owner specified, owners is empty, no filters
 			new Object[] {
@@ -115,8 +111,8 @@ public class GridDaoTest {
 		};
 	}
 	
-	@Test
-	@Parameters(method = "dataApplySorting")
+	@ParameterizedTest
+	@MethodSource("dataApplySorting")
 	public void testApplySorting(
 			SortedMap<String, Sort> sorting, String expected) {
 		QueryBuilder builder = new QueryBuilder(new PostgreSqlQueryBuilder(), mock(Connection.class));
@@ -128,7 +124,7 @@ public class GridDaoTest {
 		assertEquals("SELECT 42 as x" + expected, select.createSql());
 	}
 	
-	public Object[] dataApplySorting() {
+	public static Object[] dataApplySorting() {
 		return new Object[] {
 			// no sorting
 			new Object[] {

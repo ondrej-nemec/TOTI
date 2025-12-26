@@ -6,27 +6,24 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import ji.common.structures.ThrowingConsumer;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import toti.templating.Parameter;
 import toti.templating.Tag;
 import toti.templating.TagVariableMode;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
-
-@RunWith(JUnitParamsRunner.class)	
 public class TemplateParserTest {
 	
 	// TODO throwing tests
 	// TODO test with variable escape
 	
-	@Test
-	@Parameters(method="dataParseWorks")
+	@ParameterizedTest
+	@MethodSource("dataParseWorks")
 	public void testParseWorks(boolean minimalize, String text, String expected) throws IOException {
 		TemplateParser parser = new TemplateParser(getTestingTags(), getTestingParameters(), minimalize);
 		BufferedReader br = getReader(text);
@@ -36,7 +33,7 @@ public class TemplateParserTest {
 		parser.parse(br, bw, new ParsingInfo("", ""));
 	}
 	
-	public Object[] dataParseWorks() {
+	public static Object[] dataParseWorks() {
 		return new Object[] {
 			new Object[] {
 				true,

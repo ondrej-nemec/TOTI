@@ -1,6 +1,6 @@
 package multimedia.sound;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;

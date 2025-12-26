@@ -1,26 +1,28 @@
 package ji.common.functions;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-
-@RunWith(JUnitParamsRunner.class)
 public class InputStreamLoaderTest {
 
-	@Test(expected = FileNotFoundException.class)
+	@Test
 	public void testConstructorForFilesThrowIfNoFileInDir() throws IOException {
-		InputStreamLoader.createInputStream(getClass(), "----/not-existing.properties");
+		FileNotFoundException ex = assertThrows(FileNotFoundException.class, ()->{
+			InputStreamLoader.createInputStream(getClass(), "----/not-existing.properties");
+		});
+		assertNotNull(ex);
 	}
 
-	@Test
-	@Parameters({"functions/env","tests/functions/env"})
+	@ParameterizedTest
+	@ValueSource(strings={"functions/env","tests/functions/env"})
 	public void testConstructorForFilesWorksForClasspathAndPathOnly(String path) throws IOException {
 		InputStreamLoader.createInputStream(getClass(), path + "/app.properties");
 		assertTrue(true);

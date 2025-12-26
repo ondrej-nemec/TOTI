@@ -1,18 +1,15 @@
 package toti.templating.parsing;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import toti.templating.parsing.enums.VariableSource;
 
-@RunWith(JUnitParamsRunner.class)
 public class VariableParserTest {
 
 	@Test
@@ -48,8 +45,8 @@ public class VariableParserTest {
 		return parser;
 	}
 
-	@Test
-	@Parameters(method = "dataParseTextWorks")
+	@ParameterizedTest
+	@MethodSource("dataParseTextWorks")
 	public void testParseTextWorks(String template, boolean finished, String variableName, String expectedCalling, boolean escape) throws IOException {
 		VariableParser parser = new VariableParser(0, new ParsingInfo("", ""));
 		assertEquals(finished, ParsingSimulator.simulate(parser, template));
@@ -58,7 +55,7 @@ public class VariableParserTest {
 		assertEquals(escape, parser.escape());
 	}
 	
-	public Object[] dataParseTextWorks() {
+	public static Object[] dataParseTextWorks() {
 		return new Object[] {
 		/*	new Object[] {
 				"title",

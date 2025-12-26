@@ -1,6 +1,6 @@
 package toti.answers.router;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 import java.lang.reflect.Method;
@@ -8,14 +8,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
 import ji.common.exceptions.LogicException;
 import ji.common.structures.MapInit;
 import ji.common.structures.ObjectBuilder;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
+
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import test.ControllerA;
 import test.NotController;
 import test.NotRegisteredController;
@@ -24,16 +24,15 @@ import toti.application.Module;
 import toti.application.register.Param;
 import toti.application.register.Register;
 
-@RunWith(JUnitParamsRunner.class)
 public class LinkTest {
 	
-	@Test
-	@Parameters(method="dataIsRelative")
+	@ParameterizedTest
+	@MethodSource("dataIsRelative")
 	public void testIsRelative(String url, boolean expected) {
 		assertEquals(expected, Link.isRelative(url));
 	}
 	
-	public Object[] dataIsRelative() {
+	public static Object[] dataIsRelative() {
 		return new Object[] {
 			new Object[] { "/home", true },
 			new Object[] { "/", true },
@@ -58,7 +57,7 @@ public class LinkTest {
 	}
 
 	@Test
-	@Parameters(method="dataParseStringHrefReturnsCorrectResult")
+	@MethodSource("dataParseStringHrefReturnsCorrectResult")
 	public void testParseStringHrefReturnsCorrectResult(String href, StringHref expected) {
 		Link link = new Link(mock(Register.class), mock(UriPattern.class));
 		StringHref actual = link.parseStringHref(href);
@@ -140,7 +139,7 @@ public class LinkTest {
 	}
 	
 	@Test(expected = NoSuchMethodException.class)
-	@Parameters(method="dataGetMethodThrowsIfNoMethodFound")
+	@MethodSource("dataGetMethodThrowsIfNoMethodFound")
 	public void testGetMethodThrowsIfNoMethodFound(String method, int count) throws NoSuchMethodException {
 		Link link = new Link(mock(Register.class), mock(UriPattern.class));
 		link.getMethod(NotRegisteredController.class, method, count);
@@ -167,7 +166,7 @@ public class LinkTest {
 	}
 	
 	@Test
-	@Parameters(method="dataGetMethodReturnsCorrectMethod")
+	@MethodSource("dataGetMethodReturnsCorrectMethod")
 	public void testGetMethodReturnsCorrectMethod(String method, int parameterCount, Method expected) throws NoSuchMethodException {
 		Link link = new Link(mock(Register.class), mock(UriPattern.class));
 		Method actual = link.getMethod(NotRegisteredController.class, method, parameterCount);
@@ -231,7 +230,7 @@ public class LinkTest {
 	}
 	
 	@Test
-	@Parameters(method="dataCreate")
+	@MethodSource("dataCreate")
 	public void testCreate(Map<String, Object> queryParams, Object[] pathParams, String expected) throws NoSuchMethodException, SecurityException {
 		UriPattern pattern = new UriPattern(){};
 		
@@ -270,7 +269,7 @@ public class LinkTest {
 	}
 	
 	@Test
-	@Parameters(method="dataParseParams")
+	@MethodSource("dataParseParams")
 	public void testParseParams(String key, Object value, String expected) {
 		StringBuilder result = new StringBuilder();
 		Link link = new Link(mock(Register.class), mock(UriPattern.class));

@@ -1,25 +1,23 @@
 package ji.common;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.params.ParameterizedTest;
 
 import ji.common.functions.FileExtension;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 
-@RunWith(JUnitParamsRunner.class)
+import org.junit.jupiter.params.provider.MethodSource;
+
 public class FileExtensionTest {
 	
-	@Test
-	@Parameters(method = "dataGetExtensionReturnsCorrectString")
+	@ParameterizedTest
+	@MethodSource("dataGetExtensionReturnsCorrectString")
 	public void testGetExtensionReturnsCorrectString(String fileName, String extension) {
 		FileExtension fe = new FileExtension(fileName);
 		assertEquals(extension, fe.getExtension());
 	}
 	
-	public Object[] dataGetExtensionReturnsCorrectString() {
+	public static Object[] dataGetExtensionReturnsCorrectString() {
 		return new Object[] {
 			new Object[] {"no_extension", ""},
 			new Object[] {"one.extension", "extension"},
@@ -28,14 +26,14 @@ public class FileExtensionTest {
 		};
 	}
 	
-	@Test
-	@Parameters(method = "dataGetJustNameReturnsCorrectName")
+	@ParameterizedTest
+	@MethodSource("dataGetJustNameReturnsCorrectName")
 	public void testGetJustNameReturnsCorrectName(String fileName, String name) {
 		FileExtension fe = new FileExtension(fileName);
 		assertEquals(name, fe.getName());
 	}
 	
-	public Object[] dataGetJustNameReturnsCorrectName() {
+	public static Object[] dataGetJustNameReturnsCorrectName() {
 		return new Object[] {
 			new Object[] {"just_name", "just_name"},
 			new Object[] {"one.extension", "one"},

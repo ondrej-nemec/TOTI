@@ -1,21 +1,18 @@
 package ji.json;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import ji.json.event.Event;
 import ji.json.event.EventType;
 import ji.json.event.Value;
 import ji.json.event.ValueType;
 import ji.json.providers.InputStringProvider;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 
-@RunWith(JUnitParamsRunner.class)
 public class InputJsonStreamTest {
 	
 	@Test
@@ -35,8 +32,8 @@ public class InputJsonStreamTest {
 		assertEquals("closed", b.toString());
 	}
 
-	@Test
-	@Parameters(method = "dataNextTestEventTypes")
+	@ParameterizedTest
+	@MethodSource("dataNextTestEventTypes")
 	public void testNextTestEventTypes(String json, Event[] events) throws IOException {
 		StringBuilder b = new StringBuilder();
 		InputStringProvider provider = new InputStringProvider(json) {
@@ -58,7 +55,7 @@ public class InputJsonStreamTest {
 		assertEquals("closed", b.toString());
 	}
 	
-	public Object[] dataNextTestEventTypes() {
+	public static Object[] dataNextTestEventTypes() {
 		return new Object[] {
 			new Object[] {
 				"{}",

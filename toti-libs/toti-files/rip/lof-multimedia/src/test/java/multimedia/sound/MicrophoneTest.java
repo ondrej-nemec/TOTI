@@ -1,7 +1,7 @@
 package multimedia.sound;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.*;
 
 import java.io.ByteArrayInputStream;
@@ -15,7 +15,7 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import multimedia.DataLineFactory;
 

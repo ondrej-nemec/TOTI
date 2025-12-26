@@ -1,12 +1,12 @@
 package toti.http_2.parsers;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import ji.common.structures.MapInit;
 import toti.http.parsers.Payload;

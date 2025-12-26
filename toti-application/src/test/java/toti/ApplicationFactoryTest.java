@@ -1,6 +1,6 @@
 package toti;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -9,8 +9,8 @@ import java.util.Properties;
 import java.util.function.Consumer;
 
 import org.apache.logging.log4j.Logger;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 
 import ji.common.functions.Env;
@@ -18,7 +18,7 @@ import ji.common.structures.MapInit;
 import ji.env.PropertiesEnv;
 import ji.testing.TestCase;
 import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
+import org.junit.jupiter.params.provider.MethodSource;
 import toti.application.Module;
 import toti.application.Task;
 
@@ -35,8 +35,8 @@ public class ApplicationFactoryTest implements TestCase {
 	}
 	
 	@Test
-	@Parameters(method="data")
-	@Ignore
+	@MethodSource("data")
+	@Disabled
 	public void test(Properties properties, Consumer<ApplicationFactory> setFactory) throws Exception {
 		Env env = new PropertiesEnv(properties);
 		Env applicationsEnv = mock(Env.class);

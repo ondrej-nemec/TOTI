@@ -1,28 +1,25 @@
 package toti.validation.rules;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import toti.validation.ValidationItem;
 
-@RunWith(JUnitParamsRunner.class)
 public class AllowedValuesRuleTest {
 
-	@Test
-	@Parameters(method="dataIsErrorToShow")
+	@ParameterizedTest
+	@MethodSource("dataIsErrorToShow")
 	public void testIsErrorToShow(Collection<Object> allowedList, Object value, boolean expected) {
 		AllowedValuesRule rule = new AllowedValuesRule(null, null);
 		assertEquals(expected, rule.isErrorToShow(allowedList, value));
 	}
 	
-	public Object[] dataIsErrorToShow() {
+	public static Object[] dataIsErrorToShow() {
 		return new Object[] {
 			new Object[] {
 				Arrays.asList(), "val", true

@@ -3,14 +3,12 @@ package ji.common.functions;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
 
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(JUnitParamsRunner.class)
 public class FilesListTest {
 
 	// TODO test when path is pointed to file (4 cases)
@@ -32,8 +30,8 @@ public class FilesListTest {
 		}
 	}
 	
-	@Test
-	@Parameters(method="dataPointedToFile")
+	@ParameterizedTest
+	@MethodSource("dataPointedToFile")
 	public void testPointedToFile(String path) throws Exception {
 		List<String> expected = Arrays.asList();
 		List<String> actual = FilesList.get(path, true).getFiles();
@@ -45,7 +43,7 @@ public class FilesListTest {
 		}
 	}
 	
-	public Object[] dataPointedToFile() {
+	public static Object[] dataPointedToFile() {
 		return new Object[] {
 			new Object[] {
 				"tests/filesList/a1.txt"

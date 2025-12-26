@@ -1,9 +1,5 @@
 package toti.validation;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,20 +8,20 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import ji.testing.TestCase;
+import toti.answers.request.Identity;
+import toti.answers.request.Request;
 import toti.extensions.Translator;
 import toti.http.structures.RequestParameters;
 import toti.validation.collections.RulesCollection;
 import toti.validation.rules.Rule;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-import toti.answers.request.Identity;
-import toti.answers.request.Request;
 
-@RunWith(JUnitParamsRunner.class)
-public class ValidatorTest {
+public class ValidatorTest implements TestCase {
 	/*
 	@Test
 	@Parameters({"true", "false"})
@@ -68,8 +64,8 @@ public class ValidatorTest {
 		assertEquals(expectedParameters, parameters);
 	}
 	*/
-	@Test
-	@Parameters(method="dataValidate")
+	@ParameterizedTest
+	@MethodSource("dataValidate")
 	public void testValidate(
 			String message,
 			Boolean strict,
@@ -103,16 +99,13 @@ public class ValidatorTest {
 		Identity identity = mock(Identity.class);
 		ValidationResult actualResult = validator.validate(request, parameters, translator, identity);
 
-		assertEquals(message, expectedResult.toString(), actualResult.toString());
-		assertEquals(message, expectedParameters.toString(), parameters.toString());
-		
-		assertEquals(message, expectedResult, actualResult);
-		assertEquals(message, expectedParameters, parameters);
+		assertEquals(expectedResult, actualResult, message);
+		assertEquals(expectedParameters, parameters, message);
 		
 		verifyNoMoreInteractions(identity);
 	}
 	
-	public Object[] dataValidate() {
+	public static Object[] dataValidate() {
 		return new Object[] {
 			new Object[] {
 				"no rules - strict",
@@ -358,11 +351,11 @@ public class ValidatorTest {
 		};
 	}
 	
-	private GlobalFunction g(GlobalFunction g) {
+	private static GlobalFunction g(GlobalFunction g) {
 		return g;
 	}
 	
-	class RC implements RulesCollection {
+	static class RC implements RulesCollection {
 		private final String name;
 		private final List<Rule> rules = new LinkedList<>();
 		private Optional<String> rename = Optional.empty();

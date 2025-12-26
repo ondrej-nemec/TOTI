@@ -1,25 +1,21 @@
 package toti.http_2.parsers;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import toti.http.parsers.Form;
 import toti.http.parsers.Payload;
 import toti.http.parsers.StreamReader;
 import toti.http.structures.RequestParameters;
 
-@RunWith(JUnitParamsRunner.class)
 public class FormTest {
 
-	@Test
-	@Parameters(method="dataRead")
+	@ParameterizedTest
+	@MethodSource("dataRead")
 	public void testRead(String file, int length, String type) throws IOException {
 		Form form = new Form(new Payload(), new StreamReader(null));
 		try (BufferedInputStream is = new BufferedInputStream(getClass().getResourceAsStream("/parser/form/" + file))) {
@@ -30,7 +26,7 @@ public class FormTest {
 		}
 	}
 	
-	public Object[] dataRead() {
+	public static Object[] dataRead() {
 		return new Object[] {
 			new Object[] {
 				"postman.txt", 277,

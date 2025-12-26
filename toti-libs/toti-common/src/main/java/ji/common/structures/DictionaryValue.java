@@ -554,25 +554,6 @@ public class DictionaryValue {
 	}
 
 	/************/
-
-	/**
-	 * Returns value as {@link List} of strings. If value is string, will be splited using given delimiter
-	 * 
-	 * @param delimiter {@link String} value for split the string value
-	 * @return {@link List}
-	 * @throws ClassCastException if all convert and parse mechanism fails
-	 */
-	//@SuppressWarnings("unchecked")
-	public <T> List<T> getList(String delimiter) {
-		if (value == null) {
-			return null;
-		}
-		if (value.toString().isEmpty()) {
-			return new LinkedList<>();
-		}
-		return new DictionaryValue(value.toString().split(delimiter)).getList();
-		// return parseValue(List.class, a->Arrays.asList(a.split(delimiter)));
-	}
 	
 	/**
 	 * Get value as {@link ListDictionary}

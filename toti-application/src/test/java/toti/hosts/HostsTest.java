@@ -1,23 +1,23 @@
 package toti.hosts;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 
 import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
+import org.junit.jupiter.params.provider.MethodSource;
 import toti.answers.Answer;
 
 @RunWith(JUnitParamsRunner.class)
 public class HostsTest {
 
 	@Test
-	@Parameters(method="dataOneAnswer")
+	@MethodSource("dataOneAnswer")
 	public void testOneAnswer(String hostName, String path) {
 		Answer answer = mock(Answer.class);
 		
@@ -41,7 +41,7 @@ public class HostsTest {
 	}
 
 	@Test
-	@Parameters(method="dataOnlyHostnames")
+	@MethodSource("dataOnlyHostnames")
 	public void testOnlyHostnames(String hostName, String path, Integer result) {
 		Answer answer1 = mock(Answer.class);
 		Answer answer2 = mock(Answer.class);
@@ -78,7 +78,7 @@ public class HostsTest {
 	}
 
 	@Test
-	@Parameters(method="dataOnlyPaths")
+	@MethodSource("dataOnlyPaths")
 	public void testOnlyPaths(String hostName, String path, Integer result, boolean usePath) {
 		Answer answer1 = mock(Answer.class);
 		Answer answer2 = mock(Answer.class);
@@ -114,7 +114,7 @@ public class HostsTest {
 	}
 
 	@Test
-	@Parameters(method="dataCombined")
+	@MethodSource("dataCombined")
 	public void testCombined(String hostName, String path, Integer result, boolean usePath) {
 		Answer answer1 = mock(Answer.class);
 		Answer answer2 = mock(Answer.class);

@@ -1,6 +1,6 @@
 package toti.answers;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -10,13 +10,13 @@ import java.util.HashMap;
 import java.util.Optional;
 
 import org.apache.logging.log4j.Logger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 
 import ji.common.structures.MapDictionary;
 import ji.files.text.Text;
 import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
+import org.junit.jupiter.params.provider.MethodSource;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.answers.response.FinalResponse;
@@ -117,7 +117,7 @@ public class ExceptionAnswerTest {
 	}
 	
 	@Test
-	@Parameters(method="dataGetResponse")
+	@MethodSource("dataGetResponse")
 	public void testGetResponse(
 			String message,
 			boolean isAsync, String ip, int saveToFile,
@@ -190,7 +190,7 @@ public class ExceptionAnswerTest {
 	}
 	
 	@Test
-	@Parameters(method="dataGetFileNameReturnsCorrectFilename")
+	@MethodSource("dataGetFileNameReturnsCorrectFilename")
 	public void testGetFileNameReturnsCorrectFilename(
 			String logsPath,
 			MappedAction action, StatusCode code, Throwable t,
@@ -227,7 +227,7 @@ public class ExceptionAnswerTest {
 	}
 	
 	@Test
-	@Parameters(method="dataSaveToFileDoNothingIfFileIsNotCreateAndNotUsed")
+	@MethodSource("dataSaveToFileDoNothingIfFileIsNotCreateAndNotUsed")
 	public void testSaveToFileDoNothingIfFileIsNotCreateAndNotUsed(FileName filename) {
 		Text text = mock(Text.class);
 		

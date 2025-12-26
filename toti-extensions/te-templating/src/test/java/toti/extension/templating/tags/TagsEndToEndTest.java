@@ -2,23 +2,20 @@ package toti.extension.templating.tags;
 
 import java.util.Map;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import ji.common.structures.MapInit;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import toti.extension.templating.BaseTemplateTestExt;
 
-@RunWith(JUnitParamsRunner.class)
 public class TagsEndToEndTest extends BaseTemplateTestExt {
 	
 	public TagsEndToEndTest() {
 		super("toti/extension/templating/tags");
 	}
 
-	@Test
-	@Parameters(method="dataTags")
+	@ParameterizedTest
+	@MethodSource("dataTags")
 	public void testTags(String template, String expected) throws Exception {
 		Map<String, Object> variables = new MapInit<String, Object>()
 			.append("currentMethod", "myMethod")
@@ -29,7 +26,7 @@ public class TagsEndToEndTest extends BaseTemplateTestExt {
 		testTemplate(variables, "", template, expected);
 	}
 	
-	public Object[] dataTags() {
+	public static Object[] dataTags() {
 		return new Object[] {
 			// if current + else
 			new Object[] {

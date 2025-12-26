@@ -11,8 +11,8 @@ import java.io.OutputStream;
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class AudioCreatorTest {
 
@@ -28,7 +28,7 @@ public class AudioCreatorTest {
 		this.creator = spy(new AudioCreator(os));
 	}
 
-	@Ignore("hard test - static function audio system")
+	@Disabled("hard test - static function audio system")
 	@Test
 	public void testSaveWithByteArrayWorks() throws IOException {
 		ByteArrayOutputStream data = mock(ByteArrayOutputStream.class);

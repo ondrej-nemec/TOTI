@@ -1,14 +1,12 @@
 package ji.common.structures;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-
-@RunWith(JUnitParamsRunner.class)
 public class IntegerBuilderTest {
 
 	@Test
@@ -20,16 +18,16 @@ public class IntegerBuilderTest {
 		assertEquals(42, ib.get());
 	}
 	
-	@Test
-	@Parameters({"0, 42", "10, 52", "-10, 32"})
+	@ParameterizedTest
+	@CsvSource({"0, 42", "10, 52", "-10, 32"})
 	public void testAdd(int add, int expected) {
 		IntegerBuilder ib = new IntegerBuilder(42);
 		ib.add(add);
 		assertEquals(expected, ib.get());
 	}
 	
-	@Test
-	@Parameters({"0, 42", "10, 32", "-10, 52"})
+	@ParameterizedTest
+	@CsvSource({"0, 42", "10, 32", "-10, 52"})
 	public void testRemove(int remove, int expected) {
 		IntegerBuilder ib = new IntegerBuilder(42);
 		ib.remove(remove);
@@ -40,7 +38,7 @@ public class IntegerBuilderTest {
 	public void testChange() {
 		IntegerBuilder ib = new IntegerBuilder(42);
 		ib.change((origin)->{
-			org.junit.Assert.assertEquals(Integer.valueOf(42), origin);
+			assertEquals(42, origin);
 			return 10;
 		});
 		assertEquals(10, ib.get());

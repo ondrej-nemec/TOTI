@@ -1,10 +1,5 @@
 package toti.http_2.parsers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -17,16 +12,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import org.apache.logging.log4j.Logger;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import static org.mockito.Mockito.mock;
 
 import ji.common.Log4j2LoggerTestImpl;
 import ji.common.structures.MapDictionary;
 import ji.common.structures.MapInit;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import toti.http.client.Exchange;
 import toti.http.client.ExchangeFactory;
 import toti.http.client.ExchangeRequest;
@@ -43,7 +40,6 @@ import toti.http.parsers.Urlencode;
 import toti.http.structures.RequestParameters;
 import toti.http.structures.UploadedFile;
 
-@RunWith(JUnitParamsRunner.class)
 public class ExchangeFactoryTest {
 	
 	private class BufferedInputStremMock extends BufferedInputStream {
@@ -90,8 +86,8 @@ public class ExchangeFactoryTest {
 		}
 	}
 	
-	@Test
-	@Parameters(method = "getData")
+	@ParameterizedTest
+	@MethodSource("getData")
 	public void testWriteRequest(String filename, Map<String, List<Object>> headers, Function<Exchange, Object> setBody) throws IOException {
 		ExchangeFactory parser = createParser();
 		// String expected = Text.get().read(b->ReadText.get().asString(b), getClass().getResource("/parser/requests/" + filename));
@@ -114,8 +110,8 @@ public class ExchangeFactoryTest {
 		}
 	}
 
-	@Test
-	@Parameters(method = "getData")
+	@ParameterizedTest
+	@MethodSource("getData")
 	public void testWriteResponse(String filename, Map<String, List<Object>> headers, Function<Exchange, Object> setBody) throws IOException {
 		// BodyType type, Object body
 		ExchangeFactory parser = createParser();
@@ -137,8 +133,8 @@ public class ExchangeFactoryTest {
 		}
 	}
 
-	@Test
-	@Parameters(method = "getData")
+	@ParameterizedTest
+	@MethodSource("getData")
 	public void testReadRequest(String filename, Object headers, Function<Exchange, Object> setBody) throws IOException {
 		ExchangeFactory parser = createParser();
 		try (InputStream is = getClass().getResourceAsStream("/parser/requests/" + filename);
@@ -154,8 +150,8 @@ public class ExchangeFactoryTest {
 		}
 	}
 
-	@Test
-	@Parameters(method = "getData")
+	@ParameterizedTest
+	@MethodSource("getData")
 	public void testReadResponse(String filename, Map<String, List<Object>> headers, Function<Exchange, Object> setBody) throws IOException {
 		ExchangeFactory parser = createParser();
 		try (InputStream is = getClass().getResourceAsStream("/parser/responses/" + filename);
@@ -192,7 +188,7 @@ public class ExchangeFactoryTest {
 		}
 	}
 	
-	public Object[] getData() {
+	public static Object[] getData() {
 		ByteArrayOutputStream binaryData = new ByteArrayOutputStream();
 		for (int b : new int[] {
 				137, 80, 78, 71, 13, 10, 26, 10,
@@ -418,7 +414,7 @@ public class ExchangeFactoryTest {
 		}
 	}
 	
-	private Object createFunction(Function<Exchange, Object> setBody) {
+	private static Object createFunction(Function<Exchange, Object> setBody) {
 		return setBody;
 	}
 	

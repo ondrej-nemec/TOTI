@@ -1,23 +1,18 @@
 package toti.templating;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-
-@RunWith(JUnitParamsRunner.class)
 public class TemplateTest {
 
-	@Test
-	@Parameters(method = "dataCheckWorks")
+	@ParameterizedTest
+	@MethodSource("dataCheckWorks")
 	public void testCheckWorks(String string, boolean expected) {
 		assertEquals(expected, Template.check(string));
 	}
 	
-	public Object[] dataCheckWorks() {
+	public static Object[] dataCheckWorks() {
 		return new Object[] {
 			new Object[] {"not alpah num", false},
 			new Object[] {"$*aa", false},
@@ -40,13 +35,13 @@ public class TemplateTest {
 	
 	// escaping: https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html
 
-	@Test
-	@Parameters(method = "dataEscapeStringWorks")
+	@ParameterizedTest
+	@MethodSource("dataEscapeStringWorks")
 	public void testEscapeStringWorks(String variable, String expected) {
 		assertEquals(expected, Template.escapeHtml(variable));
 	}
 	
-	public Object[] dataEscapeStringWorks() {
+	public static Object[] dataEscapeStringWorks() {
 		return new Object[] {
 			new Object[] {null, "NULL"},
 			new Object[] {"no escape", "no escape"},
@@ -60,7 +55,7 @@ public class TemplateTest {
 	}
 /*
 	@Test
-	@Parameters(method = "dataEscapeJSWorks")
+	@MethodSource("dataEscapeJSWorks")
 	public void testEscapJSWorks(String variable, String expected) {
 		assertEquals(expected, Template.escapeJs(variable));
 	}
@@ -78,7 +73,7 @@ public class TemplateTest {
 	}
 
 	@Test
-	@Parameters(method = "dataEscapeCSSWorks")
+	@MethodSource("dataEscapeCSSWorks")
 	public void testEscapeCSSWorks(String variable, String expected) {
 		assertEquals(expected, Template.escapeCss(variable));
 	}
@@ -95,7 +90,7 @@ public class TemplateTest {
 	}
 
 	@Test
-	@Parameters(method = "dataEscapeUrlWorks")
+	@MethodSource("dataEscapeUrlWorks")
 	public void testEscapeUrlWorks(String variable, String expected) {
 		assertEquals(expected, Template.escapeUrl(variable));
 	}

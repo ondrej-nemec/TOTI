@@ -29,7 +29,7 @@ public class AuthenticationExtensionTest {
 	// TODO
 	/*
 	@Test
-	@Parameters(method="dataSetUserSelectCorrectMode")
+	@MethodSource("dataSetUserSelectCorrectMode")
 	public void testSetUserSelectCorrectMode(LoggedUser user, AuthMode mode) {
 		Identity identity = new Identity("IP");
 		identity.setUser(user);

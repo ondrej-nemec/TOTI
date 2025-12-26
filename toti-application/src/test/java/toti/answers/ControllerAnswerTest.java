@@ -1,8 +1,8 @@
 package toti.answers;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -21,14 +21,14 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.apache.logging.log4j.Logger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 
 import ji.common.structures.MapDictionary;
 import ji.common.structures.ThrowingFunction;
 import ji.testing.TestCase;
 import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
+import org.junit.jupiter.params.provider.MethodSource;
 import toti.ServerException;
 import toti.answers.action.BodyType;
 import toti.answers.action.ResponseAction;
@@ -151,7 +151,7 @@ public class ControllerAnswerTest implements TestCase {
 	}
 	
 	@Test
-	@Parameters(method="dataGetUrlParts")
+	@MethodSource("dataGetUrlParts")
 	public void testGetUrlParts(String url, List<String> expected) {
 		ControllerAnswer answer = new ControllerAnswer(null, null, null, null, null, null, null, null);
 		assertEquals(expected, answer.getUrlParts(url));
@@ -168,7 +168,7 @@ public class ControllerAnswerTest implements TestCase {
 	}
 
 	@Test
-	@Parameters(method="dataGetMappedAction")
+	@MethodSource("dataGetMappedAction")
 	public void testGetMappedAction(String url, HttpMethod method, Param root, MappedAction expected, List<Object> params) {
 		Router router = mock(Router.class);
 	//	when(router.getUrlMapping("/routered")).thenReturn("/routered-method");
@@ -412,7 +412,7 @@ public class ControllerAnswerTest implements TestCase {
 	// TODO checkSecured throws serverException
 	
 	@Test
-	@Parameters(method="dataRun")
+	@MethodSource("dataRun")
 	public void testRun(
 			String uri, List<Object> pathParams, AuthMode authMode, String redirect,
 			Object controller, ThrowingFunction<Object, Method, Exception> getMethod,
@@ -685,7 +685,7 @@ public class ControllerAnswerTest implements TestCase {
 	}
 /*
 	@Test
-	@Parameters(method="dataRunCreateParametersNotMatch")
+	@MethodSource("dataRunCreateParametersNotMatch")
 	public void testRunCreateParametersNotMatch(
 			List<Object> pathParams,
 			Object controller, ThrowingFunction<Object, Method, Exception> getMethod) throws Throwable {
@@ -785,7 +785,7 @@ public class ControllerAnswerTest implements TestCase {
 	}
 */
 	@Test
-	@Parameters(method="dataCheckSecured")
+	@MethodSource("dataCheckSecured")
 	public void testCheckSecured(Supplier<MappedAction> mapped, Supplier<Identity> identity, StatusCode expectedCode) {
 		ControllerAnswer answer = new ControllerAnswer(
 			mock(Router.class), mock(Param.class), mock(TemplateExtension.class),
@@ -901,7 +901,7 @@ public class ControllerAnswerTest implements TestCase {
 	}
 	
 	@Test
-	@Parameters(method="dataParseBody")
+	@MethodSource("dataParseBody")
 	public void testParseBody(Request request, List<BodyType> allowedTypes, Consumer<Request> check) throws ServerException {
 		ControllerAnswer answer = new ControllerAnswer(
 			mock(Router.class), mock(Param.class), mock(TemplateExtension.class),

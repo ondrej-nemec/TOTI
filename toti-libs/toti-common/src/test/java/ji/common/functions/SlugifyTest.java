@@ -1,23 +1,20 @@
 package ji.common.functions;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-
-@RunWith(JUnitParamsRunner.class)
 public class SlugifyTest {
 
-	@Test
-	@Parameters
+	@ParameterizedTest
+	@MethodSource("parametersForTestTuSlugSlugifyString")
 	public void testTuSlugSlugifyString(String string, String expectedSlug) {
 		assertEquals(expectedSlug, Slugify.toSlug(string));
 	}
 	
-	public Object[] parametersForTestTuSlugSlugifyString() {
+	public static Object[] parametersForTestTuSlugSlugifyString() {
 		return new Object[] {
 			new Object[] {
 				"text",

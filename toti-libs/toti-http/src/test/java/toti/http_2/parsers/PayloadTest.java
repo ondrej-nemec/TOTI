@@ -1,7 +1,5 @@
 package toti.http_2.parsers;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,20 +7,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import ji.common.structures.MapInit;
 import ji.common.structures.Tuple2;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import toti.http.parsers.Payload;
 
-@RunWith(JUnitParamsRunner.class)
 public class PayloadTest {
 
-	@Test
-	@Parameters(method="dataParseParamsWorks")
+	@ParameterizedTest
+	@MethodSource("dataParseParamsWorks")
 	public void testWriteWorks(List<Tuple2<String, Object>> expected, Map<String, Object> payload) throws UnsupportedEncodingException {
 		Payload parser = new Payload();
 		List<Tuple2<String, Object>> actual = new ArrayList<>();
@@ -32,8 +28,8 @@ public class PayloadTest {
 		assertEquals(expected, actual);
 	}
 
-	@Test
-	@Parameters(method="dataParseParamsWorks")
+	@ParameterizedTest
+	@MethodSource("dataParseParamsWorks")
 	public void testReadWorks(List<Tuple2<String, Object>> payload, Map<String, Object> expected) throws UnsupportedEncodingException {
 		Payload parser = new Payload();
 		Map<String, Object> actual = new HashMap<>();
@@ -47,7 +43,7 @@ public class PayloadTest {
 		assertEquals(expected, actual);
 	}
 	
-	public Object[] dataParseParamsWorks() {
+	public static Object[] dataParseParamsWorks() {
 		// key=
 		// key=value
 		// key1=value1&key2=value2

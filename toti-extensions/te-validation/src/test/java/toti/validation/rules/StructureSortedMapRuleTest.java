@@ -1,34 +1,30 @@
 package toti.validation.rules;
 
-import static org.junit.Assert.assertEquals;
+import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import ji.common.structures.MapInit;
 import ji.common.structures.SortedMap;
+import toti.answers.request.Identity;
+import toti.answers.request.Request;
 import toti.extensions.Translator;
 import toti.http.structures.RequestParameters;
 import toti.validation.ValidationItem;
 import toti.validation.ValidationResult;
 import toti.validation.Validator;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-import toti.answers.request.Identity;
-import toti.answers.request.Request;
 
-@RunWith(JUnitParamsRunner.class)
 public class StructureSortedMapRuleTest {
 
-	@Test
-	@Parameters(method="dataCheck")
+	@ParameterizedTest
+	@MethodSource("dataCheck")
 	public void testCheck(Object originValue, Object newValue,
 			boolean canValidate, int errorCalling, int validatorCalling,
 			String propertyName, String format, RequestParameters params) {
@@ -54,7 +50,7 @@ public class StructureSortedMapRuleTest {
 		verify(result, times(validatorCalling)).addSubResult(subResult);
 	}
 	
-	public Object[] dataCheck() {
+	public static Object[] dataCheck() {
 		return new Object[] {
 			new Object[] {
 				Arrays.asList(

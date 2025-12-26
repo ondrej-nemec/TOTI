@@ -4,10 +4,13 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.LinkedList;
 
-import ji.json.event.EventType;
 import ji.json.providers.OutputProvider;
 
 public class OutputJsonStream implements Closeable {
+
+	enum StartMode { START, END }
+
+	//	enum OrderMode { STAR}
 
 	private final OutputProvider provider;
 	
@@ -25,62 +28,37 @@ public class OutputJsonStream implements Closeable {
 		this.provider = provider;
 		this.formated = formated;
 	}
-/*
-	public void startDocument() throws JsonStreamException {
-		provider.write("{");
-		parent.add(true);
-	}
-	
-	public void endDocument() throws JsonStreamException {
-		parent.removeLast();
-		provider.write(getFormat(true) + "}");
-		provider.close();
-	}
-*/
+
 	public void writeObjectValue(String name, Object value) throws JsonStreamException {
-		boolean isFirst = checkFirst();
-		provider.write(getFormat(isFirst) + String.format("\"%s\":%s", name, (formated ? " " : "") + getValue(value)));
+		provider.write(getFormat(null) + String.format("\"%s\":%s", name, (formated ? " " : "") + getValue(value)));
 	}
 
 	public void writeObjectStart() throws JsonStreamException {
-		boolean isFirst = checkFirst(EventType.OBJECT_START);
-		provider.write(getFormat(isFirst) + "{");
-		//level++;
+		provider.write(getFormat(StartMode.START) + "{");
 	}
 	
 	public void writeObjectStart(String name) throws JsonStreamException {
-		boolean isFirst = checkFirst(EventType.OBJECT_START);
-		provider.write(getFormat(isFirst) + String.format("\"%s\":%s{", name, (formated ? " " : "")));
-		//level++;
+		provider.write(getFormat(StartMode.START) + String.format("\"%s\":%s{", name, (formated ? " " : "")));
 	}
 	
 	public void writeObjectEnd() throws JsonStreamException {
-		//level--;
-		provider.write(getFormat(true) + "}");
-		parent.removeLast();
+		provider.write(getFormat(StartMode.END) + "}");
 	}
 	
 	public void writeListValue(Object value) throws JsonStreamException {
-		boolean isFirst = checkFirst();
-		provider.write(getFormat(isFirst) + String.format("%s", getValue(value)));
+		provider.write(getFormat(null) + String.format("%s", getValue(value)));
 	}
 	
 	public void writeListStart() throws JsonStreamException {
-		boolean isFirst = checkFirst(EventType.LIST_START);
-		provider.write(getFormat(isFirst) + "[");
-		//level++;
+		provider.write(getFormat(StartMode.START) + "[");
 	}
 	
 	public void writeListStart(String name) throws JsonStreamException {
-		boolean isFirst = checkFirst(EventType.LIST_START);
-		provider.write(getFormat(isFirst) + String.format("\"%s\":%s[", name, (formated ? " " : "")));
-		//level++;
+		provider.write(getFormat(StartMode.START) + String.format("\"%s\":%s[", name, (formated ? " " : "")));
 	}
 	
 	public void writeListEnd() throws JsonStreamException {
-		//level--;
-		provider.write(getFormat(true) + "]");
-		parent.removeLast();
+		provider.write(getFormat(StartMode.END) + "]");
 	}
 	
 	private String getValue(Object value) {
@@ -105,42 +83,44 @@ public class OutputJsonStream implements Closeable {
 				.replace("\f", "\\f") // replace \f with \\f
 		);
 	}
-	
-	private boolean checkFirst(EventType child) {
-		if (parent.size() == 0) {
+
+	private String getFormat(StartMode mode) {
+		StringBuilder pre = new StringBuilder();
+		
+		boolean newLine = false;
+		int tabs = 0;
+		if (parent.isEmpty()) { // initial state
+			// ignore
+		} else if (parent.getLast() == null) { // object or list is starting
+			parent.removeLast();
 			parent.add(true);
-			return true;
-		}
-		boolean isFirst = parent.getLast();
-		if (isFirst) {
+
+			newLine = true;
+			tabs = parent.size();
+		} else if (mode != StartMode.END) { // another not ending element
 			parent.removeLast();
 			parent.add(false);
+			pre.append(",");
+			
+			newLine = true;
+			tabs = parent.size();
 		}
-		parent.add(true);
-		return isFirst;
-	}
-	
-	private boolean checkFirst() {
-		boolean isFirst = parent.getLast();
-		if (isFirst) {
+
+		if (mode == StartMode.START) {
+			parent.add(null);
+		} else if (mode == StartMode.END) {
 			parent.removeLast();
-			parent.add(false);
+			
+			newLine = true;
+			tabs = parent.size();
 		}
-		return isFirst;
-	}
-	
-	private String getFormat(boolean isFirst) {
-		StringBuilder pre = new StringBuilder((isFirst ? "" : ","));
-		/*if (formated && level == 0 && !isEmpty) {
+		if (formated && newLine) {
 			pre.append("\n");
-		} else {
-			isEmpty = false;
-		}*/
-		if (formated /*&& level > 0*/) {
-			pre.append("\n");
-			parent.forEach((item)->{
+		}
+		if (formated && newLine) {
+			for (int i = 0; i < tabs; i++) {
 				pre.append("  ");
-			});
+			}
 		}
 		return pre.toString();
 	}

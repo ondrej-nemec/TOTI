@@ -1,23 +1,23 @@
 package ji.env;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Properties;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import ji.common.functions.Env;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 
-@RunWith(JUnitParamsRunner.class)
 public class PropertiesEnvTest {
 	
 	@Test
@@ -37,27 +37,30 @@ public class PropertiesEnvTest {
 		assertNull(sub.get("key"));
 	}
 	
-	@Test(expected = IOException.class)
-	public void testConstructorForFilesThrowIfNoFileInDir() throws FileNotFoundException, IOException {
-		PropertiesEnv.create("functions/env/not-existing.properties");
+	@Test
+	public void testConstructorForFilesThrowIfNoFileInDir() {
+		IOException expectzed = assertThrows(IOException.class, ()->{
+			PropertiesEnv.create("functions/env/not-existing.properties");
+		});
+		assertNotNull(expectzed);
 	}
 	
-	@Test
-	@Parameters({"tests/functions/env","functions/env"})
+	@ParameterizedTest
+	@ValueSource(strings={"tests/functions/env","functions/env"})
 	public void testConstructorForFilesWorksForClasspathAndPathOnly(String path) throws FileNotFoundException, IOException {
 		PropertiesEnv.create(path + "/app.properties");
 		assertTrue(true);
 	}
 	
-	@Test
-	@Parameters
+	@ParameterizedTest
+	@MethodSource("dataConstructorForFileFindCorrectProperties")
 	public void testConstructorForFileFindCorrectProperties(final String subDir)
 			throws FileNotFoundException, IOException {
 		Env e = PropertiesEnv.create("functions/env/env." + subDir + ".properties");
 		assertEquals("value", e.get("key"));
 	}
 	
-	public Collection<Object[]> parametersForTestConstructorForFileFindCorrectProperties() {
+	public static Collection<Object[]> dataConstructorForFileFindCorrectProperties() {
 		return Arrays.asList(
 				new Object[] {"prod"},
 				new Object[] {"dev"},

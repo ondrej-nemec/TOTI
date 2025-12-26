@@ -1,23 +1,18 @@
 package ji.json.event;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-
-@RunWith(JUnitParamsRunner.class)
 public class ValueParserTest {
 
-	@Test
-	@Parameters(method = "dataGetTypeWorks")
+	@ParameterizedTest
+	@MethodSource("dataGetTypeWorks")
 	public void testGetTypeWorks(ValueType expected, String value, boolean isValueQuoted) {
 		assertEquals(expected, ValueParser.parse(value, isValueQuoted).getType());
 	}
 	
-	public Object[] dataGetTypeWorks() {
+	public static Object[] dataGetTypeWorks() {
 		return new Object[] {
 			new Object[] {ValueType.STRING, "string", true},
 			new Object[] {ValueType.STRING, "123", true},

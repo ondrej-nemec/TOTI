@@ -1,29 +1,25 @@
 package toti.templating.parsing;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import toti.templating.Tag;
 import toti.templating.TagVariableMode;
 import toti.templating.parsing.enums.TagType;
 import toti.templating.parsing.structures.TagParserParam;
 
-@RunWith(JUnitParamsRunner.class)
 public class TagParserTest {
 	
 	// TODO test with invalid html -> throwing
 
-	@Test
-	@Parameters(method="dataAcceptWorks")
+	@ParameterizedTest
+	@MethodSource("dataAcceptWorks")
 	public void testAcceptWorks(
 			String text, boolean finished, 
 			String tagName, boolean isHtml, TagType type,
@@ -46,7 +42,7 @@ public class TagParserTest {
 		assertEquals(isHtml, parser.isHtmlTag());
 	}
 	
-	public Object[] dataAcceptWorks() {
+	public static Object[] dataAcceptWorks() {
 		return new Object[] {
 			new Object[] {
 					"p>",

@@ -1,12 +1,12 @@
 package ji.common.functions;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import ji.common.annotations.MapperIgnored;
 import ji.common.annotations.MapperParameter;

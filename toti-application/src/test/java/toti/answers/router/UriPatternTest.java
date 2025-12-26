@@ -1,20 +1,18 @@
 package toti.answers.router;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
+import org.junit.jupiter.params.provider.MethodSource;
 import toti.application.Module;
 
-@RunWith(JUnitParamsRunner.class)
 public class UriPatternTest {
 	
-	@Test
-	@Parameters(method="dataCreateBase")
+	@ParametrizedTest
+	@MethodSource("dataCreateBase")
 	public void testCreateBase(String module, String controller, String action, String expected) throws NoSuchMethodException, SecurityException {
 		UriPattern pattern = new UriPattern(){};
 		assertEquals(expected, pattern.createUri(

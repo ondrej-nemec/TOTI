@@ -1,6 +1,6 @@
 package toti.answers;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -9,14 +9,14 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 
 import ji.common.functions.Env;
 import ji.common.structures.MapDictionary;
 import ji.common.structures.ObjectBuilder;
 import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
+import org.junit.jupiter.params.provider.MethodSource;
 import toti.answers.request.Identity;
 import toti.answers.request.IdentityFactory;
 import toti.answers.request.Request;
@@ -36,7 +36,7 @@ import toti.extensions.TemplateExtension;
 public class TotiAnsserTest {
 	
 	@Test
-	@Parameters(method="dataRoutingWithExtension")
+	@MethodSource("dataRoutingWithExtension")
 	public void testRoutingWithExtension(String url, Response expected) {
 		TotiExtension extension = new TotiExtension() {
 			@Override
@@ -91,7 +91,7 @@ public class TotiAnsserTest {
 	}
 	
 	@Test
-	@Parameters(method="dataGetResponseWithEmptyAndNotExistingUrl")
+	@MethodSource("dataGetResponseWithEmptyAndNotExistingUrl")
 	public void testGetResponseWithEmptyAndNotExistingUrl(String ip, String url, Response expected) {
 		Identity identity = mock(Identity.class);
 		when(identity.getIP()).thenReturn(ip);

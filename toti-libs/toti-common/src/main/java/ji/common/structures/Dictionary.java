@@ -191,16 +191,6 @@ public interface Dictionary<S> {
 	}
 
 	/**
-	 * See {@link DictionaryValue#getList(String)}
-	 * 
-	 * @param key S identifier
-	 * @return {@link List} or null
-	 */
-	default List<String> getList(S key, String delimiter) {
-		return getDictionaryValue(key).getList(delimiter);
-	}
-
-	/**
 	 * See {@link DictionaryValue#getDictionaryList()}
 	 * 
 	 * @param key S identifier

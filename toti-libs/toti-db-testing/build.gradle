@@ -3,8 +3,6 @@ plugins {
     id 'java-test-fixtures'
 }
 
-sourceCompatibility = 17.0
-targetCompatibility = 17.0
 compileTestJava.options.encoding = 'UTF-8'
 
 repositories {
@@ -17,18 +15,16 @@ dependencies {
 	api project(':toti-libs:toti-database')
 	testImplementation(testFixtures(project))
 	
-	// https://mvnrepository.com/artifact/junit/junit
-	implementation group: 'junit', name: 'junit', version: '4.12'
 	// https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
 	implementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.11.4'
 	
 	
 	// https://mvnrepository.com/artifact/org.mockito/mockito-core
 	implementation group: 'org.mockito', name: 'mockito-core', version: '2.19.1'
-	
-	// https://mvnrepository.com/artifact/pl.pragmatists/JUnitParams
-	testImplementation group: 'pl.pragmatists', name: 'JUnitParams', version: '1.1.1'
 
+	// https://github.com/gradle/gradle/issues/34512
+	testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+	
 	// https://mvnrepository.com/artifact/mysql/mysql-connector-java
 	testImplementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.17'
 	// https://mvnrepository.com/artifact/org.postgresql/postgresql

@@ -1,17 +1,17 @@
 package toti.answers;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 
 import org.apache.logging.log4j.Logger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 
 import ji.common.structures.MapDictionary;
 import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
+import org.junit.jupiter.params.provider.MethodSource;
 import toti.ServerException;
 import toti.answers.request.Request;
 import toti.answers.response.FinalResponse;
@@ -47,7 +47,7 @@ public class FileSystemAnswerTest {
 	}
 
 	@Test(expected =  ServerException.class)
-	@Parameters(method="dataAnswerWithDefaultFileThrowing")
+	@MethodSource("dataAnswerWithDefaultFileThrowing")
 	public void testAnswerWithDefaultFileThrowing(String message, String uri) throws ServerException {
 		FileSystemAnswer answer = create("index.txt", false);
 		
@@ -72,7 +72,7 @@ public class FileSystemAnswerTest {
 	}
 
 	@Test
-	@Parameters(method="dataAnswerWithDefaultFileWorking")
+	@MethodSource("dataAnswerWithDefaultFileWorking")
 	public void testAnswerWithDefaultFileWorking(String message, String uri) throws ServerException {
 		FileSystemAnswer answer = create("index.txt", false);
 		

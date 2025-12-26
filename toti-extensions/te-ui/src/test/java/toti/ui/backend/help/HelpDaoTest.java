@@ -1,10 +1,9 @@
 package toti.ui.backend.help;
 
-import static org.junit.Assert.fail;
-
 import java.sql.SQLException;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.Test;
 
 public class HelpDaoTest {
 
@@ -32,7 +31,7 @@ public class HelpDaoTest {
 	// TODO test for help
 	/*
 	@Test
-	@Parameters(method = "dataHelp")
+	@MethodSource("dataHelp")
 	public void testHelp(String key, String value, String disabled, String group, String expected) {
 		ObjectBuilder<SelectBuilder> select = new ObjectBuilder<>();
 		QueryBuilder builder = new QueryBuilder(new MySqlQueryBuilder(null) {

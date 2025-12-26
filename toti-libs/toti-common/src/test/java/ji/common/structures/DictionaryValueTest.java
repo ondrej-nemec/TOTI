@@ -1,6 +1,6 @@
 package ji.common.structures;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.time.LocalDate;
@@ -12,26 +12,23 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-
-@RunWith(JUnitParamsRunner.class)
 public class DictionaryValueTest {
 
 	// TODO test mapper?
 	
 	
-	@Test
-	@Parameters(method = "dataPrimitives")
+	@ParameterizedTest
+	@MethodSource("dataPrimitives")
 	public void testPrimitives(Object value, Class<?> clazz, Object expected) {
 		DictionaryValue dictionaryValue = new DictionaryValue(value);
 		assertEquals(expected, dictionaryValue.getValue(clazz));
 	}
 	
-	public Object[] dataPrimitives() {
+	public static Object[] dataPrimitives() {
 		return new Object[] {
 			new Object[] {false, Boolean.class, false},
 			new Object[] {false, boolean.class, false},
@@ -65,15 +62,15 @@ public class DictionaryValueTest {
 		};
 	}
 
-	@Test
-	@Parameters(method = "dataTimestamps")
+	@ParameterizedTest
+	@MethodSource("dataTimestamps")
 	public void testTimestamps(String message, Object value, Class<?> clazz, Object expected) {
 		DictionaryValue dictionaryValue = new DictionaryValue(value);
 		dictionaryValue.withZoneId(ZoneId.of("+01:00"));
-		assertEquals(message, expected, dictionaryValue.getValue(clazz));
+		assertEquals(expected, dictionaryValue.getValue(clazz), message);
 	}
 	
-	public Object[] dataTimestamps() {
+	public static Object[] dataTimestamps() {
 		ZoneId zoneId = ZoneId.of("+01:00");
 		long epoch = 1681127100; // ZonedDateTime.of(2023, 4, 10, 12, 45, 0, 0, zoneId).toEpochSecond()
 		return new Object[] {
@@ -284,14 +281,14 @@ public class DictionaryValueTest {
 		};
 	}
 
-	@Test
-	@Parameters(method = "dataListsAndMaps")
+	@ParameterizedTest
+	@MethodSource("dataListsAndMaps")
 	public void testListsAndMaps(String message, Object value, Class<?> clazz, Object expected) {
 		DictionaryValue dictionaryValue = new DictionaryValue(value);
-		assertEquals(message, expected, dictionaryValue.getValue(clazz));
+		assertEquals(expected, dictionaryValue.getValue(clazz), message);
 	}
 
-	public Object[] dataListsAndMaps() {
+	public static Object[] dataListsAndMaps() {
 		// set, collection, array, listdictionary mezi sebou
 		// map, mapdictionary, sorted map na list, collection, array, listdictionary
 		// map, mapdictionary, sorted map mezi sebou
@@ -406,14 +403,14 @@ public class DictionaryValueTest {
 		};
 	}
 
-	@Test
-	@Parameters(method = "dataArray")
+	@ParameterizedTest
+	@MethodSource("dataArray")
 	public void testArray(String message, Object value, String[] expected) {
 		DictionaryValue dictionaryValue = new DictionaryValue(value);
-		assertArrayEquals(message, expected, dictionaryValue.getArray());
+		assertArrayEquals(expected, dictionaryValue.getArray(), message);
 	}
 	
-	public Object[] dataArray() {
+	public static Object[] dataArray() {
 		return new Object[] {
 			new Object[] {
 				"Array to Array",

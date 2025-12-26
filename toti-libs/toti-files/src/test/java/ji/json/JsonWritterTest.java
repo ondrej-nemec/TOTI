@@ -1,27 +1,23 @@
 package ji.json;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Arrays;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import ji.common.structures.MapInit;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 
-@RunWith(JUnitParamsRunner.class)
 public class JsonWritterTest {
 
-	@Test
-	@Parameters(method="dataWriteJson")
+	@ParameterizedTest
+	@MethodSource("dataWriteJson")
 	public void testWriteJson(Object json, String expected) {
 		JsonWritter w = new JsonWritter();
 		assertEquals(expected, w.write(json));
 	}
 	
-	public Object[] dataWriteJson() {
+	public static Object[] dataWriteJson() {
 		// TODO add enums, jsonable, mapDictionary, listDictionary, Dictionaryvalue, optional,tuples...
 		return new Object[] {
 			new Object[] {

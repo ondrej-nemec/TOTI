@@ -4,15 +4,15 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import ji.database.DatabaseConfig;
 import ji.testing.entities.Row;
 import ji.testing.entities.Table;
 
 // for doc
-public class Example extends DatabaseTestCase {
-
+public class Example/* extends DatabaseTestCase*/ {
+/*
 	public Example() {
 		super(new DatabaseConfig(
 			"",
@@ -58,7 +58,7 @@ public class Example extends DatabaseTestCase {
 		// ...
 	}
 	
-	@Test
+	/Test
 	public void test2() throws SQLException {
 		alterDataSet(Arrays.asList(
 			new Table("Table1")
@@ -75,5 +75,5 @@ public class Example extends DatabaseTestCase {
 		));
 		// ...
 	}
-
+*/
 }

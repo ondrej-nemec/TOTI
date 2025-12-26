@@ -1,28 +1,25 @@
 package toti.validation.rules;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Arrays;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import toti.http.structures.UploadedFile;
 import toti.validation.ValidationItem;
 
-@RunWith(JUnitParamsRunner.class)
 public class FileAllowedTypeTest {
 
-	@Test
-	@Parameters(method="dataIsErrorToShow")
+	@ParameterizedTest
+	@MethodSource("dataIsErrorToShow")
 	public void testIsErrorToShow(Object value, boolean expected) {
 		FileAllowedTypesRule rule = new FileAllowedTypesRule(null, null);
 		assertEquals(expected, rule.isErrorToShow(Arrays.asList("type1", "type2"), value));
 	}
 	
-	public Object[] dataIsErrorToShow() {
+	public static Object[] dataIsErrorToShow() {
 		return new Object[] {
 			new Object[] { createFile("type1", "xxx"), true },
 			new Object[] { createFile("xxx", "type1"), false },
@@ -30,7 +27,7 @@ public class FileAllowedTypeTest {
 		};
 	}
 	
-	private UploadedFile createFile(String type, String bom) {
+	private static UploadedFile createFile(String type, String bom) {
 		return new UploadedFile("fileName", type, bom, new byte[10]);
 	}
 	

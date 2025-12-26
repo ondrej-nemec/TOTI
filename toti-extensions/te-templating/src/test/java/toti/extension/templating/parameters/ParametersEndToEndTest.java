@@ -2,23 +2,20 @@ package toti.extension.templating.parameters;
 
 import java.util.Map;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import ji.common.structures.MapInit;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import toti.extension.templating.BaseTemplateTestExt;
 
-@RunWith(JUnitParamsRunner.class)
 public class ParametersEndToEndTest extends BaseTemplateTestExt {
 
 	public ParametersEndToEndTest() {
 		super("toti/extension/templating/parameters");
 	}
 	
-	@Test
-	@Parameters(method="data")
+	@ParameterizedTest
+	@MethodSource("data")
 	public void test(String template, String expected) throws Exception {
 		Map<String, Object> variables = new MapInit<String, Object>()
 			//	.append("totiIdentity", identity)
@@ -29,7 +26,7 @@ public class ParametersEndToEndTest extends BaseTemplateTestExt {
 		testTemplate(variables, "", template, expected);
 	}
 	
-	public Object[] data() {
+	public static Object[] data() {
 		return new Object[] {
 				// TODO alt, src, placeholder
 			new Object[] {

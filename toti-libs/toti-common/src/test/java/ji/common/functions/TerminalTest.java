@@ -1,22 +1,19 @@
 package ji.common.functions;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import java.util.Arrays;
 import java.util.Collection;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import org.apache.logging.log4j.Logger;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(JUnitParamsRunner.class)
 public class TerminalTest {
 	
-	private final String SYSTEM_ERROR_MESSAGE = "SYSTEM_ERROR_MESSAGE"; 
+	private static final String SYSTEM_ERROR_MESSAGE = "SYSTEM_ERROR_MESSAGE"; 
 	
-	private String path =
+	private static final String PATH =
 			"src" +
 			OperationSystem.PATH_SEPARATOR +
 			"test" +
@@ -32,8 +29,8 @@ public class TerminalTest {
 	
 	private String stdOut = "";
 	
-	@Test
-	@Parameters
+	@ParameterizedTest
+	@MethodSource("parametersForTestRunCommandWorks")
 	public void testRunCommandWorks(final String command, int expectedCode, final String expectedOut, final String expectedErr) {
 		Terminal terminal = new Terminal(mock(Logger.class));
 		
@@ -53,22 +50,22 @@ public class TerminalTest {
 		}		
 	}
 	
-	public Collection<Object[]> parametersForTestRunCommandWorks() {
+	public static Collection<Object[]> parametersForTestRunCommandWorks() {
 		return Arrays.asList(
-				new Object[]{ //working void command
-					"exit", 0, "", ""
-				},
-				new Object[]{ //working void command
-					"echo success", 0, "success", ""
-				},
-				new Object[]{ // not working command
-					"notExisting", 1, "", SYSTEM_ERROR_MESSAGE
-				}
-			);
+			new Object[]{ //working void command
+				"exit", 0, "", ""
+			},
+			new Object[]{ //working void command
+				"echo success", 0, "success", ""
+			},
+			new Object[]{ // not working command
+				"notExisting", 1, "", SYSTEM_ERROR_MESSAGE
+			}
+		);
 	}
 	
-	@Test
-	@Parameters
+	@ParameterizedTest
+	@MethodSource("parametersForTestRunFileWorks")
 	public void testRunFileWorks(final String file, int expectedCode, final String expectedOut, final String expectedErr) {
 		Terminal terminal = new Terminal(mock(Logger.class));
 		
@@ -88,26 +85,26 @@ public class TerminalTest {
 		}		
 	}
 	
-	public Collection<Object[]> parametersForTestRunFileWorks() {
+	public static Collection<Object[]> parametersForTestRunFileWorks() {
 		String absolutePath = System.getProperty("user.dir");
 		return Arrays.asList(
 				new Object[]{
-					path + "success",
+					PATH + "success",
 					0,
 					" | " + absolutePath + ">echo standart output  | standart output | ",
 					""
 				},
 				new Object[]{
-					path + "bad-command", 1, " | " + absolutePath + ">echor | ", SYSTEM_ERROR_MESSAGE
+					PATH + "bad-command", 1, " | " + absolutePath + ">echor | ", SYSTEM_ERROR_MESSAGE
 				},
 				new Object[]{
-					path + "std-err-out",
+					PATH + "std-err-out",
 					0,
 					" | " + absolutePath + ">echo std err  1>&2  |  | " + absolutePath + ">echo std out  | std out | ",
 					"std err  | "
 				},
 				new Object[]{
-					path + "exit-code-5", 5, " | " + absolutePath + ">exit 5  | ", ""
+					PATH + "exit-code-5", 5, " | " + absolutePath + ">exit 5  | ", ""
 				}
 			);
 	}

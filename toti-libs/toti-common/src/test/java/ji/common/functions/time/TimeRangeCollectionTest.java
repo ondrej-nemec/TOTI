@@ -1,20 +1,17 @@
 package ji.common.functions.time;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-
-@RunWith(JUnitParamsRunner.class)
 public class TimeRangeCollectionTest {
 
 	@Test
@@ -23,8 +20,8 @@ public class TimeRangeCollectionTest {
 		assertNull(range.get(LocalDate.of(2025, 4, 10)));
 	}
 
-	@Test
-	@Parameters(method="dataGet")
+	@ParameterizedTest
+	@MethodSource("dataGet")
 	public void testGet(String message, LocalDate date, TimeRange<LocalDate> expected) {
 		/*
 		2025-03-15
@@ -43,10 +40,10 @@ public class TimeRangeCollectionTest {
 			LocalDate.of(2025, 4, 10), // this one is duplicated
 			LocalDate.of(2025, 4, 20)
 		), d->d);
-		assertEquals(message, expected, range.get(date));
+		assertEquals(expected, range.get(date), message);
 	}
 
-	public Object[] dataGet() {
+	public static Object[] dataGet() {
 		return new Object[] {
 			new Object[] {
 				"Start interval", LocalDate.of(2025, 4, 1), new TimeRange<>(

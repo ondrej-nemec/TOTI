@@ -1,26 +1,23 @@
 package toti.validation.rules;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import toti.http.structures.UploadedFile;
 import toti.validation.ValidationItem;
 
-@RunWith(JUnitParamsRunner.class)
 public class FileMaxSizeRuleTest {
 	
-	@Test
-	@Parameters(method="dataIsErrorToShow")
+	@ParameterizedTest
+	@MethodSource("dataIsErrorToShow")
 	public void testIsErrorToShow(Object value, Integer bond, boolean expected) {
 		FileMaxSizeRule rule = new FileMaxSizeRule(null, null);
 		assertEquals(expected, rule.isErrorToShow(bond, value));
 	}
 	
-	public Object[] dataIsErrorToShow() {
+	public static Object[] dataIsErrorToShow() {
 		return new Object[] {
 			new Object[] { createFile(10), 12, false },
 			new Object[] { createFile(10), 10, false },
@@ -28,7 +25,7 @@ public class FileMaxSizeRuleTest {
 		};
 	}
 	
-	private UploadedFile createFile(int size) {
+	private static UploadedFile createFile(int size) {
 		return new UploadedFile("fileName", "type", "bom", new byte[size]);
 	}
 	

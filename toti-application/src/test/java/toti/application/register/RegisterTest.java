@@ -1,6 +1,6 @@
 package toti.application.register;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -8,13 +8,13 @@ import static org.mockito.Mockito.when;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 
 import ji.common.structures.ObjectBuilder;
 import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
+import org.junit.jupiter.params.provider.MethodSource;
 import test.ControllerA;
 import test.ControllerB;
 import test.ControllerC;
@@ -190,7 +190,7 @@ public class RegisterTest {
 	}
 	
 	@Test
-	@Parameters(method="dataGetParam")
+	@MethodSource("dataGetParam")
 	public void testGetParam(Param parent, String part, Param expected) {
 		Register register = new Register(mock(Param.class), new ObjectBuilder<>(), getPattern(), new HashMap<>());
 		assertEquals(expected, register.getParam(part, parent));
@@ -223,7 +223,7 @@ public class RegisterTest {
 	}
 
 	@Test(expected = RegisterException.class)
-	@Ignore
+	@Disabled
 	public void testAddControllerThrowsIfClassIsAnnonymous() {
 		@SuppressWarnings("unused")
 		Register register = new Register(mock(Param.class), new ObjectBuilder<>(), getPattern(), new HashMap<>());

@@ -1,24 +1,22 @@
 package toti.validation.rules;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
+import toti.answers.request.Identity;
+import toti.answers.request.Request;
 import toti.extensions.Translator;
 import toti.validation.ValidationItem;
 import toti.validation.ValidationResult;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-import toti.answers.request.Identity;
-import toti.answers.request.Request;
 
-@RunWith(JUnitParamsRunner.class)
 public class ExpectedTypeRuleTest {
 
-	@Test
-	@Parameters(method="dataCheck")
+	@ParameterizedTest
+	@MethodSource("dataCheck")
 	public void testCheck(Class<?> expectedType, Object originValue, Object newValue, boolean canValidate, int times) {
 		ValidationResult result = mock(ValidationResult.class);
 		Translator translator = mock(Translator.class);
@@ -34,7 +32,7 @@ public class ExpectedTypeRuleTest {
 		verify(result, times(times)).addError("propertyName", "error");
 	}
 	
-	public Object[] dataCheck() {
+	public static Object[] dataCheck() {
 		return new Object[] {
 			new Object[] {
 				String.class, "someText", "someText", true, 0

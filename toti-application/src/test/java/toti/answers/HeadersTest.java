@@ -1,6 +1,6 @@
 package toti.answers;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 
 import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @RunWith(JUnitParamsRunner.class)
 public class HeadersTest {
@@ -21,7 +21,7 @@ public class HeadersTest {
 	// TODO isAsyncReques?
 	
 	@Test
-	@Parameters(method="dataGetHeader")
+	@MethodSource("dataGetHeader")
 	public void testGetHeader(String name, String expected) {
 		Map<String, List<Object>> map = new HashMap<>();
 		map.put("some-header", Arrays.asList("value", "value2"));
@@ -66,7 +66,7 @@ public class HeadersTest {
 	}
 	
 	@Test
-	@Parameters(method="dataGetCookieValue")
+	@MethodSource("dataGetCookieValue")
 	public void testGetCookieValue(String cookie, String cookieName, Optional<String> expected) {
 		Map<String, List<Object>> map = new HashMap<>();
 		if (cookie != null) {

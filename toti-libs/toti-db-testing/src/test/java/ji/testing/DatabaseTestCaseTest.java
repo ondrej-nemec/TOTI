@@ -1,10 +1,5 @@
 package ji.testing;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
-
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,12 +8,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.AfterEach;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.mock;
+
 import ji.database.Database;
 import ji.env.PropertiesEnv;
 import ji.testing.entities.Row;
@@ -33,7 +34,7 @@ public class DatabaseTestCaseTest extends DatabaseTestCase {
 		this.realDatabase = new Database(config, mock(Logger.class));
 	}
 	
-	@Before
+	@BeforeEach
 	@Override
 	public void before() throws SQLException {
 		getDatabase().migrate();
@@ -41,7 +42,7 @@ public class DatabaseTestCaseTest extends DatabaseTestCase {
 		applyDataSet();
 	}
 	
-	@After
+	@AfterEach
 	@Override
 	public void after() throws SQLException {
 		super.after();
@@ -87,14 +88,17 @@ public class DatabaseTestCaseTest extends DatabaseTestCase {
 	}
 	
 	@Test
-	@Ignore
+	@Disabled
 	public void testThrowingTest() throws IOException {
 		throw new IOException("Expected exception");
 	}
 	
-	@Test(expected=IOException.class)
+	@Test
 	public void testWithExpectedException() throws IOException {
-		throw new IOException("Expected exception");
+		IOException expected = assertThrows(IOException.class, ()->{
+			throw new IOException("Expected exception");
+		});
+		assertNotNull(expected);
 	}
 
 	@Override
@@ -157,12 +161,12 @@ public class DatabaseTestCaseTest extends DatabaseTestCase {
 		prop.put("database.pool-size", 3);
 		/*/
 		prop.put("database.type", "mysql");
-		prop.put("database.url", "//localhost:3306");
+		prop.put("database.url", "//mysql");
 		prop.put("database.externalServer", true);
 		prop.put("database.schema-name", "javainit_testing_test");
 		prop.put("database.login", "root");
-		prop.put("database.password", "");
-		prop.put("database.pathToMigrations", "migrations");
+		prop.put("database.password", "Strong!Passw0rd");
+		prop.put("database.pathToMigrations", Arrays.asList("migrations"));
 		prop.put("database.pool-size", 3);
 		//*/
 		prop.put("log.logFile", "log.txt");

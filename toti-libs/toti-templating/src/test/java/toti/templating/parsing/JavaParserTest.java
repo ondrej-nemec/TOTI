@@ -1,18 +1,13 @@
 package toti.templating.parsing;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-
-@RunWith(JUnitParamsRunner.class)
 public class JavaParserTest {
 
-	@Test
-	@Parameters(method="dataParseWorks")
+	@ParameterizedTest
+	@MethodSource("dataParseWorks")
 	public void testParseWorks(String text, boolean finished, String expected, boolean isReturning) {
 		JavaParser parser = new JavaParser();
 		assertEquals(finished, ParsingSimulator.simulate(parser, text));
@@ -20,7 +15,7 @@ public class JavaParserTest {
 		assertEquals(isReturning, parser.isReturning());
 	}
 	
-	public Object[] dataParseWorks() {
+	public static Object[] dataParseWorks() {
 		return new Object[] {
 			new Object[] {
 				"%>",
