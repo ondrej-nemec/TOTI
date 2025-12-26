@@ -3,7 +3,6 @@ package toti.answers.response;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import ji.common.functions.InputStreamLoader;
@@ -43,19 +42,13 @@ public class FileResponse implements Response {
 			String charset) {
 		setContentType(fileName, charset, responseHeader);
 		switch (download) {
-			case DOWNLOAD:
-				responseHeader.addHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
-				break;
-			case FORCE_DOWNLOAD:
-				responseHeader.addHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-				break;
-			case RESPONSE:
-				break;
-			default:
-				break;
+			case DOWNLOAD -> responseHeader.addHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
+			case FORCE_DOWNLOAD -> responseHeader.addHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+			case RESPONSE -> {}
+			default -> {}
 		}
 		responseHeader.setHeaders(this.headers.getHeaders());
-		return new FinalResponse(code, responseHeader, ByteBuffer.wrap(binaryContent));
+		return new FinalResponse(code, responseHeader, binaryContent);
 	}
 	
 	private static byte[] binaryContent(String name) {

@@ -1,6 +1,5 @@
 package toti.answers.response;
 
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,7 +46,7 @@ public class TemplateResponse implements Response {
 		});
 		setContentType(fileName, charset, resHeaders);
 		
-		return new FinalResponse(code, resHeaders, ByteBuffer.wrap(createResponse(container).getBytes()));
+		return new FinalResponse(code, resHeaders, createResponse(container).getBytes());
 	}
 	
 	public String createResponse(ResponseContainer container) {

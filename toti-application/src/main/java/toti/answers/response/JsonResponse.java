@@ -1,7 +1,5 @@
 package toti.answers.response;
 
-import java.nio.ByteBuffer;
-
 import ji.json.JsonWritter;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
@@ -27,7 +25,7 @@ public class JsonResponse implements Response {
 			String charset) {
 		headers.addHeader("Content-Type", "application/json; charset=" + charset);
 		headers.setHeaders(this.headers.getHeaders());
-		return new FinalResponse(code, headers, ByteBuffer.wrap(createResponse().getBytes()));
+		return new FinalResponse(code, headers, createResponse().getBytes());
 	}
 	
 	private String createResponse() {

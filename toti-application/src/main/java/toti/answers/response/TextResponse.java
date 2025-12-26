@@ -1,7 +1,5 @@
 package toti.answers.response;
 
-import java.nio.ByteBuffer;
-
 import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.http.enums.StatusCode;
@@ -28,7 +26,7 @@ public class TextResponse implements Response {
 			headers.addHeader("Content-Type", "text/plain");
 		}
 		headers.setHeaders(this.headers.getHeaders());
-		return new FinalResponse(code, headers, ByteBuffer.wrap(text.getBytes()));
+		return new FinalResponse(code, headers, text.getBytes());
 	}
 
 	@Override

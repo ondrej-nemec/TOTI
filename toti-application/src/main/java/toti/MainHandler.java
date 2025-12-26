@@ -130,7 +130,21 @@ public class MainHandler extends Handler.Abstract {
 
 		ByteBuffer responseBody = response.getBody();
 		if (responseBody != null) {
-			jettyResponse.write(true, responseBody, callback);
+			jettyResponse.getHeaders().put("Content-Length", response.getLength());
+			jettyResponse.write(true, responseBody, new Callback() {
+				@Override
+				public void succeeded() {
+					//jettyResponse.complete();   // *** DŮLEŽITÉ ***
+					callback.succeeded();
+				}
+
+				@Override
+				public void failed(Throwable x) {
+					callback.failed(x);
+				}
+			});
+		} else {
+			callback.succeeded();
 		}
 		
 		callback.succeeded();

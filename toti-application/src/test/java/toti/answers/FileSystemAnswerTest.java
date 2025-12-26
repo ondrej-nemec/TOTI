@@ -1,52 +1,60 @@
 package toti.answers;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 import java.util.Optional;
 
 import org.apache.logging.log4j.Logger;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import ji.common.structures.MapDictionary;
-import junitparams.JUnitParamsRunner;
-import org.junit.jupiter.params.provider.MethodSource;
 import toti.ServerException;
 import toti.answers.request.Request;
 import toti.answers.response.FinalResponse;
 import toti.http.enums.HttpMethod;
-import toti.http.structures.RequestParameters;
 import toti.http.enums.StatusCode;
+import toti.http.structures.RequestParameters;
 
-@RunWith(JUnitParamsRunner.class)
 public class FileSystemAnswerTest {
 	
 	private final String basePath = "test/FileSystemAnswerTest";
 	
 	 // neporarilo se zvalidovat url - asi pri chybe - tezko nasimulovat - nenexistující soubor?
 
-	@Test(expected =  ServerException.class)
+	@Test
 	public void testAnswerFileOutsideBasePath() throws ServerException {
 		FileSystemAnswer answer = create("index.txt", true);
 		
 		Headers responseHeaders = mock(Headers.class);
 		Request request = createRequest("/../outside-file.txt");
 		
-		answer.answer(request, responseHeaders, "toti-charset");
+		ServerException expected = assertThrows(ServerException.class, ()->{
+			answer.answer(request, responseHeaders, "toti-charset");
+		});
+		assertNotNull(expected);
 	}
 
-	@Test(expected =  ServerException.class)
+	@Test
 	public void testAnswerNotExistingFileNoBypass() throws ServerException {
 		FileSystemAnswer answer = create(null, false);
 		
 		Headers responseHeaders = mock(Headers.class);
 		Request request = createRequest("/not-existing");
 		
-		answer.answer(request, responseHeaders, "toti-charset");
+		ServerException expected = assertThrows(ServerException.class, ()->{
+			answer.answer(request, responseHeaders, "toti-charset");
+		});
+		assertNotNull(expected);
 	}
 
-	@Test(expected =  ServerException.class)
+	@ParameterizedTest
 	@MethodSource("dataAnswerWithDefaultFileThrowing")
 	public void testAnswerWithDefaultFileThrowing(String message, String uri) throws ServerException {
 		FileSystemAnswer answer = create("index.txt", false);
@@ -54,10 +62,13 @@ public class FileSystemAnswerTest {
 		Headers responseHeaders = mock(Headers.class);
 		Request request = createRequest(uri);
 		
-		answer.answer(request, responseHeaders, "toti-charset");
+		ServerException expected = assertThrows(ServerException.class, ()->{
+			answer.answer(request, responseHeaders, "toti-charset");
+		});
+		assertNotNull(expected);
 	}
 	
-	public Object[] dataAnswerWithDefaultFileThrowing() {
+	public static Object[] dataAnswerWithDefaultFileThrowing() {
 		return new Object[] {
 			new Object[] {
 				"Not existing file", "/some-not-existing-file"
@@ -71,7 +82,7 @@ public class FileSystemAnswerTest {
 		};
 	}
 
-	@Test
+	@ParameterizedTest
 	@MethodSource("dataAnswerWithDefaultFileWorking")
 	public void testAnswerWithDefaultFileWorking(String message, String uri) throws ServerException {
 		FileSystemAnswer answer = create("index.txt", false);
@@ -83,13 +94,13 @@ public class FileSystemAnswerTest {
 		
 		FinalResponse expected = new FinalResponse(StatusCode.OK, mock(Headers.class), "Index content");
 		
-		assertEquals(message, expected, actual);
+		assertEquals(expected, actual, message);
 		verify(responseHeaders, times(1)).addHeader("Content-Type", "text/plain; charset=toti-charset");
 		verify(responseHeaders, times(1)).getHeaders();
 		verifyNoMoreInteractions(responseHeaders);
 	}
 	
-	public Object[] dataAnswerWithDefaultFileWorking() {
+	public static Object[] dataAnswerWithDefaultFileWorking() {
 		return new Object[] {
 			new Object[] {
 				"Root dir", "/"

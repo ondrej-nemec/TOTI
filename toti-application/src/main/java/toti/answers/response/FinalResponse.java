@@ -10,25 +10,32 @@ public class FinalResponse {
 	private final StatusCode statusCode;
 	private final Headers headers;
 	private final ByteBuffer body;
+	private final int length;
 
 	public FinalResponse(StatusCode statusCode, Headers headers, String body) {
 		this(statusCode, headers, body.getBytes());
 	}
-	
+
 	public FinalResponse(StatusCode statusCode, Headers headers, byte[] body) {
-		this(statusCode, headers, ByteBuffer.wrap(body));
+		this(statusCode, headers, ByteBuffer.wrap(body), body.length);
 	}
 	
-	public FinalResponse(StatusCode statusCode, Headers headers, ByteBuffer body) {
+	public FinalResponse(StatusCode statusCode, Headers headers, ByteBuffer body, int length) {
 		this.statusCode = statusCode;
 		this.headers = headers;
 		this.body = body;
+		this.length = length;
 	}
 	
 	public FinalResponse(StatusCode statusCode, Headers headers) {
 		this.statusCode = statusCode;
 		this.headers = headers;
 		this.body = null;
+		this.length = 0;
+	}
+
+	public int getLength() {
+		return length;
 	}
 	
 	public StatusCode getStatusCode() {
@@ -82,10 +89,7 @@ public class FinalResponse {
 		} else if (!headers.equals(other.headers)) {
 			return false;
 		}
-		if (statusCode != other.statusCode) {
-			return false;
-		}
-		return true;
+		return statusCode == other.statusCode;
 	}
 	
 }
