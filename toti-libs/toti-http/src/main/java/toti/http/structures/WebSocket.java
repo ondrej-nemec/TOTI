@@ -17,6 +17,7 @@ public class WebSocket implements Session.Listener.AutoDemanding {
 	private BiConsumer<Boolean, ByteBuffer> onMessage;
 	private Consumer<Throwable> onError;
 	private Consumer<String> onClose;
+	private ji.common.structures.Callback onOpen;
 	
 	private boolean isAccepted = false;
 	
@@ -29,6 +30,7 @@ public class WebSocket implements Session.Listener.AutoDemanding {
 	@Override
 	public void onWebSocketOpen(Session session) {
 		this.session = session;
+		onOpen.call();
 	}
 	
 	@Override
@@ -101,7 +103,13 @@ public class WebSocket implements Session.Listener.AutoDemanding {
 		return isAccepted;
 	}
 	
-	public void accept(BiConsumer<Boolean, ByteBuffer> onMessage, Consumer<Throwable> onError, Consumer<String> onClose) throws Exception {
+	public void accept(
+		ji.common.structures.Callback onOpen,
+		BiConsumer<Boolean, ByteBuffer> onMessage,
+		Consumer<Throwable> onError,
+		Consumer<String> onClose
+	) throws Exception {
+		this.onOpen = onOpen;
 		this.onError = onError;
 		this.onMessage = onMessage;
 		this.onClose = onClose;

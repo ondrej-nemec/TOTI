@@ -145,7 +145,9 @@ public class ResponseController {
 				// websocket can be empty - means this request is not valid websocket request
 				if (req.getWebsocket().isPresent()) {
 					WebSocket webSocket = req.getWebsocket().get();
-					webSocket.accept(task.onMessage(), task.onError(), (x)->task.removeWebsocket());
+					webSocket.accept(()->{
+						// TODO on open
+					}, task.onMessage(), task.onError(), (x)->task.removeWebsocket());
 					task.setWebsocket(webSocket);
 					return Response.getWebsocket(webSocket);
 				}
