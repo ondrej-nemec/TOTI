@@ -1,22 +1,19 @@
 package toti.answers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import ji.common.functions.Env;
 import ji.common.structures.MapDictionary;
 import ji.common.structures.ObjectBuilder;
-import junitparams.JUnitParamsRunner;
-import org.junit.jupiter.params.provider.MethodSource;
 import toti.answers.request.Identity;
 import toti.answers.request.IdentityFactory;
 import toti.answers.request.Request;
@@ -26,16 +23,15 @@ import toti.answers.response.FileResponse;
 import toti.answers.response.Response;
 import toti.answers.response.TextResponse;
 import toti.application.register.Register;
+import toti.extensions.TemplateExtension;
 import toti.extensions.TotiExtension;
 import toti.extensions.TranslatorExtension;
 import toti.http.enums.StatusCode;
 import toti.http.structures.RequestParameters;
-import toti.extensions.TemplateExtension;
 
-@RunWith(JUnitParamsRunner.class)
 public class TotiAnsserTest {
 	
-	@Test
+	@ParameterizedTest
 	@MethodSource("dataRoutingWithExtension")
 	public void testRoutingWithExtension(String url, Response expected) {
 		TotiExtension extension = new TotiExtension() {
@@ -76,7 +72,7 @@ public class TotiAnsserTest {
 		));
 	}
 
-	public Object[] dataRoutingWithExtension() {
+	public static Object[] dataRoutingWithExtension() {
 		return new Object[] {
 			new Object[] {
 				"/not-existing", new EmptyResponse(StatusCode.NOT_FOUND, new Headers())
@@ -90,7 +86,7 @@ public class TotiAnsserTest {
 		};
 	}
 	
-	@Test
+	@ParameterizedTest
 	@MethodSource("dataGetResponseWithEmptyAndNotExistingUrl")
 	public void testGetResponseWithEmptyAndNotExistingUrl(String ip, String url, Response expected) {
 		Identity identity = mock(Identity.class);
@@ -108,7 +104,7 @@ public class TotiAnsserTest {
 		));
 	}
 	
-	public Collection<Object[]> dataGetResponseWithEmptyAndNotExistingUrl() {
+	public static Collection<Object[]> dataGetResponseWithEmptyAndNotExistingUrl() {
 		Collection<Object[]> result = new LinkedList<>();
 		String[] both = new String[] {
 			"", "/index", "/index.html", "/"

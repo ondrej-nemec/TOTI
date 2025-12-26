@@ -37,6 +37,10 @@ public interface Response {
 		return create(StatusCode.INTERNAL_SERVER_ERROR);
 	}
 
+	static ResponseFactory SEE_OTHER() {
+		return create(StatusCode.SEE_OTHER);
+	}
+
 	/**
 	 * Create builder for response
 	 * @param code response status code

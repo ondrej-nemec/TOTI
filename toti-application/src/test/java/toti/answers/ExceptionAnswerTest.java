@@ -11,12 +11,13 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.params.ParameterizedTest;
 
 import ji.common.structures.MapDictionary;
 import ji.files.text.Text;
-import junitparams.JUnitParamsRunner;
+
 import org.junit.jupiter.params.provider.MethodSource;
+
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.answers.response.FinalResponse;
@@ -32,7 +33,6 @@ import toti.http.structures.RequestParameters;
 import toti.http.enums.StatusCode;
 import toti.logging.FileName;
 
-@RunWith(JUnitParamsRunner.class)
 public class ExceptionAnswerTest {
 	
 	// TODO test exception/error templates - after testing it in samples
@@ -116,7 +116,7 @@ public class ExceptionAnswerTest {
 		
 	}
 	
-	@Test
+	@ParameterizedTest
 	@MethodSource("dataGetResponse")
 	public void testGetResponse(
 			String message,
@@ -163,7 +163,7 @@ public class ExceptionAnswerTest {
 		verify(answer, times(1)).getFileName(any(), anyInt(), any(), any(), any());
 	}
 	
-	public Object[] dataGetResponse() {
+	public static Object[] dataGetResponse() {
 		return new Object[] {
 			new Object[] {
 				"Sync request, dev ip",
@@ -189,7 +189,7 @@ public class ExceptionAnswerTest {
 		};
 	}
 	
-	@Test
+	@ParameterizedTest
 	@MethodSource("dataGetFileNameReturnsCorrectFilename")
 	public void testGetFileNameReturnsCorrectFilename(
 			String logsPath,
@@ -205,13 +205,13 @@ public class ExceptionAnswerTest {
 			mock(TranslatorExtension.class),
 			mock(Logger.class)
 		);
-		assertEquals("First run", expected, answer.getFileName(now, random, action, code, t));
+		assertEquals(expected, answer.getFileName(now, random, action, code, t), "First run");
 		
 		FileName secondExpected = new FileName(expected.getName(), false);
-		assertEquals("Second run", secondExpected, answer.getFileName(now.plusHours(1), random*2, action, code, t));
+		assertEquals(secondExpected, answer.getFileName(now.plusHours(1), random*2, action, code, t), "Second run");
 	}
 	
-	public Object[] dataGetFileNameReturnsCorrectFilename() {
+	public static Object[] dataGetFileNameReturnsCorrectFilename() {
 		return new Object[] {
 			new Object[] {
 				null,
@@ -226,7 +226,7 @@ public class ExceptionAnswerTest {
 		};
 	}
 	
-	@Test
+	@ParameterizedTest
 	@MethodSource("dataSaveToFileDoNothingIfFileIsNotCreateAndNotUsed")
 	public void testSaveToFileDoNothingIfFileIsNotCreateAndNotUsed(FileName filename) {
 		Text text = mock(Text.class);
@@ -243,7 +243,7 @@ public class ExceptionAnswerTest {
 		verifyNoMoreInteractions(text);
 	}
 	
-	public Object[] dataSaveToFileDoNothingIfFileIsNotCreateAndNotUsed() {
+	public static Object[] dataSaveToFileDoNothingIfFileIsNotCreateAndNotUsed() {
 		return new Object[] {
 			new Object[] {
 				new FileName(null, false)
