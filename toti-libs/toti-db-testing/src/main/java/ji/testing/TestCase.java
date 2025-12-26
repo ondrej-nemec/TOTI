@@ -13,29 +13,29 @@ import ji.common.structures.ThrowingFunction;
 
 public interface TestCase {
 	
-	default <T> Consumer<T> consumer(Class<T> clazz, Consumer<T> consumer) {
+	static <T> Consumer<T> consumer(Class<T> clazz, Consumer<T> consumer) {
 		return consumer;
 	}
 
-	default <T> Supplier<T> supplier(Supplier<T> supplier) {
+	static <T> Supplier<T> supplier(Supplier<T> supplier) {
 		return supplier;
 	}
 
-	default <T, R> Function<T, R> function(Function<T, R> function) {
+	static <T, R> Function<T, R> function(Function<T, R> function) {
 		return function;
 	}
 
-	default <T, R, E extends Exception> ThrowingFunction<T, R, E> throwingFunction(ThrowingFunction<T, R, E> function) {
+	static <T, R, E extends Exception> ThrowingFunction<T, R, E> throwingFunction(ThrowingFunction<T, R, E> function) {
 		return function;
 	}
 	
 	/**************************/
 
-	default void assertEquals(Map<?, ?> expected, Map<?, ?> actual) {
+	static void assertEquals(Map<?, ?> expected, Map<?, ?> actual) {
 		assertEquals(expected, actual, null);
 	}
 	
-	default void assertEquals(Map<?, ?> expected, Map<?, ?> actual, String message) {
+	static void assertEquals(Map<?, ?> expected, Map<?, ?> actual, String message) {
 		try {
 			Assertions.assertEquals(expected, actual, message);
 		} catch (Error e) {
@@ -48,11 +48,11 @@ public interface TestCase {
 		}
 	}
 	
-	default void assertEquals(Collection<?> expected, Collection<?> actual) {
+	static void assertEquals(Collection<?> expected, Collection<?> actual) {
 		assertEquals(expected, actual, null);
 	}
 
-	default void assertEquals(Collection<?> expected, Collection<?> actual, String message) {
+	static void assertEquals(Collection<?> expected, Collection<?> actual, String message) {
 		try {
 			Assertions.assertEquals(expected, actual, message);
 		} catch (Error e) {
@@ -65,11 +65,11 @@ public interface TestCase {
 		}
 	}
 
-	default void assertEquals(Object expected, Object actual) {
+	static void assertEquals(Object expected, Object actual) {
 		assertEquals(expected, actual, null);
 	}
 
-	default void assertEquals(Object expected, Object actual, String message) {
+	static void assertEquals(Object expected, Object actual, String message) {
 		try {
 			Assertions.assertEquals(expected, actual, message);
 		} catch (Error e) {
@@ -84,11 +84,11 @@ public interface TestCase {
 	
 	/*********************************/
 
-	default void assertNotEquals(Map<?, ?> expected, Map<?, ?> actual) {
+	static void assertNotEquals(Map<?, ?> expected, Map<?, ?> actual) {
 		assertNotEquals(expected, actual, null);
 	}
 	
-	default void assertNotEquals(Map<?, ?> expected, Map<?, ?> actual, String message) {
+	static void assertNotEquals(Map<?, ?> expected, Map<?, ?> actual, String message) {
 		try {
 			Assertions.assertNotEquals(expected, actual, message);
 		} catch (Error e) {
@@ -101,11 +101,11 @@ public interface TestCase {
 		}
 	}
 	
-	default void assertNotEquals(Collection<?> expected, Collection<?> actual) {
+	static void assertNotEquals(Collection<?> expected, Collection<?> actual) {
 		assertEquals(expected, actual, null);
 	}
 
-	default void assertNotEquals(Collection<?> expected, Collection<?> actual, String message) {
+	static void assertNotEquals(Collection<?> expected, Collection<?> actual, String message) {
 		try {
 			Assertions.assertNotEquals(expected, actual, message);
 		} catch (Error e) {
@@ -118,11 +118,11 @@ public interface TestCase {
 		}
 	}
 
-	default void assertNotEquals(Object expected, Object actual) {
+	static void assertNotEquals(Object expected, Object actual) {
 		assertNotEquals(expected, actual, null);
 	}
 
-	default void assertNotEquals(Object expected, Object actual, String message) {
+	static void assertNotEquals(Object expected, Object actual, String message) {
 		try {
 			Assertions.assertNotEquals(expected, actual, message);
 		} catch (Error e) {

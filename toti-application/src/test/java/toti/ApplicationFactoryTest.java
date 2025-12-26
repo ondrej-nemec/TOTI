@@ -1,29 +1,33 @@
 package toti;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.function.Consumer;
 
 import org.apache.logging.log4j.Logger;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+import static ji.testing.TestCase.*;
 
 import ji.common.functions.Env;
 import ji.common.structures.MapInit;
 import ji.env.PropertiesEnv;
 import ji.testing.TestCase;
-import junitparams.JUnitParamsRunner;
-import org.junit.jupiter.params.provider.MethodSource;
 import toti.application.Module;
 import toti.application.Task;
 
-@RunWith(JUnitParamsRunner.class)
-public class ApplicationFactoryTest implements TestCase {
+public class ApplicationFactoryTest {
 	
 	// TODO test without modules ?
 	// TODO test without aliases ?
@@ -34,7 +38,7 @@ public class ApplicationFactoryTest implements TestCase {
 		fail("TODO");
 	}
 	
-	@Test
+	@ParameterizedTest
 	@MethodSource("data")
 	@Disabled
 	public void test(Properties properties, Consumer<ApplicationFactory> setFactory) throws Exception {
@@ -81,12 +85,12 @@ public class ApplicationFactoryTest implements TestCase {
 		// TODO verify env db: type, url, external, schema-name, password, pool-size
 	}
 	
-	public Object[] data() {
+	public static Object[] data() {
 		return new Object[] {
 			// default values
 			new Object[] {
 				MapInit.create().toProperties(),
-				consumer(ApplicationFactory.class, (f)->{})
+				TestCase.consumer(ApplicationFactory.class, (f)->{})
 			},
 			/*// TODO
 			new Object[] {

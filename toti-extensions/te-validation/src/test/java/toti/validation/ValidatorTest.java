@@ -13,7 +13,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-import ji.testing.TestCase;
+import static ji.testing.TestCase.assertEquals;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.extensions.Translator;
@@ -21,7 +21,7 @@ import toti.http.structures.RequestParameters;
 import toti.validation.collections.RulesCollection;
 import toti.validation.rules.Rule;
 
-public class ValidatorTest implements TestCase {
+public class ValidatorTest {
 	/*
 	@Test
 	@Parameters({"true", "false"})

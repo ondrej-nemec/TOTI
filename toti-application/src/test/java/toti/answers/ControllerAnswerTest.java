@@ -1,6 +1,8 @@
 package toti.answers;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -11,6 +13,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static ji.testing.TestCase.*;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -22,13 +25,14 @@ import java.util.function.Supplier;
 
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.params.ParameterizedTest;
 
 import ji.common.structures.MapDictionary;
 import ji.common.structures.ThrowingFunction;
 import ji.testing.TestCase;
-import junitparams.JUnitParamsRunner;
+
 import org.junit.jupiter.params.provider.MethodSource;
+
 import toti.ServerException;
 import toti.answers.action.BodyType;
 import toti.answers.action.ResponseAction;
@@ -52,8 +56,7 @@ import toti.http.enums.HttpMethod;
 import toti.http.enums.StatusCode;
 import toti.http.structures.RequestParameters;
 
-@RunWith(JUnitParamsRunner.class)
-public class ControllerAnswerTest implements TestCase {
+public class ControllerAnswerTest {
 
 	@Test
 	public void testAnswerNoMappedAction() throws Exception {
@@ -150,14 +153,14 @@ public class ControllerAnswerTest implements TestCase {
 		verifyNoMoreInteractions(translator, identityFactory, authenticationExtension, answer, router);
 	}
 	
-	@Test
+	@ParameterizedTest
 	@MethodSource("dataGetUrlParts")
 	public void testGetUrlParts(String url, List<String> expected) {
 		ControllerAnswer answer = new ControllerAnswer(null, null, null, null, null, null, null, null);
 		assertEquals(expected, answer.getUrlParts(url));
 	}
 	
-	public Object[] dataGetUrlParts() {
+	public static Object[] dataGetUrlParts() {
 		return new Object[] {
 			new Object[] { "", Arrays.asList() },
 			new Object[] { "/", Arrays.asList() },
@@ -167,7 +170,7 @@ public class ControllerAnswerTest implements TestCase {
 		};
 	}
 
-	@Test
+	@ParameterizedTest
 	@MethodSource("dataGetMappedAction")
 	public void testGetMappedAction(String url, HttpMethod method, Param root, MappedAction expected, List<Object> params) {
 		Router router = mock(Router.class);
@@ -197,12 +200,12 @@ public class ControllerAnswerTest implements TestCase {
 			assertNull(actual);
 		} else {
 			assertTrue(
+				expected.assertForTest(actual),
 				String.format(
 					"Expected: %s, Actual: %s",
 					expected.simpleString(),
 					actual == null ? "NULL" : actual.simpleString()
-				),
-				expected.assertForTest(actual)
+				)
 			);
 		}
 		assertEquals(params, request.getPathParams().toList());
@@ -210,7 +213,7 @@ public class ControllerAnswerTest implements TestCase {
 		verifyNoMoreInteractions(router);
 	}
 
-	public Object[] dataGetMappedAction() {
+	public static Object[] dataGetMappedAction() {
 		return new Object[] {
 			// no mapping
 			new Object[] {
@@ -358,7 +361,7 @@ public class ControllerAnswerTest implements TestCase {
 		};
 	}
 	
-	private Param mapping() {
+	private static Param mapping() {
 		Param root = new Param(null);
 		root.addAction(HttpMethod.GET, MappedAction.test("ro", "ot", "GET"));
 		root.addAction(HttpMethod.POST, MappedAction.test("ro", "ot", "POST"));
@@ -402,7 +405,7 @@ public class ControllerAnswerTest implements TestCase {
 		return root;
 	}
 	
-	private Param param(Consumer<Param> create) {
+	private static Param param(Consumer<Param> create) {
 		Param root = new Param(null);
 		create.accept(root);
 		return root;
@@ -411,7 +414,7 @@ public class ControllerAnswerTest implements TestCase {
 	
 	// TODO checkSecured throws serverException
 	
-	@Test
+	@ParameterizedTest
 	@MethodSource("dataRun")
 	public void testRun(
 			String uri, List<Object> pathParams, AuthMode authMode, String redirect,
@@ -448,7 +451,7 @@ public class ControllerAnswerTest implements TestCase {
 		assertEquals(expected, actual);
 	}
 	
-	public Object[] dataRun() {
+	public static Object[] dataRun() {
 		return new Object[] {
 			// interruption in prevalidate
 			new Object[] {
@@ -784,7 +787,7 @@ public class ControllerAnswerTest implements TestCase {
 		};
 	}
 */
-	@Test
+	@ParameterizedTest
 	@MethodSource("dataCheckSecured")
 	public void testCheckSecured(Supplier<MappedAction> mapped, Supplier<Identity> identity, StatusCode expectedCode) {
 		ControllerAnswer answer = new ControllerAnswer(
@@ -802,7 +805,7 @@ public class ControllerAnswerTest implements TestCase {
 		}
 	}
 	
-	public Object[] dataCheckSecured() {
+	public static Object[] dataCheckSecured() {
 		return new Object[] {
 			// secured annotation - not secured - nothing
 			new Object[] {
@@ -863,7 +866,7 @@ public class ControllerAnswerTest implements TestCase {
 		};
 	}
 	
-	private Object[] authModeCombination(AuthMode m, AuthMode i, StatusCode code) {
+	private static Object[] authModeCombination(AuthMode m, AuthMode i, StatusCode code) {
 		return new Object[] {
 			supplier(()->{
 				MappedAction mapped = mock(MappedAction.class);
@@ -881,7 +884,7 @@ public class ControllerAnswerTest implements TestCase {
 		};
 	}
 
-	@Test(expected = ServerException.class)
+	@Test
 	public void testParseBodyThrowsWithNotSupportedTypes() throws ServerException {
 		ControllerAnswer answer = new ControllerAnswer(
 			mock(Router.class), mock(Param.class), mock(TemplateExtension.class),
@@ -897,10 +900,13 @@ public class ControllerAnswerTest implements TestCase {
 			null, // body
 			Optional.empty()
 		);
-		answer.parseBody(request, Arrays.asList(), mock(MappedAction.class));
+		ServerException expected = assertThrows(ServerException.class, ()->{
+			answer.parseBody(request, Arrays.asList(), mock(MappedAction.class));
+		});
+		assertNotNull(expected);
 	}
 	
-	@Test
+	@ParameterizedTest
 	@MethodSource("dataParseBody")
 	public void testParseBody(Request request, List<BodyType> allowedTypes, Consumer<Request> check) throws ServerException {
 		ControllerAnswer answer = new ControllerAnswer(
@@ -912,7 +918,7 @@ public class ControllerAnswerTest implements TestCase {
 		check.accept(request);
 	}
 	
-	public Object[] dataParseBody() {
+	public static Object[] dataParseBody() {
 		return new Object[] {
 			// request contains body in map - nothing change
 			new Object[] {
@@ -1054,11 +1060,11 @@ public class ControllerAnswerTest implements TestCase {
 		};
 	}
 
-	private byte[] getJson() {
+	private static byte[] getJson() {
 		return "{\"some\": \"parameter\"}".getBytes();
 	}
 
-	private byte[] getXml() {
+	private static byte[] getXml() {
 		return "<root><some>parameter</some></root>".getBytes();
 	}
 /*
