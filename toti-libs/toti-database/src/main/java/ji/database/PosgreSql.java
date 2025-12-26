@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 import org.apache.logging.log4j.Logger;
+
 import ji.querybuilder.DbInstance;
 import ji.querybuilder.instances.PostgreSqlQueryBuilder;
 
@@ -30,10 +31,10 @@ public class PosgreSql implements DatabaseInstance {
 		this.logger = logger;
 		this.name = name;
 		try {
-            Class.forName("org.postgresql.Driver");
-        } catch (ClassNotFoundException e) {
-        	this.logger.warn("MySQL driver could not be registered", e);
-        }
+			Class.forName("org.postgresql.Driver");
+		} catch (ClassNotFoundException e) {
+			this.logger.warn("MySQL driver could not be registered", e);
+		}
 	}
 /*
 	@Override
@@ -56,7 +57,8 @@ public class PosgreSql implements DatabaseInstance {
 */
 	@Override
 	public void createDb() throws SQLException {
-		try (Connection con = DriverManager.getConnection(baseConnectionString, property)) {
+		// always need some database specified. if no db, same as user is used. can cause problems
+		try (Connection con = DriverManager.getConnection(baseConnectionString + "postgres", property)) {
 			PreparedStatement stmt = con.prepareStatement("SELECT FROM pg_database WHERE datname = ?");
 			stmt.setString(1, name);
 			ResultSet rs = stmt.executeQuery();
