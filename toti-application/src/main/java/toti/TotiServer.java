@@ -1,5 +1,6 @@
 package toti;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class TotiServer {
 	
 	private boolean isRunning = false;
 	
-	public TotiServer(Server server, StreamReader streamReader, Env env, String charset, Logger logger) {
+	public TotiServer(Server server, StreamReader streamReader, Env env, String charset, long timeout, Logger logger) {
 		this.server = server;
 		this.logger = logger;
 		this.env = env;
@@ -38,7 +39,8 @@ public class TotiServer {
 		
 		// required for websockets
 		ContextHandler contextHandler = new ContextHandler();
-		/*ServerWebSocketContainer container =*/ ServerWebSocketContainer.ensure(server, contextHandler);
+		ServerWebSocketContainer container = ServerWebSocketContainer.ensure(server, contextHandler);
+		container.setIdleTimeout(Duration.ofMillis(timeout));
 		contextHandler.setHandler(handler);
 		
 		server.setHandler(contextHandler);

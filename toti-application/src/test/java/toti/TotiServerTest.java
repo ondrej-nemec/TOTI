@@ -20,17 +20,18 @@ import java.util.Arrays;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import ji.common.functions.Env;
 import ji.common.structures.IntegerBuilder;
 import ji.common.structures.MapInit;
-import junitparams.JUnitParamsRunner;
+
 import org.junit.jupiter.params.provider.MethodSource;
+
 import toti.answers.Answer;
 import toti.http.parsers.StreamReader;
 
-@RunWith(JUnitParamsRunner.class)
 public class TotiServerTest {
 
 	@Test
@@ -47,7 +48,7 @@ public class TotiServerTest {
 		Server server = mock(Server.class);
 		Logger logger = mock(Logger.class);
 		TotiServer toti = spy(new TotiServer(
-			server, mock(StreamReader.class), mock(Env.class), "charset", logger
+			server, mock(StreamReader.class), mock(Env.class), "charset", 60000, logger
 		));
 		doNothing().when(toti).startApplication(any());
 		toti.getApplications().put("h1", app1);
@@ -103,7 +104,7 @@ public class TotiServerTest {
 		/*/
 		IntegerBuilder callCount = new IntegerBuilder(0);
 		TotiServer toti = new TotiServer(
-			server, mock(StreamReader.class), mock(Env.class), "charset", logger
+			server, mock(StreamReader.class), mock(Env.class), "charset", 60000, logger
 		) {
 			@Override
 			protected boolean stopApplication(String host, Application application) {
@@ -124,8 +125,8 @@ public class TotiServerTest {
 		//*/
 	}
 
-	@Test
-	@Parameters({
+	@ParameterizedTest
+	@CsvSource({
 		"false, false, 0",
 		"false, true, 0",
 		"true, false, 0",
@@ -138,7 +139,9 @@ public class TotiServerTest {
 		Env env = mock(Env.class);
 		when(env.getModule(any())).thenReturn(env);
 		Logger logger = mock(Logger.class);
-		TotiServer server = spy(new TotiServer(mock(Server.class), mock(StreamReader.class), env, "charset", logger));
+		TotiServer server = spy(new TotiServer(
+			mock(Server.class), mock(StreamReader.class), env, "charset", 60000, logger
+		));
 		server.setRunning(isServerRunning);
 		doNothing().when(server).startApplication(any());
 		
@@ -162,8 +165,8 @@ public class TotiServerTest {
 		verifyNoMoreInteractions(server);
 	}
 
-	@Test
-	@Parameters({
+	@ParameterizedTest
+	@CsvSource({
 		"0, false, true, true",
 		"0, true, true, true",
 		"1, true, true, true",
@@ -189,7 +192,9 @@ public class TotiServerTest {
 		verify(server, times(stopTimes)).stopApplication("host", app);
 		/*/
 		IntegerBuilder callCount = new IntegerBuilder(0);
-		TotiServer server = new TotiServer(mock(Server.class), mock(StreamReader.class), env, "charset", logger) {
+		TotiServer server = new TotiServer(
+			mock(Server.class), mock(StreamReader.class), env, "charset", 60000, logger
+		) {
 			@Override
 			protected boolean stopApplication(String host, Application application) {
 				callCount.add(1);
@@ -211,7 +216,8 @@ public class TotiServerTest {
 	public void testStartApplication() throws Exception {
 		Logger logger = mock(Logger.class);
 		TotiServer server = new TotiServer(
-			mock(Server.class), mock(StreamReader.class), mock(Env.class), "charset", logger
+			mock(Server.class), mock(StreamReader.class),
+			mock(Env.class), "charset", 60000, logger
 		);
 		Answer answer = mock(Answer.class);
 		Application app = mock(Application.class);
@@ -232,7 +238,10 @@ public class TotiServerTest {
 	@Test
 	public void testStopApplicationWorking() throws Exception {
 		Logger logger = mock(Logger.class);
-		TotiServer server = new TotiServer(mock(Server.class), mock(StreamReader.class), mock(Env.class), "charset", logger);
+		TotiServer server = new TotiServer(
+			mock(Server.class), mock(StreamReader.class),
+			mock(Env.class), "charset", 60000, logger
+		);
 		Application app = mock(Application.class);
 		assertTrue(server.stopApplication("host", app));
 		verify(app, times(1)).stop();
@@ -241,7 +250,10 @@ public class TotiServerTest {
 	@Test
 	public void testStopApplicationAppThrowsException() throws Exception {
 		Logger logger = mock(Logger.class);
-		TotiServer server = new TotiServer(mock(Server.class), mock(StreamReader.class), mock(Env.class), "charset", logger);
+		TotiServer server = new TotiServer(
+			mock(Server.class), mock(StreamReader.class),
+			mock(Env.class), "charset", 60000, logger
+		);
 		Application app = mock(Application.class);
 		doThrow(new RuntimeException()).when(app).stop();
 		

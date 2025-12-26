@@ -65,6 +65,13 @@ public class WebSocket implements Session.Listener.AutoDemanding {
 		this.session.sendBinary(ByteBuffer.wrap(content), Callback.NOOP);
 	}
 
+	public void sendPing() {
+		if (!session.isOpen()) {
+			return;
+		}
+		this.session.sendPing(ByteBuffer.wrap(new byte[]{1}), Callback.NOOP);
+	}
+
 	public void close() {
 		session.close();
 		// session.disconnect();

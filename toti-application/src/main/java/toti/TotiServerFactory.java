@@ -85,11 +85,10 @@ public class TotiServerFactory {
 		if (certs.isPresent()) {
 			server.addConnector(createHTTPS(server, httpsPort, readTimeout, certs.get()));
 		}
-		
-		
+
 		StreamReader streamReader = new StreamReader(getMaxRequestSize(settings));
-		
-		return new TotiServer(server, streamReader, env, charset, logger);
+
+		return new TotiServer(server, streamReader, env, charset, readTimeout, logger);
 	}
 	
 	private ServerConnector createHTTP(Server server, int port, long timeout) {
