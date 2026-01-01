@@ -2,12 +2,8 @@ package toti.application.extensions.auth;
 
 import java.util.Optional;
 
-import org.junit.runner.RunWith;
-
-import junitparams.JUnitParamsRunner;
 import toti.extensions.auth.LoggedUser;
 
-@RunWith(JUnitParamsRunner.class)
 public class AuthenticationExtensionTest {
 	
 	class User implements LoggedUser {

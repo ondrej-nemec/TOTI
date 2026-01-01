@@ -3,15 +3,13 @@ package toti.answers.router;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-
+import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import toti.application.Module;
 
 public class UriPatternTest {
 	
-	@ParametrizedTest
+	@ParameterizedTest
 	@MethodSource("dataCreateBase")
 	public void testCreateBase(String module, String controller, String action, String expected) throws NoSuchMethodException, SecurityException {
 		UriPattern pattern = new UriPattern(){};
@@ -21,7 +19,7 @@ public class UriPatternTest {
 		));
 	}
 	
-	public Object[] dataCreateBase() {
+	public static Object[] dataCreateBase() {
 		return new Object[] {
 			new Object[] { "m", "c", "a", "/m/c/a" },
 			new Object[] { "", "c", "a", "/c/a" },

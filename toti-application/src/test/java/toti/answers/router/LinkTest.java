@@ -1,21 +1,22 @@
 package toti.answers.router;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import static org.mockito.Mockito.mock;
 
 import ji.common.exceptions.LogicException;
 import ji.common.structures.MapInit;
 import ji.common.structures.ObjectBuilder;
-
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import test.ControllerA;
 import test.NotController;
 import test.NotRegisteredController;
@@ -49,14 +50,17 @@ public class LinkTest {
 		};
 	}
 	
-	@Test(expected = LogicException.class)
-	@Parameters({ "", ":", "something", "something:" })
+	@ParameterizedTest
+	@ValueSource(strings={ "", ":", "something", "something:" })
 	public void testParseStringHrefThrowsWithWrongString(String href) {
 		Link link = new Link(mock(Register.class), mock(UriPattern.class));
-		link.parseStringHref(href);
+		LogicException expected = assertThrows(LogicException.class, ()->{
+			link.parseStringHref(href);
+		});
+		assertNotNull(expected);
 	}
 
-	@Test
+	@ParameterizedTest
 	@MethodSource("dataParseStringHrefReturnsCorrectResult")
 	public void testParseStringHrefReturnsCorrectResult(String href, StringHref expected) {
 		Link link = new Link(mock(Register.class), mock(UriPattern.class));
@@ -64,7 +68,7 @@ public class LinkTest {
 		assertEquals(expected, actual);
 	}
 	
-	public Object[] dataParseStringHrefReturnsCorrectResult() {
+	public static Object[] dataParseStringHrefReturnsCorrectResult() {
 		return new Object[] {
 			new Object[] {
 				":method", new StringHref(null, "method", MapInit.create().toMap(), Arrays.asList())
@@ -138,14 +142,17 @@ public class LinkTest {
 		};
 	}
 	
-	@Test(expected = NoSuchMethodException.class)
+	@ParameterizedTest
 	@MethodSource("dataGetMethodThrowsIfNoMethodFound")
 	public void testGetMethodThrowsIfNoMethodFound(String method, int count) throws NoSuchMethodException {
 		Link link = new Link(mock(Register.class), mock(UriPattern.class));
-		link.getMethod(NotRegisteredController.class, method, count);
+		NoSuchMethodException expected = assertThrows(NoSuchMethodException.class, ()->{
+			link.getMethod(NotRegisteredController.class, method, count);
+		});
+		assertNotNull(expected);
 	}
 	
-	public Object[] dataGetMethodThrowsIfNoMethodFound()  {
+	public static Object[] dataGetMethodThrowsIfNoMethodFound()  {
 		return new Object[] {
 			new Object[] {
 				"index2", 0 // not existing
@@ -165,7 +172,7 @@ public class LinkTest {
 		};
 	}
 	
-	@Test
+	@ParameterizedTest
 	@MethodSource("dataGetMethodReturnsCorrectMethod")
 	public void testGetMethodReturnsCorrectMethod(String method, int parameterCount, Method expected) throws NoSuchMethodException {
 		Link link = new Link(mock(Register.class), mock(UriPattern.class));
@@ -173,7 +180,7 @@ public class LinkTest {
 		assertEquals(expected, actual);
 	}
 	
-	public Object[] dataGetMethodReturnsCorrectMethod() throws NoSuchMethodException, SecurityException {
+	public static Object[] dataGetMethodReturnsCorrectMethod() throws NoSuchMethodException, SecurityException {
 		return new Object[] {
 			new Object[] {
 				"index", 0, NotRegisteredController.class.getMethod("index")
@@ -192,10 +199,13 @@ public class LinkTest {
 		};
 	}
 	
-	@Test(expected = ClassNotFoundException.class)
+	@Test
 	public void testGetControllerThrowsOnWrongClass() throws ClassNotFoundException {
 		Link link = new Link(mock(Register.class), mock(UriPattern.class));
-		link.getController("test.NotExistingClass");
+		ClassNotFoundException expected = assertThrows(ClassNotFoundException.class, ()->{
+			link.getController("test.NotExistingClass");
+		});
+		assertNotNull(expected);
 	}
 	
 	@Test
@@ -211,25 +221,34 @@ public class LinkTest {
 		assertEquals(NotRegisteredController.class, controller.runLinkMethod(()->link.getController(null)));
 	}
 
-	@Test(expected = ClassNotFoundException.class)
+	@Test
 	public void testGetControllerThrowsWithNullNameAndNoController() throws ClassNotFoundException {
 		Link link = new Link(mock(Register.class), mock(UriPattern.class));
-		link.getController(null);
-	}
-	
-	@Test(expected = LogicException.class)
-	public void testCreateThrowsIfClassIsNotController() throws NoSuchMethodException, SecurityException {
-		Link link = new Link(mock(Register.class), mock(UriPattern.class));
-		link.create(NotController.class, NotController.class.getMethod("index"), new HashMap<>());
-	}
-	
-	@Test(expected = LogicException.class)
-	public void testCreateThrowsIfMethodNotAction() throws NoSuchMethodException, SecurityException {
-		Link link = new Link(mock(Register.class), mock(UriPattern.class));
-		link.create(ControllerA.class, ControllerA.class.getMethod("notAction"), new HashMap<>());
+		ClassNotFoundException expected = assertThrows(ClassNotFoundException.class, ()->{
+			link.getController(null);
+		});
+		assertNotNull(expected);
 	}
 	
 	@Test
+	public void testCreateThrowsIfClassIsNotController() throws NoSuchMethodException, SecurityException {
+		Link link = new Link(mock(Register.class), mock(UriPattern.class));
+		LogicException expected = assertThrows(LogicException.class, ()->{
+			link.create(NotController.class, NotController.class.getMethod("index"), new HashMap<>());
+		});
+		assertNotNull(expected);
+	}
+	
+	@Test
+	public void testCreateThrowsIfMethodNotAction() throws NoSuchMethodException, SecurityException {
+		Link link = new Link(mock(Register.class), mock(UriPattern.class));
+		LogicException expected = assertThrows(LogicException.class, ()->{
+			link.create(ControllerA.class, ControllerA.class.getMethod("notAction"), new HashMap<>());
+		});
+		assertNotNull(expected);
+	}
+	
+	@ParameterizedTest
 	@MethodSource("dataCreate")
 	public void testCreate(Map<String, Object> queryParams, Object[] pathParams, String expected) throws NoSuchMethodException, SecurityException {
 		UriPattern pattern = new UriPattern(){};
@@ -243,7 +262,7 @@ public class LinkTest {
 		));
 	}
 	 
-	public Object[] dataCreate() {
+	public static Object[] dataCreate() {
 		return new Object[] {
 			new Object[] {
 				MapInit.create().toMap(),
@@ -268,7 +287,7 @@ public class LinkTest {
 		};
 	}
 	
-	@Test
+	@ParameterizedTest
 	@MethodSource("dataParseParams")
 	public void testParseParams(String key, Object value, String expected) {
 		StringBuilder result = new StringBuilder();
@@ -277,7 +296,7 @@ public class LinkTest {
 		assertEquals(expected, result.toString());
 	}
 	
-	public Object[] dataParseParams() {
+	public static Object[] dataParseParams() {
 		return new Object[] {
 			new Object[] {
 				"key", "value", "key=value"

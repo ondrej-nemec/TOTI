@@ -10,11 +10,12 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.params.ParameterizedTest;
 
 import ji.common.structures.ObjectBuilder;
-import junitparams.JUnitParamsRunner;
+
 import org.junit.jupiter.params.provider.MethodSource;
+
 import test.ControllerA;
 import test.ControllerB;
 import test.ControllerC;
@@ -23,7 +24,6 @@ import toti.answers.router.UriPattern;
 import toti.extensions.Extension;
 import toti.http.enums.HttpMethod;
 
-@RunWith(JUnitParamsRunner.class)
 public class RegisterTest {
 	
 	// TODO test with two controllers
@@ -166,37 +166,47 @@ public class RegisterTest {
 		);
 	}
 	
-	@Test(expected = RegisterException.class)
+	@Test
 	public void testAddControllerWithMoreSameNameMethodsAndSameparametersCount() {
 		Param root = new Param(null);
 		Register register = new Register(root, new ObjectBuilder<>(new TestModule()), getPattern(), new HashMap<>());
-		register.addController(ControllerC.class, ()->new ControllerC());
+		RegisterException expected = assertThrows(RegisterException.class, ()->{
+			register.addController(ControllerC.class, ()->new ControllerC());
+		});
+		assertNotNull(expected);
 	}
 	
-	@Test(expected = RegisterException.class)
+	@Test
 	public void testAddControllerThanAlreadyExists() {
 		UriPattern pattern = mock(UriPattern.class);
 		when(pattern.createUri(any(), any(), any(), any(), any(), any())).thenReturn("/a/b/c");
 		Param root = new Param(null);
 		Register register = new Register(root, new ObjectBuilder<>(new TestModule()), pattern, new HashMap<>());
 		register.addController(ControllerA.class, ()->new ControllerA());
-		register.addController(ControllerA.class, ()->new ControllerA());
-	}
-	
-	@Test(expected = RuntimeException.class)
-	public void testGetParamThrowsIfPartContainsSlash() {
-		Register register = new Register(mock(Param.class), new ObjectBuilder<>(), mock(UriPattern.class), new HashMap<>());
-		register.getParam("a/x", new Param(""));
+		
+		RegisterException expected = assertThrows(RegisterException.class, ()->{
+			register.addController(ControllerA.class, ()->new ControllerA());
+		});
+		assertNotNull(expected);
 	}
 	
 	@Test
+	public void testGetParamThrowsIfPartContainsSlash() {
+		Register register = new Register(mock(Param.class), new ObjectBuilder<>(), mock(UriPattern.class), new HashMap<>());
+		RuntimeException expected = assertThrows(RuntimeException.class, ()->{
+			register.getParam("a/x", new Param(""));
+		});
+		assertNotNull(expected);
+	}
+	
+	@ParameterizedTest
 	@MethodSource("dataGetParam")
 	public void testGetParam(Param parent, String part, Param expected) {
 		Register register = new Register(mock(Param.class), new ObjectBuilder<>(), getPattern(), new HashMap<>());
 		assertEquals(expected, register.getParam(part, parent));
 	}
 	
-	public Object[] dataGetParam() {
+	public static Object[] dataGetParam() {
 		return new Object[] {
 			new Object[] {
 				new Param("parent"), null, new Param("parent")
@@ -210,24 +220,33 @@ public class RegisterTest {
 		};
 	}
 
-	@Test(expected = RegisterException.class)
+	@Test
 	public void testAddControllerThrowsIfModuleIsNull() {
 		Register register = new Register(mock(Param.class), new ObjectBuilder<>(), mock(UriPattern.class), new HashMap<>());
-		register.addController(ControllerA.class, ()->new ControllerA());
+		RegisterException expected = assertThrows(RegisterException.class, ()->{
+			register.addController(ControllerA.class, ()->new ControllerA());
+		});
+		assertNotNull(expected);
 	}
 	
-	@Test(expected = RegisterException.class)
+	@Test
 	public void testAdControllerThrowsIfClassIsNotController() {
 		Register register = new Register(mock(Param.class), new ObjectBuilder<>(new TestModule()), mock(UriPattern.class), new HashMap<>());
-		register.addController(SomeClass.class, ()->new SomeClass());
+		RegisterException expected = assertThrows(RegisterException.class, ()->{
+			register.addController(SomeClass.class, ()->new SomeClass());
+		});
+		assertNotNull(expected);
 	}
 
-	@Test(expected = RegisterException.class)
+	@Test
 	@Disabled
 	public void testAddControllerThrowsIfClassIsAnnonymous() {
 		@SuppressWarnings("unused")
 		Register register = new Register(mock(Param.class), new ObjectBuilder<>(), getPattern(), new HashMap<>());
-		// register.addController(RegisteredController.class, ()->new RegisteredController());
+		RegisterException expected = assertThrows(RegisterException.class, ()->{
+			// register.addController(RegisteredController.class, ()->new RegisteredController());
+		});
+		assertNotNull(expected);
 	}
 	
 	class SomeClass {

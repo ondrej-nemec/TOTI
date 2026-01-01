@@ -6,17 +6,15 @@ import static org.mockito.Mockito.mock;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.params.ParameterizedTest;
 
-import junitparams.JUnitParamsRunner;
 import org.junit.jupiter.params.provider.MethodSource;
+
 import toti.answers.Answer;
 
-@RunWith(JUnitParamsRunner.class)
 public class HostsTest {
 
-	@Test
+	@ParameterizedTest
 	@MethodSource("dataOneAnswer")
 	public void testOneAnswer(String hostName, String path) {
 		Answer answer = mock(Answer.class);
@@ -29,7 +27,7 @@ public class HostsTest {
 		assertEquals(expected, hosts.get(hostName, path));
 	}
 	
-	public Object[] dataOneAnswer() {
+	public static Object[] dataOneAnswer() {
 		return new Object[] {
 			new Object[] { null, null },
 			new Object[] { new LinkedList<>(), new LinkedList<>() },
@@ -40,7 +38,7 @@ public class HostsTest {
 		};
 	}
 
-	@Test
+	@ParameterizedTest
 	@MethodSource("dataOnlyHostnames")
 	public void testOnlyHostnames(String hostName, String path, Integer result) {
 		Answer answer1 = mock(Answer.class);
@@ -53,8 +51,8 @@ public class HostsTest {
 		Answer answer = null;
 		if (result != null) {
 			switch (result) {
-				case 1: answer = answer1; break;
-				case 2: answer = answer2; break;
+				case 1 -> answer = answer1;
+				case 2 -> answer = answer2;
 			}
 		}
 		
@@ -77,7 +75,7 @@ public class HostsTest {
 		};
 	}
 
-	@Test
+	@ParameterizedTest
 	@MethodSource("dataOnlyPaths")
 	public void testOnlyPaths(String hostName, String path, Integer result, boolean usePath) {
 		Answer answer1 = mock(Answer.class);
@@ -90,8 +88,8 @@ public class HostsTest {
 		Answer answer = null;
 		if (result != null) {
 			switch (result) {
-				case 1: answer = answer1; break;
-				case 2: answer = answer2; break;
+				case 1 -> answer = answer1;
+				case 2 -> answer = answer2;
 			}
 		}
 		
@@ -99,7 +97,7 @@ public class HostsTest {
 		assertEquals(expected, hosts.get(hostName, path));
 	}
 	
-	public Object[] dataOnlyPaths() {
+	public static Object[] dataOnlyPaths() {
 		return new Object[] {
 			new Object[] { null, null, null, false },
 			new Object[] { "", "", null, false },
@@ -113,7 +111,7 @@ public class HostsTest {
 		};
 	}
 
-	@Test
+	@ParameterizedTest
 	@MethodSource("dataCombined")
 	public void testCombined(String hostName, String path, Integer result, boolean usePath) {
 		Answer answer1 = mock(Answer.class);
@@ -128,9 +126,9 @@ public class HostsTest {
 		Answer answer = null;
 		if (result != null) {
 			switch (result) {
-				case 1: answer = answer1; break;
-				case 2: answer = answer2; break;
-				case 3: answer = answer3; break;
+				case 1 -> answer = answer1;
+				case 2 -> answer = answer2;
+				case 3 -> answer = answer3;
 			}
 		}
 
@@ -138,7 +136,7 @@ public class HostsTest {
 		assertEquals(expected, hosts.get(hostName, path));
 	}
 	
-	public Object[] dataCombined() {
+	public static Object[] dataCombined() {
 		return new Object[] {
 			new Object[] { null, null, null, false },
 			new Object[] { "not-existing", null, null, false },

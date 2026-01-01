@@ -1,7 +1,5 @@
 package toti.answers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -9,18 +7,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-
-import junitparams.JUnitParamsRunner;
+import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(JUnitParamsRunner.class)
 public class HeadersTest {
 	
 	// TODO isAsyncReques?
 	
-	@Test
+	@ParameterizedTest
 	@MethodSource("dataGetHeader")
 	public void testGetHeader(String name, String expected) {
 		Map<String, List<Object>> map = new HashMap<>();
@@ -29,7 +25,7 @@ public class HeadersTest {
 		assertEquals(expected, headers.getHeader(name));
 	}
 	
-	public Object[] dataGetHeader() {
+	public static Object[] dataGetHeader() {
 		return new Object[] {
 			new Object[] { "Some-Header", "value" },
 			new Object[] { "some-header", "value" },
@@ -65,7 +61,7 @@ public class HeadersTest {
 		assertEquals(expected, headers.getHeaders());
 	}
 	
-	@Test
+	@ParameterizedTest
 	@MethodSource("dataGetCookieValue")
 	public void testGetCookieValue(String cookie, String cookieName, Optional<String> expected) {
 		Map<String, List<Object>> map = new HashMap<>();
@@ -76,7 +72,7 @@ public class HeadersTest {
 		assertEquals(expected, headers.getCookieValue(cookieName));
 	}
 	
-	public Object[] dataGetCookieValue() {
+	public static Object[] dataGetCookieValue() {
 		return new Object[] {
 			new Object[] {
 				null, "auth", Optional.empty()
