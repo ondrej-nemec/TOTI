@@ -6,7 +6,7 @@ import java.util.function.BiFunction;
 
 import org.apache.logging.log4j.Logger;
 
-import ji.common.functions.Env;
+import toti.env.Env;
 import ji.common.structures.MapDictionary;
 import ji.database.Database;
 import ji.database.DatabaseConfig;
@@ -40,11 +40,11 @@ public class DatabaseExtension implements Extension {
 
 	@Override
 	public void init(Env appEnv, Register register) {
-		Env env = appEnv.getModule("database");
+		Env env = appEnv.getSection("database");
 		if (createDatabase != null) {
 			this.database = createDatabase.apply(migrations, env);
 		} else if (env != null && env.getString("type") != null) {
-			this.database = new Database(new DatabaseConfig(
+			DatabaseConfig config = new DatabaseConfig(
 				env.getString("type"),
 				env.getString("url"),
 				env.getString("schema-name"),
@@ -52,7 +52,13 @@ public class DatabaseExtension implements Extension {
 				env.getString("password"),
 				migrations,
 				env.getInteger("pool-size")
-			), logger);
+			);
+			if (env.hasSection("options")) {
+				env.getSection("options").iterate((name, value)->{
+					config.setProperty(name, value.getValue());
+				});
+			}
+			this.database = new Database(config, logger);
 		}
 		if (this.database == null) {
 			logger.info("No database specified");
