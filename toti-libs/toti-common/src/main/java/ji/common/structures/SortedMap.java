@@ -123,7 +123,7 @@ public class SortedMap<K, V> implements Dictionary<K>, Iterable<Tuple3<K, V, Int
 	}
 
 	public K getFirstKey() {
-		if (this.order.size() > 0) {
+		if (!order.isEmpty()) {
 			return this.order.get(0);
 		}
 		return null;
@@ -138,7 +138,7 @@ public class SortedMap<K, V> implements Dictionary<K>, Iterable<Tuple3<K, V, Int
 	}
 
 	public K getLastKey() {
-		if (order.size() > 0) {
+		if (!order.isEmpty()) {
 			return order.get(order.size() - 1);
 		}
 		return null;
@@ -260,6 +260,10 @@ public class SortedMap<K, V> implements Dictionary<K>, Iterable<Tuple3<K, V, Int
 			list.add(v);
 		});
 		return list;
+	}
+	
+	public List<K> getKeys() {
+		return order;
 	}
 
 	@Override
