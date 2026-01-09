@@ -15,10 +15,10 @@ import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.answers.response.FinalResponse;
 import toti.answers.response.Response;
+import toti.answers.response.ResponseContainer;
 import toti.answers.response.TextResponse;
 import toti.application.register.MappedAction;
 import toti.application.register.Register;
-import toti.answers.response.ResponseContainer;
 import toti.extensions.TranslatorExtension;
 import toti.http.enums.StatusCode;
 import toti.logging.ExceptionHashCode;
@@ -227,11 +227,7 @@ public class ExceptionAnswer {
 			*/
 			text.write((bw)->{ bw.write(response); }, fileName.getName(), charset, false);
 			File file = new File(fileName.getName());
-			/*
-			IS needed?
-			
 			file.mkdirs();
-			*/
 			file.setExecutable(true, false);
 			file.setReadable(true, false);
 			file.setWritable(true, false);
