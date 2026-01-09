@@ -23,6 +23,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import ji.common.functions.Mapper;
+import ji.common.structures.dictionary.Scalar;
 
 /**
  * Class is wrapper for any object. The class is able to convert some common types to another
@@ -31,11 +32,11 @@ import ji.common.functions.Mapper;
  * @author Ondřej Němec
  *
  */
-public class DictionaryValue {
+public class DictionaryValue implements Scalar {
 
 	private final Object value;
 	
-	private Function<String, Object> stringMapping = (v)->{
+	private final Function<String, Object> stringMapping = (v)->{
 		try {
 			Object reader = Class.forName("ji.json.JsonReader").getDeclaredConstructor().newInstance();
 			return reader.getClass().getMethod("read", String.class).invoke(reader, v);
@@ -45,7 +46,6 @@ public class DictionaryValue {
 	};
 	private Function<String, Object> fromStringToListCallback = stringMapping;
 	private Function<String, Object> fromStringToMapCallback = stringMapping;
-	private ZoneId zoneId = ZoneId.systemDefault();
 	private String onlyKey = null;
 	
 	/**
@@ -56,6 +56,11 @@ public class DictionaryValue {
 	public DictionaryValue(Object value) {
 		this.value = value;
 	}
+
+    @Override
+    public Object _getValue() {
+		return value;
+    }
 	
 	/**
 	 * Override default method for parsing {@link List} from string
@@ -91,19 +96,7 @@ public class DictionaryValue {
 		this.onlyKey = onlyKey;
 		return this;
 	}
-	
-	/**
-	 * Set ZoneId for parsing @link LocalDate}, {@link LocalTime}, {@link LocalDateTime}
-	 *  and {@link ZonedDateTime}. Default is <code>ZoneId.systemDefault()</code>
-	 * 
-	 * @param zoneId {@link ZoneId}
-	 * @return {@link DictionaryValue} self
-	 */
-	public DictionaryValue withZoneId(ZoneId zoneId) {
-		this.zoneId = zoneId;
-		return this;
-	}
-	
+		
 	/******/
 
 	/**
@@ -206,350 +199,6 @@ public class DictionaryValue {
 			return getDictionaryMap().parse(clazz, onlyKey);
 		} else {
 			return value;
-		}
-	}
-	
-	/**************/
-	
-	/**
-	 * Get value as {@link Boolean}.
-	 * <p>
-	 * {@link String} is true if is equals (CI): true/on/1
-	 * <p>
-	 * {@link Number} is true if value is great that 0
-	 * 
-	 * @return {@link Boolean} or null if value is null or value is empty string or value is 'null'(CI string)
-	 * @throws ClassCastException if all convert and parse mechanism fails
-	 */
-	public Boolean getBoolean() {
-		return parseValue(
-			Boolean.class,
-			v->v!=null && (v.equalsIgnoreCase("true") || v.equalsIgnoreCase("on") || v.equalsIgnoreCase("1")),
-			v->{
-				if (v instanceof Number) {
-					return Number.class.cast(v).byteValue() > 0;
-				}
-				return v;
-			}
-		);
-	}
-
-	/**
-	 * Get value as {@link Byte}.
-	 * 
-	 * @return {@link Byte} or null if value is null or value is empty string or value is 'null'(CI string)
-	 * @throws ClassCastException if all convert and parse mechanism fails
-	 */
-	public Byte getByte() {
-		Number num = getNumber();
-		if (num == null) {
-			return null;
-		}
-		return num.byteValue();
-		/*return parseValue(
-			Byte.class, 
-			a->parsePrimitive(a, ()->Byte.parseByte(a)),
-			v->Number.class.cast(v).byteValue()
-		);*/
-	}
-
-	/**
-	 * Get value as {@link Short}.
-	 * 
-	 * @return {@link Short} or null if value is null or value is empty string or value is 'null'(CI string)
-	 * @throws ClassCastException if all convert and parse mechanism fails
-	 */
-	public Short getShort() {
-		Number num = getNumber();
-		if (num == null) {
-			return null;
-		}
-		return num.shortValue();
-		/*return parseValue(
-			Short.class, 
-			a->parsePrimitive(a, ()->Short.parseShort(a)),
-			v->Number.class.cast(v).shortValue()
-		);*/
-	}
-
-	/**
-	 * Get value as {@link Integer}.
-	 * 
-	 * @return {@link Integer} or null if value is null or value is empty string or value is 'null'(CI string)
-	 * @throws ClassCastException if all convert and parse mechanism fails
-	 */
-	public Integer getInteger() {
-		Number num = getNumber();
-		if (num == null) {
-			return null;
-		}
-		return num.intValue();
-		/*return parseValue(
-			Integer.class, 
-			a->parsePrimitive(a, ()->Integer.parseInt(a)), 
-			v->Number.class.cast(v).intValue()
-		);*/
-	}
-
-	/**
-	 * Get value as {@link Long}.
-	 * 
-	 * @return {@link Long} or null if value is null or value is empty string or value is 'null'(CI string)
-	 * @throws ClassCastException if all convert and parse mechanism fails
-	 */
-	public Long getLong() {
-		Number num = getNumber();
-		if (num == null) {
-			return null;
-		}
-		return num.longValue();
-		/*return parseValue(
-			Long.class,
-			a->parsePrimitive(a, ()->Long.parseLong(a)), 
-			v->Number.class.cast(v).longValue()
-		);*/
-	}
-
-	/**
-	 * Get value as {@link Float}.
-	 * 
-	 * @return {@link Float} or null if value is null or value is empty string or value is 'null'(CI string)
-	 * @throws ClassCastException if all convert and parse mechanism fails
-	 */
-	public Float getFloat() {
-		Number num = getNumber();
-		if (num == null) {
-			return null;
-		}
-		return num.floatValue();
-		/*return parseValue(
-			Float.class, 
-			a->parsePrimitive(a, ()->Float.parseFloat(a)), 
-			v->Number.class.cast(v).floatValue()
-		);*/
-	}
-
-	/**
-	 * Get value as {@link Double}.
-	 * 
-	 * @return {@link Double} or null if value is null or value is empty string or value is 'null'(CI string)
-	 * @throws ClassCastException if all convert and parse mechanism fails
-	 */
-	public Double getDouble() {
-		Number num = getNumber();
-		if (num == null) {
-			return null;
-		}
-		return num.doubleValue();
-		/*return parseValue(
-			Double.class,
-			a->parsePrimitive(a, ()->Double.parseDouble(a)),
-			v->Number.class.cast(v).doubleValue()
-		);*/
-	}
-	/**
-	 * Get value as {@link Number}.
-	 * 
-	 * @return {@link Number} or null if value is null or value is empty string or value is 'null'(CI string)
-	 * @throws ClassCastException if all convert and parse mechanism fails
-	 */
-	public Number getNumber() {
-        return parseValue(
-             Number.class,
-             a->{
-                 if (a.contains(".")) {
-                      return parsePrimitive(a, ()->Double.parseDouble(a));
-                 }
-                 return parsePrimitive(a, ()->Long.parseLong(a));
-             },
-             v->Number.class.cast(v)
-        );
-    }
-
-	/**
-	 * Get value as {@link Character}.
-	 * 
-	 * @return {@link Character} or null if value is null or value is empty string or value is 'null'(CI string)
-	 * @throws ClassCastException if all convert and parse mechanism fails
-	 */
-	public Character getCharacter() {
-		return parseValue(
-			Character.class, 
-			a->parsePrimitive(a, ()->a.charAt(0)),
-			a->a.toString().charAt(0)
-		);
-	}
-
-	/**
-	 * Get value as {@link String}.
-	 * 
-	 * @return {@link String} or null if value is null
-	 * @throws ClassCastException if all convert and parse mechanism fails
-	 */
-	public String getString() {
-		return parseValue(String.class, a->a, a->a.toString());
-	}
-
-	/**
-	 * Parse value to given {@link Enum}
-	 * 
-	 * @return {@link Enum} or null if value is null or value is empty string or value is 'null'(CI string)
-	 * @throws ClassCastException if all convert and parse mechanism fails
-     * @throws IllegalArgumentException if the specified enum type has
-     *         no constant with the specified name, or the specified
-     *         class object does not represent an enum type
-	 */
-	public <E extends Enum<E>> E getEnum(Class<E> enumm) {
-		return parseValue(enumm,a->parsePrimitive(a, ()->E.valueOf(enumm, a)));
-	}
-	
-	private <T> T parsePrimitive(String s, Supplier<T> supplier) {
-		if (s == null) {
-			return null;
-		}
-		switch (s.toLowerCase()) {
-			case "":
-			case "nan":
-			case "null":
-			case "undefined":
-				return null;
-			default:
-				return supplier.get();
-		}
-	}
-	
-	/*****************/
-
-	/**
-	 * Get value as {@link LocalTime}.
-	 * 
-	 * @return {@link LocalTime} or null if value is null
-	 * @throws ClassCastException if all convert and parse mechanism fails
-	 */
-	public LocalTime getTime() {
-		return getTimestamp(
-			LocalTime.class, 
-			time->LocalTime.from(time)
-		);
-	}
-
-	/**
-	 * Get value as {@link LocalDate}.
-	 * 
-	 * @return {@link LocalDate} or null if value is null
-	 * @throws ClassCastException if all convert and parse mechanism fails
-	 */
-	public LocalDate getDate() {
-		return getTimestamp(
-			LocalDate.class, 
-			time->LocalDate.from(time)
-		);
-	}
-
-	/**
-	 * Get value as {@link LocalDateTime}.
-	 * 
-	 * @return {@link LocalDateTime} or null if value is null
-	 * @throws ClassCastException if all convert and parse mechanism fails
-	 */
-	public LocalDateTime getDateTime() {
-		return getTimestamp(
-			LocalDateTime.class, 
-			time->LocalDateTime.from(time)
-		);
-	}
-
-	/**
-	 * Get value as {@link ZonedDateTime}.
-	 * 
-	 * @return {@link ZonedDateTime} or null if value is null
-	 * @throws ClassCastException if all convert and parse mechanism fails
-	 */
-	public ZonedDateTime getDateTimeZone() {
-		return getTimestamp(
-			ZonedDateTime.class, 
-			time->ZonedDateTime.from(time)
-		);
-	}
-	
-	private <T> T getTimestamp(Class<T> clazz, Function<TemporalAccessor, T> fromTime) {
-		return parseValue(
-			clazz,
-			(string)->{
-				if (string.isEmpty()) {
-					return null;
-				}
-				return getTimestampFromString(string, clazz);
-			},
-			(object)->{
-				if (Long.class.isInstance(object) || long.class.isInstance(object)) {
-					long number = Long.class.cast(object);
-					if (number > 100000000000L) {
-						return fromTime.apply(Instant.ofEpochMilli(number).atZone(zoneId));
-					}
-					return fromTime.apply(Instant.ofEpochSecond(number).atZone(zoneId));
-				}
-				if (TemporalAccessor.class.isInstance(object)) {
-					return fromTime.apply(createZoneDateTime(object, zoneId));
-				}
-				if (Date.class.isInstance(object)) {
-					return fromTime.apply(Date.class.cast(object).toInstant().atZone(zoneId));
-				}
-				return getTimestampFromString(object.toString(), clazz);
-				// return fromString.apply(object.toString());
-			}
-		);
-	}
-
-	private ZonedDateTime createZoneDateTime(Object object, ZoneId zoneId) {
-		if (LocalTime.class.isInstance(object)) {
-			return ZonedDateTime.of(LocalDate.of(1970, 1, 1), LocalTime.class.cast(object), zoneId);
-		}
-		if (LocalDate.class.isInstance(object)) {
-			return ZonedDateTime.of(LocalDate.class.cast(object), LocalTime.of(0, 0), zoneId);
-		}
-		if (LocalDateTime.class.isInstance(object)) {
-			return ZonedDateTime.of(LocalDateTime.class.cast(object), zoneId);
-		}
-		if (ZonedDateTime.class.isInstance(object)) {
-			return ZonedDateTime.class.cast(object);
-		}
-		return null;
-	}
-	
-	private <T> TemporalAccessor getTimestampFromString(String stringValue, Class<T> expected) {
-		Map<Class<?>, Function<String, TemporalAccessor>> available = new HashMap<>();
-		available.put(LocalTime.class, string->{
-			return LocalTime.parse(string, DateTimeFormatter.ISO_TIME);
-		});
-		available.put(LocalDate.class, string->{
-			return LocalDate.parse(string, DateTimeFormatter.ISO_DATE);
-		});
-		available.put(LocalDateTime.class, (string)->{
-			return LocalDateTime.parse(string, DateTimeFormatter.ISO_DATE_TIME);
-		});
-		available.put(ZonedDateTime.class, (string)->{
-			return ZonedDateTime.parse(string, DateTimeFormatter.ISO_ZONED_DATE_TIME);
-		});
-		RuntimeException result = null;
-		try {
-			return tryTimestamp(available.remove(expected), stringValue);
-		} catch (RuntimeException e) {
-			result = e;
-		}
-		for (Function<String, TemporalAccessor> func : available.values()) {
-			try {
-				return tryTimestamp(func, stringValue);
-			} catch (Exception e) {}
-		}
-		throw result;
-	}
-	
-	private <T> TemporalAccessor tryTimestamp(Function<String, TemporalAccessor> fromString, String string) {
-		try {
-			return fromString.apply(string);
-		} catch (Exception e) {
-			return fromString.apply(string.replaceFirst(" ", "T"));
 		}
 	}
 

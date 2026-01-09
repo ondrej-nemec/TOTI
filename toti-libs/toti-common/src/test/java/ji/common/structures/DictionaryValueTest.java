@@ -1,18 +1,17 @@
 package ji.common.structures;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.List;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -66,7 +65,7 @@ public class DictionaryValueTest {
 	@MethodSource("dataTimestamps")
 	public void testTimestamps(String message, Object value, Class<?> clazz, Object expected) {
 		DictionaryValue dictionaryValue = new DictionaryValue(value);
-		dictionaryValue.withZoneId(ZoneId.of("+01:00"));
+	//	dictionaryValue.withZoneId(ZoneId.of("+01:00"));
 		assertEquals(expected, dictionaryValue.getValue(clazz), message);
 	}
 	
