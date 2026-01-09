@@ -2,10 +2,10 @@ package toti.application;
 
 import java.util.List;
 
-import ji.common.functions.Env;
 import toti.answers.router.Link;
 import toti.answers.router.Router;
 import toti.application.register.Register;
+import toti.env.Env;
 
 public interface Module {
 	

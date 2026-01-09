@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.Logger;
 
-import ji.common.functions.Env;
+import toti.env.Env;
 import ji.database.Database;
 import ji.translator.Translator;
 import toti.answers.router.Link;
@@ -25,8 +25,7 @@ public class ApplicationModule implements Module {
 	- ruzne response
 	*/
 	@Override
-	public List<Task> initInstances(Env env, Translator translator, Register register, Link link, Database database,
-			Logger logger) throws Exception {
+	public List<Task> initInstances(Env env, Register register, Link link) throws Exception {
 		return Arrays.asList();
 	}
 
@@ -35,9 +34,9 @@ public class ApplicationModule implements Module {
 		return "application";
 	}
 
-	@Override
+	/*@Override
 	public String getTemplatesPath() {
 		return "templates/application";
-	}
+	}*/
 	
 }

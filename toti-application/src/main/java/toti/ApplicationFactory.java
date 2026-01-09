@@ -5,11 +5,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.apache.logging.log4j.Logger;
 
-import ji.common.functions.Env;
+import toti.env.Env;
 import ji.common.structures.ObjectBuilder;
+import ji.common.structures.dictionary.Scalar;
 import toti.answers.Answer;
 import toti.answers.ControllerAnswer;
 import toti.answers.ExceptionAnswer;
@@ -78,7 +80,7 @@ public class ApplicationFactory {
 	}
 
 	public Application create(List<Module> modules, Logger logger) throws Exception {
-	//	Env env = appEnv = this.env.getModule("applications").getModule(hostname);
+	//	Env env = appEnv = this.env.getSection("applications").getModule(hostname);
 		// Profiler profiler = initProfiler(env, logger);
 		
 		
@@ -153,15 +155,15 @@ public class ApplicationFactory {
 	/*************************/
 
 	private String getResourcesPath(Env env) {
-		return getProperty(resourcesPath, "resource-path", "www", String.class, env);
+		return getProperty(resourcesPath, "resource-path", "www", v->v.getString(), env);
 	}
 	
 	private Boolean getDirResponseAllowed(Env env) {
-		return getProperty(dirResponseAllowed, "dir-allowed", false, Boolean.class, env);
+		return getProperty(dirResponseAllowed, "dir-allowed", false, v->v.getBoolean(), env);
 	}
 	
 	private String getDirDefaultFile(Env env) {
-		return getProperty(dirDefaultFile, "dir-default-file", "index.html", String.class, env);
+		return getProperty(dirDefaultFile, "dir-default-file", "index.html", v->v.getString(), env);
 	}
 	
 	private List<String> getDevelopIps(Env env) {
@@ -170,13 +172,13 @@ public class ApplicationFactory {
 		}
 		String key = "ip";
 		if (env != null && env.getValue(key) != null) {
-			return env.getList(key);
+			return env.getList(key, v->v.getString());
 		}
 		return Arrays.asList("127.0.0.1", "0:0:0:0:0:0:0:1");
 	}
 	
 	private String getLogsPath(Env env) {
-		return getProperty(logsPath, "logs-path", "logs" + "/" + appIdentifier,  String.class, env);
+		return getProperty(logsPath, "logs-path", "logs" + "/" + appIdentifier,  v->v.getString(), env);
 	}
 	
 	private Map<String, List<Object>>  getResponseHeaders(Env env) {
@@ -210,15 +212,15 @@ public class ApplicationFactory {
 	}
 	
 	private boolean getAutoStart(Env env) {
-		return getProperty(autoStart, "autostart", true, Boolean.class, env);
+		return getProperty(autoStart, "autostart", true, v->v.getBoolean(), env);
 	}
 	
-	private <T> T getProperty(T value,String key, T defaultValue, Class<T> clazz, Env env) {
+	private <T> T getProperty(T value,String key, T defaultValue, Function<Scalar, T> get, Env env) {
 		if (value != null) {
 			return value;
 		}
 		if (env != null && env.getValue(key) != null) {
-			return env.getDictionaryValue(key).getValue(clazz);
+			return get.apply(env._getValue(key));
 		}
 		return defaultValue;
 	}

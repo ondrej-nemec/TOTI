@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 
-import ji.common.functions.Env;
+import toti.env.Env;
 import ji.common.structures.MapDictionary;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
@@ -45,9 +45,9 @@ public class TemplateExtension implements toti.extensions.TemplateExtension, Ext
 	
 	public TemplateExtension(Env env, Logger logger) {
 		this(
-			env.getModule("templating").getString("temp"),
-			env.getModule("templating").getBoolean("minimalize-templates"),
-			env.getModule("templating").getBoolean("delete-temp-java"),
+			env.getSection("templating").getString("temp"),
+			env.getSection("templating").getBoolean("minimalize-templates"),
+			env.getSection("templating").getBoolean("delete-temp-java"),
 			logger
 		);
 	}

@@ -13,7 +13,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-import static ji.testing.TestCase.assertEquals;
+import static toti.common.tests.TestCase.assertEquals;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.extensions.Translator;

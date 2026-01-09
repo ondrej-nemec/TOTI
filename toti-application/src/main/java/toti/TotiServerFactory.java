@@ -1,7 +1,7 @@
 package toti;
 
 import java.util.Optional;
-import java.util.Properties;
+import java.util.function.Function;
 
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
@@ -17,10 +17,8 @@ import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
-import ji.common.functions.Env;
-import ji.env.JsonEnv;
-import ji.env.PropertiesEnv;
-import ji.env.XmlEnv;
+import ji.common.structures.dictionary.Scalar;
+import toti.env.Env;
 import toti.http.SslCredentials;
 import toti.http.parsers.StreamReader;
 
@@ -37,27 +35,11 @@ public class TotiServerFactory {
 	private final Env env;
 	
 	public TotiServerFactory() {
-		this.env = new PropertiesEnv(new Properties());
+		this.env = Env.empty();
 	}
 	
 	public TotiServerFactory(String configFile) throws Exception {
-		this(selectEnv(configFile));
-	}
-	
-	private static Env selectEnv(String file) throws Exception {
-		if (file == null) {
-			return new PropertiesEnv(new Properties());
-		}
-		if (file.endsWith(".properties")) {
-			return PropertiesEnv.create(file);
-		}
-		if (file.endsWith(".xml")) {
-			return XmlEnv.create(file);
-		}
-		if (file.endsWith(".json")) {
-			return JsonEnv.create(file);
-		}
-		return new PropertiesEnv(new Properties());
+		this(Env.load(configFile));
 	}
 
 	public TotiServerFactory(Env env) {
@@ -69,7 +51,7 @@ public class TotiServerFactory {
 	}
 	
 	public TotiServer create(Logger logger) throws Exception {
-		Env settings = env.getModule("http");
+		Env settings = env.getSection("http");
 		String charset = getCharset(settings);
 
 		Server server = new Server(new QueuedThreadPool(getThreadPool(settings)));
@@ -159,27 +141,27 @@ public class TotiServerFactory {
 	/************************/
 	
 	private int getHttpsPort(Env env) {
-		return getProperty(httpsPort, "secured-port", 443, Integer.class, env);
+		return getProperty(httpsPort, "secured-port", 443, v->v.getInteger(), env);
 	}
 	
 	private int getHttpPort(Env env) {
-		return getProperty(httpPort, "port", 80, Integer.class, env);
+		return getProperty(httpPort, "port", 80, v->v.getInteger(), env);
 	}
 	
 	private String getCharset(Env env) {
-		return getProperty(charset, "charset", "UTF-8", String.class, env);
+		return getProperty(charset, "charset", "UTF-8", v->v.getString(), env);
 	}
 
 	private int getThreadPool(Env env) {
-		return getProperty(threadPool, "thread-pool", 5, Integer.class, env);
+		return getProperty(threadPool, "thread-pool", 5, v->v.getInteger(), env);
 	}
 	
 	private long getReadTimeout(Env env) {
-		return getProperty(readTimeout, "read-timeout", 60000L, Long.class, env);
+		return getProperty(readTimeout, "read-timeout", 60000L, v->v.getLong(), env);
 	}
 	
 	private Integer getMaxRequestSize(Env env) {
-		return getProperty(maxRequestSize, "max-request-size", null, Integer.class, env);
+		return getProperty(maxRequestSize, "max-request-size", null, v->v.getInteger(), env);
 	}
 	
 	private Optional<SslCredentials> getCerts(Env env) {
@@ -211,12 +193,12 @@ public class TotiServerFactory {
 		return Optional.empty();
 	}
 	
-	private <T> T getProperty(T value, String key, T defaultValue, Class<T> clazz, Env env) {
+	private <T> T getProperty(T value, String key, T defaultValue, Function<Scalar, T> get, Env env) {
 		if (value != null) {
 			return value;
 		}
 		if (env != null && env.getValue(key) != null) {
-			return env.getDictionaryValue(key).getValue(clazz);
+			return get.apply(env._getValue(key));
 		}
 		return defaultValue;
 	}

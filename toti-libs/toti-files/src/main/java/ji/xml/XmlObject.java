@@ -75,6 +75,10 @@ public class XmlObject {
 	public List<XmlObject> getReferences() {
 		return references;
 	}
+
+	public Map<String, List<XmlObject>> getReferencesSearch() {
+		return referencesSearch;
+	}
 	
 	public XmlObject addValue(String value) {
 		this.value.append(value);

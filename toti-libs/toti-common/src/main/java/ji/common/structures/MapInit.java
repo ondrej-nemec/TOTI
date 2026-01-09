@@ -20,7 +20,11 @@ public class MapInit<K, V> {
 	 * @return {@link MapInit} new instance
 	 */
 	public static MapInit<String, Object> create() {
-		return new MapInit<String, Object>();
+		return new MapInit<>();
+	}
+
+	public static <K, V> MapInit<K, V> create(Class<K> k, Class<V> v) {
+		return new MapInit<>();
 	}
 	
 	private final Map<K, V> map;

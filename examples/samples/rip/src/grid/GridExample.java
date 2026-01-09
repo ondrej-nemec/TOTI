@@ -9,7 +9,7 @@ import java.util.Random;
 
 import org.apache.logging.log4j.Logger;
 
-import ji.common.functions.Env;
+import toti.env.Env;
 import ji.common.structures.MapInit;
 import ji.database.Database;
 import ji.socketCommunication.http.HttpMethod;

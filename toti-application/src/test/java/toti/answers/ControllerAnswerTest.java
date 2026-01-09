@@ -13,7 +13,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static ji.testing.TestCase.*;
+import static toti.common.tests.TestCase.*;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -29,7 +29,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 
 import ji.common.structures.MapDictionary;
 import ji.common.structures.ThrowingFunction;
-import ji.testing.TestCase;
 
 import org.junit.jupiter.params.provider.MethodSource;
 

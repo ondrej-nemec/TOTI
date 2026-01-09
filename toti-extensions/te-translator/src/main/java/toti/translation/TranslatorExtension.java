@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.apache.logging.log4j.Logger;
 
-import ji.common.functions.Env;
 import ji.common.structures.MapDictionary;
 import ji.translator.LanguageSettings;
 import ji.translator.Locale;
@@ -17,6 +16,7 @@ import ji.translator.Translator;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.application.register.Register;
+import toti.env.Env;
 import toti.extensions.Extension;
 import toti.http.structures.RequestParameters;
 
@@ -33,7 +33,7 @@ public class TranslatorExtension implements toti.extensions.TranslatorExtension,
 	private Translator translator;
 
 	public TranslatorExtension(Env env, Logger logger) {
-		this(parseLangSettings(env.getModule("lang")), logger);
+		this(parseLangSettings(env.getSection("lang")), logger);
 	}
 	
 	private static LanguageSettings parseLangSettings(Env env) {
@@ -41,7 +41,7 @@ public class TranslatorExtension implements toti.extensions.TranslatorExtension,
 			List<Locale> locales = new LinkedList<>();
 			for (String l : env.getString("locales").split(",")) {
 				String locale = l.trim();
-				Env langConf = env.getModule("locale").getModule(locale);
+				Env langConf = env.getSection("locale").getSection(locale);
 				Boolean ltr = langConf.getBoolean("ltr");
 				String substitutions = langConf.getString("substitutions");
 				locales.add(new Locale(

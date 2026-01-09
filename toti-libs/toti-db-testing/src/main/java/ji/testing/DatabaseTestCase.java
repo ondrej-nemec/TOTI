@@ -8,10 +8,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 
-import ji.common.functions.Env;
 import ji.database.Database;
 import ji.database.DatabaseConfig;
 import ji.testing.entities.Table;
+import toti.env.Env;
 
 public abstract class DatabaseTestCase {
 	
@@ -38,7 +38,7 @@ public abstract class DatabaseTestCase {
 				env.getString("database.schema-name"),
 				env.getString("database.login"),
 				env.getString("database.password"),
-				env.getList("database.pathToMigrations"),
+				env.getList("database.pathToMigrations", v->v.getString()),
 				env.getInteger("database.pool-size")
 		), logger);
 	}

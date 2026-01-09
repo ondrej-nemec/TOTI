@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 import org.apache.logging.log4j.Logger;
 
 import ji.common.functions.Console;
-import ji.common.functions.Env;
+import toti.env.Env;
 import ji.database.Database;
 import ji.database.DatabaseConfig;
 import ji.translator.LanguageSettings;

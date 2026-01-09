@@ -21,16 +21,16 @@ import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.mock;
 
 import ji.database.Database;
-import ji.env.PropertiesEnv;
 import ji.testing.entities.Row;
 import ji.testing.entities.Table;
+import toti.env.Env;
 
 public class DatabaseTestCaseTest extends DatabaseTestCase {
 
 	private final Database realDatabase;
 	
 	public DatabaseTestCaseTest() {
-		super(new PropertiesEnv(getProperties()), mock(Logger.class));
+		super(Env.empty(), mock(Logger.class));
 		this.realDatabase = new Database(config, mock(Logger.class));
 	}
 	

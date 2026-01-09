@@ -3,7 +3,7 @@ package toti.samples.templating;
 import java.util.Arrays;
 import java.util.List;
 
-import ji.common.functions.Env;
+import toti.env.Env;
 import toti.answers.router.Link;
 import toti.application.Module;
 import toti.application.Task;

@@ -1,11 +1,9 @@
 package toti;
 
 import java.util.Arrays;
-import java.util.Properties;
 import java.util.function.Consumer;
 
 import org.apache.logging.log4j.Logger;
-
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.Disabled;
@@ -18,14 +16,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static ji.testing.TestCase.*;
 
-import ji.common.functions.Env;
-import ji.common.structures.MapInit;
-import ji.env.PropertiesEnv;
-import ji.testing.TestCase;
 import toti.application.Module;
 import toti.application.Task;
+import static toti.common.tests.TestCase.assertEquals;
+import static toti.common.tests.TestCase.consumer;
+import toti.env.Env;
 
 public class ApplicationFactoryTest {
 	
@@ -41,12 +37,11 @@ public class ApplicationFactoryTest {
 	@ParameterizedTest
 	@MethodSource("data")
 	@Disabled
-	public void test(Properties properties, Consumer<ApplicationFactory> setFactory) throws Exception {
-		Env env = new PropertiesEnv(properties);
+	public void test(Env env, Consumer<ApplicationFactory> setFactory) throws Exception {
 		Env applicationsEnv = mock(Env.class);
-		when(applicationsEnv.getModule(any())).thenReturn(env);
+		when(applicationsEnv.getSection(any())).thenReturn(env);
 		Env baseEnv = mock(Env.class);
-		when(baseEnv.getModule(any())).thenReturn(applicationsEnv);
+		when(baseEnv.getSection(any())).thenReturn(applicationsEnv);
 		
 		Logger totiLogger = mock(Logger.class);
 		
@@ -68,8 +63,8 @@ public class ApplicationFactoryTest {
 		
 		Application application = factory.create(Arrays.asList(module1, module2), totiLogger);
 		
-		verify(baseEnv, times(1)).getModule("applications");
-		verify(applicationsEnv, times(1)).getModule("hostName");
+		verify(baseEnv, times(1)).getSection("applications");
+		verify(applicationsEnv, times(1)).getSection("hostName");
 		verifyNoMoreInteractions(baseEnv, applicationsEnv);
 		
 		assertNotNull(application.getLink());
@@ -89,8 +84,8 @@ public class ApplicationFactoryTest {
 		return new Object[] {
 			// default values
 			new Object[] {
-				MapInit.create().toProperties(),
-				TestCase.consumer(ApplicationFactory.class, (f)->{})
+				Env.empty(),
+				consumer(ApplicationFactory.class, (f)->{})
 			},
 			/*// TODO
 			new Object[] {

@@ -1,8 +1,15 @@
 package toti;
 
+import java.util.Arrays;
+
+import org.apache.logging.log4j.Logger;
+import org.eclipse.jetty.server.Server;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
@@ -15,21 +22,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
-
-import org.apache.logging.log4j.Logger;
-import org.eclipse.jetty.server.Server;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-
-import ji.common.functions.Env;
 import ji.common.structures.IntegerBuilder;
 import ji.common.structures.MapInit;
-
-import org.junit.jupiter.params.provider.MethodSource;
-
 import toti.answers.Answer;
+import toti.env.Env;
 import toti.http.parsers.StreamReader;
 
 public class TotiServerTest {
@@ -137,7 +133,7 @@ public class TotiServerTest {
 		when(app.isAutoStart()).thenReturn(isAppAutoStart);
 		
 		Env env = mock(Env.class);
-		when(env.getModule(any())).thenReturn(env);
+		when(env.getSection(any())).thenReturn(env);
 		Logger logger = mock(Logger.class);
 		TotiServer server = spy(new TotiServer(
 			mock(Server.class), mock(StreamReader.class), env, "charset", 60000, logger
@@ -176,7 +172,7 @@ public class TotiServerTest {
 		Application app = mock(Application.class);
 		Logger logger = mock(Logger.class);
 		Env env = mock(Env.class);
-		when(env.getModule(any())).thenReturn(env);
+		when(env.getSection(any())).thenReturn(env);
 		/*
 		HttpServer server = spy(new HttpServer(
 			mock(Server.class), env, "charset",

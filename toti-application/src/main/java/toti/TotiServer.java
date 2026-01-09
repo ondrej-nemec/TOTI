@@ -10,8 +10,8 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.websocket.server.ServerWebSocketContainer;
 
-import ji.common.functions.Env;
 import ji.common.structures.ThrowingBiFunction;
+import toti.env.Env;
 import toti.http.parsers.Form;
 import toti.http.parsers.Payload;
 import toti.http.parsers.StreamReader;
@@ -50,9 +50,9 @@ public class TotiServer {
 			String appIdentifier,
 			ThrowingBiFunction<Env, ApplicationFactory, Application, Exception> init,
 			List<String> hostnames, List<String> paths) throws Exception {
-		Env env = this.env.getModule("applications").getModule(appIdentifier);
-		ApplicationFactory applicationFactory = new ApplicationFactory(appIdentifier, env, charset, hostnames, paths);
-		Application application = init.apply(env, applicationFactory);
+		Env applicationEnv = this.env.getSection("applications").getSection(appIdentifier);
+		ApplicationFactory applicationFactory = new ApplicationFactory(appIdentifier, applicationEnv, charset, hostnames, paths);
+		Application application = init.apply(applicationEnv, applicationFactory);
 		applications.put(appIdentifier, application);
 		if (isRunning && application.isAutoStart()) {
 			startApplication(appIdentifier);
