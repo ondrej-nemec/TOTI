@@ -13,6 +13,7 @@ repositories {
 
 dependencies {
 	api project(':toti-libs:toti-common')
+	testImplementation(testFixtures(project(':toti-libs:toti-common')))
 	
 	// https://github.com/gradle/gradle/issues/34512
 	testRuntimeOnly "org.junit.platform:junit-platform-launcher"

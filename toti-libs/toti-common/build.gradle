@@ -2,6 +2,7 @@
 // Apply the java-library plugin to add support for Java Library
 plugins {
     id 'java-library'
+	id 'java-test-fixtures'
 }
 
 compileTestJava.options.encoding = 'UTF-8'
@@ -11,6 +12,8 @@ repositories {
 }
 
 dependencies {
+	testImplementation(testFixtures(project))
+
 	// https://mvnrepository.com/artifact/org.slf4j/slf4j-api
 	//api group: 'org.slf4j', name: 'slf4j-api', version: '2.0.0-alpha7'
 	// https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api
@@ -21,14 +24,14 @@ dependencies {
 	
 
 	// https://github.com/gradle/gradle/issues/34512
-	testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+	testFixturesRuntimeOnly "org.junit.platform:junit-platform-launcher"
 	// https://mvnrepository.com/artifact/org.mockito/mockito-core
-	testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.19.1'
+	testFixturesImplementation group: 'org.mockito', name: 'mockito-core', version: '2.19.1'
 	// https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
-	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.11.2'
-	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.2'
+	testFixturesImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.11.2'
+	testFixturesRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.2'
 	// https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-params
-	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.11.2'
+	testFixturesImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.11.2'
 
 	testImplementation files('tests/filesList.jar')
 }

@@ -12,6 +12,7 @@ repositories {
 dependencies {
 	api project(':toti-libs:toti-common')
 	api project(':toti-libs:toti-http')
+	testImplementation(testFixtures(project(':toti-libs:toti-common')))
 	testImplementation(testFixtures(project(':toti-libs:toti-db-testing')))
 	
 	//implementation group: 'at.favre.lib', name: 'bcrypt', version: '0.9.0'

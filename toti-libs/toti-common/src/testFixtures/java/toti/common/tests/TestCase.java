@@ -1,4 +1,4 @@
-package ji.testing;
+package toti.common.tests;
 
 import java.util.Collection;
 import java.util.Map;
@@ -8,11 +8,12 @@ import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Assertions;
 
-import ji.common.functions.Implode;
 import ji.common.structures.ThrowingFunction;
 
 public interface TestCase {
 	
+	static final String PREFIX = "  ";
+
 	static <T> Consumer<T> consumer(Class<T> clazz, Consumer<T> consumer) {
 		return consumer;
 	}
@@ -39,11 +40,7 @@ public interface TestCase {
 		try {
 			Assertions.assertEquals(expected, actual, message);
 		} catch (Error e) {
-			Assertions.assertEquals(
-				expected == null ? "NULL" : Implode.implode("\n", ":", expected),
-				actual == null ? "NULL" : Implode.implode("\n", ":", actual),
-				message
-			);
+			Assertions.assertEquals(_toString(expected), _toString(actual), message);
 			throw e;
 		}
 	}
@@ -56,11 +53,7 @@ public interface TestCase {
 		try {
 			Assertions.assertEquals(expected, actual, message);
 		} catch (Error e) {
-			Assertions.assertEquals(
-				expected == null ? "NULL" : Implode.implode("\n", expected),
-				actual == null ? "NULL" : Implode.implode("\n", actual),
-				message
-			);
+			Assertions.assertEquals(_toString(expected), _toString(actual), message);
 			throw e;
 		}
 	}
@@ -73,11 +66,7 @@ public interface TestCase {
 		try {
 			Assertions.assertEquals(expected, actual, message);
 		} catch (Error e) {
-			Assertions.assertEquals(
-				expected == null ? "NULL" : expected.toString(),
-				actual == null ? "NULL" : expected.toString(),
-				message
-			);
+			Assertions.assertEquals(_toString(expected), _toString(actual), message);
 			throw e;
 		}
 	}
@@ -92,11 +81,7 @@ public interface TestCase {
 		try {
 			Assertions.assertNotEquals(expected, actual, message);
 		} catch (Error e) {
-			Assertions.assertNotEquals(
-				expected == null ? "NULL" : Implode.implode("\n", ":", expected),
-				actual == null ? "NULL" : Implode.implode("\n", ":", actual),
-				message
-			);
+			Assertions.assertNotEquals(_toString(expected), _toString(actual), message);
 			throw e;
 		}
 	}
@@ -109,11 +94,7 @@ public interface TestCase {
 		try {
 			Assertions.assertNotEquals(expected, actual, message);
 		} catch (Error e) {
-			Assertions.assertNotEquals(
-				expected == null ? "NULL" : Implode.implode("\n", expected),
-				actual == null ? "NULL" : Implode.implode("\n", actual),
-				message
-			);
+			Assertions.assertNotEquals(_toString(expected), _toString(actual), message);
 			throw e;
 		}
 	}
@@ -126,12 +107,77 @@ public interface TestCase {
 		try {
 			Assertions.assertNotEquals(expected, actual, message);
 		} catch (Error e) {
-			Assertions.assertNotEquals(
-				expected == null ? "NULL" : expected.toString(),
-				actual == null ? "NULL" : expected.toString(),
-				message
-			);
+			Assertions.assertNotEquals(_toString(expected), _toString(actual), message);
 			throw e;
 		}
+	}
+
+	/******************************/
+
+	static <K, V> String _toString(Map<K, V> map) {
+		if (map == null) {
+			return "NULL";
+		}
+		return _toString(map, "");
+	}
+
+	static <K, V> String _toString(Map<K, V> map, String prefix) {
+		System.out.println("To string MAP '" + prefix + "'");
+		StringBuilder res = new StringBuilder();
+		res.append(prefix);
+		res.append("{");
+		map.forEach((k, v)->{
+			res.append("\n");
+			res.append(prefix);
+			res.append(PREFIX);
+			res.append(k);
+			res.append(": ");
+			res.append(_toString(v, prefix + PREFIX));
+		});
+		res.append("\n");
+		res.append(prefix);
+		res.append("}");
+		return res.toString();
+	}
+
+	static <T> String _toString(Iterable<T> iterable) {
+		if (iterable == null) {
+			return "NULL";
+		}
+		return _toString(iterable, "");
+	}
+
+	static <T> String _toString(Iterable<T> iterable, String prefix) {
+		StringBuilder res = new StringBuilder();
+		res.append(prefix);
+		res.append("[");
+		for (T t : iterable) {
+			res.append("\n");
+			res.append(prefix);
+			res.append(PREFIX);
+			res.append(_toString(t, prefix + PREFIX));
+		}
+		res.append("\n");
+		res.append(prefix);
+		res.append("]");
+		return res.toString();
+	}
+
+	static <T> String _toString(T t) {
+		return _toString(t, "");
+	}
+
+	@SuppressWarnings("unchecked")
+	static <T> String _toString(T t, String prefix) {
+		if (t == null) {
+			return prefix + "NULL ";
+		}
+		if (t instanceof Map) {
+			return _toString(Map.class.cast(t), prefix);
+		}
+		if (t instanceof Iterable) {
+			return _toString(Iterable.class.cast(t), prefix);
+		}
+		return t.toString();
 	}
 }
