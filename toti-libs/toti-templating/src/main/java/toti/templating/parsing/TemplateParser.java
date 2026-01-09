@@ -15,10 +15,10 @@ import ji.common.structures.MapInit;
 import ji.common.structures.ThrowingConsumer;
 import ji.common.structures.ThrowingSupplier;
 import ji.files.text.Text;
-import toti.templating.TemplateContainer;
 import toti.templating.Parameter;
 import toti.templating.Tag;
 import toti.templating.Template;
+import toti.templating.TemplateContainer;
 import toti.templating.TemplateException;
 import toti.templating.TemplateFactory;
 import toti.templating.TemplateParameters;
@@ -178,7 +178,7 @@ public class TemplateParser {
 			if (actual == '\n') {
 				info.addLine();
 			}
-			ParserWrapper last = parsers.size() > 0 ? parsers.getLast() : null;
+			ParserWrapper last = !parsers.isEmpty() ? parsers.getLast() : null;
 			if (last != null) {
 				if (actual == '"' && previous != '\\' && !last.isSingleQuoted()) {
 					last.setDoubleQuoted();
@@ -253,7 +253,7 @@ public class TemplateParser {
 		if (last.accept(previous, actual)) {
 			parsers.removeLast();
 			last.finishTag(htmlTags);
-			if (parsers.size() > 0) {
+			if (!parsers.isEmpty()) {
 				if (last.getType() == ParserType.VARIABLE) {
 					parsers.getLast().addVariable(last);
 				} else {
@@ -262,7 +262,7 @@ public class TemplateParser {
 			} else {
 				node.append("\");");
 				node.append(last.getContent(
-					htmlTags.size() == 0 ? null : htmlTags.getLast(),
+					htmlTags.isEmpty()? null : htmlTags.getLast(),
 					isDoubleQuoted
 				));
 				node.append("write(\"");
@@ -271,20 +271,22 @@ public class TemplateParser {
 	}
 	
 	private void writeText(StringBuilder node, char previous, char actual) {
-		if (actual == '\r') {
-			// ignored
-		} else if (actual == '\n') {
-			node.append(
-				(minimalize ? "" : "\\n") + "\");write(\""
-			);
-		} else {
-			if (minimalize && (actual == '\t' || (actual == ' ' && previous == ' ') )) {
-				// ignore
-			} else {
-				if (actual == '\"' || actual == '\\') {
-					node.append("\\");
+		switch (actual) {
+			case '\r'->{
+				// ignored
+			}
+			case '\n'->{
+				node.append(String.format("%s\");write(\"", minimalize ? "" : "\\n"));
+			}
+			default->{
+				if (minimalize && (actual == '\t' || (actual == ' ' && previous == ' ') )) {
+					// ignore
+				} else {
+					if (actual == '\"' || actual == '\\') {
+						node.append("\\");
+					}
+					node.append(actual);
 				}
-				node.append(actual + "");
 			}
 		}
 	}
