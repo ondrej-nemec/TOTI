@@ -210,6 +210,7 @@ public class ExceptionAnswer {
 		saveToFile(fileName, response, charset, Text.get());
 	}
 	
+	@SuppressWarnings({"UseSpecificCatch", "CallToPrintStackTrace"})
 	protected int saveToFile(FileName fileName, String response, String charset, Text text) {
 		if (!fileName.isCreate() || !fileName.isUsed()) {
 			return -1;
