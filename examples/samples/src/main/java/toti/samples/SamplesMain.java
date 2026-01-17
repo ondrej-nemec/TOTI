@@ -9,15 +9,15 @@ import ji.translator.LanguageSettings;
 import ji.translator.Locale;
 import toti.TotiServer;
 import toti.TotiServerFactory;
-import toti.database.DatabaseExtension;
+import toti.extension.database.DatabaseExtension;
 import toti.extension.templating.TemplateExtension;
+import toti.extension.translation.TranslatorExtension;
+import toti.extension.ui.UiExtension;
 import toti.extensions.auth.AuthenticationExtension;
 import toti.lib.common.structures.MapInit;
 import toti.samples.application.ApplicationModule;
 import toti.samples.templating.TemplatingModule;
 import toti.samples.ui.UiModule;
-import toti.translation.TranslatorExtension;
-import toti.ui.UiExtension;
 
 public class SamplesMain {
 
