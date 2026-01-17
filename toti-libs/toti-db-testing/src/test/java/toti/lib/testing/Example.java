@@ -1,4 +1,4 @@
-package ji.testing;
+package toti.lib.testing;
 
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -6,9 +6,9 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import ji.testing.entities.Row;
-import ji.testing.entities.Table;
 import toti.lib.database.base.DatabaseConfig;
+import toti.lib.testing.entities.Row;
+import toti.lib.testing.entities.Table;
 
 // for doc
 public class Example/* extends DatabaseTestCase*/ {

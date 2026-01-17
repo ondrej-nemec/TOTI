@@ -1,4 +1,4 @@
-package ji.testing;
+package toti.lib.testing;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -13,8 +13,8 @@ import toti.lib.database.querybuilder.QueryBuilderFactory;
 import toti.lib.database.querybuilder.builders.BatchBuilder;
 import toti.lib.database.querybuilder.builders.InsertBuilder;
 import toti.lib.database.querybuilder.builders.UpdateBuilder;
-import ji.testing.entities.Row;
-import ji.testing.entities.Table;
+import toti.lib.testing.entities.Row;
+import toti.lib.testing.entities.Table;
 import toti.lib.database.base.Database;
 import toti.lib.database.base.DatabaseConfig;
 

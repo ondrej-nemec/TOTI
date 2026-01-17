@@ -1,4 +1,4 @@
-package ji.testing;
+package toti.lib.testing;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -20,10 +20,10 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.mock;
 
-import ji.testing.entities.Row;
-import ji.testing.entities.Table;
 import toti.lib.database.base.Database;
 import toti.lib.files.env.Env;
+import toti.lib.testing.entities.Row;
+import toti.lib.testing.entities.Table;
 
 public class DatabaseTestCaseTest extends DatabaseTestCase {
 

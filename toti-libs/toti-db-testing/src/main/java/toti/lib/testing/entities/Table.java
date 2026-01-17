@@ -1,4 +1,4 @@
-package ji.testing.entities;
+package toti.lib.testing.entities;
 
 import java.util.LinkedList;
 import java.util.List;

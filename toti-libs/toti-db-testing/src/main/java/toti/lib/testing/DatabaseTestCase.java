@@ -1,4 +1,4 @@
-package ji.testing;
+package toti.lib.testing;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -8,10 +8,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 
-import ji.testing.entities.Table;
 import toti.lib.database.base.Database;
 import toti.lib.database.base.DatabaseConfig;
 import toti.lib.files.env.Env;
+import toti.lib.testing.entities.Table;
 
 public abstract class DatabaseTestCase {
 	
