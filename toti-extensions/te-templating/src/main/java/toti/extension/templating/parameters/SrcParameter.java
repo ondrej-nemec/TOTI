@@ -1,7 +1,7 @@
 package toti.extension.templating.parameters;
 
 import toti.extension.templating.TemplateResponseContainer;
-import toti.templating.Parameter;
+import toti.lib.templating.Parameter;
 
 public class SrcParameter implements Parameter {
 

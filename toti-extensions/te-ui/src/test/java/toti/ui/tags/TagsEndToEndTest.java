@@ -7,8 +7,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import toti.lib.common.structures.MapInit;
-import toti.templating.BaseTemplateTest;
-import toti.templating.TemplateContainer;
+import toti.lib.templating.BaseTemplateTest;
+import toti.lib.templating.TemplateContainer;
 import toti.ui.TagsProvider;
 
 public class TagsEndToEndTest extends BaseTemplateTest {

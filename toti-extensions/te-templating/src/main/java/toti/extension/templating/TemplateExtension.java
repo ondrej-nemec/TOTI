@@ -27,10 +27,10 @@ import toti.extensions.Extension;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.files.env.Env;
 import toti.lib.tcpip.structures.RequestParameters;
-import toti.templating.Parameter;
-import toti.templating.Tag;
-import toti.templating.Template;
-import toti.templating.TemplateFactory;
+import toti.lib.templating.Parameter;
+import toti.lib.templating.Tag;
+import toti.lib.templating.Template;
+import toti.lib.templating.TemplateFactory;
 
 public class TemplateExtension implements toti.extensions.TemplateExtension, Extension {
 	

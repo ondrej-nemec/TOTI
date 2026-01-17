@@ -2,8 +2,8 @@ package toti.ui.tags;
 
 import java.util.Map;
 
-import toti.templating.Tag;
-import toti.templating.TagVariableMode;
+import toti.lib.templating.Tag;
+import toti.lib.templating.TagVariableMode;
 
 public class FormTag implements Tag {
 	

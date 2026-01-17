@@ -3,8 +3,8 @@ package toti.extension.templating.tags;
 import java.util.Map;
 
 import toti.extension.templating.TemplateResponseContainer;
-import toti.templating.Tag;
-import toti.templating.TagVariableMode;
+import toti.lib.templating.Tag;
+import toti.lib.templating.TagVariableMode;
 
 public class TranslateTag implements Tag {
 	

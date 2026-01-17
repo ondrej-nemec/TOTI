@@ -2,7 +2,7 @@ package toti.ui;
 
 import java.util.List;
 
-import toti.templating.Tag;
+import toti.lib.templating.Tag;
 
 public class TagsProvider {
 

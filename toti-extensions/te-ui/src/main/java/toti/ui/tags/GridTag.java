@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import toti.templating.Tag;
-import toti.templating.TagVariableMode;
+import toti.lib.templating.Tag;
+import toti.lib.templating.TagVariableMode;
 
 public class GridTag implements Tag {
 	

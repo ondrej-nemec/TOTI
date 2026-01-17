@@ -3,7 +3,7 @@ package toti.extension.templating;
 import java.util.Map;
 
 import toti.answers.response.ResponseContainer;
-import toti.templating.TemplateContainer;
+import toti.lib.templating.TemplateContainer;
 
 public class TemplateResponseContainer implements TemplateContainer {
 

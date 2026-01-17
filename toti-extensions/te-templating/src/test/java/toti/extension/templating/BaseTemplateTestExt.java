@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import toti.answers.response.ResponseContainer;
 import toti.application.register.MappedAction;
 import toti.extensions.Translator;
-import toti.templating.BaseTemplateTest;
+import toti.lib.templating.BaseTemplateTest;
 
 public class BaseTemplateTestExt extends BaseTemplateTest {
 

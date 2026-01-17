@@ -5,9 +5,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import toti.extension.templating.TemplateResponseContainer;
-import toti.templating.Tag;
-import toti.templating.TagVariableMode;
-import toti.templating.TemplateException;
+import toti.lib.templating.Tag;
+import toti.lib.templating.TagVariableMode;
+import toti.lib.templating.TemplateException;
 
 public class DatetimeFormatTag implements Tag {
 

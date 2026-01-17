@@ -4,8 +4,8 @@ import java.util.Map;
 
 import toti.extension.templating.TemplateResponseContainer;
 import toti.lib.common.exceptions.LogicException;
-import toti.templating.Tag;
-import toti.templating.TagVariableMode;
+import toti.lib.templating.Tag;
+import toti.lib.templating.TagVariableMode;
 
 public class IfCurrentTag implements Tag {
 	
