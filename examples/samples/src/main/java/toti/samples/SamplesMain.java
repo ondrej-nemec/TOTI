@@ -2,7 +2,6 @@ package toti.samples;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 
@@ -17,7 +16,6 @@ import toti.lib.common.structures.MapInit;
 import toti.samples.application.ApplicationModule;
 import toti.samples.templating.TemplatingModule;
 import toti.samples.ui.UiModule;
-import toti.tcpip.SslCredentials;
 import toti.translation.TranslatorExtension;
 import toti.ui.UiExtension;
 

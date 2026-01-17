@@ -5,7 +5,7 @@ import toti.answers.request.Identity;
 import toti.extensions.Extension;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.files.env.Env;
-import toti.tcpip.structures.RequestParameters;
+import toti.lib.tcpip.structures.RequestParameters;
 
 public class Extension1 implements Extension {
 

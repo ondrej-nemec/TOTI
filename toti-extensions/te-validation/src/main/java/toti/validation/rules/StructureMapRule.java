@@ -4,7 +4,7 @@ import java.util.function.Function;
 
 import toti.extensions.Translator;
 import toti.lib.common.structures.DictionaryValue;
-import toti.tcpip.structures.RequestParameters;
+import toti.lib.tcpip.structures.RequestParameters;
 import toti.validation.ValidationItem;
 import toti.validation.Validator;
 import toti.answers.request.Request;

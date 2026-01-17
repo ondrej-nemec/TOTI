@@ -26,7 +26,7 @@ import toti.extension.templating.tags.TranslateTag;
 import toti.extensions.Extension;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.files.env.Env;
-import toti.tcpip.structures.RequestParameters;
+import toti.lib.tcpip.structures.RequestParameters;
 import toti.templating.Parameter;
 import toti.templating.Tag;
 import toti.templating.Template;

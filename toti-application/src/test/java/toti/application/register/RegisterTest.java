@@ -20,7 +20,7 @@ import test.TestModule;
 import toti.answers.router.UriPattern;
 import toti.extensions.Extension;
 import toti.lib.common.structures.ObjectBuilder;
-import toti.tcpip.enums.HttpMethod;
+import toti.lib.tcpip.enums.HttpMethod;
 
 public class RegisterTest {
 	

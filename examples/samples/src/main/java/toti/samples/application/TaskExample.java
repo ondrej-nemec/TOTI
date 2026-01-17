@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 import org.apache.logging.log4j.Logger;
 
 import toti.application.Task;
-import toti.tcpip.structures.WebSocket;
+import toti.lib.tcpip.structures.WebSocket;
 
 public class TaskExample implements Task {
 	

@@ -3,7 +3,7 @@ package test;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.answers.action.ResponseAction;
-import toti.tcpip.enums.HttpMethod;
+import toti.lib.tcpip.enums.HttpMethod;
 
 @Controller("controllerA")
 public class ControllerA {

@@ -17,7 +17,7 @@ import static toti.lib.common.tests.TestCase.assertEquals;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.extensions.Translator;
-import toti.tcpip.structures.RequestParameters;
+import toti.lib.tcpip.structures.RequestParameters;
 import toti.validation.collections.RulesCollection;
 import toti.validation.rules.Rule;
 

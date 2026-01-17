@@ -15,7 +15,7 @@ import toti.application.register.MappedAction;
 import toti.extensions.TotiExtension;
 import toti.extensions.TranslatorExtension;
 import toti.lib.common.structures.ObjectBuilder;
-import toti.tcpip.enums.StatusCode;
+import toti.lib.tcpip.enums.StatusCode;
 import toti.extensions.TemplateExtension;
 
 public class TotiAnswer {

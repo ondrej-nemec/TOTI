@@ -15,7 +15,7 @@ import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.extensions.Translator;
 import toti.lib.common.structures.MapInit;
-import toti.tcpip.structures.RequestParameters;
+import toti.lib.tcpip.structures.RequestParameters;
 import toti.validation.ValidationItem;
 import toti.validation.ValidationResult;
 import toti.validation.Validator;

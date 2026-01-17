@@ -10,7 +10,7 @@ import toti.application.register.Register;
 import toti.extensions.Extension;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.files.env.Env;
-import toti.tcpip.structures.RequestParameters;
+import toti.lib.tcpip.structures.RequestParameters;
 
 public class AuthenticationExtension implements Extension, toti.extensions.AuthenticationExtension {
 

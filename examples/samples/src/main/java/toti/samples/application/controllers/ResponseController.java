@@ -12,9 +12,9 @@ import toti.answers.response.Response;
 import toti.answers.router.Link;
 import toti.lib.common.functions.FileExtension;
 import toti.lib.common.structures.MapInit;
+import toti.lib.tcpip.enums.StatusCode;
+import toti.lib.tcpip.structures.WebSocket;
 import toti.samples.application.TaskExample;
-import toti.tcpip.enums.StatusCode;
-import toti.tcpip.structures.WebSocket;
 
 @Controller("response")
 public class ResponseController {

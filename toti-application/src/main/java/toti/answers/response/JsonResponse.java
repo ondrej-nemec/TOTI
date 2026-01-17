@@ -3,7 +3,7 @@ package toti.answers.response;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.lib.files.json.JsonWritter;
-import toti.tcpip.enums.StatusCode;
+import toti.lib.tcpip.enums.StatusCode;
 
 public class JsonResponse implements Response {
 	

@@ -8,9 +8,9 @@ import toti.answers.Headers;
 import toti.lib.common.structures.DictionaryValue;
 import toti.lib.common.structures.ListDictionary;
 import toti.lib.common.structures.MapDictionary;
-import toti.tcpip.enums.HttpMethod;
-import toti.tcpip.structures.RequestParameters;
-import toti.tcpip.structures.WebSocket;
+import toti.lib.tcpip.enums.HttpMethod;
+import toti.lib.tcpip.structures.RequestParameters;
+import toti.lib.tcpip.structures.WebSocket;
 
 public class Request {
 

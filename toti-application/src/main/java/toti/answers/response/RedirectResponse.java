@@ -3,7 +3,7 @@ package toti.answers.response;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.answers.router.Link;
-import toti.tcpip.enums.StatusCode;
+import toti.lib.tcpip.enums.StatusCode;
 
 public class RedirectResponse implements Response {
 

@@ -6,7 +6,7 @@ import toti.annotations.Secured;
 import toti.answers.action.ResponseAction;
 import toti.answers.response.Response;
 import toti.lib.common.exceptions.LogicException;
-import toti.tcpip.enums.HttpMethod;
+import toti.lib.tcpip.enums.HttpMethod;
 
 /**
  * This example shows TOTI reaction on varios exceptions

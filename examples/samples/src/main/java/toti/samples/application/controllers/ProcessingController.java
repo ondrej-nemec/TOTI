@@ -4,7 +4,7 @@ import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.answers.action.ResponseAction;
 import toti.answers.response.Response;
-import toti.tcpip.enums.StatusCode;
+import toti.lib.tcpip.enums.StatusCode;
 
 @Controller("processing")
 public class ProcessingController {

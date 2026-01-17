@@ -20,9 +20,9 @@ import toti.application.register.MappedAction;
 import toti.application.register.Register;
 import toti.extensions.TranslatorExtension;
 import toti.lib.files.text.Text;
+import toti.lib.tcpip.enums.StatusCode;
 import toti.logging.ExceptionHashCode;
 import toti.logging.FileName;
-import toti.tcpip.enums.StatusCode;
 
 public class ExceptionAnswer {
 

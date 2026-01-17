@@ -18,9 +18,9 @@ import toti.ServerException;
 import toti.answers.request.Request;
 import toti.answers.response.FinalResponse;
 import toti.lib.common.structures.MapDictionary;
-import toti.tcpip.enums.HttpMethod;
-import toti.tcpip.enums.StatusCode;
-import toti.tcpip.structures.RequestParameters;
+import toti.lib.tcpip.enums.HttpMethod;
+import toti.lib.tcpip.enums.StatusCode;
+import toti.lib.tcpip.structures.RequestParameters;
 
 public class FileSystemAnswerTest {
 	

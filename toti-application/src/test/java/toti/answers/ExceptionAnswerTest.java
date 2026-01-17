@@ -15,6 +15,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.files.text.Text;
+import toti.lib.tcpip.enums.HttpMethod;
+import toti.lib.tcpip.enums.StatusCode;
+import toti.lib.tcpip.structures.RequestParameters;
 
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -29,9 +32,6 @@ import toti.extensions.CustomExceptionExtension;
 import toti.extensions.Translator;
 import toti.extensions.TranslatorExtension;
 import toti.logging.FileName;
-import toti.tcpip.enums.HttpMethod;
-import toti.tcpip.enums.StatusCode;
-import toti.tcpip.structures.RequestParameters;
 
 public class ExceptionAnswerTest {
 	

@@ -18,7 +18,7 @@ import toti.application.register.Register;
 import toti.extensions.Extension;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.files.env.Env;
-import toti.tcpip.structures.RequestParameters;
+import toti.lib.tcpip.structures.RequestParameters;
 
 public class TranslatorExtension implements toti.extensions.TranslatorExtension, Extension {
 	

@@ -6,7 +6,7 @@ import java.util.Collection;
 import toti.answers.Headers;
 import toti.extensions.Extension;
 import toti.lib.common.structures.MapDictionary;
-import toti.tcpip.structures.RequestParameters;
+import toti.lib.tcpip.structures.RequestParameters;
 
 public class IdentityFactory {
 
