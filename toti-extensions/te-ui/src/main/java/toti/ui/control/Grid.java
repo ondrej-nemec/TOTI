@@ -6,8 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import toti.files.json.Jsonable;
 import toti.lib.common.exceptions.LogicException;
+import toti.lib.files.json.Jsonable;
 import toti.ui.control.columns.Column;
 import toti.ui.control.columns.GroupAction;
 import toti.ui.control.columns.TreeColumn;

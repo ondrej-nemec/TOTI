@@ -3,7 +3,7 @@ package toti.ui.backend.help;
 import java.util.HashMap;
 import java.util.Map;
 
-import toti.files.json.Jsonable;
+import toti.lib.files.json.Jsonable;
 
 public class Help implements Jsonable {
 

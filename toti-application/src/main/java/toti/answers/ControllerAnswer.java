@@ -14,9 +14,10 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.logging.log4j.Logger;
 
-import toti.files.xml.XmlObject;
-import toti.files.xml.XmlReader;
 import toti.lib.common.structures.DictionaryValue;
+import toti.lib.files.json.JsonReader;
+import toti.lib.files.xml.XmlObject;
+import toti.lib.files.xml.XmlReader;
 import toti.tcpip.enums.HttpMethod;
 import toti.tcpip.enums.StatusCode;
 import toti.ServerException;
@@ -38,7 +39,6 @@ import toti.extensions.AuthenticationExtension;
 import toti.extensions.TemplateExtension;
 import toti.extensions.Translator;
 import toti.extensions.TranslatorExtension;
-import toti.files.json.JsonReader;
 
 public class ControllerAnswer {
 	

@@ -5,8 +5,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Objects;
 
-import toti.files.text.Text;
 import toti.lib.common.functions.InputStreamLoader;
+import toti.lib.files.text.Text;
 import ji.querybuilder.QueryBuilder;
 
 public class SqlMigrationFile implements MigrationFile {

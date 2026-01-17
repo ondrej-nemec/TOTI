@@ -10,7 +10,6 @@ import java.util.Random;
 
 import org.apache.logging.log4j.Logger;
 
-import toti.files.text.Text;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.answers.response.FinalResponse;
@@ -20,6 +19,7 @@ import toti.answers.response.TextResponse;
 import toti.application.register.MappedAction;
 import toti.application.register.Register;
 import toti.extensions.TranslatorExtension;
+import toti.lib.files.text.Text;
 import toti.logging.ExceptionHashCode;
 import toti.logging.FileName;
 import toti.tcpip.enums.StatusCode;

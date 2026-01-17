@@ -13,8 +13,8 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 
-import toti.files.text.Text;
 import toti.lib.common.structures.MapDictionary;
+import toti.lib.files.text.Text;
 
 import org.junit.jupiter.params.provider.MethodSource;
 

@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import toti.files.text.Text;
 import toti.lib.common.tests.Log4j2LoggerTestImpl;
+import toti.lib.files.text.Text;
 
 @Deprecated
 public class TemplateFactoryEndToEndTest {

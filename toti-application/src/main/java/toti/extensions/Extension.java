@@ -3,8 +3,8 @@ package toti.extensions;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.application.register.Register;
-import toti.files.env.Env;
 import toti.lib.common.structures.MapDictionary;
+import toti.lib.files.env.Env;
 import toti.tcpip.structures.RequestParameters;
 
 public interface Extension {

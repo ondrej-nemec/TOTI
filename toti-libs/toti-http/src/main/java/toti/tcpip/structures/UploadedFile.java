@@ -3,7 +3,7 @@ package toti.tcpip.structures;
 import java.io.IOException;
 import java.util.Arrays;
 
-import toti.files.text.Binary;
+import toti.lib.files.text.Binary;
 
 public class UploadedFile {
 

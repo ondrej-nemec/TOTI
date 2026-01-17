@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import toti.files.json.Jsonable;
+import toti.lib.files.json.Jsonable;
 
 public class ValidationResult implements Jsonable {
 

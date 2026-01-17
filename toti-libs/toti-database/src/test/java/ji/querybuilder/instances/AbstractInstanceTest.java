@@ -19,8 +19,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import ji.database.Connections;
-import toti.files.text.Text;
 import toti.lib.common.structures.ThrowingConsumer;
+import toti.lib.files.text.Text;
 import ji.querybuilder.Builder;
 import ji.querybuilder.DbInstance;
 import ji.querybuilder.QueryBuilder;
