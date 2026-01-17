@@ -24,11 +24,7 @@ public abstract class DatabaseTestCase {
 
 	public DatabaseTestCase(DatabaseConfig config, Logger logger) {
 		this.config = config;
-		this.database = new DatabaseMock(
-				config,
-				getDataSet(),
-				logger
-		);
+		this.database = new DatabaseMock(config, getDataSet(), logger);
 	}
 
 	public DatabaseTestCase(Env env, Logger logger) {

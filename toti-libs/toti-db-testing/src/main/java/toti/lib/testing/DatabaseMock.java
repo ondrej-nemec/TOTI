@@ -45,7 +45,7 @@ public class DatabaseMock extends Database {
 			BatchBuilder batch = builder.batch();
 			for(Table table : tables) {
 				for(Row row : table.getRows()) {
-					batch.addBatch(applyRow(builder, batch, table.getName(), row));
+					batch.addBatch(applyRow(builder, table.getName(), row));
 				}
 			}
 			batch.execute();
@@ -53,7 +53,7 @@ public class DatabaseMock extends Database {
 		});
 	}
 	
-	private Builder applyRow(QueryBuilderFactory builder, BatchBuilder batch, String table, Row row) {
+	private Builder applyRow(QueryBuilderFactory builder, String table, Row row) {
 		if (row.isInsert()) {
 			InsertBuilder insert = builder.insert(table, row.getIdName());
 			row.getColumns().forEach((key, value)->{
