@@ -1,4 +1,4 @@
-package toti.translator;
+package toti.lib.translator;
 
 import java.io.IOException;
 
