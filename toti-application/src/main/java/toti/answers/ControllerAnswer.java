@@ -16,6 +16,8 @@ import org.apache.logging.log4j.Logger;
 
 import toti.files.xml.XmlObject;
 import toti.files.xml.XmlReader;
+import toti.tcpip.enums.HttpMethod;
+import toti.tcpip.enums.StatusCode;
 import toti.ServerException;
 import toti.answers.action.BodyType;
 import toti.answers.action.ResponseAction;
@@ -37,8 +39,6 @@ import toti.extensions.TemplateExtension;
 import toti.extensions.Translator;
 import toti.extensions.TranslatorExtension;
 import toti.files.json.JsonReader;
-import toti.http.enums.HttpMethod;
-import toti.http.enums.StatusCode;
 
 public class ControllerAnswer {
 	

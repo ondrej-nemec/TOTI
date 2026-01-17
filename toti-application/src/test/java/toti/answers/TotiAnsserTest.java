@@ -26,8 +26,8 @@ import toti.extensions.TemplateExtension;
 import toti.extensions.TotiExtension;
 import toti.extensions.TranslatorExtension;
 import toti.files.env.Env;
-import toti.http.enums.StatusCode;
-import toti.http.structures.RequestParameters;
+import toti.tcpip.enums.StatusCode;
+import toti.tcpip.structures.RequestParameters;
 
 public class TotiAnsserTest {
 	

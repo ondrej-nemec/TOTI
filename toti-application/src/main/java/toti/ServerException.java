@@ -1,7 +1,7 @@
 package toti;
 
 import toti.application.register.MappedAction;
-import toti.http.enums.StatusCode;
+import toti.tcpip.enums.StatusCode;
 
 public class ServerException extends Exception {
 	

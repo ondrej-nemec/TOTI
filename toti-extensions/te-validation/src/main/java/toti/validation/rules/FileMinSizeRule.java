@@ -3,7 +3,7 @@ package toti.validation.rules;
 import java.util.function.Function;
 
 import toti.extensions.Translator;
-import toti.http.structures.UploadedFile;
+import toti.tcpip.structures.UploadedFile;
 
 public class FileMinSizeRule extends SimpleRule<Integer> {
 

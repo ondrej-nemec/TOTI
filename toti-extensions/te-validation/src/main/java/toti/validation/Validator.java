@@ -12,7 +12,7 @@ import toti.answers.request.Request;
 import toti.common.exceptions.LogicException;
 import toti.common.structures.MapInit;
 import toti.extensions.Translator;
-import toti.http.structures.RequestParameters;
+import toti.tcpip.structures.RequestParameters;
 import toti.validation.collections.RulesCollection;
 import toti.validation.rules.Rule;
 

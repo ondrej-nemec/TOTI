@@ -8,7 +8,7 @@ import java.util.Arrays;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.common.functions.InputStreamLoader;
-import toti.http.enums.StatusCode;
+import toti.tcpip.enums.StatusCode;
 
 public class FileResponse implements Response {
 

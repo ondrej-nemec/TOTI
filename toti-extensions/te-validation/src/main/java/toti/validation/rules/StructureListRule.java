@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import toti.extensions.Translator;
-import toti.http.structures.RequestParameters;
+import toti.tcpip.structures.RequestParameters;
 import toti.validation.ValidationItem;
 import toti.validation.Validator;
 import toti.answers.request.Request;

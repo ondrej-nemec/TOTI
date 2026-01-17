@@ -3,7 +3,7 @@ package toti.extensions;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.answers.response.Response;
-import toti.http.enums.StatusCode;
+import toti.tcpip.enums.StatusCode;
 
 public interface CustomExceptionExtension {
 	

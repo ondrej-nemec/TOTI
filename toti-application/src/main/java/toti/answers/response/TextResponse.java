@@ -2,7 +2,7 @@ package toti.answers.response;
 
 import toti.answers.Headers;
 import toti.answers.request.Identity;
-import toti.http.enums.StatusCode;
+import toti.tcpip.enums.StatusCode;
 
 public class TextResponse implements Response {
 

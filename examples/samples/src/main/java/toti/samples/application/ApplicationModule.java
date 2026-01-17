@@ -17,7 +17,6 @@ import toti.common.exceptions.LogicException;
 import toti.extension.templating.TemplateExtension;
 import toti.extensions.auth.AuthenticationExtension;
 import toti.files.env.Env;
-import toti.http.enums.StatusCode;
 import toti.extensions.CustomExceptionExtension;
 import toti.extensions.TranslatorExtension;
 import toti.samples.application.controllers.ExceptionsController;
@@ -25,6 +24,7 @@ import toti.samples.application.controllers.ProcessingController;
 import toti.samples.application.controllers.RequestController;
 import toti.samples.application.controllers.ResponseController;
 import toti.samples.application.controllers.UserController;
+import toti.tcpip.enums.StatusCode;
 
 public class ApplicationModule implements Module {
 

@@ -1,9 +1,9 @@
-# JI - Client/Server Communication
+# TOTI TCP/IP
 
 ## Documentation
 
-<a href="https://ondrej-nemec.github.io/JI/?&file=communication-about.html">See documentation</a>
+TODO
 
 ## Include
 
-[![](https://jitpack.io/v/ondrej-nemec/JI.svg)](https://jitpack.io/#ondrej-nemec/JI)
+TODO

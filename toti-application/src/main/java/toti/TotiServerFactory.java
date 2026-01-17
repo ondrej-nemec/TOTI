@@ -19,8 +19,8 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 import toti.common.structures.dictionary.Scalar;
 import toti.files.env.Env;
-import toti.http.SslCredentials;
-import toti.http.parsers.StreamReader;
+import toti.tcpip.SslCredentials;
+import toti.tcpip.parsers.StreamReader;
 
 public class TotiServerFactory {
 	

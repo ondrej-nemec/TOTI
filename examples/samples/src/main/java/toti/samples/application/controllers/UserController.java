@@ -6,9 +6,9 @@ import toti.annotations.Secured;
 import toti.answers.action.ResponseAction;
 import toti.answers.request.AuthMode;
 import toti.answers.response.Response;
-import toti.http.enums.StatusCode;
 import toti.samples.application.SampleUser;
 import toti.samples.application.SessionUserProviderExample;
+import toti.tcpip.enums.StatusCode;
 
 @Controller("users")
 public class UserController {

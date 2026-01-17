@@ -16,7 +16,7 @@ import toti.common.structures.ObjectBuilder;
 import toti.common.structures.Tuple2;
 import toti.extensions.CustomExceptionExtension;
 import toti.extensions.Extension;
-import toti.http.enums.HttpMethod;
+import toti.tcpip.enums.HttpMethod;
 
 public class Register {
 	

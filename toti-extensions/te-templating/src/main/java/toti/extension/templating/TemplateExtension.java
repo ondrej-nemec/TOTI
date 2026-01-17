@@ -26,7 +26,7 @@ import toti.extension.templating.tags.PermissionsTag;
 import toti.extension.templating.tags.TranslateTag;
 import toti.extensions.Extension;
 import toti.files.env.Env;
-import toti.http.structures.RequestParameters;
+import toti.tcpip.structures.RequestParameters;
 import toti.templating.Parameter;
 import toti.templating.Tag;
 import toti.templating.Template;

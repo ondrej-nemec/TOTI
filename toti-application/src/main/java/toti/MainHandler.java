@@ -18,12 +18,12 @@ import toti.answers.response.FinalResponse;
 import toti.common.structures.ObjectBuilder;
 import toti.hosts.AnswerWrapper;
 import toti.hosts.Hosts;
-import toti.http.enums.HttpMethod;
-import toti.http.parsers.Form;
-import toti.http.parsers.StreamReader;
-import toti.http.parsers.Urlencode;
-import toti.http.structures.RequestParameters;
-import toti.http.structures.WebSocket;
+import toti.tcpip.enums.HttpMethod;
+import toti.tcpip.parsers.Form;
+import toti.tcpip.parsers.StreamReader;
+import toti.tcpip.parsers.Urlencode;
+import toti.tcpip.structures.RequestParameters;
+import toti.tcpip.structures.WebSocket;
 
 public class MainHandler extends Handler.Abstract {
 

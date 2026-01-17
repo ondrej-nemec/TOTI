@@ -9,7 +9,7 @@ import toti.answers.request.Identity;
 import toti.answers.request.IdentityFactory;
 import toti.answers.request.Request;
 import toti.answers.response.FinalResponse;
-import toti.http.enums.StatusCode;
+import toti.tcpip.enums.StatusCode;
 
 public class Answer {
 

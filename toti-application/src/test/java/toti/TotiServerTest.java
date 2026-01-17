@@ -26,7 +26,7 @@ import toti.answers.Answer;
 import toti.common.structures.IntegerBuilder;
 import toti.common.structures.MapInit;
 import toti.files.env.Env;
-import toti.http.parsers.StreamReader;
+import toti.tcpip.parsers.StreamReader;
 
 public class TotiServerTest {
 

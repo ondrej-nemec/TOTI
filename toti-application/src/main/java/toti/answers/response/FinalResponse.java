@@ -3,7 +3,7 @@ package toti.answers.response;
 import java.nio.ByteBuffer;
 
 import toti.answers.Headers;
-import toti.http.enums.StatusCode;
+import toti.tcpip.enums.StatusCode;
 
 public class FinalResponse {
 

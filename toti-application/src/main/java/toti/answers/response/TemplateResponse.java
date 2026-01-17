@@ -7,7 +7,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 import toti.answers.Headers;
 import toti.answers.request.Identity;
-import toti.http.enums.StatusCode;
+import toti.tcpip.enums.StatusCode;
 
 public class TemplateResponse implements Response {
 	

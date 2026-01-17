@@ -3,7 +3,7 @@ package test;
 import toti.annotations.Action;
 import toti.annotations.Secured;
 import toti.answers.action.ResponseAction;
-import toti.http.enums.HttpMethod;
+import toti.tcpip.enums.HttpMethod;
 
 public class Test {
 	

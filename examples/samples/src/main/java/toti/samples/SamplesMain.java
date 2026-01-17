@@ -14,10 +14,10 @@ import toti.common.structures.MapInit;
 import toti.database.DatabaseExtension;
 import toti.extension.templating.TemplateExtension;
 import toti.extensions.auth.AuthenticationExtension;
-import toti.http.SslCredentials;
 import toti.samples.application.ApplicationModule;
 import toti.samples.templating.TemplatingModule;
 import toti.samples.ui.UiModule;
+import toti.tcpip.SslCredentials;
 import toti.translation.TranslatorExtension;
 import toti.ui.UiExtension;
 

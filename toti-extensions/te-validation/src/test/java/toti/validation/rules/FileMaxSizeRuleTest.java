@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import toti.http.structures.UploadedFile;
+import toti.tcpip.structures.UploadedFile;
 import toti.validation.ValidationItem;
 
 public class FileMaxSizeRuleTest {

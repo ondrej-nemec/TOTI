@@ -1,7 +1,7 @@
 package toti.validation;
 
 import toti.extensions.Translator;
-import toti.http.structures.RequestParameters;
+import toti.tcpip.structures.RequestParameters;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
 

@@ -4,9 +4,9 @@ import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.answers.action.ResponseAction;
 import toti.answers.response.Response;
-import toti.http.enums.HttpMethod;
-import toti.http.enums.StatusCode;
-import toti.http.structures.UploadedFile;
+import toti.tcpip.enums.HttpMethod;
+import toti.tcpip.enums.StatusCode;
+import toti.tcpip.structures.UploadedFile;
 
 /**
  * This example shows how different type of request are served

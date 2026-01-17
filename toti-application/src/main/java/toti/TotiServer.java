@@ -12,10 +12,10 @@ import org.eclipse.jetty.websocket.server.ServerWebSocketContainer;
 
 import toti.common.structures.ThrowingBiFunction;
 import toti.files.env.Env;
-import toti.http.parsers.Form;
-import toti.http.parsers.Payload;
-import toti.http.parsers.StreamReader;
-import toti.http.parsers.Urlencode;
+import toti.tcpip.parsers.Form;
+import toti.tcpip.parsers.Payload;
+import toti.tcpip.parsers.StreamReader;
+import toti.tcpip.parsers.Urlencode;
 
 public class TotiServer {
 	

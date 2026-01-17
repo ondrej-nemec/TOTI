@@ -9,8 +9,8 @@ import toti.ServerException;
 import toti.answers.request.Request;
 import toti.answers.response.FinalResponse;
 import toti.answers.response.Response;
-import toti.http.enums.HttpMethod;
-import toti.http.enums.StatusCode;
+import toti.tcpip.enums.HttpMethod;
+import toti.tcpip.enums.StatusCode;
 
 public class FileSystemAnswer {
 
