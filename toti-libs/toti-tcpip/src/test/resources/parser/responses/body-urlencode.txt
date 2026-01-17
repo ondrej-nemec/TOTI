@@ -1,6 +1,6 @@
 HTTP/1.1 200 OK
 content-length: 273
-content-type: application/x-www-form-urlencoded
 some-header: my header value
+content-type: application/x-www-form-urlencoded
 
 maplist%5Ba%5D%5B%5D=value-maplist-a-1&maplist%5Ba%5D%5B%5D=value-maplist-a-2&maplist%5Bb%5D%5B%5D=value-maplist-b-1&maplist%5Bb%5D%5B%5D=value-maplist-b-2&list%5B%5D=value-list-1&list%5B%5D=value-list-2&list%5B%5D=value-list-3&map%5Ba%5D=value-map-a&map%5Bb%5D=value-map-b

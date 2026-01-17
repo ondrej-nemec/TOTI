@@ -3,6 +3,7 @@ package toti.lib.tcpip.parsers;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -33,10 +34,6 @@ import toti.lib.tcpip.client.Headers;
 import toti.lib.tcpip.client.Protocol;
 import toti.lib.tcpip.enums.HttpMethod;
 import toti.lib.tcpip.enums.StatusCode;
-import toti.lib.tcpip.parsers.Form;
-import toti.lib.tcpip.parsers.Payload;
-import toti.lib.tcpip.parsers.StreamReader;
-import toti.lib.tcpip.parsers.Urlencode;
 import toti.lib.tcpip.structures.RequestParameters;
 import toti.lib.tcpip.structures.UploadedFile;
 
@@ -105,7 +102,7 @@ public class ExchangeFactoryTest {
 			try {
 				assertTrue(Arrays.equals(expected.toByteArray(), bos.get().toByteArray()));
 			} catch (Error e) {
-				assertEquals(new String(expected.toByteArray()), new String(bos.get().toByteArray()));
+				assertEquals(toString(expected.toByteArray()), toString(bos.get().toByteArray()));
 				throw e;
 			}
 		}
@@ -126,12 +123,20 @@ public class ExchangeFactoryTest {
 
 			parser.write(response, bos);
 			
-			assertEquals(
-				new String(expected.toByteArray()).replace("\r", "\\r").replace("\n", "\\n"), 
-				new String(bos.get().toByteArray()).replace("\r", "\\r").replace("\n", "\\n")
-			);
-			assertTrue(Arrays.equals(expected.toByteArray(), bos.get().toByteArray()));
+			try {
+				assertTrue(Arrays.equals(expected.toByteArray(), bos.get().toByteArray()));
+			} catch (Error e) {
+				assertEquals(toString(expected.toByteArray()), toString(bos.get().toByteArray()));
+				throw e;
+			}
 		}
+	}
+
+	private String toString(byte[] bytes) {
+		return new String(bytes)
+			.replace("\r", "\r")
+			//.replace("\r", "")
+			.replace("\n", "\n\n");
 	}
 
 	@ParameterizedTest
@@ -188,8 +193,8 @@ public class ExchangeFactoryTest {
 			assertNull(request.getBody());
 		}
 	}
-	
-	public static Object[] getData() {
+
+	private static ByteArrayOutputStream fileContent() {
 		ByteArrayOutputStream binaryData = new ByteArrayOutputStream();
 		for (int b : new int[] {
 				137, 80, 78, 71, 13, 10, 26, 10,
@@ -217,6 +222,11 @@ public class ExchangeFactoryTest {
 				96, 130}) {
 			binaryData.write(b);
 		}
+		return binaryData;
+	}
+	
+	public static Object[] getData() {
+		ByteArrayOutputStream binaryData = fileContent();
 		
 		return new Object[] {
 			new Object[] {
@@ -452,26 +462,158 @@ public class ExchangeFactoryTest {
 				()->"item-separator",
 				logger
 		);
-		
-		/*
-		()->new ByteArrayOutputStream() {
-			@Override 
-			public void write(int b) {
-				if (b == '\n') {
-					super.write('\r');
+	}
+
+	public static void main(String[] args) throws Exception {
+		System.out.println("Start");
+		byte[] file = fileContent().toByteArray();
+		writeFiles("body-binary.txt", bodyBinary(), file);
+		writeFiles("body-empty.txt", bodyEmpty(), file);
+		writeFiles("body-multipart-no-file.txt", bodyMultipartNoFile(), file);
+		writeFiles("body-multipart-with-file.txt", bodyMultipartWithFile(), file);
+		writeFiles("body-plain-text.txt", bodyPlainText(), file);
+		writeFiles("body-urlencode.txt", bodyUrlencode(), file);
+		writeFiles("websocket.txt", websocket(), file);
+		System.out.println("End");
+	}
+
+	private static void writeFiles(String fileName, List<String> data, byte[] file) throws Exception {
+		System.out.println("--> write " + fileName);
+		try (OutputStream req = new FileOutputStream("toti-libs/toti-tcpip/src/test/resources/parser/requests/" + fileName);
+			OutputStream res = new FileOutputStream("toti-libs/toti-tcpip/src/test/resources/parser/responses/" + fileName)
+		) {
+			req.write("POST /some/url HTTP/1.1".getBytes());
+
+			res.write("HTTP/1.1 200 OK".getBytes());
+			for (String message : data) {
+				req.write('\r');
+				req.write('\n');
+
+				res.write('\r');
+				res.write('\n');
+				if (message.equals("--file--")) {
+					req.write(file);
+					res.write(file);
+				} else {
+					req.write(message.getBytes());
+					res.write(message.getBytes());
 				}
-				super.write(b);
-			}
-			@Override
-			public void write(byte[] b) throws IOException {
-				if (Arrays.equals("\n".getBytes(), b)) {
-					super.write('\r');
-				}
-				super.write(b);
 			}
 		}
-		
-		*/
+	}
+
+	private static List<String> bodyEmpty() {
+		return Arrays.asList(
+			"content-length: 0",
+			"some-header: my header value",
+			"content-type: application/x-www-form-urlencoded",
+			"",
+			""
+		);
+	}
+
+	private static List<String> bodyBinary() {
+		return Arrays.asList(
+			"content-length: 317",
+			"some-header: my header value",
+			"content-type: image/x-icon",
+			"",
+			"--file--"
+		);
+	}
+
+	private static List<String> bodyMultipartNoFile() {
+		return Arrays.asList(
+			"content-length: 789",
+			"some-header: my header value",
+			"content-type: multipart/form-data; boundary=item-separator",
+			"",
+			"--item-separator",
+			"Content-Disposition: form-data; name=\"maplist[a][]\"",
+			"",
+			"value-maplist-a-1",
+			"--item-separator",
+			"Content-Disposition: form-data; name=\"maplist[a][]\"",
+			"",
+			"value-maplist-a-2",
+			"--item-separator",
+			"Content-Disposition: form-data; name=\"maplist[b][]\"",
+			"",
+			"value-maplist-b-1",
+			"--item-separator",
+			"Content-Disposition: form-data; name=\"maplist[b][]\"",
+			"",
+			"value-maplist-b-2",
+			"--item-separator",
+			"Content-Disposition: form-data; name=\"list[]\"",
+			"",
+			"value-list-1",
+			"--item-separator",
+			"Content-Disposition: form-data; name=\"list[]\"",
+			"",
+			"value-list-2",
+			"--item-separator",
+			"Content-Disposition: form-data; name=\"list[]\"",
+			"",
+			"value-list-3",
+			"--item-separator",
+			"Content-Disposition: form-data; name=\"map[a]\"",
+			"",
+			"value-map-a",
+			"--item-separator",
+			"Content-Disposition: form-data; name=\"map[b]\"",
+			"",
+			"value-map-b",
+			"--item-separator--"
+		);
+	}
+
+	private static List<String> bodyPlainText() {
+		return Arrays.asList(
+			"content-length: 59",
+			"some-header: my header value",
+			"content-type: plain/text",
+			"",
+			"Some UTF-8 text: ěščř Сайн уу 你好 أأهلاً"
+		);
+	}
+
+	private static List<String> bodyUrlencode() {
+		return Arrays.asList(
+			"content-length: 273",
+			"some-header: my header value",
+			"content-type: application/x-www-form-urlencoded",
+			"",
+			"maplist%5Ba%5D%5B%5D=value-maplist-a-1&maplist%5Ba%5D%5B%5D=value-maplist-a-2&maplist%5Bb%5D%5B%5D=value-maplist-b-1&maplist%5Bb%5D%5B%5D=value-maplist-b-2&list%5B%5D=value-list-1&list%5B%5D=value-list-2&list%5B%5D=value-list-3&map%5Ba%5D=value-map-a&map%5Bb%5D=value-map-b"
+		);
+	}
+
+	private static List<String> websocket() {
+		return Arrays.asList(
+			"some-header: my header value",
+			"Upgrade: websocket",
+			"Origin: me",
+			"Sec-WebSocket-Key: myRequest"
+		);
+	}
+
+	private static List<String> bodyMultipartWithFile() {
+		return Arrays.asList(
+			"content-length: 526",
+			"some-header: my header value",
+			"content-type: multipart/form-data; boundary=item-separator",
+			"",
+			"--item-separator",
+			"Content-Disposition: form-data; name=\"another\"",
+			"",
+			"value",
+			"--item-separator",
+			"Content-Disposition: form-data; name=\"fileinput\"; filename=\"filename.xyz\"",
+			"Content-Type: IMG",
+			"",
+			"--file--",
+			"--item-separator--"
+		);
 	}
 	
 }

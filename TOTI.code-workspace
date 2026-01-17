@@ -50,6 +50,13 @@
                 "mainClass": "XXXX",
                 "projectName": "XXXX",
                 "console": "internalConsole"
+            },
+            {
+                "type": "java",
+                "name": "ExchangeFactoryTest generate test files",
+                "request": "launch",
+                "mainClass": "toti.lib.tcpip.parsers.ExchangeFactoryTest",
+                "console": "internalConsole"
             }
         ],
         "defaults": {
