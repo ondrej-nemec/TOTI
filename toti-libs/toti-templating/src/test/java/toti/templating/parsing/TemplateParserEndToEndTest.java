@@ -9,9 +9,9 @@ import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 
-import ji.common.Log4j2LoggerTestImpl;
 import ji.common.structures.MapInit;
 import ji.files.text.Text;
+import toti.common.tests.Log4j2LoggerTestImpl;
 import toti.templating.Parameter;
 import toti.templating.Tag;
 import toti.templating.TagVariableMode;

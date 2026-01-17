@@ -14,17 +14,24 @@ dependencies {
 	api project(':toti-libs:toti-common')
 	api project(':toti-libs:toti-files')
 	testImplementation(testFixtures(project))
+	testImplementation(testFixtures(project(':toti-libs:toti-common')))
 	
 	// https://github.com/gradle/gradle/issues/34512
 	testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+	testFixturesRuntimeOnly "org.junit.platform:junit-platform-launcher"
 	// https://mvnrepository.com/artifact/org.mockito/mockito-core
 	testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.19.1'
+	testFixturesImplementation group: 'org.mockito', name: 'mockito-core', version: '2.19.1'
 	// https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
 	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.11.2'
+	testFixturesImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.11.2'
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.2'
+	testFixturesRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.2'
 	// https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-params
 	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.11.2'
+	testFixturesImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.11.2'
 	
 	testImplementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+	testFixturesImplementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
 }
 

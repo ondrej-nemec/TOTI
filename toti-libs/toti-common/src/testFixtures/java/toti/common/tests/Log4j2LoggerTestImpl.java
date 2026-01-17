@@ -1,4 +1,4 @@
-package ji.common;
+package toti.common.tests;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

@@ -6,14 +6,12 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 import org.apache.logging.log4j.Logger;
-import ji.common.functions.Terminal;
+
 import ji.querybuilder.DbInstance;
 import ji.querybuilder.instances.DerbyQueryBuilder;
 
 @Deprecated
 public class Derby implements DatabaseInstance {
-
-	private final Terminal terminal;
 	
 	private final Logger logger;
 	
@@ -26,7 +24,6 @@ public class Derby implements DatabaseInstance {
 	private final boolean runOnExternal;
 	
 	public Derby(boolean runOnExternal, final String pathToServer, String connectionString, Properties property, final Logger logger) {
-		this.terminal = new Terminal(logger);
 		this.logger = logger;
 		this.connectionString = connectionString;
 		this.property = property;

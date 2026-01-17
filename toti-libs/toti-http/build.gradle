@@ -13,6 +13,7 @@ repositories {
 dependencies {
 	api project(':toti-libs:toti-common')
 	api project(':toti-libs:toti-files')
+	testImplementation(testFixtures(project(':toti-libs:toti-common')))
 	
 	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
 	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'

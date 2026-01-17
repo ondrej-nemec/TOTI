@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 import org.apache.logging.log4j.Logger;
 
-import ji.common.Log4j2LoggerTestImpl;
+import toti.common.tests.Log4j2LoggerTestImpl;
 
 public class TotiLoggerFactory implements Function<String, Logger> {
 	
