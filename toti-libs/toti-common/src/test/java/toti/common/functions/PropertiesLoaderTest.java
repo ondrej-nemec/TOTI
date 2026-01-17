@@ -13,8 +13,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 
 import org.junit.jupiter.params.provider.ValueSource;
 
-import toti.common.functions.PropertiesLoader;
-
 public class PropertiesLoaderTest {
 
 	@Test

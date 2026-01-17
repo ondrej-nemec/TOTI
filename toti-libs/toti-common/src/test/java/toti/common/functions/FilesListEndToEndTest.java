@@ -1,7 +1,5 @@
 package toti.common.functions;
 
-import toti.common.functions.FilesList;
-
 public class FilesListEndToEndTest {
 
 	public static void main(String[] args) {

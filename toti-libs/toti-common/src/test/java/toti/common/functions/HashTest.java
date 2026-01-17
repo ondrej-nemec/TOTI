@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import toti.common.exceptions.HashException;
-import toti.common.functions.Hash;
 
 public class HashTest {
 	

@@ -9,8 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import toti.common.functions.Terminal;
-
 public class TerminalTest {
 	
 	private static final String SYSTEM_ERROR_MESSAGE = "SYSTEM_ERROR_MESSAGE";

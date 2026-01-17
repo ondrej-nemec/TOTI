@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import toti.common.annotations.MapperIgnored;
 import toti.common.annotations.MapperParameter;
 import toti.common.annotations.MapperType;
-import toti.common.functions.Mapper;
 import toti.common.functions.testingClasses.Generic;
 import toti.common.functions.testingClasses.Main;
 import toti.common.functions.testingClasses.Parse;
