@@ -2,10 +2,10 @@ package toti.tutorial1.migrations;
 
 import java.sql.SQLException;
 
-import ji.migration.Migration;
-import ji.querybuilder.QueryBuilder;
-import ji.querybuilder.enums.ColumnSetting;
-import ji.querybuilder.enums.ColumnType;
+import toti.lib.database.migration.Migration;
+import toti.lib.database.querybuilder.QueryBuilder;
+import toti.lib.database.querybuilder.enums.ColumnSetting;
+import toti.lib.database.querybuilder.enums.ColumnType;
 import toti.tutorial1.services.DeviceStateDao;
 
 public class M2__added_device_state_table implements Migration {

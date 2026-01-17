@@ -2,8 +2,8 @@ package migration.per_type;
 
 import java.sql.SQLException;
 
-import ji.migration.Migration;
-import ji.querybuilder.QueryBuilder;
+import toti.lib.database.migration.Migration;
+import toti.lib.database.querybuilder.QueryBuilder;
 
 public class Java implements Migration {
 

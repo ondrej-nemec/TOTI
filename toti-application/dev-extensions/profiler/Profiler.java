@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.function.Consumer;
 
 import ji.common.structures.MapInit;
-import ji.database.support.SqlQueryProfiler;
+import toti.lib.database.base.support.SqlQueryProfiler;
 import ji.translator.TransProfiler;
 import ji.json.Jsonable;
 import ji.socketCommunication.http.HttpMethod;

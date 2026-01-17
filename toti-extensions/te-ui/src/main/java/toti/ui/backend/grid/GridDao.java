@@ -8,11 +8,11 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import ji.database.Database;
-import ji.database.support.DatabaseRow;
-import ji.querybuilder.QueryBuilder;
-import ji.querybuilder.builders.SelectBuilder;
+import toti.lib.database.base.support.DatabaseRow;
+import toti.lib.database.querybuilder.QueryBuilder;
+import toti.lib.database.querybuilder.builders.SelectBuilder;
 import toti.lib.common.structures.SortedMap;
+import toti.lib.database.base.Database;
 import toti.ui.backend.Owner;
 
 public interface GridDao {

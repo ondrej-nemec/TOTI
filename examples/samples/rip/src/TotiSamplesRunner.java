@@ -10,8 +10,8 @@ import org.apache.logging.log4j.Logger;
 
 import ji.common.functions.Console;
 import toti.env.Env;
-import ji.database.Database;
-import ji.database.DatabaseConfig;
+import toti.lib.database.base.Database;
+import toti.lib.database.base.DatabaseConfig;
 import ji.translator.LanguageSettings;
 import ji.translator.Locale;
 import toti.HttpServer;

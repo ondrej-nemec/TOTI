@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import toti.env.Env;
 import ji.common.functions.FileExtension;
 import ji.common.structures.MapInit;
-import ji.database.Database;
+import toti.lib.database.base.Database;
 import ji.socketCommunication.http.StatusCode;
 import ji.socketCommunication.http.structures.WebSocket;
 import ji.translator.Translator;

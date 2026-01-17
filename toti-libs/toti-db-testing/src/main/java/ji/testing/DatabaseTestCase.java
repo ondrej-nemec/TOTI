@@ -8,9 +8,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 
-import ji.database.Database;
-import ji.database.DatabaseConfig;
 import ji.testing.entities.Table;
+import toti.lib.database.base.Database;
+import toti.lib.database.base.DatabaseConfig;
 import toti.lib.files.env.Env;
 
 public abstract class DatabaseTestCase {

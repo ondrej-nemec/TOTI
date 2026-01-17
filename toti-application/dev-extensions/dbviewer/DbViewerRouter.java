@@ -6,8 +6,8 @@ import java.util.Map;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
-import ji.database.Database;
-import ji.database.DatabaseConfig;
+import toti.lib.database.base.Database;
+import toti.lib.database.base.DatabaseConfig;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.structures.RequestParameters;
 import toti.Headers;

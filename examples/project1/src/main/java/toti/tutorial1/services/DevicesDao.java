@@ -5,10 +5,10 @@ import java.util.List;
 
 import ext.EntityDao;
 import ext.GridEntityDao;
-import ji.database.Database;
-import ji.database.support.DatabaseRow;
-import ji.querybuilder.QueryBuilder;
-import ji.querybuilder.builders.SelectBuilder;
+import toti.lib.database.base.Database;
+import toti.lib.database.base.support.DatabaseRow;
+import toti.lib.database.querybuilder.QueryBuilder;
+import toti.lib.database.querybuilder.builders.SelectBuilder;
 import toti.tutorial1.entity.Device;
 
 public class DevicesDao implements EntityDao<Device>, GridEntityDao<Device> {

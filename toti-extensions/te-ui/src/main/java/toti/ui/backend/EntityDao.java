@@ -4,11 +4,11 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import ji.database.Database;
-import ji.database.support.DatabaseRow;
-import ji.querybuilder.builders.SelectBuilder;
+import toti.lib.database.base.support.DatabaseRow;
+import toti.lib.database.querybuilder.builders.SelectBuilder;
 import toti.lib.common.structures.DictionaryValue;
 import toti.lib.common.structures.ThrowingFunction;
+import toti.lib.database.base.Database;
 
 public interface EntityDao {
 	

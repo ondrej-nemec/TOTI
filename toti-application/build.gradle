@@ -11,7 +11,7 @@ repositories {
 
 dependencies {
 	api project(':toti-libs:toti-common')
-	api project(':toti-libs:toti-http')
+	api project(':toti-libs:toti-tcpip')
 	testImplementation(testFixtures(project(':toti-libs:toti-common')))
 	testImplementation(testFixtures(project(':toti-libs:toti-db-testing')))
 	

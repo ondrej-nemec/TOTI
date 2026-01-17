@@ -2,7 +2,7 @@ package toti.dbviewer;
 
 import java.util.List;
 
-import ji.database.support.DatabaseRow;
+import toti.lib.database.base.support.DatabaseRow;
 
 public class QueryResult {
 

@@ -20,9 +20,9 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.mock;
 
-import ji.database.Database;
 import ji.testing.entities.Row;
 import ji.testing.entities.Table;
+import toti.lib.database.base.Database;
 import toti.lib.files.env.Env;
 
 public class DatabaseTestCaseTest extends DatabaseTestCase {

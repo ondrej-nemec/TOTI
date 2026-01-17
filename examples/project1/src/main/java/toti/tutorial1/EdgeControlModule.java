@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.apache.logging.log4j.Logger;
 
-import toti.env.Env;
-import ji.database.Database;
+import toti.lib.files.env.Env;
+import toti.lib.database.base.Database;
 import ji.translator.Translator;
 import toti.tutorial1.services.DeviceStateDao;
 import toti.tutorial1.services.DevicesDao;

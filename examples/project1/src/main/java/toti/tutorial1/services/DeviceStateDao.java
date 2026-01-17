@@ -3,10 +3,10 @@ package toti.tutorial1.services;
 import java.sql.SQLException;
 
 import ext.GridEntityDao;
-import ji.database.Database;
-import ji.querybuilder.QueryBuilder;
-import ji.querybuilder.builders.SelectBuilder;
-import ji.querybuilder.enums.Join;
+import toti.lib.database.base.Database;
+import toti.lib.database.querybuilder.QueryBuilder;
+import toti.lib.database.querybuilder.builders.SelectBuilder;
+import toti.lib.database.querybuilder.enums.Join;
 import toti.tutorial1.entity.State;
 
 public class DeviceStateDao implements GridEntityDao<State> {

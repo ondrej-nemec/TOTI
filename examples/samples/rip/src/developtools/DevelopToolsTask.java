@@ -8,9 +8,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import ji.common.structures.MapInit;
-import ji.database.Database;
-import ji.querybuilder.enums.ColumnType;
-import ji.querybuilder.enums.Join;
+import toti.lib.database.base.Database;
+import toti.lib.database.querybuilder.enums.ColumnType;
+import toti.lib.database.querybuilder.enums.Join;
 import ji.translator.Translator;
 import toti.application.Task;
 

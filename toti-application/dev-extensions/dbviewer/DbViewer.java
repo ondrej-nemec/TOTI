@@ -8,8 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import ji.database.Database;
-import ji.database.support.DatabaseRow;
+import toti.lib.database.base.Database;
+import toti.lib.database.base.support.DatabaseRow;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.structures.RequestParameters;
 import toti.answers.response.Response;

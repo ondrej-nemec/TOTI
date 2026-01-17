@@ -6,9 +6,9 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import ji.database.DatabaseConfig;
 import ji.testing.entities.Row;
 import ji.testing.entities.Table;
+import toti.lib.database.base.DatabaseConfig;
 
 // for doc
 public class Example/* extends DatabaseTestCase*/ {

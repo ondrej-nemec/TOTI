@@ -9,9 +9,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import static org.mockito.Mockito.mock;
 
-import ji.querybuilder.QueryBuilder;
-import ji.querybuilder.builders.SelectBuilder;
-import ji.querybuilder.instances.PostgreSqlQueryBuilder;
+import toti.lib.database.querybuilder.QueryBuilder;
+import toti.lib.database.querybuilder.builders.SelectBuilder;
+import toti.lib.database.querybuilder.instances.PostgreSqlQueryBuilder;
 import toti.lib.common.structures.MapInit;
 import toti.lib.common.structures.SortedMap;
 import toti.ui.backend.Owner;

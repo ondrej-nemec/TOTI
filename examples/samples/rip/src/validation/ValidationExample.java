@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.Logger;
 import toti.env.Env;
-import ji.database.Database;
+import toti.lib.database.base.Database;
 import ji.translator.Translator;
 import toti.annotations.Action;
 import toti.annotations.Controller;

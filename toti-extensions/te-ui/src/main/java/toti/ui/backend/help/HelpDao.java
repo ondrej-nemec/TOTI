@@ -7,9 +7,9 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import ji.database.Database;
-import ji.querybuilder.QueryBuilder;
-import ji.querybuilder.builders.SelectBuilder;
+import toti.lib.database.querybuilder.QueryBuilder;
+import toti.lib.database.querybuilder.builders.SelectBuilder;
+import toti.lib.database.base.Database;
 import toti.ui.backend.Owner;
 
 public interface HelpDao{

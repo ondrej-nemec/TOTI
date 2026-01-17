@@ -2,9 +2,9 @@ package migration.endToEndModule2;
 
 import java.sql.SQLException;
 
-import ji.migration.Migration;
-import ji.querybuilder.QueryBuilder;
-import ji.querybuilder.enums.ColumnType;
+import toti.lib.database.migration.Migration;
+import toti.lib.database.querybuilder.QueryBuilder;
+import toti.lib.database.querybuilder.enums.ColumnType;
 
 public class V1__AddedSecondTable implements Migration {
 

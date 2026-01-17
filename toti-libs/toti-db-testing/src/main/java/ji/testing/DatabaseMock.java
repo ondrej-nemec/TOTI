@@ -5,17 +5,18 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.logging.log4j.Logger;
-import ji.database.Database;
-import ji.database.DatabaseConfig;
-import ji.database.support.ConnectionFunction;
-import ji.database.support.DoubleConsumer;
-import ji.querybuilder.Builder;
-import ji.querybuilder.QueryBuilderFactory;
-import ji.querybuilder.builders.BatchBuilder;
-import ji.querybuilder.builders.InsertBuilder;
-import ji.querybuilder.builders.UpdateBuilder;
+
+import toti.lib.database.base.support.ConnectionFunction;
+import toti.lib.database.base.support.DoubleConsumer;
+import toti.lib.database.querybuilder.Builder;
+import toti.lib.database.querybuilder.QueryBuilderFactory;
+import toti.lib.database.querybuilder.builders.BatchBuilder;
+import toti.lib.database.querybuilder.builders.InsertBuilder;
+import toti.lib.database.querybuilder.builders.UpdateBuilder;
 import ji.testing.entities.Row;
 import ji.testing.entities.Table;
+import toti.lib.database.base.Database;
+import toti.lib.database.base.DatabaseConfig;
 
 public class DatabaseMock extends Database {
 	

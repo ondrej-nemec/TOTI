@@ -6,13 +6,13 @@ import java.util.function.BiFunction;
 
 import org.apache.logging.log4j.Logger;
 
-import ji.database.Database;
-import ji.database.DatabaseConfig;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.application.register.Register;
 import toti.extensions.Extension;
 import toti.lib.common.structures.MapDictionary;
+import toti.lib.database.base.Database;
+import toti.lib.database.base.DatabaseConfig;
 import toti.lib.files.env.Env;
 import toti.lib.tcpip.structures.RequestParameters;
 

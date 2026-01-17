@@ -5,9 +5,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 
-import ji.database.Database;
-import ji.querybuilder.builders.BatchBuilder;
-import ji.querybuilder.enums.ColumnType;
+import toti.lib.database.base.Database;
+import toti.lib.database.querybuilder.builders.BatchBuilder;
+import toti.lib.database.querybuilder.enums.ColumnType;
 import toti.ui.backend.EntityDao;
 import toti.ui.backend.grid.GridDao;
 import toti.ui.backend.grid.GridOptions;
