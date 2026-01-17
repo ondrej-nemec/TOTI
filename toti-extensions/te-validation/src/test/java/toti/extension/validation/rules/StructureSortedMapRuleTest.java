@@ -11,13 +11,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import toti.answers.request.Identity;
-import toti.answers.request.Request;
+import toti.application.answers.request.Identity;
+import toti.application.answers.request.Request;
 import toti.extension.validation.ValidationItem;
 import toti.extension.validation.ValidationResult;
 import toti.extension.validation.Validator;
 import toti.extension.validation.rules.StructureSortedMapRule;
-import toti.extensions.Translator;
+import toti.application.extensions.Translator;
 import toti.lib.common.structures.MapInit;
 import toti.lib.common.structures.SortedMap;
 import toti.lib.tcpip.structures.RequestParameters;

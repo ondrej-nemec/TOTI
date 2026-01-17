@@ -1,9 +1,9 @@
 package toti.extension.validation;
 
-import toti.extensions.Translator;
+import toti.application.extensions.Translator;
 import toti.lib.tcpip.structures.RequestParameters;
-import toti.answers.request.Identity;
-import toti.answers.request.Request;
+import toti.application.answers.request.Identity;
+import toti.application.answers.request.Request;
 
 public interface GlobalFunction {
 

@@ -5,11 +5,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import toti.answers.request.Identity;
+import toti.application.answers.request.Identity;
 import toti.extension.ui.control.inputs.Hidden;
 import toti.extension.ui.control.inputs.Input;
-import toti.extensions.auth.AuthenticationExtension;
-import toti.extensions.auth.LoggedUser;
+import toti.application.extensions.auth.AuthenticationExtension;
+import toti.application.extensions.auth.LoggedUser;
 
 public class Form implements Control {
 

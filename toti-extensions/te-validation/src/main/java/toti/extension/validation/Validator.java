@@ -7,11 +7,11 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import toti.answers.request.Identity;
-import toti.answers.request.Request;
+import toti.application.answers.request.Identity;
+import toti.application.answers.request.Request;
 import toti.extension.validation.collections.RulesCollection;
 import toti.extension.validation.rules.Rule;
-import toti.extensions.Translator;
+import toti.application.extensions.Translator;
 import toti.lib.common.exceptions.LogicException;
 import toti.lib.common.structures.MapInit;
 import toti.lib.tcpip.structures.RequestParameters;

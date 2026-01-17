@@ -13,7 +13,7 @@ import toti.extension.database.DatabaseExtension;
 import toti.extension.templating.TemplateExtension;
 import toti.extension.translation.TranslatorExtension;
 import toti.extension.ui.UiExtension;
-import toti.extensions.auth.AuthenticationExtension;
+import toti.application.extensions.auth.AuthenticationExtension;
 import toti.lib.common.structures.MapInit;
 import toti.samples.application.ApplicationModule;
 import toti.samples.templating.TemplatingModule;

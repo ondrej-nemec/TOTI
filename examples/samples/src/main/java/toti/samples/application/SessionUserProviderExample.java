@@ -6,9 +6,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import toti.answers.router.Link;
-import toti.extensions.auth.LoggedUser;
-import toti.extensions.auth.SessionUserProvider;
+import toti.application.answers.router.Link;
+import toti.application.extensions.auth.LoggedUser;
+import toti.application.extensions.auth.SessionUserProvider;
 import toti.samples.application.controllers.UserController;
 /**
 * very simple implementation for test

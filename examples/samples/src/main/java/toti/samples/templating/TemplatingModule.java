@@ -3,10 +3,10 @@ package toti.samples.templating;
 import java.util.Arrays;
 import java.util.List;
 
-import toti.answers.router.Link;
-import toti.application.Module;
-import toti.application.Task;
-import toti.application.register.Register;
+import toti.application.answers.router.Link;
+import toti.application.application.Module;
+import toti.application.application.Task;
+import toti.application.application.register.Register;
 import toti.lib.files.env.Env;
 
 public class TemplatingModule implements Module {

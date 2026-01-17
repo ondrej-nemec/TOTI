@@ -1,6 +1,6 @@
 package test;
 
-import toti.annotations.Action;
+import toti.application.annotations.Action;
 
 public class NotController {
 

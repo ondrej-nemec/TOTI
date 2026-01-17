@@ -9,7 +9,7 @@ import toti.extension.validation.rules.FileAllowedTypesRule;
 import toti.extension.validation.rules.FileMaxSizeRule;
 import toti.extension.validation.rules.FileMinSizeRule;
 import toti.extension.validation.rules.Rule;
-import toti.extensions.Translator;
+import toti.application.extensions.Translator;
 import toti.lib.common.exceptions.LogicException;
 import toti.lib.common.structures.MapInit;
 import toti.lib.tcpip.structures.UploadedFile;

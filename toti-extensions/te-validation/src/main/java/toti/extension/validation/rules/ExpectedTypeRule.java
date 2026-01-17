@@ -2,9 +2,9 @@ package toti.extension.validation.rules;
 
 import java.util.function.Function;
 
-import toti.extensions.Translator;
+import toti.application.extensions.Translator;
 import toti.lib.common.structures.DictionaryValue;
-import toti.answers.request.Request;
+import toti.application.answers.request.Request;
 import toti.extension.validation.ValidationItem;
 
 public class ExpectedTypeRule implements Rule {

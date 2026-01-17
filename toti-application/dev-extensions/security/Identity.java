@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import ji.translator.Locale;
-import toti.answers.request.AuthMode;
+import toti.application.answers.request.AuthMode;
 
 public class Identity {
 

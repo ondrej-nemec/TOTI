@@ -2,9 +2,9 @@ package toti.tutorial1.web;
 
 import java.util.HashMap;
 
-import toti.annotations.Action;
-import toti.annotations.Controller;
-import toti.answers.response.Response;
+import toti.application.annotations.Action;
+import toti.application.annotations.Controller;
+import toti.application.answers.response.Response;
 
 @Controller("dashboard")
 public class WelcomePageController {

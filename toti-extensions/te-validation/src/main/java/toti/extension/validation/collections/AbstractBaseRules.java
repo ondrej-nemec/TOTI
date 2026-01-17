@@ -11,7 +11,7 @@ import toti.extension.validation.ValidationItem;
 import toti.extension.validation.rules.ExpectedTypeRule;
 import toti.extension.validation.rules.RequiredItemRule;
 import toti.extension.validation.rules.Rule;
-import toti.extensions.Translator;
+import toti.application.extensions.Translator;
 import toti.lib.common.exceptions.LogicException;
 import toti.lib.common.structures.MapInit;
 

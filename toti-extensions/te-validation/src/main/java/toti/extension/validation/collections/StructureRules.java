@@ -11,7 +11,7 @@ import toti.extension.validation.rules.Rule;
 import toti.extension.validation.rules.StructureListRule;
 import toti.extension.validation.rules.StructureMapRule;
 import toti.extension.validation.rules.StructureSortedMapRule;
-import toti.extensions.Translator;
+import toti.application.extensions.Translator;
 import toti.lib.common.exceptions.LogicException;
 import toti.lib.common.structures.MapInit;
 

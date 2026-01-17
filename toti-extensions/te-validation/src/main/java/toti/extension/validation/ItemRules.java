@@ -7,7 +7,7 @@ import toti.extension.validation.collections.BaseRules;
 import toti.extension.validation.collections.FileRules;
 import toti.extension.validation.collections.NumberRules;
 import toti.extension.validation.collections.StructureRules;
-import toti.extensions.Translator;
+import toti.application.extensions.Translator;
 import toti.lib.common.structures.MapInit;
 
 public class ItemRules {

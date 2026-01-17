@@ -3,7 +3,7 @@ package toti.extension.validation.rules;
 import java.util.Collection;
 import java.util.function.Function;
 
-import toti.extensions.Translator;
+import toti.application.extensions.Translator;
 import toti.lib.tcpip.structures.UploadedFile;
 
 public class FileAllowedTypesRule extends SimpleRule<Collection<Object>> {

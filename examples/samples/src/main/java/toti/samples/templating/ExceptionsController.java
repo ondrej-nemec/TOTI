@@ -2,10 +2,10 @@ package toti.samples.templating;
 
 import java.util.HashMap;
 
-import toti.annotations.Action;
-import toti.annotations.Controller;
-import toti.answers.action.ResponseAction;
-import toti.answers.response.Response;
+import toti.application.annotations.Action;
+import toti.application.annotations.Controller;
+import toti.application.answers.action.ResponseAction;
+import toti.application.answers.response.Response;
 
 /**
  * This example shows TOTI reaction on Template errors

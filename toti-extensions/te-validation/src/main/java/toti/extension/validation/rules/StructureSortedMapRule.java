@@ -6,11 +6,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
 
-import toti.extensions.Translator;
+import toti.application.extensions.Translator;
 import toti.lib.common.structures.DictionaryValue;
 import toti.lib.common.structures.SortedMap;
 import toti.lib.tcpip.structures.RequestParameters;
-import toti.answers.request.Request;
+import toti.application.answers.request.Request;
 import toti.extension.validation.ValidationItem;
 import toti.extension.validation.Validator;
 

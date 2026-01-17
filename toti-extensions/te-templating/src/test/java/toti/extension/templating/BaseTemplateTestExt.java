@@ -7,9 +7,9 @@ import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 
-import toti.answers.response.ResponseContainer;
-import toti.application.register.MappedAction;
-import toti.extensions.Translator;
+import toti.application.answers.response.ResponseContainer;
+import toti.application.application.register.MappedAction;
+import toti.application.extensions.Translator;
 import toti.lib.templating.BaseTemplateTest;
 
 public class BaseTemplateTestExt extends BaseTemplateTest {

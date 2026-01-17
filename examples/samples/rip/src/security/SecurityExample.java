@@ -8,11 +8,11 @@ import org.apache.logging.log4j.Logger;
 import toti.env.Env;
 import toti.lib.database.base.Database;
 import ji.translator.Translator;
-import toti.answers.router.Link;
-import toti.answers.router.Router;
-import toti.application.Module;
-import toti.application.Task;
-import toti.application.register.Register;
+import toti.application.answers.router.Link;
+import toti.application.answers.router.Router;
+import toti.application.application.Module;
+import toti.application.application.Task;
+import toti.application.application.register.Register;
 
 /**
  * Example demonstrate security in TOTI

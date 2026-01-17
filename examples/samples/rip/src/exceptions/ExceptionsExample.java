@@ -11,19 +11,19 @@ import toti.lib.database.base.Database;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
 import ji.translator.Translator;
-import toti.annotations.Action;
-import toti.annotations.Controller;
-import toti.annotations.Secured;
-import toti.answers.action.ResponseAction;
-import toti.answers.action.ResponseBuilder;
-import toti.answers.request.Identity;
-import toti.answers.response.Response;
-import toti.answers.router.Link;
-import toti.answers.router.Router;
-import toti.application.Module;
-import toti.application.Task;
-import toti.application.register.Register;
-import toti.extensions.CustomExceptionResponse;
+import toti.application.annotations.Action;
+import toti.application.annotations.Controller;
+import toti.application.annotations.Secured;
+import toti.application.answers.action.ResponseAction;
+import toti.application.answers.action.ResponseBuilder;
+import toti.application.answers.request.Identity;
+import toti.application.answers.response.Response;
+import toti.application.answers.router.Link;
+import toti.application.answers.router.Router;
+import toti.application.application.Module;
+import toti.application.application.Task;
+import toti.application.application.register.Register;
+import toti.application.extensions.CustomExceptionResponse;
 
 /**
  * This example shows TOTI reaction on varios exceptions
@@ -143,7 +143,7 @@ public class ExceptionsExample implements Module {
 		return new CustomExceptionResponse() {
 
 			@Override
-			public Response catchException(toti.answers.request.Request request, StatusCode status, Identity identity,
+			public Response catchException(toti.application.answers.request.Request request, StatusCode status, Identity identity,
 					Translator translator, Throwable t, boolean isDevelopResponseAllowed, boolean isAsyncRequest) {
 				return Response.OK().getText("Oops, something happends.");
 			}

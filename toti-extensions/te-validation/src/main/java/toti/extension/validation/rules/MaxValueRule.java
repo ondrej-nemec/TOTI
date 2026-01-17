@@ -2,7 +2,7 @@ package toti.extension.validation.rules;
 
 import java.util.function.Function;
 
-import toti.extensions.Translator;
+import toti.application.extensions.Translator;
 import toti.lib.common.structures.DictionaryValue;
 
 public class MaxValueRule extends SimpleRule<Number> {

@@ -7,11 +7,11 @@ import java.util.Map;
 
 import ji.translator.Translator;
 import toti.tutorial1.web.api.SignApiController;
-import toti.annotations.Action;
-import toti.annotations.Controller;
-import toti.annotations.Param;
-import toti.answers.response.Response;
-import toti.answers.router.Link;
+import toti.application.annotations.Action;
+import toti.application.annotations.Controller;
+import toti.application.annotations.Param;
+import toti.application.answers.response.Response;
+import toti.application.answers.router.Link;
 import toti.control.Form;
 import toti.control.inputs.Option;
 import toti.control.inputs.Password;

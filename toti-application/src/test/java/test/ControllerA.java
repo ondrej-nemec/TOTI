@@ -1,8 +1,8 @@
 package test;
 
-import toti.annotations.Action;
-import toti.annotations.Controller;
-import toti.answers.action.ResponseAction;
+import toti.application.annotations.Action;
+import toti.application.annotations.Controller;
+import toti.application.answers.action.ResponseAction;
 import toti.lib.tcpip.enums.HttpMethod;
 
 @Controller("controllerA")

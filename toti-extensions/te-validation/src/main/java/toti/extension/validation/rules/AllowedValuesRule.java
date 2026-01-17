@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.function.Function;
 
 import toti.extension.validation.ValidationItem;
-import toti.extensions.Translator;
+import toti.application.extensions.Translator;
 
 public class AllowedValuesRule extends SimpleRule<Collection<Object>> {
 

@@ -5,9 +5,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
-import toti.answers.request.Identity;
-import toti.answers.request.LoggedUser;
-import toti.answers.request.SessionUserProvider;
+import toti.application.answers.request.Identity;
+import toti.application.answers.request.LoggedUser;
+import toti.application.answers.request.SessionUserProvider;
 
 public class SessionManager implements SessionUserProvider {
 	

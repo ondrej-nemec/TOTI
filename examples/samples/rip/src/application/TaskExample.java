@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 
 import org.apache.logging.log4j.Logger;
 import ji.socketCommunication.http.structures.WebSocket;
-import toti.application.Task;
+import toti.application.application.Task;
 
 public class TaskExample implements Task {
 	

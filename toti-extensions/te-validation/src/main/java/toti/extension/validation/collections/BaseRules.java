@@ -2,7 +2,7 @@ package toti.extension.validation.collections;
 
 import java.util.function.BiFunction;
 
-import toti.extensions.Translator;
+import toti.application.extensions.Translator;
 
 public class BaseRules extends AbstractBaseRules<BaseRules> {
 

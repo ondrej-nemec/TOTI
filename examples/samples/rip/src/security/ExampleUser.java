@@ -2,7 +2,7 @@ package toti.samples.security;
 
 import java.util.Optional;
 
-import toti.answers.request.LoggedUser;
+import toti.application.answers.request.LoggedUser;
 
 public class ExampleUser implements LoggedUser {
 	

@@ -5,11 +5,11 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 
-import toti.annotations.Action;
-import toti.annotations.Controller;
-import toti.answers.action.ResponseAction;
-import toti.answers.response.Response;
-import toti.answers.router.Link;
+import toti.application.annotations.Action;
+import toti.application.annotations.Controller;
+import toti.application.answers.action.ResponseAction;
+import toti.application.answers.response.Response;
+import toti.application.answers.router.Link;
 import toti.lib.common.functions.FileExtension;
 import toti.lib.common.structures.MapInit;
 import toti.lib.tcpip.enums.StatusCode;

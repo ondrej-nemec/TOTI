@@ -9,12 +9,12 @@ import ext.GridColumn;
 import ext.GridOptions;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.StatusCode;
-import toti.annotations.Action;
-import toti.annotations.Controller;
-import toti.annotations.Method;
-import toti.annotations.Params;
-import toti.annotations.Secured;
-import toti.answers.response.Response;
+import toti.application.annotations.Action;
+import toti.application.annotations.Controller;
+import toti.application.annotations.Method;
+import toti.application.annotations.Params;
+import toti.application.annotations.Secured;
+import toti.application.answers.response.Response;
 import toti.tutorial1.services.DeviceStateDao;
 import toti.validation.Validator;
 

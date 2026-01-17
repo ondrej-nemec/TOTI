@@ -12,7 +12,7 @@ import toti.lib.database.base.Database;
 import toti.lib.database.querybuilder.enums.ColumnType;
 import toti.lib.database.querybuilder.enums.Join;
 import ji.translator.Translator;
-import toti.application.Task;
+import toti.application.application.Task;
 
 public class DevelopToolsTask implements Task {
 	

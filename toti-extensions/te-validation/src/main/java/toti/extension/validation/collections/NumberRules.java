@@ -7,7 +7,7 @@ import java.util.function.Function;
 import toti.extension.validation.rules.MaxValueRule;
 import toti.extension.validation.rules.MinValueRule;
 import toti.extension.validation.rules.Rule;
-import toti.extensions.Translator;
+import toti.application.extensions.Translator;
 import toti.lib.common.exceptions.LogicException;
 import toti.lib.common.structures.MapInit;
 

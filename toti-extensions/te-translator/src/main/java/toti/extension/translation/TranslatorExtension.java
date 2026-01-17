@@ -12,15 +12,15 @@ import org.apache.logging.log4j.Logger;
 import ji.translator.LanguageSettings;
 import ji.translator.Locale;
 import ji.translator.Translator;
-import toti.answers.Headers;
-import toti.answers.request.Identity;
-import toti.application.register.Register;
-import toti.extensions.Extension;
+import toti.application.answers.Headers;
+import toti.application.answers.request.Identity;
+import toti.application.application.register.Register;
+import toti.application.extensions.Extension;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.files.env.Env;
 import toti.lib.tcpip.structures.RequestParameters;
 
-public class TranslatorExtension implements toti.extensions.TranslatorExtension, Extension {
+public class TranslatorExtension implements toti.application.extensions.TranslatorExtension, Extension {
 	
 	private final static String LOCALE_COOKIE_NAME = "Language";
 	private final static String LOCALE_HEADER_NAME = "Accept-Language";
@@ -115,11 +115,11 @@ public class TranslatorExtension implements toti.extensions.TranslatorExtension,
 	}
 
 	@Override
-	public toti.extensions.Translator getTranslator(Identity identity) {
+	public toti.application.extensions.Translator getTranslator(Identity identity) {
 		return new TranslatorImpl(translator.withLocale(identity.getSessionSpace(this).getString(NAME)));
 	}
 
-	public toti.extensions.Translator getTranslator() {
+	public toti.application.extensions.Translator getTranslator() {
 		return new TranslatorImpl(translator);
 	}
 	

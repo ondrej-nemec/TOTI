@@ -6,10 +6,10 @@ import java.util.function.BiFunction;
 
 import org.apache.logging.log4j.Logger;
 
-import toti.answers.Headers;
-import toti.answers.request.Identity;
-import toti.application.register.Register;
-import toti.extensions.Extension;
+import toti.application.answers.Headers;
+import toti.application.answers.request.Identity;
+import toti.application.application.register.Register;
+import toti.application.extensions.Extension;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.database.base.Database;
 import toti.lib.database.base.DatabaseConfig;

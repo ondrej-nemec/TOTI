@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.Logger;
 
-import toti.application.Task;
+import toti.application.application.Task;
 import toti.tutorial1.entity.State;
 import toti.tutorial1.services.DeviceStateDao;
 import toti.tutorial1.services.DevicesDao;

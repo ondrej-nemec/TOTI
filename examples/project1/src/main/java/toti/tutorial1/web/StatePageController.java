@@ -5,12 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ji.translator.Translator;
-import toti.annotations.Action;
-import toti.annotations.Controller;
-import toti.annotations.Secured;
-import toti.answers.request.AuthMode;
-import toti.answers.response.Response;
-import toti.answers.router.Link;
+import toti.application.annotations.Action;
+import toti.application.annotations.Controller;
+import toti.application.annotations.Secured;
+import toti.application.answers.request.AuthMode;
+import toti.application.answers.response.Response;
+import toti.application.answers.router.Link;
 import toti.control.Grid;
 import toti.control.columns.ValueColumn;
 import toti.control.inputs.Option;

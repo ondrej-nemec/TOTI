@@ -14,15 +14,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static toti.lib.common.tests.TestCase.assertEquals;
 
-import toti.answers.request.Identity;
-import toti.answers.request.Request;
+import toti.application.answers.request.Identity;
+import toti.application.answers.request.Request;
 import toti.extension.validation.GlobalFunction;
 import toti.extension.validation.ValidationItem;
 import toti.extension.validation.ValidationResult;
 import toti.extension.validation.Validator;
 import toti.extension.validation.collections.RulesCollection;
 import toti.extension.validation.rules.Rule;
-import toti.extensions.Translator;
+import toti.application.extensions.Translator;
 import toti.lib.tcpip.structures.RequestParameters;
 
 public class ValidatorTest {

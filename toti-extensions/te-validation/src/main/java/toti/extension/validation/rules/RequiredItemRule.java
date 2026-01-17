@@ -2,8 +2,8 @@ package toti.extension.validation.rules;
 
 import java.util.function.BiFunction;
 
-import toti.extensions.Translator;
-import toti.answers.request.Request;
+import toti.application.extensions.Translator;
+import toti.application.answers.request.Request;
 import toti.extension.validation.ValidationItem;
 
 public class RequiredItemRule implements Rule {

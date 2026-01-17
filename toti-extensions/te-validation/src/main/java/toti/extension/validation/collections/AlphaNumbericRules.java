@@ -3,7 +3,7 @@ package toti.extension.validation.collections;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import toti.extensions.Translator;
+import toti.application.extensions.Translator;
 
 public class AlphaNumbericRules extends AbstractAlphaNumbericRules<AlphaNumbericRules> {
 

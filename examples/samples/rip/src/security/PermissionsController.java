@@ -7,15 +7,15 @@ import java.util.Map;
 
 import ji.common.structures.Tuple2;
 import ji.socketCommunication.http.StatusCode;
-import toti.annotations.Action;
-import toti.annotations.Controller;
-import toti.annotations.Secured;
-import toti.answers.action.RequestInterruptedException;
-import toti.answers.action.ResponseAction;
-import toti.answers.action.ResponseBuilder;
-import toti.answers.request.AuthMode;
-import toti.answers.response.Response;
-import toti.answers.router.Link;
+import toti.application.annotations.Action;
+import toti.application.annotations.Controller;
+import toti.application.annotations.Secured;
+import toti.application.answers.action.RequestInterruptedException;
+import toti.application.answers.action.ResponseAction;
+import toti.application.answers.action.ResponseBuilder;
+import toti.application.answers.request.AuthMode;
+import toti.application.answers.response.Response;
+import toti.application.answers.router.Link;
 
 /**
  * Example demonstrate security in TOTI: Permissions

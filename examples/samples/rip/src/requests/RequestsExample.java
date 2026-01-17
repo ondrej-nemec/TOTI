@@ -11,15 +11,15 @@ import toti.lib.database.base.Database;
 import ji.socketCommunication.http.HttpMethod;
 import ji.socketCommunication.http.structures.UploadedFile;
 import ji.translator.Translator;
-import toti.annotations.Action;
-import toti.annotations.Controller;
-import toti.answers.action.ResponseAction;
-import toti.answers.action.ResponseBuilder;
-import toti.answers.response.Response;
-import toti.answers.router.Link;
-import toti.application.Module;
-import toti.application.Task;
-import toti.application.register.Register;
+import toti.application.annotations.Action;
+import toti.application.annotations.Controller;
+import toti.application.answers.action.ResponseAction;
+import toti.application.answers.action.ResponseBuilder;
+import toti.application.answers.response.Response;
+import toti.application.answers.router.Link;
+import toti.application.application.Module;
+import toti.application.application.Task;
+import toti.application.application.register.Register;
 
 /**
  * This controller shows various ways of receiving parameters.

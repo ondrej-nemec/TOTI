@@ -7,12 +7,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import toti.answers.request.Identity;
-import toti.answers.request.Request;
+import toti.application.answers.request.Identity;
+import toti.application.answers.request.Request;
 import toti.extension.validation.ValidationItem;
 import toti.extension.validation.ValidationResult;
 import toti.extension.validation.rules.RequiredItemRule;
-import toti.extensions.Translator;
+import toti.application.extensions.Translator;
 
 public class RequiredItemRuleTest {
 

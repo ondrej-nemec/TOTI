@@ -2,7 +2,7 @@ package toti.samples.application;
 
 import java.util.Optional;
 
-import toti.extensions.auth.LoggedUser;
+import toti.application.extensions.auth.LoggedUser;
 
 public class SampleUser implements LoggedUser {
 

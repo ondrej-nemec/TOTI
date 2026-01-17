@@ -2,8 +2,8 @@ package toti.extension.validation;
 
 import java.util.function.Function;
 
-import toti.extensions.Translator;
-import toti.answers.request.Identity;
+import toti.application.extensions.Translator;
+import toti.application.answers.request.Identity;
 
 public class ValidationItem {
 

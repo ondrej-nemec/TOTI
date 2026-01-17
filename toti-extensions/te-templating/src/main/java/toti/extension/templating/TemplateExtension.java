@@ -8,11 +8,11 @@ import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 
-import toti.answers.Headers;
-import toti.answers.request.Identity;
-import toti.answers.response.ResponseContainer;
-import toti.answers.response.ResponseException;
-import toti.application.register.Register;
+import toti.application.answers.Headers;
+import toti.application.answers.request.Identity;
+import toti.application.answers.response.ResponseContainer;
+import toti.application.answers.response.ResponseException;
+import toti.application.application.register.Register;
 import toti.extension.templating.parameters.AltParameter;
 import toti.extension.templating.parameters.HrefParameter;
 import toti.extension.templating.parameters.PlaceholderParameter;
@@ -23,7 +23,7 @@ import toti.extension.templating.tags.IfCurrentTag;
 import toti.extension.templating.tags.LinkTag;
 import toti.extension.templating.tags.PermissionsTag;
 import toti.extension.templating.tags.TranslateTag;
-import toti.extensions.Extension;
+import toti.application.extensions.Extension;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.files.env.Env;
 import toti.lib.tcpip.structures.RequestParameters;
@@ -32,7 +32,7 @@ import toti.lib.templating.Tag;
 import toti.lib.templating.Template;
 import toti.lib.templating.TemplateFactory;
 
-public class TemplateExtension implements toti.extensions.TemplateExtension, Extension {
+public class TemplateExtension implements toti.application.extensions.TemplateExtension, Extension {
 	
 	private final Map<String, TemplateFactory> templateFactories;
 	private final String tempPath;
