@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ji.common.structures.ObjectBuilder;
 import toti.ServerException;
 import toti.answers.request.Identity;
 import toti.answers.request.IdentityFactory;
@@ -13,6 +12,7 @@ import toti.answers.response.FinalResponse;
 import toti.answers.response.Response;
 import toti.answers.response.ResponseContainer;
 import toti.application.register.MappedAction;
+import toti.common.structures.ObjectBuilder;
 import toti.extensions.TotiExtension;
 import toti.extensions.TranslatorExtension;
 import toti.http.enums.StatusCode;

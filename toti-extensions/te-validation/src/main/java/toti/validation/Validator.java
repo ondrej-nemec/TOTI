@@ -7,10 +7,10 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import ji.common.exceptions.LogicException;
-import ji.common.structures.MapInit;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
+import toti.common.exceptions.LogicException;
+import toti.common.structures.MapInit;
 import toti.extensions.Translator;
 import toti.http.structures.RequestParameters;
 import toti.validation.collections.RulesCollection;

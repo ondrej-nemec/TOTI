@@ -7,12 +7,12 @@ import java.util.function.BiFunction;
 import org.apache.logging.log4j.Logger;
 
 import toti.env.Env;
-import ji.common.structures.MapDictionary;
 import ji.database.Database;
 import ji.database.DatabaseConfig;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.application.register.Register;
+import toti.common.structures.MapDictionary;
 import toti.extensions.Extension;
 import toti.http.structures.RequestParameters;
 

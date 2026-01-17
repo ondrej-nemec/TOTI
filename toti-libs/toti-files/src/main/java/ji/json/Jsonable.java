@@ -1,6 +1,6 @@
 package ji.json;
 
-import ji.common.functions.Mapper;
+import toti.common.functions.Mapper;
 
 public interface Jsonable {
 

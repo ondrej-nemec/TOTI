@@ -26,10 +26,6 @@ import java.util.function.Supplier;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-
-import ji.common.structures.MapDictionary;
-import ji.common.structures.ThrowingFunction;
-
 import org.junit.jupiter.params.provider.MethodSource;
 
 import toti.ServerException;
@@ -47,6 +43,8 @@ import toti.answers.router.Link;
 import toti.answers.router.Router;
 import toti.application.register.MappedAction;
 import toti.application.register.Param;
+import toti.common.structures.MapDictionary;
+import toti.common.structures.ThrowingFunction;
 import toti.extensions.AuthenticationExtension;
 import toti.extensions.TemplateExtension;
 import toti.extensions.Translator;

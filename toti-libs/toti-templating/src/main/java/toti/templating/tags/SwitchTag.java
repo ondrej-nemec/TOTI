@@ -2,7 +2,7 @@ package toti.templating.tags;
 
 import java.util.Map;
 
-import ji.common.exceptions.LogicException;
+import toti.common.exceptions.LogicException;
 import toti.templating.Tag;
 import toti.templating.TagVariableMode;
 

@@ -1,9 +1,9 @@
 package test;
 
-import ji.common.structures.ThrowingSupplier;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.answers.action.ResponseAction;
+import toti.common.structures.ThrowingSupplier;
 
 @Controller
 public class NotRegisteredController {

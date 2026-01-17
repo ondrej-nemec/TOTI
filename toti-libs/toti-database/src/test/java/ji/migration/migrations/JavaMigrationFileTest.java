@@ -13,9 +13,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import ji.common.structures.ThrowingBiFunction;
 import ji.migration.Migration;
 import ji.querybuilder.QueryBuilder;
+import toti.common.structures.ThrowingBiFunction;
 
 public class JavaMigrationFileTest {
 	

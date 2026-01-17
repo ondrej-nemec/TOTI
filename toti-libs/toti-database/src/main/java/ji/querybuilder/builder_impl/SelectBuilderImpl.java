@@ -6,9 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import ji.common.structures.DictionaryValue;
-import ji.common.structures.ThrowingFunction;
-import ji.common.structures.Tuple2;
 import ji.database.support.DatabaseRow;
 import ji.querybuilder.DbInstance;
 import ji.querybuilder.builder_impl.share.ParametrizedSql;
@@ -16,6 +13,9 @@ import ji.querybuilder.builder_impl.share.SelectExecute;
 import ji.querybuilder.builder_impl.share.SelectImpl;
 import ji.querybuilder.builders.SelectBuilder;
 import ji.querybuilder.structures.SubSelect;
+import toti.common.structures.DictionaryValue;
+import toti.common.structures.ThrowingFunction;
+import toti.common.structures.Tuple2;
 
 public class SelectBuilderImpl extends SelectImpl<SelectBuilderImpl> implements SelectBuilder, ParametrizedSql, SelectExecute {
 

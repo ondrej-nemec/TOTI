@@ -14,10 +14,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-import ji.common.structures.MapDictionary;
 import toti.ServerException;
 import toti.answers.request.Request;
 import toti.answers.response.FinalResponse;
+import toti.common.structures.MapDictionary;
 import toti.http.enums.HttpMethod;
 import toti.http.enums.StatusCode;
 import toti.http.structures.RequestParameters;

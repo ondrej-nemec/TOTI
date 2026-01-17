@@ -9,13 +9,13 @@ import java.util.Set;
 
 import org.apache.logging.log4j.Logger;
 
-import ji.common.structures.MapDictionary;
 import ji.translator.LanguageSettings;
 import ji.translator.Locale;
 import ji.translator.Translator;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.application.register.Register;
+import toti.common.structures.MapDictionary;
 import toti.env.Env;
 import toti.extensions.Extension;
 import toti.http.structures.RequestParameters;

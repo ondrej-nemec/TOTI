@@ -1,6 +1,6 @@
 package toti.http.enums;
 
-import ji.common.exceptions.LogicException;
+import toti.common.exceptions.LogicException;
 
 public enum StatusCode {
 

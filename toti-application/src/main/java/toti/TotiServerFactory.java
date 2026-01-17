@@ -17,7 +17,7 @@ import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
-import ji.common.structures.dictionary.Scalar;
+import toti.common.structures.dictionary.Scalar;
 import toti.env.Env;
 import toti.http.SslCredentials;
 import toti.http.parsers.StreamReader;

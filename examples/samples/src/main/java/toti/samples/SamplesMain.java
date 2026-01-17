@@ -6,11 +6,11 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 
-import ji.common.structures.MapInit;
 import ji.translator.LanguageSettings;
 import ji.translator.Locale;
 import toti.TotiServer;
 import toti.TotiServerFactory;
+import toti.common.structures.MapInit;
 import toti.database.DatabaseExtension;
 import toti.extension.templating.TemplateExtension;
 import toti.extensions.auth.AuthenticationExtension;

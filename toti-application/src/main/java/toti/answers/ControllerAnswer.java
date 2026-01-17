@@ -14,7 +14,6 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.logging.log4j.Logger;
 
-import ji.common.structures.DictionaryValue;
 import ji.json.JsonReader;
 import ji.xml.XmlObject;
 import ji.xml.XmlReader;
@@ -32,6 +31,7 @@ import toti.answers.router.Link;
 import toti.answers.router.Router;
 import toti.application.register.MappedAction;
 import toti.application.register.Param;
+import toti.common.structures.DictionaryValue;
 import toti.answers.response.ResponseContainer;
 import toti.extensions.AuthenticationExtension;
 import toti.extensions.TemplateExtension;

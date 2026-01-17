@@ -9,12 +9,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import ji.common.functions.InputStreamLoader;
-import ji.common.structures.DictionaryValue;
-import ji.common.structures.MapInit;
-import ji.common.structures.ThrowingConsumer;
-import ji.common.structures.ThrowingSupplier;
 import ji.files.text.Text;
+import toti.common.functions.InputStreamLoader;
+import toti.common.structures.DictionaryValue;
+import toti.common.structures.MapInit;
+import toti.common.structures.ThrowingConsumer;
+import toti.common.structures.ThrowingSupplier;
 import toti.templating.Parameter;
 import toti.templating.Tag;
 import toti.templating.Template;

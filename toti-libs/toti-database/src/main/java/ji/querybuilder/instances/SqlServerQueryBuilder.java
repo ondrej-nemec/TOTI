@@ -6,9 +6,6 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import ji.common.functions.Implode;
-import ji.common.structures.ObjectBuilder;
-import ji.common.structures.Tuple2;
 import ji.querybuilder.DbInstance;
 import ji.querybuilder.Escape;
 import ji.querybuilder.builder_impl.AlterTableBuilderImpl;
@@ -37,6 +34,9 @@ import ji.querybuilder.structures.DefaultValue;
 import ji.querybuilder.structures.ForeignKey;
 import ji.querybuilder.structures.Joining;
 import ji.querybuilder.structures.SubSelect;
+import toti.common.functions.Implode;
+import toti.common.structures.ObjectBuilder;
+import toti.common.structures.Tuple2;
 
 public class SqlServerQueryBuilder implements DbInstance {
 

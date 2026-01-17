@@ -11,10 +11,10 @@ import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
 
-import ji.common.structures.BooleanBuilder;
 import toti.extensions.Translator;
 import toti.validation.ValidationItem;
 import toti.answers.request.Request;
+import toti.common.structures.BooleanBuilder;
 
 public class SimpleRuleTest {
 	

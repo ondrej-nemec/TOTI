@@ -16,13 +16,13 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import ji.common.structures.MapDictionary;
 import toti.ServerException;
 import toti.answers.request.Identity;
 import toti.answers.request.IdentityFactory;
 import toti.answers.request.Request;
 import toti.answers.response.FinalResponse;
 import toti.application.register.MappedAction;
+import toti.common.structures.MapDictionary;
 import toti.http.enums.HttpMethod;
 import toti.http.enums.StatusCode;
 import toti.http.structures.RequestParameters;

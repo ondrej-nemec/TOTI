@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import ji.common.structures.DictionaryValue;
+import toti.common.structures.DictionaryValue;
 import toti.extensions.Translator;
 
 public class MinLengthRule extends SimpleRule<Integer> {

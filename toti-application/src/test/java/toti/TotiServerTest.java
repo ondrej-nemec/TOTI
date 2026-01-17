@@ -22,9 +22,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import ji.common.structures.IntegerBuilder;
-import ji.common.structures.MapInit;
 import toti.answers.Answer;
+import toti.common.structures.IntegerBuilder;
+import toti.common.structures.MapInit;
 import toti.env.Env;
 import toti.http.parsers.StreamReader;
 

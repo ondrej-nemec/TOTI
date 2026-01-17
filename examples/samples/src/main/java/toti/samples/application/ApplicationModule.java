@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 
-import ji.common.exceptions.LogicException;
 import toti.env.Env;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
@@ -15,6 +14,7 @@ import toti.answers.router.Router;
 import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Register;
+import toti.common.exceptions.LogicException;
 import toti.extension.templating.TemplateExtension;
 import toti.extensions.auth.AuthenticationExtension;
 import toti.http.enums.StatusCode;

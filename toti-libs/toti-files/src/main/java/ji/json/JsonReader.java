@@ -6,11 +6,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import ji.common.exceptions.LogicException;
-import ji.common.functions.Mapper;
 import ji.json.event.Event;
 import ji.json.event.EventType;
 import ji.json.providers.InputStringProvider;
+import toti.common.exceptions.LogicException;
+import toti.common.functions.Mapper;
 
 public class JsonReader {
 	

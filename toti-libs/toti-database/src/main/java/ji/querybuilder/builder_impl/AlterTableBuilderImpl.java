@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import ji.common.structures.SortedMap;
 import ji.querybuilder.DbInstance;
 import ji.querybuilder.builder_impl.share.MultipleExecute;
 import ji.querybuilder.builders.AlterTableBuilder;
@@ -17,6 +16,7 @@ import ji.querybuilder.enums.OnAction;
 import ji.querybuilder.structures.Column;
 import ji.querybuilder.structures.ForeignKey;
 import ji.querybuilder.structures.ModifyColumn;
+import toti.common.structures.SortedMap;
 
 public class AlterTableBuilderImpl implements AlterTableBuilder, MultipleExecute {
 

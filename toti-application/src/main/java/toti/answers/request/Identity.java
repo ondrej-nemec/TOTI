@@ -1,6 +1,6 @@
 package toti.answers.request;
 
-import ji.common.structures.MapDictionary;
+import toti.common.structures.MapDictionary;
 import toti.extensions.Extension;
 
 public class Identity {

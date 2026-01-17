@@ -9,12 +9,12 @@ import java.util.Map;
 import org.apache.logging.log4j.Logger;
 
 import toti.env.Env;
-import ji.common.structures.MapDictionary;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.answers.response.ResponseContainer;
 import toti.answers.response.ResponseException;
 import toti.application.register.Register;
+import toti.common.structures.MapDictionary;
 import toti.extension.templating.parameters.AltParameter;
 import toti.extension.templating.parameters.HrefParameter;
 import toti.extension.templating.parameters.PlaceholderParameter;

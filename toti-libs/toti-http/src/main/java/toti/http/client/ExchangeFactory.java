@@ -12,8 +12,9 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import org.apache.logging.log4j.Logger;
-import ji.common.structures.MapDictionary;
-import ji.common.structures.ThrowingSupplier;
+
+import toti.common.structures.MapDictionary;
+import toti.common.structures.ThrowingSupplier;
 import toti.http.parsers.Form;
 import toti.http.parsers.Payload;
 import toti.http.parsers.StreamReader;

@@ -9,8 +9,8 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
-import ji.common.functions.Implode;
-import ji.common.structures.DictionaryValue;
+import toti.common.functions.Implode;
+import toti.common.structures.DictionaryValue;
 
 public class Headers {
 	

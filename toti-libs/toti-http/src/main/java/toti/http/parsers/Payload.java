@@ -9,7 +9,7 @@ import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
 
-import ji.common.structures.DictionaryValue;
+import toti.common.structures.DictionaryValue;
 import toti.http.structures.RequestParameters;
 
 public class Payload {

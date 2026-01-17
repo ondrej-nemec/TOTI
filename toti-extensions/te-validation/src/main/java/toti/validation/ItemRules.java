@@ -2,7 +2,7 @@ package toti.validation;
 
 import java.util.function.BiFunction;
 
-import ji.common.structures.MapInit;
+import toti.common.structures.MapInit;
 import toti.extensions.Translator;
 import toti.validation.collections.AlphaNumbericRules;
 import toti.validation.collections.BaseRules;

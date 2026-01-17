@@ -8,15 +8,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import ji.common.structures.DictionaryValue;
-import ji.common.structures.ThrowingBiConsumer;
-import ji.common.structures.ThrowingConsumer;
-import ji.common.structures.ThrowingFunction;
-import ji.common.structures.ThrowingSupplier;
 import ji.database.support.DatabaseRow;
 import ji.querybuilder.builders.InsertBuilder;
 import ji.querybuilder.builders.SelectBuilder;
 import ji.querybuilder.builders.UpdateBuilder;
+import toti.common.structures.DictionaryValue;
+import toti.common.structures.ThrowingBiConsumer;
+import toti.common.structures.ThrowingConsumer;
+import toti.common.structures.ThrowingFunction;
+import toti.common.structures.ThrowingSupplier;
 
 public interface PreparedQueries extends QueryBuilderFactory {
 	

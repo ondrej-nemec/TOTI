@@ -1,8 +1,8 @@
 package toti.answers.response;
 
-import ji.common.functions.FileExtension;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
+import toti.common.functions.FileExtension;
 import toti.http.enums.StatusCode;
 import toti.http.structures.WebSocket;
 

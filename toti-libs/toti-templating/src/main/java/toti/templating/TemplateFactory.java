@@ -11,11 +11,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
-import ji.common.exceptions.LogicException;
-import ji.common.functions.FileExtension;
-import ji.common.functions.compiling.Compiler;
-import ji.common.structures.ThrowingFunction;
-import ji.common.structures.Tuple2;
+
+import toti.common.exceptions.LogicException;
+import toti.common.functions.FileExtension;
+import toti.common.functions.compiling.Compiler;
+import toti.common.structures.ThrowingFunction;
+import toti.common.structures.Tuple2;
 import toti.templating.parsing.TemplateParser;
 import toti.templating.tags.*;
 

@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Assertions;
 
-import ji.common.structures.ThrowingFunction;
+import toti.common.structures.ThrowingFunction;
 
 public interface TestCase {
 	

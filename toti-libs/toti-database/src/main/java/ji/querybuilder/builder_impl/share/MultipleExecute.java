@@ -6,8 +6,8 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 
-import ji.common.structures.ThrowingConsumer;
 import ji.database.wrappers.StatementWrapper;
+import toti.common.structures.ThrowingConsumer;
 
 public interface MultipleExecute {
 

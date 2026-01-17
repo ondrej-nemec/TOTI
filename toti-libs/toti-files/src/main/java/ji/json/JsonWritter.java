@@ -7,14 +7,14 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 
-import ji.common.functions.Mapper;
-import ji.common.structures.DictionaryValue;
-import ji.common.structures.ListDictionary;
-import ji.common.structures.MapDictionary;
-import ji.common.structures.SortedMap;
-import ji.common.structures.Tuple2;
-import ji.common.structures.Tuple3;
 import ji.json.providers.OutputStringProvider;
+import toti.common.functions.Mapper;
+import toti.common.structures.DictionaryValue;
+import toti.common.structures.ListDictionary;
+import toti.common.structures.MapDictionary;
+import toti.common.structures.SortedMap;
+import toti.common.structures.Tuple2;
+import toti.common.structures.Tuple3;
 
 public class JsonWritter {
 	

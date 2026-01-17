@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.function.Function;
 
-import ji.common.functions.PropertiesLoader;
-import ji.common.structures.DictionaryValue;
+import toti.common.functions.PropertiesLoader;
+import toti.common.structures.DictionaryValue;
 
 public class PropertiesEnvSource {
 

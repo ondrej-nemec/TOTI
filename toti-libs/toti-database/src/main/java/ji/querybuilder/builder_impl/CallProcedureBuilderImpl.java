@@ -10,12 +10,12 @@ import java.time.LocalTime;
 import java.util.LinkedList;
 import java.util.List;
 
-import ji.common.structures.IntegerBuilder;
-import ji.common.structures.SortedMap;
 import ji.querybuilder.DbInstance;
 import ji.querybuilder.Escape;
 import ji.querybuilder.builders.CallProcedureBuilder;
 import ji.querybuilder.structures.ProcedureResult;
+import toti.common.structures.IntegerBuilder;
+import toti.common.structures.SortedMap;
 
 public class CallProcedureBuilderImpl implements CallProcedureBuilder {
 	

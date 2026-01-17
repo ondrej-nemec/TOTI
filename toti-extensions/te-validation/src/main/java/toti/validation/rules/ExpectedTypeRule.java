@@ -2,10 +2,10 @@ package toti.validation.rules;
 
 import java.util.function.Function;
 
-import ji.common.structures.DictionaryValue;
 import toti.extensions.Translator;
 import toti.validation.ValidationItem;
 import toti.answers.request.Request;
+import toti.common.structures.DictionaryValue;
 
 public class ExpectedTypeRule implements Rule {
 	

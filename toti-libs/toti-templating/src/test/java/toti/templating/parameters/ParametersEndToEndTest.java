@@ -5,7 +5,7 @@ import java.util.Map;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import ji.common.structures.MapInit;
+import toti.common.structures.MapInit;
 import toti.templating.BaseTemplateTest;
 
 public class ParametersEndToEndTest extends BaseTemplateTest {

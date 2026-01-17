@@ -7,11 +7,11 @@ import java.lang.reflect.Method;
 
 import org.objenesis.ObjenesisStd;
 
-import ji.common.structures.ObjectBuilder;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import net.bytebuddy.implementation.FieldAccessor;
 import net.bytebuddy.implementation.MethodDelegation;
+import toti.common.structures.ObjectBuilder;
 
 public class MockCreator {
 

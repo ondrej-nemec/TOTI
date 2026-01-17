@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-import ji.common.structures.Tuple2;
 import ji.querybuilder.DbInstance;
 import ji.querybuilder.Functions;
 import ji.querybuilder.builder_impl.DeleteBuilderImpl;
@@ -14,6 +13,7 @@ import ji.querybuilder.builder_impl.InsertBuilderImpl;
 import ji.querybuilder.builder_impl.SelectBuilderImpl;
 import ji.querybuilder.builder_impl.UpdateBuilderImpl;
 import ji.querybuilder.structures.SubSelect;
+import toti.common.structures.Tuple2;
 
 public class WithBuilder {
 

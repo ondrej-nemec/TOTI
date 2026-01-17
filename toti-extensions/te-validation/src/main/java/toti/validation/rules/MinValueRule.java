@@ -2,7 +2,7 @@ package toti.validation.rules;
 
 import java.util.function.Function;
 
-import ji.common.structures.DictionaryValue;
+import toti.common.structures.DictionaryValue;
 import toti.extensions.Translator;
 
 public class MinValueRule extends SimpleRule<Number> {

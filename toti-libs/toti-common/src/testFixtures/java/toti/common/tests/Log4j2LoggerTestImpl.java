@@ -14,7 +14,7 @@ import org.apache.logging.log4j.message.MessageFactory;
 import org.apache.logging.log4j.util.MessageSupplier;
 import org.apache.logging.log4j.util.Supplier;
 
-import ji.common.exceptions.NotImplementedYet;
+import toti.common.exceptions.NotImplementedYet;
 
 public class Log4j2LoggerTestImpl implements Logger {
 	

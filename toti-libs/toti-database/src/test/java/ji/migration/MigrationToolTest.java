@@ -13,13 +13,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import static org.mockito.Mockito.mock;
 
-import ji.common.functions.Implode;
-import ji.common.structures.SortedMap;
 import ji.migration.migrations.JavaMigrationFile;
 import ji.migration.migrations.MigrationFile;
 import ji.migration.migrations.MigrationInternal;
 import ji.migration.migrations.SqlMigrationFile;
 import ji.querybuilder.QueryBuilder;
+import toti.common.functions.Implode;
+import toti.common.structures.SortedMap;
 
 public class MigrationToolTest {
 	

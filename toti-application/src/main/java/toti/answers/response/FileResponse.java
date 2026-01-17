@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import ji.common.functions.InputStreamLoader;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
+import toti.common.functions.InputStreamLoader;
 import toti.http.enums.StatusCode;
 
 public class FileResponse implements Response {

@@ -4,10 +4,10 @@ package toti.answers.request;
 import java.util.Arrays;
 import java.util.Optional;
 
-import ji.common.structures.DictionaryValue;
-import ji.common.structures.ListDictionary;
-import ji.common.structures.MapDictionary;
 import toti.answers.Headers;
+import toti.common.structures.DictionaryValue;
+import toti.common.structures.ListDictionary;
+import toti.common.structures.MapDictionary;
 import toti.http.enums.HttpMethod;
 import toti.http.structures.RequestParameters;
 import toti.http.structures.WebSocket;

@@ -18,7 +18,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import ji.common.structures.ThrowingConsumer;
 import ji.database.Connections;
 import ji.files.text.Text;
 import ji.querybuilder.Builder;
@@ -38,6 +37,7 @@ import ji.querybuilder.enums.Join;
 import ji.querybuilder.enums.OnAction;
 import ji.querybuilder.enums.Where;
 import ji.querybuilder.structures.ProcedureResult;
+import toti.common.structures.ThrowingConsumer;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractInstanceTest {

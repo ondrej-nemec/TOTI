@@ -9,14 +9,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import ji.common.structures.DictionaryValue;
-import ji.common.structures.ObjectBuilder;
-import ji.common.structures.ThrowingConsumer;
-import ji.common.structures.Tuple2;
 import ji.querybuilder.DbInstance;
 import ji.querybuilder.builder_impl.share.MultipleExecute;
 import ji.querybuilder.builders.InsertBuilder;
 import ji.querybuilder.structures.SubSelect;
+import toti.common.structures.DictionaryValue;
+import toti.common.structures.ObjectBuilder;
+import toti.common.structures.ThrowingConsumer;
+import toti.common.structures.Tuple2;
 
 public class InsertBuilderImpl implements InsertBuilder, MultipleExecute {
 

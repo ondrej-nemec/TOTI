@@ -3,11 +3,11 @@ package toti.extensions.auth;
 import java.util.Map;
 import java.util.Optional;
 
-import ji.common.structures.MapDictionary;
 import toti.answers.Headers;
 import toti.answers.request.AuthMode;
 import toti.answers.request.Identity;
 import toti.application.register.Register;
+import toti.common.structures.MapDictionary;
 import toti.env.Env;
 import toti.extensions.Extension;
 import toti.http.structures.RequestParameters;

@@ -5,12 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import toti.env.Env;
-import ji.common.structures.MapDictionary;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.answers.response.Response;
 import toti.application.register.Register;
+import toti.common.structures.MapDictionary;
 import toti.extension.templating.TemplateExtension;
 import toti.extensions.Extension;
 import toti.extensions.TotiExtension;

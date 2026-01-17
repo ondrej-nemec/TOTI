@@ -9,11 +9,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import static org.mockito.Mockito.mock;
 
-import ji.common.structures.MapInit;
-import ji.common.structures.SortedMap;
 import ji.querybuilder.QueryBuilder;
 import ji.querybuilder.builders.SelectBuilder;
 import ji.querybuilder.instances.PostgreSqlQueryBuilder;
+import toti.common.structures.MapInit;
+import toti.common.structures.SortedMap;
 import toti.ui.backend.Owner;
 
 public class GridDaoTest {

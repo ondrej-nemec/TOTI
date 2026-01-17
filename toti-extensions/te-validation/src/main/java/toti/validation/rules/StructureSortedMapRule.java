@@ -6,13 +6,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
 
-import ji.common.structures.DictionaryValue;
-import ji.common.structures.SortedMap;
 import toti.extensions.Translator;
 import toti.http.structures.RequestParameters;
 import toti.validation.ValidationItem;
 import toti.validation.Validator;
 import toti.answers.request.Request;
+import toti.common.structures.DictionaryValue;
+import toti.common.structures.SortedMap;
 
 public class StructureSortedMapRule implements Rule {
 	

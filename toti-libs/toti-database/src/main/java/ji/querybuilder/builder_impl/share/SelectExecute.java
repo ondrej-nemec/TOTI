@@ -9,11 +9,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import ji.common.structures.DictionaryValue;
-import ji.common.structures.ThrowingFunction;
 import ji.database.support.DatabaseRow;
 import ji.database.wrappers.StatementWrapper;
 import ji.querybuilder.Escape;
+import toti.common.structures.DictionaryValue;
+import toti.common.structures.ThrowingFunction;
 
 public interface SelectExecute {
 

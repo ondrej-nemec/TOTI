@@ -10,8 +10,6 @@ import java.util.function.Function;
 import org.apache.logging.log4j.Logger;
 
 import toti.env.Env;
-import ji.common.structures.ObjectBuilder;
-import ji.common.structures.dictionary.Scalar;
 import toti.answers.Answer;
 import toti.answers.ControllerAnswer;
 import toti.answers.ExceptionAnswer;
@@ -28,6 +26,8 @@ import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Param;
 import toti.application.register.Register;
+import toti.common.structures.ObjectBuilder;
+import toti.common.structures.dictionary.Scalar;
 import toti.extensions.AuthenticationExtension;
 import toti.extensions.Extension;
 import toti.extensions.TemplateExtension;

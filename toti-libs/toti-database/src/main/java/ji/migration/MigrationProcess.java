@@ -2,8 +2,8 @@ package ji.migration;
 
 import java.util.List;
 
-import ji.common.structures.SortedMap;
 import ji.migration.migrations.MigrationInternal;
+import toti.common.structures.SortedMap;
 
 public interface MigrationProcess {
 

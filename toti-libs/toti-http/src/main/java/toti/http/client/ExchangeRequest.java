@@ -1,6 +1,6 @@
 package toti.http.client;
 
-import ji.common.structures.MapDictionary;
+import toti.common.structures.MapDictionary;
 import toti.http.enums.HttpMethod;
 
 public class ExchangeRequest extends Exchange {

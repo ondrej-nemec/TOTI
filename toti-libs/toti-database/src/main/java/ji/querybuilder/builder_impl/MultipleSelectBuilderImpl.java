@@ -8,9 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import ji.common.structures.DictionaryValue;
-import ji.common.structures.ThrowingFunction;
-import ji.common.structures.Tuple2;
 import ji.database.support.DatabaseRow;
 import ji.querybuilder.DbInstance;
 import ji.querybuilder.Functions;
@@ -19,6 +16,9 @@ import ji.querybuilder.builder_impl.share.SelectExecute;
 import ji.querybuilder.builders.MultipleSelectBuilder;
 import ji.querybuilder.builders.SelectBuilder;
 import ji.querybuilder.enums.SelectJoin;
+import toti.common.structures.DictionaryValue;
+import toti.common.structures.ThrowingFunction;
+import toti.common.structures.Tuple2;
 
 public class MultipleSelectBuilderImpl implements MultipleSelectBuilder, ParametrizedSql, SelectExecute {
 

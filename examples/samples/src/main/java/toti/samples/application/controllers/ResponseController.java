@@ -5,13 +5,13 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 
-import ji.common.functions.FileExtension;
-import ji.common.structures.MapInit;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.answers.action.ResponseAction;
 import toti.answers.response.Response;
 import toti.answers.router.Link;
+import toti.common.functions.FileExtension;
+import toti.common.structures.MapInit;
 import toti.http.enums.StatusCode;
 import toti.http.structures.WebSocket;
 import toti.samples.application.TaskExample;

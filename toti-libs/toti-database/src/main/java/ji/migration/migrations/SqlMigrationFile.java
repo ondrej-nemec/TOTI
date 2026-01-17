@@ -5,9 +5,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Objects;
 
-import ji.common.functions.InputStreamLoader;
 import ji.files.text.Text;
 import ji.querybuilder.QueryBuilder;
+import toti.common.functions.InputStreamLoader;
 
 public class SqlMigrationFile implements MigrationFile {
 	

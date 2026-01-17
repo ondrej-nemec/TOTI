@@ -10,16 +10,16 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.Logger;
 
-import ji.common.functions.FileExtension;
-import ji.common.functions.FilesList;
-import ji.common.functions.compiling.Compiler;
-import ji.common.structures.SortedMap;
 import ji.migration.migrations.JavaMigrationFile;
 import ji.migration.migrations.MigrationInternal;
 import ji.migration.migrations.SqlMigrationFile;
 import ji.querybuilder.QueryBuilder;
 import ji.querybuilder.enums.ColumnSetting;
 import ji.querybuilder.enums.ColumnType;
+import toti.common.functions.FileExtension;
+import toti.common.functions.FilesList;
+import toti.common.functions.compiling.Compiler;
+import toti.common.structures.SortedMap;
 
 public class MigrationTool {
 

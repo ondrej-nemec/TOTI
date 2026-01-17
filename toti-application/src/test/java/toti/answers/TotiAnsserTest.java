@@ -12,8 +12,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import toti.env.Env;
-import ji.common.structures.MapDictionary;
-import ji.common.structures.ObjectBuilder;
 import toti.answers.request.Identity;
 import toti.answers.request.IdentityFactory;
 import toti.answers.request.Request;
@@ -23,6 +21,8 @@ import toti.answers.response.FileResponse;
 import toti.answers.response.Response;
 import toti.answers.response.TextResponse;
 import toti.application.register.Register;
+import toti.common.structures.MapDictionary;
+import toti.common.structures.ObjectBuilder;
 import toti.extensions.TemplateExtension;
 import toti.extensions.TotiExtension;
 import toti.extensions.TranslatorExtension;

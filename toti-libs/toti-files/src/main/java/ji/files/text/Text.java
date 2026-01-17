@@ -14,10 +14,10 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 
-import ji.common.structures.ThrowingConsumer;
-import ji.common.structures.ThrowingFunction;
 import ji.files.text.basic.ReadText;
 import ji.files.text.basic.WriteText;
+import toti.common.structures.ThrowingConsumer;
+import toti.common.structures.ThrowingFunction;
 
 public class Text {
 	

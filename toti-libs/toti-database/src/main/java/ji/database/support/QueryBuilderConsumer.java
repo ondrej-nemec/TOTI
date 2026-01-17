@@ -2,8 +2,8 @@ package ji.database.support;
 
 import java.sql.SQLException;
 
-import ji.common.structures.ThrowingConsumer;
 import ji.querybuilder.QueryBuilder;
+import toti.common.structures.ThrowingConsumer;
 
 public interface QueryBuilderConsumer extends ThrowingConsumer<QueryBuilder, SQLException> {
 

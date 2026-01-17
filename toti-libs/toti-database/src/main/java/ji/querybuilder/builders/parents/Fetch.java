@@ -4,9 +4,9 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import ji.common.structures.DictionaryValue;
-import ji.common.structures.ThrowingFunction;
 import ji.database.support.DatabaseRow;
+import toti.common.structures.DictionaryValue;
+import toti.common.structures.ThrowingFunction;
 
 public interface Fetch {
 

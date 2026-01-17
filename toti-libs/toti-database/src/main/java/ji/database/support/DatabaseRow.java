@@ -3,7 +3,7 @@ package ji.database.support;
 import java.util.HashMap;
 import java.util.Map;
 
-import ji.common.structures.MapDictionary;
+import toti.common.structures.MapDictionary;
 
 public class DatabaseRow extends MapDictionary<String> {
 

@@ -14,9 +14,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import static org.mockito.Mockito.mock;
 
-import ji.common.exceptions.LogicException;
-import ji.common.structures.MapInit;
-import ji.common.structures.ObjectBuilder;
 import test.ControllerA;
 import test.NotController;
 import test.NotRegisteredController;
@@ -24,6 +21,9 @@ import test.TestModule;
 import toti.application.Module;
 import toti.application.register.Param;
 import toti.application.register.Register;
+import toti.common.exceptions.LogicException;
+import toti.common.structures.MapInit;
+import toti.common.structures.ObjectBuilder;
 
 public class LinkTest {
 	

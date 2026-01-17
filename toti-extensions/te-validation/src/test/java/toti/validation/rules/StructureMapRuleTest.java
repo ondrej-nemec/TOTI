@@ -11,9 +11,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import ji.common.structures.MapInit;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
+import toti.common.structures.MapInit;
 import toti.extensions.Translator;
 import toti.http.structures.RequestParameters;
 import toti.validation.ValidationItem;

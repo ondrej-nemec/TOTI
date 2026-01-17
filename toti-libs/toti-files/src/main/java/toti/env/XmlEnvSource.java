@@ -7,10 +7,10 @@ import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
-import ji.common.functions.InputStreamLoader;
 import ji.files.text.Text;
 import ji.xml.XmlObject;
 import ji.xml.XmlReader;
+import toti.common.functions.InputStreamLoader;
 
 public class XmlEnvSource {
 

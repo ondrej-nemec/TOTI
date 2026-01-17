@@ -7,7 +7,8 @@ import java.net.Socket;
 import java.util.Optional;
 
 import org.apache.logging.log4j.Logger;
-import ji.common.structures.ThrowingConsumer;
+
+import toti.common.structures.ThrowingConsumer;
 import toti.http.client.ExchangeFactory;
 import toti.http.client.ExchangeRequest;
 import toti.http.client.ExchangeResponse;

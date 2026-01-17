@@ -3,7 +3,7 @@ package ji.translator;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import ji.common.structures.ListInit;
+import toti.common.structures.ListInit;
 import toti.common.tests.Log4j2LoggerTestImpl;
 
 public class PropertiesTranslatorEndToEndTest {

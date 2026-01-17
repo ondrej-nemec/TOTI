@@ -3,9 +3,9 @@ package ji.migration.migrations;
 import java.sql.SQLException;
 import java.util.Objects;
 
-import ji.common.structures.ThrowingBiFunction;
 import ji.migration.Migration;
 import ji.querybuilder.QueryBuilder;
+import toti.common.structures.ThrowingBiFunction;
 
 public class JavaMigrationFile implements MigrationFile {
 	

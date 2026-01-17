@@ -1,9 +1,9 @@
 package toti.application.register;
 
 import toti.env.Env;
-import ji.common.structures.MapDictionary;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
+import toti.common.structures.MapDictionary;
 import toti.extensions.Extension;
 import toti.http.structures.RequestParameters;
 

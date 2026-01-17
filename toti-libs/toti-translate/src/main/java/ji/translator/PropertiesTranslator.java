@@ -8,7 +8,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
-import ji.common.functions.PropertiesLoader;
+
+import toti.common.functions.PropertiesLoader;
 
 public class PropertiesTranslator implements Translator {
 	

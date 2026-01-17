@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import ji.common.functions.InputStreamLoader;
-import ji.common.structures.DictionaryValue;
 import ji.files.text.Text;
 import ji.json.JsonReader;
+import toti.common.functions.InputStreamLoader;
+import toti.common.structures.DictionaryValue;
 
 public class JsonEnvSource {
 

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import ji.common.exceptions.LogicException;
+import toti.common.exceptions.LogicException;
 import toti.templating.Parameter;
 import toti.templating.Tag;
 import toti.templating.TagVariableMode;

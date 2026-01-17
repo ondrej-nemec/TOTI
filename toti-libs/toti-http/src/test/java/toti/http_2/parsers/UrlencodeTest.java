@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 
-import ji.common.structures.MapInit;
+import toti.common.structures.MapInit;
 import toti.http.parsers.Payload;
 import toti.http.parsers.StreamReader;
 import toti.http.parsers.Urlencode;

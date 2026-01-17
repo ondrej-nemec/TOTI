@@ -3,8 +3,8 @@ package toti.templating;
 import java.util.LinkedList;
 import java.util.Map;
 
-import ji.common.structures.DictionaryValue;
-import ji.common.structures.MapDictionary;
+import toti.common.structures.DictionaryValue;
+import toti.common.structures.MapDictionary;
 import toti.templating.parsing.structures.TagNode;
 
 public interface Template {

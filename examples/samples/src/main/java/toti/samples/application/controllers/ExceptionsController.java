@@ -1,11 +1,11 @@
 package toti.samples.application.controllers;
 
-import ji.common.exceptions.LogicException;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.annotations.Secured;
 import toti.answers.action.ResponseAction;
 import toti.answers.response.Response;
+import toti.common.exceptions.LogicException;
 import toti.http.enums.HttpMethod;
 
 /**

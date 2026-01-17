@@ -3,7 +3,7 @@ package ji.querybuilder;
 import java.util.Arrays;
 import java.util.List;
 
-import ji.common.functions.Implode;
+import toti.common.functions.Implode;
 
 public interface Builder {
 

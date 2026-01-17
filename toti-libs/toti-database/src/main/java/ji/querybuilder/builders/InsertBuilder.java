@@ -3,9 +3,9 @@ package ji.querybuilder.builders;
 import java.sql.SQLException;
 import java.util.List;
 
-import ji.common.structures.DictionaryValue;
 import ji.querybuilder.Builder;
 import ji.querybuilder.structures.SubSelect;
+import toti.common.structures.DictionaryValue;
 
 public interface InsertBuilder extends Builder {
 	

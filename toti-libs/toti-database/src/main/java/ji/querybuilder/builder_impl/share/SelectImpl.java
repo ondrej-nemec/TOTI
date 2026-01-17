@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import ji.common.structures.Tuple2;
 import ji.querybuilder.Builder;
 import ji.querybuilder.DbInstance;
 import ji.querybuilder.Functions;
@@ -14,6 +13,7 @@ import ji.querybuilder.enums.Join;
 import ji.querybuilder.enums.Where;
 import ji.querybuilder.structures.Joining;
 import ji.querybuilder.structures.SubSelect;
+import toti.common.structures.Tuple2;
 
 public abstract class SelectImpl<P> implements SingleExecute, ParametrizedSql, Builder {
 
