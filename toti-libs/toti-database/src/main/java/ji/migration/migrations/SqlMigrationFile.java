@@ -6,8 +6,8 @@ import java.sql.Statement;
 import java.util.Objects;
 
 import toti.files.text.Text;
+import toti.lib.common.functions.InputStreamLoader;
 import ji.querybuilder.QueryBuilder;
-import toti.common.functions.InputStreamLoader;
 
 public class SqlMigrationFile implements MigrationFile {
 	

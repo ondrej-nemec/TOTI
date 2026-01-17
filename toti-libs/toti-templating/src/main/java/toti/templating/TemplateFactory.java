@@ -12,11 +12,11 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
 
-import toti.common.exceptions.LogicException;
-import toti.common.functions.FileExtension;
-import toti.common.functions.compiling.Compiler;
-import toti.common.structures.ThrowingFunction;
-import toti.common.structures.Tuple2;
+import toti.lib.common.exceptions.LogicException;
+import toti.lib.common.functions.FileExtension;
+import toti.lib.common.functions.compiling.Compiler;
+import toti.lib.common.structures.ThrowingFunction;
+import toti.lib.common.structures.Tuple2;
 import toti.templating.parsing.TemplateParser;
 import toti.templating.tags.*;
 

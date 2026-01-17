@@ -22,7 +22,7 @@ import toti.answers.request.IdentityFactory;
 import toti.answers.request.Request;
 import toti.answers.response.FinalResponse;
 import toti.application.register.MappedAction;
-import toti.common.structures.MapDictionary;
+import toti.lib.common.structures.MapDictionary;
 import toti.tcpip.enums.HttpMethod;
 import toti.tcpip.enums.StatusCode;
 import toti.tcpip.structures.RequestParameters;

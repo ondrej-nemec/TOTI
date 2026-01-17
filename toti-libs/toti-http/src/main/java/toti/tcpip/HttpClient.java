@@ -8,7 +8,7 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.Logger;
 
-import toti.common.structures.ThrowingConsumer;
+import toti.lib.common.structures.ThrowingConsumer;
 import toti.tcpip.client.ExchangeFactory;
 import toti.tcpip.client.ExchangeRequest;
 import toti.tcpip.client.ExchangeResponse;

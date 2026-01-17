@@ -7,9 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 
-import toti.common.structures.MapInit;
-import toti.files.env.Env;
-import toti.files.env.Value;
+import toti.lib.common.structures.MapInit;
 
 public class EnvTest {
 

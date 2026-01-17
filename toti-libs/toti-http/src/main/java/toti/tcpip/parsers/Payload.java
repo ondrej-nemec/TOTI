@@ -9,7 +9,7 @@ import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
 
-import toti.common.structures.DictionaryValue;
+import toti.lib.common.structures.DictionaryValue;
 import toti.tcpip.structures.RequestParameters;
 
 public class Payload {

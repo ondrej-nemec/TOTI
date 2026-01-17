@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.function.Function;
 
 import toti.extensions.Translator;
+import toti.lib.common.structures.DictionaryValue;
 import toti.tcpip.structures.RequestParameters;
 import toti.validation.ValidationItem;
 import toti.validation.Validator;
 import toti.answers.request.Request;
-import toti.common.structures.DictionaryValue;
 
 public class StructureListRule implements Rule {
 

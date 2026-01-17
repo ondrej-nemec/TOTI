@@ -14,7 +14,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
-import toti.common.functions.InputStreamLoader;
+import toti.lib.common.functions.InputStreamLoader;
 
 public class SSL {
 	

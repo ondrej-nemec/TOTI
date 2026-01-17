@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import toti.common.structures.ThrowingConsumer;
+import toti.lib.common.structures.ThrowingConsumer;
 
 public class TagNode {
 

@@ -17,7 +17,7 @@ import ji.querybuilder.enums.Join;
 import ji.querybuilder.enums.Where;
 import ji.querybuilder.structures.Joining;
 import ji.querybuilder.structures.SubSelect;
-import toti.common.structures.Tuple2;
+import toti.lib.common.structures.Tuple2;
 
 public class DeleteBuilderImpl implements DeleteBuilder, SingleExecute, ParametrizedSql {
 

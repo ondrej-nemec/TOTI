@@ -5,9 +5,9 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import toti.answers.Headers;
-import toti.common.structures.DictionaryValue;
-import toti.common.structures.ListDictionary;
-import toti.common.structures.MapDictionary;
+import toti.lib.common.structures.DictionaryValue;
+import toti.lib.common.structures.ListDictionary;
+import toti.lib.common.structures.MapDictionary;
 import toti.tcpip.enums.HttpMethod;
 import toti.tcpip.structures.RequestParameters;
 import toti.tcpip.structures.WebSocket;

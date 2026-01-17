@@ -12,7 +12,7 @@ import ji.database.Database;
 import ji.database.support.DatabaseRow;
 import ji.querybuilder.QueryBuilder;
 import ji.querybuilder.builders.SelectBuilder;
-import toti.common.structures.SortedMap;
+import toti.lib.common.structures.SortedMap;
 import toti.ui.backend.Owner;
 
 public interface GridDao {

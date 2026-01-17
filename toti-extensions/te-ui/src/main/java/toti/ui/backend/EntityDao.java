@@ -7,8 +7,8 @@ import java.util.Map;
 import ji.database.Database;
 import ji.database.support.DatabaseRow;
 import ji.querybuilder.builders.SelectBuilder;
-import toti.common.structures.DictionaryValue;
-import toti.common.structures.ThrowingFunction;
+import toti.lib.common.structures.DictionaryValue;
+import toti.lib.common.structures.ThrowingFunction;
 
 public interface EntityDao {
 	

@@ -1,7 +1,7 @@
 package toti.answers.request;
 
-import toti.common.structures.MapDictionary;
 import toti.extensions.Extension;
+import toti.lib.common.structures.MapDictionary;
 
 public class Identity {
 

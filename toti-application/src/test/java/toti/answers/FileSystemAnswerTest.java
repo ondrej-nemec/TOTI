@@ -17,7 +17,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import toti.ServerException;
 import toti.answers.request.Request;
 import toti.answers.response.FinalResponse;
-import toti.common.structures.MapDictionary;
+import toti.lib.common.structures.MapDictionary;
 import toti.tcpip.enums.HttpMethod;
 import toti.tcpip.enums.StatusCode;
 import toti.tcpip.structures.RequestParameters;

@@ -5,8 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import toti.common.structures.DictionaryValue;
-import toti.common.structures.MapDictionary;
+import toti.lib.common.structures.DictionaryValue;
+import toti.lib.common.structures.MapDictionary;
 
 public class XmlObject {
 

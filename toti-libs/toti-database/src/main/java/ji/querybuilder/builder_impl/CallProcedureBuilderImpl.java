@@ -14,8 +14,8 @@ import ji.querybuilder.DbInstance;
 import ji.querybuilder.Escape;
 import ji.querybuilder.builders.CallProcedureBuilder;
 import ji.querybuilder.structures.ProcedureResult;
-import toti.common.structures.IntegerBuilder;
-import toti.common.structures.SortedMap;
+import toti.lib.common.structures.IntegerBuilder;
+import toti.lib.common.structures.SortedMap;
 
 public class CallProcedureBuilderImpl implements CallProcedureBuilder {
 	

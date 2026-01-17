@@ -10,11 +10,11 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import toti.files.text.Text;
-import toti.common.functions.InputStreamLoader;
-import toti.common.structures.DictionaryValue;
-import toti.common.structures.MapInit;
-import toti.common.structures.ThrowingConsumer;
-import toti.common.structures.ThrowingSupplier;
+import toti.lib.common.functions.InputStreamLoader;
+import toti.lib.common.structures.DictionaryValue;
+import toti.lib.common.structures.MapInit;
+import toti.lib.common.structures.ThrowingConsumer;
+import toti.lib.common.structures.ThrowingSupplier;
 import toti.templating.Parameter;
 import toti.templating.Tag;
 import toti.templating.Template;

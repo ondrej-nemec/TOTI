@@ -20,12 +20,12 @@ import toti.answers.response.FileResponse;
 import toti.answers.response.Response;
 import toti.answers.response.TextResponse;
 import toti.application.register.Register;
-import toti.common.structures.MapDictionary;
-import toti.common.structures.ObjectBuilder;
 import toti.extensions.TemplateExtension;
 import toti.extensions.TotiExtension;
 import toti.extensions.TranslatorExtension;
 import toti.files.env.Env;
+import toti.lib.common.structures.MapDictionary;
+import toti.lib.common.structures.ObjectBuilder;
 import toti.tcpip.enums.StatusCode;
 import toti.tcpip.structures.RequestParameters;
 

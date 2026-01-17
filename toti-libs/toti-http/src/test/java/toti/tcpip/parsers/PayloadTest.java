@@ -11,8 +11,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import toti.common.structures.MapInit;
-import toti.common.structures.Tuple2;
+import toti.lib.common.structures.MapInit;
+import toti.lib.common.structures.Tuple2;
 
 public class PayloadTest {
 

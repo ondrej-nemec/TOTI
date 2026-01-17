@@ -13,9 +13,9 @@ import ji.querybuilder.builder_impl.share.SelectExecute;
 import ji.querybuilder.builder_impl.share.SelectImpl;
 import ji.querybuilder.builders.SelectBuilder;
 import ji.querybuilder.structures.SubSelect;
-import toti.common.structures.DictionaryValue;
-import toti.common.structures.ThrowingFunction;
-import toti.common.structures.Tuple2;
+import toti.lib.common.structures.DictionaryValue;
+import toti.lib.common.structures.ThrowingFunction;
+import toti.lib.common.structures.Tuple2;
 
 public class SelectBuilderImpl extends SelectImpl<SelectBuilderImpl> implements SelectBuilder, ParametrizedSql, SelectExecute {
 

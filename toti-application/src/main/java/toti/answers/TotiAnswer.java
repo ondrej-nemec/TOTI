@@ -12,9 +12,9 @@ import toti.answers.response.FinalResponse;
 import toti.answers.response.Response;
 import toti.answers.response.ResponseContainer;
 import toti.application.register.MappedAction;
-import toti.common.structures.ObjectBuilder;
 import toti.extensions.TotiExtension;
 import toti.extensions.TranslatorExtension;
+import toti.lib.common.structures.ObjectBuilder;
 import toti.tcpip.enums.StatusCode;
 import toti.extensions.TemplateExtension;
 

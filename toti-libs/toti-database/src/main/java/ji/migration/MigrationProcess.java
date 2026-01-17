@@ -3,7 +3,7 @@ package ji.migration;
 import java.util.List;
 
 import ji.migration.migrations.MigrationInternal;
-import toti.common.structures.SortedMap;
+import toti.lib.common.structures.SortedMap;
 
 public interface MigrationProcess {
 

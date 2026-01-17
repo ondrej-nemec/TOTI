@@ -34,11 +34,11 @@ import ji.querybuilder.structures.DefaultValue;
 import ji.querybuilder.structures.ForeignKey;
 import ji.querybuilder.structures.Joining;
 import ji.querybuilder.structures.SubSelect;
-import toti.common.functions.Implode;
-import toti.common.structures.ObjectBuilder;
-import toti.common.structures.SortedMap;
-import toti.common.structures.Tuple2;
-import toti.common.structures.Tuple3;
+import toti.lib.common.functions.Implode;
+import toti.lib.common.structures.ObjectBuilder;
+import toti.lib.common.structures.SortedMap;
+import toti.lib.common.structures.Tuple2;
+import toti.lib.common.structures.Tuple3;
 
 public class MySqlQueryBuilder implements DbInstance {
 

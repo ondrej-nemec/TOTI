@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 import org.eclipse.jetty.websocket.api.Callback;
 import org.eclipse.jetty.websocket.api.Session;
 
-import toti.common.structures.ThrowingCallback;
+import toti.lib.common.structures.ThrowingCallback;
 
 public class WebSocket implements Session.Listener.AutoDemanding {
 	
@@ -17,7 +17,7 @@ public class WebSocket implements Session.Listener.AutoDemanding {
 	private BiConsumer<Boolean, ByteBuffer> onMessage;
 	private Consumer<Throwable> onError;
 	private Consumer<String> onClose;
-	private toti.common.structures.Callback onOpen;
+	private toti.lib.common.structures.Callback onOpen;
 	
 	private boolean isAccepted = false;
 	
@@ -104,7 +104,7 @@ public class WebSocket implements Session.Listener.AutoDemanding {
 	}
 	
 	public void accept(
-		toti.common.structures.Callback onOpen,
+		toti.lib.common.structures.Callback onOpen,
 		BiConsumer<Boolean, ByteBuffer> onMessage,
 		Consumer<Throwable> onError,
 		Consumer<String> onClose

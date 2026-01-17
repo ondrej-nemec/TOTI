@@ -8,9 +8,9 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
-import toti.common.structures.MapInit;
 import toti.files.env.PropertiesEnvSource;
 import toti.files.env.Value;
+import toti.lib.common.structures.MapInit;
 
 public class PropertiesEnvSourceTest {
 

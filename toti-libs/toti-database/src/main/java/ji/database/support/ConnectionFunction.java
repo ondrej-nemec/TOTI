@@ -3,7 +3,7 @@ package ji.database.support;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import toti.common.structures.ThrowingFunction;
+import toti.lib.common.structures.ThrowingFunction;
 
 public interface ConnectionFunction<T> extends ThrowingFunction<Connection, T, SQLException> {
 

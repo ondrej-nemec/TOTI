@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import toti.common.structures.DictionaryValue;
 import toti.extensions.Translator;
+import toti.lib.common.structures.DictionaryValue;
 
 public class MaxLengthRule extends SimpleRule<Integer> {
 

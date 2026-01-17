@@ -13,10 +13,10 @@ import ji.querybuilder.DbInstance;
 import ji.querybuilder.builder_impl.share.MultipleExecute;
 import ji.querybuilder.builders.InsertBuilder;
 import ji.querybuilder.structures.SubSelect;
-import toti.common.structures.DictionaryValue;
-import toti.common.structures.ObjectBuilder;
-import toti.common.structures.ThrowingConsumer;
-import toti.common.structures.Tuple2;
+import toti.lib.common.structures.DictionaryValue;
+import toti.lib.common.structures.ObjectBuilder;
+import toti.lib.common.structures.ThrowingConsumer;
+import toti.lib.common.structures.Tuple2;
 
 public class InsertBuilderImpl implements InsertBuilder, MultipleExecute {
 

@@ -16,13 +16,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static toti.lib.common.tests.TestCase.assertEquals;
+import static toti.lib.common.tests.TestCase.consumer;
 
 import toti.application.Module;
 import toti.application.Task;
 import toti.files.env.Env;
-
-import static toti.common.tests.TestCase.assertEquals;
-import static toti.common.tests.TestCase.consumer;
 
 public class ApplicationFactoryTest {
 	

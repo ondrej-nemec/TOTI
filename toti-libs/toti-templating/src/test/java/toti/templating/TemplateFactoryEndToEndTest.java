@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import toti.files.text.Text;
-import toti.common.tests.Log4j2LoggerTestImpl;
+import toti.lib.common.tests.Log4j2LoggerTestImpl;
 
 @Deprecated
 public class TemplateFactoryEndToEndTest {

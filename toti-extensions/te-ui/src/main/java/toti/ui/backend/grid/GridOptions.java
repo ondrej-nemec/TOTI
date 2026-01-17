@@ -3,9 +3,9 @@ package toti.ui.backend.grid;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import toti.common.annotations.MapperParameter;
-import toti.common.annotations.MapperType;
-import toti.common.structures.SortedMap;
+import toti.lib.common.annotations.MapperParameter;
+import toti.lib.common.annotations.MapperType;
+import toti.lib.common.structures.SortedMap;
 import toti.ui.backend.Entity;
 import toti.validation.ItemRules;
 import toti.validation.Validator;

@@ -3,7 +3,7 @@ package toti.translator;
 import java.io.IOException;
 import java.util.Properties;
 
-import toti.common.functions.PropertiesLoader;
+import toti.lib.common.functions.PropertiesLoader;
 
 public class PropertiesFile implements MessagesFile {
 	

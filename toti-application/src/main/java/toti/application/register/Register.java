@@ -12,10 +12,10 @@ import toti.annotations.Secured;
 import toti.answers.request.AuthMode;
 import toti.answers.router.UriPattern;
 import toti.application.Module;
-import toti.common.structures.ObjectBuilder;
-import toti.common.structures.Tuple2;
 import toti.extensions.CustomExceptionExtension;
 import toti.extensions.Extension;
+import toti.lib.common.structures.ObjectBuilder;
+import toti.lib.common.structures.Tuple2;
 import toti.tcpip.enums.HttpMethod;
 
 public class Register {

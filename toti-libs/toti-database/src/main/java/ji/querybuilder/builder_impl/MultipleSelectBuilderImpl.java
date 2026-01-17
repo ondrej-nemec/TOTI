@@ -16,9 +16,9 @@ import ji.querybuilder.builder_impl.share.SelectExecute;
 import ji.querybuilder.builders.MultipleSelectBuilder;
 import ji.querybuilder.builders.SelectBuilder;
 import ji.querybuilder.enums.SelectJoin;
-import toti.common.structures.DictionaryValue;
-import toti.common.structures.ThrowingFunction;
-import toti.common.structures.Tuple2;
+import toti.lib.common.structures.DictionaryValue;
+import toti.lib.common.structures.ThrowingFunction;
+import toti.lib.common.structures.Tuple2;
 
 public class MultipleSelectBuilderImpl implements MultipleSelectBuilder, ParametrizedSql, SelectExecute {
 

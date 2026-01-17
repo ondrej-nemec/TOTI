@@ -6,11 +6,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import toti.common.exceptions.LogicException;
-import toti.common.functions.Mapper;
 import toti.files.json.event.Event;
 import toti.files.json.event.EventType;
 import toti.files.json.providers.InputStringProvider;
+import toti.lib.common.exceptions.LogicException;
+import toti.lib.common.functions.Mapper;
 
 public class JsonReader {
 	

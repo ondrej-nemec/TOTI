@@ -10,7 +10,7 @@ import javax.xml.stream.XMLStreamException;
 import toti.files.text.Text;
 import toti.files.xml.XmlObject;
 import toti.files.xml.XmlReader;
-import toti.common.functions.InputStreamLoader;
+import toti.lib.common.functions.InputStreamLoader;
 
 public class XmlEnvSource {
 

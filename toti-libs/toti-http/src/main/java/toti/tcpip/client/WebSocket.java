@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import toti.common.structures.Tuple2;
+import toti.lib.common.structures.Tuple2;
 import toti.tcpip.streams.OutputStreamWrapper;
 
 // https://tools.ietf.org/html/rfc6455#section-5.5.1

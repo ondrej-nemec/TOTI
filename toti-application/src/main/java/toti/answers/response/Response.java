@@ -2,7 +2,7 @@ package toti.answers.response;
 
 import toti.answers.Headers;
 import toti.answers.request.Identity;
-import toti.common.functions.FileExtension;
+import toti.lib.common.functions.FileExtension;
 import toti.tcpip.enums.StatusCode;
 import toti.tcpip.structures.WebSocket;
 

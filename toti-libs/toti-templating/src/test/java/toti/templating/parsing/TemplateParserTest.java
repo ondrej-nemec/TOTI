@@ -12,7 +12,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import toti.common.structures.ThrowingConsumer;
+import toti.lib.common.structures.ThrowingConsumer;
 import toti.templating.Parameter;
 import toti.templating.Tag;
 import toti.templating.TagVariableMode;

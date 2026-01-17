@@ -18,8 +18,8 @@ import test.ControllerB;
 import test.ControllerC;
 import test.TestModule;
 import toti.answers.router.UriPattern;
-import toti.common.structures.ObjectBuilder;
 import toti.extensions.Extension;
+import toti.lib.common.structures.ObjectBuilder;
 import toti.tcpip.enums.HttpMethod;
 
 public class RegisterTest {

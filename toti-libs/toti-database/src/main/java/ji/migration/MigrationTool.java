@@ -16,10 +16,10 @@ import ji.migration.migrations.SqlMigrationFile;
 import ji.querybuilder.QueryBuilder;
 import ji.querybuilder.enums.ColumnSetting;
 import ji.querybuilder.enums.ColumnType;
-import toti.common.functions.FileExtension;
-import toti.common.functions.FilesList;
-import toti.common.functions.compiling.Compiler;
-import toti.common.structures.SortedMap;
+import toti.lib.common.functions.FileExtension;
+import toti.lib.common.functions.FilesList;
+import toti.lib.common.functions.compiling.Compiler;
+import toti.lib.common.structures.SortedMap;
 
 public class MigrationTool {
 

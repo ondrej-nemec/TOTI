@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 import toti.files.xml.XmlObject;
 import toti.files.xml.XmlReader;
+import toti.lib.common.structures.DictionaryValue;
 import toti.tcpip.enums.HttpMethod;
 import toti.tcpip.enums.StatusCode;
 import toti.ServerException;
@@ -32,7 +33,6 @@ import toti.answers.router.Link;
 import toti.answers.router.Router;
 import toti.application.register.MappedAction;
 import toti.application.register.Param;
-import toti.common.structures.DictionaryValue;
 import toti.answers.response.ResponseContainer;
 import toti.extensions.AuthenticationExtension;
 import toti.extensions.TemplateExtension;

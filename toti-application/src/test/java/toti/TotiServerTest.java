@@ -23,9 +23,9 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import toti.answers.Answer;
-import toti.common.structures.IntegerBuilder;
-import toti.common.structures.MapInit;
 import toti.files.env.Env;
+import toti.lib.common.structures.IntegerBuilder;
+import toti.lib.common.structures.MapInit;
 import toti.tcpip.parsers.StreamReader;
 
 public class TotiServerTest {

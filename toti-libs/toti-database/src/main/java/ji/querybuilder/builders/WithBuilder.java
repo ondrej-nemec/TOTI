@@ -13,7 +13,7 @@ import ji.querybuilder.builder_impl.InsertBuilderImpl;
 import ji.querybuilder.builder_impl.SelectBuilderImpl;
 import ji.querybuilder.builder_impl.UpdateBuilderImpl;
 import ji.querybuilder.structures.SubSelect;
-import toti.common.structures.Tuple2;
+import toti.lib.common.structures.Tuple2;
 
 public class WithBuilder {
 

@@ -10,8 +10,8 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.websocket.server.ServerWebSocketContainer;
 
-import toti.common.structures.ThrowingBiFunction;
 import toti.files.env.Env;
+import toti.lib.common.structures.ThrowingBiFunction;
 import toti.tcpip.parsers.Form;
 import toti.tcpip.parsers.Payload;
 import toti.tcpip.parsers.StreamReader;

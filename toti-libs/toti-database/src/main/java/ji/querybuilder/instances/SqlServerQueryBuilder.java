@@ -34,9 +34,9 @@ import ji.querybuilder.structures.DefaultValue;
 import ji.querybuilder.structures.ForeignKey;
 import ji.querybuilder.structures.Joining;
 import ji.querybuilder.structures.SubSelect;
-import toti.common.functions.Implode;
-import toti.common.structures.ObjectBuilder;
-import toti.common.structures.Tuple2;
+import toti.lib.common.functions.Implode;
+import toti.lib.common.structures.ObjectBuilder;
+import toti.lib.common.structures.Tuple2;
 
 public class SqlServerQueryBuilder implements DbInstance {
 

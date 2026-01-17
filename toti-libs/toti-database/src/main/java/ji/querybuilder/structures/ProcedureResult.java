@@ -2,8 +2,8 @@ package ji.querybuilder.structures;
 
 import java.util.Objects;
 
-import toti.common.structures.DictionaryValue;
-import toti.common.structures.MapDictionary;
+import toti.lib.common.structures.DictionaryValue;
+import toti.lib.common.structures.MapDictionary;
 
 public class ProcedureResult {
 

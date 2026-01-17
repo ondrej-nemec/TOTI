@@ -12,9 +12,9 @@ import java.util.function.Function;
 import org.junit.jupiter.api.Test;
 
 import toti.extensions.Translator;
+import toti.lib.common.structures.BooleanBuilder;
 import toti.validation.ValidationItem;
 import toti.answers.request.Request;
-import toti.common.structures.BooleanBuilder;
 
 public class SimpleRuleTest {
 	

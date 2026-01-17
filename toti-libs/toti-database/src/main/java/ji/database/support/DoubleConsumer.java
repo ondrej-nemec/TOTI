@@ -2,7 +2,7 @@ package ji.database.support;
 
 import java.sql.SQLException;
 
-import toti.common.structures.ThrowingSupplier;
+import toti.lib.common.structures.ThrowingSupplier;
 
 public interface DoubleConsumer<T> extends ThrowingSupplier<T, SQLException> {
 

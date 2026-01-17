@@ -3,9 +3,9 @@ package toti.validation.rules;
 import java.util.function.Function;
 
 import toti.extensions.Translator;
+import toti.lib.common.structures.DictionaryValue;
 import toti.validation.ValidationItem;
 import toti.answers.request.Request;
-import toti.common.structures.DictionaryValue;
 
 public class ExpectedTypeRule implements Rule {
 	

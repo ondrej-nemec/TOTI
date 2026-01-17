@@ -13,9 +13,9 @@ import static org.mockito.Mockito.when;
 
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
-import toti.common.structures.MapInit;
-import toti.common.structures.SortedMap;
 import toti.extensions.Translator;
+import toti.lib.common.structures.MapInit;
+import toti.lib.common.structures.SortedMap;
 import toti.tcpip.structures.RequestParameters;
 import toti.validation.ValidationItem;
 import toti.validation.ValidationResult;

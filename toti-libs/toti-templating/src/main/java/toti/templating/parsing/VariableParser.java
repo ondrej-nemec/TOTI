@@ -2,7 +2,7 @@ package toti.templating.parsing;
 
 import java.util.LinkedList;
 
-import toti.common.functions.Implode;
+import toti.lib.common.functions.Implode;
 import toti.templating.TemplateException;
 import toti.templating.parsing.enums.VariableSource;
 

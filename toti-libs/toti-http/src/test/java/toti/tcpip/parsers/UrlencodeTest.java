@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 
-import toti.common.structures.MapInit;
+import toti.lib.common.structures.MapInit;
 import toti.tcpip.structures.RequestParameters;
 
 public class UrlencodeTest {

@@ -2,8 +2,8 @@ package toti.ui.backend;
 
 import java.util.Map;
 
-import toti.common.functions.Mapper;
 import toti.files.json.Jsonable;
+import toti.lib.common.functions.Mapper;
 
 public interface Entity extends Jsonable {
 	

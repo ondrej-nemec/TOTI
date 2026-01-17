@@ -13,10 +13,10 @@ import toti.answers.action.ResponseAction;
 import toti.answers.router.mock.MockCreator;
 import toti.application.Module;
 import toti.application.register.Register;
-import toti.common.exceptions.LogicException;
-import toti.common.functions.StackTrace;
-import toti.common.structures.DictionaryValue;
-import toti.common.structures.ObjectBuilder;
+import toti.lib.common.exceptions.LogicException;
+import toti.lib.common.functions.StackTrace;
+import toti.lib.common.structures.DictionaryValue;
+import toti.lib.common.structures.ObjectBuilder;
 
 public class Link {
 	

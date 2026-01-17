@@ -8,10 +8,10 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.temporal.Temporal;
 
-import toti.common.functions.Implode;
-import toti.common.structures.DictionaryValue;
-import toti.common.structures.ListDictionary;
-import toti.common.structures.ThrowingSupplier;
+import toti.lib.common.functions.Implode;
+import toti.lib.common.structures.DictionaryValue;
+import toti.lib.common.structures.ListDictionary;
+import toti.lib.common.structures.ThrowingSupplier;
 
 public class Escape {
 

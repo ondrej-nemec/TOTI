@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import toti.common.structures.ThrowingConsumer;
+import toti.lib.common.structures.ThrowingConsumer;
 
 public class Binary {
 	

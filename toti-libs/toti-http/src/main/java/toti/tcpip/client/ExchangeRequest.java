@@ -1,6 +1,6 @@
 package toti.tcpip.client;
 
-import toti.common.structures.MapDictionary;
+import toti.lib.common.structures.MapDictionary;
 import toti.tcpip.enums.HttpMethod;
 
 public class ExchangeRequest extends Exchange {

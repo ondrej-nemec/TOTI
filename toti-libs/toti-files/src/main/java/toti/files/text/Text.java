@@ -16,8 +16,8 @@ import java.net.URL;
 
 import toti.files.text.basic.ReadText;
 import toti.files.text.basic.WriteText;
-import toti.common.structures.ThrowingConsumer;
-import toti.common.structures.ThrowingFunction;
+import toti.lib.common.structures.ThrowingConsumer;
+import toti.lib.common.structures.ThrowingFunction;
 
 public class Text {
 	

@@ -13,8 +13,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 import org.apache.logging.log4j.Logger;
 
-import toti.common.structures.MapDictionary;
-import toti.common.structures.ThrowingSupplier;
+import toti.lib.common.structures.MapDictionary;
+import toti.lib.common.structures.ThrowingSupplier;
 import toti.tcpip.parsers.Form;
 import toti.tcpip.parsers.Payload;
 import toti.tcpip.parsers.StreamReader;

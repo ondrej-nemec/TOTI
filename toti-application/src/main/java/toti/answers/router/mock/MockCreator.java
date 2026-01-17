@@ -11,7 +11,7 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import net.bytebuddy.implementation.FieldAccessor;
 import net.bytebuddy.implementation.MethodDelegation;
-import toti.common.structures.ObjectBuilder;
+import toti.lib.common.structures.ObjectBuilder;
 
 public class MockCreator {
 

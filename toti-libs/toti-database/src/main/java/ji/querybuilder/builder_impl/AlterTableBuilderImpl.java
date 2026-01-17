@@ -16,7 +16,7 @@ import ji.querybuilder.enums.OnAction;
 import ji.querybuilder.structures.Column;
 import ji.querybuilder.structures.ForeignKey;
 import ji.querybuilder.structures.ModifyColumn;
-import toti.common.structures.SortedMap;
+import toti.lib.common.structures.SortedMap;
 
 public class AlterTableBuilderImpl implements AlterTableBuilder, MultipleExecute {
 

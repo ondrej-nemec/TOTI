@@ -9,9 +9,9 @@ import java.util.stream.Collectors;
 
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
-import toti.common.exceptions.LogicException;
-import toti.common.structures.MapInit;
 import toti.extensions.Translator;
+import toti.lib.common.exceptions.LogicException;
+import toti.lib.common.structures.MapInit;
 import toti.tcpip.structures.RequestParameters;
 import toti.validation.collections.RulesCollection;
 import toti.validation.rules.Rule;

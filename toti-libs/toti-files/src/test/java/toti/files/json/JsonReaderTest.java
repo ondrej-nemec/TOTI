@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import toti.common.structures.MapInit;
+import toti.lib.common.structures.MapInit;
 
 public class JsonReaderTest {
 	

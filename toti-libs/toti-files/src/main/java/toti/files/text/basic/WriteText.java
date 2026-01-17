@@ -4,7 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.List;
 
-import toti.common.functions.Implode;
+import toti.lib.common.functions.Implode;
 
 public class WriteText {
 	

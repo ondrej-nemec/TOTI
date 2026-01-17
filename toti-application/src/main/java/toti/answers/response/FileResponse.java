@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 import toti.answers.Headers;
 import toti.answers.request.Identity;
-import toti.common.functions.InputStreamLoader;
+import toti.lib.common.functions.InputStreamLoader;
 import toti.tcpip.enums.StatusCode;
 
 public class FileResponse implements Response {

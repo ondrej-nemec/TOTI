@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 
 import toti.files.text.Text;
+import toti.lib.common.structures.MapDictionary;
 
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -24,7 +25,6 @@ import toti.answers.response.Response;
 import toti.answers.response.TextResponse;
 import toti.application.register.MappedAction;
 import toti.application.register.Register;
-import toti.common.structures.MapDictionary;
 import toti.extensions.CustomExceptionExtension;
 import toti.extensions.Translator;
 import toti.extensions.TranslatorExtension;

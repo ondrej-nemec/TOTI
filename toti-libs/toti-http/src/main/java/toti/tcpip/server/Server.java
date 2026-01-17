@@ -18,7 +18,7 @@ import javax.net.ssl.SSLServerSocketFactory;
 
 import org.apache.logging.log4j.Logger;
 
-import toti.common.structures.NamedThredFactory;
+import toti.lib.common.structures.NamedThredFactory;
 import toti.tcpip.SSL;
 import toti.tcpip.SslCredentials;
 

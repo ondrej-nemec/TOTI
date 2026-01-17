@@ -12,7 +12,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import toti.common.exceptions.LogicException;
+import toti.lib.common.exceptions.LogicException;
 
 public class XmlReader {
 

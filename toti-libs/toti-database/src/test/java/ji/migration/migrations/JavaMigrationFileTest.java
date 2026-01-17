@@ -15,7 +15,7 @@ import static org.mockito.Mockito.when;
 
 import ji.migration.Migration;
 import ji.querybuilder.QueryBuilder;
-import toti.common.structures.ThrowingBiFunction;
+import toti.lib.common.structures.ThrowingBiFunction;
 
 public class JavaMigrationFileTest {
 	

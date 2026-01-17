@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import toti.common.structures.MapInit;
-import toti.common.structures.ThrowingConsumer;
+import toti.lib.common.structures.MapInit;
+import toti.lib.common.structures.ThrowingConsumer;
 import toti.templating.Template;
 import toti.templating.TemplateContainer;
 import toti.templating.TemplateFactory;

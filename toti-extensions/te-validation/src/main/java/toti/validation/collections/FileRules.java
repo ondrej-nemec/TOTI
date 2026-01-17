@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import toti.common.exceptions.LogicException;
-import toti.common.structures.MapInit;
 import toti.extensions.Translator;
+import toti.lib.common.exceptions.LogicException;
+import toti.lib.common.structures.MapInit;
 import toti.tcpip.structures.UploadedFile;
 import toti.validation.rules.FileAllowedTypesRule;
 import toti.validation.rules.FileMaxSizeRule;

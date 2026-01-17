@@ -2,8 +2,8 @@ package toti.validation.rules;
 
 import java.util.function.Function;
 
-import toti.common.structures.DictionaryValue;
 import toti.extensions.Translator;
+import toti.lib.common.structures.DictionaryValue;
 
 public class MaxValueRule extends SimpleRule<Number> {
 

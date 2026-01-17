@@ -7,9 +7,9 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import toti.common.exceptions.LogicException;
-import toti.common.structures.MapInit;
 import toti.extensions.Translator;
+import toti.lib.common.exceptions.LogicException;
+import toti.lib.common.structures.MapInit;
 import toti.validation.ValidationItem;
 import toti.validation.rules.ExpectedTypeRule;
 import toti.validation.rules.RequiredItemRule;

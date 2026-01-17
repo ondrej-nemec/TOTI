@@ -20,6 +20,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import ji.database.Connections;
 import toti.files.text.Text;
+import toti.lib.common.structures.ThrowingConsumer;
 import ji.querybuilder.Builder;
 import ji.querybuilder.DbInstance;
 import ji.querybuilder.QueryBuilder;
@@ -37,7 +38,6 @@ import ji.querybuilder.enums.Join;
 import ji.querybuilder.enums.OnAction;
 import ji.querybuilder.enums.Where;
 import ji.querybuilder.structures.ProcedureResult;
-import toti.common.structures.ThrowingConsumer;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractInstanceTest {

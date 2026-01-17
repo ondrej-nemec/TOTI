@@ -8,8 +8,8 @@ import java.util.Map;
 
 import toti.files.json.JsonReader;
 import toti.files.text.Text;
-import toti.common.functions.InputStreamLoader;
-import toti.common.structures.DictionaryValue;
+import toti.lib.common.functions.InputStreamLoader;
+import toti.lib.common.structures.DictionaryValue;
 
 public class JsonEnvSource {
 

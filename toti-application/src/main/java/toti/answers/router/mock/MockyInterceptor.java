@@ -2,7 +2,7 @@ package toti.answers.router.mock;
 
 import java.lang.reflect.Method;
 
-import toti.common.structures.ObjectBuilder;
+import toti.lib.common.structures.ObjectBuilder;
 
 public class MockyInterceptor {
 

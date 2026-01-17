@@ -3,7 +3,7 @@ package test;
 import toti.annotations.Action;
 import toti.annotations.Controller;
 import toti.answers.action.ResponseAction;
-import toti.common.structures.ThrowingSupplier;
+import toti.lib.common.structures.ThrowingSupplier;
 
 @Controller
 public class NotRegisteredController {

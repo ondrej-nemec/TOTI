@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import toti.common.structures.ThrowingConsumer;
 import toti.files.json.providers.OutputStringProvider;
+import toti.lib.common.structures.ThrowingConsumer;
 
 public class OutputJsonStreamTest {
 

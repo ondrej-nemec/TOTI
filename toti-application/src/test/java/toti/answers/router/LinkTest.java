@@ -21,9 +21,9 @@ import test.TestModule;
 import toti.application.Module;
 import toti.application.register.Param;
 import toti.application.register.Register;
-import toti.common.exceptions.LogicException;
-import toti.common.structures.MapInit;
-import toti.common.structures.ObjectBuilder;
+import toti.lib.common.exceptions.LogicException;
+import toti.lib.common.structures.MapInit;
+import toti.lib.common.structures.ObjectBuilder;
 
 public class LinkTest {
 	

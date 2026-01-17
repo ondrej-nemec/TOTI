@@ -12,11 +12,11 @@ import ji.database.support.DatabaseRow;
 import ji.querybuilder.builders.InsertBuilder;
 import ji.querybuilder.builders.SelectBuilder;
 import ji.querybuilder.builders.UpdateBuilder;
-import toti.common.structures.DictionaryValue;
-import toti.common.structures.ThrowingBiConsumer;
-import toti.common.structures.ThrowingConsumer;
-import toti.common.structures.ThrowingFunction;
-import toti.common.structures.ThrowingSupplier;
+import toti.lib.common.structures.DictionaryValue;
+import toti.lib.common.structures.ThrowingBiConsumer;
+import toti.lib.common.structures.ThrowingConsumer;
+import toti.lib.common.structures.ThrowingFunction;
+import toti.lib.common.structures.ThrowingSupplier;
 
 public interface PreparedQueries extends QueryBuilderFactory {
 	

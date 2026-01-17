@@ -10,9 +10,9 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-import toti.common.functions.FileExtension;
-import toti.common.structures.dictionary.Scalar;
-import toti.common.structures.dictionary.ScalarStructure;
+import toti.lib.common.functions.FileExtension;
+import toti.lib.common.structures.dictionary.Scalar;
+import toti.lib.common.structures.dictionary.ScalarStructure;
 
 public class Env implements ScalarStructure<Object> {
 

@@ -7,12 +7,12 @@ import java.util.Map.Entry;
 import java.util.function.Function;
 
 import toti.extensions.Translator;
+import toti.lib.common.structures.DictionaryValue;
+import toti.lib.common.structures.SortedMap;
 import toti.tcpip.structures.RequestParameters;
 import toti.validation.ValidationItem;
 import toti.validation.Validator;
 import toti.answers.request.Request;
-import toti.common.structures.DictionaryValue;
-import toti.common.structures.SortedMap;
 
 public class StructureSortedMapRule implements Rule {
 	

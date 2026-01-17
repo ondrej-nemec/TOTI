@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
 
-import toti.common.functions.PropertiesLoader;
+import toti.lib.common.functions.PropertiesLoader;
 
 public class PropertiesTranslator implements Translator {
 	

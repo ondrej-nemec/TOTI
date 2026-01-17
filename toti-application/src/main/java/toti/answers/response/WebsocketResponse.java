@@ -2,7 +2,7 @@ package toti.answers.response;
 
 import toti.answers.Headers;
 import toti.answers.request.Identity;
-import toti.common.exceptions.LogicException;
+import toti.lib.common.exceptions.LogicException;
 import toti.tcpip.enums.StatusCode;
 import toti.tcpip.structures.WebSocket;
 

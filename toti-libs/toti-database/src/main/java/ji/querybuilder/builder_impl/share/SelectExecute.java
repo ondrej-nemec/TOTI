@@ -12,8 +12,8 @@ import java.util.Map;
 import ji.database.support.DatabaseRow;
 import ji.database.wrappers.StatementWrapper;
 import ji.querybuilder.Escape;
-import toti.common.structures.DictionaryValue;
-import toti.common.structures.ThrowingFunction;
+import toti.lib.common.structures.DictionaryValue;
+import toti.lib.common.structures.ThrowingFunction;
 
 public interface SelectExecute {
 

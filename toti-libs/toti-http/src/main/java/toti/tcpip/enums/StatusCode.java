@@ -1,6 +1,6 @@
 package toti.tcpip.enums;
 
-import toti.common.exceptions.LogicException;
+import toti.lib.common.exceptions.LogicException;
 
 public enum StatusCode {
 

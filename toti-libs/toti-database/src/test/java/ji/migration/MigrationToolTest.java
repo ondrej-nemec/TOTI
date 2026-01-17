@@ -18,8 +18,8 @@ import ji.migration.migrations.MigrationFile;
 import ji.migration.migrations.MigrationInternal;
 import ji.migration.migrations.SqlMigrationFile;
 import ji.querybuilder.QueryBuilder;
-import toti.common.functions.Implode;
-import toti.common.structures.SortedMap;
+import toti.lib.common.functions.Implode;
+import toti.lib.common.structures.SortedMap;
 
 public class MigrationToolTest {
 	

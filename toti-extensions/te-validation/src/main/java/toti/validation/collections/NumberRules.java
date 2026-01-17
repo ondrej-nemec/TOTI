@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import toti.common.exceptions.LogicException;
-import toti.common.structures.MapInit;
 import toti.extensions.Translator;
+import toti.lib.common.exceptions.LogicException;
+import toti.lib.common.structures.MapInit;
 import toti.validation.rules.MaxValueRule;
 import toti.validation.rules.MinValueRule;
 import toti.validation.rules.Rule;

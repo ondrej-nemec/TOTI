@@ -21,9 +21,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import static org.mockito.Mockito.mock;
 
-import toti.common.structures.MapDictionary;
-import toti.common.structures.MapInit;
-import toti.common.tests.Log4j2LoggerTestImpl;
+import toti.lib.common.structures.MapDictionary;
+import toti.lib.common.structures.MapInit;
+import toti.lib.common.tests.Log4j2LoggerTestImpl;
 import toti.tcpip.client.Exchange;
 import toti.tcpip.client.ExchangeFactory;
 import toti.tcpip.client.ExchangeRequest;

@@ -6,7 +6,7 @@ import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.answers.response.Response;
-import toti.common.structures.MapDictionary;
+import toti.lib.common.structures.MapDictionary;
 
 public interface TotiExtension extends Extension {
 	

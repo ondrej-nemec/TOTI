@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import ji.database.wrappers.StatementWrapper;
-import toti.common.structures.ThrowingConsumer;
+import toti.lib.common.structures.ThrowingConsumer;
 
 public interface MultipleExecute {
 

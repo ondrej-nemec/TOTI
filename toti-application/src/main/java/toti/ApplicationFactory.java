@@ -25,14 +25,14 @@ import toti.application.Module;
 import toti.application.Task;
 import toti.application.register.Param;
 import toti.application.register.Register;
-import toti.common.structures.ObjectBuilder;
-import toti.common.structures.dictionary.Scalar;
 import toti.extensions.AuthenticationExtension;
 import toti.extensions.Extension;
 import toti.extensions.TemplateExtension;
 import toti.extensions.Translator;
 import toti.extensions.TranslatorExtension;
 import toti.files.env.Env;
+import toti.lib.common.structures.ObjectBuilder;
+import toti.lib.common.structures.dictionary.Scalar;
 import toti.extensions.TotiExtension;
 
 public class ApplicationFactory {

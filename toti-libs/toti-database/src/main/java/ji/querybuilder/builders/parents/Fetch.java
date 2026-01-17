@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import ji.database.support.DatabaseRow;
-import toti.common.structures.DictionaryValue;
-import toti.common.structures.ThrowingFunction;
+import toti.lib.common.structures.DictionaryValue;
+import toti.lib.common.structures.ThrowingFunction;
 
 public interface Fetch {
 

@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import toti.common.structures.DictionaryValue;
+import toti.lib.common.structures.DictionaryValue;
 import toti.tcpip.structures.RequestParameters;
 
 public abstract class Exchange {

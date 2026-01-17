@@ -1,6 +1,6 @@
 package toti.files.json;
 
-import toti.common.functions.Mapper;
+import toti.lib.common.functions.Mapper;
 
 public interface Jsonable {
 

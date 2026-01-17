@@ -5,7 +5,7 @@ import java.util.List;
 
 import ji.querybuilder.Builder;
 import ji.querybuilder.structures.SubSelect;
-import toti.common.structures.DictionaryValue;
+import toti.lib.common.structures.DictionaryValue;
 
 public interface InsertBuilder extends Builder {
 	

@@ -22,7 +22,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import ji.database.Connections;
-import toti.common.structures.ThrowingSupplier;
+import toti.lib.common.structures.ThrowingSupplier;
 
 public class EscapeTest {
 	

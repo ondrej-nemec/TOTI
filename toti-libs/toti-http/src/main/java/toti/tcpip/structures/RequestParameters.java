@@ -3,7 +3,7 @@ package toti.tcpip.structures;
 import java.util.HashMap;
 import java.util.Map;
 
-import toti.common.structures.MapDictionary;
+import toti.lib.common.structures.MapDictionary;
 
 public class RequestParameters extends MapDictionary<String> {
 	

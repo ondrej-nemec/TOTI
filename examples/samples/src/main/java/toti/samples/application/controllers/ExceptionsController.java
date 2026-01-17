@@ -5,7 +5,7 @@ import toti.annotations.Controller;
 import toti.annotations.Secured;
 import toti.answers.action.ResponseAction;
 import toti.answers.response.Response;
-import toti.common.exceptions.LogicException;
+import toti.lib.common.exceptions.LogicException;
 import toti.tcpip.enums.HttpMethod;
 
 /**
