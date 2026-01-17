@@ -1,1 +1,0 @@
-echo standart output

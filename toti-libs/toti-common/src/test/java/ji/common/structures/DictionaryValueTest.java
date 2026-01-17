@@ -70,8 +70,8 @@ public class DictionaryValueTest {
 	}
 	
 	public static Object[] dataTimestamps() {
-		ZoneId zoneId = ZoneId.of("+01:00");
-		long epoch = 1681127100; // ZonedDateTime.of(2023, 4, 10, 12, 45, 0, 0, zoneId).toEpochSecond()
+		ZoneId zoneId = ZoneId.of("Etc/UTC");
+		long epoch = 1681127100; // 1681127100 // ZonedDateTime.of(2023, 4, 10, 12, 45, 0, 0, zoneId).toEpochSecond()
 		return new Object[] {
 			// date
 			new Object[] {
@@ -121,7 +121,7 @@ public class DictionaryValueTest {
 			// time
 			new Object[] {
 				"LocalTime from Epoch", epoch,
-				LocalTime.class, LocalTime.of(12, 45)
+				LocalTime.class, LocalTime.of(11, 45)
 			},
 			new Object[] {
 				"LocalTime from LocalTime object", LocalTime.of(12, 45),
@@ -174,7 +174,7 @@ public class DictionaryValueTest {
 			// datetime
 			new Object[] {
 				"LocalDateTime from Epoch", epoch, 
-				LocalDateTime.class, LocalDateTime.of(2023, 4, 10, 12, 45)
+				LocalDateTime.class, LocalDateTime.of(2023, 4, 10, 11, 45)
 			},
 			new Object[] {
 				"LocalDateTime from LocalDateTime object", LocalDateTime.of(2023, 4, 10, 12, 45), 
@@ -219,18 +219,18 @@ public class DictionaryValueTest {
 			// zoned date time
 			new Object[] {
 				"ZonedDateTime from Epoch", epoch, 
-				ZonedDateTime.class, ZonedDateTime.of(2023, 4, 10, 12, 45, 0, 0, zoneId)
+				ZonedDateTime.class, ZonedDateTime.of(2023, 4, 10, 11, 45, 0, 0, zoneId)
 			},
 			new Object[] {
 				"ZonedDateTime from ZonedDateTime object", ZonedDateTime.of(2023, 4, 10, 12, 45, 0, 0, zoneId), 
 				ZonedDateTime.class, ZonedDateTime.of(2023, 4, 10, 12, 45, 0, 0, zoneId)
 			},
 			new Object[] {
-				"ZonedDateTime from ZonedDateTime string 1", "2023-04-10T12:45:00+01:00", 
+				"ZonedDateTime from ZonedDateTime string 1", "2023-04-10T12:45:00Z[Etc/UTC]", 
 				ZonedDateTime.class, ZonedDateTime.of(2023, 4, 10, 12, 45, 0, 0, zoneId)
 			},
 			new Object[] {
-				"ZonedDateTime from ZonedDateTime string 2", "2023-04-10 12:45:00+01:00", 
+				"ZonedDateTime from ZonedDateTime string 2", "2023-04-10 12:45:00Z[Etc/UTC]", 
 				ZonedDateTime.class, ZonedDateTime.of(2023, 4, 10, 12, 45, 0, 0, zoneId)
 			},
 			new Object[] {
