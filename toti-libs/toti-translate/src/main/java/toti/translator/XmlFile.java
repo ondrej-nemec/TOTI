@@ -4,9 +4,9 @@ import java.io.IOException;
 
 import javax.xml.stream.XMLStreamException;
 
-import ji.files.text.Text;
-import ji.xml.XmlObject;
-import ji.xml.XmlReader;
+import toti.files.text.Text;
+import toti.files.xml.XmlObject;
+import toti.files.xml.XmlReader;
 import toti.common.structures.DictionaryValue;
 
 public class XmlFile implements MessagesFile {

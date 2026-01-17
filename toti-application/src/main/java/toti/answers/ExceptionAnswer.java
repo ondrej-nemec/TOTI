@@ -10,7 +10,7 @@ import java.util.Random;
 
 import org.apache.logging.log4j.Logger;
 
-import ji.files.text.Text;
+import toti.files.text.Text;
 import toti.answers.request.Identity;
 import toti.answers.request.Request;
 import toti.answers.response.FinalResponse;

@@ -1,8 +1,8 @@
 package toti.answers.response;
 
-import ji.json.JsonWritter;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
+import toti.files.json.JsonWritter;
 import toti.http.enums.StatusCode;
 
 public class JsonResponse implements Response {

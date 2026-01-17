@@ -9,7 +9,7 @@ import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 
-import ji.files.text.Text;
+import toti.files.text.Text;
 import toti.common.structures.MapInit;
 import toti.common.tests.Log4j2LoggerTestImpl;
 import toti.templating.Parameter;

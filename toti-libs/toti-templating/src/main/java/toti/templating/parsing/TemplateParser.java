@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import ji.files.text.Text;
+import toti.files.text.Text;
 import toti.common.functions.InputStreamLoader;
 import toti.common.structures.DictionaryValue;
 import toti.common.structures.MapInit;

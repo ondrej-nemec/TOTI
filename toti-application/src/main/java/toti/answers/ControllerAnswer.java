@@ -14,9 +14,8 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.logging.log4j.Logger;
 
-import ji.json.JsonReader;
-import ji.xml.XmlObject;
-import ji.xml.XmlReader;
+import toti.files.xml.XmlObject;
+import toti.files.xml.XmlReader;
 import toti.ServerException;
 import toti.answers.action.BodyType;
 import toti.answers.action.ResponseAction;
@@ -37,6 +36,7 @@ import toti.extensions.AuthenticationExtension;
 import toti.extensions.TemplateExtension;
 import toti.extensions.Translator;
 import toti.extensions.TranslatorExtension;
+import toti.files.json.JsonReader;
 import toti.http.enums.HttpMethod;
 import toti.http.enums.StatusCode;
 

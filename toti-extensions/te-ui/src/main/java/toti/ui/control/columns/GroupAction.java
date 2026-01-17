@@ -3,7 +3,7 @@ package toti.ui.control.columns;
 import java.util.HashMap;
 import java.util.Map;
 
-import ji.json.Jsonable;
+import toti.files.json.Jsonable;
 import toti.ui.control.Control;
 
 public class GroupAction implements Jsonable {

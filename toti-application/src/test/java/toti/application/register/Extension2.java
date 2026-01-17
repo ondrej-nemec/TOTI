@@ -1,10 +1,10 @@
 package toti.application.register;
 
-import toti.env.Env;
 import toti.answers.Headers;
 import toti.answers.request.Identity;
 import toti.common.structures.MapDictionary;
 import toti.extensions.Extension;
+import toti.files.env.Env;
 import toti.http.structures.RequestParameters;
 
 public class Extension2 implements Extension {

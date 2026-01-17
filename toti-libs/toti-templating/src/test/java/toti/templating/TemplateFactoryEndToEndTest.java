@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import ji.files.text.Text;
+import toti.files.text.Text;
 import toti.common.tests.Log4j2LoggerTestImpl;
 
 @Deprecated

@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 import toti.answers.Answer;
 import toti.common.structures.IntegerBuilder;
 import toti.common.structures.MapInit;
-import toti.env.Env;
+import toti.files.env.Env;
 import toti.http.parsers.StreamReader;
 
 public class TotiServerTest {

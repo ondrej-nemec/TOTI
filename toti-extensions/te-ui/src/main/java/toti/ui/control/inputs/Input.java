@@ -2,7 +2,7 @@ package toti.ui.control.inputs;
 
 import java.util.Map;
 
-import ji.json.Jsonable;
+import toti.files.json.Jsonable;
 
 public interface Input extends Jsonable {
 

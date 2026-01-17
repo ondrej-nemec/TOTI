@@ -19,7 +19,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import ji.database.Connections;
-import ji.files.text.Text;
+import toti.files.text.Text;
 import ji.querybuilder.Builder;
 import ji.querybuilder.DbInstance;
 import ji.querybuilder.QueryBuilder;

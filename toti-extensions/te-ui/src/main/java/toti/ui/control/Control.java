@@ -2,8 +2,8 @@ package toti.ui.control;
 
 import java.util.Map;
 
-import ji.json.JsonWritter;
-import ji.json.Jsonable;
+import toti.files.json.JsonWritter;
+import toti.files.json.Jsonable;
 
 public interface Control extends Jsonable {
 

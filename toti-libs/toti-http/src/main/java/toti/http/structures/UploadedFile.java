@@ -3,7 +3,7 @@ package toti.http.structures;
 import java.io.IOException;
 import java.util.Arrays;
 
-import ji.files.text.Binary;
+import toti.files.text.Binary;
 
 public class UploadedFile {
 

@@ -2,7 +2,7 @@ package toti.ui.control.columns;
 
 import java.util.Map;
 
-import ji.json.Jsonable;
+import toti.files.json.Jsonable;
 
 public interface Column extends Jsonable {
 	

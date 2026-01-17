@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Objects;
 
-import ji.files.text.Text;
+import toti.files.text.Text;
 import ji.querybuilder.QueryBuilder;
 import toti.common.functions.InputStreamLoader;
 

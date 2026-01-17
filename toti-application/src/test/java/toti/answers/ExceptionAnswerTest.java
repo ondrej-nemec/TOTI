@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 
-import ji.files.text.Text;
+import toti.files.text.Text;
 
 import org.junit.jupiter.params.provider.MethodSource;
 
