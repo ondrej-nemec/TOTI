@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
@@ -123,17 +122,6 @@ public class DatabaseTestCaseTest extends DatabaseTestCase {
 		);
 	}
 	
-	private void testDbEmptyOrNotExists() {
-		try {
-			realDatabase.applyQuery((con)->{
-				testDbEmpty();
-				return null;
-			});
-		} catch (SQLException | RuntimeException e) {
-			assertEquals("Unknown database 'javainit_testing_test'", e.getMessage());
-		}
-	}
-	
 	private void testDbEmpty() throws SQLException {
 		realDatabase.applyQuery((con)->{
 			try {
@@ -152,34 +140,6 @@ public class DatabaseTestCaseTest extends DatabaseTestCase {
 		row.addColumn("id", i);
 		row.addColumn("name", "Name #" + i);
 		return row;
-	}	
-	
-	private static Properties getProperties() {
-		Properties prop = new Properties();
-		prop.put("app.mode", "test");
-		prop.put("db.timezone", "Europe/Prague");
-		/*
-		prop.put("database.type", "postgresql");
-		prop.put("database.url", "//localhost");
-		prop.put("database.externalServer", true);
-		prop.put("database.schema-name", "javainit_testing_test");
-		prop.put("database.login", "postgres");
-		prop.put("database.password", "1234");
-		prop.put("database.pathToMigrations", "migrations");
-		prop.put("database.pool-size", 3);
-		/*/
-		prop.put("database.type", "mysql");
-		prop.put("database.url", "//mysql");
-		prop.put("database.externalServer", true);
-		prop.put("database.schema-name", "javainit_testing_test");
-		prop.put("database.login", "root");
-		prop.put("database.password", "Strong!Passw0rd");
-		prop.put("database.pathToMigrations", Arrays.asList("migrations"));
-		prop.put("database.pool-size", 3);
-		//*/
-		prop.put("log.logFile", "log.txt");
-		prop.put("log.type", "null");
-		return prop;
 	}
 
 }
