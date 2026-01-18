@@ -84,37 +84,37 @@ public class SqlMigrationFileTest {
 	public static Object[] dataLoadContent() {
 		return new Object[] {
 			new Object[] {
-				"test/migrationFiles/sql__in_dir.sql",
+				"test/migrations/sql__in_dir.sql",
 				false,
 				"select * from dir"
 			},
 			new Object[] {
-				"ji/migration/migrations/sql__in_classpath.sql",
+				"migrations/sql__in_classpath.sql",
 				false,
 				"select * from classpath"
 			},
 			new Object[] {
-				"ji/migration/migrations/sql__only_foward.sql",
+				"migrations/sql__only_foward.sql",
 				false,
 				"select * from Foward"
 			},
 			new Object[] {
-				"ji/migration/migrations/sql__only_revert.sql",
+				"migrations/sql__only_revert.sql",
 				true,
 				"select * from Revert"
 			},
 			new Object[] {
-				"ji/migration/migrations/sql__only_revert.sql",
+				"migrations/sql__only_revert.sql",
 				false,
 				""
 			},
 			new Object[] {
-				"ji/migration/migrations/sql__foward_and_revert.sql",
+				"migrations/sql__foward_and_revert.sql",
 				false,
 				"select * from Foward"
 			},
 			new Object[] {
-				"ji/migration/migrations/sql__foward_and_revert.sql",
+				"migrations/sql__foward_and_revert.sql",
 				true,
 				"select * from Revert"
 			}
@@ -124,7 +124,7 @@ public class SqlMigrationFileTest {
 	@Test
 	// (expected = RuntimeException.class)
 	public void testLoadContentThrowsIfMissingRequiredRevertPart() throws IOException {
-		SqlMigrationFile file = new SqlMigrationFile("ji/migration/migrations/sql__only_foward.sql");
+		SqlMigrationFile file = new SqlMigrationFile("migrations/sql__only_foward.sql");
 		RuntimeException e = assertThrows(RuntimeException.class, ()->{
 			file.loadContent(true);
 		});

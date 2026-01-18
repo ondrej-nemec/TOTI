@@ -13,13 +13,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import static org.mockito.Mockito.mock;
 
+import toti.lib.common.functions.Implode;
+import toti.lib.common.structures.SortedMap;
 import toti.lib.database.migration.migrations.JavaMigrationFile;
 import toti.lib.database.migration.migrations.MigrationFile;
 import toti.lib.database.migration.migrations.MigrationInternal;
 import toti.lib.database.migration.migrations.SqlMigrationFile;
 import toti.lib.database.querybuilder.QueryBuilder;
-import toti.lib.common.functions.Implode;
-import toti.lib.common.structures.SortedMap;
 
 public class MigrationToolTest {
 	
@@ -167,7 +167,7 @@ public class MigrationToolTest {
 	
 	@Test
 	public void testProcess() throws MigrationException {
-		new File("test/migrationFiles/Java_not_compiled__in_dir.class").delete();
+		new File("test/migrations/Java_not_compiled__in_dir.class").delete();
 		
 		ClassLoader loader = mock(ClassLoader.class);
 		MigrationTool tool = new MigrationTool(null, null, null);
@@ -175,21 +175,21 @@ public class MigrationToolTest {
 		SortedMap<String, MigrationInternal> expected = new SortedMap<String, MigrationInternal>()
 		.append(
 			"Java_compiled",
-			new MigrationInternal("Java_compiled", "in_dir", "test/migrationFiles")
-			.setFile(new JavaMigrationFile("test.migrationFiles", "Java_compiled__in_dir", loader))
+			new MigrationInternal("Java_compiled", "in_dir", "test/migrations")
+			.setFile(new JavaMigrationFile("test.migrations", "Java_compiled__in_dir", loader))
 		)
 		.append(
 			"Java_not_compiled",
-			new MigrationInternal("Java_not_compiled", "in_dir", "test/migrationFiles")
-			.setFile(new JavaMigrationFile("test.migrationFiles", "Java_not_compiled__in_dir", loader))
+			new MigrationInternal("Java_not_compiled", "in_dir", "test/migrations")
+			.setFile(new JavaMigrationFile("test.migrations", "Java_not_compiled__in_dir", loader))
 		)
 		.append(
 			"sql",
-			new MigrationInternal("sql", "in_dir", "test/migrationFiles")
-			.setFile(new SqlMigrationFile("test/migrationFiles/sql__in_dir.sql"))
+			new MigrationInternal("sql", "in_dir", "test/migrations")
+			.setFile(new SqlMigrationFile("test/migrations/sql__in_dir.sql"))
 		)
 		;
-		SortedMap<String, MigrationInternal> actual = tool.processFiles("test/migrationFiles", Arrays.asList(
+		SortedMap<String, MigrationInternal> actual = tool.processFiles("test/migrations", Arrays.asList(
 			"Java_compiled__in_dir.class",
 			"Java_compiled__in_dir.java",
 			"Java_not_compiled__in_dir.java",
@@ -206,9 +206,9 @@ public class MigrationToolTest {
 			);
 			throw e;
 		}
-		assertTrue(new File("test/migrationFiles/Java_not_compiled__in_dir.class").exists());
-		assertTrue(new File("test/migrationFiles/Java_compiled__in_dir.class").exists());
-		new File("test/migrationFiles/Java_not_compiled__in_dir.class").delete();
+		assertTrue(new File("test/migrations/Java_not_compiled__in_dir.class").exists());
+		assertTrue(new File("test/migrations/Java_compiled__in_dir.class").exists());
+		new File("test/migrations/Java_not_compiled__in_dir.class").delete();
 	}
 	
 	@Test
@@ -217,7 +217,7 @@ public class MigrationToolTest {
 		MigrationTool tool = new MigrationTool(null, null, null);
 		
 		MigrationException e = assertThrows(MigrationException.class, ()->{
-			tool.processFiles("test/migrationFiles/subdir", Arrays.asList(
+			tool.processFiles("test/migrations/subdir", Arrays.asList(
 				"Java__compilation_error.java"
 			), loader);
 		});

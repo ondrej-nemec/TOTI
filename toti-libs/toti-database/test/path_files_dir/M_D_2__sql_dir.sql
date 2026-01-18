@@ -1,1 +1,0 @@
-create table dir_sql ();

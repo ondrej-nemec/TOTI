@@ -1,1 +1,0 @@
-create table src_sql ();

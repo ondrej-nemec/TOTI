@@ -1,1 +1,0 @@
-create table res_sql ();

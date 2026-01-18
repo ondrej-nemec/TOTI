@@ -1,1 +1,0 @@
-select 'B' as b

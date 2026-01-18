@@ -13,9 +13,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import toti.lib.common.structures.ThrowingBiFunction;
 import toti.lib.database.migration.Migration;
 import toti.lib.database.querybuilder.QueryBuilder;
-import toti.lib.common.structures.ThrowingBiFunction;
 
 public class JavaMigrationFileTest {
 	
@@ -52,10 +52,10 @@ public class JavaMigrationFileTest {
 		ThrowingBiFunction<String, ClassLoader, Object, Exception> load = mock(ThrowingBiFunction.class);
 		when(load.apply(any(), any())).thenReturn(migration);
 
-		JavaMigrationFile file = new JavaMigrationFile("toti.lib.database.migration.migrations", "Java__in_classpath", loader);
+		JavaMigrationFile file = new JavaMigrationFile("migrations", "Java__in_classpath", loader);
 		assertEquals(migration, file.getMigration(load));
 		
-		verify(load, times(1)).apply("toti.lib.database.migration.migrations.Java__in_classpath", loader);
+		verify(load, times(1)).apply("migrations.Java__in_classpath", loader);
 		verifyNoMoreInteractions(load, loader);
 	}
 
@@ -70,10 +70,10 @@ public class JavaMigrationFileTest {
 		.thenThrow(new ClassNotFoundException())
 		.thenReturn(migration);
 
-		JavaMigrationFile file = new JavaMigrationFile("test.migrationFiles", "Java_compiled__in_dir", loader);
+		JavaMigrationFile file = new JavaMigrationFile("test.migrations", "Java_compiled__in_dir", loader);
 		assertEquals(migration, file.getMigration(load));
 		
-		verify(load, times(1)).apply("test.migrationFiles.Java_compiled__in_dir", loader);
+		verify(load, times(1)).apply("test.migrations.Java_compiled__in_dir", loader);
 		verify(load, times(1)).apply("Java_compiled__in_dir", loader);
 		verifyNoMoreInteractions(load, loader);
 	}

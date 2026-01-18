@@ -1,21 +1,20 @@
-package migration.endToEnd;
+package migrations;
 
 import java.sql.SQLException;
 
 import toti.lib.database.migration.Migration;
 import toti.lib.database.querybuilder.QueryBuilder;
-import toti.lib.database.querybuilder.enums.ColumnType;
 
-public class V1__AddedFirstTable implements Migration {
+public class Java__in_classpath implements Migration {
 
 	@Override
 	public void migrate(QueryBuilder builder) throws SQLException {
-		builder.createTable("First_table").addColumn("id", ColumnType.integer()).execute();
+		builder.select("Foward");
 	}
 
 	@Override
 	public void revert(QueryBuilder builder) throws SQLException {
-		builder.deleteTable("First_table").execute();
+		builder.select("Revert");
 	}
 
 }
