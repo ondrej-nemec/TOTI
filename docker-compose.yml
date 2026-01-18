@@ -81,6 +81,7 @@ services:
     container_name: toti_adminer
     volumes:
       - ./volumes/sqlite/:/root/sqlite/
+      - ./docs:/var/www/html/docs
     ports:
       - 19040:8080
     depends_on:
