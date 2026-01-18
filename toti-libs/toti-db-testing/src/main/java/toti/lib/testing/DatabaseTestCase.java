@@ -10,7 +10,6 @@ import org.mockito.Mockito;
 
 import toti.lib.database.base.Database;
 import toti.lib.database.base.DatabaseConfig;
-import toti.lib.files.env.Env;
 import toti.lib.testing.entities.Table;
 
 public abstract class DatabaseTestCase {
@@ -25,18 +24,6 @@ public abstract class DatabaseTestCase {
 	public DatabaseTestCase(DatabaseConfig config, Logger logger) {
 		this.config = config;
 		this.database = new DatabaseMock(config, getDataSet(), logger);
-	}
-
-	public DatabaseTestCase(Env env, Logger logger) {
-		this(new DatabaseConfig(
-				env.getString("database.type"),
-				env.getString("database.url"),
-				env.getString("database.schema-name"),
-				env.getString("database.login"),
-				env.getString("database.password"),
-				env.getList("database.pathToMigrations", v->v.getString()),
-				env.getInteger("database.pool-size")
-		), logger);
 	}
 
 	protected abstract List<Table> getDataSet();

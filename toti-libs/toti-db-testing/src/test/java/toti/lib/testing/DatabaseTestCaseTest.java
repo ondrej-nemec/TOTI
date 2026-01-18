@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.mock;
 
 import toti.lib.database.base.Database;
-import toti.lib.files.env.Env;
+import toti.lib.database.base.DatabaseConfig;
 import toti.lib.testing.entities.Row;
 import toti.lib.testing.entities.Table;
 
@@ -30,15 +30,24 @@ public class DatabaseTestCaseTest extends DatabaseTestCase {
 	private final Database realDatabase;
 	
 	public DatabaseTestCaseTest() {
-		super(Env.empty(), mock(Logger.class));
+		super(new DatabaseConfig(
+			"postgresql",
+			"//postgres:5432/",
+			"database_testing",
+			"postgres",
+			"Strong!Passw0rd",
+			Arrays.asList("dbMigrations"),
+			1
+		), mock(Logger.class));
 		this.realDatabase = new Database(config, mock(Logger.class));
 	}
 	
 	@BeforeEach
 	@Override
 	public void before() throws SQLException {
+		getDatabase().createDbIfNotExists();
 		getDatabase().migrate();
-		testDbEmptyOrNotExists();
+		//testDbEmptyOrNotExists();
 		applyDataSet();
 	}
 	
@@ -73,9 +82,8 @@ public class DatabaseTestCaseTest extends DatabaseTestCase {
 			)
 		));
 		getDatabase().applyQuery((con)->{
-			PreparedStatement stat = con.prepareStatement("select * from dbtc");
+			PreparedStatement stat = con.prepareStatement("select * from dbtc order by id");
 			ResultSet res = stat.executeQuery();
-			
 			for (int i = 0; i < 3; i++) {
 				assertTrue(res.next());
 				assertEquals(i, res.getInt(1));
@@ -102,7 +110,7 @@ public class DatabaseTestCaseTest extends DatabaseTestCase {
 	}
 
 	@Override
-	protected List<Table> getDataSet() {			
+	protected List<Table> getDataSet() {
 		return Arrays.asList(
 			new Table(
 				"dbtc",
