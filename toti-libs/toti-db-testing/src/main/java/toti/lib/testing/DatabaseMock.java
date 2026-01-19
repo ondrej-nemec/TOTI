@@ -33,7 +33,6 @@ public class DatabaseMock extends Database {
 		} catch (SQLException e) {
 			throw new RuntimeException("Connection to database could not be created", e);
 		}
-		
 	}
 
 	public void applyDataSet() throws SQLException {
@@ -42,24 +41,23 @@ public class DatabaseMock extends Database {
 
 	protected void applyDataSet(List<Table> tables) throws SQLException {
 		applyBuilder((builder)->{
-			BatchBuilder batch = builder.batch();
 			for(Table table : tables) {
 				for(Row row : table.getRows()) {
-					batch.addBatch(applyRow(builder, table.getName(), row));
+					applyRow(builder, table.getName(), row);
 				}
 			}
-			batch.execute();
 			return null;
 		});
 	}
-	
-	private Builder applyRow(QueryBuilderFactory builder, String table, Row row) {
+
+	private void applyRow(QueryBuilderFactory builder, String table, Row row) throws SQLException {
 		if (row.isInsert()) {
 			InsertBuilder insert = builder.insert(table, row.getIdName());
 			row.getColumns().forEach((key, value)->{
 				insert.addValue(key, value);
 			});
-			return insert;
+			insert.execute();
+			return;
 		}
 		UpdateBuilder update = builder.update(table);
 		row.getColumns().forEach((key, value)->{
@@ -68,7 +66,7 @@ public class DatabaseMock extends Database {
 		});
 		String idName = row.getIdName().get();
 		update.where(idName + " = :" + idName).addParameter(":" + idName, row.getIdValue());
-		return update;
+		update.execute();
 	}
 	
 	@Override
