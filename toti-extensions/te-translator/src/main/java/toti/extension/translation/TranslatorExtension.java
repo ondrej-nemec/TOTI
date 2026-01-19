@@ -9,9 +9,6 @@ import java.util.Set;
 
 import org.apache.logging.log4j.Logger;
 
-import ji.translator.LanguageSettings;
-import ji.translator.Locale;
-import ji.translator.Translator;
 import toti.application.answers.Headers;
 import toti.application.answers.request.Identity;
 import toti.application.application.register.Register;
@@ -19,6 +16,7 @@ import toti.application.extensions.Extension;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.files.env.Env;
 import toti.lib.tcpip.structures.RequestParameters;
+import toti.lib.translator.Translator;
 
 public class TranslatorExtension implements toti.application.extensions.TranslatorExtension, Extension {
 	
@@ -68,7 +66,7 @@ public class TranslatorExtension implements toti.application.extensions.Translat
 
 	@Override
 	public void init(Env appEnv, Register register) {
-		this.translator = Translator.create(langSettings, paths, logger);
+		this.translator = new Translator(paths);
 	}
 	
 	public void addTranslationPath(String path) {
@@ -97,11 +95,13 @@ public class TranslatorExtension implements toti.application.extensions.Translat
 	}
 	
 	private Locale resolveLocale(String locale) {
-		Locale loc = translator.getLocale(locale);
+		// TODO vymyslet
+		return null;
+		/*Locale loc = translator.getLocale(locale);
 		if (loc == null) {
 			return translator.getLocale(langSettings.getDefaultLang().getLang());
 		}
-		return loc;
+		return loc;*/
 	}
 
 	@Override
@@ -116,7 +116,7 @@ public class TranslatorExtension implements toti.application.extensions.Translat
 
 	@Override
 	public toti.application.extensions.Translator getTranslator(Identity identity) {
-		return new TranslatorImpl(translator.withLocale(identity.getSessionSpace(this).getString(NAME)));
+		return new TranslatorImpl(translator.withLang(identity.getSessionSpace(this).getString(NAME)));
 	}
 
 	public toti.application.extensions.Translator getTranslator() {

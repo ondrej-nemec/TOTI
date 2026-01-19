@@ -2,7 +2,7 @@ package toti.extension.translation;
 
 import java.util.Map;
 
-import ji.translator.Translator;
+import toti.lib.translator.Translator;
 
 public class TranslatorImpl implements toti.application.extensions.Translator {
 
