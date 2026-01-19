@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Assertions;
 
+import toti.lib.common.structures.ThrowingConsumer;
 import toti.lib.common.structures.ThrowingFunction;
 
 public interface TestCase {
@@ -24,6 +25,10 @@ public interface TestCase {
 
 	static <T, R> Function<T, R> function(Function<T, R> function) {
 		return function;
+	}
+
+	static <T, E extends Exception> ThrowingConsumer<T, E> throwingConsumer(ThrowingConsumer<T, E> consumer) {
+		return consumer;
 	}
 
 	static <T, R, E extends Exception> ThrowingFunction<T, R, E> throwingFunction(ThrowingFunction<T, R, E> function) {
