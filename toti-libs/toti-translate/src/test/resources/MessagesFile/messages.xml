@@ -1,0 +1,14 @@
+<messages>
+	<a>
+		A
+		<b>B</b>
+		<b>B2</b>
+	</a>
+	<x>
+		<y>
+			<z1>XYZ1</z1>
+			<z2>XYZ2</z2>
+		</y>
+		<z>Z</z>
+	</x>
+</messages>

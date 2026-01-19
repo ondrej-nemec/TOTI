@@ -1,7 +1,11 @@
 package toti.lib.translator;
 
+import java.util.Map;
+
 public interface MessagesFile {
 
-	String getMessage(String key);
+	Map<Object, Object> getMessages(String filename) throws Exception;
+
+	String getExtension();
 	
 }
