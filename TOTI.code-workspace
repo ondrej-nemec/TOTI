@@ -6,6 +6,9 @@
     ],
     "settings": {
         "editor.insertSpaces": false,
+        "editor.pasteAs.preferences": ["text"],
+        "editor.pasteAs.enabled": false,
+        "editor.copyWithSyntaxHighlighting": false,
         "workbench.startupEditor": "none",
         "workbench.colorTheme": "Default Dark Modern",
         "remote.autoForwardPortsSource": "hybrid",
