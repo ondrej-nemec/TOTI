@@ -1,3 +1,148 @@
 <h1>Library: Common</h1>
 
-TODO
+<p>Contains common structures, functions and exceptions.</p>
+
+<h2>Dependency</h2>
+
+<p>TODO</p>
+
+<h2>Builders</h2>
+
+<p>
+	Some builders usefull in callbacks.
+	<ul>
+		<li>BooleanBuilder</li>
+		<li>IntegerBuilder</li>
+		<li>ObjectBuilder</li>
+	</ul>
+
+</p>
+
+<h2>Extended callbacks</h2>
+
+<p>
+	<ul>
+		<li>Callback</li>
+		<li>ThrowingBiConsumer</li>
+		<li>ThrowingBiFunction</li>
+		<li>ThrowingCallback</li>
+		<li>ThrowingFunction</li>
+		<li>ThrowingSupplier</li>
+		<li>ThrowingTriConsumer</li>
+		<li>TriConsumer</li>
+	</ul>
+</p>
+
+<h2>Tuples</h2>
+
+<p>
+	<ul>
+		<li>Tuple2</li>
+		<li>Tuple3</li>
+	</ul>
+</p>
+
+
+<h2>Others</h2>
+
+<h3>NamedThredFactory</h3>
+
+<p>
+	Allow have custom thread name.
+</p>
+
+<strong>Usage</strong>
+<p>
+	<code>
+		Executors.newFixedThreadPool(15, new NamedThredFactory("my-custom-name"));
+	</code>
+</p>
+
+<h3>Implode</h3>
+
+<p>
+	Convert arrays, Lists, Maps etc. to string.
+</p>
+
+<strong>Usage:</strong>
+<pre>
+	<code class="language-java">
+Implode.implode(", ", 1, 2, 3);  // returns "1, 2, 3"
+Implode.implode(i->i+"0", ", ", 1, 2, 3);  // returns "10, 20, 30"
+Implode.implode(", ", Arrays.asList(1, 2, 3));  // returns "1, 2, 3"
+Implode.implode(i->i+"0", ", ", Arrays.asList(1, 2, 3));  // returns "10, 20, 30"
+
+
+Map<Object, Object> map = new HashMap<>();
+map.put("a", "A");
+map.put("b", "B");
+Implode.implode(", ", ": ", map); // returns "a: A, b: B"
+	</code>
+</pre>
+
+<h3>TimeRange</h3>
+
+<p>
+	TODO
+</p>
+
+
+
+### Functions
+
+* Mapper
+* StackTrace
+
+* TimeRange
+* TimeRangeCollection
+
+* Compiler
+* CompilingDiagnostic
+
+### Structures
+
+* Dictionary
+* DictionaryValue
+* Scalar
+* ScalarStructure
+
+
+* ListDictionary
+* ListInit
+* MapDictionary
+* MapInit
+* SortedMap
+* UniqueMap
+
+
+### Soon to files
+
+* FileExtension
+* FilesList
+* InputStreamLoader
+* PropertyLoader
+
+### Close to deprecated
+
+* Console
+* Terminal
+* OperationSystem
+* DateTime
+* Hash
+* HashException
+
+### Exception
+
+* LogicException
+* NotImplementedYet
+
+### Deprecated
+
+* Slugify
+
+### TestFixtures
+
+`testImplementation(testFixtures(project(':toti-libs:toti-common')))`
+
+* TestCase
+* Log4j2LoggerTestImpl
