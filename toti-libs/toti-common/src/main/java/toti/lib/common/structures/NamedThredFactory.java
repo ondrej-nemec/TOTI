@@ -40,15 +40,17 @@ public class NamedThredFactory implements ThreadFactory {
 	@Override
 	public Thread newThread(Runnable r) {
 		String name = namePrefix;
-		if (r instanceof NamedRunnable) {
-			name += ((NamedRunnable)r).getName() + "-";
+		if (r instanceof NamedRunnable namedRunnable) {
+			name += namedRunnable.getName() + "-";
 		}
 		name += threadNumber.getAndIncrement();
 		Thread t = new MonitoredThread(group, r, name, 0, LocalDateTime.now());
-		if (t.isDaemon())
+		if (t.isDaemon()) {
 			t.setDaemon(false);
-		if (t.getPriority() != Thread.NORM_PRIORITY)
+		}	
+		if (t.getPriority() != Thread.NORM_PRIORITY) {
 			t.setPriority(Thread.NORM_PRIORITY);
+		}
 		return t;
 	}
 	
@@ -64,7 +66,7 @@ public class NamedThredFactory implements ThreadFactory {
 		public LocalDateTime getStartTime() {
 			return start;
 		}
-		public String toString() {
+		@Override public String toString() {
 			ThreadGroup group = getThreadGroup();
 			return "Thread{"
 				+ "name:" + getName()

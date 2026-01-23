@@ -1,25 +1,20 @@
 package toti.lib.common.structures;
 
-import java.time.Instant;
+import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import toti.lib.common.functions.Mapper;
@@ -40,7 +35,7 @@ public class DictionaryValue implements Scalar {
 		try {
 			Object reader = Class.forName("ji.json.JsonReader").getDeclaredConstructor().newInstance();
 			return reader.getClass().getMethod("read", String.class).invoke(reader, v);
-		} catch (Exception e) {
+		} catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InstantiationException | NoSuchMethodException | SecurityException | InvocationTargetException e) {
 			return v;
 		}
 	};
@@ -57,10 +52,10 @@ public class DictionaryValue implements Scalar {
 		this.value = value;
 	}
 
-    @Override
-    public Object _getValue() {
+	@Override
+	public Object _getValue() {
 		return value;
-    }
+	}
 	
 	/**
 	 * Override default method for parsing {@link List} from string
@@ -156,7 +151,7 @@ public class DictionaryValue implements Scalar {
 		} else if (clazz.isAssignableFrom(Boolean.class) || clazz.isAssignableFrom(boolean.class)) {
 			return getBoolean();
 		} else if (clazz.isAssignableFrom(Number.class)) {
-            return getNumber();
+			return getNumber();
 		} else if (clazz.isAssignableFrom(Byte.class) || clazz.isAssignableFrom(byte.class)) {
 			return getByte();
 		} else if (clazz.isAssignableFrom(Short.class) || clazz.isAssignableFrom(short.class)) {
@@ -220,23 +215,23 @@ public class DictionaryValue implements Scalar {
 	 */
 	@SuppressWarnings("unchecked")
 	public ListDictionary getDictionaryList() {
-		return parseValue(ListDictionary.class, fromStringToListCallback, (value)->{
-			if (value.getClass().isArray()) {
-				return new ListDictionary(Arrays.asList((Object[])value));
+		return parseValue(ListDictionary.class, fromStringToListCallback, (val)->{
+			if (val.getClass().isArray()) {
+				return new ListDictionary(Arrays.asList((Object[])val));
 			}
-			if (value instanceof Collection<?>) {
-				return new ListDictionary(Collection.class.cast(value));
+			if (val instanceof Collection<?>) {
+				return new ListDictionary(Collection.class.cast(val));
 			}
-			if (value instanceof SortedMap<?, ?>) {
-				return new ListDictionary(SortedMap.class.cast(value).toList());
+			if (val instanceof SortedMap<?, ?>) {
+				return new ListDictionary(SortedMap.class.cast(val).toList());
 			}
-			if (value instanceof Map<?, ?>) {
-				return new ListDictionary(Map.class.cast(value).values());
+			if (val instanceof Map<?, ?>) {
+				return new ListDictionary(Map.class.cast(val).values());
 			}
-			if (value instanceof MapDictionary<?>) {
-				return new ListDictionary(MapDictionary.class.cast(value).values());
+			if (val instanceof MapDictionary<?>) {
+				return new ListDictionary(MapDictionary.class.cast(val).values());
 			}
-			return value;
+			return val;
 		});
 	}
 
@@ -255,14 +250,14 @@ public class DictionaryValue implements Scalar {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T, E> MapDictionary<T> getDictionaryMap() {
-		return parseValue(MapDictionary.class, fromStringToMapCallback, (value)->{
-			if (value instanceof Map<?, ?>) {
-				return new MapDictionary<T>(Map.class.cast(value));
+		return parseValue(MapDictionary.class, fromStringToMapCallback, (val)->{
+			if (val instanceof Map<?, ?>) {
+				return new MapDictionary<>(Map.class.cast(val));
 			}
-			if (value instanceof SortedMap<?, ?>) {
-				return new MapDictionary<T>(SortedMap.class.cast(value).toMap());
+			if (val instanceof SortedMap<?, ?>) {
+				return new MapDictionary<>(SortedMap.class.cast(val).toMap());
 			}
-			return value;
+			return val;
 		});
 	}
 
@@ -279,14 +274,14 @@ public class DictionaryValue implements Scalar {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T, E> SortedMap<T, E> getSortedMap() {
-		return parseValue(SortedMap.class, fromStringToListCallback, (value)->{
-			if (value instanceof Map<?, ?>) {
-				return new SortedMap<T, E>().putAll(Map.class.cast(value));
+		return parseValue(SortedMap.class, fromStringToListCallback, (val)->{
+			if (val instanceof Map<?, ?>) {
+				return new SortedMap<T, E>().putAll(Map.class.cast(val));
 			}
-			if (value instanceof MapDictionary<?>) {
-				return new SortedMap<T, E>().putAll(MapDictionary.class.cast(value).toMap());
+			if (val instanceof MapDictionary<?>) {
+				return new SortedMap<T, E>().putAll(MapDictionary.class.cast(val).toMap());
 			}
-			return value;
+			return val;
 		});
 	}
 
@@ -307,26 +302,26 @@ public class DictionaryValue implements Scalar {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> List<T> getList() {
-		return parseValue(List.class, fromStringToListCallback, (value)-> {
-			if (value.getClass().isArray()) {
-				return new ArrayList<>(Arrays.asList((T[])value));
+		return parseValue(List.class, fromStringToListCallback, (val)-> {
+			if (val.getClass().isArray()) {
+				return new ArrayList<>(Arrays.asList((T[])val));
 			}
-			if (value instanceof ListDictionary) {
-				return ListDictionary.class.cast(value).toList();
+			if (val instanceof ListDictionary) {
+				return ListDictionary.class.cast(val).toList();
 			}
-			if (value instanceof Set<?>) {
-				return new LinkedList<>(Set.class.cast(value));
+			if (val instanceof Set<?>) {
+				return new LinkedList<>(Set.class.cast(val));
 			}
-			if (value instanceof SortedMap<?, ?>) {
-				return SortedMap.class.cast(value).toList();
+			if (val instanceof SortedMap<?, ?>) {
+				return SortedMap.class.cast(val).toList();
 			}
-			if (value instanceof Map<?, ?>) {
-				return Map.class.cast(value).values().stream().collect(Collectors.toList());
+			if (val instanceof Map<?, ?>) {
+				return Map.class.cast(val).values().stream().collect(Collectors.toList());
 			}
-			if (value instanceof MapDictionary<?>) {
-				return MapDictionary.class.cast(value).values().stream().collect(Collectors.toList());
+			if (val instanceof MapDictionary<?>) {
+				return MapDictionary.class.cast(val).values().stream().collect(Collectors.toList());
 			}
-			return value;
+			return val;
 		});
 	}
 	/**
@@ -346,20 +341,20 @@ public class DictionaryValue implements Scalar {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> Set<T> getSet() {
-		return parseValue(Set.class, fromStringToListCallback, (value)-> {
-			if (value.getClass().isArray()) {
-				return new HashSet<>(Arrays.asList((T[])value));
+		return parseValue(Set.class, fromStringToListCallback, (val)-> {
+			if (val.getClass().isArray()) {
+				return new HashSet<>(Arrays.asList((T[])val));
 			}
-			if (value instanceof ListDictionary || value instanceof List<?>) {
+			if (val instanceof ListDictionary || val instanceof List<?>) {
 				return new HashSet<>(getList());
 			}
-			if (value instanceof Map<?, ?>) {
-				return new HashSet<>(Map.class.cast(value).keySet());
+			if (val instanceof Map<?, ?>) {
+				return new HashSet<>(Map.class.cast(val).keySet());
 			}
-			if (value instanceof MapDictionary<?>) {
-				return new HashSet<>(MapDictionary.class.cast(value).keySet());
+			if (val instanceof MapDictionary<?>) {
+				return new HashSet<>(MapDictionary.class.cast(val).keySet());
 			}
-			return value;
+			return val;
 		});
 	}
 	/**
@@ -446,14 +441,14 @@ public class DictionaryValue implements Scalar {
 	 */
 	@SuppressWarnings("unchecked")
 	public <K, V> Map<K, V> getMap() {
-		return parseValue(Map.class, fromStringToMapCallback, (value)-> {
-			if (value instanceof MapDictionary<?>) {
-				return MapDictionary.class.cast(value).toMap();
+		return parseValue(Map.class, fromStringToMapCallback, (val)-> {
+			if (val instanceof MapDictionary<?>) {
+				return MapDictionary.class.cast(val).toMap();
 			}
-			if (value instanceof SortedMap<?, ?>) {
-				return SortedMap.class.cast(value).toMap();
+			if (val instanceof SortedMap<?, ?>) {
+				return SortedMap.class.cast(val).toMap();
 			}
-			return value;
+			return val;
 		});
 	}
 	
@@ -467,7 +462,7 @@ public class DictionaryValue implements Scalar {
 			return clazz.cast(value);
 		}
 		Object val = value;
-		if (val instanceof String && fromString != null && val != null) {
+		if (val instanceof String && fromString != null) {
 			val = fromString.apply(val.toString());
 		}
 		if (prepare != null && val != null) {
@@ -477,10 +472,6 @@ public class DictionaryValue implements Scalar {
 			return null;
 		}
 		return clazz.cast(val);
-	}
-	
-	private <T> T parseValue(Class<T> clazz, Function<String, Object> create) {
-		return parseValue(clazz, create, null);
 	}
 	
 	/************/
@@ -495,6 +486,18 @@ public class DictionaryValue implements Scalar {
 	
 	@Override
 	public boolean equals(Object obj) {
+		if (value == null) {
+			return obj == null;
+		}
 		return value.equals(obj);
 	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 53 * hash + Objects.hashCode(this.value);
+		return hash;
+	}
+
+
 }
