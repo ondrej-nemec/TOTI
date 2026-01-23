@@ -29,15 +29,15 @@ import toti.lib.database.querybuilder.builders.CreateTableBuilder;
 import toti.lib.database.querybuilder.builders.CreateViewBuilder;
 import toti.lib.database.querybuilder.builders.DeleteBuilder;
 import toti.lib.database.querybuilder.builders.DeleteIndexBuilder;
-import toti.lib.database.querybuilder.builders.DeleteViewBuilder;
 import toti.lib.database.querybuilder.builders.DeleteTableBuilder;
+import toti.lib.database.querybuilder.builders.DeleteViewBuilder;
 import toti.lib.database.querybuilder.builders.InsertBuilder;
 import toti.lib.database.querybuilder.builders.MultipleSelectBuilder;
 import toti.lib.database.querybuilder.builders.SelectBuilder;
 import toti.lib.database.querybuilder.builders.UpdateBuilder;
 import toti.lib.database.querybuilder.builders.WithBuilder;
 
-public class QueryBuilder implements QueryBuilderFactory, PreparedQueries {
+public class QueryBuilder implements QueryBuilderFactory {
 
 	// TODO transaction
 	

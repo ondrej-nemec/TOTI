@@ -1,4 +1,4 @@
-# JI - Database
+# TOTI Database
 
 ## Documentation
 
