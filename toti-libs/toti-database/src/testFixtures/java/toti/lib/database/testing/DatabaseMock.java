@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.apache.logging.log4j.Logger;
 
+import toti.lib.database.base.Database;
+import toti.lib.database.base.DatabaseConfig;
 import toti.lib.database.base.support.ConnectionFunction;
 import toti.lib.database.base.support.DoubleConsumer;
 import toti.lib.database.querybuilder.QueryBuilderFactory;
@@ -13,8 +15,6 @@ import toti.lib.database.querybuilder.builders.InsertBuilder;
 import toti.lib.database.querybuilder.builders.UpdateBuilder;
 import toti.lib.database.testing.entities.Row;
 import toti.lib.database.testing.entities.Table;
-import toti.lib.database.base.Database;
-import toti.lib.database.base.DatabaseConfig;
 
 public class DatabaseMock extends Database {
 	
@@ -83,9 +83,14 @@ public class DatabaseMock extends Database {
 		connection.rollback();
 		//pool.close();
 	}
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 	
 	@Override
-	protected void finalize() throws Throwable {
-		pool.close();
+	public void close() throws SQLException {
+		super.close();
 	}
 }
