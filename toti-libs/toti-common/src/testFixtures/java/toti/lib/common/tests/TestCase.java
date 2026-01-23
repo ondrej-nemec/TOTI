@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Assertions;
 
+import toti.lib.common.structures.MapDictionary;
 import toti.lib.common.structures.ThrowingConsumer;
 import toti.lib.common.structures.ThrowingFunction;
 
@@ -176,12 +177,15 @@ public interface TestCase {
 		if (t == null) {
 			return prefix + "NULL ";
 		}
-		if (t instanceof Map) {
-			return _toString(Map.class.cast(t), prefix);
+		if (t instanceof Map map) {
+			return _toString(map, prefix);
 		}
-		if (t instanceof Iterable) {
-			return _toString(Iterable.class.cast(t), prefix);
+		if (t instanceof MapDictionary map) {
+			return _toString(map.toMap(), prefix);
+ 		}
+		if (t instanceof Iterable iterable) {
+			return _toString(iterable, prefix);
 		}
-		return t.toString();
+		return t.toString(); // TODO maybe some flag to use this?  + " (" + t.getClass() + ")";
 	}
 }
