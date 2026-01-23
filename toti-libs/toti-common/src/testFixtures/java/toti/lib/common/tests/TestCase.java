@@ -127,7 +127,6 @@ public interface TestCase {
 	}
 
 	static <K, V> String _toString(Map<K, V> map, String prefix) {
-		System.out.println("To string MAP '" + prefix + "'");
 		StringBuilder res = new StringBuilder();
 		res.append(prefix);
 		res.append("{");
