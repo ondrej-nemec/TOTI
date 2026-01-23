@@ -1,4 +1,4 @@
-package toti.lib.testing;
+package toti.lib.database.testing;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -21,8 +21,8 @@ import static org.mockito.Mockito.mock;
 
 import toti.lib.database.base.Database;
 import toti.lib.database.base.DatabaseConfig;
-import toti.lib.testing.entities.Row;
-import toti.lib.testing.entities.Table;
+import toti.lib.database.testing.entities.Row;
+import toti.lib.database.testing.entities.Table;
 
 public class DatabaseTestCaseTest extends DatabaseTestCase {
 
@@ -35,7 +35,7 @@ public class DatabaseTestCaseTest extends DatabaseTestCase {
 			"database_testing",
 			"postgres",
 			"Strong!Passw0rd",
-			Arrays.asList("dbMigrations"),
+			Arrays.asList("testing"),
 			1
 		), mock(Logger.class));
 		this.realDatabase = new Database(config, mock(Logger.class));

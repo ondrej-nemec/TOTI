@@ -1,4 +1,4 @@
-package toti.lib.testing.entities;
+package toti.lib.database.testing.entities;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -58,7 +58,7 @@ public class Row {
 		return idValue;
 	}
 	
-	public Row clone() {
+	public Row duplicate() {
 		Row row = new Row(idName, idValue);
 		row.columns.putAll(columns);
 		return row;
@@ -72,9 +72,7 @@ public class Row {
 		} else {
 			string.append(String.format("UPDATE %s[%s]:", idName, idValue));
 		}
-		string.append(" ");
-		string.append(columns.toString());
-		string.append(" (" + super.toString() + ")");
+		string.append(String.format(" %s (%s)", columns.toString(), super.toString()));
 		return string.toString();
 	}
 	

@@ -1,4 +1,4 @@
-package toti.lib.testing.entities;
+package toti.lib.database.testing.entities;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -36,10 +36,10 @@ public class Table {
 		return rows;
 	}
 	
-	public Table clone() {
-		List<Row> rows = new LinkedList<>();
-		this.rows.forEach((row)->rows.add(row.clone()));
-		return new Table(name, rows);
+	public Table duplicate() {
+		List<Row> newRows = new LinkedList<>();
+		this.rows.forEach((row)->newRows.add(row.duplicate()));
+		return new Table(name, newRows);
 	}
 	
 	@Override
@@ -49,7 +49,8 @@ public class Table {
 			rows.size(), super.toString())
 		);
 		rows.forEach((r)->{
-			string.append("\n\t" + r);
+			string.append("\n\t");
+			string.append(r);
 		});
 		return string.toString();
 	}

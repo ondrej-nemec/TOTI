@@ -1,14 +1,4 @@
-package toti.lib.testing;
-
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
-
-import org.junit.jupiter.api.Test;
-
-import toti.lib.database.base.DatabaseConfig;
-import toti.lib.testing.entities.Row;
-import toti.lib.testing.entities.Table;
+package toti.lib.database.testing;
 
 // for doc
 public class Example/* extends DatabaseTestCase*/ {

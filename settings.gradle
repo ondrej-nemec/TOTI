@@ -5,7 +5,6 @@ rootProject.name = 'TOTI'
 include('toti-libs:toti-common')
 include('toti-libs:toti-database')
 include('toti-libs:toti-files')
-include('toti-libs:toti-db-testing')
 include('toti-libs:toti-translate')
 
 include('toti-libs:toti-templating')

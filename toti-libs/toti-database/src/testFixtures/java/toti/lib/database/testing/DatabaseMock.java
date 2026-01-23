@@ -1,4 +1,4 @@
-package toti.lib.testing;
+package toti.lib.database.testing;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -8,13 +8,11 @@ import org.apache.logging.log4j.Logger;
 
 import toti.lib.database.base.support.ConnectionFunction;
 import toti.lib.database.base.support.DoubleConsumer;
-import toti.lib.database.querybuilder.Builder;
 import toti.lib.database.querybuilder.QueryBuilderFactory;
-import toti.lib.database.querybuilder.builders.BatchBuilder;
 import toti.lib.database.querybuilder.builders.InsertBuilder;
 import toti.lib.database.querybuilder.builders.UpdateBuilder;
-import toti.lib.testing.entities.Row;
-import toti.lib.testing.entities.Table;
+import toti.lib.database.testing.entities.Row;
+import toti.lib.database.testing.entities.Table;
 import toti.lib.database.base.Database;
 import toti.lib.database.base.DatabaseConfig;
 

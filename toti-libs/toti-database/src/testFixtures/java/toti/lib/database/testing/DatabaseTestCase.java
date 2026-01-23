@@ -1,4 +1,4 @@
-package toti.lib.testing;
+package toti.lib.database.testing;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -10,7 +10,7 @@ import org.mockito.Mockito;
 
 import toti.lib.database.base.Database;
 import toti.lib.database.base.DatabaseConfig;
-import toti.lib.testing.entities.Table;
+import toti.lib.database.testing.entities.Table;
 
 public abstract class DatabaseTestCase {
 	
