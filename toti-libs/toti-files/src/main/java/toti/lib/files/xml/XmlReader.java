@@ -42,34 +42,25 @@ public class XmlReader {
 		}
 	}
 	
-	private XmlObject readLevel(final XMLStreamReader in) throws XMLStreamException {
-		//String name = in.getName().getLocalPart();
+	private XmlObject readLevel(XMLStreamReader in) throws XMLStreamException {
 		XmlObject result = new XmlObject(in.getName().getLocalPart());
-
-		for (int i = 0; i<in.getAttributeCount(); i++){
-			result.addAtribute(
-				in.getAttributeLocalName(i),
-				in.getAttributeValue(i)
-			);
+		for (int i = 0; i < in.getAttributeCount(); i++) {
+			result.addAtribute(in.getAttributeLocalName(i), in.getAttributeValue(i));
 		}
-		while (in.hasNext() && in.getEventType()!=XMLStreamConstants.END_ELEMENT){
+		while (in.hasNext()) {
 			in.next();
-			if (in.getEventType() == XMLStreamConstants.CHARACTERS){
+			if (in.getEventType() == XMLStreamConstants.CHARACTERS) {
 				String value = in.getText();
 				Pattern p = Pattern.compile("[\t|\n]*"); //(.*)([\t|\n| ]*)
 				Matcher m = p.matcher(value);
-				while(m.find()){
+				while (m.find()) {
 					value = value.replace(m.group(), "");
 				}
 				result.addValue(value);
-			} else if (in.getEventType() == XMLStreamConstants.START_ELEMENT){
-				while(in.getEventType() != XMLStreamConstants.END_ELEMENT || in.getName().getLocalPart() != result.getName()){
-					if (in.getEventType() == XMLStreamConstants.START_ELEMENT ){
-						result.addReference(readLevel(in));
-					} else /*if(in.hasNext())*/ {
-						in.next();
-					}
-				}
+			} else if (in.getEventType() == XMLStreamConstants.START_ELEMENT) {
+				result.addReference(readLevel(in));
+			} else if (in.getEventType() == XMLStreamConstants.END_ELEMENT && in.getName().getLocalPart().equals(result.getName())) {
+				break;
 			}
 		}
 		return result;

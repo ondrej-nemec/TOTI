@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -253,5 +254,12 @@ public class MapDictionary<K> implements Dictionary<K>, Iterable<Tuple2<K, Objec
 			
 		};
 	}
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 89 * hash + Objects.hashCode(this.map);
+        return hash;
+    }
 	
 }

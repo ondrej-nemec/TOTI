@@ -1,3 +1,226 @@
 <h1>Library: Files</h1>
 
-TODO
+
+<p>Package provides reading and writing from/to plaintext, binary or some structured files.</p>
+
+
+<h2>Text</h2>
+
+<p>
+	Simplify reading/writing from streams and plaintext files.
+</p>
+
+<p>TODO dodelat po mergy s tridami z common</p>
+
+
+<!-- ************************* -->
+
+<h2>JSON</h2>
+
+
+<p>
+	TOTI Files provides two ways how to work with JSON - directly write to/read from JSON stream and automatic file read from/write to objects.
+</p>
+
+<h3>JSON stream</h3>
+
+<p>With JSON stream you write/read JSON parts one by one. Package see JSON as objects (<code>{}</code>), lists (<code>[]</code>) and items (values). All three entities can have their name, if they are inside object. Objects and lists have start and end.</p>
+
+<h4>OutpuJsonStream</h4>
+
+<p>
+	For creating <code>OutputJsonStream</code> you need <code>OutputProvider</code> (see below) and (optionally) <code>boolean</code> parameter <code>formated</code> (switch, if print human-readable or not. Default false). <code>OutputJsonStream</code> is closable. The <code>close</code> method close <code>OutputProvider</code>.
+</p>
+
+<strong>API</strong>
+
+<pre><code class="language-java">
+// object start - '{' - in list or empty file
+stream.writeObjectStart();
+// object start - '{' - in object
+stream.writeObjectStart(name);
+// object end - '}'
+stream.writeObjectEnd();
+
+// list start - '[' - in list or empty file
+stream.writeListStart();
+// list start - '[' - in object
+stream.writeListStart(name);
+// list end - ']'
+stream.writeListEnd("aaa");
+
+
+// primitive or String value - in list
+stream.writeListValue(value);
+// primitive or String value - in object
+stream.writeObjectValue(name, value);
+</code></pre>
+
+<strong>Example: construct</strong>
+<pre><code class="language-java">
+OutputProvider provider = ...;
+OutputJsonStream stream = new OutputJsonStream(provider);
+// your code
+stream.close();
+</code></pre>
+
+<strong>Example: writing</strong>
+
+<pre><code class="nohighlight">
+{
+	"item1": 123,
+	"item2": "value",
+	"item-list": [
+		"one",
+		2,
+		false,
+		NULL
+	],
+	"item-object": {
+		"subItem": "value"
+	}
+}
+</code></pre>
+
+<pre><code class="language-java">
+stream.writeObjectStart();
+stream.writeObjectValue("item1", 123);
+stream.writeObjectValue("item2", "value");
+stream.writeListStart("item-list");
+stream.writeListValue("one");
+stream.writeListValue(2);
+stream.writeListValue(false);
+stream.writeListValue(null);
+stream.writeListEnd();
+stream.writeObjectStart("item-object");
+stream.writeObjectItem("subItem", "value");
+stream.writeObjectEnd();
+stream.writeObjectEnd();
+</code></pre>
+
+<h5>OutputProvider</h5>
+
+<p>
+	Write data. TOTI Files contains two implementations:
+
+	<ul>
+		<li><code>OutputStringProvider</code>: write JSON into <code>String</code>. The result is available on <code>getJson</code> method.</li>
+		<li><code>OutputWriterProvider</code>: write JSON into given <code>Writer</code>. The <code>OutputWriterProvider::close()</code> close <code>Writer</code>.</li>
+	</ul>
+</p>
+
+<h4>InputJsonStream</h4>
+
+<p>
+	For creating <code>InputJsonStream</code> you need <code>InputProvider</code> (see below). The stream is controlled with <code>next</code>method<code>. This method returns <code>Event</code> that provide you all required information. InputJsonStream</code> is closable. The <code>close</code> method close <code>InputProvider</code>.
+</p>
+
+<strong>Event</strong>
+<p>
+	The <code>Event</code> contains <code>EventType</code>, name (<code>null</code> if no name), <code>Value</code> and <code>int</code> level.
+</p>
+
+<strong>Value</strong>
+<p>
+	The <code>Code</code> holds JSON item value and <code>ValueType</code> (<code>NULL</code>, <code>BOOLEAN</code>, <code>INTEGER</code>, <code>DOUBLE</code> and <code>String</code>).
+</p>
+
+<strong>Example: construct</strong>
+<pre><code class="language-java">
+InputProvider provider = ...;
+InputJsonStream stream = new InputJsonStream(provider);
+// your code
+stream.close();
+</code></pre>
+
+<strong>Example: reading</strong>
+<pre><code class="language-java">
+// reading is more general, does not requried JSON example
+Event e = stream.next();
+while(e.hasNext()) {
+	// your code
+	e = stream.next();
+}
+</code></pre>
+
+<h5>InputProvider</h5>
+
+<p>
+	Read data. TOTI Files contains two implementations:
+
+	<ul>
+		<li><code>InputStringProvider</code>: provide data from given String</li>
+		<li><code>InputReaderProvider</code>: read data from given <code>Reader</code>. The <code>InputReaderProvider::close()</code> close <code>Reader</code>.</li>
+	</ul>
+</p>
+
+<h3>JsonWriter</h3>
+
+<p>
+	Write any <code>Object</code> to JSON stream.
+</p>
+
+<pre><code class="language-java">
+Object data = ...;
+// create JSON and returns it as string
+String json = new JsonWritter().write(data);
+// write JSON to given OutputJsonStream
+OutputJsonStream stream = ...;
+new JsonWritter().write(stream, data);
+</code></pre>
+
+<p>
+	The object will be written with following rules:
+	<ul>
+		<li><code>NULL</code> is <code>null</code></li>
+		<li><code>Iterable</code> and <code>ListDictionary</code> are JSON list</li>
+		<li><code>Map</code> and <code>MapDictionary</code> are JSON object</li>
+		<li><code>Jsonable</code> (see bellow) - the final JSON is defined by <code>toJson</code> method</li>
+		<li><code>Boolean</code> and <code>Number</code> are written with <code>toString</code> without quotes</li>
+		<li><code>DictionaryValue</code> is written as it's value</li>
+		<li><code>Optional</code> - if present, the value is written, otherwise <code>null</code></li>
+		<li><code>Tuple2</code> and <code>Tuple3</code> are serialized with JI Common <code>Mapper</code></li>
+		<li>Any other objects are written as text (using <code>toString()</code>) with quotes</li>
+	</ul>
+</p>
+
+<h4>Jsonable</h4>
+
+<p>
+	This interface allow you define how to parse your object to JSON. <code>toJson</code> returns object and the rules upper will be applied on it. The method has default implementation - serialize object with TOTI Common <code>Mapper</code>
+</p>
+
+<h3>JsonReader</h3>
+
+<p>
+	Reads from JSON stream and returns <code>Object</code>. JSON list is <code>List</code>, JSON object is <code>Map</code>.If target class is specified, returns new instance of that class (using <code>Mapper</code>).
+</p>
+
+<pre><code class="language-java">
+// parse from string
+String json = ...;
+Object parsedJson = new JsonReader().read(json);
+
+// parse from stream
+InputJsonStream jsonStream = ...;
+Object parsedJsonStream = new JsonReader().read(jsonStream);
+
+// parse from json to MyClass
+String json = ...;
+MyClass myClassFromString = new JsonReader().read(json, MyClass.class);
+
+// parse from stream to MyClass
+InputJsonStream jsonStream = ...;
+MyClass myClassFromStream = new JsonReader().read(jsonStream, MyClass.class);
+</code></pre>
+
+
+<!-- ************************* -->
+
+<h2>XML</h2>
+
+
+
+<!-- ************************* -->
+
+<h2>Env</h2>
