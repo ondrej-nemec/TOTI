@@ -28,16 +28,13 @@ public class XmlWritter {
 			out.writeEndDocument();
 			out.flush();
 		} finally {
-			try {
-				if(out != null)
-					out.close();
-			} catch (Exception e) {
-				throw new XMLStreamException(e);
+			if (out != null) {
+				out.close();
 			}
 		}
 	}
 	
-	private void writeLevel(final XMLStreamWriter out, final XmlObject object) throws XMLStreamException {
+	private void writeLevel(XMLStreamWriter out, XmlObject object) throws XMLStreamException {
 		out.writeStartElement(object.getName());
 		writeAtribute(out, object.getAttributes());
 		for (Object obj : object.getContent()) {
@@ -52,8 +49,8 @@ public class XmlWritter {
 		out.writeEndElement();
 	}
 	
-	private void writeAtribute(final XMLStreamWriter out, final MapDictionary<String> attributes) throws XMLStreamException {
-		if(attributes != null){
+	private void writeAtribute(XMLStreamWriter out, MapDictionary<String> attributes) throws XMLStreamException {
+		if (attributes != null) {
 			Set<String> set = attributes.keySet();
 			for (String key : set) {
 				Object value = attributes.get(key);

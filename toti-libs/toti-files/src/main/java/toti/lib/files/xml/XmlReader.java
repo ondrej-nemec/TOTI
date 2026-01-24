@@ -34,10 +34,8 @@ public class XmlReader {
 			in.next();
 			return readLevel(in);
 		} finally {
-			try {
+			if (in != null) {
 				in.close();
-			} catch (Exception e) {
-				throw new XMLStreamException(e);
 			}
 		}
 	}
