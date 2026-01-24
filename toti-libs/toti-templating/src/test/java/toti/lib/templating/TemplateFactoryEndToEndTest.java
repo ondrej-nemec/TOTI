@@ -6,8 +6,6 @@ import java.util.Map;
 
 import toti.lib.common.tests.Log4j2LoggerTestImpl;
 import toti.lib.files.text.Text;
-import toti.lib.templating.Template;
-import toti.lib.templating.TemplateFactory;
 
 @Deprecated
 public class TemplateFactoryEndToEndTest {

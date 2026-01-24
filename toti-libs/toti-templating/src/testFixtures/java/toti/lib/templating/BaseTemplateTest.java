@@ -1,8 +1,5 @@
 package toti.lib.templating;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -11,12 +8,8 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Logger;
-
-import toti.lib.templating.Parameter;
-import toti.lib.templating.Tag;
-import toti.lib.templating.Template;
-import toti.lib.templating.TemplateContainer;
-import toti.lib.templating.TemplateFactory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 public class BaseTemplateTest {
 

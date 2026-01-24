@@ -11,6 +11,25 @@ services:
       - .:/home/coder/project
       - .vscode-config:/home/coder/.local/share/code-server
     restart: "no"
+
+  adminer:
+  #  image: adminer
+    build:
+      context: ./docker/adminer
+      dockerfile: Dockerfile
+    restart: "no"
+    container_name: toti_adminer
+    volumes:
+      - ./volumes/sqlite/:/root/sqlite/
+      - ./docs:/var/www/html/docs
+    ports:
+      - 19040:8080
+    depends_on:
+      - postgres
+      - sqlserver
+      - mysql
+      - sqlite
+
   mysql:
     image: mysql:8.0
     restart: "no"
@@ -71,21 +90,3 @@ services:
       # - ./docker/sqlite_dump.sql:/root/dump.sql
       #- ./toti-libs/toti-database/sql/sqlite_dump.sql:/docker-entrypoint-initdb.d/query_builder.sql:ro
     entrypoint: ["/bin/sh", "/init-sqlite.sh"]
-
-  adminer:
-  #  image: adminer
-    build:
-      context: ./docker/adminer
-      dockerfile: Dockerfile
-    restart: "no"
-    container_name: toti_adminer
-    volumes:
-      - ./volumes/sqlite/:/root/sqlite/
-      - ./docs:/var/www/html/docs
-    ports:
-      - 19040:8080
-    depends_on:
-      - postgres
-      - sqlserver 
-      - mysql
-      - sqlite
