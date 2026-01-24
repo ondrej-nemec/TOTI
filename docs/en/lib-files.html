@@ -219,8 +219,83 @@ MyClass myClassFromStream = new JsonReader().read(jsonStream, MyClass.class);
 
 <h2>XML</h2>
 
+<p>
+	XML content is converted to <code>XmlObject</code>. Root XML element is first <code>XmlObject</code>. All others elements are sub in it.
+</p>
+
+<h3>XmlObject</h3>
+<p>
+	Each <code>XmlObject</code> has:
+	<ul>
+		<li><strong>Name</strong>: name of element</li>
+		<li><strong>Value</strong>: content of element</li>
+		<li><strong>Attributes</strong>: stored in <code>MapDictionary</code></li>
+		<li>
+			<strong>References</strong>: for one name there is list of <code>XmlObject</code> subs.
+		</li>
+	</ul>
+</p>
+
+<strong>Example</strong>
+
+<pre><code>
+&lt;person age="42"&gt;
+	&lt;telephone&gt;000000000&lt;/telephone&gt;
+	&lt;telephone&gt;111111111&lt;/telephone&gt;
+	&tl;address&gt;...&tl;/address&gt;
+&lt;/person&gt;
+</code></pre>
+
+<p>
+	In example:
+	<ul>
+		<li><code>person</code> is name of <code>person</code></li>
+		<li><code>age</code> is attribute of <code>person</code></li>
+		<li><code>000000000</code> is value of <code>telephone</code></li>
+		<li><code>telephone</code>s and <code>address</code> are references in <code>person</code></li>
+	</ul>
+</p>
+
+<h3>Reading</h3>
+
+<p>
+	<code>XmlReader</code> allows read xml from given <code>String</code> or <code>BufferedReader</code>.
+</p>
+<pre><code class="language-java">
+	XmlReader reader = new XmlReader();
+	XmlObject sRes = reader.read("....");
+	XmlObject brRes = reader.read(bufferedReader);
+</code></pre>
+
+<h3>Writing</h3>
+
+<p>
+	<code>XmlWritter</code> allows write xml to <code>String</code> or given <code>BufferedReader</code>.
+</p>
+<pre><code class="language-java">
+	XmlObject data = new XmlObject(...);
+
+	XmlWritter writter = new XmlWritter();
+	String xml = writter.write(data);
+	writter.write(data, bufferedWritter);
+</code></pre>
 
 
 <!-- ************************* -->
 
 <h2>Env</h2>
+
+<p>
+	<code>Env</code> works as configuration holder loaded from file. Supported formats: <code>xml</code>, <code>json</code> and <code>properties</code>.
+</p>
+
+<p>
+	<code>Env</code> is <code>ScalarStructure</code>. So scalar values can be converted from one type to another.
+</p>
+<p>
+	<code>Env</code> can be multilevel. Sub level is available on <code>env.getSection(sectionName)</code>. Result is <code>Env</code>.
+</p>
+
+<pre><code>
+	Env env = Env.load(filename); // format is selected automatically by file extensions
+</code></pre>
