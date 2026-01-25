@@ -1,6 +1,8 @@
 <h1>Library: Database</h1>
 
-TODO
+<p>
+	Manage database connections, helps keep database up-to-date and provide API for SQL queries in different SQL mutations.
+</p>
 
 <h2>Dependency</h2>
 
@@ -67,6 +69,14 @@ int result = database.applyBuilder((builder)->{
 	builder.select(*).from("Table1").fetchAll();
 	*/
 	return 1;
+});
+
+// without returning
+database.applyBuilder((builder)->{
+	/*
+	// your code here, f.e.:
+	builder.delete("Table1").execute();
+	*/
 });
 </code></pre>
 

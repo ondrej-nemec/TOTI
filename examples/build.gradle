@@ -1,0 +1,25 @@
+plugins {
+    id 'java-library'
+}
+
+compileTestJava.options.encoding = 'UTF-8'
+
+repositories {
+	mavenCentral()
+	maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+	api project(':toti-application')
+	api project(':toti-extensions:te-ui')
+	api project(':toti-extensions:te-templating')
+	api project(':toti-extensions:te-database')
+	api project(':toti-extensions:te-translator')
+	
+	
+	implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.23.1'
+	
+	// https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl
+	implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.23.1'
+}
+
