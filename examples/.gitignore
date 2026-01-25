@@ -1,3 +1,7 @@
 build
 bin
 .settings
+
+temp
+logs
+OLD
