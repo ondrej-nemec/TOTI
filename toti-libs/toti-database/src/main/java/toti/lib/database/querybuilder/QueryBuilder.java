@@ -37,7 +37,7 @@ import toti.lib.database.querybuilder.builders.SelectBuilder;
 import toti.lib.database.querybuilder.builders.UpdateBuilder;
 import toti.lib.database.querybuilder.builders.WithBuilder;
 
-public class QueryBuilder implements QueryBuilderFactory {
+public class QueryBuilder implements PreparedQueries {
 
 	// TODO transaction
 	
