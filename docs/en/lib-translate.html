@@ -1,3 +1,85 @@
 <h1>Library: Translate</h1>
 
-TODO
+<p>
+	Provide localization from files. Allowed formats: <code>xml</code>, <code>properties</code>.
+</p>
+
+<p>
+	<code>Translator</code> class is constructed with Set of paths where translation files are stored. Optionaly you can set namespace (default: <i>messages</i>) and language (default is empty - not selected) too. 
+</p>
+
+
+<h2>How it works</h2>
+
+<p>
+	When you request translation for given key, package looks for files for given namespace and language. If no language is selected, expected filename format is: <i>namespace</i>.<i>format</i>. If language is selected, expected filename formats are: <i>namespace</i>.<i>format</i> and <i>lang</i>/<i>namespace</i>.<i>format</i>.
+</p>
+
+<p>
+	There can be more files with same namespace and language in given paths. Or you can combine XML and Properties file in one path. In result all data will be merged.
+</p>
+
+<pre><code>
+	Translator t = new Translator(...);
+	String translatedText = t.translate(key);
+</code></pre>
+
+<p>
+	If no key is found, original key is returned.
+</p>
+
+<p>
+	<code>key</code> refers to text in file given by namespace, see examle below. If you want use another namespace, you can either use format: <code>namespace</code>:<code>key</code> or switch <code>Translator</code> to another namespace (<code>t.withNamespace(...)</code>).
+</p>
+
+<p>
+	<code>Translator</code> always use selected language. If you with switch to another, use <code>t.withLang(...)</code>.
+</p>
+
+<h3>Example</h3>
+
+<strong>Properties file</strong>
+
+<pre><code>
+hello-world=Hello World
+common.yes=Yes
+common.no=No
+</code></pre>
+
+<pre><code>
+&lt;root&gt;
+	&lt;hello-world&gt;Hello World&lt;/hello-world&gt;
+	&lt;common&gt;
+		&lt;yes&gt;Yes&lt;/yes&gt;
+		&lt;no&gt;No&lt;/no&gt;
+	&lt;/common&gt;
+&lt;/root&gt;
+</code></pre>
+
+<p>
+	In both cases, keys are <code>hello-world</code>, <code>common.yes</code> and <code>common.no</code>.
+</p>
+
+<h2>Variables</h2>
+
+<p>
+	Package allows parametrized your messages. The second optional parameter to <code>translate</code> method is <code>Map&lt;String, Object&gt;</code>. This map contains variables. If map is provided, package looks, if translated text contains any of key from map in format: <code>%mapKey%</code>. If so, package replace given placeholder with value.
+</p>
+
+<strong>Example</strong>
+
+<pre><code>
+	Translator t = ...;
+
+	Map&lt;String, Object&gt; parameters = new HashMap&lt;&gt;();
+	parameters.put("age", 42);
+	parameters.put("name", "Jane Doe");
+
+	// in file, value for key is: %title% %name% is in age of 20
+	String message = t.translate("personal-info.lady-age");
+	// message: %title% Jane Doe is in age of 20
+</code></pre>
+
+<p>
+	As you can see from examle, <code>age</code> variable was not used. Also parameters miss variable <code>title</code>, so it stays as is.
+</p>
