@@ -170,9 +170,11 @@ public class ApplicationFactory {
 		if (developIps != null) {
 			return developIps;
 		}
-		String key = "ip";
-		if (env != null && env.getValue(key) != null) {
-			return env.getList(key, v->v.getString());
+		String key = "dev-addresses";
+		if (!env.getList(key).isEmpty()) {
+			return env.getList(key, v->{
+				return v.getString();
+			});
 		}
 		return Arrays.asList("127.0.0.1", "0:0:0:0:0:0:0:1");
 	}
@@ -186,9 +188,15 @@ public class ApplicationFactory {
 			return responseHeaders;
 		}
 		Headers headers = new Headers();
-		if (env.getValue("headers") != null) {
+		if (!env.getList("headers").isEmpty()) {
 			env.getList("headers").forEach(h->{
-				String[] hds = h.toString().split(":", 2);
+				String header = "";
+				if (h.isSection()) {
+					header = h.getSection().getString("header");
+				} else if (h.isValue()) {
+					header = h.getValue().toString();
+				}
+				String[] hds = header.toString().split(":", 2);
 				if (hds.length == 1) {
 					headers.addHeader(hds[0].trim(), "");
 				} else {
@@ -215,11 +223,11 @@ public class ApplicationFactory {
 		return getProperty(autoStart, "autostart", true, v->v.getBoolean(), env);
 	}
 	
-	private <T> T getProperty(T value,String key, T defaultValue, Function<Scalar, T> get, Env env) {
+	private <T> T getProperty(T value, String key, T defaultValue, Function<Scalar, T> get, Env env) {
 		if (value != null) {
 			return value;
 		}
-		if (env != null && env.getValue(key) != null) {
+		if (env.getValue(key) != null) {
 			return get.apply(env._getValue(key));
 		}
 		return defaultValue;
@@ -264,17 +272,17 @@ public class ApplicationFactory {
 	public ApplicationFactory addExtension(Extension extension) {
 		extensions.put(extension.getClass().getName(), extension);
 		
-		if (extension instanceof TotiExtension) {
-			extensionsTotiResponses.add((TotiExtension)extension);
+		if (extension instanceof TotiExtension ext) {
+			extensionsTotiResponses.add(ext);
 		}
-		if (extension instanceof TranslatorExtension) {
-			this.translatorExtension = (TranslatorExtension)extension;
+		if (extension instanceof TranslatorExtension ext) {
+			this.translatorExtension = ext;
 		}
-		if (extension instanceof TemplateExtension) {
-			this.templateExtension = (TemplateExtension)extension;
+		if (extension instanceof TemplateExtension ext) {
+			this.templateExtension = ext;
 		}
-		if (extension instanceof AuthenticationExtension) {
-			this.authenticationExtension =  (AuthenticationExtension)extension;
+		if (extension instanceof AuthenticationExtension ext) {
+			this.authenticationExtension = ext;
 		}
 		return this;
 	}
