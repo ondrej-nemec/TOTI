@@ -8,8 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 
 import toti.lib.common.structures.MapInit;
-import toti.lib.files.env.Env;
-import toti.lib.files.env.Value;
 
 public class EnvTest {
 
@@ -28,8 +26,7 @@ public class EnvTest {
 	@Test
 	public void testGetNotExistingSection() {
 		Env env = getEnv();
-		RuntimeException expected = assertThrows(RuntimeException.class, ()->env.getSection("wrong"));
-		assertEquals("'wrong' is not a section", expected.getMessage());
+		assertEquals(Env.empty(), env.getSection("wrong"));
 	}
 
 	@Test
@@ -87,15 +84,17 @@ public class EnvTest {
 	@Test
 	public void getNotExistingList() {
 		Env env = getEnv();
-		RuntimeException expected = assertThrows(RuntimeException.class, ()->env.getList("wrong"));
-		assertEquals("'wrong' is null or value", expected.getMessage());
+		assertEquals(Arrays.asList(), env.getList("wrong"));
 	}
 
 	@Test
 	public void getListButValue() {
 		Env env = getEnv();
-		RuntimeException expected = assertThrows(RuntimeException.class, ()->env.getList("value-a"));
-		assertEquals("'value-a' is null or value", expected.getMessage());
+		assertEquals(Arrays.asList(
+			new Value("something")
+		), env.getList("value-a"));
+
+		
 	}
 
 	@Test

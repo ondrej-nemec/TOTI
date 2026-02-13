@@ -24,27 +24,24 @@ public class Env implements ScalarStructure<Object> {
 
 	public static Env load(String fileName) throws IOException {
 		FileExtension ext = new FileExtension(fileName);
-		Map<Object, Value> result = switch (ext.getExtension()) {
+		return new Env(switch (ext.getExtension()) {
 			case "json" -> JsonEnvSource.parse(fileName);
 			case "xml" -> XmlEnvSource.parse(fileName);
 			case "properties" -> PropertiesEnvSource.parse(fileName);
 			default -> throw new RuntimeException("Unsupported extension type: " + ext.getExtension());
-		};
-		return new Env(result);
+		});
 	}
 
 	protected Env(Map<Object, Value> data) {
 		this.data = data;
 	}
 
-	public boolean hasSection(String name) {
-		Value value = data.get(name);
-		return value != null && value.isSection();
-	}
-
 	public Env getSection(Object name) {
 		Value value = data.get(name);
-		if (value == null || !value.isSection()) {
+		if (value == null) {
+			return new Env(new HashMap<>());
+		}
+		if (!value.isSection()) {
 			throw new RuntimeException("'" + name + "' is not a section");
 		}
 		return value.getSection();
@@ -60,10 +57,10 @@ public class Env implements ScalarStructure<Object> {
 
 	public List<Value> getList(String name) {
 		Value value = data.get(name);
-		if (value == null || value.isValue()) {
-			throw new RuntimeException("'" + name + "' is null or value");
+		if (value == null) {
+			return new LinkedList<>();
 		}
-		if (value.isSection()) {
+		if (!value.isList()) {
 			return Arrays.asList(value);
 		}
 		return value.getList();

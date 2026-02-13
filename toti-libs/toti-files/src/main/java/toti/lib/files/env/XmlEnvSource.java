@@ -29,7 +29,21 @@ public class XmlEnvSource {
 		if (object.getReferences().isEmpty() && object.getAttributes().isEmpty()) {
 			return new Value(object.getValue().getValue());
 		} else {
-			if (object.getAttributes().size() > 0 || object.getReferencesSearch().size() > 1) {
+			/*Map<String, Value> xx = new HashMap<>();
+			object.getReferencesSearch().forEach((key, values)->{
+				if (values.size() == 1) {
+					xx.put(key, parse(values.get(0)));
+				} else if (values.size() > 1) {
+					Value val = new Value(new LinkedList<>());
+					values.forEach(value->{
+						val.getList().add(parse(value));
+					});
+					xx.put(key, val);
+				}
+			});*/
+
+			// pokud reference < 2, muze to byt map i list
+		//	if (object.getAttributes().size() > 0 || object.getReferencesSearch().size() > 1) {
 				Value result = new Value(new HashMap<>());
 				object.getReferencesSearch().forEach((key, values)->{
 					if (values.size() == 1) {
@@ -46,13 +60,13 @@ public class XmlEnvSource {
 					result.getMap().put(key, new Value(value.getValue()));
 				});
 				return result;
-			} else {
+			/*} else {
 				Value result = new Value(new LinkedList<>());
 				object.getReferences().forEach(val->{
 					result.getList().add(parse(val));
 				});
 				return result;
-			}
+			}*/
 		}
 	}
 

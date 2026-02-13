@@ -9,8 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 import toti.lib.common.structures.MapInit;
-import toti.lib.files.env.JsonEnvSource;
-import toti.lib.files.env.Value;
 
 public class JsonEnvSourceTest {
 
@@ -50,6 +48,11 @@ public class JsonEnvSourceTest {
 						.append("b", new Value("CZ"))
 					.toMap())
 				)))
+			.toMap()))
+		.toMap()));
+		expected.put("applications", new Value(MapInit.create(Object.class, Value.class)
+			.append("application", new Value(MapInit.create(Object.class, Value.class)
+				.append("name", new Value("App1"))
 			.toMap()))
 		.toMap()));
 
