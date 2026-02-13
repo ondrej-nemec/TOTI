@@ -11,6 +11,7 @@ import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -86,11 +87,22 @@ public class Mapper {
 	public Map<String, Object> serialize(Object value, String key) {
 		try {
 			Map<String, Object> json = new HashMap<>();
-			Field[] fields = value.getClass().getDeclaredFields();
+			List<Field> fields = new LinkedList<>();
+			Class<?> clazz = value.getClass();
+			while (clazz != null) {
+				Collections.addAll(fields, clazz.getDeclaredFields());
+				clazz = clazz.getSuperclass();
+			}
+			// Field[] fields = value.getClass().getDeclaredFields();
 			for (Field field : fields) {
-				if (field.getName().equals("this$0")) {
+				if (field.isSynthetic()) {
+					// igrnoe this$0 $SWITCH_TABLE$ etc
+					// is needed: || Modifier.isStatic(field.getModifiers())
 					continue;
 				}
+				/*if (field.getName().equals("this$0")) {
+					continue;
+				}*/
 				if (field.isAnnotationPresent(MapperIgnored.class)) {
 					String[] annotationKeys = field.getAnnotation(MapperIgnored.class).value();
 					if (annotationKeys.length == 0 || Arrays.asList(annotationKeys).contains(key)) {
