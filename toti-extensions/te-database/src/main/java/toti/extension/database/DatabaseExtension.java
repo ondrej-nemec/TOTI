@@ -53,11 +53,9 @@ public class DatabaseExtension implements Extension {
 				migrations,
 				env.getInteger("pool-size")
 			);
-			if (env.hasSection("options")) {
-				env.getSection("options").iterate((name, value)->{
-					config.setProperty(name, value.getValue());
-				});
-			}
+			env.getSection("options").iterate((name, value)->{
+				config.setProperty(name, value.getValue());
+			});
 			this.database = new Database(config, logger);
 		}
 		if (this.database == null) {
