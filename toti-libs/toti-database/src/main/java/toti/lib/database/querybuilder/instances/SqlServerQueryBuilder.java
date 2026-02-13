@@ -6,6 +6,9 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import toti.lib.common.functions.Implode;
+import toti.lib.common.structures.ObjectBuilder;
+import toti.lib.common.structures.Tuple2;
 import toti.lib.database.querybuilder.DbInstance;
 import toti.lib.database.querybuilder.Escape;
 import toti.lib.database.querybuilder.builder_impl.AlterTableBuilderImpl;
@@ -34,9 +37,6 @@ import toti.lib.database.querybuilder.structures.DefaultValue;
 import toti.lib.database.querybuilder.structures.ForeignKey;
 import toti.lib.database.querybuilder.structures.Joining;
 import toti.lib.database.querybuilder.structures.SubSelect;
-import toti.lib.common.functions.Implode;
-import toti.lib.common.structures.ObjectBuilder;
-import toti.lib.common.structures.Tuple2;
 
 public class SqlServerQueryBuilder implements DbInstance {
 
@@ -567,14 +567,16 @@ DBCC CHECKIDENT ('table_name', RESEED, (SELECT ISNULL(MAX(id), 0) FROM table_nam
 			sql, builder.getOrderBy(),
 			i->" ORDER BY ", i->", ", i->i
 		);
-		if (builder.getOffset() != null && builder.getLimit() != null) {
+		if (builder.getOffset() != null) {
 			if (builder.getOrderBy().isEmpty()) {
 				sql.append(" ORDER BY (SELECT null)");
 			}
-			sql.append(String.format(
-				" OFFSET %s ROWS FETCH NEXT %s ROWS ONLY",
-				builder.getOffset(), builder.getLimit()
-			));
+			if (builder.getLimit() != null && builder.getLimit() > 0) {
+				sql.append(String.format(
+					" OFFSET %s ROWS FETCH NEXT %s ROWS ONLY",
+					builder.getOffset(), builder.getLimit()
+				));
+			}
 		}
 	}
 	
