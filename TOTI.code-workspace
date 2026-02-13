@@ -48,11 +48,11 @@
             },
             {
                 "type": "java",
-                "name": "XXXX",
+                "name": "TOTI Examples Runner",
                 "request": "launch",
-                "mainClass": "XXXX",
-                "projectName": "XXXX",
-                "console": "internalConsole"
+                "mainClass": "toti.examples.TotiExamplesRunner",
+                "console": "internalConsole",
+                "cwd": "examples"
             },
             {
                 "type": "java",
