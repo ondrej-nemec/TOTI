@@ -19,10 +19,10 @@ import toti.application.answers.response.TextResponse;
 import toti.application.application.register.MappedAction;
 import toti.application.application.register.Register;
 import toti.application.extensions.TranslatorExtension;
-import toti.lib.files.text.Text;
-import toti.lib.tcpip.enums.StatusCode;
 import toti.application.logging.ExceptionHashCode;
 import toti.application.logging.FileName;
+import toti.lib.files.text.Text;
+import toti.lib.tcpip.enums.StatusCode;
 
 public class ExceptionAnswer {
 
@@ -216,19 +216,11 @@ public class ExceptionAnswer {
 			return -1;
 		}
 		try {
-			/*
-			IS needed?
-			
-			String dirName = logsPath + (logsPath.endsWith("/") ? "" : "/");
-            File dir = new File(dirName);
-            dir.setExecutable(true, false);
-            dir.setReadable(true, false);
-            dir.setWritable(true, false);
-            dir.mkdirs();
-			*/
+			File path = new File(logsPath);
+			path.mkdirs();
+
 			text.write((bw)->{ bw.write(response); }, fileName.getName(), charset, false);
 			File file = new File(fileName.getName());
-			file.mkdirs();
 			file.setExecutable(true, false);
 			file.setReadable(true, false);
 			file.setWritable(true, false);
