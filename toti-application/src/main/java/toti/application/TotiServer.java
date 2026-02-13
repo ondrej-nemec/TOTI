@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Server;
@@ -79,7 +80,11 @@ public class TotiServer {
 			}
 		});
 		logger.info("Server is running");
-		logger.info("Available applications: " + applications.keySet());
+		logger.info(
+			"Available applications: " + applications.entrySet().stream()
+			.map(e->e.getKey() + ": " + (e.getValue().isRunning() ? "Running" : "Stopped"))
+			.collect(Collectors.toSet())
+		);
 		isRunning = true;
 	}
 	
