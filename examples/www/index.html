@@ -1,0 +1,598 @@
+<html>
+<head>
+	<title>TOTI samples</title>
+	<style type="text/css">
+		code {
+			font-size: .875em;
+		    color: #d63384;
+		    word-wrap: break-word;
+		}
+		.tile {
+			width: 200px;
+			display: inline-block;
+			background-color: #7FC6CC;
+			color: #e3ffff;
+			padding: 1em;
+			margin: 0.5em;
+		}
+		
+		.button {
+			display: inline-block;
+			cursor: pointer;
+			margin: 10px;
+			padding: 10px;
+			border: solid 2px #e3ffff;
+			border-radius:25%;
+		}
+	</style>
+</head>
+<body>
+	<h1>TOTI samples disambiguation</h1>
+
+	<div style="">
+		<!-- <div style="width: 25%; float:right; background-color: #e6e6e6;">-->
+		<div style="width: 25%; background-color: #e6e6e6; float:right; position: sticky; top: 20px;">
+			<h5 style="text-align: center">Result of async calling:</h5>
+			<div id="asyncRes-url"></div>
+			<div id="asyncRes-code"></div>
+			<div style="overflow: auto">
+				<pre id="asyncRes"></pre>
+			</div>
+		</div>
+		<div id="modules" style="max-width: 75%"></div>
+	</div>
+
+	<script type="text/javascript">
+		var openLinkButtons = [
+			{
+				name: 'OPEN',
+				method: 'GET',
+				sync: true
+			}
+		];
+		var syncAsyncButtons = [
+			{
+				name: 'OPEN',
+				method: 'GET',
+				sync: true
+			},
+			{
+				name: 'RUN',
+				method: 'GET',
+				sync: false
+			}
+		];
+		var applicationModule = [
+			{
+				name: 'TOTI',
+				description: 'Basic TOTI URLs and functions',
+				links: [
+					{
+						name: 'Welcome page',
+						description: 'TOTI Welcome page for verify system is running and responding.'
+							+ ' Works only from develing IP addresses.',
+						link: '/toti',
+						buttons: openLinkButtons
+					},
+					{
+						name: 'Link to folder',
+						description: 'Link points to folder inside www folder. TOTI prints filder content'
+							+ ' Works only if dir response is allowed.',
+						link: '/folder1',
+						buttons: openLinkButtons
+					},
+					{
+						name: 'Link to folder',
+						description: 'Link points to folder inside www folder, but folder contains index file.'
+							+ ' TOTI open index file.'
+							+ ' Works only if dir default file is set to index.html and dir response is forbidden.',
+						link: '/folder2',
+						buttons: openLinkButtons
+					},
+					{
+						name: 'Link to plain text file',
+						description: 'Link points to file in www folder. TOTI opens file.',
+						link: '/files/plainTextFile.txt',
+						buttons: openLinkButtons
+					},
+					{
+						name: 'Link to binary file',
+						description: 'Link points to file in www folder. Browser downloads file.',
+						link: '/files/binaryFile.odt',
+						buttons: openLinkButtons
+					}
+				]
+			},
+			{
+				name: 'Application: Exceptions',
+				description: 'How TOTI reacts on different exceptions throwed in different sources.',
+				links: [
+					{
+						name: 'Inside of method',
+						description: 'Exception throwed directly in method.',
+						link: '/application/exceptions/method',
+						buttons: syncAsyncButtons
+					},
+					{
+						name: 'Secured',
+						description: 'Exception throwed by TOTI because of missing logged user.',
+						link: '/application/exceptions/secured',
+						buttons: syncAsyncButtons
+					},
+					{
+						name: 'Request Interrupted',
+						description: 'Request interrupted in createResponse step.',
+						link: '/application/exceptions/interrupt',
+						buttons: syncAsyncButtons
+					},
+					{
+						name: 'Wrong HTTP method',
+						description: 'Exception throwed by TOTI because of wrong HTTP method. POST required, GET used.',
+						link: '/application/exceptions/post',
+						buttons: syncAsyncButtons
+					},
+					{
+						name: 'Catched',
+						description: 'Exception catched by CustomExceptionExtension',
+						link: '/application/exceptions/catched',
+						buttons: syncAsyncButtons
+					}
+				]
+			},
+			{
+				name: 'Router',
+				description: 'Static special routes mapped to existing URL.',
+				links: [
+					{
+						name: 'TOTI',
+						description: 'Route start with toti. Returns error - routes start with /toti are not allowed.',
+						link: '/toti-test',
+						buttons: syncAsyncButtons
+					},
+					{
+						name: 'Controller',
+						description: 'Pointing to existing controller.',
+						link: '/application-response.text',
+						buttons: syncAsyncButtons
+					},
+					{
+						name: 'File',
+						description: 'Pointing to file in resource directory. Returns error - routes pointing to file are not allowed.',
+						link: '/ico',
+						buttons: syncAsyncButtons
+					}
+				]
+			},
+			{
+				name: 'Application: Request',
+				description: 'How TOTI handle different types of requests.',
+				links: [
+					{
+						name: 'Basic',
+						description: 'Simple request on controller method.',
+						link: '/application/request/basic',
+						buttons: syncAsyncButtons
+					},
+					{
+						name: 'URI parameter',
+						description: 'Request on controller method with paramter (String).',
+						link: '/application/request/basic/',
+						buttons: [
+							{
+								name: 'Parameter: someRandomString',
+								method: 'GET',
+								sync: true,
+								linkParam: 'someRandomString'
+							},
+							{
+								name: 'Parameter: 42 (number)',
+								method: 'GET',
+								sync: true,
+								linkParam: '42'
+							}
+						]
+					},
+					{
+						name: 'HTTP POST',
+						description: 'Request with POST method. Method GET cause Exception.',
+						link: '/application/request/post',
+						buttons: [
+							{
+								name: 'OPEN',
+								method: 'GET',
+								sync: true
+							},
+							{
+								name: 'RUN',
+								method: 'GET',
+								sync: false
+							},
+							{
+								name: 'OPEN',
+								method: 'POST',
+								sync: true
+							},
+							{
+								name: 'RUN',
+								method: 'POST',
+								sync: false
+							}
+						]
+					},
+					{
+						name: 'HTTP GET or POST',
+						description: 'Controller method servers both GET and POST.',
+						link: '/application/request/get-or-post',
+						buttons: [
+							{
+								name: 'OPEN',
+								method: 'GET',
+								sync: true
+							},
+							{
+								name: 'RUN',
+								method: 'GET',
+								sync: false
+							},
+							{
+								name: 'OPEN',
+								method: 'POST',
+								sync: true
+							},
+							{
+								name: 'RUN',
+								method: 'POST',
+								sync: false
+							}
+						]
+					},
+					{
+						name: 'URI query',
+						description: 'Parsing query parameters',
+						link: '/application/request/query?',
+						buttons: [
+							{
+								name: 'Simple parameters',
+								method: 'GET',
+								sync: false,
+								linkParam: 'someText=aaaa&someNumber=12&anotherNumber=21&bool=true'
+							},
+							{
+								name: 'Array',
+								method: 'GET',
+								sync: false,
+								linkParam: 'names[]=smith.john&names[]=doe.jane&names[]=my.name'
+							},
+							{
+								name: 'Map',
+								method: 'GET',
+								sync: false,
+								linkParam: 'rate[0]=273.15&rate[26.85]=300&rate[100]=373.15'
+							},
+							{
+								name: 'List in map',
+								method: 'GET',
+								sync: false,
+								linkParam: 'map[list][]=273.15&map[list][]=300&map[100]=373.15'
+							},
+							{
+								name: 'Simple + list + map',
+								method: 'GET',
+								sync: false,
+								linkParam: 'age=42&name=my_name&list[]=a&list[]=b&map[a]=aa&map[b]=bb'
+							},
+							{
+								name: 'Simple + list + map 2',
+								method: 'GET',
+								sync: false,
+								linkParam: 'age=42&list[]=a&list[]=b&map[a]=aa&map[b]=bb'
+							}
+						]
+					},
+					{
+						name: 'Body type',
+						description: 'Method accepted request body only in JSON.',
+						link: '/application/request/body-type'
+						// TODO body
+					},
+					{
+						name: 'File',
+						description: 'Serving request with file',
+						link: '/application/request/file',
+						// TODO file
+					}
+				]
+			},
+			{
+				name: 'Application: Response',
+				description: 'How can TOTI answer to request.',
+				links: [
+					{
+						name: 'File from disk',
+						description: 'Returns file from disk.',
+						link: '/application/response/file',
+						buttons: syncAsyncButtons
+					},
+					{
+						name: 'Generate file',
+						description: 'Returns runtime generated file.',
+						link: '/application/response/generate',
+						buttons: syncAsyncButtons
+					},
+					{
+						name: 'JSON',
+						description: 'Returns JSON response.',
+						link: '/application/response/json',
+						buttons: syncAsyncButtons
+					},
+					{
+						name: 'Simple text',
+						description: 'Returns simple text response.',
+						link: '/application/response/text',
+						buttons: syncAsyncButtons
+					},
+					{
+						name: 'Template',
+						description: 'Returns response created from tempkate. Requires registered TemplateExtension.',
+						link: '/application/response/template',
+						buttons: syncAsyncButtons
+					},
+					{
+						name: 'Redirect inside application',
+						description: 'Redirect to Simple text page.',
+						link: '/application/response/redirect',
+						buttons: syncAsyncButtons
+					},
+					{
+						name: 'Redirect out of application',
+						description: 'Redirect to Github.',
+						link: '/application/response/open-redirect',
+						buttons: syncAsyncButtons
+					},
+					{
+						name: 'Websocket',
+						description: 'Communication thru websocket.',
+						link: '/application/response/websocket',
+						buttons: syncAsyncButtons
+					}
+				]
+			}
+		];
+// TODO formulare a posilani tokenu
+// TODO callbacky pro js prihlaseni
+		var authButtons = [
+			{
+				name: 'No token',
+				method: 'GET',
+				sync: true
+			},
+			{
+				name: 'Cookie only',
+				method: 'GET',
+				sync: true
+			},
+			{
+				name: 'Cookie and CSFR',
+				method: 'GET',
+				sync: false
+			},
+			{
+				name: 'Authentication header',
+				method: 'GET',
+				sync: true
+			},
+		];
+		var authExtension = [
+			{
+				name: 'Authentication: login',
+				description: '',
+				links: [
+					{
+						name: 'Login',
+						description: 'Login selected user',
+						link: '/application/users/login/',
+						buttons: [
+							{
+								name: 'User 1',
+								method: 'GET',
+								sync: true,
+								linkParam: 'user1'
+							},
+							{
+								name: 'User 1',
+								method: 'GET',
+								sync: false,
+								linkParam: 'user1'
+							},
+							{
+								name: 'User 2',
+								method: 'GET',
+								sync: true,
+								linkParam: 'user2'
+							},
+							{
+								name: 'User 2',
+								method: 'GET',
+								sync: false,
+								linkParam: 'user2'
+							}
+						]
+					},
+					{
+						name: 'Logout',
+						description: 'Logout current user.',
+						link: '/application/users/logout',
+						buttons: [
+							{
+								name: 'RUN',
+								method: 'GET',
+								sync: false
+							}
+						]
+					},
+					{
+						name: 'Check user',
+						description: 'Check current user',
+						link: '/application/users/check',
+						buttons: [
+							{
+								name: 'RUN',
+								method: 'GET',
+								sync: false
+							}
+						]
+					},
+					{
+						name: 'Not secured',
+						description: 'Works every time',
+						link: '/application/users/not-secured',
+						buttons: authButtons
+					},
+					{
+						name: 'Cookie token',
+						description: 'Requires token at least in cookie',
+						link: '/application/users/page',
+						buttons: authButtons
+					},
+					{
+						name: 'CSFR',
+						description: 'Requires token in cookie and CSFR token',
+						link: '/application/users/form',
+						buttons: authButtons
+					},
+					{
+						name: 'Header',
+						description: 'Requires token in Authentication header',
+						link: '/application/users/api',
+						buttons: authButtons
+					}
+				]
+			}
+		];
+		var translateExtension = [];
+		var templateExtension = [];
+		var validatorExtension = [];
+		var uiExtension = [];
+		var databaseExtension = [];
+
+		var modules = [
+			{
+				name: 'Application',
+				description: '',
+				links: applicationModule
+			},
+			{
+				name: 'Extension: Authenticate',
+				description: '',
+				links: authExtension
+			},
+			{
+				name: 'Extension: Translate',
+				description: '',
+				links: translateExtension
+			},
+			{
+				name: 'Extension: Templating',
+				description: '',
+				links: templateExtension
+			},
+			{
+				name: 'Extension: Validator',
+				description: '',
+				links: validatorExtension
+			},
+			{
+				name: 'Extension: UI',
+				description: '',
+				links: uiExtension
+			},
+			{
+				name: 'Extension: Database',
+				description: '',
+				links: databaseExtension
+			}
+		];
+
+		modules.forEach((module)=>{
+			var moduleContainer = createContainer(
+				document.querySelector("#modules"),
+				module.name, 'h2', module.description
+			);
+			module.links.forEach((part)=>{
+				var partContainer = createContainer(moduleContainer, part.name, 'h3', part.description);
+				var links = document.createElement("div");
+				partContainer.appendChild(links);
+				part.links.forEach((item)=>{
+					var itemContainer = createContainer(links, item.name, 'h4', item.description);
+					itemContainer.classList.add('tile');
+
+					if (!item.hasOwnProperty('buttons')) {
+						console.warn(
+							'Item requires button settings ' + part.name + ":" + item.name
+						);
+						return;
+					}
+					var buttons = document.createElement('div');
+					item.buttons.forEach((button)=>{
+						if (button.method !== 'GET' && button.sync) {
+							console.warn('Method ' + button.method + ' called synchronious is not supported');
+							return;
+						}
+						var element = document.createElement('div');
+						buttons.appendChild(element);
+						element.classList.add('button');
+
+						element.innerText = (button.sync ? '(S)' : '(A)')
+							+ ' ' + button.method + ":" + button.name;
+						var link = item.link;
+						if (button.hasOwnProperty('linkParam')) {
+							link += button.linkParam;
+						}
+						if (button.hasOwnProperty('params')) {
+							// TODO
+							// vyplnit uzivatelem
+							// jiz vyplneny form - neviditelny
+						}
+						element.onclick = ()=>{
+							if (button.hasOwnProperty('callback')) {
+								button.callback();
+							}
+							if (button.sync) {
+								window.open(link, '_blank').focus();
+							} else {
+								var xhr = new XMLHttpRequest
+								document.getElementById('asyncRes-url').innerText = button.method + ": " + link;
+								xhr.open(button.method, link);
+								var onResponse = ()=>{
+									document.getElementById('asyncRes-code').innerText = 'Code: ' + xhr.status + " " + xhr.responseText;
+									document.getElementById('asyncRes').innerText = xhr.responseText;
+								};
+								xhr.onload = onResponse;
+								xhr.onerror = onResponse;
+								xhr.send();
+							}
+						};
+					});
+					itemContainer.appendChild(buttons);
+				});
+			});
+		});
+
+		function createContainer(parent, title, healineType, description) {
+			var headline = document.createElement(healineType);
+			headline.innerText = title;
+
+			var desc = document.createElement('p');
+			desc.innerText = description;
+
+			var container = document.createElement("div");
+			container.appendChild(headline);
+			container.appendChild(desc);
+
+			parent.appendChild(container);
+			return container;
+		}
+	</script>
+
+</body>
+</html>

@@ -2,20 +2,21 @@ package toti.examples;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 
 import toti.application.TotiServer;
 import toti.application.TotiServerFactory;
 import toti.lib.common.structures.MapInit;
+import toti.lib.tcpip.SslCredentials;
 
 public class TotiExamplesRunner {
 
-
 	public static void main(String[] args) {
-		// createWithDefaultSettings();
+	//	createWithDefaultSettings();
 		createAndSetProgrammatically();
-		// createWithFileSettings();
+	//	createWithFileSettings();
 	}
 
 	protected static void createWithDefaultSettings() {
@@ -23,7 +24,7 @@ public class TotiExamplesRunner {
 			TotiServerFactory serverFactory = new TotiServerFactory();
 
 			TotiServer server = serverFactory.create(LogManager.getLogger("toti"));
-			server.addApplication("samples", (env, applicationFactory)->{
+			server.addApplication("examples", (env, applicationFactory)->{
 				// TODO applicationFactory.setUrlPattern(null);
 				
 				// optional: add extensions, always in code
@@ -37,7 +38,7 @@ public class TotiExamplesRunner {
 					/*new ApplicationModule(),
 					new UiModule(),
 					new TemplatingModule()*/
-				), LogManager.getLogger("samples-toti"));
+				), LogManager.getLogger("toti"));
 			}, Arrays.asList("localhost", "127.0.0.1"), null);
 			server.start();
 		} catch (Exception e) {
@@ -47,10 +48,11 @@ public class TotiExamplesRunner {
 	
 	protected static void createWithFileSettings() {
 		try {
-			TotiServerFactory serverFactory = new TotiServerFactory("toti/samples/fileConfiguration.properties");
+			//TotiServerFactory serverFactory = new TotiServerFactory("fileConfiguration.properties");
+			TotiServerFactory serverFactory = new TotiServerFactory("fileConfiguration.xml");
 			
 			TotiServer server = serverFactory.create(LogManager.getLogger("toti"));
-			server.addApplication("samples", (env, applicationFactory)->{
+			server.addApplication("examples", (env, applicationFactory)->{
 				// TODO applicationFactory.setUrlPattern(null);
 				
 				// optional: add extensions, always in code
@@ -64,7 +66,7 @@ public class TotiExamplesRunner {
 					/*new ApplicationModule(),
 					new UiModule(),
 					new TemplatingModule()*/
-				), LogManager.getLogger("samples-toti"));
+				), LogManager.getLogger("toti"));
 			}, Arrays.asList("localhost", "127.0.0.1"), null);
 			server.start();
 		} catch (Exception e) {
@@ -76,19 +78,19 @@ public class TotiExamplesRunner {
 		try {
 			TotiServerFactory serverFactory = new TotiServerFactory();
 			serverFactory.setCharset("utf-8");
-			// TODO to doc
-			/* SslCredentials cred = new SslCredentials();
-			cred.setCertificateStore("certificates/cert.p12", "betasecret", "PKCS12");
-			cred.setSniHostCheck(false);
-			serverFactory.setCerts(Optional.of(cred));*/
 			serverFactory.setMaxRequestBodySize(20*1024); // 20 kB
-			serverFactory.setHttpPort(8080);
-			serverFactory.setHttpsPort(8443);
+			serverFactory.setHttpPort(81);
+			serverFactory.setHttpsPort(444);
 			serverFactory.setReadTimeout(90000); // 90s
 			serverFactory.setThreadPool(100);
 			
+			SslCredentials cred = new SslCredentials();
+			cred.setCertificateStore("certificates/cert.p12", "betasecret", "PKCS12");
+			cred.setSniHostCheck(false);
+			serverFactory.setCerts(Optional.of(cred));
+			
 			TotiServer server = serverFactory.create(LogManager.getLogger("toti"));
-			server.addApplication("samples", (env, applicationFactory)->{
+			server.addApplication("examples", (env, applicationFactory)->{
 				// set
 				applicationFactory.setAutoStart(true);
 				applicationFactory.setDevelopIpAdresses(Arrays.asList("/127.0.0.1", "/0:0:0:0:0:0:0:1"));
@@ -120,7 +122,7 @@ public class TotiExamplesRunner {
 					/*new ApplicationModule(),
 					new UiModule(),
 					new TemplatingModule()*/
-				), LogManager.getLogger("samples-toti"));
+				), LogManager.getLogger("toti"));
 			}, Arrays.asList("localhost", "127.0.0.1"), null);
 			server.start();
 		} catch (Exception e) {

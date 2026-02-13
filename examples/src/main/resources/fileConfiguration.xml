@@ -1,0 +1,26 @@
+<root>
+	<http>
+		<port>82</port>
+		<secured-port>445</secured-port>
+		<thread-pool>100</thread-pool>
+		<read-timeout>90000</read-timeout>
+		<max-request-size>20480</max-request-size>
+		<charset>UTF-8</charset>
+
+		<key-store>certificates/cert.p12</key-store>
+		<key-store-password>betasecret</key-store-password>
+		<key-store-type>PKCS12</key-store-type>
+	</http>
+	<applications>
+		<examples>
+			<resource-path>www</resource-path>
+			<dir-allowed>true</dir-allowed>
+			<dir-default-file>index.html</dir-default-file>
+			<logs-path>logs</logs-path>
+			<autostart>true</autostart>
+			<dev-addresses>127.0.0.1</dev-addresses>
+			<dev-addresses>0:0:0:0:0:0:0:1</dev-addresses>
+			<headers>Access-Control-Allow-Origin:*</headers>
+		</examples>
+	</applications>
+</root>
