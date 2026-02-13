@@ -134,7 +134,6 @@ public class MainHandler extends Handler.Abstract {
 			jettyResponse.write(true, responseBody, new Callback() {
 				@Override
 				public void succeeded() {
-					//jettyResponse.complete();   // *** DŮLEŽITÉ ***
 					callback.succeeded();
 				}
 
