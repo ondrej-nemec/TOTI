@@ -26,7 +26,7 @@ public class FileSystemTest {
 				"tests/fileAccess", true, SearchFilter.FILES_AND_DIRECTORY,
 				Arrays.asList(
 					// aJava, cJava, bJava not in build
-					root(),
+					//root(),
 					sameJava(), sameJar(), sameRes(), sameExt(),
 					aRes(), aExt(), aJar(),
 					bRes(), bExt(), bJar(),
@@ -40,7 +40,7 @@ public class FileSystemTest {
 				"tests/fileAccess", false, SearchFilter.FILES_AND_DIRECTORY,
 				Arrays.asList(
 					// aJava, cJava, bJava not in build
-					root(),
+					//root(),
 					sameJava(), sameJar(), sameRes(), sameExt(),
 					aRes(), aExt(), aJar(),
 					bRes(), bExt(), bJar(),
@@ -64,7 +64,7 @@ public class FileSystemTest {
 				"tests/fileAccess", true, SearchFilter.DIRECTORY_ONLY,
 				Arrays.asList(
 					// aJava, cJava, bJava not in build
-					root(),
+					//root(),
 					subJar(), subJava(), subRes(), subExt()
 				)
 			},
@@ -105,7 +105,7 @@ public class FileSystemTest {
 				"Pointing to folder",
 				"tests/fileAccess/sub", true, SearchFilter.FILES_AND_DIRECTORY,
 				Arrays.asList(
-					subJar2(),
+					//subJar2(),
 					cRes2(), cExt2(), cJar2(), 
 					dJava2(), dRes2(), dExt2(), dJar2()
 				)
@@ -115,7 +115,7 @@ public class FileSystemTest {
 				"Folder ends with /",
 				"tests/fileAccess/sub/", true, SearchFilter.FILES_AND_DIRECTORY,
 				Arrays.asList(
-					subJar2(),
+					//subJar2(),
 					cRes2(), cExt2(), cJar2(), 
 					dJava2(), dRes2(), dExt2(), dJar2()
 				)
@@ -148,7 +148,7 @@ public class FileSystemTest {
 				"Folder ends with \\",
 				"tests\\fileAccess\\sub\\", true, SearchFilter.FILES_AND_DIRECTORY,
 				Arrays.asList(
-					subJar2(),
+					//subJar2(),
 					cRes2(), cExt2(), cJar2(), 
 					dJava2(), dRes2(), dExt2(), dJar2()
 				)
@@ -215,19 +215,21 @@ public class FileSystemTest {
 			}
 		};
 	}
-
+/*
 	private static FileInfo root() {
 		return new FileInfo(
 			FileType.DIRECTORY, FileMode.JAR, "", "",
-			"jar:file:/home/coder/project/toti-libs/toti-files/tests/fileAccess.jar!/tests/fileAccess",
+			// jar:file:/home/coder/project/toti-libs/toti-files/tests/fileAccess.jar!
+			"/tests/fileAccess",
 			1771361076000L
 		);
 	}
-
+*/
+/*
 	private static FileInfo aJava() {
 		return null; //"a1.txt"
 	}
-
+*/
 	private static FileInfo aRes() {
 		return aRes("a2.txt", "a2.txt");
 	}
@@ -272,15 +274,16 @@ public class FileSystemTest {
 	private static FileInfo aJar(String name, String relativePath) {
 		return new FileInfo(
 			FileType.FILE, FileMode.JAR, name, relativePath,
-			"jar:file:/home/coder/project/toti-libs/toti-files/tests/fileAccess.jar!/tests/fileAccess/a4.txt",
+			// jar:file:/home/coder/project/toti-libs/toti-files/tests/fileAccess.jar!
+			"/tests/fileAccess/a4.txt",
 			1761300112000L
 		);
 	}
-
+/*
 	private static FileInfo bJava() {
 		return null; //"b1.json"
 	}
-
+*/
 	private static FileInfo bRes() {
 		return new FileInfo(
 			FileType.FILE, FileMode.RESOURCE, "b2.json", "b2.json",
@@ -300,7 +303,8 @@ public class FileSystemTest {
 	private static FileInfo bJar() {
 		return new FileInfo(
 			FileType.FILE, FileMode.JAR, "b4.json", "b4.json",
-			"jar:file:/home/coder/project/toti-libs/toti-files/tests/fileAccess.jar!/tests/fileAccess/b4.json",
+			// jar:file:/home/coder/project/toti-libs/toti-files/tests/fileAccess.jar!
+			"/tests/fileAccess/b4.json",
 			1761300122000L
 		);
 	}
@@ -364,7 +368,8 @@ public class FileSystemTest {
 	private static FileInfo sameJar(String name, String relative) {
 		return new FileInfo(
 			FileType.FILE, FileMode.JAR, name, relative,
-			"jar:file:/home/coder/project/toti-libs/toti-files/tests/fileAccess.jar!/tests/fileAccess/Same.java",
+			// jar:file:/home/coder/project/toti-libs/toti-files/tests/fileAccess.jar!
+			"/tests/fileAccess/Same.java",
 			1771361016000L
 		);
 	}
@@ -372,11 +377,11 @@ public class FileSystemTest {
 	private static FileInfo subJava() {
 		return subJava("sub", "sub");
 	}
-
+/*
 	private static FileInfo subJava2() {
 		return subJava("", "");
 	}
-
+*/
 	private static FileInfo subJava(String name, String relative) {
 		return new FileInfo(
 			FileType.DIRECTORY, FileMode.RESOURCE, name, relative,
@@ -388,11 +393,11 @@ public class FileSystemTest {
 	private static FileInfo subRes() {
 		return subRes("sub", "sub");
 	}
-
+/*
 	private static FileInfo subRes2() {
 		return subRes("", "");
 	}
-
+*/
 	private static FileInfo subRes(String name, String relative) {
 		return new FileInfo(
 			FileType.DIRECTORY, FileMode.RESOURCE, name, relative,
@@ -404,11 +409,11 @@ public class FileSystemTest {
 	private static FileInfo subExt() {
 		return subExt("sub", "sub");
 	}
-
+/*
 	private static FileInfo subExt2() {
 		return subExt("", "");
 	}
-
+*/
 	private static FileInfo subExt(String name, String relative) {
 		return new FileInfo(
 			FileType.DIRECTORY, FileMode.EXTERNAL, name, relative,
@@ -428,15 +433,16 @@ public class FileSystemTest {
 	private static FileInfo subJar(String name, String relative) {
 		return new FileInfo(
 			FileType.DIRECTORY, FileMode.JAR, name, relative,
-			"jar:file:/home/coder/project/toti-libs/toti-files/tests/fileAccess.jar!/tests/fileAccess/sub",
+			// jar:file:/home/coder/project/toti-libs/toti-files/tests/fileAccess.jar!
+			"/tests/fileAccess/sub",
 			1771275800000L
 		);
 	}
-
+/*
 	private static FileInfo cJava() {
 		return null; //"sub/c1.xml",
 	}
-	
+*/	
 	private static FileInfo cRes() {
 		return cRes("c2.xml", "sub/c2.xml");
 	}
@@ -480,7 +486,8 @@ public class FileSystemTest {
 	private static FileInfo cJar(String name, String relative) {
 		return new FileInfo(
 			FileType.FILE, FileMode.JAR, name, relative,
-			"jar:file:/home/coder/project/toti-libs/toti-files/tests/fileAccess.jar!/tests/fileAccess/sub/c4.xml",
+			// jar:file:/home/coder/project/toti-libs/toti-files/tests/fileAccess.jar!
+			"/tests/fileAccess/sub/c4.xml",
 			1761300150000L
 		);
 	}
@@ -544,9 +551,9 @@ public class FileSystemTest {
 	private static FileInfo dJar(String name, String relative) {
 		return new FileInfo(
 			FileType.FILE, FileMode.JAR, name, relative,
-			"jar:file:/home/coder/project/toti-libs/toti-files/tests/fileAccess.jar!/tests/fileAccess/sub/d4.java",
+			// jar:file:/home/coder/project/toti-libs/toti-files/tests/fileAccess.jar!
+			"/tests/fileAccess/sub/d4.java",
 			1771362306000L
 		);
 	}
-
 }

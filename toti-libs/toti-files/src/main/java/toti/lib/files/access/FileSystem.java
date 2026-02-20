@@ -2,19 +2,21 @@ package toti.lib.files.access;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.JarURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import java.util.Map;
+import java.util.stream.Stream;
 
 public class FileSystem {
-	
-	// TODO get one file by name, not by folder
 
 	public static List<FileInfo> get(String search, boolean recursive, SearchFilter filterFileType) throws IOException {
 		if (search == null) {
@@ -31,38 +33,29 @@ public class FileSystem {
 			throw new RuntimeException("Empty search is not allowed");
 		}
 		List<FileInfo> result = new LinkedList<>();
-		Consumer<FileInfo> addFile = (fileInfo)->{
-			if (fileInfo.isDirectory()) {
-				if (filterFileType != SearchFilter.FILES_ONLY) {
-					result.add(fileInfo);
-				}
-			} else if (filterFileType != SearchFilter.DIRECTORY_ONLY) {
-				if (recursive) {
-					result.add(fileInfo);
-				} else if (fileInfo.isInSearchRoot()) {
-					result.add(fileInfo);
-				}
-			}
-		};
 		Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources(search);
-		while (urls.hasMoreElements()) {
-			URL url = urls.nextElement();
-			if (url.toString().startsWith("rsrc:")) {
-				throw new IOException("Unsupported protocol: " + url);
-			// jar - in separated jar - gradle build
-			} else if (url.toString().startsWith("jar:") || url.toString().startsWith("jrt:")) {
-				addJar(search, url, addFile);
-			} else if (url.toString().startsWith("file:")) {
-				String path = url.getPath();
-				File file = new File(path);
-				addResourceAndExternal(file, search, addFile, recursive, FileMode.RESOURCE);
-			} else {
-				throw new IOException("Unsupported protocol: " + url);
+		try {
+			while (urls.hasMoreElements()) {
+				URL url = urls.nextElement();
+				URI uri = url.toURI();
+				if (url.toString().startsWith("rsrc:")) {
+					throw new IOException("Unsupported protocol: " + url);
+				} else if (url.toString().startsWith("jar:") || url.toString().startsWith("jrt:")) {
+					try (java.nio.file.FileSystem fs = FileSystems.newFileSystem(uri, Map.of())) {
+						iterateFiles(result, fs.getPath("/" + search), search, recursive, filterFileType, FileMode.JAR);
+					}
+				} else if (url.toString().startsWith("file:")) {
+					iterateFiles(result, Paths.get(uri), search, recursive, filterFileType, FileMode.RESOURCE);
+				} else {
+					throw new IOException("Unsupported protocol: " + url);
+				}
 			}
+		} catch (URISyntaxException e) {
+			throw new IOException(e);
 		}
 		File external = new File(search);
 		if (external.exists()) {
-			addResourceAndExternal(external, search, addFile, recursive, FileMode.EXTERNAL);
+			iterateFiles(result, external.toPath(), search, recursive, filterFileType, FileMode.EXTERNAL);
 		}
 
 		result.sort((a, b)->{
@@ -78,84 +71,46 @@ public class FileSystem {
 		});
 		return result;
 	}
-	
-	private static void addJar(String search, URL url, Consumer<FileInfo> addFile) throws IOException {
-		URLConnection con = url.openConnection();
-		if (con instanceof JarURLConnection connection) {
-			JarFile file = connection.getJarFile();
-			Enumeration<JarEntry> entries = file.entries();
-			while (entries.hasMoreElements()) {
-				JarEntry e = entries.nextElement();
-				if (e.getName().startsWith(search)) {
-					String relativePath = "";
-					String name = "";
-					String absolutePath = url.toString();
-					FileType type = FileType.FILE;
-					if (e.getName().equals(search)) {
-						int index = e.getName().lastIndexOf("/");
-						if (index == -1) {
-							name = e.getName();
-						} else {
-							name = e.getName().substring(index + 1);
-						}
-					} else if (e.getName().equals(search + "/")) {
-						type = FileType.DIRECTORY;
-						name = ""; // search root
-					} else {
-						relativePath = e.getName().replace(search + "/", "");
-						if (relativePath.endsWith("/")) {
-							relativePath = relativePath.substring(0, relativePath.lastIndexOf("/"));
-							type = FileType.DIRECTORY;
-						}
-						int index = relativePath.lastIndexOf("/");
-						if (index == -1) {
-							name = relativePath;
-						} else {
-							name = relativePath.substring(index + 1);
-						}
-						if (!relativePath.isEmpty()) {
-							absolutePath += "/" + relativePath;
-						}
-					}
 
-					addFile.accept(new FileInfo(
-						type, FileMode.JAR,
-						name, relativePath, absolutePath,
-						e.getLastModifiedTime().toMillis()
-					));
+	private static void iterateFiles(List<FileInfo> result, Path path, String search, boolean recursive, SearchFilter filterFileType, FileMode mode) throws IOException {
+		if (Files.isRegularFile(path)) {
+			addFile(result, path, search, recursive, filterFileType, mode);
+		} else if (Files.isDirectory(path)) {
+			try (Stream<Path> stream = Files.list(path)) {
+				Iterator<Path> i = stream.iterator();
+				while (i.hasNext()) {
+					addFile(result, i.next(), search, recursive, filterFileType, mode);
 				}
 			}
 		}
 	}
-	
-	private static void addResourceAndExternal(File rootFile, String search, Consumer<FileInfo> addFile, boolean recursive, FileMode mode) {
-		if (rootFile.isFile()) {
-			addFile(rootFile, addFile, search, recursive, mode);
-		} else if (rootFile.isDirectory()) {
-			for (File f : rootFile.listFiles()) {
-				addFile(f, addFile, search, recursive, mode);
-			}
-		}
-	}
 
-	private static void addFile(File file, Consumer<FileInfo> addFile, String search, boolean recursive, FileMode mode) {
-		String absolutePath = file.getAbsolutePath().replaceAll("\\\\", "/");
-		int index = absolutePath.indexOf(search);
-		if (index < 0) {
-			// TODO
+	private static void addFile(List<FileInfo> result, Path path, String search, boolean recursive, SearchFilter filterFileType, FileMode mode) throws IOException {
+		boolean isDirectory = Files.isDirectory(path);
+		boolean isFile = Files.isRegularFile(path);
+		if (isDirectory && filterFileType == SearchFilter.FILES_ONLY) {
+			// ignore
+		} else if (isFile && filterFileType == SearchFilter.DIRECTORY_ONLY) {
+			// ignore
+		} else {
+			String absolutePath = path.toAbsolutePath().toString().replace("\\", "/");
+			int index = absolutePath.indexOf(search);
+			if (index < 0) {
+				// TODO
+			}
+			String relativePath = "";
+			int relPathStartIndex = index + search.length() + 1;
+			if (relPathStartIndex < absolutePath.length()) {
+				relativePath = absolutePath.substring(relPathStartIndex);
+			}
+			String name = path.getFileName().toString();
+			result.add(new FileInfo(
+				isDirectory ? FileType.DIRECTORY : (isFile ? FileType.FILE : FileType.UNKNOWN),
+				mode, name, relativePath, absolutePath, Files.getLastModifiedTime(path).toMillis()
+			));
 		}
-		String relativePath = "";
-		int relPathStartIndex = index + search.length() + 1;
-		if (relPathStartIndex < absolutePath.length()) {
-			relativePath = absolutePath.substring(relPathStartIndex);
-		}
-		FileInfo fileInfo = new FileInfo(
-			file.isDirectory() ? FileType.DIRECTORY : (file.isFile() ? FileType.FILE : FileType.UNKNOWN),
-			mode, file.getName(), relativePath, absolutePath, file.lastModified()
-		);
-		addFile.accept(fileInfo);
-		if (fileInfo.isDirectory() && recursive) {
-			addResourceAndExternal(file, search, addFile, recursive, mode);
+		if (isDirectory && recursive) {
+			iterateFiles(result, path, search, recursive, filterFileType, mode);
 		}
 	}
 
