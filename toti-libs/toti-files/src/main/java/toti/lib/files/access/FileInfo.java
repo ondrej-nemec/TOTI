@@ -67,7 +67,7 @@ public class FileInfo {
 	}
 
 	public boolean isInSearchRoot() {
-		return fullName.equals("");
+		return relativePath.equals("") || fullName.equals(relativePath);
 	}
 
 	@Override

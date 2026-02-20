@@ -17,13 +17,26 @@ public class FileSystem {
 	// TODO get one file by name, not by folder
 
 	public static List<FileInfo> get(String search, boolean recursive, SearchFilter filterFileType) throws IOException {
+		if (search == null) {
+			throw new NullPointerException();
+		}
+		search = search.replace("\\", "/"); // replace \ with /
+		if (search.endsWith("/")) {
+			search = search.substring(0, search.length() - 1);
+		}
+		if (search.startsWith("/") || search.contains(":")) {
+			throw new RuntimeException("Absolute paths are not allowed");
+		}
+		if (search.equals("")) {
+			throw new RuntimeException("Empty search is not allowed");
+		}
 		List<FileInfo> result = new LinkedList<>();
 		Consumer<FileInfo> addFile = (fileInfo)->{
 			if (fileInfo.isDirectory()) {
 				if (filterFileType != SearchFilter.FILES_ONLY) {
 					result.add(fileInfo);
 				}
-			} else {
+			} else if (filterFileType != SearchFilter.DIRECTORY_ONLY) {
 				if (recursive) {
 					result.add(fileInfo);
 				} else if (fileInfo.isInSearchRoot()) {
