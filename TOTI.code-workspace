@@ -44,7 +44,8 @@
                 "type": "java",
                 "name": "Current File",
                 "request": "launch",
-                "mainClass": "${file}"
+                "mainClass": "${file}",
+                "console": "internalConsole"
             },
             {
                 "type": "java",
@@ -60,6 +61,22 @@
                 "request": "launch",
                 "mainClass": "toti.lib.tcpip.parsers.ExchangeFactoryTest",
                 "console": "internalConsole"
+            },
+            {
+                "type": "java",
+                "name": "TemplateParser E2E",
+                "request": "launch",
+                "mainClass": "toti.lib.templating.parsing.TemplateParserEndToEndTest",
+                "console": "internalConsole",
+                "cwd": "toti-libs/toti-templating"
+            },
+            {
+                "type": "java",
+                "name": "TemplateFactory E2E",
+                "request": "launch",
+                "mainClass": "toti.lib.templating.TemplateFactoryEndToEndTest",
+                "console": "internalConsole",
+                "cwd": "toti-libs/toti-templating"
             }
         ],
         "defaults": {
