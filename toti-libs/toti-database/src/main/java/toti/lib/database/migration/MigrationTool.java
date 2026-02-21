@@ -191,7 +191,7 @@ public class MigrationTool {
 		Compiler compiler = new Compiler(logger);
 		SortedMap<String, MigrationInternal> loadedFiles = new SortedMap<>();
 		for (FileInfo fileInfo : files) {
-			File file = new File(folder + "/" + fileInfo);
+			File file = new File(fileInfo.getRelativePath());
 			
 			MigrationInternal migration = createMigration(fileInfo, folder);
 			switch (fileInfo.getExtension()) {
@@ -212,7 +212,7 @@ public class MigrationTool {
 					));;
 					break;
 				case "sql":
-					migration.setFile(new SqlMigrationFile(folder + "/" + fileInfo));
+					migration.setFile(new SqlMigrationFile(fileInfo));
 					break;
 				default: break;
 			}

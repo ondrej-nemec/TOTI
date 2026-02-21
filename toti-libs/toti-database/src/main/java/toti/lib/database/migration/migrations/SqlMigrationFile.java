@@ -6,15 +6,15 @@ import java.sql.Statement;
 import java.util.Objects;
 
 import toti.lib.database.querybuilder.QueryBuilder;
-import toti.lib.files.access.FileUtils;
+import toti.lib.files.access.FileInfo;
 import toti.lib.files.text.Text;
 
 public class SqlMigrationFile implements MigrationFile {
 	
-	private final String path;
+	private final FileInfo fileInfo;
 	
-	public SqlMigrationFile(String path) {
-		this.path = path;
+	public SqlMigrationFile(FileInfo fileInfo) {
+		this.fileInfo = fileInfo;
 	}
 
 	@Override
@@ -36,29 +36,29 @@ public class SqlMigrationFile implements MigrationFile {
 	}
 
 	protected String loadContent(boolean isRevert) throws IOException {
-		String sql = Text.get().read((br)->br.asString(), FileUtils.createInputStream(path));
+		String sql = Text.get().read((br)->br.asString(), fileInfo.createInputStream());
 		
 		String[] mig = sql.split("--- REVERT ---");
 		if (isRevert && mig.length > 1) {
 			return mig[1].trim();
 		} else if (isRevert && mig.length < 2) {
-			throw new RuntimeException(String.format("Migration %s has not revert part", path));
+			throw new RuntimeException(String.format("Migration %s has not revert part", fileInfo.getRelativePath()));
 	//	} else if (!isRevert && mig.length == 1) {
 	//		return sql.toString().trim();
 		} else if (!isRevert && mig.length > 1) {
 			return mig[0].trim();
 		}
-		return sql.toString().trim();
+		return sql.trim();
 	}
 
 	@Override
 	public String toString() {
-		return "SqlMigrationFile [path=" + path + "]";
+		return "SqlMigrationFile [path=" + fileInfo.getRelativePath() + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(path);
+		return Objects.hash(fileInfo.getRelativePath());
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public class SqlMigrationFile implements MigrationFile {
 			return false;
 		}
 		SqlMigrationFile other = (SqlMigrationFile) obj;
-		return Objects.equals(path, other.path);
+		return Objects.equals(fileInfo.getRelativePath(), other.fileInfo.getRelativePath());
 	}
 
 }

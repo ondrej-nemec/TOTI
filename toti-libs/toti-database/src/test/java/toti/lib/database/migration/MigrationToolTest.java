@@ -20,6 +20,7 @@ import toti.lib.database.migration.migrations.MigrationFile;
 import toti.lib.database.migration.migrations.MigrationInternal;
 import toti.lib.database.migration.migrations.SqlMigrationFile;
 import toti.lib.database.querybuilder.QueryBuilder;
+import toti.lib.files.access.FileInfo;
 
 public class MigrationToolTest {
 	
@@ -186,15 +187,42 @@ public class MigrationToolTest {
 		.append(
 			"sql",
 			new MigrationInternal("sql", "in_dir", "test/migrations")
-			.setFile(new SqlMigrationFile("test/migrations/sql__in_dir.sql"))
+			.setFile(new SqlMigrationFile(new FileInfo(
+				null, null, "sql__in_dir.sql", "test/migrations/sql__in_dir.sql", null, 0
+			)))
 		)
 		;
 		SortedMap<String, MigrationInternal> actual = tool.processFiles("test/migrations", Arrays.asList(
-			"Java_compiled__in_dir.class",
-			"Java_compiled__in_dir.java",
-			"Java_not_compiled__in_dir.java",
-			"not__a-migration.txt",
-			"sql__in_dir.sql"*/
+			new FileInfo(
+				null, null,
+				"Java_compiled__in_dir.class",
+				"test/migrations/Java_compiled__in_dir.class",
+				null, 0
+			),
+			new FileInfo(
+				null, null,
+				"Java_compiled__in_dir.java",
+				"test/migrations/Java_compiled__in_dir.java",
+				null, 0
+			),
+			new FileInfo(
+				null, null,
+				"Java_not_compiled__in_dir.java",
+				"test/migrations/Java_not_compiled__in_dir.java",
+				null, 0
+			),
+			new FileInfo(
+				null, null,
+				"not__a-migration.txt",
+				"test/migrations/not__a-migration.txt",
+				null, 0
+			),
+			new FileInfo(
+				null, null,
+				"sql__in_dir.sql",
+				"test/migrations/sql__in_dir.sql",
+				null, 0
+			)
 		), loader);
 		
 		try {
@@ -217,9 +245,10 @@ public class MigrationToolTest {
 		MigrationTool tool = new MigrationTool(null, null, null);
 		
 		MigrationException e = assertThrows(MigrationException.class, ()->{
-			tool.processFiles("test/migrations/subdir", Arrays.asList(
-				"Java__compilation_error.java"
-			), loader);
+			tool.processFiles("test/migrations/subdir", Arrays.asList(new FileInfo(
+				null, null, "Java__compilation_error.java",
+				"test/migrations/subdir/Java__compilation_error.java", null, 0
+		)), loader);
 		});
 		assertNotNull(e);
 	}
@@ -231,7 +260,10 @@ public class MigrationToolTest {
 		MigrationTool tool = new MigrationTool(null, null, null);
 		
 		MigrationInternal expected = new MigrationInternal("some_id", "comment_or_description", "module-name");
-		MigrationInternal actual = tool.createMigration("some_id__comment_or_description", "module-name");
+		MigrationInternal actual = tool.createMigration(
+			new FileInfo(null, null, "some_id__comment_or_description", null, null, 0),
+			"module-name"
+		);
 		try {
 			assertEquals(expected, actual);
 		} catch(Error e) {
@@ -244,7 +276,10 @@ public class MigrationToolTest {
 	public void testCreateMigrationThrowsWhenNoSeparator() throws MigrationException {
 		MigrationException e = assertThrows(MigrationException.class, ()->{
 			MigrationTool tool = new MigrationTool(null, null, null);
-			tool.createMigration("some_id", "module-name");
+			tool.createMigration(
+				new FileInfo(null, null, "some_id", null, null, 0),
+				"module-name"
+			);
 		});
 		assertNotNull(e);
 	}
@@ -253,7 +288,10 @@ public class MigrationToolTest {
 	public void testCreateMigrationThrowsWhenMoreSeparators() throws MigrationException {
 		MigrationException e = assertThrows(MigrationException.class, ()->{
 			MigrationTool tool = new MigrationTool(null, null, null);
-			tool.createMigration("some_id__comment__description", "module-name");
+			tool.createMigration(
+				new FileInfo(null, null, "some_id__comment__description", null, null, 0),
+				"module-name"
+			);
 		});
 		assertNotNull(e);
 	}

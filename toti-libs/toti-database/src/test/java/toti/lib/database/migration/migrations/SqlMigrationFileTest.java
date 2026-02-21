@@ -20,6 +20,9 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import toti.lib.database.querybuilder.QueryBuilder;
+import toti.lib.files.access.FileInfo;
+import toti.lib.files.access.FileMode;
+import toti.lib.files.access.FileType;
 
 public class SqlMigrationFileTest {
 
@@ -76,44 +79,53 @@ public class SqlMigrationFileTest {
 
 	@ParameterizedTest
 	@MethodSource("dataLoadContent")
-	public void testLoadContent(String path, boolean isRevert, String expected) throws IOException {
-		SqlMigrationFile file = new SqlMigrationFile(path);
+	public void testLoadContent(FileMode mode, String path, boolean isRevert, String expected) throws IOException {
+		SqlMigrationFile file = new SqlMigrationFile(new FileInfo(
+			FileType.FILE, mode, "", path, null, 0
+		));
 		assertEquals(expected, file.loadContent(isRevert));
 	}
 	
 	public static Object[] dataLoadContent() {
 		return new Object[] {
 			new Object[] {
+				FileMode.EXTERNAL,
 				"test/migrations/sql__in_dir.sql",
 				false,
 				"select * from dir"
 			},
 			new Object[] {
+				FileMode.RESOURCE,
 				"migrations/sql__in_classpath.sql",
 				false,
 				"select * from classpath"
 			},
 			new Object[] {
+				FileMode.RESOURCE,
 				"migrations/sql__only_foward.sql",
 				false,
 				"select * from Foward"
 			},
 			new Object[] {
+				FileMode.RESOURCE,
 				"migrations/sql__only_revert.sql",
 				true,
 				"select * from Revert"
 			},
 			new Object[] {
+				FileMode.RESOURCE,
 				"migrations/sql__only_revert.sql",
 				false,
 				""
 			},
 			new Object[] {
+				FileMode.RESOURCE,
 				"migrations/sql__foward_and_revert.sql",
 				false,
 				"select * from Foward"
 			},
 			new Object[] {
+				FileMode.RESOURCE,
 				"migrations/sql__foward_and_revert.sql",
 				true,
 				"select * from Revert"
@@ -124,7 +136,9 @@ public class SqlMigrationFileTest {
 	@Test
 	// (expected = RuntimeException.class)
 	public void testLoadContentThrowsIfMissingRequiredRevertPart() throws IOException {
-		SqlMigrationFile file = new SqlMigrationFile("migrations/sql__only_foward.sql");
+		SqlMigrationFile file = new SqlMigrationFile(new FileInfo(
+			FileType.FILE, FileMode.RESOURCE, "", "migrations/sql__only_foward.sql", null, 0
+		));
 		RuntimeException e = assertThrows(RuntimeException.class, ()->{
 			file.loadContent(true);
 		});
