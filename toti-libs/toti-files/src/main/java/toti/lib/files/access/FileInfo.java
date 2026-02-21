@@ -68,14 +68,14 @@ public class FileInfo {
 		return type == FileType.FILE;
 	}
 
+    public long getLastModificationTime() {
+        return lastModificationTime;
+    }
+
 	public InputStream createInputStream() throws IOException {
 		if (!isFile()) {
 			throw new IOException("Path: " + absolutePath + " is no file. Probable it is dirrectory");
 		}
-		System.out.println(mode);
-		System.out.println(relativePath);
-		System.out.println(absolutePath);
-		System.out.println();
 		if (mode == FileMode.JAR || mode == FileMode.RESOURCE) {
 			return Thread.currentThread().getContextClassLoader().getResourceAsStream(relativePath);
 		}
@@ -100,6 +100,14 @@ public class FileInfo {
 
 	@Override
 	public boolean equals(Object obj) {
+		if (partialEquals(obj)) {
+			FileInfo other = (FileInfo) obj;
+			return lastModificationTime != other.lastModificationTime;
+		}
+		return false;
+	}
+
+	protected boolean partialEquals(Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)
@@ -130,8 +138,6 @@ public class FileInfo {
 			if (other.absolutePath != null)
 				return false;
 		} else if (!absolutePath.equals(other.absolutePath))
-			return false;
-		if (lastModificationTime != other.lastModificationTime)
 			return false;
 		if (fullName == null) {
 			if (other.fullName != null)

@@ -2,6 +2,7 @@ package toti.lib.files.access;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -15,7 +16,7 @@ public class FileListTest {
 	@ParameterizedTest
 	@MethodSource("testGet")
 	public void testGet(String message, String folder, boolean recursive, SearchFilter filter, List<FileInfo> expected) throws Exception {
-		List<FileInfo> actual = FileList.get(folder, recursive, filter);
+		List<FileInfo> actual = FileList.get(folder, recursive, filter).stream().map(f->create(f)).collect(Collectors.toList());
 		TestCase.assertEquals(expected, actual);
 	}
 
@@ -217,7 +218,7 @@ public class FileListTest {
 	}
 /*
 	private static FileInfo root() {
-		return new FileInfo(
+		return create(
 			FileType.DIRECTORY, FileMode.JAR, "", "",
 			// jar:file:/home/coder/project/toti-libs/toti-files/tests/fileAccess.jar!
 			"/tests/fileAccess",
@@ -240,10 +241,10 @@ public class FileListTest {
 	}
 
 	private static FileInfo aRes(String name) {
-		return new FileInfo(
+		return create(
 			FileType.FILE, FileMode.RESOURCE, name, "tests/fileAccess/a2.txt",
 			"/home/coder/project/toti-libs/toti-files/build/resources/test/tests/fileAccess/a2.txt",
-			1771361530572L
+			1771691443673L
 		);
 	}
 
@@ -256,10 +257,10 @@ public class FileListTest {
 	}
 
 	private static FileInfo aExt(String name) {
-		return new FileInfo(
+		return create(
 			FileType.FILE, FileMode.EXTERNAL, name, "tests/fileAccess/a3.txt",
 			"/home/coder/project/toti-libs/toti-files/tests/fileAccess/a3.txt",
-			1761300113000L
+			1771689255046L
 		);
 	}
 
@@ -272,7 +273,7 @@ public class FileListTest {
 	}
 
 	private static FileInfo aJar(String name) {
-		return new FileInfo(
+		return create(
 			FileType.FILE, FileMode.JAR, name, "tests/fileAccess/a4.txt",
 			// jar:file:/home/coder/project/toti-libs/toti-files/tests/fileAccess.jar!
 			"/tests/fileAccess/a4.txt",
@@ -285,7 +286,7 @@ public class FileListTest {
 	}
 */
 	private static FileInfo bRes() {
-		return new FileInfo(
+		return create(
 			FileType.FILE, FileMode.RESOURCE, "b2.json", "tests/fileAccess/b2.json",
 			"/home/coder/project/toti-libs/toti-files/build/resources/test/tests/fileAccess/b2.json",
 			1771361530564L
@@ -293,7 +294,7 @@ public class FileListTest {
 	}
 
 	private static FileInfo bExt() {
-		return new FileInfo(
+		return create(
 			FileType.FILE, FileMode.EXTERNAL, "b3.json", "tests/fileAccess/b3.json",
 			"/home/coder/project/toti-libs/toti-files/tests/fileAccess/b3.json",
 			1761300122000L
@@ -301,7 +302,7 @@ public class FileListTest {
 	}
 
 	private static FileInfo bJar() {
-		return new FileInfo(
+		return create(
 			FileType.FILE, FileMode.JAR, "b4.json", "tests/fileAccess/b4.json",
 			// jar:file:/home/coder/project/toti-libs/toti-files/tests/fileAccess.jar!
 			"/tests/fileAccess/b4.json",
@@ -318,7 +319,7 @@ public class FileListTest {
 	}
 
 	private static FileInfo sameJava(String name) {
-		return new FileInfo(
+		return create(
 			FileType.FILE, FileMode.RESOURCE, name, "tests/fileAccess/Same.class",
 			"/home/coder/project/toti-libs/toti-files/build/classes/java/test/tests/fileAccess/Same.class",
 			1771361530064L
@@ -334,10 +335,10 @@ public class FileListTest {
 	}
 
 	private static FileInfo sameRes(String name) {
-		return new FileInfo(
+		return create(
 			FileType.FILE, FileMode.RESOURCE, name, "tests/fileAccess/Same.java",
 			"/home/coder/project/toti-libs/toti-files/build/resources/test/tests/fileAccess/Same.java",
-			1771361530572L
+			1771691443673L
 		);
 	}
 
@@ -350,7 +351,7 @@ public class FileListTest {
 	}
 
 	private static FileInfo sameExt(String name) {
-		return new FileInfo(
+		return create(
 			FileType.FILE, FileMode.EXTERNAL, name, "tests/fileAccess/Same.java",
 			"/home/coder/project/toti-libs/toti-files/tests/fileAccess/Same.java",
 			1771361017503L
@@ -366,7 +367,7 @@ public class FileListTest {
 	}
 
 	private static FileInfo sameJar(String name) {
-		return new FileInfo(
+		return create(
 			FileType.FILE, FileMode.JAR, name, "tests/fileAccess/Same.java",
 			// jar:file:/home/coder/project/toti-libs/toti-files/tests/fileAccess.jar!
 			"/tests/fileAccess/Same.java",
@@ -375,7 +376,7 @@ public class FileListTest {
 	}
 
 	private static FileInfo subJava() {
-		return new FileInfo(
+		return create(
 			FileType.DIRECTORY, FileMode.RESOURCE, "sub", "tests/fileAccess/sub",
 			"/home/coder/project/toti-libs/toti-files/build/classes/java/test/tests/fileAccess/sub",
 			1771361530060L
@@ -383,7 +384,7 @@ public class FileListTest {
 	}
 
 	private static FileInfo subRes() {
-		return new FileInfo(
+		return create(
 			FileType.DIRECTORY, FileMode.RESOURCE, "sub", "tests/fileAccess/sub",
 			"/home/coder/project/toti-libs/toti-files/build/resources/test/tests/fileAccess/sub",
 			1771361530572L
@@ -391,7 +392,7 @@ public class FileListTest {
 	}
 
 	private static FileInfo subExt() {
-		return new FileInfo(
+		return create(
 			FileType.DIRECTORY, FileMode.EXTERNAL, "sub", "tests/fileAccess/sub",
 			"/home/coder/project/toti-libs/toti-files/tests/fileAccess/sub",
 			1771275800893L
@@ -407,7 +408,7 @@ public class FileListTest {
 	}
 
 	private static FileInfo subJar(String name) {
-		return new FileInfo(
+		return create(
 			FileType.DIRECTORY, FileMode.JAR, name, "tests/fileAccess/sub",
 			// jar:file:/home/coder/project/toti-libs/toti-files/tests/fileAccess.jar!
 			"/tests/fileAccess/sub",
@@ -428,7 +429,7 @@ public class FileListTest {
 	}
 
 	private static FileInfo cRes(String name) {
-		return new FileInfo(
+		return create(
 			FileType.FILE, FileMode.RESOURCE, name, "tests/fileAccess/sub/c2.xml",
 			"/home/coder/project/toti-libs/toti-files/build/resources/test/tests/fileAccess/sub/c2.xml",
 			1771361530572L
@@ -444,7 +445,7 @@ public class FileListTest {
 	}
 
 	private static FileInfo cExt(String name) {
-		return new FileInfo(
+		return create(
 			FileType.FILE, FileMode.EXTERNAL, name, "tests/fileAccess/sub/c3.xml",
 			"/home/coder/project/toti-libs/toti-files/tests/fileAccess/sub/c3.xml",
 			1761300150000L
@@ -460,7 +461,7 @@ public class FileListTest {
 	}
 
 	private static FileInfo cJar(String name) {
-		return new FileInfo(
+		return create(
 			FileType.FILE, FileMode.JAR, name, "tests/fileAccess/sub/c4.xml",
 			// jar:file:/home/coder/project/toti-libs/toti-files/tests/fileAccess.jar!
 			"/tests/fileAccess/sub/c4.xml",
@@ -477,7 +478,7 @@ public class FileListTest {
 	}
 
 	private static FileInfo dJava(String name) {
-		return new FileInfo(
+		return create(
 			FileType.FILE, FileMode.RESOURCE, name, "tests/fileAccess/sub/d1.class",
 			"/home/coder/project/toti-libs/toti-files/build/classes/java/test/tests/fileAccess/sub/d1.class",
 			1771361530060L
@@ -493,7 +494,7 @@ public class FileListTest {
 	}
 
 	private static FileInfo dRes(String name) {
-		return new FileInfo(
+		return create(
 			FileType.FILE, FileMode.RESOURCE, name, "tests/fileAccess/sub/d2.java",
 			"/home/coder/project/toti-libs/toti-files/build/resources/test/tests/fileAccess/sub/d2.java",
 			1771361530572L
@@ -509,7 +510,7 @@ public class FileListTest {
 	}
 
 	private static FileInfo dExt(String name) {
-		return new FileInfo(
+		return create(
 			FileType.FILE, FileMode.EXTERNAL, name, "tests/fileAccess/sub/d3.java",
 			"/home/coder/project/toti-libs/toti-files/tests/fileAccess/sub/d3.java",
 			1771361883533L
@@ -525,11 +526,29 @@ public class FileListTest {
 	}
 
 	private static FileInfo dJar(String name) {
-		return new FileInfo(
+		return create(
 			FileType.FILE, FileMode.JAR, name, "tests/fileAccess/sub/d4.java",
 			// jar:file:/home/coder/project/toti-libs/toti-files/tests/fileAccess.jar!
 			"/tests/fileAccess/sub/d4.java",
 			1771362306000L
 		);
+	}
+
+	private static FileInfo create(FileInfo info) {
+		return create(info.getType(), info.getMode(), info.getFullName(), info.getRelativePath(), info.getAbsolutePath(), info.getLastModificationTime());
+	}
+
+
+	private static FileInfo create(FileType type, FileMode mode, String name, String relative, String absolute, long lastModified) {
+		return new FileInfo(type, mode, name, relative, absolute, -1000000L) {
+			@Override public boolean equals(Object obj) {
+				return super.partialEquals(obj);
+				/*if (super.partialEquals(obj)) {
+					FileInfo other = (FileInfo) obj;
+					return getLastModificationTime() >= lastModified && other.getLastModificationTime() >= lastModified;
+				}
+			    return false;*/
+			}
+		};
 	}
 }

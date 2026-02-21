@@ -1,15 +1,37 @@
 package toti.lib.files.access;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import toti.lib.files.text.Text;
 
 public class FileInfoTest {
+
+	@ParameterizedTest
+	@MethodSource("testCreateInputStream")
+	public void testCreateInputStream(String path, String expected) throws IOException {
+		FileInfo file = FileList.get(path, false, SearchFilter.FILES_ONLY).get(0);
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(file.createInputStream()))) {
+			String content = br.readLine();
+			assertEquals(expected, content);
+		}
+	}
+
+	public static Object[] testCreateInputStream() {
+		return new Object[] {
+			new Object[] { "tests/fileAccess/a2.txt", "Content of a2" },
+			new Object[] { "tests/fileAccess/a3.txt", "Content of a3" },
+			new Object[] { "tests/fileAccess/a4.txt", "Content of a4" }
+		};
+	}
 
 	@Test
 	public void testGetInputStream() throws IOException {
