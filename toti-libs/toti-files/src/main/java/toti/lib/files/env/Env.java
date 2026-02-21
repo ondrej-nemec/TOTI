@@ -10,9 +10,9 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-import toti.lib.common.functions.FileExtension;
 import toti.lib.common.structures.dictionary.Scalar;
 import toti.lib.common.structures.dictionary.ScalarStructure;
+import toti.lib.files.access.FileUtils;
 
 public class Env implements ScalarStructure<Object> {
 
@@ -23,12 +23,12 @@ public class Env implements ScalarStructure<Object> {
 	}
 
 	public static Env load(String fileName) throws IOException {
-		FileExtension ext = new FileExtension(fileName);
-		return new Env(switch (ext.getExtension()) {
+		String ext = FileUtils.parseName(fileName).extension();
+		return new Env(switch (ext) {
 			case "json" -> JsonEnvSource.parse(fileName);
 			case "xml" -> XmlEnvSource.parse(fileName);
 			case "properties" -> PropertiesEnvSource.parse(fileName);
-			default -> throw new RuntimeException("Unsupported extension type: " + ext.getExtension());
+			default -> throw new RuntimeException("Unsupported extension type: " + ext);
 		});
 	}
 

@@ -6,15 +6,15 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import toti.lib.common.functions.InputStreamLoader;
 import toti.lib.common.structures.DictionaryValue;
+import toti.lib.files.access.FileUtils;
 import toti.lib.files.json.JsonReader;
 import toti.lib.files.text.Text;
 
 public class JsonEnvSource {
 
 	public static Map<Object, Value> parse(String path) throws IOException {
-		String json = Text.get().read(br->br.asString(), InputStreamLoader.createInputStream(JsonEnvSource.class, path));
+		String json = Text.get().read(br->br.asString(), FileUtils.createInputStream(path));
 		DictionaryValue data = new DictionaryValue(new JsonReader().read(json));
 		return parse(data).getMap();
 	}

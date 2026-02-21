@@ -14,7 +14,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
-import toti.lib.common.functions.InputStreamLoader;
+import toti.lib.files.access.FileUtils;
 
 public class SSL {
 	
@@ -74,7 +74,7 @@ public class SSL {
 	
 	private static KeyStore loadStore(String storePath, String password, String type) throws Exception {
 		KeyStore store = KeyStore.getInstance(type); // KeyStore.getDefaultType()
-		InputStream storeIS = InputStreamLoader.createInputStream(SSL.class, storePath);
+		InputStream storeIS = FileUtils.createInputStream(storePath);
 		store.load(storeIS, password.toCharArray());
 		storeIS.close();
 		return store;

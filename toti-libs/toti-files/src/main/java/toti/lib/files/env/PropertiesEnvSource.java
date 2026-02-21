@@ -7,13 +7,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.function.Function;
 
-import toti.lib.common.functions.PropertiesLoader;
 import toti.lib.common.structures.DictionaryValue;
+import toti.lib.files.access.FileUtils;
 
 public class PropertiesEnvSource {
 
 	public static Map<Object, Value> parse(String path) throws IOException {
-		Properties prop = PropertiesLoader.loadProperties(path);
+		Properties prop = FileUtils.loadProperties(path);
 		Map<Object, Value> result = new HashMap<>();
 		prop.forEach((raw, value)->{
 			/*

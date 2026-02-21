@@ -5,9 +5,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Objects;
 
-import toti.lib.common.functions.InputStreamLoader;
-import toti.lib.files.text.Text;
 import toti.lib.database.querybuilder.QueryBuilder;
+import toti.lib.files.access.FileUtils;
+import toti.lib.files.text.Text;
 
 public class SqlMigrationFile implements MigrationFile {
 	
@@ -36,7 +36,7 @@ public class SqlMigrationFile implements MigrationFile {
 	}
 
 	protected String loadContent(boolean isRevert) throws IOException {
-		String sql = Text.get().read((br)->br.asString(), InputStreamLoader.createInputStream(getClass(), path));
+		String sql = Text.get().read((br)->br.asString(), FileUtils.createInputStream(path));
 		
 		String[] mig = sql.split("--- REVERT ---");
 		if (isRevert && mig.length > 1) {

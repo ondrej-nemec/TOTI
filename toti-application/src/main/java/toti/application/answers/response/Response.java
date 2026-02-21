@@ -2,7 +2,7 @@ package toti.application.answers.response;
 
 import toti.application.answers.Headers;
 import toti.application.answers.request.Identity;
-import toti.lib.common.functions.FileExtension;
+import toti.lib.files.access.FileUtils;
 import toti.lib.tcpip.enums.StatusCode;
 import toti.lib.tcpip.structures.WebSocket;
 
@@ -77,7 +77,7 @@ public interface Response {
 		if (fileName == null) {
 			return null;
 		}
-		String ext = new FileExtension(fileName).getExtension();
+		String ext = FileUtils.parseName(fileName).extension();
 		// https://stackoverflow.com/a/48704300
 		switch (ext) {
 		// TODO IMPROVE more https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types

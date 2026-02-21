@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 import toti.application.answers.Headers;
 import toti.application.answers.request.Identity;
-import toti.lib.common.functions.InputStreamLoader;
+import toti.lib.files.access.FileUtils;
 import toti.lib.tcpip.enums.StatusCode;
 
 public class FileResponse implements Response {
@@ -53,7 +53,7 @@ public class FileResponse implements Response {
 	
 	private static byte[] binaryContent(String name) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try (InputStream is = InputStreamLoader.createInputStream(FileResponse.class, name)) {
+		try (InputStream is = FileUtils.createInputStream(name)) {
 			byte[] b = new byte[1024];
 			int readed;
 			while((readed = is.read(b, 0, b.length)) != -1) {

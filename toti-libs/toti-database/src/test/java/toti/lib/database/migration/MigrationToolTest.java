@@ -194,7 +194,7 @@ public class MigrationToolTest {
 			"Java_compiled__in_dir.java",
 			"Java_not_compiled__in_dir.java",
 			"not__a-migration.txt",
-			"sql__in_dir.sql"
+			"sql__in_dir.sql"*/
 		), loader);
 		
 		try {

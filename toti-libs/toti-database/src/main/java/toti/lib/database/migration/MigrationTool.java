@@ -10,16 +10,17 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.Logger;
 
+import toti.lib.common.functions.compiling.Compiler;
+import toti.lib.common.structures.SortedMap;
 import toti.lib.database.migration.migrations.JavaMigrationFile;
 import toti.lib.database.migration.migrations.MigrationInternal;
 import toti.lib.database.migration.migrations.SqlMigrationFile;
 import toti.lib.database.querybuilder.QueryBuilder;
 import toti.lib.database.querybuilder.enums.ColumnSetting;
 import toti.lib.database.querybuilder.enums.ColumnType;
-import toti.lib.common.functions.FileExtension;
-import toti.lib.common.functions.FilesList;
-import toti.lib.common.functions.compiling.Compiler;
-import toti.lib.common.structures.SortedMap;
+import toti.lib.files.access.FileInfo;
+import toti.lib.files.access.FileList;
+import toti.lib.files.access.SearchFilter;
 
 public class MigrationTool {
 
@@ -105,10 +106,10 @@ public class MigrationTool {
 	// TODO test
 	protected void process(List<String> folders, boolean isRevert, QueryBuilder builder, MigrationProcess process) throws Exception {
 		for (String folder : folders) {
-			FilesList filesList = FilesList.get(folder, false);
+			List<FileInfo> filesList = FileList.get(folder, false, SearchFilter.FILES_ONLY);
 			List<MigrationInternal> toMigrate = getFowardMigrations(
 				processFiles(
-					folder, filesList.getFiles(), Thread.currentThread().getContextClassLoader()
+					folder, filesList, Thread.currentThread().getContextClassLoader()
 				),
 				selectMigrations(builder, folder)
 			);
@@ -185,34 +186,33 @@ public class MigrationTool {
 	
 	/***********************/
 
-	protected SortedMap<String, MigrationInternal> processFiles(String folder, List<String> files, ClassLoader loader) throws MigrationException {
+	protected SortedMap<String, MigrationInternal> processFiles(String folder, List<FileInfo> files, ClassLoader loader) throws MigrationException {
 		// JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		Compiler compiler = new Compiler(logger);
 		SortedMap<String, MigrationInternal> loadedFiles = new SortedMap<>();
-		for (String fileName : files) {
-			File file = new File(folder + "/" + fileName);
-			FileExtension fe = new FileExtension(fileName);
+		for (FileInfo fileInfo : files) {
+			File file = new File(folder + "/" + fileInfo);
 			
-			MigrationInternal migration = createMigration(fe.getName(), folder);
-			switch (fe.getExtension()) {
+			MigrationInternal migration = createMigration(fileInfo, folder);
+			switch (fileInfo.getExtension()) {
 				case "java":
 					if (loadedFiles.containsKey(migration.getId())) {
 						// if folder contains .class and .java files
 						break;
 					}
 					// compiler.run(null, null, null, file.getPath()); // null - stream where log is written
-					Optional<String> res = compiler.compile(file, folder, fileName);
+					Optional<String> res = compiler.compile(file, folder, fileInfo.getFullName());
 					if (res.isPresent()) {
 						throw new MigrationException(res.get());
 					}
 					// continue with "class" logic
 				case "class":
 					migration.setFile(new JavaMigrationFile(
-						parseJavaPath(folder), fe.getName(), loader
+						parseJavaPath(folder), fileInfo.getName(), loader
 					));;
 					break;
 				case "sql":
-					migration.setFile(new SqlMigrationFile(folder + "/" + fileName));
+					migration.setFile(new SqlMigrationFile(folder + "/" + fileInfo));
 					break;
 				default: break;
 			}
@@ -223,18 +223,18 @@ public class MigrationTool {
 		return loadedFiles;
 	}
 
-	protected MigrationInternal createMigration(String name, String module) throws MigrationException {
-		if (!name.contains(SEPARATOR)) {
+	protected MigrationInternal createMigration(FileInfo fileInfo, String module) throws MigrationException {
+		if (!fileInfo.getFullName().contains(SEPARATOR)) {
 			throw new MigrationException(
-				"File name is in incorrect format: " + name + ", separator is required: " + SEPARATOR
+				"File name is in incorrect format: " + fileInfo.getFullName() + ", separator is required: " + SEPARATOR
 			);
 		}
-		String[] aux = new FileExtension(name).getName().split(SEPARATOR);
+		String[] aux = fileInfo.getName().split(SEPARATOR);
 		if (aux.length == 2) {
 			return new MigrationInternal(aux[0], aux[1], module);
 		} else {
 			throw new MigrationException(
-				"File name is in incorrect format: " + name + ", required format: "
+				"File name is in incorrect format: " + fileInfo.getFullName() + ", required format: "
 				+ String.format("<id>%s<description>", SEPARATOR)
 			);
 		}
