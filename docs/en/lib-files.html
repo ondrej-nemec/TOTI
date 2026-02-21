@@ -3,6 +3,33 @@
 
 <p>Package provides reading and writing from/to plaintext, binary or some structured files.</p>
 
+<h2>Access</h2>
+
+<p>Basic access to files</p>
+
+<h3>FileList</h3>
+
+<p>
+	Give list of files on given location. Search path is always relative to application root. Class is searching in compiled jar, too.
+</p>
+
+<pre><code>
+	FileList.get(searchPhrase, useRecursiveSearch, filter);
+</code></pre>
+
+<p>Search can be recursive (if directory is found, search inside).</p>
+
+<p>Filter allows search for only files, only directories or for both.</p>
+
+
+<h3>FileUtils</h3>
+
+<ul>
+	<li><code>parseName(fileName)</code>: split filename to name and extension</li>
+	<li><code>createInputStream(path)</code>: create input stream from given path. Path is relative to application root. External file or compiled in jar can be used.</li>
+	<li><code>loadProperties(path)</code>: load file into <code>Properties</code></li>
+</ul>
+
 
 <h2>Text</h2>
 

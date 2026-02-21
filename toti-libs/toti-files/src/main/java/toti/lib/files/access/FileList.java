@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public class FileSystem {
+public class FileList {
 
 	public static List<FileInfo> get(String search, boolean recursive, SearchFilter filterFileType) throws IOException {
 		if (search == null) {
@@ -95,18 +95,15 @@ public class FileSystem {
 		} else {
 			String absolutePath = path.toAbsolutePath().toString().replace("\\", "/");
 			int index = absolutePath.indexOf(search);
-			if (index < 0) {
-				// TODO
-			}
-			String relativePath = "";
+			/*String relativePath = "";
 			int relPathStartIndex = index + search.length() + 1;
 			if (relPathStartIndex < absolutePath.length()) {
 				relativePath = absolutePath.substring(relPathStartIndex);
-			}
+			}*/
 			String name = path.getFileName().toString();
 			result.add(new FileInfo(
 				isDirectory ? FileType.DIRECTORY : (isFile ? FileType.FILE : FileType.UNKNOWN),
-				mode, name, relativePath, absolutePath, Files.getLastModifiedTime(path).toMillis()
+				mode, name, absolutePath.substring(index), absolutePath, Files.getLastModifiedTime(path).toMillis()
 			));
 		}
 		if (isDirectory && recursive) {

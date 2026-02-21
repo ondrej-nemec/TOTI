@@ -1,6 +1,8 @@
 package toti.lib.files.access;
 
-import toti.lib.common.functions.FileExtension;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class FileInfo {
 
@@ -25,9 +27,9 @@ public class FileInfo {
 		this.fullName = name;
 		// TODO this need tests
 	//	this.search = relativePath.replace(name, "");
-		FileExtension ext = new FileExtension(name);
-		this.name = ext.getName();
-		this.extension = ext.getExtension();
+		FileName ext = FileUtils.parseName(name);
+		this.name = ext.name();
+		this.extension = ext.extension();
     }
 
 	public String getFullName() {
@@ -66,9 +68,20 @@ public class FileInfo {
 		return type == FileType.FILE;
 	}
 
-	public boolean isInSearchRoot() {
-		return relativePath.equals("") || fullName.equals(relativePath);
+	public InputStream createInputStream() throws IOException {
+		if (!isFile()) {
+			throw new IOException("Path: " + absolutePath + " is no file. Probable it is dirrectory");
+		}
+		System.out.println(mode);
+		System.out.println(relativePath);
+		System.out.println(absolutePath);
+		System.out.println();
+		if (mode == FileMode.JAR || mode == FileMode.RESOURCE) {
+			return Thread.currentThread().getContextClassLoader().getResourceAsStream(relativePath);
+		}
+		return new FileInputStream(relativePath);
 	}
+
 
 	@Override
 	public int hashCode() {
