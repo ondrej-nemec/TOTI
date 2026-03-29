@@ -11,18 +11,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 public class BaseTemplateTest {
-
-	private final TemplateContainer templateContainer;
 	
 	private final List<Tag> tags;
 	private final List<Parameter> parameters;
 	
 	public BaseTemplateTest() {
-		this(new TemplateContainer() {}, new LinkedList<>(), new LinkedList<>());
+		this(new LinkedList<>(), new LinkedList<>());
 	}
 	
-	public BaseTemplateTest(TemplateContainer templateContainer, List<Tag> tags, List<Parameter> parameters) {
-		this.templateContainer = templateContainer;
+	public BaseTemplateTest(List<Tag> tags, List<Parameter> parameters) {
 		this.tags = tags;
 		this.parameters = parameters;
 	}
@@ -34,7 +31,7 @@ public class BaseTemplateTest {
 			"temp", modules, false, false, tags, parameters, mock(Logger.class)
 		);
 		Template template = templateFactory.getTemplate(module, templatePath);
-		String actual = template.create(templateFactory, variables, templateContainer);
+		String actual = template.create(templateFactory, variables);
 		assertEquals(expected, actual);
 	}
 

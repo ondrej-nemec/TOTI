@@ -11,19 +11,11 @@ public interface Template {
 
 	long getLastModification();
 	
-	default String create(
-			TemplateFactory templateFactory, 
-			Map<String, Object>variables, 
-			TemplateContainer data) throws Exception {
-		return _create(templateFactory, variables, data, new LinkedList<>(), 0);
+	default String create(TemplateFactory templateFactory, Map<String, Object>variables) throws Exception {
+		return _create(templateFactory, variables, new LinkedList<>(), 0);
 	}
 	
-	String _create(
-			TemplateFactory templateFactory, 
-			Map<String, Object>variables, 
-			TemplateContainer data,
-			LinkedList<TagNode> nodes, 
-			int parent) throws Exception;
+	String _create(TemplateFactory templateFactory, Map<String, Object>variables, LinkedList<TagNode> nodes, int parent) throws Exception;
 
 	//@Deprecated
 	static String escapeVariable(Object variable) {

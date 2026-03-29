@@ -17,7 +17,6 @@ import toti.lib.files.text.Text;
 import toti.lib.templating.Parameter;
 import toti.lib.templating.Tag;
 import toti.lib.templating.Template;
-import toti.lib.templating.TemplateContainer;
 import toti.lib.templating.TemplateException;
 import toti.lib.templating.TemplateFactory;
 import toti.lib.templating.TemplateParameters;
@@ -58,7 +57,6 @@ public class TemplateParser {
 				+ String.format("import %s;", TagNode.class.getCanonicalName())
 				+ String.format("import %s;", TemplateException.class.getCanonicalName())
 				+ String.format("import %s;", TemplateParameters.class.getCanonicalName())
-				+ String.format("import %s;", TemplateContainer.class.getCanonicalName())
 				
 				+ String.format("public class %s implements Template, TemplateParameters{", file.className())
 					+ "private LinkedList<TagNode> nodes = new LinkedList<>();"
@@ -77,7 +75,6 @@ public class TemplateParser {
 				+ "public String _create("
 					+ "TemplateFactory templateFactory,"
 					+ "Map<String, Object>variables,"
-					+ "TemplateContainer container,"
 					+ "LinkedList<TagNode> nodes,"
 					+ "int parent"
 			+ ")throws Exception{";
@@ -89,7 +86,7 @@ public class TemplateParser {
 			bw.write("Template layout=null;this.nodes = nodes;initNode(variables);");
 			loadFile(file.templateFullPath(), bw.getBufferedWriter());
 			bw.write("if(layout!=null){"
-					+ "layout._create(templateFactory,variables,container,this.nodes,this.hashCode());"
+					+ "layout._create(templateFactory,variables,this.nodes,this.hashCode());"
 					+ "}");
 			bw.write("return flushNode().getBuilder().toString();");
 			bw.write(clazz2);
