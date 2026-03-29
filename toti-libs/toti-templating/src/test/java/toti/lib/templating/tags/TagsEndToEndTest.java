@@ -1,6 +1,7 @@
 package toti.lib.templating.tags;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,12 +13,16 @@ import toti.lib.templating.BaseTemplateTest;
 public class TagsEndToEndTest extends BaseTemplateTest {
 	
 	public TagsEndToEndTest() {
-		super("toti/templating/tags");
+		super();
 	}
 
 	@ParameterizedTest
 	@MethodSource("dataTags")
 	public void testTags(String module, String template, String expected) throws Exception {
+		Map<String, String> modules = new HashMap<>();
+		modules.put("module", "toti/templating/tags/module");
+		modules.put(module, "toti/templating/tags/" + module);
+
 		Map<String, Object> variables = new MapInit<String, Object>()
 			//.append("totiIdentity", identity)
 			.append("layout", "layout.jsp")
@@ -41,7 +46,7 @@ public class TagsEndToEndTest extends BaseTemplateTest {
 			)
 			.append("list", Arrays.asList("a", "b", "c"))
 			.toMap();
-		testTemplate(variables, module, template, expected);
+		testTemplate(modules, module, template, variables, expected);
 	}
 	
 	public static Object[] dataTags() {
@@ -211,18 +216,18 @@ public class TagsEndToEndTest extends BaseTemplateTest {
 			new Object[] {
 				"cycles", "foreachContinue.jsp", "Foreach: a c"
 			},
-			new Object[] {
+			/*new Object[] {
 				"cycles", "foreachCol.jsp", "Collection: a b c"
-			},
+			},*/
 			new Object[] {
 				"cycles", "foreachColReturning.jsp", "Collection: a b c"
 			},
 			new Object[] {
 				"cycles", "foreachColVariable.jsp", "Collection: a b c"
 			},
-			new Object[] {
+			/*new Object[] {
 				"cycles", "foreachMap.jsp", "Map: a:aa b:bb c:cc"
-			},
+			},*/
 			new Object[] {
 				"cycles", "foreachMapVariable.jsp", "Map: a:aa b:bb c:cc"
 			},

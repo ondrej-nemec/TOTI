@@ -11,8 +11,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import toti.lib.templating.Tag;
 import toti.lib.templating.TagVariableMode;
-import toti.lib.templating.parsing.ParsingInfo;
-import toti.lib.templating.parsing.TagParser;
 import toti.lib.templating.parsing.enums.TagType;
 import toti.lib.templating.parsing.structures.TagParserParam;
 
@@ -36,7 +34,7 @@ public class TagParserTest {
 			@Override public String getNotPairCode(Map<String, String> params) { return null; }
 			@Override public String getName() { return tagName; }
 		});
-		TagParser parser = new TagParser(text.charAt(0), tags, new HashMap<>(), new ParsingInfo("", ""));
+		TagParser parser = new TagParser(text.charAt(0), tags, new HashMap<>(), new ParsingInfo(""));
 		assertEquals(finished, ParsingSimulator.simulate(parser, text.substring(1)));
 		assertEquals(type, parser.getTagType());
 		assertEquals(parameters, parser.getParams());

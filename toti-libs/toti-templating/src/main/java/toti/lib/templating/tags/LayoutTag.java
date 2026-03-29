@@ -39,11 +39,11 @@ public class LayoutTag implements Tag {
 			throw new TemplateException("Missing parameter 'path' in 'layout' tag.");
 		}
 		if (params.get("module") == null) {
-			code.append(String.format("layout=templateFactory.getTemplate(\"%s\");", params.get("path")));
+			code.append(String.format("layout=templateFactory.getTemplate(moduleName, \"%s\");", params.get("path")));
 		} else {
 			code.append(String.format(
-				"layout=templateFactory.getModuleTemplate(\"%s\", \"%s\");",
-				params.get("path"), params.get("module")
+				"layout=templateFactory.getTemplate(\"%s\", \"%s\");",
+				params.get("module"), params.get("path")
 			));
 		}
 		code.append("}");

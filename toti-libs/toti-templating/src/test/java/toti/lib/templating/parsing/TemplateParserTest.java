@@ -16,8 +16,6 @@ import toti.lib.common.structures.ThrowingConsumer;
 import toti.lib.templating.Parameter;
 import toti.lib.templating.Tag;
 import toti.lib.templating.TagVariableMode;
-import toti.lib.templating.parsing.ParsingInfo;
-import toti.lib.templating.parsing.TemplateParser;
 
 public class TemplateParserTest {
 	
@@ -32,7 +30,7 @@ public class TemplateParserTest {
 		ThrowingConsumer<String, IOException> bw = (actual)->{
 			assertEquals(expected, actual);
 		};
-		parser.parse(br, bw, new ParsingInfo("", ""));
+		parser.parse(br, bw, new ParsingInfo(""));
 	}
 	
 	public static Object[] dataParseWorks() {

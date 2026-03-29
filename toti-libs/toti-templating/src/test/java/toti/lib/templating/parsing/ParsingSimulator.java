@@ -1,7 +1,5 @@
 package toti.lib.templating.parsing;
 
-import toti.lib.templating.parsing.Parser;
-
 public class ParsingSimulator {
 	
 	public static boolean simulate(Parser parser, String text) {

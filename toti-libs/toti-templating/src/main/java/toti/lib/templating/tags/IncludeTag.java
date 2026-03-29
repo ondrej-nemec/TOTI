@@ -66,11 +66,11 @@ public class IncludeTag implements Tag {
 		});
 		code.append(".toMap());");
 		if (params.get("module") == null) {
-			code.append(String.format("Template temp = templateFactory.getTemplate(\"%s\");", params.get("file")));
+			code.append(String.format("Template temp = templateFactory.getTemplate(moduleName, \"%s\");", params.get("file")));
 		} else {
 			code.append(String.format(
-					"Template temp = templateFactory.getModuleTemplate(\"%s\", \"%s\");",
-					params.get("file"), params.get("module")
+					"Template temp = templateFactory.getTemplate(\"%s\", \"%s\");",
+					params.get("module"), params.get("file")
 			));
 		}
 		code.append("temp._create(templateFactory,variables,container,this.nodes,this.hashCode());");

@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import toti.lib.templating.parsing.ParsingInfo;
-import toti.lib.templating.parsing.VariableParser;
 import toti.lib.templating.parsing.enums.VariableSource;
 
 public class VariableParserTest {
@@ -42,7 +40,7 @@ public class VariableParserTest {
 	}
 
 	private VariableParser parseText(String text, int position) {
-		VariableParser parser = new VariableParser(position, new ParsingInfo("", ""));
+		VariableParser parser = new VariableParser(position, new ParsingInfo(""));
 		ParsingSimulator.simulate(parser, text);
 		return parser;
 	}
@@ -50,7 +48,7 @@ public class VariableParserTest {
 	@ParameterizedTest
 	@MethodSource("dataParseTextWorks")
 	public void testParseTextWorks(String template, boolean finished, String variableName, String expectedCalling, boolean escape) throws IOException {
-		VariableParser parser = new VariableParser(0, new ParsingInfo("", ""));
+		VariableParser parser = new VariableParser(0, new ParsingInfo(""));
 		assertEquals(finished, ParsingSimulator.simulate(parser, template));
 		assertEquals(variableName, parser.getVariableName());
 		assertEquals(expectedCalling, parser.getCalling(VariableSource.HTML));

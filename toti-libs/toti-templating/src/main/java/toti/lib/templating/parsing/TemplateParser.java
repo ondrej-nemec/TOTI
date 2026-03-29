@@ -2,18 +2,17 @@ package toti.lib.templating.parsing;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import toti.lib.common.functions.InputStreamLoader;
 import toti.lib.common.structures.DictionaryValue;
 import toti.lib.common.structures.MapInit;
 import toti.lib.common.structures.ThrowingConsumer;
 import toti.lib.common.structures.ThrowingSupplier;
+import toti.lib.files.access.FileUtils;
 import toti.lib.files.text.Text;
 import toti.lib.templating.Parameter;
 import toti.lib.templating.Tag;
@@ -22,9 +21,9 @@ import toti.lib.templating.TemplateContainer;
 import toti.lib.templating.TemplateException;
 import toti.lib.templating.TemplateFactory;
 import toti.lib.templating.TemplateParameters;
-import toti.lib.templating.TemplateProfiler;
 import toti.lib.templating.parsing.enums.ParserType;
 import toti.lib.templating.parsing.structures.TagNode;
+import toti.lib.templating.structures.TemplateFile;
 
 /** version 2.1 */
 public class TemplateParser {
@@ -44,15 +43,8 @@ public class TemplateParser {
 		this.minimalize = minimalize;
 	}
 	
-	public String createTempCache(
-			String namespace,
-			String className,
-			String fileName, 
-			String tempPath,
-			String module,
-			long modificationTime,
-			String templatePath, String templateFile) throws IOException {
-		String preClass = namespace.length() == 0 ? "%s" : "package %s;";
+	public String createTempCache(TemplateFile file, String tempDirPath) throws IOException {
+		String preClass = file.namespace().isEmpty() ? "" : "package " + file.namespace() + ";";
 		String clazz1 = preClass
 				+ String.format("import %s;", Map.class.getCanonicalName())
 				+ String.format("import %s;", HashMap.class.getCanonicalName())
@@ -61,23 +53,16 @@ public class TemplateParser {
 				+ String.format("import %s;", ThrowingSupplier.class.getCanonicalName())
 				+ String.format("import %s;", DictionaryValue.class.getCanonicalName())
 				+ String.format("import %s;", MapInit.class.getCanonicalName())
-			//	+ String.format("import %s;", Translator.class.getCanonicalName())
 				+ String.format("import %s;", TemplateFactory.class.getCanonicalName())
 				+ String.format("import %s;", Template.class.getCanonicalName())
 				+ String.format("import %s;", TagNode.class.getCanonicalName())
 				+ String.format("import %s;", TemplateException.class.getCanonicalName())
 				+ String.format("import %s;", TemplateParameters.class.getCanonicalName())
-				+ String.format("import %s;", TemplateProfiler.class.getCanonicalName())
 				+ String.format("import %s;", TemplateContainer.class.getCanonicalName())
 				
-				+ "public class %s implements Template, TemplateParameters{"
+				+ String.format("public class %s implements Template, TemplateParameters{", file.className())
 					+ "private LinkedList<TagNode> nodes = new LinkedList<>();"
-				
-					+ "private final TemplateProfiler profiler;"
-					+ "public %s(TemplateProfiler profiler) {"
-						+ "this.profiler = profiler;"
-					+ "}"
-				
+					+ String.format("private final String moduleName = \"%s\";", file.moduleName())
 				+ "private void write(Object data) {nodes.getLast().getBuilder().append(data);}"
 				+ "public void addVariable(String name, Object value) {nodes.getLast().getVariables().put(name, value);}"
 				+ "public Object getVariable(String name) {return nodes.getLast().getVariables().get(name);}"
@@ -88,7 +73,7 @@ public class TemplateParser {
 				+ "private void initNode(Map<String, Object> variables) {Map<String, Object> params = new HashMap<>();Map<String, ThrowingConsumer<Map<String, Object>, Exception>> blocks = new HashMap<>();if (nodes.size() > 0) {params.putAll(nodes.getLast().getVariables());blocks.putAll(nodes.getLast().getBlocks());}if (variables != null) {params.putAll(variables);}nodes.add(new TagNode(params, blocks));}"
 				+ "private TagNode flushNode() {TagNode node = nodes.removeLast();if (nodes.size() > 0) {write(node.getBuilder().toString());nodes.getLast().updateVariables(node);}return node;}"
 								
-				+ "public long getLastModification(){return %sL;}"
+				+ String.format("public long getLastModification(){return %sL;}", file.lastModification())
 				+ "public String _create("
 					+ "TemplateFactory templateFactory,"
 					+ "Map<String, Object>variables,"
@@ -97,24 +82,12 @@ public class TemplateParser {
 					+ "int parent"
 			+ ")throws Exception{";
 		String clazz2 = "}}";
-		String tempFile = tempPath + "/" + namespace + "/" + className + ".java";
+		String tempFile = tempDirPath + "/" + file.tempFileRelativeFolder() + "/" + file.className() + ".java";
 		
 		Text.get().write((bw)->{
-			bw.write(String.format(
-				clazz1, 
-				namespace.replaceAll("/", "."), className, 
-				className, modificationTime
-			));
+			bw.write(clazz1);
 			bw.write("Template layout=null;this.nodes = nodes;initNode(variables);");
-			bw.write(String.format(
-				"if(profiler!=null){"
-					+ "profiler.logGetTemplate("
-						+ "\"%s\", \"%s\",\"%s\",nodes.getLast().getVariables(),parent,this.hashCode()"
-					+ ");"
-				+ "}", 
-				module, templatePath, templateFile
-			));
-			loadFile(fileName, bw.getBufferedWriter(), module);
+			loadFile(file.templateFullPath(), bw.getBufferedWriter());
 			bw.write("if(layout!=null){"
 					+ "layout._create(templateFactory,variables,container,this.nodes,this.hashCode());"
 					+ "}");
@@ -125,28 +98,17 @@ public class TemplateParser {
 		return tempFile;
 	}
 	
-	private void loadFile(String fileName, BufferedWriter bw, String module) throws IOException {
-		InputStream is = null;
-		ParsingInfo info = new ParsingInfo(module, fileName);
-		try {
-			is = InputStreamLoader.createInputStream(this.getClass(), module + "/" + fileName);
-			info.setFilePath(module + "/" + fileName);
-		} catch (FileNotFoundException e1) {
-			try {
-				is = InputStreamLoader.createInputStream(this.getClass(), fileName);
-				info.setFilePath(fileName);
-			} catch (FileNotFoundException e2) {
-				throw new FileNotFoundException("Template file not found: " + e1.getMessage() + " OR " + e2.getMessage());
-			}
+	private void loadFile(String fileName, BufferedWriter bw) throws IOException {
+		ParsingInfo info = new ParsingInfo(fileName);
+		try (InputStream is = FileUtils.createInputStream(fileName);) {
+			info.setFilePath(fileName);
+			Text.get().read((br)->{
+				parse(br.getBufferedReader(), (text)->{
+					bw.write(text);
+				}, info);
+				return null;
+			}, is, "utf-8"); // TODO maybe configurable
 		}
-		Text.get().read((br)->{
-			parse(br.getBufferedReader(), (text)->{
-				bw.write(text);
-			}, info);			
-			// TODO read s void
-			return null;
-		}, is, "utf-8"); // TODO maybe configurable
-		is.close();
 	}
 	
 	/*

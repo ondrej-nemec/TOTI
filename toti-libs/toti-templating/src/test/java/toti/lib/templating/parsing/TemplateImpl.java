@@ -32,7 +32,7 @@ public class TemplateImpl implements Template {
 	private void initNode(Map<String, Object> variables) {
 		Map<String, Object> params = new HashMap<>();
 		Map<String, ThrowingConsumer<Map<String, Object>, Exception>> blocks = new HashMap<>();
-		if (nodes.size() > 0) {
+		if (!nodes.isEmpty()) {
 			params.putAll(nodes.getLast().getVariables());
 			blocks.putAll(nodes.getLast().getBlocks());
 		}
@@ -44,7 +44,7 @@ public class TemplateImpl implements Template {
 
 	private TagNode flushNode() {
 		TagNode node = nodes.removeLast();
-		if (nodes.size() > 0) {
+		if (!nodes.isEmpty()) {
 			write(node.getBuilder().toString());
 		}
 		return node;
@@ -52,7 +52,7 @@ public class TemplateImpl implements Template {
 
 	/********/
 	
-	private boolean is;
+	private final boolean is;
 	
 	public TemplateImpl(boolean is) {
 		this.is = is;
@@ -132,15 +132,6 @@ public class TemplateImpl implements Template {
 			return layout._create(templateFactory, variables, container, this.nodes, level+1);
 		}
 		return flushNode().getBuilder().toString();
-	}
-
-	public static void main(String[] args) {
-		TemplateImpl template = new TemplateImpl();
-		try {
-			System.out.println(template.create(null, null, null));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 	
 }
