@@ -35,7 +35,7 @@ public class Compiler {
 	public Optional<String> compile(File javaFile, String namespace, String templateFile) {
 		CompilingDiagnostic diagnostic = new CompilingDiagnostic(namespace, templateFile);
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostic, null, null);
-		List<String> optionList = new ArrayList<String>();
+		List<String> optionList = new ArrayList<>();
 		optionList.addAll(Arrays.asList("-classpath", System.getProperty("java.class.path")));
 		//compiler.run(null, null, tempFile.getPath());
 		/*boolean isOk = */compiler.getTask(
