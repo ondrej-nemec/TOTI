@@ -7,7 +7,6 @@ import java.util.Map;
 import toti.lib.common.structures.MapInit;
 import toti.lib.common.structures.ThrowingConsumer;
 import toti.lib.templating.Template;
-import toti.lib.templating.TemplateFactory;
 import toti.lib.templating.parsing.structures.TagNode;
 
 public class TemplateImpl implements Template {
@@ -69,7 +68,7 @@ public class TemplateImpl implements Template {
 	}
 	
 	@Override
-	public String _create(TemplateFactory templateFactory, Map<String, Object> variables, 
+	public String _create(Map<String, Object> variables, 
 			LinkedList<TagNode> nodes, int level) throws Exception {
 		TemplateImpl layout = null; // TODO template
 		this.nodes = nodes;
@@ -128,7 +127,7 @@ public class TemplateImpl implements Template {
 		}
 		
 		if (layout != null) {
-			return layout._create(templateFactory, variables, this.nodes, level+1);
+			return layout._create(variables, this.nodes, level+1);
 		}
 		return flushNode().getBuilder().toString();
 	}

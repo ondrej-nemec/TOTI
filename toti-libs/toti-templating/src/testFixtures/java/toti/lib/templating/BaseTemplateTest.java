@@ -31,7 +31,7 @@ public class BaseTemplateTest {
 			"temp", modules, false, false, tags, parameters, mock(Logger.class)
 		);
 		Template template = templateFactory.getTemplate(module, templatePath);
-		String actual = template.create(templateFactory, variables);
+		String actual = template.create(variables);
 		assertEquals(expected, actual);
 	}
 

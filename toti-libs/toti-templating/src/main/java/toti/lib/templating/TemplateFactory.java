@@ -132,7 +132,8 @@ public class TemplateFactory {
 				TemplateFactory.class.getClassLoader()
 		)) {
 			try {
-				Template template = (Template)loader.loadClass(file.fullClassName()).getDeclaredConstructor().newInstance();
+				Template template = (Template)loader.loadClass(file.fullClassName())
+					.getDeclaredConstructor(TemplateFactory.class).newInstance(this);
 				if (file.lastModification() != template.getLastModification()) {
 					logger.warn("Class " + file.fullClassName() + " has change, compile " + file.lastModification() + " vs " + template.getLastModification());
 				} else {
@@ -144,7 +145,8 @@ public class TemplateFactory {
 			compileNewCache(file);
 		}
 		try (URLClassLoader loader = new URLClassLoader(new URL[] {cacheDir.toURI().toURL()});) {
-			return (Template)loader.loadClass(file.fullClassName()).getDeclaredConstructor().newInstance();
+			return (Template)loader.loadClass(file.fullClassName())
+				.getDeclaredConstructor(TemplateFactory.class).newInstance(this);
 		}
 	}
 

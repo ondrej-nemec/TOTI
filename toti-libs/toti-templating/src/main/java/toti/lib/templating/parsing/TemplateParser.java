@@ -61,6 +61,10 @@ public class TemplateParser {
 				+ String.format("public class %s implements Template, TemplateParameters{", file.className())
 					+ "private LinkedList<TagNode> nodes = new LinkedList<>();"
 					+ String.format("private final String moduleName = \"%s\";", file.moduleName())
+					+ "private final TemplateFactory templateFactory;"
+				+ String.format("public %s(TemplateFactory templateFactory){", file.className())
+				+ "this.templateFactory=templateFactory;"
+				+ "}"
 				+ "private void write(Object data) {nodes.getLast().getBuilder().append(data);}"
 				+ "public void addVariable(String name, Object value) {nodes.getLast().getVariables().put(name, value);}"
 				+ "public Object getVariable(String name) {return nodes.getLast().getVariables().get(name);}"
@@ -73,7 +77,6 @@ public class TemplateParser {
 								
 				+ String.format("public long getLastModification(){return %sL;}", file.lastModification())
 				+ "public String _create("
-					+ "TemplateFactory templateFactory,"
 					+ "Map<String, Object>variables,"
 					+ "LinkedList<TagNode> nodes,"
 					+ "int parent"
@@ -86,7 +89,7 @@ public class TemplateParser {
 			bw.write("Template layout=null;this.nodes = nodes;initNode(variables);");
 			loadFile(file.templateFullPath(), bw.getBufferedWriter());
 			bw.write("if(layout!=null){"
-					+ "layout._create(templateFactory,variables,this.nodes,this.hashCode());"
+					+ "layout._create(variables,this.nodes,this.hashCode());"
 					+ "}");
 			bw.write("return flushNode().getBuilder().toString();");
 			bw.write(clazz2);
