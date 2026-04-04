@@ -67,9 +67,7 @@ public class HttpClient {
 	public ExchangeResponse send(HttpMethod method, String uri, ThrowingConsumer<ExchangeRequest, Exception> createRequest) throws Exception {
 		ExchangeRequest request = new ExchangeRequest(method, uri, protocol);
 		createRequest.accept(request);
-		Socket con = createSocket(serverUrl, port, ssl, logger);
-		con.setSoTimeout(timeOut);
-		return send(con, request);
+		return send(request);
 	}
 	
 	public ExchangeResponse send(ExchangeRequest request) throws Exception {

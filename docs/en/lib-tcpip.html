@@ -1,3 +1,114 @@
 <h1>Library: TCP/IP</h1>
 
-TODO
+<p>
+	Package provides HTTP(S) client and universal TCP/IP server.
+</p>
+
+TODO dependency
+
+<h2>Client</h2>
+
+<p>
+	Client can be created in two ways:
+</p>
+
+<pre><code>
+String url = "example.com";
+int port = 80;
+Protocol protocol = Protocol.HTTP_1_1;
+Optional&lt;SslCredentials&gt; ssl = Optional.empty();
+int timeOut = 60000;
+Integer maxResponseBodySize = null;
+Logger logger = ...;
+HttpClient client = new HttpClient(url, port, protocol, ssl, timeOut, maxRespnoseBodySize, logger);
+
+// OR
+// port is 80 or 443 if SslCredentials are present
+// other values have default value as defined in first example
+HttpClient client = new HttpClient(url, protocol, ssl, logger);
+</code></pre>
+
+
+<h3>Request</h3>
+
+<p>
+	<code>ExchangeResponse response = client.get("/some/uri", request->{ /* see below */ });</code> <br>
+	<code>ExchangeResponse response = client.post("/some/uri", request->{ /* see below */ });</code> <br>
+	<code>ExchangeResponse response = client.put("/some/uri", request->{ /* see below */ });</code> <br>
+	<code>ExchangeResponse response = client.delete("/some/uri", request->{ /* see below */ });</code> <br>
+	<code>ExchangeResponse response = client.send(HttpMethod.HEAD, "/some/uri", request->{ /* see below */ });</code>
+</p>
+
+<strong>Request callback</strong>
+
+<pre><code>
+	// add header
+	request.addHeader("HeaderName", "HeaderValue");
+
+	// set body: byte content
+	request.setBody(new byte[] { ... });
+	// OR set body: url encoded
+	RequestParameters params = new RequestParameters();
+	params.put("name", "value");
+	request.setBodyUrlencoded(params);
+	// OR set body: FormData
+	RequestParameters params = new RequestParameters();
+	params.put("name", "value");
+	request.setBodyFormData(params);
+
+</code></pre>
+
+<h2>Server</h2>
+
+<p>
+	Server provides request catch and thread pool manage. Every client in halded in own thread.
+</p>
+
+<pre><code>
+	int port = 80;
+	int threadPool = 20; // how many clients can be served at once
+	long readTimeout = 60000L;
+	Optional&lt;SslCredentials&gt; ssl = Optional.empty();
+	String charset = "utf-8";
+	Logger logger = ...;
+	Server server = new Server(port, treadPool, readTimeout, (socket, usedCharset)->{
+		// your own handling
+	}, ssl, charset, logger);
+</code></pre>
+
+<strong>Manage server</strong>
+
+<pre><code>
+	server.start(); // start listening on given port
+	server.pause(); // try pause listening
+	server.stop(); // stop listening, close resources
+</code></pre>
+
+<h2>SSL</h2>
+
+<p>
+	If <code>Optional&lt;SslCredentials&gt;</code> is present, secured connection will be used.
+</p>
+
+<strong>Set certificates.</strong>
+
+<p>
+	All setting is optional.
+</p>
+
+<pre><code>
+	SslCredentials ssl = new SslCredentials();
+
+	// server certificate
+	String storeType = "JKS";
+	ssl.setCertificateStore("/path/to/store", "storePassword", storeType);
+
+	// set SNI validation
+	ssl.setSniHostCheck(false); // default is true
+
+	// set allowed clients
+	ssl.setTrustedClientsStore("/paht/to/store", "storePassword", storeType);
+
+	// set trust all clients
+	ssl.setTrustAll(false); // default value is false, if trusted client store is set, default value change to false
+</code></pre>
