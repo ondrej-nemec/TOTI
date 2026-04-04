@@ -65,7 +65,11 @@ public class Escape {
 	}
 
 	protected String escapeDateAndTime(Object value) {
-		String string = value.toString().replace("[UTC]", "").replace("T", " ").replace("Z", "+00:00");
+		String string = value.toString()
+		.replace("[UTC]", "")
+		.replace("[Etc/UTC]", "")
+		.replace("T", " ")
+		.replace("Z", "+00:00");
 		return escapeString(string);
 	}
 
