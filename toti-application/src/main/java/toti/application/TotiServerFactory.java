@@ -101,7 +101,10 @@ public class TotiServerFactory {
 		httpConfig.setSendServerVersion(false);
 		
 		SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
-		
+		sslContextFactory.setSniRequired(certs.sniHostCheck());
+		if (!certs.sniHostCheck()) {
+			sslContextFactory.setEndpointIdentificationAlgorithm(null);
+		}
 		if (certs.useTrustedClients()) {
 			sslContextFactory.setTrustStorePath(certs.getTrustedClientsStore());
 			sslContextFactory.setTrustStorePassword(certs.getClientTrustStorePassword());
@@ -176,6 +179,10 @@ public class TotiServerFactory {
 					env.getString("key-store-password"),
 					env.getString("key-store-type")
 				);
+				Boolean checkSNI = env.getBoolean("checkSNI");
+				if (checkSNI != null) {
+					cred.setSniHostCheck(checkSNI);
+				}
 			}
 			if (env.getString("trust-store") != null && env.getString("trust-store-password") != null) {
 				cred.setTrustedClientsStore(
