@@ -1,5 +1,6 @@
 package toti.extension.templating.parameters;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.params.ParameterizedTest;
@@ -11,19 +12,21 @@ import toti.lib.common.structures.MapInit;
 public class ParametersEndToEndTest extends BaseTemplateTestExt {
 
 	public ParametersEndToEndTest() {
-		super("toti/extension/templating/parameters");
+		super();
 	}
 	
 	@ParameterizedTest
 	@MethodSource("data")
 	public void test(String template, String expected) throws Exception {
+		Map<String, String> modules = new HashMap<>();
+		modules.put("", "toti/extension/templating/parameters");
 		Map<String, Object> variables = new MapInit<String, Object>()
 			//	.append("totiIdentity", identity)
 				.append("toTranslate", "some.key")
 				.append("fullLink", "toti.templating.parameters.Controller:index")
 				.append("method", "index")
 				.toMap();
-		testTemplate(variables, "", template, expected);
+		testTemplate(modules, "", template, variables, expected);
 	}
 	
 	public static Object[] data() {

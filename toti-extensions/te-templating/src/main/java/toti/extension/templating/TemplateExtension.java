@@ -13,6 +13,7 @@ import toti.application.answers.request.Identity;
 import toti.application.answers.response.ResponseContainer;
 import toti.application.answers.response.ResponseException;
 import toti.application.application.register.Register;
+import toti.application.extensions.Extension;
 import toti.extension.templating.parameters.AltParameter;
 import toti.extension.templating.parameters.HrefParameter;
 import toti.extension.templating.parameters.PlaceholderParameter;
@@ -23,7 +24,6 @@ import toti.extension.templating.tags.IfCurrentTag;
 import toti.extension.templating.tags.LinkTag;
 import toti.extension.templating.tags.PermissionsTag;
 import toti.extension.templating.tags.TranslateTag;
-import toti.application.extensions.Extension;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.files.env.Env;
 import toti.lib.tcpip.structures.RequestParameters;
@@ -84,7 +84,7 @@ public class TemplateExtension implements toti.application.extensions.TemplateEx
 	
 	public void registerModule(String module, String modulePath, String templatePath) {
 		templateFactories.put(module, new TemplateFactory(
-			tempPath, templatePath, module, modulePath,templateFactories,
+			tempPath, new HashMap<>(), // TODO
 			deleteAuxFiles, minimalizeTemplate, tags, parameters, logger
 		));
 	}
@@ -93,8 +93,9 @@ public class TemplateExtension implements toti.application.extensions.TemplateEx
 	public String getTemplate(String module, String filename, Map<String, Object> params, ResponseContainer container) throws Exception {
 		try {
 			TemplateFactory templateFactory = templateFactories.get(module);
-			Template template = templateFactory.getTemplate(filename);
-			return template.create(templateFactory, params, new TemplateResponseContainer(container));
+			Template template = templateFactory.getTemplate(module, filename);
+			// TODO set system variables for link, traslator etc
+			return template.create(params);
 		} catch (Exception e) {
 			throw new ResponseException(e);
 		}
