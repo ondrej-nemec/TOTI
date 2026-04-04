@@ -72,6 +72,10 @@ public class Env implements ScalarStructure<Object> {
 		});
 	}
 
+	public boolean isEmpty() {
+		return data != null && data.isEmpty();
+	}
+
 	@Override
 	public Object getValue(Object name) {
 		Value value = data.get(name);
