@@ -173,27 +173,29 @@ public class TotiServerFactory {
 		}
 		if (env != null) {
 			SslCredentials cred = new SslCredentials();
-			if (env.getString("key-store") != null && env.getString("key-store-password") != null) {
+			Env keyStore = env.getSection("key-store");
+			if (!keyStore.isEmpty()) {
 				cred.setCertificateStore(
-					env.getString("key-store"),
-					env.getString("key-store-password"),
-					env.getString("key-store-type")
+					keyStore.getString("path"),
+					keyStore.getString("password"),
+					keyStore.getString("type")
 				);
-				Boolean checkSNI = env.getBoolean("checkSNI");
+				Boolean checkSNI = keyStore.getBoolean("checkSNI");
 				if (checkSNI != null) {
 					cred.setSniHostCheck(checkSNI);
 				}
 			}
-			if (env.getString("trust-store") != null && env.getString("trust-store-password") != null) {
+			Env trustStore = env.getSection("trust-store");
+			if (!trustStore.isEmpty()) {
 				cred.setTrustedClientsStore(
-					env.getString("trust-store"),
-					env.getString("trust-store-password"),
-					env.getString("trust-store-type")
+					trustStore.getString("path"),
+					trustStore.getString("password"),
+					trustStore.getString("type")
 				);
 			} else {
 				cred.setTrustAll(true);
 			}
-			if (env.getString("trust-store") != null || env.getString("key-store") != null) {
+			if (!keyStore.isEmpty() || !trustStore.isEmpty()) {
 				return Optional.of(cred);
 			}
 		}

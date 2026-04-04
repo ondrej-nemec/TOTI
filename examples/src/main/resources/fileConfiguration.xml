@@ -7,9 +7,12 @@
 		<max-request-size>20480</max-request-size>
 		<charset>UTF-8</charset>
 
-		<key-store>certificates/cert.p12</key-store>
-		<key-store-password>betasecret</key-store-password>
-		<key-store-type>PKCS12</key-store-type>
+		<key-store>
+			<path>certificates/cert.p12</path>
+			<password>betasecret</password>
+			<type>PKCS12</type>
+			<checkSNI>false</checkSNI>
+		</key-store>
 	</http>
 	<applications>
 		<examples>
