@@ -50,15 +50,5 @@ public class VariableDefineTag implements Tag {
 		return String.format("%s=(%s)%s;", define, type, value)
 				+ String.format("addVariable(\"%s\", %s);", name, value);
 	}
-/*
-	private String getValue(String type) {
-		if (type.equals("String") || type.endsWith(".String")) {
-			return "\"%s\"";
-		}
-		if (type.equals("char") || type.equals("Character") || type.endsWith(".Character")) {
-			return "'%s'";
-		}
-		return "%s";
-	}
-*/
+
 }

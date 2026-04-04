@@ -21,7 +21,6 @@ import toti.lib.templating.parsing.TemplateParser;
 import toti.lib.templating.structures.TemplateFile;
 import toti.lib.templating.tags.BlockTag;
 import toti.lib.templating.tags.BreakTag;
-import toti.lib.templating.tags.CallbackTag;
 import toti.lib.templating.tags.CaseTag;
 import toti.lib.templating.tags.CatchTag;
 import toti.lib.templating.tags.ConsoleOutputTag;
@@ -257,26 +256,11 @@ public class TemplateFactory {
 		tags.add(new LayoutTag());
 		tags.add(new BlockTag());
 		tags.add(new IncludeTag());
-	//	tags.add(new ControlTag());
-	//	tags.add(new FormError());
-	//	tags.add(new FormInput());
-	//	tags.add(new FormLabel());
-	//	tags.add(new FormTag());
-	//	tags.add(new GridTag());
-	//	tags.add(new PermissionsTag());
-	//	tags.add(new LinkTag());
-	//	tags.add(new IfCurrentTag());
-		tags.add(new CallbackTag());
 		return tags;
 	}
 	
 	protected List<Parameter> initParameters() {
 		List<Parameter> parameters = new ArrayList<>();
-	//	parameters.add(new HrefParameter());
-	//	parameters.add(new SrcParameter());
-	//	parameters.add(new TitleParameter());
-	//	parameters.add(new PlaceholderParameter());
-	//	parameters.add(new AltParameter());
 		return parameters;
 	}
 }

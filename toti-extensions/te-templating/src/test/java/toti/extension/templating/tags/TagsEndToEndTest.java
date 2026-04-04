@@ -1,5 +1,6 @@
 package toti.extension.templating.tags;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.params.ParameterizedTest;
@@ -11,19 +12,21 @@ import toti.lib.common.structures.MapInit;
 public class TagsEndToEndTest extends BaseTemplateTestExt {
 	
 	public TagsEndToEndTest() {
-		super("toti/extension/templating/tags");
+		super();
 	}
 
 	@ParameterizedTest
 	@MethodSource("dataTags")
 	public void testTags(String template, String expected) throws Exception {
+		Map<String, String> modules = new HashMap<>();
+		modules.put("", "toti/extension/templating/tags");
 		Map<String, Object> variables = new MapInit<String, Object>()
 			.append("currentMethod", "myMethod")
 			.append("securityDoamin", "my-domain")
 			.append("toTranslate", "some.key")
 			.append("transParam", "some.value")
 			.toMap();
-		testTemplate(variables, "", template, expected);
+		testTemplate(modules, "", template, variables, expected);
 	}
 	
 	public static Object[] dataTags() {

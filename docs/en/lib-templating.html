@@ -1,3 +1,447 @@
 <h1>Library: Templating</h1>
 
-TODO
+<p>
+	Creating HTML text from file template (usually <code>jsp</code>). Package suports variables and tags and parameters (see below).
+</p>
+
+TODO dependency
+
+
+<h2>Create</h2>
+
+<h3>Initialize</h3>
+
+<pre><code>
+String tempPath = "/tmp/myApp";
+Map&lt;String, String&gt; modules = new HashMap&lt;&gt;();
+modules.put(moduleName, pathToModuleDir);
+List&lt;Tag&gt; customTags = Arrays.asList(...);
+List&lt;Parameter&gt; customParams = Arrays.asList(...);
+TemplateFactory templateFactory = new TemplateFactory(tempPath, modules, customTags, customParams, logger);
+
+// or add module after initialization
+templateFactory.addModule(moduleName, pathToModuleDir);
+</code></pre>
+
+
+<h2>Generate HTML</h2>
+
+<pre><code>
+Template template = templateFactory.getTemplate(moduleName, templatePathRelativeToModulePath);
+Map&lt;String, String&gt; variables = new HashMap&lt;&gt;();
+String html = template.create(variables);
+</code></pre>
+
+<p>
+	Template file is usually HTML file with variables and some special tags - see below. Template syntax is similar to JSP, the .jsp extension is often used.
+</p>
+
+<h2>Variables</h2>
+
+<p>
+	For using variable in template, package define syntax: <code>${variableName}</code>. A result is ecaped, ff is written to final HTML.
+</p>
+
+<p>
+	Variable can be primite, String, null or any other object.
+</p>
+
+<h3>Non escaped value</h3>
+
+<p>
+	If not escaped value is needed: <code>${variableName|noescape}</code>.
+</p>
+
+<h3>Calling method of variable</h3>
+
+<p>
+	If variable is object, they methods can be called: <code>${variableName.equals(123)}</code> or <code>${variableName.getSometing()}</code>. If object has attributes with getters, this is also posssible: <code>${variableName.something}</code>
+</p>
+
+<p>
+	If variable is object, they methods can be called: <code>${variableName.equals(123)}</code>.
+</p>
+
+<p>
+	Another variable can be used as parameter: <code>${variableName.equals(${anotherVariableName})}</code>.
+</p>
+
+<p>
+	Variable can be casted: <code>${variableName|Integer.class}</code>. Sometimes full class path will be necessary.
+</p>
+
+
+<h2>Code</h2>
+
+<h3>Comment</h3>
+
+<p>
+	Everyting between <code>&lt;%--</code> and <code>--%&gt;</code> is commented. Variables inside are not replaced, nothing is executed.
+</p>
+
+<h3>Java code</h3>
+
+<p class="alert alert-danger">Writting Java code directly in template could be hard and danger!</p>
+
+
+<p>
+	Everyting between <code>&lt;%</code> and <code>%&gt;</code> is pure Java code. Example: <code>&lt;% System.out.println("This"); %&gt;</code>.
+</p>
+
+<p>Variables are not replaced here.</p>
+
+<h3>Returning Java code</h3>
+
+<p>
+	Returning Java code allows do one line operation and return result. Result is not escaped. Variables will be replaced.
+</p>
+
+<p>
+	Example 1: <code>&lt;%= (123*321)%8  =%&gt;</code>. This will print <code>3</code> to template.
+</p>
+
+<p>
+	Example 2: <code>&lt;%= ${countOfGuests|int} > 5 ? "Too many" : "OK"  =%&gt;</code>. This will print one of given texts to template.
+</p>
+
+
+<h2>Tags</h2>
+
+<p>
+Tags are special HTML like tags. Name of tags starts with <code>t:</code>. They run given login before final HTML is created.
+</p>
+
+<h3>Variables</h3>
+
+<h4>Define variable</h4>
+
+<p>
+	Define new variable. Visibility respects visibility in java, eg. variable in block is not visible outside. Variable is also available as <code>${}</code> (with given visibility).
+</p>
+<p>
+	<strong>Tag:</strong> <code>var</code>
+	<br>
+	<strong>Paired:</strong> no
+	<br>
+	<strong>Parameters</strong>
+	<ul>
+		<li><code>name</code>: name of variable</li>
+		<li><code>type</code>: type of variable. Optional. Default value: java.util.Object</li>
+		<li><code>final</code>: if present, variable is final</li>
+		<li><code>value</code>: initial value. Optional. String value must be set like <code>value='"something"'</code>.</li>
+	</ul>
+
+</p>
+
+<h4>Set variable</h4>
+
+<p>Set value of already defined variable. Change appears in <code>${}</code> too.</p>
+<p>
+	<strong>Tag:</strong> <code>set</code>
+	<br>
+	<strong>Paired:</strong> no
+	<br>
+	<strong>Parameters</strong>
+	<ul>
+		<li><code>name</code>: name of variable</li>
+		<li><code>value</code>: new value. String value must be set like <code>value='"something"'</code>.</li>
+	</ul>
+
+</p>
+
+<h4>Print variable</h4>
+<p>Print variable to template. Tag supports only variables defined in template.</p>
+<p>
+	<strong>Tag:</strong> <code>out</code>
+	<br>
+	<strong>Paired:</strong> no
+	<br>
+	<strong>Parameters</strong>
+	<ul>
+		<li><code>name</code>: name of variable</li>
+		<li><code>noescape</code>: if present, variable will not be escaped</li>
+	</ul>
+</p>
+
+<h3>Layout</h3>
+
+<h4>layout</h4>
+<p>Define layout of template. Only one per template is allowed.</p>
+<p>
+	<strong>Tag:</strong> <code>layout</code>
+	<br>
+	<strong>Paired:</strong> no
+	<br>
+	<strong>Parameters</strong>
+	<ul>
+		<li><code>path</code>: path to layout template relative to module path.</li>
+		<li><code>module</code>: name of module where layout is. Optional. Default same as module of actual template.</li>
+	</ul>
+
+</p>
+
+<h4>Block</h4>
+<p>Define block of code for future usage. All parameters except listed below, are used as variables available as <code>${}</code>.</p>
+<p>
+	<strong>Tag:</strong> <code>block</code>
+	<br>
+	<strong>Paired:</strong> yes
+	<br>
+	<strong>Parameters</strong>
+	<ul>
+		<li><code>name</code>: block name</li>
+	</ul>
+
+</p>
+
+<h4>Include</h4>
+<p>
+	Allows include defined block or another template. All parameters except listed below, are used as variables available as <code>${}</code>.
+</p>
+<p>
+	If parameter <code>block</code> is present, block will be included. If parameter <code>file</code> is present, another template will be included.
+</p>
+<p>
+	<strong>Tag:</strong> <code>include</code>
+	<br>
+	<strong>Paired:</strong> no
+	<br>
+	<strong>Parameters for including block</strong>
+	<ul>
+		<li><code>block</code>: name of defined block. If not existst, exception is thrown.</li>
+		<li><code>optional</code>: if present, block will be included only if exists.</li>
+	</ul>
+	<br>
+	<strong>Parameters for including template</strong>
+	<ul>
+		<li><code>file</code>: template path relative to module path.</li>
+		<li><code>module</code>: module name. Optional. Default same as module of actual template.</li>
+	</ul>
+
+</p>
+
+<h3>Conditions</h3>
+
+
+<h4>If</h4>
+<p>Check if condition is true.</p>
+<p>
+	<strong>Tag:</strong> <code>if</code>
+	<br>
+	<strong>Paired:</strong> both. Not paired works as <code>if</code> without braces.
+	<br>
+	<strong>Parameters</strong>
+	<ul>
+		<li><code>cond</code>: Condition. Variables defined in template or <code>${}</code> can be used. String must be in quotes.</li>
+	</ul>
+</p>
+
+<h4>Else If</h4>
+<p>Check if another condition is true. Must be always after <code>if</code> tag.</p>
+<p>
+	<strong>Tag:</strong> <code>elseif</code>
+	<br>
+	<strong>Paired:</strong> no, but must be finished with <code>else</code> or closing <code>if</code> tag.
+	<br>
+	<strong>Parameters</strong>
+	<ul>
+		<li><code>cond</code>: Condition. Variables defined in template or <code>${}</code> can be used. String must be in quotes.</li>
+	</ul>
+
+</p>
+
+<h4>Else</h4>
+<p>Else statement.</p>
+<p>
+	<strong>Tag:</strong> <code>else</code>
+	<br>
+	<strong>Paired:</strong> no, but must be finished with closing <code>if</code> tag.
+
+</p>
+
+<h4>Break</h4>
+<p>Break statement for <code>if</code> or <code>elseif</code>.</p>
+<p>
+	<strong>Tag:</strong> <code>break</code>
+	<br>
+	<strong>Paired:</strong>
+
+</p>
+
+<h4>Continue</h4>
+<p>Continue statement for <code>if</code> or <code>elseif</code>.</p>
+<p>
+	<strong>Tag:</strong> <code>continue</code>
+	<br>
+	<strong>Paired:</strong> no
+
+</p>
+
+
+<h4>Switch</h4>
+<p>Switch statement</p>
+<p>
+	<strong>Tag:</strong> <code>switch</code>
+	<br>
+	<strong>Paired:</strong> yes
+	<br>
+	<strong>Parameters</strong>
+	<ul>
+		<li><code>object</code>: value than will be checked. Template defined variable or <code>${}</code>.</li>
+	</ul>
+
+</p>
+
+<h4>Case</h4>
+<p>Case statement in switch.</p>
+<p>
+	<strong>Tag:</strong> <code>case</code>
+	<br>
+	<strong>Paired:</strong> both. Paired works like case with break, not paired works like case without break.
+	<br>
+	<strong>Parameters</strong>
+	<ul>
+		<li><code>cond</code>: case value. String must be written like <code>'"something"'</code></li>
+	</ul>
+
+</p>
+
+<h4>Default</h4>
+<p>Default statement in switch.</p>
+<p>
+	<strong>Tag:</strong> <code>default</code>
+	<br>
+	<strong>Paired:</strong> yes
+
+</p>
+
+
+<h3>Cycles</h3>
+
+<h4>For</h4>
+<p>For statement</p>
+<p>
+	<strong>Tag:</strong> <code>for</code>
+	<br>
+	<strong>Paired:</strong> yes
+	<br>
+	<strong>Parameters</strong>
+	<ul>
+		<li><code>from</code>: initial state. Required format: <code>[type] [variableName]=[initialValue]</code>. Variable is also available as <code>${}</code></li>
+		<li><code>to</code>: closing condition.</li>
+		<li><code>change</code>: change every iteration.</li>
+	</ul>
+
+</p>
+
+<h4>For Each</h4>
+<p>For Each for <code>Map</code> and <code>List</code></p>
+<p>
+	If parameter <code>map</code> is present, tag iterate map. If parameter <code>list</code> is present, tag iterate list.
+</p>
+<p>
+	<strong>Tag:</strong> <code>foreach</code>
+	<br>
+	<strong>Paired:</strong> yes
+	<br>
+	<strong>Parameters for iterating map</strong>
+	<ul>
+		<li><code>map</code>: the map than will be iterated. <code>${}</code> also can be used.</li>
+		<li><code>key</code>: key of each iterated item. Required format is <code>[type] [variableName]</code> or <code>[variableName]</code> (then type will be Object). Variable is also available in <code>${}</code>.</li>
+		<li><code>value</code>: value of each iterated item. Required format is <code>[type] [variableName]</code> or <code>[variableName]</code> (then type will be Object). Variable is also available in <code>${}</code>.</li>
+	</ul>
+	<br>
+	<strong>Parameters for iterating list</strong>
+	<ul>
+		<li><code>list</code>: the list than will be iterated. <code>${}</code> also can be used.</li>
+		<li><code>item</code>: each item. Required format is <code>[type] [variableName]</code> or <code>[variableName]</code> (then type will be Object). Variable is also available in <code>${}</code>.</li>
+	</ul>
+</p>
+
+<h4>While</h4>
+<p>While statement</p>
+<p>
+	<strong>Tag:</strong> <code>while</code>
+	<br>
+	<strong>Paired:</strong> yes
+	<br>
+	<strong>Parameters</strong>
+	<ul>
+		<li><code>cond</code>: Condition. Variables defined in template or <code>${}</code> can be used. String must be in quotes.</li>
+	</ul>
+
+</p>
+
+<h4>Do While</h4>
+<p>Do-while statement. <strong>All parameters are defined in closing tag.</strong></p>
+<p>
+	<strong>Tag:</strong> <code>dowhile</code>
+	<br>
+	<strong>Paired:</strong> yes
+	<br>
+	<strong>Parameters</strong>
+	<ul>
+		<li><code>cond</code>: Condition. Variables defined in template or <code>${}</code> can be used. String must be in quotes.</li>
+	</ul>
+
+</p>
+
+<h3>Try Catch</h3>
+
+<h4>Try</h4>
+<p>Try statement.</p>
+<p>
+	<strong>Tag:</strong> <code>try</code>
+	<br>
+	<strong>Paired:</strong> yes
+</p>
+
+<h4>Catch</h4>
+<p>Catch statement. Must be between start and closing <code>try</code> tag.</p>
+<p>
+	<strong>Tag:</strong> <code>catch</code>
+	<br>
+	<strong>Paired:</strong> no
+	<br>
+	<strong>Parameters</strong>
+	<ul>
+		<li><code>name</code>: name of exception variable. Exception variable is also available in <code>${}</code>.</li>
+		<li><code>exception</code>: expected exception. Optional. Default value is <code>java.util.Exception</code>.</li>
+	</ul>
+</p>
+
+<h4>Finally</h4>
+<p>Finally statement. Must be between start and closing <code>try</code> tag, or between <code>catch</code> and closing <code>try</code>.</p>
+<p>
+	<strong>Tag:</strong> <code>finally</code>
+	<br>
+	<strong>Paired:</strong>no
+</p>
+
+<h3>Others</h3>
+
+<h4>Console outpu</h4>
+<p>Print result to system console.</p>
+<p>
+	<strong>Tag:</strong> <code>console</code>
+	<br>
+	<strong>Paired:</strong> no
+	<br>
+	<strong>Parameters</strong>
+	<ul>
+		<li><code>text</code>: text, that will be printed.</li>
+	</ul>
+
+</p>
+
+
+
+<h2>Parameters</h2>
+
+<p>
+	Parameters are special HTML attributes. They start with <code>t:</code>. They are parsed before creating final HTML.
+</p>
+
+<p class="fw-bold">
+	This package supports paramters but not define any.
+</p>
