@@ -21,8 +21,6 @@
 			<dir-default-file>index.html</dir-default-file>
 			<logs-path>logs</logs-path>
 			<autostart>true</autostart>
-			<dev-addresses>127.0.0.1</dev-addresses>
-			<dev-addresses>0:0:0:0:0:0:0:1</dev-addresses>
 			<headers>Access-Control-Allow-Origin:*</headers>
 		</examples>
 	</applications>

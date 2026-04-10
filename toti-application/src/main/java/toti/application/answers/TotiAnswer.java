@@ -3,6 +3,7 @@ package toti.application.answers;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import toti.application.ServerException;
 import toti.application.answers.request.Identity;
@@ -12,15 +13,15 @@ import toti.application.answers.response.FinalResponse;
 import toti.application.answers.response.Response;
 import toti.application.answers.response.ResponseContainer;
 import toti.application.application.register.MappedAction;
+import toti.application.extensions.TemplateExtension;
 import toti.application.extensions.TotiExtension;
 import toti.application.extensions.TranslatorExtension;
 import toti.lib.common.structures.ObjectBuilder;
 import toti.lib.tcpip.enums.StatusCode;
-import toti.application.extensions.TemplateExtension;
 
 public class TotiAnswer {
 	
-	private final List<String> developIps;
+	private final Function<String, Boolean> isDevelop;
 	private final TemplateExtension templateExtension;
 	private final TranslatorExtension translatorExtension;
 	
@@ -28,9 +29,9 @@ public class TotiAnswer {
 	private final Map<String, TotiExtension> extensions = new HashMap<>();
 	
 	public TotiAnswer(
-			List<String> developIps, TemplateExtension templateExtension, TranslatorExtension translatorExtension,
+			Function<String, Boolean> isDevelop, TemplateExtension templateExtension, TranslatorExtension translatorExtension,
 			IdentityFactory identityFactory, List<TotiExtension> extensions) {
-		this.developIps = developIps;
+		this.isDevelop = isDevelop;
 		this.templateExtension = templateExtension;
 		this.translatorExtension = translatorExtension;
 		this.identityFactory = identityFactory;
@@ -44,19 +45,19 @@ public class TotiAnswer {
 		ObjectBuilder<String> moduleName = new ObjectBuilder<>();
 		String uri = request.getUri().substring(5);
 		return getResponse(uri, request, identity, responseHeaders, moduleName)
-				.prepare(
-					responseHeaders, identity,
-					new ResponseContainer(
-						translatorExtension.getTranslator(identity), null,
-						MappedAction.totiAnswer(moduleName.get()),
-						templateExtension, null
-					), 
-					charset
-				);
+		.prepare(
+			responseHeaders, identity,
+			new ResponseContainer(
+				translatorExtension.getTranslator(identity), null,
+				MappedAction.totiAnswer(moduleName.get()),
+				templateExtension, null
+			), 
+			charset
+		);
 	}
 	
 	protected Response getResponse(String url, Request request, Identity identity, Headers responseHeaders, ObjectBuilder<String> moduleName) {
-		boolean isDevelopReqeust = developIps.contains(identity.getIP());
+		boolean isDevelopReqeust = isDevelop.apply(identity.getIP());
 		switch (url.toLowerCase()) {
 			case "":
 			case "/":

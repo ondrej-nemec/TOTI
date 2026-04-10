@@ -61,7 +61,7 @@ public class TotiAnsserTest {
 		};
 		
 		TotiAnswer answer = new TotiAnswer(
-			Arrays.asList("localhost"),
+			ip->ip.equals("localhost"),
 			mock(TemplateExtension.class),
 			mock(TranslatorExtension.class),
 			mock(IdentityFactory.class),
@@ -93,7 +93,7 @@ public class TotiAnsserTest {
 		when(identity.getIP()).thenReturn(ip);
 		
 		TotiAnswer answer = new TotiAnswer(
-			Arrays.asList("localhost"),
+			incomingIP->incomingIP.equals("localhost"),
 			mock(TemplateExtension.class),
 			mock(TranslatorExtension.class),
 			mock(IdentityFactory.class),

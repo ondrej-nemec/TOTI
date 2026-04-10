@@ -1,25 +1,26 @@
 package toti.application.answers;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
 
 import org.apache.logging.log4j.Logger;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-
-import toti.lib.common.structures.MapDictionary;
-import toti.lib.files.text.Text;
-import toti.lib.tcpip.enums.HttpMethod;
-import toti.lib.tcpip.enums.StatusCode;
-import toti.lib.tcpip.structures.RequestParameters;
-
 import org.junit.jupiter.params.provider.MethodSource;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import toti.application.answers.request.Identity;
 import toti.application.answers.request.Request;
@@ -32,6 +33,11 @@ import toti.application.extensions.CustomExceptionExtension;
 import toti.application.extensions.Translator;
 import toti.application.extensions.TranslatorExtension;
 import toti.application.logging.FileName;
+import toti.lib.common.structures.MapDictionary;
+import toti.lib.files.text.Text;
+import toti.lib.tcpip.enums.HttpMethod;
+import toti.lib.tcpip.enums.StatusCode;
+import toti.lib.tcpip.structures.RequestParameters;
 
 public class ExceptionAnswerTest {
 	
@@ -59,7 +65,7 @@ public class ExceptionAnswerTest {
 		
 		ExceptionAnswer answer = spy(new ExceptionAnswer(
 			mock(Register.class),
-			Arrays.asList("localhost"),
+			ip->ip.equals("localhost"),
 			null,
 			translatorExtension,
 			mock(Logger.class)
@@ -97,7 +103,7 @@ public class ExceptionAnswerTest {
 		
 		ExceptionAnswer answer = spy(new ExceptionAnswer(
 			register,
-			Arrays.asList("localhost"),
+			ip->ip.equals("localhost"),
 			null,
 			mock(TranslatorExtension.class),
 			logger
@@ -139,7 +145,7 @@ public class ExceptionAnswerTest {
 		
 		ExceptionAnswer answer = spy(new ExceptionAnswer(
 			mock(Register.class),
-			Arrays.asList("localhost"),
+			incomingIp->incomingIp.equals("localhost"),
 			null,
 			mock(TranslatorExtension.class),
 			logger
@@ -200,7 +206,7 @@ public class ExceptionAnswerTest {
 		int random = 123456789;
 		ExceptionAnswer answer = new ExceptionAnswer(
 			mock(Register.class),
-			Arrays.asList(),
+			ip->ip.equals("localhost"),
 			logsPath,
 			mock(TranslatorExtension.class),
 			mock(Logger.class)
@@ -233,7 +239,7 @@ public class ExceptionAnswerTest {
 		
 		ExceptionAnswer answer = new ExceptionAnswer(
 			mock(Register.class),
-			Arrays.asList(),
+			ip->ip.equals("localhost"),
 			null,
 			mock(TranslatorExtension.class),
 			mock(Logger.class)
@@ -264,7 +270,7 @@ public class ExceptionAnswerTest {
 		
 		ExceptionAnswer answer = new ExceptionAnswer(
 			mock(Register.class),
-			Arrays.asList(),
+			ip->ip.equals("localhost"),
 			null,
 			mock(TranslatorExtension.class),
 			mock(Logger.class)

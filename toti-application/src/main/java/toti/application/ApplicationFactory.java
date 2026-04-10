@@ -40,7 +40,7 @@ public class ApplicationFactory {
 	private String resourcesPath = null;
 	private Boolean dirResponseAllowed = null;
 	private String dirDefaultFile = null;
-	private List<String> developIps = null;
+	private Function<String, Boolean> isDevelop = null;
 //	private Long tokenExpirationTime = null;
 //	private String tokenCustomSalt = null;
 	// private String urlPattern = null;
@@ -51,10 +51,8 @@ public class ApplicationFactory {
 	private Map<String, List<Object>>  responseHeaders = null;
 	private UriPattern pattern = new UriPattern() {};
 	
-	private List<String> paths;
-	private List<String> hostnames;
-	
-	//private Env appEnv;
+	private final List<String> paths;
+	private final List<String> hostnames;
 	
 	private final Env env;
 	private final String appIdentifier;
@@ -105,17 +103,12 @@ public class ApplicationFactory {
 		
 		IdentityFactory identityFactory = new IdentityFactory(extensions.values());
 		
-		List<String> developIps = getDevelopIps(env);
+		Function<String, Boolean> isDevelop = getDevModeFunc();
+		
 		TotiAnswer totiAnwer = new TotiAnswer(
-			developIps, templateExtension, translatorExtension, identityFactory, extensionsTotiResponses
+			isDevelop, templateExtension, translatorExtension, identityFactory, extensionsTotiResponses
 		);
-		ExceptionAnswer exceptionAnswer = new ExceptionAnswer(
-			register,
-			developIps,
-			getLogsPath(env),
-			translatorExtension,
-			logger
-		);
+		ExceptionAnswer exceptionAnswer = new ExceptionAnswer(register, isDevelop, getLogsPath(env), translatorExtension, logger);
 		ControllerAnswer controllerAnswer = new ControllerAnswer(
 			router, root, templateExtension, authenticationExtension,
 			identityFactory, link, translatorExtension, logger
@@ -166,17 +159,11 @@ public class ApplicationFactory {
 		return getProperty(dirDefaultFile, "dir-default-file", "index.html", v->v.getString(), env);
 	}
 	
-	private List<String> getDevelopIps(Env env) {
-		if (developIps != null) {
-			return developIps;
+	private Function<String, Boolean> getDevModeFunc() {
+		if (isDevelop == null) {
+			return ip->ip.equals("127.0.0.1") || ip.equals("0:0:0:0:0:0:0:1");
 		}
-		String key = "dev-addresses";
-		if (!env.getList(key).isEmpty()) {
-			return env.getList(key, v->{
-				return v.getString();
-			});
-		}
-		return Arrays.asList("127.0.0.1", "0:0:0:0:0:0:0:1");
+		return isDevelop;
 	}
 	
 	private String getLogsPath(Env env) {
@@ -312,8 +299,8 @@ public class ApplicationFactory {
 		return this;
 	}
 
-	public ApplicationFactory setDevelopIpAdresses(List<String> developIps) {
-		this.developIps = developIps;
+	public ApplicationFactory setDevModeFunc(Function<String, Boolean> isDevelop) {
+		this.isDevelop = isDevelop;
 		return this;
 	}
 

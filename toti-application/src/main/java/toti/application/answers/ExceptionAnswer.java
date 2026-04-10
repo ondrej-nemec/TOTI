@@ -4,9 +4,9 @@ import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Function;
 
 import org.apache.logging.log4j.Logger;
 
@@ -26,7 +26,7 @@ import toti.lib.tcpip.enums.StatusCode;
 
 public class ExceptionAnswer {
 
-	private final List<String> developIps;
+	private final Function<String, Boolean> isDevelop;
 	private final Logger logger;
 	private final String logsPath;
 	private final TranslatorExtension translator;
@@ -35,11 +35,11 @@ public class ExceptionAnswer {
 	private final Map<ExceptionHashCode, String> exceptionFileName = new HashMap<>();
 	
 	public ExceptionAnswer(
-			Register register, List<String> developIps,
+			Register register, Function<String, Boolean> isDevelop,
 			String logsPath, TranslatorExtension translator, Logger logger) {
 		this.register = register;
 		this.logger = logger;
-		this.developIps = developIps;
+		this.isDevelop = isDevelop;
 		this.translator = translator;
 		if (logsPath == null || logsPath.isEmpty()) {
 			this.logsPath = null;
@@ -77,7 +77,7 @@ public class ExceptionAnswer {
 		}
 		logger.error(String.format(message, status, request.getMethod(), request.getUri()), t);
 		
-		boolean isDevelopResponseAllowed = developIps.contains(identity.getIP());
+		boolean isDevelopResponseAllowed = isDevelop.apply(identity.getIP());
 		boolean isAsyncRequest = request.getHeaders().isAsyncRequest(); // probably js request
 		
 		if (register.getCustomExceptionResponse() != null) {
