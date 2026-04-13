@@ -8,10 +8,13 @@ import org.apache.logging.log4j.LogManager;
 
 import toti.application.TotiServer;
 import toti.application.TotiServerFactory;
+import toti.examples.modules.ApplicationModule;
 import toti.lib.common.structures.MapInit;
 import toti.lib.tcpip.SslCredentials;
 
 public class TotiExamplesRunner {
+
+	// TODO spravne def nastaveni hostname a path + example jak pouzit
 
 	public static void main(String[] args) {
 	//	createWithDefaultSettings();
@@ -25,6 +28,7 @@ public class TotiExamplesRunner {
 
 			TotiServer server = serverFactory.create(LogManager.getLogger("toti"));
 			server.addApplication("examples", (env, applicationFactory)->{
+				applicationFactory.setDevModeFunc(ip->true); // dev mode
 				// TODO applicationFactory.setUrlPattern(null);
 				
 				// optional: add extensions, always in code
@@ -35,11 +39,11 @@ public class TotiExamplesRunner {
 				// DatabaseExtension require settings
 				
 				return applicationFactory.create(Arrays.asList(
-					/*new ApplicationModule(),
+					new ApplicationModule()/*,
 					new UiModule(),
 					new TemplatingModule()*/
 				), LogManager.getLogger("toti"));
-			}, Arrays.asList("localhost", "127.0.0.1"), null);
+			}, null, null);
 			server.start();
 		} catch (Exception e) {
 			LogManager.getLogger("toti").error("Init fails", e);
@@ -53,6 +57,7 @@ public class TotiExamplesRunner {
 			
 			TotiServer server = serverFactory.create(LogManager.getLogger("toti"));
 			server.addApplication("examples", (env, applicationFactory)->{
+				applicationFactory.setDevModeFunc(ip->true); // dev mode
 				// TODO applicationFactory.setUrlPattern(null);
 				
 				// optional: add extensions, always in code
@@ -63,11 +68,11 @@ public class TotiExamplesRunner {
 				applicationFactory.addExtension(new DatabaseExtension(LogManager.getLogger("database")));*/
 				
 				return applicationFactory.create(Arrays.asList(
-					/*new ApplicationModule(),
+					new ApplicationModule()/*,
 					new UiModule(),
 					new TemplatingModule()*/
 				), LogManager.getLogger("toti"));
-			}, Arrays.asList("localhost", "127.0.0.1"), null);
+			}, null, null);
 			server.start();
 		} catch (Exception e) {
 			LogManager.getLogger("toti").error("Init fails", e);
@@ -93,7 +98,7 @@ public class TotiExamplesRunner {
 			server.addApplication("examples", (env, applicationFactory)->{
 				// set
 				applicationFactory.setAutoStart(true);
-				applicationFactory.setDevelopIpAdresses(Arrays.asList("/127.0.0.1", "/0:0:0:0:0:0:0:1"));
+				applicationFactory.setDevModeFunc(ip->true); // dev mode
 				applicationFactory.setDirDefaultFile("index.html");
 				applicationFactory.setDirResponseAllowed(true);
 				applicationFactory.setHeaders(
@@ -119,11 +124,11 @@ public class TotiExamplesRunner {
 				// validation extension doesn't need register
 				
 				return applicationFactory.create(Arrays.asList(
-					/*new ApplicationModule(),
+					new ApplicationModule()/*,
 					new UiModule(),
 					new TemplatingModule()*/
 				), LogManager.getLogger("toti"));
-			}, Arrays.asList("localhost", "127.0.0.1"), null);
+			}, null, null);
 			server.start();
 		} catch (Exception e) {
 			LogManager.getLogger("toti").error("Init fails", e);

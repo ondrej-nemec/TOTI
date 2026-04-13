@@ -21,6 +21,7 @@ import toti.application.application.register.Register;
 import toti.application.extensions.TranslatorExtension;
 import toti.application.logging.ExceptionHashCode;
 import toti.application.logging.FileName;
+import toti.application.logging.Page;
 import toti.lib.files.text.Text;
 import toti.lib.tcpip.enums.StatusCode;
 
@@ -68,8 +69,9 @@ public class ExceptionAnswer {
 	}
 	
 	protected Response getResponse(
-			Request request,
-			StatusCode status, Throwable t, Identity identity, MappedAction mappedAction, String charset) {
+		Request request, StatusCode status, Throwable t,
+		Identity identity, MappedAction mappedAction, String charset
+	) {
 		FileName fileName = getFileName(mappedAction, status, t);
 		String message = "Exception occured %s. URL: %s %s.";
 		if (fileName.isUsed()) {
@@ -123,64 +125,155 @@ public class ExceptionAnswer {
 		);
 	}
 
-	protected String getExceptionDetail(Request request,
-			StatusCode status, Throwable t, Identity identity, MappedAction mappedAction) {
-		String title = String.format("<title>Exception %s</title>", status);
-		String headline = String.format(
-			"<h1>Exception occured: %s %s</h1>"
-			+ "<div>In %s %s</div>", 
-			status.getCode(), status.getDescription(),
-			request.getMethod(), request.getUri()
-		);
-		String style = "<style>"
-			+ "h1 {"
-				+ "text-align: center;"
-				+ "padding: 0.5em;"
-				+ "color: #e3ffff;"
-				+ "background-color: #017CA5;"
-			+ "}"
-			+ "body {"
-				+ "background-color: #7FC6CC;"
-				+ "padding-left: 1em;"
-				+ "padding-right: 1em;"
-			+ "}"
-			+ "</style>";
-		
+	protected String getExceptionDetail(Request request, StatusCode status, Throwable t, Identity identity, MappedAction mappedAction) {
+		String title = String.format("Exception %s", status);
+		StringBuilder body = new StringBuilder();
+
+		body.append(String.format("<h1>Exception occured: %s %s</h1>", status.getCode(), status.getDescription()));
+		body.append(Page.paragraph(String.format("<div>In %s %s</div>", request.getMethod(), request.getUri())));
+
 		StringBuilder errorStackTrace = new StringBuilder();
 		Throwable aux = t;
 		while (aux != null) {
-			String prefix = "";
-			if (!errorStackTrace.toString().isEmpty()) {
-				prefix = "Caused by: ";
+			if (!errorStackTrace.isEmpty()) {
+				errorStackTrace.append("</br>Caused by: ");
 			}
-			errorStackTrace.append(String.format(
-				"<h2>%s%s: %s</h2>",
-				prefix, aux.getClass(), aux.getMessage()
-			));
-			errorStackTrace.append("<div>");
+			errorStackTrace.append(String.format("%s: %s<br>", aux.getClass(), aux.getMessage()));
 			for (StackTraceElement el : aux.getStackTrace()) {
 				errorStackTrace.append(String.format(
-					"at %s.%s (%s:%s)",
+					"at %s.%s (%s:%s)<br>",
 					el.getClassName(), el.getMethodName(),
 					el.getFileName(), el.getLineNumber()
 				));
-				errorStackTrace.append("<br>");
 			}
-			errorStackTrace.append("</div>");
-			
 			aux = aux.getCause();
 		}
+		body.append(Page.section(2, "Exception", Page.code(errorStackTrace.toString()), false));
+
+		body.append("<h2>Request info</h2>");
+		if (mappedAction != null) {
+			body.append(Page.section(
+				3, "Mapping",
+				Page.paragraph(String.format(
+					"<strong>Module</strong> %s<br>"
+					+ "<strong>Controller</strong> %s<br>"
+					+ "<strong>Method</strong> %s<br>",
+					mappedAction.getModuleName(),
+					mappedAction.getClassName(),
+					mappedAction.getMethodName()
+				)),
+				true
+			));
+		}
+/*
+<div class="block">
+					<table>
+						<tr>
+							<th>IP</th>
+							<td>${identity.getIP()}</td>
+						</tr>
+						<tr>
+							<th>Locale</th>
+							<td>${identity.getLocale()}</td>
+						</tr>
+					<t:if cond="${identity.isPresent()}" >
+						<tr>
+							<th>Login method</th>
+							<td>${identity.getLoginMode()}</td>
+						</tr>
+						<tr>
+							<th>User Id</th>
+							<td>${identity.getUser().getId()}</td>
+						</tr>
+					</t:if>
+					</table>
+				</div> */
+		body.append(Page.section(3, "Identity", "TODO", false));
 		
-		return String.format(
-			"<html><head>"
-			+ title
-			+ style
-			+ "</head><body>"
-			+ headline
-			+ errorStackTrace.toString()
-			+ "</body></html>",
-			status.getCode(), status.getCode(), status.getDescription()
-		);
+
+		// probably not show/save parameters - not save - password and other secrets leak
+		//body.append(Page.section(3, "Parameters", "TODO", false));
+		/*
+					<div class="section">
+				<div>
+					<h3>Paramenters</h3>
+					<img src="" class="block-show" width="20px">
+					<img src="" class="block-hide" width="20px">
+				</div>
+				<div class="block">
+					<h3>Query parameters</h3>
+					<table>
+						<t:foreach key="String key" value="Object value" map="${request.getQueryParameters()}">
+							<tr>
+								<th>${key}</th>
+								<t:if cond="value == null">
+									<td>${value}</td>
+									<td></td>
+								<t:else>
+									<td>${value}</td>
+									<td>${value.getClass().getName()}</td>
+								</t:if>
+								
+							</tr>
+						</t:foreach>
+					</table>
+					<h3>Binary body:</h3>
+					<div>
+						<t:if cond="${request.getBody()} == null">
+							No binary data
+						<t:else>
+							Contains ${request.getBody().length} bytes
+						</t:if>
+					</div>
+					<h3>Body as parameters</h3>
+					<table>
+						<t:foreach key="String key" value="Object value" map="${request.getBodyInParameters()}">
+							<tr>
+								<th>${key}</th>
+								<t:if cond="value == null">
+									<td>${value}</td>
+									<td></td>
+								<t:else>
+									<td>${value}</td>
+									<td>${value.getClass().getName()}</td>
+								</t:if>
+								
+							</tr>
+						</t:foreach>
+					</table>
+				</div>
+			</div>
+			
+			<div class="section">
+				<div>
+					<h3>Headers</h3>
+					<img src="" class="block-show" width="20px">
+					<img src="" class="block-hide" width="20px">
+				</div>
+				<div class="block">
+					<table>
+						<t:foreach key="String key" value="Object list" map="${requestHeaders.getHeaders()}">
+							<t:foreach item="Object value" collection="${list}">
+								<tr>
+									<th>${key}</th>
+									<t:if cond="value == null">
+										<td>${value}</td>
+										<td></td>
+									<t:else>
+										<td>${value}</td>
+										<td>${value.getClass().getName()}</td>
+									</t:if>
+								</tr>
+							</t:foreach>
+						</t:foreach>
+					</table>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+		*/
+		return Page.error(title, body.toString());
 	}
 	
 	private FileName getFileName(MappedAction action, StatusCode code, Throwable t) {

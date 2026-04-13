@@ -1,37 +1,163 @@
-<html>
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-page="primary">
 <head>
-	<title>TOTI samples</title>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>TOTI | Examples</title>
 	<style type="text/css">
+		:root {
+		    --bg: #ffffff;
+		    --text: #2c3e50;
+		    --muted: #6b7280;
+		    --card: #f4f6f8;
+		    --border: #e5e7eb;
+		    --code-bg: #f4f6f8;
+		    --accent: #2f80ed;
+		    --primary: #2f80ed;
+		    --secondary: #56a0ff;
+		}
+
+		[data-theme="dark"] {
+		    --bg: #0f172a;
+		    --text: #e5e7eb;
+		    --muted: #9ca3af;
+		    --card: #111827;
+		    --border: #1f2937;
+		    --code-bg: #1e293b;
+		    --primary: #60a5fa;
+		    --secondary: #93c5fd;
+		}
+		body {
+		    margin: 0;
+		    font-family: system-ui, sans-serif;
+		    background: var(--bg);
+		    color: var(--text);
+		}
+
+		.topbar {
+		    display: flex;
+		    justify-content: space-between;
+		    align-items: center;
+		    padding: 12px 20px;
+		    border-bottom: 1px solid var(--border);
+		}
+
+		.brand {
+		    font-weight: 600;
+		    color: var(--accent);
+		}
+
+		.actions {
+		    display: flex;
+		    gap: 10px;
+		    font-size: 14px;
+		    color: var(--muted);
+		}
+
+		.container {
+		    max-width: 95%;
+		    margin: 40px auto;
+		    padding: 0 20px;
+		}
+
+		.card {
+		    background: var(--card);
+		    border: 1px solid var(--border);
+		    border-radius: 10px;
+		    padding: 16px;
+		    margin-bottom: 16px;
+		}
+		.paragraph {
+		    padding: 16px;
+		    margin-bottom: 16px;
+		}
+
+		h1 {
+		    margin: 0 0 10px 0;
+		    color: var(--accent);
+		}
+
+		h2 {
+		    margin: 0 0 10px 0;
+		    font-weight: normal;
+		    color: var(--muted);
+		}
+
+		.code {
+		    background: var(--code-bg);
+		    border-left: 4px solid var(--accent);
+		    padding: 12px;
+		    font-family: monospace;
+		    overflow-x: auto;
+		}
+
+		#toggle-theme {
+		    background: transparent;
+		    color: var(--text);
+		    border: 1px solid var(--border);
+		    padding: 6px 10px;
+		    border-radius: 6px;
+		    cursor: pointer;
+		}
+		[data-theme="dark"] #theme-dark {
+			display: none;
+		}
+		[data-theme="light"] #theme-light {
+			display: none;
+		}
+		/**************************/
+		#calling-results {
+			width: 35%;
+		    background: var(--code-bg);
+			float:right;
+			position: sticky;
+			top: 20px;
+		    border-left: 4px solid var(--accent);
+		}
 		code {
 			font-size: .875em;
 		    color: #d63384;
 		    word-wrap: break-word;
+		    font-family: monospace;
+		    background: var(--code-bg);
 		}
 		.tile {
-			width: 200px;
 			display: inline-block;
-			background-color: #7FC6CC;
-			color: #e3ffff;
-			padding: 1em;
+			width: 200px;
+		    background: var(--card);
+		    color: var(--secondary);
+		    border: 1px solid var(--border);
+		    border-radius: 10px;
+		    padding: 16px;
 			margin: 0.5em;
 		}
 		
 		.button {
 			display: inline-block;
-			cursor: pointer;
 			margin: 10px;
-			padding: 10px;
-			border: solid 2px #e3ffff;
-			border-radius:25%;
+		    color: var(--text);
+		    border: 1px solid var(--border);
+		    padding: 6px 10px;
+		    border-radius: 6px;
+		    cursor: pointer;
 		}
 	</style>
 </head>
 <body>
-	<h1>TOTI samples disambiguation</h1>
+	<div class="topbar">
+	    <div class="brand">TOTI</div>
 
-	<div style="">
-		<!-- <div style="width: 25%; float:right; background-color: #e6e6e6;">-->
-		<div style="width: 25%; background-color: #e6e6e6; float:right; position: sticky; top: 20px;">
+	    <div class="actions">
+	        <button id="toggle-theme" onclick="toggleTheme()">
+	        	<span id="theme-light">☀️</span>
+	        	<span id="theme-dark">🌙</span>
+	        </button>
+	    </div>
+	</div>
+
+	<div class="container">
+		<h1>TOTI samples disambiguation</h1>
+		<div id="calling-results">
 			<h5 style="text-align: center">Result of async calling:</h5>
 			<div id="asyncRes-url"></div>
 			<div id="asyncRes-code"></div>
@@ -43,6 +169,11 @@
 	</div>
 
 	<script type="text/javascript">
+		function toggleTheme() {
+		    const html = document.documentElement;
+		    const current = html.getAttribute("data-theme");
+		    html.setAttribute("data-theme", current === "dark" ? "light" : "dark");
+		}
 		var openLinkButtons = [
 			{
 				name: 'OPEN',

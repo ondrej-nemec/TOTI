@@ -16,6 +16,7 @@ import toti.application.application.register.MappedAction;
 import toti.application.extensions.TemplateExtension;
 import toti.application.extensions.TotiExtension;
 import toti.application.extensions.TranslatorExtension;
+import toti.application.logging.Page;
 import toti.lib.common.structures.ObjectBuilder;
 import toti.lib.tcpip.enums.StatusCode;
 
@@ -81,7 +82,15 @@ public class TotiAnswer {
 	}
 	
 	private Response getWelcomePage() {
-		return Response.create(StatusCode.OK).getFile("toti/assets/index.html");
+		//return Response.create(StatusCode.OK).getFile("toti/assets/index.html");
+		return Response.create(StatusCode.OK)
+			.addHeader("Content-Type", "text/html")
+			.getText(Page.primary(
+				"Welcome",
+				"<h1>Welcome</h1>"
+				+ "<h2>Hello and welcome in TOTI framework</h2>"
+				+ Page.paragraph("Your application is running successfully")
+			));
 	}
 	
 	/*

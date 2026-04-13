@@ -47,7 +47,7 @@ public class Param {
 	}
 	
 	public boolean hasActions() {
-		return actions.size() == 0;
+		return actions.isEmpty();
 	}
 	
 	public boolean isParam() {

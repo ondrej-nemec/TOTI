@@ -41,9 +41,6 @@ public class ApplicationFactory {
 	private Boolean dirResponseAllowed = null;
 	private String dirDefaultFile = null;
 	private Function<String, Boolean> isDevelop = null;
-//	private Long tokenExpirationTime = null;
-//	private String tokenCustomSalt = null;
-	// private String urlPattern = null;
 	private String logsPath = null;
 	
 	private Boolean autoStart = null;
@@ -78,10 +75,6 @@ public class ApplicationFactory {
 	}
 
 	public Application create(List<Module> modules, Logger logger) throws Exception {
-	//	Env env = appEnv = this.env.getSection("applications").getModule(hostname);
-		// Profiler profiler = initProfiler(env, logger);
-		
-		
 		ObjectBuilder<Module> actualModule = new ObjectBuilder<>();
 		Param root = new Param(null);
 		Register register = new Register(root, actualModule, pattern, extensions);
