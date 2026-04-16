@@ -8,6 +8,7 @@ import toti.application.answers.router.Router;
 import toti.application.application.Module;
 import toti.application.application.Task;
 import toti.application.application.register.Register;
+import toti.examples.modules.application.ErrorHandlerExampleController;
 import toti.examples.modules.application.ExceptionsController;
 import toti.lib.files.env.Env;
 
@@ -45,6 +46,7 @@ public class ApplicationModule implements Module {
 		
 		//register.getExtension(AuthenticationExtension.class).setSessionUserProvider(sipe);
 		
+		register.addController(ErrorHandlerExampleController.class, ()->new ErrorHandlerExampleController());
 		register.addController(ExceptionsController.class, ()->new ExceptionsController());
 		/*register.addController(RequestController.class, ()->new RequestController());
 		register.addController(ResponseController.class, ()->new ResponseController(task, link));

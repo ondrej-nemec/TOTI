@@ -34,7 +34,7 @@ public class ExceptionAnswer {
 	private final Register register;
 	
 	private final Map<ExceptionHashCode, String> exceptionFileName = new HashMap<>();
-	
+
 	public ExceptionAnswer(
 			Register register, Function<String, Boolean> isDevelop,
 			String logsPath, TranslatorExtension translator, Logger logger) {
@@ -51,13 +51,12 @@ public class ExceptionAnswer {
 	}
 
 	public FinalResponse answer(
-			Request request,
-			StatusCode status, Throwable t,
-			Identity identity, MappedAction mappedAction,
-			Headers responseHeaders,
-			String charset
-		) {
-		
+		Request request,
+		StatusCode status, Throwable t,
+		Identity identity, MappedAction mappedAction,
+		Headers responseHeaders,
+		String charset
+	) {
 		return getResponse(request, status, t, identity, mappedAction, charset)
 		.prepare(
 			responseHeaders, identity,
@@ -80,18 +79,16 @@ public class ExceptionAnswer {
 		logger.error(String.format(message, status, request.getMethod(), request.getUri()), t);
 		
 		boolean isDevelopResponseAllowed = isDevelop.apply(identity.getIP());
-		boolean isAsyncRequest = request.getHeaders().isAsyncRequest(); // probably js request
-		
-		if (register.getCustomExceptionResponse() != null) {
+		if (!isDevelopResponseAllowed && register.getCustomErrorHandler() != null) {
 			try {
-				return register.getCustomExceptionResponse()
-					.catchException(request, status, identity, translator, t, isDevelopResponseAllowed, isAsyncRequest);
+				return register.getCustomErrorHandler().create()
+					.onError(status, t).create(request, translator.getTranslator(identity), identity);
 			} catch (Throwable t1) {
-				logger.error("CustomExceptionResponse fail, default implementation continue", t1);
+				logger.error("CustomErroHandler fails, default implementation continue", t1);
 			}
 		}
 		String exceptionDetail = getExceptionDetail(request, status, t, identity, mappedAction);
-		if (isAsyncRequest) {
+		if (request.getHeaders().isAsyncRequest()) { // probably js request
 			saveToFile(fileName, exceptionDetail, charset);
 			if (isDevelopResponseAllowed) {
 				return Response.create(status).getText(t.getClass() + ": " + t.getMessage());

@@ -1,7 +1,6 @@
 package toti.application.answers;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -22,6 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import toti.application.answers.action.ResponseAction;
 import toti.application.answers.request.Identity;
 import toti.application.answers.request.Request;
 import toti.application.answers.response.FinalResponse;
@@ -29,7 +29,7 @@ import toti.application.answers.response.Response;
 import toti.application.answers.response.TextResponse;
 import toti.application.application.register.MappedAction;
 import toti.application.application.register.Register;
-import toti.application.extensions.CustomExceptionExtension;
+import toti.application.extensions.CustomErrorHandler;
 import toti.application.extensions.Translator;
 import toti.application.extensions.TranslatorExtension;
 import toti.application.logging.FileName;
@@ -46,31 +46,25 @@ public class ExceptionAnswerTest {
 	
 	@Test
 	public void testAnswer() {
-		Request request = new Request(
-			"/wrong",HttpMethod.GET, new Headers(),
-			MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty()
-		);
-		
-		Identity identity = mock(Identity.class);
-		
-		Translator translator = mock(Translator.class);
-		TranslatorExtension translatorExtension = mock(TranslatorExtension.class);
-		
-		
 		Headers reqHeaders = mock(Headers.class);
 		when(reqHeaders.isAsyncRequest()).thenReturn(true);
-		
-		Headers resHeaders = new Headers();
-		resHeaders.addHeader("test", "header");
-		
+
+		Request request = new Request(
+			"/wrong",HttpMethod.GET, reqHeaders,
+			MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty()
+		);
+		Identity identity = mock(Identity.class);
+		Translator translator = mock(Translator.class);
+		TranslatorExtension translatorExtension = mock(TranslatorExtension.class);
+
 		ExceptionAnswer answer = spy(new ExceptionAnswer(
 			mock(Register.class),
-			ip->ip.equals("localhost"),
+			ip->false,
 			null,
 			translatorExtension,
 			mock(Logger.class)
 		));
-		
+
 		FinalResponse expected = new FinalResponse(
 			StatusCode.I_AM_A_TEAPORT,
 			new Headers()
@@ -78,7 +72,9 @@ public class ExceptionAnswerTest {
 			.addHeader("content-type", "text/plain"),
 			"I'm a teapot"
 		);
-		
+
+		Headers resHeaders = new Headers();
+		resHeaders.addHeader("test", "header");
 		assertEquals(expected, answer.answer(
 			request, StatusCode.I_AM_A_TEAPORT, new Throwable(), identity, null, resHeaders, "charset"
 		));
@@ -89,26 +85,25 @@ public class ExceptionAnswerTest {
 	@Test
 	public void testCustomExceptionResponse() {
 		Logger logger = mock(Logger.class);
-		
-		CustomExceptionExtension custom = new CustomExceptionExtension() {
-			@Override
-			public Response catchException(toti.application.answers.request.Request request, StatusCode status, Identity identity,
-				TranslatorExtension translator, Throwable t, boolean isDevelopResponseAllowed, boolean isAsyncRequest) {
-				return new TextResponse(StatusCode.ACCEPTED, new Headers(), "catched");
-			}
-		};
-		
+
 		Register register = mock(Register.class);
-		when(register.getCustomExceptionResponse()).thenReturn(custom);
-		
+		when(register.getCustomErrorHandler()).thenReturn(()->new CustomErrorHandler() {
+			@Override
+			public ResponseAction onError(StatusCode status, Throwable t) {
+				return (request, translator, identity)->{
+					return new TextResponse(StatusCode.ACCEPTED, new Headers(), "catched");
+				};
+			}
+		});
+
 		ExceptionAnswer answer = spy(new ExceptionAnswer(
 			register,
-			ip->ip.equals("localhost"),
+			ip->false,
 			null,
 			mock(TranslatorExtension.class),
 			logger
 		));
-		
+
 		Response response = answer.getResponse(
 			mock(Request.class),
 			StatusCode.I_AM_A_TEAPORT, 
@@ -119,43 +114,40 @@ public class ExceptionAnswerTest {
 		);
 		assertEquals(new TextResponse(StatusCode.ACCEPTED, new Headers(), "catched"), response);
 		verify(logger, times(1)).error(anyString(), any(Throwable.class));
-		
 	}
-	
+
 	@ParameterizedTest
 	@MethodSource("dataGetResponse")
 	public void testGetResponse(
 			String message,
-			boolean isAsync, String ip, int saveToFile,
+			boolean isAsync, boolean isDev, int saveToFile,
 			Response expected) throws Exception {
 		Logger logger = mock(Logger.class);
+
 		Headers headers = mock(Headers.class);
 		when(headers.isAsyncRequest()).thenReturn(isAsync);
-		
 		Request request = new Request(
-			"/a/b/c", HttpMethod.GET, new Headers(),
+			"/a/b/c", HttpMethod.GET, headers,
 			new MapDictionary<String>(new HashMap<>()).put("some", "param").put("another", "value"),
 			new RequestParameters(),
 			"some body".getBytes(),
 			Optional.empty()
 		);
-		
 		Identity identity = mock(Identity.class);
-		when(identity.getIP()).thenReturn(ip);
 		
 		ExceptionAnswer answer = spy(new ExceptionAnswer(
 			mock(Register.class),
-			incomingIp->incomingIp.equals("localhost"),
+			incomingIp->isDev,
 			null,
 			mock(TranslatorExtension.class),
 			logger
 		));
+
 		doReturn("DetailedException").when(answer).getExceptionDetail(any(), any(), any(), any(), any());
 		doReturn("ExceptionInfo").when(answer).getExceptionInfo(any());
 		doReturn(0).when(answer).saveToFile(any(), any(), any(), any());
 		doReturn(new FileName(null, false)).when(answer).getFileName(any(), anyInt(), any(), any(), any());
-		
-		
+
 		assertEquals(expected, answer.getResponse(
 			request,
 			StatusCode.I_AM_A_TEAPORT,
@@ -172,24 +164,24 @@ public class ExceptionAnswerTest {
 	public static Object[] dataGetResponse() {
 		return new Object[] {
 			new Object[] {
-				"Sync request, dev ip",
-				false, "localhost", 0,
+				"Sync request, dev",
+				false, true, 0,
 				new TextResponse(StatusCode.OK, new Headers().addHeader("content-type", "text/html"), "DetailedException")
 			},
 			new Object[] {
-				"Sync request, not dev ip",
-				false, "42.42.42.42", 1,
-				new TextResponse(StatusCode.OK, new Headers().addHeader("content-type", "text/html"), "ExceptionInfo")
+				"Sync request, not dev",
+				false, false, 1,
+				new TextResponse(StatusCode.I_AM_A_TEAPORT, new Headers().addHeader("content-type", "text/html"), "ExceptionInfo")
 			},
 
 			new Object[] {
-				"Async request, dev ip",
-				true, "localhost", 1,
+				"Async request, dev",
+				true, true, 1,
 				new TextResponse(StatusCode.I_AM_A_TEAPORT, new Headers(), "class java.lang.Exception: Some Exception")
 			},
 			new Object[] {
-				"Async request, not dev ip",
-				true, "42.42.42.42", 1,
+				"Async request, not dev",
+				true, false, 1,
 				new TextResponse(StatusCode.I_AM_A_TEAPORT, new Headers(), "I'm a teapot")
 			},
 		};
@@ -271,7 +263,7 @@ public class ExceptionAnswerTest {
 		ExceptionAnswer answer = new ExceptionAnswer(
 			mock(Register.class),
 			ip->ip.equals("localhost"),
-			null,
+			"/tmp/toti-test",
 			mock(TranslatorExtension.class),
 			mock(Logger.class)
 		);
