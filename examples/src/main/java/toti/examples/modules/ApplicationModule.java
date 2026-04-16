@@ -26,20 +26,7 @@ public class ApplicationModule implements Module {
 	@Override
 	public List<Task> initInstances(Env env, Register register, Link link) throws Exception {
 		// register.getExtension(TemplateExtension.class).registerModule(getName(), "", "templates");
-		
-		// TODO vylepsit
-		/*register.setCustomExceptionResponse(new CustomExceptionExtension() {
-			@Override
-			public Response catchException(Request request, StatusCode status, Identity identity,
-				TranslatorExtension translator, Throwable t, boolean isDevelopResponseAllowed, boolean isAsyncRequest) {
-				// handle only some expected exceptions
-				if (t instanceof LogicException) {
-					return Response.OK().getText("Oops, something happends: " + t.getMessage());
-				}
-				throw new RuntimeException(t);
-			}
-		});*/
-		
+
 		//TaskExample task = new TaskExample(LogManager.getLogger("task"));
 		
 		//SessionUserProviderExample sipe = new SessionUserProviderExample(link);
