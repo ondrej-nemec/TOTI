@@ -87,10 +87,12 @@ public class TotiAnswer {
 			.addHeader("Content-Type", "text/html")
 			.getText(Page.primary(
 				"Welcome",
-				"<h1>Welcome</h1>"
-				+ "<h2>Hello and welcome in TOTI framework</h2>"
-				+ Page.paragraph("Your application is running successfully")
-			));
+				b->{
+					b.addH1("Welcome");
+					b.addH2("Hello and welcome in TOTI framework");
+					b.addParagraph("Your application is running successfully");
+				}
+			).create());
 	}
 	
 	/*

@@ -123,45 +123,30 @@ public class ExceptionAnswer {
 	}
 
 	protected String getExceptionDetail(Request request, StatusCode status, Throwable t, Identity identity, MappedAction mappedAction) {
-		String title = String.format("Exception %s", status);
-		StringBuilder body = new StringBuilder();
-
-		body.append(String.format("<h1>Exception occured: %s %s</h1>", status.getCode(), status.getDescription()));
-		body.append(Page.paragraph(String.format("<div>In %s %s</div>", request.getMethod(), request.getUri())));
-
-		StringBuilder errorStackTrace = new StringBuilder();
-		Throwable aux = t;
-		while (aux != null) {
-			if (!errorStackTrace.isEmpty()) {
-				errorStackTrace.append("</br>Caused by: ");
-			}
-			errorStackTrace.append(String.format("%s: %s<br>", aux.getClass(), aux.getMessage()));
-			for (StackTraceElement el : aux.getStackTrace()) {
-				errorStackTrace.append(String.format(
-					"at %s.%s (%s:%s)<br>",
-					el.getClassName(), el.getMethodName(),
-					el.getFileName(), el.getLineNumber()
-				));
-			}
-			aux = aux.getCause();
-		}
-		body.append(Page.section(2, "Exception", Page.code(errorStackTrace.toString()), false));
-
-		body.append("<h2>Request info</h2>");
-		if (mappedAction != null) {
-			body.append(Page.section(
-				3, "Mapping",
-				Page.paragraph(String.format(
-					"<strong>Module</strong> %s<br>"
-					+ "<strong>Controller</strong> %s<br>"
-					+ "<strong>Method</strong> %s<br>",
-					mappedAction.getModuleName(),
-					mappedAction.getClassName(),
-					mappedAction.getMethodName()
-				)),
-				true
-			));
-		}
+		return Page.error(String.format("Exception %s", status), b->{
+			b.addH1(String.format("Exception occured: %s %s", status.getCode(), status.getDescription()))
+			.addParagraph(p->{
+				p.addText(String.format("<div>In %s %s</div>", request.getMethod(), request.getUri()));
+				StringBuilder errorStackTrace = new StringBuilder();
+				Throwable aux = t;
+				while (aux != null) {
+					if (!errorStackTrace.isEmpty()) {
+						errorStackTrace.append("</br>Caused by: ");
+					}
+					errorStackTrace.append(String.format("%s: %s<br>", aux.getClass(), aux.getMessage()));
+					for (StackTraceElement el : aux.getStackTrace()) {
+						errorStackTrace.append(String.format(
+							"at %s.%s (%s:%s)<br>",
+							el.getClassName(), el.getMethodName(),
+							el.getFileName(), el.getLineNumber()
+						));
+					}
+					aux = aux.getCause();
+				}
+				p.addCard(e->e.addText(errorStackTrace.toString()));
+			})
+			.addH2("Request info");
+				// TODO
 /*
 <div class="block">
 					<table>
@@ -185,92 +170,22 @@ public class ExceptionAnswer {
 					</t:if>
 					</table>
 				</div> */
-		body.append(Page.section(3, "Identity", "TODO", false));
-		
-
-		// probably not show/save parameters - not save - password and other secrets leak
-		//body.append(Page.section(3, "Parameters", "TODO", false));
-		/*
-					<div class="section">
-				<div>
-					<h3>Paramenters</h3>
-					<img src="" class="block-show" width="20px">
-					<img src="" class="block-hide" width="20px">
-				</div>
-				<div class="block">
-					<h3>Query parameters</h3>
-					<table>
-						<t:foreach key="String key" value="Object value" map="${request.getQueryParameters()}">
-							<tr>
-								<th>${key}</th>
-								<t:if cond="value == null">
-									<td>${value}</td>
-									<td></td>
-								<t:else>
-									<td>${value}</td>
-									<td>${value.getClass().getName()}</td>
-								</t:if>
-								
-							</tr>
-						</t:foreach>
-					</table>
-					<h3>Binary body:</h3>
-					<div>
-						<t:if cond="${request.getBody()} == null">
-							No binary data
-						<t:else>
-							Contains ${request.getBody().length} bytes
-						</t:if>
-					</div>
-					<h3>Body as parameters</h3>
-					<table>
-						<t:foreach key="String key" value="Object value" map="${request.getBodyInParameters()}">
-							<tr>
-								<th>${key}</th>
-								<t:if cond="value == null">
-									<td>${value}</td>
-									<td></td>
-								<t:else>
-									<td>${value}</td>
-									<td>${value.getClass().getName()}</td>
-								</t:if>
-								
-							</tr>
-						</t:foreach>
-					</table>
-				</div>
-			</div>
-			
-			<div class="section">
-				<div>
-					<h3>Headers</h3>
-					<img src="" class="block-show" width="20px">
-					<img src="" class="block-hide" width="20px">
-				</div>
-				<div class="block">
-					<table>
-						<t:foreach key="String key" value="Object list" map="${requestHeaders.getHeaders()}">
-							<t:foreach item="Object value" collection="${list}">
-								<tr>
-									<th>${key}</th>
-									<t:if cond="value == null">
-										<td>${value}</td>
-										<td></td>
-									<t:else>
-										<td>${value}</td>
-										<td>${value.getClass().getName()}</td>
-									</t:if>
-								</tr>
-							</t:foreach>
-						</t:foreach>
-					</table>
-				</div>
-			</div>
-			
-		</div>
-	</div>
-		*/
-		return Page.error(title, body.toString());
+			if (mappedAction != null) {
+				b.addSection("Mapping", 3, true, m->{
+					m.addParagraph(mp->mp.addText(String.format(
+						"<strong>Module</strong> %s<br>"
+						+ "<strong>Controller</strong> %s<br>"
+						+ "<strong>Method</strong> %s<br>",
+						mappedAction.getModuleName(),
+						mappedAction.getClassName(),
+						mappedAction.getMethodName()
+					)));
+				});
+			}
+			b.addSection("Identity", 3, true, m->{
+				m.addParagraph(mp->mp.addText("TODO"));
+			});
+		}).create();
 	}
 	
 	private FileName getFileName(MappedAction action, StatusCode code, Throwable t) {

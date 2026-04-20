@@ -1,151 +1,57 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light" data-page="primary">
+<html>
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>TOTI</title>
-
+<!-- V1.0.0 -->
 <style>
-	:root {
-	    --bg: #ffffff;
-	    --text: #2c3e50;
-	    --muted: #6b7280;
-	    --card: #f4f6f8;
-	    --border: #e5e7eb;
-	    --code-bg: #f4f6f8;
-	    --accent: #2f80ed;
-	}
-
-	[data-theme="dark"] {
-	    --bg: #0f172a;
-	    --text: #e5e7eb;
-	    --muted: #9ca3af;
-	    --card: #111827;
-	    --border: #1f2937;
-	    --code-bg: #1e293b;
+	/* select  */
+	html[data-page="primary"] {
+		--primary-color: #2f80ed;
 	}
 	html[data-page="error"] {
-		--accent: #e74c3c;
+		--primary-color: #e74c3c;
 	}
 	html[data-page="success"]  {
-		--accent: #10b981;
+		--primary-color: #10b981;
 	}
 	html[data-page="warning"] {
-		--accent: #f59e0b;
+		--primary-color: #f59e0b;
 	}
-	body {
-	    margin: 0;
-	    font-family: system-ui, sans-serif;
-	    background: var(--bg);
-	    color: var(--text);
-	}
+	/*************/
+	:root { --body-bg: #ffffff; --body-color: #2c3e50; --secondary-color: #6b7280; --card: #f4f6f8; --border: #e5e7eb; --code-bg: #f4f6f8; }
+	[data-theme="dark"] { --body-bg: #0f172a; --body-color: #e5e7eb; --secondary-color: #9ca3af; --card: #111827; --border: #1f2937; --code-bg: #1e293b; }
 
-	.topbar {
-	    display: flex;
-	    justify-content: space-between;
-	    align-items: center;
-	    padding: 12px 20px;
-	    border-bottom: 1px solid var(--border);
-	}
+	body { margin: 0; font-family: system-ui, sans-serif; background: var(--body-bg); color: var(--body-color); }
+	.header { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--border); }
+	.brand { font-weight: 600; color: var(--primary-color); }
+	.container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+	h1 { margin: 0 0 10px 0; color: var(--primary-color); }
+	h2 { margin: 0 0 10px 0; font-weight: normal; color: var(--secondary-color); }
+	h3 { margin: 0 0 10px 0; font-weight: normal; color: var(--secondary-color); }
+	h4 { margin: 0 0 10px 0; font-weight: normal; color: var(--secondary-color); }
+	h5 { margin: 0 0 10px 0; font-weight: normal; color: var(--secondary-color); }
 
-	.brand {
-	    font-weight: 600;
-	    color: var(--accent);
-	}
+	#toggle-theme { background: transparent; color: var(--body-color); border: 1px solid var(--border); padding: 6px 10px; border-radius: 6px; cursor: pointer; }
+	[data-theme="dark"] #theme-dark { display: none; }
+	[data-theme="light"] #theme-light { display: none; }
+	.actions { display: flex; gap: 10px; font-size: 14px; color: var(--secondary-color); }
 
-	.actions {
-	    display: flex;
-	    gap: 10px;
-	    font-size: 14px;
-	    color: var(--muted);
-	}
+	/******** code **********/
+	.code { background: var(--code-bg); border-left: 4px solid var(--primary-color); padding: 12px; font-family: monospace; overflow-x: auto; }
+	/******** boxes **********/
+	.card { border-radius: 10px; padding: 16px; margin-bottom: 16px; background: var(--card); border: 1px solid var(--border); }
+	/******** normal text **********/
+	.paragraph { padding: 16px; margin-bottom: 16px; }
 
-	.container {
-	    max-width: 900px;
-	    margin: 40px auto;
-	    padding: 0 20px;
-	}
-
-	.card {
-	    background: var(--card);
-	    border: 1px solid var(--border);
-	    border-radius: 10px;
-	    padding: 16px;
-	    margin-bottom: 16px;
-	}
-	.paragraph {
-	    padding: 16px;
-	    margin-bottom: 16px;
-	}
-
-	h1 {
-	    margin: 0 0 10px 0;
-	    color: var(--accent);
-	}
-
-	h2 {
-	    margin: 0 0 10px 0;
-	    font-weight: normal;
-	    color: var(--muted);
-	}
-
-	.code {
-	    background: var(--code-bg);
-	    border-left: 4px solid var(--accent);
-	    padding: 12px;
-	    font-family: monospace;
-	    overflow-x: auto;
-	}
-
-	#toggle-theme {
-	    background: transparent;
-	    color: var(--text);
-	    border: 1px solid var(--border);
-	    padding: 6px 10px;
-	    border-radius: 6px;
-	    cursor: pointer;
-	}
-	[data-theme="dark"] #theme-dark {
-		display: none;
-	}
-	[data-theme="light"] #theme-light {
-		display: none;
-	}
-
-	.section {
-	    border: 1px solid var(--border);
-	    border-radius: 10px;
-	    margin-bottom: 16px;
-	    overflow: hidden;
-	}
-
-	.section-header {
-	    padding: 12px 16px;
-	    cursor: pointer;
-	    justify-content: space-between;
-	    display: flex;
-	}
-
-	.section-header:hover {
-	    background: var(--border);
-	}
-
-	.chevron {
-	    transition: transform 0.2s;
-	    color: var(--muted);
-	}
-
-	.section.collapsed .chevron {
-	    transform: rotate(-90deg);
-	}
-
-	.section-content {
-	    padding: 16px;
-	}
-
-	.section.collapsed .section-content {
-	    display: none;
-	}
+	/*********** hiddable *************/
+	.section { border: 1px solid var(--border); border-radius: 10px; margin-bottom: 16px; overflow: hidden; }
+	.section-header { padding: 12px 16px; cursor: pointer; justify-content: space-between; display: flex; }
+	.section-header:hover {  background: var(--border); }
+	.chevron {  transition: transform 0.2s; color: var(--secondary-color); }
+	.section.collapsed .chevron {  transform: rotate(-90deg); }
+	.section.collapsed .section-content {  display: none; }
 
 
 	/**************************************************************/
@@ -156,7 +62,7 @@
 	    right: 0;
 	    height: 30px;
 	    background: var(--card);
-	    border-top: 2px solid var(--accent);
+	    border-top: 2px solid var(--primary-color);
 	    display: flex;
 	    align-items: center;
 	    gap: 15px;
@@ -167,9 +73,10 @@
 </head>
 
 <body>
-<div class="topbar">
+<div class="header">
     <div class="brand">TOTI</div>
 
+<!-- only in examle -->
     <div class="actions">
         <label>
         	<input type="radio" name="level" id="primary" checked>
@@ -188,6 +95,7 @@
         	Warning
         </label>
     </div>
+ <!-- end -->
 
     <div class="actions">
         <button id="toggle-theme" onclick="toggleTheme()">
@@ -200,17 +108,13 @@
 <div class="container">
     <h1>Welcome</h1>
     <h2>Your application is running successfully</h2>
+    <h3>Your application is running successfully</h3>
+    <h4>Your application is running successfully</h4>
+    <h5>Your application is running successfully</h5>
 
     <div class="card">
-        <strong>Server:</strong> http://localhost:8080<br/>
-        <strong>Java:</strong> 17<br/>
-        <strong>Environment:</strong> development
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
     </div>
-
-    <div class="paragraph">
-    	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-    </div>
-
 
     <div class="card">
         <div class="code">
@@ -218,33 +122,63 @@
         </div>
     </div>
 
-    <div class="code">
+    <div class="paragraph">
     	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </div>
+
+    <div class="paragraph">
+	    <div class="code">
+	    	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	    </div>
     </div>
 
     <div class="section">
 	    <h3 class="section-header" onclick="toggleSection(this)">
-	        <span>Hiddable</span>
+	        <span>Collapsable</span>
 	        <span class="chevron">▼</span>
 	    </h3>
 
 	    <div class="section-content">
-	        <div>
-	        	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	        </div>
+	         <div class="card">
+		        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		    </div>
 
-		    <div class="code">
+		    <div class="card">
+		        <div class="code">
+		        	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		        </div>
+		    </div>
+
+		    <div class="paragraph">
+		    	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		    </div>
+
+		    <div class="paragraph">
+			    <div class="code">
+			    	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			    </div>
+		    </div>
+	    </div>
+	</div>
+
+    <div class="section collapsed">
+	    <h3 class="section-header" onclick="toggleSection(this)">
+	        <span>Collapsed</span>
+	        <span class="chevron">▼</span>
+	    </h3>
+
+	    <div class="section-content">
+		    <div class="paragraph">
 		    	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 		    </div>
 	    </div>
-
 	</div>
 
-    <div class="card">
-        <small style="color: var(--muted);">
+    <!-- <div class="card">
+        <small style="color: var(--secondary-color);">
             TOTI Framework
         </small>
-    </div>
+    </div>-->
 
 </div>
 
@@ -258,19 +192,29 @@
 </div>
 
 <script>
+	// dark/light
+	document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "light");
 	function toggleTheme() {
 	    const html = document.documentElement;
 	    const current = html.getAttribute("data-theme");
-	    html.setAttribute("data-theme", current === "dark" ? "light" : "dark");
+	    var theme = current === "dark" ? "light" : "dark";
+	    html.setAttribute("data-theme", theme);
+	    localStorage.setItem("theme", theme);
 	}
+	// collapsable
 	function toggleSection(header) {
 	    const section = header.parentElement;
 	    section.classList.toggle("collapsed");
 	}
+
+
+	// only for tests
+	document.documentElement.setAttribute("data-page", localStorage.getItem("level") || "primary");
 	document.querySelectorAll('input[type=radio][name="level"]').forEach((input)=>{
 		input.onchange = (e)=>{
 	    	const html = document.documentElement;
 			html.setAttribute("data-page", input.id);
+	    	localStorage.setItem("level", input.id);
 		};
 	});
 </script>
