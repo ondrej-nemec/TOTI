@@ -1,10 +1,20 @@
 package toti.application.answers;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
+
+import org.apache.logging.log4j.Logger;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -13,25 +23,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static toti.lib.common.tests.TestCase.*;
-
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
-import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 import toti.application.ServerException;
 import toti.application.answers.action.BodyType;
 import toti.application.answers.action.ResponseAction;
-import toti.application.answers.request.AuthMode;
 import toti.application.answers.request.Identity;
 import toti.application.answers.request.IdentityFactory;
 import toti.application.answers.request.Request;
@@ -43,12 +38,14 @@ import toti.application.answers.router.Link;
 import toti.application.answers.router.Router;
 import toti.application.application.register.MappedAction;
 import toti.application.application.register.Param;
-import toti.application.extensions.AuthenticationExtension;
 import toti.application.extensions.TemplateExtension;
 import toti.application.extensions.Translator;
 import toti.application.extensions.TranslatorExtension;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.common.structures.ThrowingFunction;
+import static toti.lib.common.tests.TestCase.assertEquals;
+import static toti.lib.common.tests.TestCase.consumer;
+import static toti.lib.common.tests.TestCase.throwingFunction;
 import toti.lib.tcpip.enums.HttpMethod;
 import toti.lib.tcpip.enums.StatusCode;
 import toti.lib.tcpip.structures.RequestParameters;
@@ -66,12 +63,10 @@ public class ControllerAnswerTest {
 		when(translatorExtension.getTranslator(any())).thenReturn(translator);
 		
 		IdentityFactory identityFactory = mock(IdentityFactory.class);
-		AuthenticationExtension authenticationExtension = mock(AuthenticationExtension.class);
 		Param root = new Param(null);
 		
 		ControllerAnswer answer = spy(new ControllerAnswer(
-			router, root, mock(TemplateExtension.class),
-			authenticationExtension, identityFactory,
+			router, root, mock(TemplateExtension.class), identityFactory,
 			mock(Link.class), translatorExtension, mock(Logger.class)
 		));
 		// doReturn(null).when(answer).getMappedAction(any(), any(), any());
@@ -93,7 +88,7 @@ public class ControllerAnswerTest {
 		);
 		verify(router, times(1)).getUrlMapping("/a/b/c");
 		verify(answer, times(1)).getUrlParts("/a/b/c");
-		verifyNoMoreInteractions(translator, identityFactory, authenticationExtension, answer, router);
+		verifyNoMoreInteractions(translator, identityFactory, answer, router);
 	}
 
 	@Test
@@ -107,15 +102,13 @@ public class ControllerAnswerTest {
 		when(translatorExtension.getTranslator(any())).thenReturn(translator);
 		
 		IdentityFactory identityFactory = mock(IdentityFactory.class);
-		AuthenticationExtension authenticationExtension = mock(AuthenticationExtension.class);
 		Identity identity = mock(Identity.class);
 		
 		MappedAction mappedAction = MappedAction.test("a", "b", "c");
 		
 		Param root = new Param(null);
 		ControllerAnswer answer = spy(new ControllerAnswer(
-			router, root, mock(TemplateExtension.class),
-			authenticationExtension, identityFactory,
+			router, root, mock(TemplateExtension.class), identityFactory,
 			mock(Link.class), translatorExtension, mock(Logger.class)
 		));
 		FinalResponse finalResponse = mock(FinalResponse.class);
@@ -147,13 +140,13 @@ public class ControllerAnswerTest {
 		verify(translatorExtension, times(1)).getTranslator(identity);
 		verify(router, times(1)).getUrlMapping("/a/b/c");
 		verify(answer, times(1)).getUrlParts("/a/b/c");
-		verifyNoMoreInteractions(translator, identityFactory, authenticationExtension, answer, router);
+		verifyNoMoreInteractions(translator, identityFactory, answer, router);
 	}
 	
 	@ParameterizedTest
 	@MethodSource("dataGetUrlParts")
 	public void testGetUrlParts(String url, List<String> expected) {
-		ControllerAnswer answer = new ControllerAnswer(null, null, null, null, null, null, null, null);
+		ControllerAnswer answer = new ControllerAnswer(null, null, null, null, null, null, null);
 		assertEquals(expected, answer.getUrlParts(url));
 	}
 	
@@ -178,8 +171,7 @@ public class ControllerAnswerTest {
 		when(translatorExtension.getTranslator(any())).thenReturn(translator);
 		
 		ControllerAnswer answer = new ControllerAnswer(
-			router, root, mock(TemplateExtension.class),
-			mock(AuthenticationExtension.class), mock(IdentityFactory.class),
+			router, root, mock(TemplateExtension.class), mock(IdentityFactory.class),
 			mock(Link.class), translatorExtension, mock(Logger.class)
 		);
 		Request request = new Request(
@@ -414,7 +406,7 @@ public class ControllerAnswerTest {
 	@ParameterizedTest
 	@MethodSource("dataRun")
 	public void testRun(
-			String uri, List<Object> pathParams, AuthMode authMode, String redirect,
+			String uri, List<Object> pathParams, String redirect,
 			Object controller, ThrowingFunction<Object, Method, Exception> getMethod,
 			Response expected) throws Throwable {
 		Translator translator = mock(Translator.class);
@@ -422,20 +414,16 @@ public class ControllerAnswerTest {
 		when(translatorExtension.getTranslator(any())).thenReturn(translator);
 		
 		Identity identity = mock(Identity.class);
-		when(identity.getLoginMode()).thenReturn(AuthMode.HEADER);
 		
 		MappedAction action = new MappedAction(
 			null, null, null, null,
-			getMethod.apply(controller), ()->controller, authMode,
+			getMethod.apply(controller), ()->controller,
 			null
 		);
 		
-		AuthenticationExtension authenticationExtension = mock(AuthenticationExtension.class);
-		when(authenticationExtension.getNotLoggedUserRedirect(any())).thenReturn(redirect);
-		
 		ControllerAnswer answer = new ControllerAnswer(
 			mock(Router.class), mock(Param.class), mock(TemplateExtension.class),
-			authenticationExtension, mock(IdentityFactory.class),
+			mock(IdentityFactory.class),
 			mock(Link.class), translatorExtension, mock(Logger.class)
 		);
 		Request request = new Request(
@@ -452,7 +440,7 @@ public class ControllerAnswerTest {
 		return new Object[] {
 			// interruption in prevalidate
 			new Object[] {
-				"/uri", Arrays.asList(), AuthMode.COOKIE, null,
+				"/uri", Arrays.asList(), null,
 				new Object() {
 					@SuppressWarnings("unused")
 					public ResponseAction index() {
@@ -465,7 +453,7 @@ public class ControllerAnswerTest {
 			},
 			// interrupted in authorize 
 			new Object[] {
-				"/uri", Arrays.asList(), AuthMode.COOKIE, null,
+				"/uri", Arrays.asList(), null,
 				new Object() {
 					@SuppressWarnings("unused")
 					public ResponseAction index() {
@@ -479,7 +467,7 @@ public class ControllerAnswerTest {
 			// TODO convert to correct calling
 			/*// interrupted in authorize - authMode is header, redirect is null
 			new Object[] {
-				"/uri", Arrays.asList(), AuthMode.HEADER, null,
+				"/uri", Arrays.asList(), HEADER, null,
 				new Object() {
 					@SuppressWarnings("unused")
 					public ResponseAction index() {
@@ -499,7 +487,7 @@ public class ControllerAnswerTest {
 			},
 			// interrupted in authorize - authMode is header, redirect is not null
 			new Object[] {
-				"/uri", Arrays.asList(), AuthMode.HEADER, "/redirect",
+				"/uri", Arrays.asList(), HEADER, "/redirect",
 				new Object() {
 					@SuppressWarnings("unused")
 					public ResponseAction index() {
@@ -519,7 +507,7 @@ public class ControllerAnswerTest {
 			},
 			// interrupted in authorize - authMode is not header, redirect is null
 			new Object[] {
-				"/uri", Arrays.asList(), AuthMode.COOKIE, null,
+				"/uri", Arrays.asList(), COOKIE, null,
 				new Object() {
 					@SuppressWarnings("unused")
 					public ResponseAction index() {
@@ -539,7 +527,7 @@ public class ControllerAnswerTest {
 			},
 			// interrupted in authorize - authMode is not header, redirect is not null
 			new Object[] {
-				"/uri", Arrays.asList(), AuthMode.COOKIE, "/redirect",
+				"/uri", Arrays.asList(), COOKIE, "/redirect",
 				new Object() {
 					@SuppressWarnings("unused")
 					public ResponseAction index() {
@@ -559,7 +547,7 @@ public class ControllerAnswerTest {
 			},
 			// interrupted in authorize - authMode is not header, redirect is not null, url is root
 			new Object[] {
-				"/", Arrays.asList(), AuthMode.COOKIE, "/redirect",
+				"/", Arrays.asList(), COOKIE, "/redirect",
 				new Object() {
 					@SuppressWarnings("unused")
 					public ResponseAction index() {
@@ -579,7 +567,7 @@ public class ControllerAnswerTest {
 			},*/
 			// interrupted in validate
 			new Object[] {
-				"/uri", Arrays.asList(), AuthMode.COOKIE, null,
+				"/uri", Arrays.asList(), null,
 				new Object() {
 					@SuppressWarnings("unused")
 					public ResponseAction index() {
@@ -592,7 +580,7 @@ public class ControllerAnswerTest {
 			},
 			// interrupted in create
 			new Object[] {
-				"/uri", Arrays.asList(), AuthMode.COOKIE, null,
+				"/uri", Arrays.asList(), null,
 				new Object() {
 					@SuppressWarnings("unused")
 					public ResponseAction index() {
@@ -605,7 +593,7 @@ public class ControllerAnswerTest {
 			},
 			// create return response
 			new Object[] {
-				"/uri", Arrays.asList(), AuthMode.COOKIE, null,
+				"/uri", Arrays.asList(), null,
 				new Object() {
 					@SuppressWarnings("unused")
 					public ResponseAction index() {
@@ -618,7 +606,7 @@ public class ControllerAnswerTest {
 			},
 			// create with params
 			new Object[] {
-				"/uri", Arrays.asList(10, "aaa"), AuthMode.COOKIE, null,
+				"/uri", Arrays.asList(10, "aaa"), null,
 				new Object() {
 					@SuppressWarnings("unused")
 					public ResponseAction index(int id, String value) {
@@ -631,7 +619,7 @@ public class ControllerAnswerTest {
 			},
 			// create with params - cast
 			new Object[] {
-				"/uri", Arrays.asList("10", "aaa"), AuthMode.COOKIE, null,
+				"/uri", Arrays.asList("10", "aaa"), null,
 				new Object() {
 					@SuppressWarnings("unused")
 					public ResponseAction index(int id, String value) {
@@ -644,7 +632,7 @@ public class ControllerAnswerTest {
 			},
 			// create with params - wrong type
 			new Object[] {
-				"/uri", Arrays.asList("not a number", "aaa"), AuthMode.COOKIE, null,
+				"/uri", Arrays.asList("not a number", "aaa"), null,
 				new Object() {
 					@SuppressWarnings("unused")
 					public ResponseAction index(int id, String value) {
@@ -657,7 +645,7 @@ public class ControllerAnswerTest {
 			},
 			// create with params - less that expected
 			new Object[] {
-				"/uri", Arrays.asList(10), AuthMode.COOKIE, null,
+				"/uri", Arrays.asList(10), null,
 				new Object() {
 					@SuppressWarnings("unused")
 					public ResponseAction index(int id, String value) {
@@ -670,7 +658,7 @@ public class ControllerAnswerTest {
 			},
 			// create with params - more than expected
 			new Object[] {
-				"/uri", Arrays.asList(10, "aaa", "bb"), AuthMode.COOKIE, null,
+				"/uri", Arrays.asList(10, "aaa", "bb"), null,
 				new Object() {
 					@SuppressWarnings("unused")
 					public ResponseAction index(int id, String value) {
@@ -692,11 +680,11 @@ public class ControllerAnswerTest {
 		Translator translator = mock(Translator.class);
 		when(translator.withLocale(any(Locale.class))).thenReturn(translator);
 		Identity identity = mock(Identity.class);
-		when(identity.getLoginMode()).thenReturn(AuthMode.HEADER);
+		when(identity.getLoginMode()).thenReturn(HEADER);
 		
 		MappedAction action = new MappedAction(
 			null, null, null,
-			getMethod.apply(controller), ()->controller, AuthMode.HEADER,
+			getMethod.apply(controller), ()->controller, HEADER,
 			null
 		);
 		
@@ -784,108 +772,12 @@ public class ControllerAnswerTest {
 		};
 	}
 */
-	@ParameterizedTest
-	@MethodSource("dataCheckSecured")
-	public void testCheckSecured(Supplier<MappedAction> mapped, Supplier<Identity> identity, StatusCode expectedCode) {
-		ControllerAnswer answer = new ControllerAnswer(
-			mock(Router.class), mock(Param.class), mock(TemplateExtension.class),
-			mock(AuthenticationExtension.class), mock(IdentityFactory.class),
-			mock(Link.class), mock(TranslatorExtension.class), mock(Logger.class)
-		);
-		try {
-			answer.checkSecured(mapped.get(), identity.get());
-			if (expectedCode != null) {
-				fail("Method checkSecured not throws exception");
-			}
-		} catch (ServerException e) {
-			assertEquals(expectedCode, e.getStatusCode());
-		}
-	}
-	
-	public static Object[] dataCheckSecured() {
-		return new Object[] {
-			// secured annotation - not secured - nothing
-			new Object[] {
-				supplier(()->{
-					MappedAction mapped = mock(MappedAction.class);
-					when(mapped.isSecured()).thenReturn(false);
-					return mapped;
-				}),
-				supplier(()->{
-					return null;
-				}),
-				null // status code
-			},
-			// secured annotation - is secured - identity is anonymous 401
-			new Object[] {
-				supplier(()->{
-					MappedAction mapped = mock(MappedAction.class);
-					when(mapped.isSecured()).thenReturn(true);
-					return mapped;
-				}),
-				supplier(()->{
-					Identity identity = mock(Identity.class);
-					when(identity.isAnonymous()).thenReturn(true);
-					return identity;
-				}),
-				StatusCode.UNAUTHORIZED
-			},
-			// 
-			new Object[] {
-				supplier(()->{
-					MappedAction mapped = mock(MappedAction.class);
-					when(mapped.isSecured()).thenReturn(true);
-					return mapped;
-				}),
-				supplier(()->{
-					Identity identity = mock(Identity.class);
-					when(identity.isAnonymous()).thenReturn(false);
-					return identity;
-				}),
-				null // status code
-			},
-			authModeCombination(AuthMode.HEADER, AuthMode.HEADER, null),
-			authModeCombination(AuthMode.HEADER, AuthMode.COOKIE, StatusCode.FORBIDDEN),
-			authModeCombination(AuthMode.HEADER, AuthMode.COOKIE_AND_CSRF, StatusCode.FORBIDDEN),
-			authModeCombination(AuthMode.HEADER, AuthMode.NO_TOKEN, StatusCode.FORBIDDEN),
-			authModeCombination(AuthMode.COOKIE_AND_CSRF, AuthMode.HEADER, null),
-			authModeCombination(AuthMode.COOKIE_AND_CSRF, AuthMode.COOKIE_AND_CSRF, null),
-			authModeCombination(AuthMode.COOKIE_AND_CSRF, AuthMode.COOKIE, StatusCode.FORBIDDEN),
-			authModeCombination(AuthMode.COOKIE_AND_CSRF, AuthMode.NO_TOKEN, StatusCode.FORBIDDEN),
-			authModeCombination(AuthMode.COOKIE, AuthMode.HEADER, null),
-			authModeCombination(AuthMode.COOKIE, AuthMode.COOKIE_AND_CSRF, null),
-			authModeCombination(AuthMode.COOKIE, AuthMode.COOKIE, null),
-			authModeCombination(AuthMode.COOKIE, AuthMode.NO_TOKEN, StatusCode.FORBIDDEN),
-			authModeCombination(AuthMode.NO_TOKEN, AuthMode.HEADER, null),
-			authModeCombination(AuthMode.NO_TOKEN, AuthMode.COOKIE_AND_CSRF, null),
-			authModeCombination(AuthMode.NO_TOKEN, AuthMode.COOKIE, null),
-			authModeCombination(AuthMode.NO_TOKEN, AuthMode.NO_TOKEN, null)
-		};
-	}
-	
-	private static Object[] authModeCombination(AuthMode m, AuthMode i, StatusCode code) {
-		return new Object[] {
-			supplier(()->{
-				MappedAction mapped = mock(MappedAction.class);
-				when(mapped.isSecured()).thenReturn(true);
-				when(mapped.getSecurityMode()).thenReturn(m);
-				return mapped;
-			}),
-			supplier(()->{
-				Identity identity = mock(Identity.class);
-				when(identity.isAnonymous()).thenReturn(false);
-				when(identity.getLoginMode()).thenReturn(i);
-				return identity;
-			}),
-			code
-		};
-	}
 
 	@Test
 	public void testParseBodyThrowsWithNotSupportedTypes() throws ServerException {
 		ControllerAnswer answer = new ControllerAnswer(
 			mock(Router.class), mock(Param.class), mock(TemplateExtension.class),
-			mock(AuthenticationExtension.class), mock(IdentityFactory.class),
+			mock(IdentityFactory.class),
 			mock(Link.class), mock(TranslatorExtension.class), mock(Logger.class)
 		);
 		Request request = new Request(
@@ -908,7 +800,7 @@ public class ControllerAnswerTest {
 	public void testParseBody(Request request, List<BodyType> allowedTypes, Consumer<Request> check) throws ServerException {
 		ControllerAnswer answer = new ControllerAnswer(
 			mock(Router.class), mock(Param.class), mock(TemplateExtension.class),
-			mock(AuthenticationExtension.class), mock(IdentityFactory.class),
+			mock(IdentityFactory.class),
 			mock(Link.class), mock(TranslatorExtension.class), mock(Logger.class)
 		);
 		answer.parseBody(request, allowedTypes, mock(MappedAction.class));

@@ -61,7 +61,7 @@ public class ExceptionAnswer {
 		.prepare(
 			responseHeaders, identity,
 			new ResponseContainer(
-				translator.getTranslator(identity), null, mappedAction, null, null
+				translator.getTranslator(identity), mappedAction, null, null
 			),
 			charset
 		);

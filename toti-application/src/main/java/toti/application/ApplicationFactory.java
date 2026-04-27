@@ -1,6 +1,5 @@
 package toti.application;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,11 +20,11 @@ import toti.application.answers.response.ResponseContainer;
 import toti.application.answers.router.Link;
 import toti.application.answers.router.Router;
 import toti.application.answers.router.UriPattern;
+import toti.application.answers.session.SessionManager;
 import toti.application.application.Module;
 import toti.application.application.Task;
 import toti.application.application.register.Param;
 import toti.application.application.register.Register;
-import toti.application.extensions.AuthenticationExtension;
 import toti.application.extensions.Extension;
 import toti.application.extensions.TemplateExtension;
 import toti.application.extensions.Translator;
@@ -58,10 +57,10 @@ public class ApplicationFactory {
 	private final List<TotiExtension> extensionsTotiResponses;
 	
 	private final Map<String, Extension> extensions;
-	
+	private SessionManager sessionManager;
+
 	private TemplateExtension templateExtension;
 	private TranslatorExtension translatorExtension;
-	private AuthenticationExtension authenticationExtension;
 	
 	public ApplicationFactory(String appIdentifier, Env env, String charset, List<String> hostnames, List<String> paths) {
 		this.env = env;
@@ -94,16 +93,16 @@ public class ApplicationFactory {
 		};
 		actualModule.set(null);
 		
-		IdentityFactory identityFactory = new IdentityFactory(extensions.values());
+		IdentityFactory identityFactory = new IdentityFactory(extensions.values(), getSessionManager());
 		
-		Function<String, Boolean> isDevelop = getDevModeFunc();
+		Function<String, Boolean> isDevelopFunc = getDevModeFunc();
 		
 		TotiAnswer totiAnwer = new TotiAnswer(
-			isDevelop, templateExtension, translatorExtension, identityFactory, extensionsTotiResponses
+			isDevelopFunc, templateExtension, translatorExtension, identityFactory, extensionsTotiResponses
 		);
-		ExceptionAnswer exceptionAnswer = new ExceptionAnswer(register, isDevelop, getLogsPath(env), translatorExtension, logger);
+		ExceptionAnswer exceptionAnswer = new ExceptionAnswer(register, isDevelopFunc, getLogsPath(env), translatorExtension, logger);
 		ControllerAnswer controllerAnswer = new ControllerAnswer(
-			router, root, templateExtension, authenticationExtension,
+			router, root, templateExtension,
 			identityFactory, link, translatorExtension, logger
 		);
 		FileSystemAnswer fileSystemAnswer = new FileSystemAnswer(
@@ -127,17 +126,6 @@ public class ApplicationFactory {
 		);
 	}
 
-	/*private Profiler initProfiler(Env env, Logger logger) {
-		if (getUseProfiler(env) && profiler != null) {
-			logger.warn("Profiler is enabled");
-			return profiler;
-		}
-		if (getUseProfiler(env) && profiler == null) {
-			logger.warn("Profiler is enabled but no profiler set.");
-		}
-		return Profiler.empty();
-	}*/
-		
 	/*************************/
 
 	private String getResourcesPath(Env env) {
@@ -176,7 +164,7 @@ public class ApplicationFactory {
 				} else if (h.isValue()) {
 					header = h.getValue().toString();
 				}
-				String[] hds = header.toString().split(":", 2);
+				String[] hds = header.split(":", 2);
 				if (hds.length == 1) {
 					headers.addHeader(hds[0].trim(), "");
 				} else {
@@ -214,6 +202,17 @@ public class ApplicationFactory {
 	}
 	
 	/*************************/
+
+	private SessionManager getSessionManager() {
+		if (sessionManager == null) {
+			return SessionManager.empty();
+		}
+		return sessionManager;
+	}
+
+	public void setSessionManager(SessionManager sessionManager) {
+		this.sessionManager = sessionManager;
+	}
 	
 	private TranslatorExtension getTranslatorExtension() {
 		if (translatorExtension != null) {
@@ -260,9 +259,6 @@ public class ApplicationFactory {
 		}
 		if (extension instanceof TemplateExtension ext) {
 			this.templateExtension = ext;
-		}
-		if (extension instanceof AuthenticationExtension ext) {
-			this.authenticationExtension = ext;
 		}
 		return this;
 	}

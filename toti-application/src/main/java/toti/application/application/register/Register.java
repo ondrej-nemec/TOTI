@@ -8,8 +8,6 @@ import java.util.Map;
 
 import toti.application.annotations.Action;
 import toti.application.annotations.Controller;
-import toti.application.annotations.Secured;
-import toti.application.answers.request.AuthMode;
 import toti.application.answers.router.UriPattern;
 import toti.application.application.Module;
 import toti.application.extensions.CustomErrorHandler;
@@ -99,8 +97,7 @@ public class Register {
 				}
 				MappedAction action = new MappedAction(
 					module.get().getName(), clazz.getName(), m.getName(), parametersPart,
-					m, factory,
-					getSecurityMode(m), methods
+					m, factory, methods
 				);
 				for (HttpMethod method : methods) {
 					base.addAction(method, action);
@@ -116,14 +113,6 @@ public class Register {
 
 	private Action getActionAnnotation(Method m) {
 		return m.getAnnotation(Action.class);
-	}
-
-	private AuthMode getSecurityMode(Method m) {
-		AuthMode securityMode = AuthMode.NO_TOKEN;
-		if (m.isAnnotationPresent(Secured.class)) {
-			securityMode = m.getAnnotation(Secured.class).value();
-		}
-		return securityMode;
 	}
 
 	protected Param getParam(String part, Param parent) {
@@ -145,20 +134,7 @@ public class Register {
 		}
 		return result;
 	}
-	/*
-// why is there this method? is used somewhere?
-	// router
-	public MappedAction createRoutedAction(Class<?> controller, Method method) {
-		Tuple2<Factory<?>, Module> factory = getController(controller);
-		return MappedAction.router(
-			factory._2().getName(),
-			method,
-			factory._1(),
-			getSecurityMode(method),
-			getHttpMethods(method)
-		);
-	}
-	*/
+
 	// link
 	public Module getModuleForClass(Class<?> controller) {
 		return getController(controller)._2();

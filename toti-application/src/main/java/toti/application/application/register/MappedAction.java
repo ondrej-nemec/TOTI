@@ -3,7 +3,6 @@ package toti.application.application.register;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import toti.application.answers.request.AuthMode;
 import toti.lib.tcpip.enums.HttpMethod;
 
 public class MappedAction {
@@ -16,24 +15,19 @@ public class MappedAction {
 	
 	private final Method action;
 	private final Factory<?> classFactory;
-	//private final List<Class<?>> methodParameters;
 	
 	private final HttpMethod[] methods;
 	
-	private final AuthMode securityMode;
-	
-	public static MappedAction router(
-			String module, Method method, Factory<?> factory,
-			AuthMode securityMode, HttpMethod[] methods) {
+	public static MappedAction router(String module, Method method, Factory<?> factory,  HttpMethod[] methods) {
 		return new MappedAction(
 			module, null, null, "[]",
-			method, factory, securityMode, methods
+			method, factory, methods
 		);
 	}
 	
 	public static MappedAction totiAnswer(String module) {
 		return new MappedAction(
-			module, null, null, null,
+			module, null, null,
 			null, null, null, null
 		);
 	}
@@ -45,14 +39,13 @@ public class MappedAction {
 	public static MappedAction test(String moduleName, String className, String methodName, String parameters) {
 		return new MappedAction(
 			moduleName, className, methodName, parameters,
-			null, null, null, null
+			null, null, null
 		);
 	}
 
 	public MappedAction(
 			String moduleName, String className, String methodName, String parameters,
-			Method action, Factory<?> classFactory, //List<Class<?>> methodParameters,
-			AuthMode securityMode, HttpMethod[] methods) {
+			Method action, Factory<?> classFactory, HttpMethod[] methods) {
 		this.moduleName = moduleName;
 		this.className = className;
 		this.methodName = methodName;
@@ -60,9 +53,7 @@ public class MappedAction {
 		
 		this.methods = methods;
 		this.action = action;
-		//this.methodParameters = methodParameters;
-		
-		this.securityMode = securityMode;
+
 		this.classFactory = classFactory;
 	}
 	
@@ -72,14 +63,6 @@ public class MappedAction {
 	
 	public Method getAction() {
 		return action;
-	}
-	
-	public boolean isSecured() {
-		return securityMode != AuthMode.NO_TOKEN;
-	}
-	
-	public AuthMode getSecurityMode() {
-		return securityMode;
 	}
 	
 	public String getModuleName() {
@@ -124,7 +107,7 @@ public class MappedAction {
 		return "MappedAction ["
 				+ moduleName + ":" + className + ":" + methodName + ":" + parameters
 				+ " => action=" + action /*+ ", classFactory=" + classFactory */+ ", methods=" + Arrays.toString(methods)
-				+ ", securityMode=" + securityMode + "]";
+				+ "]";
 	}
 
 	public int logHashCode() {
@@ -135,7 +118,6 @@ public class MappedAction {
 		result = prime * result + ((methodName == null) ? 0 : methodName.hashCode());
 		result = prime * result + Arrays.hashCode(methods);
 		result = prime * result + ((moduleName == null) ? 0 : moduleName.hashCode());
-		result = prime * result + ((securityMode == null) ? 0 : securityMode.hashCode());
 		return result;
 	}
 
@@ -171,9 +153,6 @@ public class MappedAction {
 		} else if (!moduleName.equals(other.moduleName)) {
 			return false;
 		}
-		if (securityMode != other.securityMode) {
-			return false;
-		}
 		return true;
 	}
 
@@ -188,7 +167,6 @@ public class MappedAction {
 		result = prime * result + Arrays.hashCode(methods);
 		result = prime * result + ((moduleName == null) ? 0 : moduleName.hashCode());
 		result = prime * result + ((parameters == null) ? 0 : parameters.hashCode());
-		result = prime * result + ((securityMode == null) ? 0 : securityMode.hashCode());
 		return result;
 	}
 
@@ -247,9 +225,6 @@ public class MappedAction {
 				return false;
 			}
 		} else if (!parameters.equals(other.parameters)) {
-			return false;
-		}
-		if (securityMode != other.securityMode) {
 			return false;
 		}
 		return true;

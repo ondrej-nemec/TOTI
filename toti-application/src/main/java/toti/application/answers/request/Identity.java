@@ -1,57 +1,60 @@
 package toti.application.answers.request;
 
+import java.util.Map;
+import java.util.Optional;
+
 import toti.application.extensions.Extension;
 import toti.lib.common.structures.MapDictionary;
 
 public class Identity {
 
 	private final String IP;
-	
-	// TODO IMPROVE will be Level? or something else more general? or in Steps?
-	private AuthMode loginMode = AuthMode.NO_TOKEN;
 		
-	private Object user;
+	private Optional<Object> user;
+
+	private final Map<String, MapDictionary<String>> sessionSpaces;
+	private final String sessionId;
+	private final CsrfToken csrfToken;
 	
-	private MapDictionary<String> sessionSpaces;
-	
-	protected Identity(String IP) {
+	protected Identity(String IP, String sessionId, Map<String, MapDictionary<String>> sessionSpaces, Optional<Object> user, CsrfToken csrfToken) {
 		this.IP = IP;
-		this.sessionSpaces = MapDictionary.hashMap();
+		this.sessionSpaces = sessionSpaces;
+		this.sessionId = sessionId;
+		this.user = user;
+		this.csrfToken = csrfToken;
 	}
 	
-	public void login(Object user, AuthMode loginMode) {
-		this.user = user;
-		this.loginMode = loginMode;
+	public void login(Object user) {
+		this.user = Optional.of(user);
 	}
 	
 	public void logout() {
-		clear();
+		this.user = Optional.empty();
 	}
-	
-	protected void clear() {
-		this.user = null;
-		this.loginMode = AuthMode.NO_TOKEN;
-	}
-	
+
 	/*************/
+
+	public CsrfToken getCsrfToken() {
+		return csrfToken;
+	}
 	
 	public MapDictionary<String> getSessionSpace(Extension extension) {
 		return getSessionSpace(extension.getIdentifier());
 	}
+
+	public MapDictionary<String> getSessionSpace() {
+		return getSessionSpace("");
+	}
 	
-	public MapDictionary<String> getSessionSpace(String name) {
+	private MapDictionary<String> getSessionSpace(String name) {
 		if (!sessionSpaces.containsKey(name)) {
 			sessionSpaces.put(name, MapDictionary.hashMap());
 		}
-		return sessionSpaces.getDictionaryMap(name);
-	}
-	
-	public AuthMode getLoginMode() {
-		return loginMode;
+		return sessionSpaces.get(name);
 	}
 	
 	public boolean isAnonymous() {
-		return user == null;
+		return user.isEmpty();
 	}
 	
 	public boolean isPresent() {
@@ -64,10 +67,10 @@ public class Identity {
 	 * @return
 	 */
 	public <U> U getUser(Class<U> clazz) {
-		return clazz.cast(user);
+		return clazz.cast(user.orElse(null));
 	}
 	
-	public Object getUser() {
+	public Optional<Object> getUser() {
 		return user;
 	}
 	
@@ -78,5 +81,13 @@ public class Identity {
 	public String getIP() {
 		return IP;
 	}
-	
+
+	protected String getSessionId() {
+		return sessionId;
+	}
+
+	protected Map<String, MapDictionary<String>> getSessionSpaces() {
+		return sessionSpaces;
+	}
+
 }

@@ -4,58 +4,66 @@ import java.io.IOException;
 import java.util.Collection;
 
 import toti.application.answers.Headers;
+import toti.application.answers.session.CurrentSession;
+import toti.application.answers.session.SessionManager;
 import toti.application.extensions.Extension;
+import toti.lib.common.exceptions.HashException;
+import toti.lib.common.functions.Hash;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.tcpip.structures.RequestParameters;
 
 public class IdentityFactory {
-
-//	private final static String PAGE_ID_HEADER_NAME = "PageId";
-//	private final static String PAGE_ID_COOKIE_NAME = "PageId";
 	
-	private final Collection<Extension> sessions;
+	private final Collection<Extension> extensions;
+	private final SessionManager session;
 	
-	public IdentityFactory(Collection<Extension> sessions) {
-		this.sessions = sessions;
-	}
-	
-	public MapDictionary<String> getSpace(String name, Identity identity) {
-		return identity.getSessionSpace(name);
+	public IdentityFactory(Collection<Extension> extensions, SessionManager session) {
+		this.extensions = extensions;
+		this.session = session;
 	}
 
 	public Identity createIdentity(Headers requestHeaders, MapDictionary<String> queryParameters, RequestParameters bodyParameters, String ip) {
-		Identity identity = new Identity(ip);
-		sessions.forEach((session)->{
-			session.onRequestStart(
-				identity, identity.getSessionSpace(session),
+		CurrentSession currentSession = session.restoreSession(requestHeaders, queryParameters, bodyParameters);
+		Identity identity = new Identity(
+			ip, currentSession.sessionId(), currentSession.sessionSpace(),
+			currentSession.user(), createCsrfToken(currentSession.sessionId(), bodyParameters)
+		);
+		extensions.forEach((extension)->{
+			extension.onRequestStart(
+				identity, identity.getSessionSpace(extension),
 				requestHeaders, queryParameters, bodyParameters
 			);
 		});
 		return identity;
 	}
 	
+	private CsrfToken createCsrfToken(String sessionId, RequestParameters parameters) {
+		String csrfTokenName = "_csrf_token";
+		String csrfToken = null;
+		if (parameters.containsKey(csrfTokenName)) {
+			csrfToken = parameters.getString(csrfTokenName);
+			parameters.remove(csrfTokenName);
+		}
+		try {
+			Hash hash = Hash.getSha256();
+			return new CsrfToken(
+				csrfTokenName,
+				hash.toHash(sessionId, session.getCsrfTokenSalt()),
+				csrfToken == null ? false : hash.compare(sessionId, csrfToken, session.getCsrfTokenSalt())
+			);
+		} catch (HashException e) {
+			// parsed to runtime exception because of using predefined hash alghoritm
+			throw new RuntimeException(e.getCause());
+		}
+	}
+
 	public void finalizeIdentity(Identity identity, Headers responseHeaders) throws IOException {
-		sessions.forEach((session)->{
-			session.onRequestEnd(
-				identity, identity.getSessionSpace(session), responseHeaders
+		extensions.forEach((extension)->{
+			extension.onRequestEnd(
+				identity, identity.getSessionSpace(extension), responseHeaders
 			);
 		});
-		/*if (identity.getPageId() != null) {
-			responseHeaders.addHeader(
-				"Set-Cookie", PAGE_ID_COOKIE_NAME + "=" + identity.getPageId()
-				+ "; SameSite=Strict"
-			);
-		}*/
+		session.saveSession(responseHeaders, identity.getSessionId(), identity.getSessionSpaces(), identity.getUser());
 	}
-	
-/*
-	private String getPageId(Headers headers) {
-		Object pageHeader = headers.getHeader(PAGE_ID_HEADER_NAME);
-		if (pageHeader == null) {
-			return ("Page_" + new Random().nextDouble()).replace(".", "");
-		}
-		return pageHeader.toString();
-	}
-	*/
-	
+
 }

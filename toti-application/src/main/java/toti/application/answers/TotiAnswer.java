@@ -49,7 +49,7 @@ public class TotiAnswer {
 		.prepare(
 			responseHeaders, identity,
 			new ResponseContainer(
-				translatorExtension.getTranslator(identity), null,
+				translatorExtension.getTranslator(identity),
 				MappedAction.totiAnswer(moduleName.get()),
 				templateExtension, null
 			), 
@@ -74,7 +74,7 @@ public class TotiAnswer {
 			moduleName.set(extension.getIdentifier());
 			return extension.getResponse(
 				url, request, 
-				identity, identityFactory.getSpace(extension.getIdentifier(), identity),
+				identity, identity.getSessionSpace(extension),
 				responseHeaders, isDevelopReqeust
 			);
 		}
@@ -94,36 +94,5 @@ public class TotiAnswer {
 				}
 			).create());
 	}
-	
-	/*
-	
-	private Response getProfiler(HttpMethod method, RequestParameters params, Identity identity) {
-		if (profiler.isUse() && developIps.contains(identity.getIP())) {
-			return profiler.getResponse(method, params);
-		}
-		return Response.getText(StatusCode.FORBIDDEN, "");
-	}
-	
-	private Response getTotiFiles(String url, Identity identity) {
-		return Response.getTemplate(
-			"/assets" + url, 
-			new MapInit<String, Object>()
-			.append("useProfiler", profiler.isUse() && developIps.contains(identity.getIP()))
-			.toMap()
-		);
-	}
-	
-	private Response getDbViewer(HttpMethod method, String url, RequestParameters params, Identity identity, Headers responseHeaders) {
-		throw new NotImplementedYet();
-		//  return dbViewer.getResponse(method, url.substring(8), params, identity, headers);
-	}
-	
-	private Response getGenerate(HttpMethod method, String url, RequestParameters params) {
-		if (url.equals("/do") && method == HttpMethod.POST) {
-			return generator.generate(params);
-		}
-		return generator.getPage();
-	}
 
-	*/
 }

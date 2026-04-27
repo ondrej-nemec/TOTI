@@ -50,13 +50,16 @@ public class Answer {
 		
 		Headers responseHeaders = new Headers(this.responseHeaders);
 		try {
+			FinalResponse response;
 			if (request.getUri().toLowerCase().startsWith("/toti")) {
-				return totiAnswer.answer(request, identity, responseHeaders, charset);
+				response = totiAnswer.answer(request, identity, responseHeaders, charset);
+			} else {
+				response = controllerAnswer.answer(
+					request, identity, responseHeaders, charset
+				);
 			}
-			FinalResponse response = controllerAnswer.answer(
-				request, identity, responseHeaders, charset
-			);
 			if (response != null) {
+				identityFactory.finalizeIdentity(identity, responseHeaders);
 				return response;
 			}
 			return fileSystemAnswer.answer(request, responseHeaders, charset);
