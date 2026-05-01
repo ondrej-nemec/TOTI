@@ -90,7 +90,7 @@ public class ApplicationFactory {
 			actualModule.set(module);
 			tasks.addAll(module.initInstances(env, register, link));
 			module.addRoutes(router, link);
-		};
+		}
 		actualModule.set(null);
 		
 		IdentityFactory identityFactory = new IdentityFactory(extensions.values(), getSessionManager());
