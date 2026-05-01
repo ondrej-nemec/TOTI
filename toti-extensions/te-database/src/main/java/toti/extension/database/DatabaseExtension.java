@@ -22,7 +22,7 @@ public class DatabaseExtension implements Extension {
 	
 	private BiFunction<List<String>, Env, Database> createDatabase = null;
 	private Database database;
-	private final List<String> migrations = new LinkedList<>();
+	private final List<String> migrationPaths = new LinkedList<>();
 	
 	public DatabaseExtension(Logger logger) {
 		this(null, logger);
@@ -42,7 +42,7 @@ public class DatabaseExtension implements Extension {
 	public void init(Env appEnv, Register register) {
 		Env env = appEnv.getSection("database");
 		if (createDatabase != null) {
-			this.database = createDatabase.apply(migrations, env);
+			this.database = createDatabase.apply(migrationPaths, env);
 		} else if (env != null && env.getString("type") != null) {
 			DatabaseConfig config = new DatabaseConfig(
 				env.getString("type"),
@@ -50,7 +50,7 @@ public class DatabaseExtension implements Extension {
 				env.getString("schema-name"),
 				env.getString("login"),
 				env.getString("password"),
-				migrations,
+				migrationPaths,
 				env.getInteger("pool-size")
 			);
 			env.getSection("options").iterate((name, value)->{
@@ -78,8 +78,8 @@ public class DatabaseExtension implements Extension {
 		return database;
 	}
 	
-	public void addMigration(String migration) {
-		migrations.add(migration);
+	public void addMigrationPath(String migrationPath) {
+		migrationPaths.add(migrationPath);
 	}
 
 	@Override
