@@ -34,10 +34,7 @@ import toti.lib.templating.TemplateFactory;
 
 public class TemplateExtension implements toti.application.extensions.TemplateExtension, Extension {
 	
-	private final Map<String, TemplateFactory> templateFactories;
-	private final String tempPath;
-	private final boolean minimalizeTemplate;
-	private final boolean deleteAuxFiles;
+	private final TemplateFactory templateFactory;
 	private final Logger logger;
 	
 	private final List<Tag> tags;
@@ -53,7 +50,6 @@ public class TemplateExtension implements toti.application.extensions.TemplateEx
 	}
 	
 	public TemplateExtension(String tempPath, boolean minimalizeTemplate, boolean deleteAuxFiles, Logger logger) {
-		this.templateFactories = new HashMap<>();
 		this.tags = new LinkedList<>(Arrays.asList(
 			new IfCurrentTag(),
 			new LinkTag(),
@@ -68,10 +64,11 @@ public class TemplateExtension implements toti.application.extensions.TemplateEx
 			new TitleParameter(),
 			new PlaceholderParameter()
 		));
-		this.tempPath = tempPath;
+		this.templateFactory = new TemplateFactory(
+			tempPath, new HashMap<>(), // TODO
+			deleteAuxFiles, minimalizeTemplate, tags, parameters, logger
+		);
 		this.logger = logger;
-		this.deleteAuxFiles = deleteAuxFiles;
-		this.minimalizeTemplate = minimalizeTemplate;
 	}
 	
 	public void registerTags(List<Tag> tags) {
@@ -82,17 +79,13 @@ public class TemplateExtension implements toti.application.extensions.TemplateEx
 		this.parameters.addAll(parameters);
 	}
 	
-	public void registerModule(String module, String modulePath, String templatePath) {
-		templateFactories.put(module, new TemplateFactory(
-			tempPath, new HashMap<>(), // TODO
-			deleteAuxFiles, minimalizeTemplate, tags, parameters, logger
-		));
+	public void registerModule(String module, String templatePath) {
+		templateFactory.addModule(module, templatePath);
 	}
 
 	@Override
 	public String getTemplate(String module, String filename, Map<String, Object> params, ResponseContainer container) throws Exception {
 		try {
-			TemplateFactory templateFactory = templateFactories.get(module);
 			Template template = templateFactory.getTemplate(module, filename);
 			// TODO set system variables for link, traslator etc
 			return template.create(params);
