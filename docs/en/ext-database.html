@@ -1,3 +1,53 @@
 <h1>Extension: Database</h1>
 
-TODO
+<p>
+	Extension includes TOTI Database lib to project. Calling <code>migrate()</code> method is automatic during application start.
+</p>
+
+
+<h2>Register in Application Factory</h2>
+
+<h3>Using Env</h3>
+
+<pre><code>
+	applicationFactory.addExtension(new DatabaseExtension(logger));
+</code></pre>
+
+<p>
+	In application env the <code>database</code> section is expected.
+	<ul>
+		<li><code>type</code> of database engine</li>
+		<li><code>url</code></li>
+		<li><code>schema-name</code></li>
+		<li><code>login</code></li>
+		<li><code>password</code></li>
+	</ul>
+	Except that, also section <code>options</code> can be included. If so, all elements from the section are used as name-value pair to set configuration property.
+</p>
+
+<h3>Programmatically</h3>
+
+<pre><code>
+	applicationFactory.addExtension(new DatabaseExtension((migrationPaths, env)-&gt;{
+		// TODO return database instance
+	}, logger));
+</code></pre>
+
+<p>
+	<code>env</code> is <code>database</code> section of application env.
+</p>
+
+<h2>Migrations</h2>
+
+<p>
+	Migration path can be added like this: <code>databaseExtension.addMigrationPath(path)</code>.
+</p> 
+<p>
+	Another way is add migration path for each module (called in <code>initInstances</code>): <code>register.getExtension(DatabaseExtension.class).addMigrationPath(path)</code>.
+</p>
+
+<h3>Get Database instance</h3>
+
+<p>
+	Database instance is available at: <code>register.getExtension(DatabaseExtension.class).getDatabase()</code>.
+</p>
