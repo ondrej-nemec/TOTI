@@ -3,9 +3,6 @@ package toti.extension.templating;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.logging.log4j.Logger;
-import static org.mockito.Mockito.mock;
-
 import toti.application.application.register.MappedAction;
 import toti.application.extensions.Translator;
 import toti.lib.templating.BaseTemplateTest;
@@ -13,10 +10,7 @@ import toti.lib.templating.BaseTemplateTest;
 public class BaseTemplateTestExt extends BaseTemplateTest {
 
 	public BaseTemplateTestExt() {
-		super(
-			new TemplateExtension("", false, false, mock(Logger.class)).getTags(),
-			new TemplateExtension("", false, false, mock(Logger.class)).getParameters()
-		);
+		super();
 	}
 
 	protected Translator getTranslator() {
