@@ -15,6 +15,12 @@ import toti.lib.tcpip.structures.RequestParameters;
 
 public class DefaultSession implements SessionManager {
 
+	// TODO
+	/*
+	overeni pristupu - @Secured? nebo jinak? aby to bylo jednoduche dat vsude => jako v edovi Sessionmanager?
+	jak redirect s backlink při neprihlasenem uzivateli? => vyuzit request?
+	*/
+
 	private final static String SESSION_COOKIE_NAME = "SessionID";
 	private final static String SESSION_HEADER_NAME = "Authorization";
 
@@ -98,91 +104,5 @@ public class DefaultSession implements SessionManager {
 		}
 		return salt;
 	}
-
-	// TODO
-	/*
-	overeni pristupu - @Secured? nebo jinak? aby to bylo jednoduche dat vsude => jako v edovi Sessionmanager?
-	overeni uzivatele v template => posilat primo neco do template?
-	jak redirect s backlink při neprihlasenem uzivateli? => vyuzit request?
-	*/
-
-
-
-	/*
-public interface LoggedUser {
-	
-	long getExpirationTime();
-	
-	long getExpirationPeriod();
-	
-	Optional<String> getCookieToken();
-	
-	Optional<String> getCsrfToken();
-	
-	Optional<String> getHeaderToken();
-	
-}
-
-	try {
-		checkSecured(mapped, identity);
-	} catch (ServerException e) {
-		if (mapped.getSecurityMode() == AuthMode.HEADER || authenticationExtension == null) {
-			throw e;
-		}
-		logger.debug(uri + " Redirect to login page: " + e.getMessage());
-		String backlink = "";
-		if (!uri.equals("/")) {
-			backlink = "?backlink=" + getBackLink(uri);
-		}
-		return Response.create(StatusCode.TEMPORARY_REDIRECT).getRedirect(
-			authenticationExtension.getNotLoggedUserRedirect(backlink)
-		);
-	}
-
-	protected void checkSecured(MappedAction mapped, Identity identity) throws ServerException {
-		if (mapped.isSecured()) {
-			if (identity.isAnonymous()) {
-				throw new ServerException(StatusCode.UNAUTHORIZED, mapped, "Method require logged user");
-			}
-			if (mapped.getSecurityMode() == AuthMode.HEADER && identity.getLoginMode() != AuthMode.HEADER) {
-				throw new ServerException(StatusCode.FORBIDDEN, mapped, "For this url you cannot use cookie token");
-			}
-			if (mapped.getSecurityMode() == AuthMode.COOKIE_AND_CSRF
-					&& (identity.getLoginMode() == AuthMode.COOKIE || identity.getLoginMode() == AuthMode.NO_TOKEN)) {
-				throw new ServerException(StatusCode.FORBIDDEN, mapped, "For this url you need CSRF token");
-			}
-			if (mapped.getSecurityMode() == AuthMode.COOKIE && identity.getLoginMode() == AuthMode.NO_TOKEN) {
-				throw new ServerException(StatusCode.FORBIDDEN, mapped, "For this url you need CSRF token");
-			}
-		}
-	}
-
-	private String getBackLink(String fullUrl) {
-		try {
-			return URLEncoder.encode(fullUrl, StandardCharsets.UTF_8.toString());
-		} catch (UnsupportedEncodingException e) {
-			return fullUrl;
-		}
-	}
-
-	private AuthMode getSecurityMode(Method m) {
-		AuthMode securityMode = AuthMode.NO_TOKEN;
-		if (m.isAnnotationPresent(Secured.class)) {
-			securityMode = m.getAnnotation(Secured.class).value();
-		}
-		return securityMode;
-	}
-	---------------------------
-
-	@Override
-	public boolean isAllowed(Object user, Map<String, Object> params) {
-		Identity identity = Identity.class.cast(user);
-		if (identity.isAnonymous()) {
-			return false;
-		}
-		return sessionUserProvider.isAllowed(LoggedUser.class.cast(identity.getUser()), params);
-	}
-	*/
-
 
 }
