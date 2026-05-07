@@ -1,7 +1,6 @@
 package toti.application.answers.response;
 
 import toti.application.answers.Headers;
-import toti.application.answers.request.Identity;
 import toti.lib.files.json.JsonWritter;
 import toti.lib.tcpip.enums.StatusCode;
 
@@ -18,14 +17,10 @@ public class JsonResponse implements Response {
 	}
 
 	@Override
-	public FinalResponse prepare(
-			Headers headers,
-			Identity identity,
-			ResponseContainer container,
-			String charset) {
-		headers.addHeader("Content-Type", "application/json; charset=" + charset);
-		headers.setHeaders(this.headers.getHeaders());
-		return new FinalResponse(code, headers, createResponse().getBytes());
+	public FinalResponse prepare(ResponseContainer container) {
+		container.headers().addHeader("Content-Type", "application/json; charset=" + container.charset());
+		container.headers().setHeaders(this.headers.getHeaders());
+		return new FinalResponse(code, container.headers(), createResponse().getBytes());
 	}
 	
 	private String createResponse() {

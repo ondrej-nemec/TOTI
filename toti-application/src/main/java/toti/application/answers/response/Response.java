@@ -1,19 +1,13 @@
 package toti.application.answers.response;
 
 import toti.application.answers.Headers;
-import toti.application.answers.request.Identity;
 import toti.lib.files.access.FileUtils;
 import toti.lib.tcpip.enums.StatusCode;
 import toti.lib.tcpip.structures.WebSocket;
 
 public interface Response {
 	
-	FinalResponse prepare(
-		Headers headers,
-		Identity identity,
-		ResponseContainer container,
-		String charset
-	);
+	FinalResponse prepare(ResponseContainer container);
 	
 	/***********/
 

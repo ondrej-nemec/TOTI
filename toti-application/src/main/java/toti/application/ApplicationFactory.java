@@ -16,7 +16,6 @@ import toti.application.answers.Headers;
 import toti.application.answers.TotiAnswer;
 import toti.application.answers.request.Identity;
 import toti.application.answers.request.IdentityFactory;
-import toti.application.answers.response.ResponseContainer;
 import toti.application.answers.router.Link;
 import toti.application.answers.router.Router;
 import toti.application.answers.router.UriPattern;
@@ -26,7 +25,7 @@ import toti.application.application.Task;
 import toti.application.application.register.Param;
 import toti.application.application.register.Register;
 import toti.application.extensions.Extension;
-import toti.application.extensions.TemplateExtension;
+import toti.application.extensions.TemplateFactory;
 import toti.application.extensions.Translator;
 import toti.application.extensions.TranslatorExtension;
 import toti.lib.common.structures.ObjectBuilder;
@@ -59,7 +58,7 @@ public class ApplicationFactory {
 	private final Map<String, Extension> extensions;
 	private SessionManager sessionManager;
 
-	private TemplateExtension templateExtension;
+	private TemplateFactory templateExtension;
 	private TranslatorExtension translatorExtension;
 	
 	public ApplicationFactory(String appIdentifier, Env env, String charset, List<String> hostnames, List<String> paths) {
@@ -82,7 +81,7 @@ public class ApplicationFactory {
 
 		extensions.forEach((n, e)->e.init(env, register));
 		TranslatorExtension translatorExtension = getTranslatorExtension();
-		TemplateExtension templateExtension = getTemplateExtension();
+		TemplateFactory templateExtension = getTemplateFactory();
 		
 		List<Task> tasks = new LinkedList<>();
 		
@@ -98,7 +97,7 @@ public class ApplicationFactory {
 		Function<String, Boolean> isDevelopFunc = getDevModeFunc();
 		
 		TotiAnswer totiAnwer = new TotiAnswer(
-			isDevelopFunc, templateExtension, translatorExtension, identityFactory, extensionsTotiResponses
+			isDevelopFunc, templateExtension, translatorExtension, extensionsTotiResponses
 		);
 		ExceptionAnswer exceptionAnswer = new ExceptionAnswer(register, isDevelopFunc, getLogsPath(env), translatorExtension, logger);
 		ControllerAnswer controllerAnswer = new ControllerAnswer(
@@ -228,16 +227,12 @@ public class ApplicationFactory {
 		};
 	}
 	
-	private TemplateExtension getTemplateExtension() {
+	private TemplateFactory getTemplateFactory() {
 		if (templateExtension != null) {
 			return templateExtension;
 		}
-		return new TemplateExtension() {
-			@Override
-			public String getTemplate(String module, String filename, Map<String, Object> params, ResponseContainer container)
-				throws Exception {
-				throw new RuntimeException("TemplateExtension is not registered");
-			}
+		return (module, filename, params, container)-> {
+			throw new RuntimeException("TemplateExtension is not registered");
 		};
 	}
 	
@@ -257,7 +252,7 @@ public class ApplicationFactory {
 		if (extension instanceof TranslatorExtension ext) {
 			this.translatorExtension = ext;
 		}
-		if (extension instanceof TemplateExtension ext) {
+		if (extension instanceof TemplateFactory ext) {
 			this.templateExtension = ext;
 		}
 		return this;

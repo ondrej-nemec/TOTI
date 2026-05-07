@@ -25,7 +25,7 @@ import toti.application.answers.router.Link;
 import toti.application.answers.router.Router;
 import toti.application.application.register.MappedAction;
 import toti.application.application.register.Param;
-import toti.application.extensions.TemplateExtension;
+import toti.application.extensions.TemplateFactory;
 import toti.application.extensions.Translator;
 import toti.application.extensions.TranslatorExtension;
 import toti.lib.common.structures.DictionaryValue;
@@ -41,12 +41,12 @@ public class ControllerAnswer {
 	private final TranslatorExtension translatorExtension;
 	private final IdentityFactory identityFactory;
 	private final Link link;
-	private final TemplateExtension templateExtension;
+	private final TemplateFactory templateExtension;
 	private final Router router;
 	private final Logger logger;
 	
 	public ControllerAnswer(
-			Router router, Param root, TemplateExtension templateExtension,
+			Router router, Param root, TemplateFactory templateExtension,
 			IdentityFactory identityFactory,
 			Link link, TranslatorExtension translatorExtension, Logger logger) {
 		this.root = root;
@@ -70,10 +70,8 @@ public class ControllerAnswer {
 			return null;
 		}
 		try {
-			Response response = run(request.getUri(), mapped, request, identity);
-			return response.prepare(responseHeaders, identity, new ResponseContainer(
-				translatorExtension.getTranslator(identity), mapped, templateExtension, link
-			), charset);
+			return run(request.getUri(), mapped, request, identity)
+				.prepare(new ResponseContainer(charset, responseHeaders, identity, link, mapped, templateExtension));
 		} catch (ServerException e){
 			throw e;
 		} catch (InvocationTargetException e) { // if exception throwed in method

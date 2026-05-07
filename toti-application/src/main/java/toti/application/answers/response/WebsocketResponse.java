@@ -1,7 +1,6 @@
 package toti.application.answers.response;
 
 import toti.application.answers.Headers;
-import toti.application.answers.request.Identity;
 import toti.lib.common.exceptions.LogicException;
 import toti.lib.tcpip.enums.StatusCode;
 import toti.lib.tcpip.structures.WebSocket;
@@ -18,13 +17,9 @@ public class WebsocketResponse implements Response {
 	}
 
 	@Override
-	public FinalResponse prepare(
-			Headers responseHeaders,
-			Identity identity,
-			ResponseContainer container,
-			String charset) {
-		responseHeaders.setHeaders(this.headers.getHeaders());
-		return new FinalResponse(StatusCode.SWITCHING_PROTOCOL, responseHeaders);
+	public FinalResponse prepare(ResponseContainer container) {
+		container.headers().setHeaders(this.headers.getHeaders());
+		return new FinalResponse(StatusCode.SWITCHING_PROTOCOL, container.headers());
 	}
 
 	@Override

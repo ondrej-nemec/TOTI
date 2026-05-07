@@ -1,7 +1,6 @@
 package toti.application.answers.response;
 
 import toti.application.answers.Headers;
-import toti.application.answers.request.Identity;
 import toti.lib.tcpip.enums.StatusCode;
 
 public class TextResponse implements Response {
@@ -17,16 +16,12 @@ public class TextResponse implements Response {
 	}
 	
 	@Override
-	public FinalResponse prepare(
-			Headers headers,
-			Identity identity,
-			ResponseContainer container,
-			String charset) {
-		if (!headers.containsHeader("Content-Type")) {
-			headers.addHeader("Content-Type", "text/plain");
+	public FinalResponse prepare(ResponseContainer container) {
+		if (!container.headers().containsHeader("Content-Type")) {
+			container.headers().addHeader("Content-Type", "text/plain");
 		}
-		headers.setHeaders(this.headers.getHeaders());
-		return new FinalResponse(code, headers, text.getBytes());
+		container.headers().setHeaders(this.headers.getHeaders());
+		return new FinalResponse(code, container.headers(), text.getBytes());
 	}
 
 	@Override

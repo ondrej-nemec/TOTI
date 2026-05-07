@@ -1,7 +1,6 @@
 package toti.application.answers.response;
 
 import toti.application.answers.Headers;
-import toti.application.answers.request.Identity;
 import toti.application.answers.router.Link;
 import toti.lib.tcpip.enums.StatusCode;
 
@@ -21,14 +20,10 @@ public class RedirectResponse implements Response {
 	}
 	
 	@Override
-	public FinalResponse prepare(
-			Headers headers,
-			Identity identity,
-			ResponseContainer container,
-			String charset) {
-		headers.addHeader("Location", url);
-		headers.setHeaders(this.headers.getHeaders());
-		return new FinalResponse(code, headers);
+	public FinalResponse prepare(ResponseContainer container) {
+		container.headers().addHeader("Location", url);
+		container.headers().setHeaders(this.headers.getHeaders());
+		return new FinalResponse(code, container.headers());
 	}
 
 	@Override

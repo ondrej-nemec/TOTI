@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 import toti.application.answers.Headers;
-import toti.application.answers.request.Identity;
 import toti.lib.files.access.FileUtils;
 import toti.lib.tcpip.enums.StatusCode;
 
@@ -35,20 +34,16 @@ public class FileResponse implements Response {
 	}
 
 	@Override
-	public FinalResponse prepare(
-			Headers responseHeader,
-			Identity identity,
-			ResponseContainer container,
-			String charset) {
-		setContentType(fileName, charset, responseHeader);
+	public FinalResponse prepare(ResponseContainer container) {
+		setContentType(fileName, container.charset(), container.headers());
 		switch (download) {
-			case DOWNLOAD -> responseHeader.addHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
-			case FORCE_DOWNLOAD -> responseHeader.addHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+			case DOWNLOAD -> container.headers().addHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
+			case FORCE_DOWNLOAD -> container.headers().addHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 			case RESPONSE -> {}
 			default -> {}
 		}
-		responseHeader.setHeaders(this.headers.getHeaders());
-		return new FinalResponse(code, responseHeader, binaryContent);
+		container.headers().setHeaders(this.headers.getHeaders());
+		return new FinalResponse(code, container.headers(), binaryContent);
 	}
 	
 	private static byte[] binaryContent(String name) {

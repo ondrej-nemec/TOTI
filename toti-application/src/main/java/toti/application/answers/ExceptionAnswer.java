@@ -58,13 +58,7 @@ public class ExceptionAnswer {
 		String charset
 	) {
 		return getResponse(request, status, t, identity, mappedAction, charset)
-		.prepare(
-			responseHeaders, identity,
-			new ResponseContainer(
-				translator.getTranslator(identity), mappedAction, null, null
-			),
-			charset
-		);
+			.prepare(new ResponseContainer(charset, responseHeaders, identity, null, mappedAction, null));
 	}
 	
 	protected Response getResponse(

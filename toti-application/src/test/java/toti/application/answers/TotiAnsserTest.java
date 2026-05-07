@@ -12,7 +12,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import toti.application.answers.request.Identity;
-import toti.application.answers.request.IdentityFactory;
 import toti.application.answers.request.Request;
 import toti.application.answers.response.DownloadMode;
 import toti.application.answers.response.EmptyResponse;
@@ -20,7 +19,7 @@ import toti.application.answers.response.FileResponse;
 import toti.application.answers.response.Response;
 import toti.application.answers.response.TextResponse;
 import toti.application.application.register.Register;
-import toti.application.extensions.TemplateExtension;
+import toti.application.extensions.TemplateFactory;
 import toti.application.extensions.TotiExtension;
 import toti.application.extensions.TranslatorExtension;
 import toti.lib.common.structures.MapDictionary;
@@ -62,9 +61,8 @@ public class TotiAnsserTest {
 		
 		TotiAnswer answer = new TotiAnswer(
 			ip->ip.equals("localhost"),
-			mock(TemplateExtension.class),
+			mock(TemplateFactory.class),
 			mock(TranslatorExtension.class),
-			mock(IdentityFactory.class),
 			Arrays.asList(extension)
 		);
 		assertEquals(expected, answer.getResponse(
@@ -94,9 +92,8 @@ public class TotiAnsserTest {
 		
 		TotiAnswer answer = new TotiAnswer(
 			incomingIP->incomingIP.equals("localhost"),
-			mock(TemplateExtension.class),
+			mock(TemplateFactory.class),
 			mock(TranslatorExtension.class),
-			mock(IdentityFactory.class),
 			new LinkedList<>()
 		);
 		assertEquals(expected, answer.getResponse(

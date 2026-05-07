@@ -9,6 +9,7 @@ import toti.application.ServerException;
 import toti.application.answers.request.Request;
 import toti.application.answers.response.FinalResponse;
 import toti.application.answers.response.Response;
+import toti.application.answers.response.ResponseContainer;
 import toti.lib.tcpip.enums.HttpMethod;
 import toti.lib.tcpip.enums.StatusCode;
 
@@ -33,7 +34,7 @@ public class FileSystemAnswer {
 			Request request, Headers responseHeaders, String charset
 			) throws ServerException {
 		return answer(request.getUri(), request.getMethod(), responseHeaders, charset)
-			.prepare(responseHeaders, null, null, charset);
+			.prepare(new ResponseContainer(charset, responseHeaders, null, null, null, null));
 	}
 	
 	private Response answer(String url, HttpMethod method, Headers responseHeaders, String charset) throws ServerException {

@@ -1,7 +1,6 @@
 package toti.application.answers.response;
 
 import toti.application.answers.Headers;
-import toti.application.answers.request.Identity;
 import toti.lib.tcpip.enums.StatusCode;
 
 public class EmptyResponse implements Response {
@@ -15,13 +14,9 @@ public class EmptyResponse implements Response {
 	}
 	
 	@Override
-	public FinalResponse prepare(
-			Headers header,
-			Identity identity,
-			ResponseContainer container,
-			String charset) {
-		header.setHeaders(this.headers.getHeaders());
-		return new FinalResponse(code, header);
+	public FinalResponse prepare(ResponseContainer container) {
+		container.headers().setHeaders(this.headers.getHeaders());
+		return new FinalResponse(code, container.headers());
 	}
 
 	@Override

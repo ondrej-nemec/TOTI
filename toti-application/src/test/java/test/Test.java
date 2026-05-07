@@ -1,7 +1,6 @@
 package test;
 
 import toti.application.annotations.Action;
-import toti.application.annotations.Secured;
 import toti.application.answers.action.ResponseAction;
 import toti.lib.tcpip.enums.HttpMethod;
 
@@ -15,7 +14,6 @@ public class Test {
 	}*/
 
 	@Action(path = "index", methods = HttpMethod.GET)
-	@Secured
 	public ResponseAction example(Integer id) {
 		// TODO
 		/* 

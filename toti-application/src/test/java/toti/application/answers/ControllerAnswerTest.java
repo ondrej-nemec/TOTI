@@ -38,7 +38,7 @@ import toti.application.answers.router.Link;
 import toti.application.answers.router.Router;
 import toti.application.application.register.MappedAction;
 import toti.application.application.register.Param;
-import toti.application.extensions.TemplateExtension;
+import toti.application.extensions.TemplateFactory;
 import toti.application.extensions.Translator;
 import toti.application.extensions.TranslatorExtension;
 import toti.lib.common.structures.MapDictionary;
@@ -66,7 +66,7 @@ public class ControllerAnswerTest {
 		Param root = new Param(null);
 		
 		ControllerAnswer answer = spy(new ControllerAnswer(
-			router, root, mock(TemplateExtension.class), identityFactory,
+			router, root, mock(TemplateFactory.class), identityFactory,
 			mock(Link.class), translatorExtension, mock(Logger.class)
 		));
 		// doReturn(null).when(answer).getMappedAction(any(), any(), any());
@@ -108,12 +108,12 @@ public class ControllerAnswerTest {
 		
 		Param root = new Param(null);
 		ControllerAnswer answer = spy(new ControllerAnswer(
-			router, root, mock(TemplateExtension.class), identityFactory,
+			router, root, mock(TemplateFactory.class), identityFactory,
 			mock(Link.class), translatorExtension, mock(Logger.class)
 		));
 		FinalResponse finalResponse = mock(FinalResponse.class);
 		Response response = mock(Response.class);
-		when(response.prepare(any(), any(), any(), any())).thenReturn(finalResponse);
+		when(response.prepare(any())).thenReturn(finalResponse);
 		doReturn(mappedAction).when(answer).getMappedAction(any(), any(), any(), any());
 		doReturn(response).when(answer).run(any(), any(), any(), any());
 
@@ -171,7 +171,7 @@ public class ControllerAnswerTest {
 		when(translatorExtension.getTranslator(any())).thenReturn(translator);
 		
 		ControllerAnswer answer = new ControllerAnswer(
-			router, root, mock(TemplateExtension.class), mock(IdentityFactory.class),
+			router, root, mock(TemplateFactory.class), mock(IdentityFactory.class),
 			mock(Link.class), translatorExtension, mock(Logger.class)
 		);
 		Request request = new Request(
@@ -422,7 +422,7 @@ public class ControllerAnswerTest {
 		);
 		
 		ControllerAnswer answer = new ControllerAnswer(
-			mock(Router.class), mock(Param.class), mock(TemplateExtension.class),
+			mock(Router.class), mock(Param.class), mock(TemplateFactory.class),
 			mock(IdentityFactory.class),
 			mock(Link.class), translatorExtension, mock(Logger.class)
 		);
@@ -776,7 +776,7 @@ public class ControllerAnswerTest {
 	@Test
 	public void testParseBodyThrowsWithNotSupportedTypes() throws ServerException {
 		ControllerAnswer answer = new ControllerAnswer(
-			mock(Router.class), mock(Param.class), mock(TemplateExtension.class),
+			mock(Router.class), mock(Param.class), mock(TemplateFactory.class),
 			mock(IdentityFactory.class),
 			mock(Link.class), mock(TranslatorExtension.class), mock(Logger.class)
 		);
@@ -799,7 +799,7 @@ public class ControllerAnswerTest {
 	@MethodSource("dataParseBody")
 	public void testParseBody(Request request, List<BodyType> allowedTypes, Consumer<Request> check) throws ServerException {
 		ControllerAnswer answer = new ControllerAnswer(
-			mock(Router.class), mock(Param.class), mock(TemplateExtension.class),
+			mock(Router.class), mock(Param.class), mock(TemplateFactory.class),
 			mock(IdentityFactory.class),
 			mock(Link.class), mock(TranslatorExtension.class), mock(Logger.class)
 		);

@@ -7,13 +7,12 @@ import java.util.function.Function;
 
 import toti.application.ServerException;
 import toti.application.answers.request.Identity;
-import toti.application.answers.request.IdentityFactory;
 import toti.application.answers.request.Request;
 import toti.application.answers.response.FinalResponse;
 import toti.application.answers.response.Response;
 import toti.application.answers.response.ResponseContainer;
 import toti.application.application.register.MappedAction;
-import toti.application.extensions.TemplateExtension;
+import toti.application.extensions.TemplateFactory;
 import toti.application.extensions.TotiExtension;
 import toti.application.extensions.TranslatorExtension;
 import toti.application.logging.Page;
@@ -23,19 +22,17 @@ import toti.lib.tcpip.enums.StatusCode;
 public class TotiAnswer {
 	
 	private final Function<String, Boolean> isDevelop;
-	private final TemplateExtension templateExtension;
+	private final TemplateFactory templateExtension;
 	private final TranslatorExtension translatorExtension;
 	
-	private final IdentityFactory identityFactory;
 	private final Map<String, TotiExtension> extensions = new HashMap<>();
 	
 	public TotiAnswer(
-			Function<String, Boolean> isDevelop, TemplateExtension templateExtension, TranslatorExtension translatorExtension,
-			IdentityFactory identityFactory, List<TotiExtension> extensions) {
+			Function<String, Boolean> isDevelop, TemplateFactory templateExtension, TranslatorExtension translatorExtension,
+			List<TotiExtension> extensions) {
 		this.isDevelop = isDevelop;
 		this.templateExtension = templateExtension;
 		this.translatorExtension = translatorExtension;
-		this.identityFactory = identityFactory;
 		extensions.forEach(e->e.getListeningUri().forEach(u->this.extensions.put(u, e)));
 	}
 	
@@ -46,15 +43,7 @@ public class TotiAnswer {
 		ObjectBuilder<String> moduleName = new ObjectBuilder<>();
 		String uri = request.getUri().substring(5);
 		return getResponse(uri, request, identity, responseHeaders, moduleName)
-		.prepare(
-			responseHeaders, identity,
-			new ResponseContainer(
-				translatorExtension.getTranslator(identity),
-				MappedAction.totiAnswer(moduleName.get()),
-				templateExtension, null
-			), 
-			charset
-		);
+		.prepare(new ResponseContainer(charset, responseHeaders, identity, null, MappedAction.totiAnswer(moduleName.get()), templateExtension));
 	}
 	
 	protected Response getResponse(String url, Request request, Identity identity, Headers responseHeaders, ObjectBuilder<String> moduleName) {

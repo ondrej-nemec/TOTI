@@ -6,7 +6,6 @@ import java.util.Map;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import toti.application.answers.Headers;
-import toti.application.answers.request.Identity;
 import toti.lib.tcpip.enums.StatusCode;
 
 public class TemplateResponse implements Response {
@@ -24,18 +23,15 @@ public class TemplateResponse implements Response {
 	}
 
 	@Override
-	public FinalResponse prepare(
-			Headers headers, 
-			Identity identity, 
-			ResponseContainer container,
-			String charset) {
+	public FinalResponse prepare(ResponseContainer container) {
+		// TODO mit to primo v Headers objektu?
 		String nonce = RandomStringUtils.randomAlphanumeric(50);
 		params.put("nonce", nonce);
-		params.put("totiIdentity", identity);
+		params.put("totiIdentity", container.identity());
 		
 		Headers resHeaders = new Headers(new HashMap<>());
 		resHeaders.setHeaders(this.headers.getHeaders());
-		headers.getHeaders().forEach((n, l)->{
+		container.headers().getHeaders().forEach((n, l)->{
 			l.forEach(v->{
 				if (v != null && v instanceof String) {
 					resHeaders.addHeader(n, v.toString().replace("{nonce}", nonce));
@@ -44,7 +40,7 @@ public class TemplateResponse implements Response {
 				}
 			});
 		});
-		setContentType(fileName, charset, resHeaders);
+		setContentType(fileName, container.charset(), resHeaders);
 		
 		return new FinalResponse(code, resHeaders, createResponse(container).getBytes());
 	}
@@ -52,10 +48,10 @@ public class TemplateResponse implements Response {
 	public String createResponse(ResponseContainer container) {
 		try {
 			String module = null;
-			if (container.getCurrent() != null) {
-				module = container.getCurrent().getModuleName();
+			if (container.mapped() != null) {
+				module = container.mapped().getModuleName();
 			}
-			return container.getTemplateExtension().getTemplate(module, fileName, params, container);
+			return container.templateFactory().getTemplate(module, fileName, params, container);
 		} catch (Exception e) {
 			throw new ResponseException(e);
 		}
