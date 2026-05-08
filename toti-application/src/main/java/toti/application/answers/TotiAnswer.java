@@ -14,7 +14,6 @@ import toti.application.answers.response.ResponseContainer;
 import toti.application.application.register.MappedAction;
 import toti.application.extensions.TemplateFactory;
 import toti.application.extensions.TotiExtension;
-import toti.application.extensions.TranslatorExtension;
 import toti.application.logging.Page;
 import toti.lib.common.structures.ObjectBuilder;
 import toti.lib.tcpip.enums.StatusCode;
@@ -23,16 +22,14 @@ public class TotiAnswer {
 	
 	private final Function<String, Boolean> isDevelop;
 	private final TemplateFactory templateExtension;
-	private final TranslatorExtension translatorExtension;
 	
 	private final Map<String, TotiExtension> extensions = new HashMap<>();
 	
 	public TotiAnswer(
-			Function<String, Boolean> isDevelop, TemplateFactory templateExtension, TranslatorExtension translatorExtension,
+			Function<String, Boolean> isDevelop, TemplateFactory templateExtension,
 			List<TotiExtension> extensions) {
 		this.isDevelop = isDevelop;
 		this.templateExtension = templateExtension;
-		this.translatorExtension = translatorExtension;
 		extensions.forEach(e->e.getListeningUri().forEach(u->this.extensions.put(u, e)));
 	}
 	
@@ -61,11 +58,7 @@ public class TotiAnswer {
 		if (extensions.containsKey(url)) {
 			TotiExtension extension = extensions.get(url);
 			moduleName.set(extension.getIdentifier());
-			return extension.getResponse(
-				url, request, 
-				identity, identity.getSessionSpace(extension),
-				responseHeaders, isDevelopReqeust
-			);
+			return extension.get(url, isDevelopReqeust).create(request, identity);
 		}
 		return Response.create(StatusCode.NOT_FOUND).getEmpty();
 	}

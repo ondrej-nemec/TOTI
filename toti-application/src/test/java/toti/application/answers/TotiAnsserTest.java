@@ -11,6 +11,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import toti.application.answers.action.ResponseAction;
 import toti.application.answers.request.Identity;
 import toti.application.answers.request.Request;
 import toti.application.answers.response.DownloadMode;
@@ -21,7 +22,6 @@ import toti.application.answers.response.TextResponse;
 import toti.application.application.register.Register;
 import toti.application.extensions.TemplateFactory;
 import toti.application.extensions.TotiExtension;
-import toti.application.extensions.TranslatorExtension;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.common.structures.ObjectBuilder;
 import toti.lib.files.env.Env;
@@ -39,9 +39,10 @@ public class TotiAnsserTest {
 				return "testExtension";
 			}
 			@Override
-			public Response getResponse(String uri, Request request, Identity identity, MapDictionary<String> space,
-					Headers responseHeaders, boolean isDeveloperRequest) {
-				return new TextResponse(StatusCode.ACCEPTED, new Headers(), "extensionResponse");
+			public ResponseAction get(String uri, boolean isDeveloperRequest) {
+				return (request, identity)->{
+					return new TextResponse(StatusCode.ACCEPTED, new Headers(), "extensionResponse");
+				};
 			}
 			@Override
 			public List<String> getListeningUri() {
@@ -62,7 +63,6 @@ public class TotiAnsserTest {
 		TotiAnswer answer = new TotiAnswer(
 			ip->ip.equals("localhost"),
 			mock(TemplateFactory.class),
-			mock(TranslatorExtension.class),
 			Arrays.asList(extension)
 		);
 		assertEquals(expected, answer.getResponse(
@@ -93,7 +93,6 @@ public class TotiAnsserTest {
 		TotiAnswer answer = new TotiAnswer(
 			incomingIP->incomingIP.equals("localhost"),
 			mock(TemplateFactory.class),
-			mock(TranslatorExtension.class),
 			new LinkedList<>()
 		);
 		assertEquals(expected, answer.getResponse(

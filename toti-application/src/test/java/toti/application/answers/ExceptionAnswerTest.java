@@ -30,8 +30,6 @@ import toti.application.answers.response.TextResponse;
 import toti.application.application.register.MappedAction;
 import toti.application.application.register.Register;
 import toti.application.extensions.CustomErrorHandler;
-import toti.application.extensions.Translator;
-import toti.application.extensions.TranslatorExtension;
 import toti.application.logging.FileName;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.files.text.Text;
@@ -54,14 +52,11 @@ public class ExceptionAnswerTest {
 			MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty()
 		);
 		Identity identity = mock(Identity.class);
-		Translator translator = mock(Translator.class);
-		TranslatorExtension translatorExtension = mock(TranslatorExtension.class);
 
 		ExceptionAnswer answer = spy(new ExceptionAnswer(
 			mock(Register.class),
 			ip->false,
 			null,
-			translatorExtension,
 			mock(Logger.class)
 		));
 
@@ -78,8 +73,6 @@ public class ExceptionAnswerTest {
 		assertEquals(expected, answer.answer(
 			request, StatusCode.I_AM_A_TEAPORT, new Throwable(), identity, null, resHeaders, "charset"
 		));
-		verify(translatorExtension, times(1)).getTranslator(identity);
-		verifyNoMoreInteractions(translator);
 	}
 	
 	@Test
@@ -90,7 +83,7 @@ public class ExceptionAnswerTest {
 		when(register.getCustomErrorHandler()).thenReturn(()->new CustomErrorHandler() {
 			@Override
 			public ResponseAction onError(StatusCode status, Throwable t) {
-				return (request, translator, identity)->{
+				return (request, identity)->{
 					return new TextResponse(StatusCode.ACCEPTED, new Headers(), "catched");
 				};
 			}
@@ -100,7 +93,6 @@ public class ExceptionAnswerTest {
 			register,
 			ip->false,
 			null,
-			mock(TranslatorExtension.class),
 			logger
 		));
 
@@ -139,7 +131,6 @@ public class ExceptionAnswerTest {
 			mock(Register.class),
 			incomingIp->isDev,
 			null,
-			mock(TranslatorExtension.class),
 			logger
 		));
 
@@ -200,7 +191,6 @@ public class ExceptionAnswerTest {
 			mock(Register.class),
 			ip->ip.equals("localhost"),
 			logsPath,
-			mock(TranslatorExtension.class),
 			mock(Logger.class)
 		);
 		assertEquals(expected, answer.getFileName(now, random, action, code, t), "First run");
@@ -233,7 +223,6 @@ public class ExceptionAnswerTest {
 			mock(Register.class),
 			ip->ip.equals("localhost"),
 			null,
-			mock(TranslatorExtension.class),
 			mock(Logger.class)
 		);
 		assertEquals(-1, answer.saveToFile(filename, "some text", "charset", text));
@@ -264,7 +253,6 @@ public class ExceptionAnswerTest {
 			mock(Register.class),
 			ip->ip.equals("localhost"),
 			"/tmp/toti-test",
-			mock(TranslatorExtension.class),
 			mock(Logger.class)
 		);
 		assertEquals(0, answer.saveToFile(new FileName("/path/to/file", true), "some content", "charset", text));

@@ -15,7 +15,6 @@ import toti.application.ServerException;
 import toti.application.answers.action.BodyType;
 import toti.application.answers.action.ResponseAction;
 import toti.application.answers.request.Identity;
-import toti.application.answers.request.IdentityFactory;
 import toti.application.answers.request.Request;
 import toti.application.answers.response.FinalResponse;
 import toti.application.answers.response.Response;
@@ -26,8 +25,6 @@ import toti.application.answers.router.Router;
 import toti.application.application.register.MappedAction;
 import toti.application.application.register.Param;
 import toti.application.extensions.TemplateFactory;
-import toti.application.extensions.Translator;
-import toti.application.extensions.TranslatorExtension;
 import toti.lib.common.structures.DictionaryValue;
 import toti.lib.files.json.JsonReader;
 import toti.lib.files.xml.XmlObject;
@@ -38,22 +35,15 @@ import toti.lib.tcpip.enums.StatusCode;
 public class ControllerAnswer {
 	
 	private final Param root;
-	private final TranslatorExtension translatorExtension;
-	private final IdentityFactory identityFactory;
 	private final Link link;
 	private final TemplateFactory templateExtension;
 	private final Router router;
 	private final Logger logger;
 	
-	public ControllerAnswer(
-			Router router, Param root, TemplateFactory templateExtension,
-			IdentityFactory identityFactory,
-			Link link, TranslatorExtension translatorExtension, Logger logger) {
+	public ControllerAnswer(Router router, Param root, TemplateFactory templateExtension, Link link, Logger logger) {
 		this.root = root;
 		this.router = router;
 		this.templateExtension = templateExtension;
-		this.identityFactory = identityFactory;
-		this.translatorExtension = translatorExtension;
 		this.link = link;
 		this.logger = logger;
 	}
@@ -127,10 +117,9 @@ public class ControllerAnswer {
 		}
 		Object controller = mapped.getClassFactory().create();
 		ResponseAction action = (ResponseAction)mapped.getAction().invoke(controller, params);
-		Translator trans = translatorExtension.getTranslator(identity);
 		// TODO jeste bude potreba zavolat parse body
 		// typ body mozna pridat do @action
-		return action.create(request, trans, identity);
+		return action.create(request, identity);
 	}
 
 	protected void parseBody(Request request, List<BodyType> allowedTypes, MappedAction mapped) throws ServerException {

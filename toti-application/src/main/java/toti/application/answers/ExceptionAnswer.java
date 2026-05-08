@@ -18,7 +18,6 @@ import toti.application.answers.response.ResponseContainer;
 import toti.application.answers.response.TextResponse;
 import toti.application.application.register.MappedAction;
 import toti.application.application.register.Register;
-import toti.application.extensions.TranslatorExtension;
 import toti.application.logging.ExceptionHashCode;
 import toti.application.logging.FileName;
 import toti.application.logging.Page;
@@ -30,18 +29,16 @@ public class ExceptionAnswer {
 	private final Function<String, Boolean> isDevelop;
 	private final Logger logger;
 	private final String logsPath;
-	private final TranslatorExtension translator;
 	private final Register register;
 	
 	private final Map<ExceptionHashCode, String> exceptionFileName = new HashMap<>();
 
 	public ExceptionAnswer(
 			Register register, Function<String, Boolean> isDevelop,
-			String logsPath, TranslatorExtension translator, Logger logger) {
+			String logsPath, Logger logger) {
 		this.register = register;
 		this.logger = logger;
 		this.isDevelop = isDevelop;
-		this.translator = translator;
 		if (logsPath == null || logsPath.isEmpty()) {
 			this.logsPath = null;
 			logger.debug("Extended HTML request log is disabled");
@@ -76,7 +73,7 @@ public class ExceptionAnswer {
 		if (!isDevelopResponseAllowed && register.getCustomErrorHandler() != null) {
 			try {
 				return register.getCustomErrorHandler().create()
-					.onError(status, t).create(request, translator.getTranslator(identity), identity);
+					.onError(status, t).create(request, identity);
 			} catch (Throwable t1) {
 				logger.error("CustomErroHandler fails, default implementation continue", t1);
 			}

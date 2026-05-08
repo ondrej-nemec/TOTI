@@ -15,6 +15,8 @@ public class Identity {
 	private final Map<String, MapDictionary<String>> sessionSpaces;
 	private final String sessionId;
 	private final CsrfToken csrfToken;
+
+	private final MapDictionary<String> scope;
 	
 	protected Identity(String IP, String sessionId, Map<String, MapDictionary<String>> sessionSpaces, Optional<Object> user, CsrfToken csrfToken) {
 		this.IP = IP;
@@ -22,6 +24,7 @@ public class Identity {
 		this.sessionId = sessionId;
 		this.user = user;
 		this.csrfToken = csrfToken;
+		this.scope = MapDictionary.hashMap();
 	}
 	
 	public void login(Object user) {
@@ -38,7 +41,7 @@ public class Identity {
 		return csrfToken;
 	}
 	
-	public MapDictionary<String> getSessionSpace(Extension extension) {
+	protected MapDictionary<String> getSessionSpace(Extension extension) {
 		return getSessionSpace(extension.getIdentifier());
 	}
 
@@ -51,6 +54,18 @@ public class Identity {
 			sessionSpaces.put(name, MapDictionary.hashMap());
 		}
 		return sessionSpaces.get(name);
+	}
+
+	public <T> T getScope(Class<T> clazz) {
+		return scope.getDictionaryValue(clazz.getCanonicalName()).getValue(clazz);
+	}
+
+	public <T> void setScope(T t) {
+		scope.put(t.getClass().getCanonicalName(), t);
+	}
+
+	public <T> void removeScope(Class<T> clazz) {
+		scope.remove(clazz.getCanonicalName());
 	}
 	
 	public boolean isAnonymous() {

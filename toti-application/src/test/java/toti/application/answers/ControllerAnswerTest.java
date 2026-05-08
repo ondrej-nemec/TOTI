@@ -39,8 +39,6 @@ import toti.application.answers.router.Router;
 import toti.application.application.register.MappedAction;
 import toti.application.application.register.Param;
 import toti.application.extensions.TemplateFactory;
-import toti.application.extensions.Translator;
-import toti.application.extensions.TranslatorExtension;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.common.structures.ThrowingFunction;
 import static toti.lib.common.tests.TestCase.assertEquals;
@@ -58,16 +56,12 @@ public class ControllerAnswerTest {
 		// MappedAction.test("routered", "route", "method")
 		when(router.getUrlMapping(any())).thenReturn(null);
 		
-		Translator translator = mock(Translator.class);
-		TranslatorExtension translatorExtension = mock(TranslatorExtension.class);
-		when(translatorExtension.getTranslator(any())).thenReturn(translator);
-		
 		IdentityFactory identityFactory = mock(IdentityFactory.class);
 		Param root = new Param(null);
 		
 		ControllerAnswer answer = spy(new ControllerAnswer(
-			router, root, mock(TemplateFactory.class), identityFactory,
-			mock(Link.class), translatorExtension, mock(Logger.class)
+			router, root, mock(TemplateFactory.class),
+			mock(Link.class), mock(Logger.class)
 		));
 		// doReturn(null).when(answer).getMappedAction(any(), any(), any());
 		
@@ -88,7 +82,7 @@ public class ControllerAnswerTest {
 		);
 		verify(router, times(1)).getUrlMapping("/a/b/c");
 		verify(answer, times(1)).getUrlParts("/a/b/c");
-		verifyNoMoreInteractions(translator, identityFactory, answer, router);
+		verifyNoMoreInteractions(identityFactory, answer, router);
 	}
 
 	@Test
@@ -97,10 +91,6 @@ public class ControllerAnswerTest {
 		when(router.getUrlMapping("/routered-action")).thenReturn("/routered/route/method");
 		//.thenReturn(MappedAction.test("routered", "route", "method"));
 		
-		Translator translator = mock(Translator.class);
-		TranslatorExtension translatorExtension = mock(TranslatorExtension.class);
-		when(translatorExtension.getTranslator(any())).thenReturn(translator);
-		
 		IdentityFactory identityFactory = mock(IdentityFactory.class);
 		Identity identity = mock(Identity.class);
 		
@@ -108,8 +98,8 @@ public class ControllerAnswerTest {
 		
 		Param root = new Param(null);
 		ControllerAnswer answer = spy(new ControllerAnswer(
-			router, root, mock(TemplateFactory.class), identityFactory,
-			mock(Link.class), translatorExtension, mock(Logger.class)
+			router, root, mock(TemplateFactory.class),
+			mock(Link.class), mock(Logger.class)
 		));
 		FinalResponse finalResponse = mock(FinalResponse.class);
 		Response response = mock(Response.class);
@@ -137,16 +127,15 @@ public class ControllerAnswerTest {
 			// .getMappedAction("/a/b/c", HttpMethod.GET, request);
 		verify(answer, times(1)).run("/a/b/c", mappedAction, request, identity);
 		verify(identityFactory, times(1)).finalizeIdentity(identity, responseHeaders);
-		verify(translatorExtension, times(1)).getTranslator(identity);
 		verify(router, times(1)).getUrlMapping("/a/b/c");
 		verify(answer, times(1)).getUrlParts("/a/b/c");
-		verifyNoMoreInteractions(translator, identityFactory, answer, router);
+		verifyNoMoreInteractions(identityFactory, answer, router);
 	}
 	
 	@ParameterizedTest
 	@MethodSource("dataGetUrlParts")
 	public void testGetUrlParts(String url, List<String> expected) {
-		ControllerAnswer answer = new ControllerAnswer(null, null, null, null, null, null, null);
+		ControllerAnswer answer = new ControllerAnswer(null, null, null, null, null);
 		assertEquals(expected, answer.getUrlParts(url));
 	}
 	
@@ -166,13 +155,9 @@ public class ControllerAnswerTest {
 		Router router = mock(Router.class);
 	//	when(router.getUrlMapping("/routered")).thenReturn("/routered-method");
 		
-		Translator translator = mock(Translator.class);
-		TranslatorExtension translatorExtension = mock(TranslatorExtension.class);
-		when(translatorExtension.getTranslator(any())).thenReturn(translator);
-		
 		ControllerAnswer answer = new ControllerAnswer(
-			router, root, mock(TemplateFactory.class), mock(IdentityFactory.class),
-			mock(Link.class), translatorExtension, mock(Logger.class)
+			router, root, mock(TemplateFactory.class),
+			mock(Link.class), mock(Logger.class)
 		);
 		Request request = new Request(
 			"", HttpMethod.GET, new Headers(), MapDictionary.hashMap(),
@@ -409,9 +394,6 @@ public class ControllerAnswerTest {
 			String uri, List<Object> pathParams, String redirect,
 			Object controller, ThrowingFunction<Object, Method, Exception> getMethod,
 			Response expected) throws Throwable {
-		Translator translator = mock(Translator.class);
-		TranslatorExtension translatorExtension = mock(TranslatorExtension.class);
-		when(translatorExtension.getTranslator(any())).thenReturn(translator);
 		
 		Identity identity = mock(Identity.class);
 		
@@ -423,8 +405,7 @@ public class ControllerAnswerTest {
 		
 		ControllerAnswer answer = new ControllerAnswer(
 			mock(Router.class), mock(Param.class), mock(TemplateFactory.class),
-			mock(IdentityFactory.class),
-			mock(Link.class), translatorExtension, mock(Logger.class)
+			mock(Link.class), mock(Logger.class)
 		);
 		Request request = new Request(
 			"", HttpMethod.GET, new Headers(), MapDictionary.hashMap(),
@@ -444,7 +425,7 @@ public class ControllerAnswerTest {
 				new Object() {
 					@SuppressWarnings("unused")
 					public ResponseAction index() {
-						return (request, translator, identity)->{
+						return (request, identity)->{
 							return new TextResponse(StatusCode.OK, new Headers(), "interrupted");
 						};
 					} 
@@ -457,7 +438,7 @@ public class ControllerAnswerTest {
 				new Object() {
 					@SuppressWarnings("unused")
 					public ResponseAction index() {
-						return (request, translator, identity)->{
+						return (request, identity)->{
 							return new TextResponse(StatusCode.OK, new Headers(), "interrupted");
 							};
 					} 
@@ -472,12 +453,12 @@ public class ControllerAnswerTest {
 					@SuppressWarnings("unused")
 					public ResponseAction index() {
 						return ResponseBuilder.get()
-							.authorize((request, translator, identity)->{
+							.authorize((request, identity)->{
 								throw new RequestInterruptedException(
 									new TextResponse(StatusCode.OK, new Headers(), "interrupted")
 								);
 							})
-							.createResponse((request, translator, identity)->{
+							.createResponse((request, identity)->{
 								fail();
 								return new TextResponse(StatusCode.OK, new Headers(), "Fail");
 							});
@@ -492,12 +473,12 @@ public class ControllerAnswerTest {
 					@SuppressWarnings("unused")
 					public ResponseAction index() {
 						return ResponseBuilder.get()
-							.authorize((request, translator, identity)->{
+							.authorize((request, identity)->{
 								throw new RequestInterruptedException(
 									new TextResponse(StatusCode.OK, new Headers(), "interrupted")
 								);
 							})
-							.createResponse((request, translator, identity)->{
+							.createResponse((request, identity)->{
 								fail();
 								return new TextResponse(StatusCode.OK, new Headers(), "Fail");
 							});
@@ -512,12 +493,12 @@ public class ControllerAnswerTest {
 					@SuppressWarnings("unused")
 					public ResponseAction index() {
 						return ResponseBuilder.get()
-							.authorize((request, translator, identity)->{
+							.authorize((request, identity)->{
 								throw new RequestInterruptedException(
 									new TextResponse(StatusCode.OK, new Headers(), "interrupted")
 								);
 							})
-							.createResponse((request, translator, identity)->{
+							.createResponse((request, identity)->{
 								fail();
 								return new TextResponse(StatusCode.OK, new Headers(), "Fail");
 							});
@@ -532,12 +513,12 @@ public class ControllerAnswerTest {
 					@SuppressWarnings("unused")
 					public ResponseAction index() {
 						return ResponseBuilder.get()
-							.authorize((request, translator, identity)->{
+							.authorize((request, identity)->{
 								throw new RequestInterruptedException(
 									new TextResponse(StatusCode.OK, new Headers(), "interrupted")
 								);
 							})
-							.createResponse((request, translator, identity)->{
+							.createResponse((request, identity)->{
 								fail();
 								return new TextResponse(StatusCode.OK, new Headers(), "Fail");
 							});
@@ -552,12 +533,12 @@ public class ControllerAnswerTest {
 					@SuppressWarnings("unused")
 					public ResponseAction index() {
 						return ResponseBuilder.get()
-							.authorize((request, translator, identity)->{
+							.authorize((request, identity)->{
 								throw new RequestInterruptedException(
 									new TextResponse(StatusCode.OK, new Headers(), "interrupted")
 								);
 							})
-							.createResponse((request, translator, identity)->{
+							.createResponse((request, identity)->{
 								fail();
 								return new TextResponse(StatusCode.OK, new Headers(), "Fail");
 							});
@@ -571,7 +552,7 @@ public class ControllerAnswerTest {
 				new Object() {
 					@SuppressWarnings("unused")
 					public ResponseAction index() {
-						return (request, translator, identity)->{
+						return (request, identity)->{
 							return new TextResponse(StatusCode.OK, new Headers(), "interrupted");
 						};
 					} 
@@ -584,7 +565,7 @@ public class ControllerAnswerTest {
 				new Object() {
 					@SuppressWarnings("unused")
 					public ResponseAction index() {
-						return (request, translator, identity)->{
+						return (request, identity)->{
 							return new TextResponse(StatusCode.OK, new Headers(), "interrupted");
 						};
 					} 
@@ -597,7 +578,7 @@ public class ControllerAnswerTest {
 				new Object() {
 					@SuppressWarnings("unused")
 					public ResponseAction index() {
-						return (request, translator, identity)->{
+						return (request, identity)->{
 							return new TextResponse(StatusCode.OK, new Headers(), "response");
 						};
 					} 
@@ -610,7 +591,7 @@ public class ControllerAnswerTest {
 				new Object() {
 					@SuppressWarnings("unused")
 					public ResponseAction index(int id, String value) {
-						return (request, translator, identity)->{
+						return (request, identity)->{
 							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id + ": " + value);
 						};
 					} 
@@ -623,7 +604,7 @@ public class ControllerAnswerTest {
 				new Object() {
 					@SuppressWarnings("unused")
 					public ResponseAction index(int id, String value) {
-						return (request, translator, identity)->{
+						return (request, identity)->{
 							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id + ": " + value);
 						};
 					} 
@@ -636,7 +617,7 @@ public class ControllerAnswerTest {
 				new Object() {
 					@SuppressWarnings("unused")
 					public ResponseAction index(int id, String value) {
-						return (request, translator, identity)->{
+						return (request, identity)->{
 							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id + ": " + value);
 						};
 					} 
@@ -649,7 +630,7 @@ public class ControllerAnswerTest {
 				new Object() {
 					@SuppressWarnings("unused")
 					public ResponseAction index(int id, String value) {
-						return (request, translator, identity)->{
+						return (request, identity)->{
 							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id + ": " + value);
 						};
 					} 
@@ -662,7 +643,7 @@ public class ControllerAnswerTest {
 				new Object() {
 					@SuppressWarnings("unused")
 					public ResponseAction index(int id, String value) {
-						return (request, translator, identity)->{
+						return (request, identity)->{
 							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id + ": " + value);
 						};
 					} 
@@ -719,7 +700,7 @@ public class ControllerAnswerTest {
 					@SuppressWarnings("unused")
 					public ResponseAction index(int id) {
 						return ResponseBuilder.get()
-						.createResponse((request, translator, identity)->{
+						.createResponse((request, identity)->{
 							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id);
 						});
 					} 
@@ -731,7 +712,7 @@ public class ControllerAnswerTest {
 					@SuppressWarnings("unused")
 					public ResponseAction index(int id) {
 						return ResponseBuilder.get()
-						.createResponse((request, translator, identity)->{
+						.createResponse((request, identity)->{
 							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id);
 						});
 					} 
@@ -743,7 +724,7 @@ public class ControllerAnswerTest {
 					@SuppressWarnings("unused")
 					public ResponseAction index(int id, String value) {
 						return ResponseBuilder.get()
-						.createResponse((request, translator, identity)->{
+						.createResponse((request, identity)->{
 							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id + ": " + value);
 						});
 					} 
@@ -755,14 +736,14 @@ public class ControllerAnswerTest {
 					@SuppressWarnings("unused")
 					public ResponseAction index(int id, String value) {
 						return ResponseBuilder.get()
-						.createResponse((request, translator, identity)->{
+						.createResponse((request, identity)->{
 							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id + ": " + value);
 						});
 					}
 					@SuppressWarnings("unused")
 					public ResponseAction index(int id) {
 						return ResponseBuilder.get()
-						.createResponse((request, translator, identity)->{
+						.createResponse((request, identity)->{
 							fail();
 							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id);
 						});
@@ -777,8 +758,7 @@ public class ControllerAnswerTest {
 	public void testParseBodyThrowsWithNotSupportedTypes() throws ServerException {
 		ControllerAnswer answer = new ControllerAnswer(
 			mock(Router.class), mock(Param.class), mock(TemplateFactory.class),
-			mock(IdentityFactory.class),
-			mock(Link.class), mock(TranslatorExtension.class), mock(Logger.class)
+			mock(Link.class), mock(Logger.class)
 		);
 		Request request = new Request(
 			"",
@@ -800,8 +780,7 @@ public class ControllerAnswerTest {
 	public void testParseBody(Request request, List<BodyType> allowedTypes, Consumer<Request> check) throws ServerException {
 		ControllerAnswer answer = new ControllerAnswer(
 			mock(Router.class), mock(Param.class), mock(TemplateFactory.class),
-			mock(IdentityFactory.class),
-			mock(Link.class), mock(TranslatorExtension.class), mock(Logger.class)
+			mock(Link.class), mock(Logger.class)
 		);
 		answer.parseBody(request, allowedTypes, mock(MappedAction.class));
 		check.accept(request);

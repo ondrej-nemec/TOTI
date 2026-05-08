@@ -14,7 +14,6 @@ import toti.application.answers.ExceptionAnswer;
 import toti.application.answers.FileSystemAnswer;
 import toti.application.answers.Headers;
 import toti.application.answers.TotiAnswer;
-import toti.application.answers.request.Identity;
 import toti.application.answers.request.IdentityFactory;
 import toti.application.answers.router.Link;
 import toti.application.answers.router.Router;
@@ -26,12 +25,10 @@ import toti.application.application.register.Param;
 import toti.application.application.register.Register;
 import toti.application.extensions.Extension;
 import toti.application.extensions.TemplateFactory;
-import toti.application.extensions.Translator;
-import toti.application.extensions.TranslatorExtension;
+import toti.application.extensions.TotiExtension;
 import toti.lib.common.structures.ObjectBuilder;
 import toti.lib.common.structures.dictionary.Scalar;
 import toti.lib.files.env.Env;
-import toti.application.extensions.TotiExtension;
 
 public class ApplicationFactory {
 
@@ -59,7 +56,6 @@ public class ApplicationFactory {
 	private SessionManager sessionManager;
 
 	private TemplateFactory templateExtension;
-	private TranslatorExtension translatorExtension;
 	
 	public ApplicationFactory(String appIdentifier, Env env, String charset, List<String> hostnames, List<String> paths) {
 		this.env = env;
@@ -80,7 +76,6 @@ public class ApplicationFactory {
 		Router router = new Router(/*register*/);
 
 		extensions.forEach((n, e)->e.init(env, register));
-		TranslatorExtension translatorExtension = getTranslatorExtension();
 		TemplateFactory templateExtension = getTemplateFactory();
 		
 		List<Task> tasks = new LinkedList<>();
@@ -97,13 +92,10 @@ public class ApplicationFactory {
 		Function<String, Boolean> isDevelopFunc = getDevModeFunc();
 		
 		TotiAnswer totiAnwer = new TotiAnswer(
-			isDevelopFunc, templateExtension, translatorExtension, extensionsTotiResponses
+			isDevelopFunc, templateExtension, extensionsTotiResponses
 		);
-		ExceptionAnswer exceptionAnswer = new ExceptionAnswer(register, isDevelopFunc, getLogsPath(env), translatorExtension, logger);
-		ControllerAnswer controllerAnswer = new ControllerAnswer(
-			router, root, templateExtension,
-			identityFactory, link, translatorExtension, logger
-		);
+		ExceptionAnswer exceptionAnswer = new ExceptionAnswer(register, isDevelopFunc, getLogsPath(env), logger);
+		ControllerAnswer controllerAnswer = new ControllerAnswer(router, root, templateExtension, link, logger);
 		FileSystemAnswer fileSystemAnswer = new FileSystemAnswer(
 			getResourcesPath(env),
 			getDirResponseAllowed(env),
@@ -212,21 +204,7 @@ public class ApplicationFactory {
 	public void setSessionManager(SessionManager sessionManager) {
 		this.sessionManager = sessionManager;
 	}
-	
-	private TranslatorExtension getTranslatorExtension() {
-		if (translatorExtension != null) {
-			return translatorExtension;
-		}
-		return new TranslatorExtension() {
-			public Translator getTranslator(Identity identity) {
-				return new Translator() {
-					@Override public String translate(String key) { return key; }
-					@Override public String translate(String key, Map<String, Object> params) { return key; }
-				};
-			};
-		};
-	}
-	
+
 	private TemplateFactory getTemplateFactory() {
 		if (templateExtension != null) {
 			return templateExtension;
@@ -245,12 +223,8 @@ public class ApplicationFactory {
 	
 	public ApplicationFactory addExtension(Extension extension) {
 		extensions.put(extension.getClass().getName(), extension);
-		
 		if (extension instanceof TotiExtension ext) {
 			extensionsTotiResponses.add(ext);
-		}
-		if (extension instanceof TranslatorExtension ext) {
-			this.translatorExtension = ext;
 		}
 		if (extension instanceof TemplateFactory ext) {
 			this.templateExtension = ext;
