@@ -2,7 +2,6 @@ package toti.examples.modules.application;
 
 import toti.application.annotations.Action;
 import toti.application.annotations.Controller;
-import toti.application.annotations.Secured;
 import toti.application.answers.action.ResponseAction;
 import toti.application.answers.response.Response;
 import toti.lib.common.exceptions.LogicException;
@@ -23,22 +22,8 @@ public class ExceptionsController {
 	 */
 	@Action(path="method")
 	public ResponseAction inMethod() {
-		return (req, translator, identity)->{
+		return (req, identity)->{
 			throw new RuntimeException(new LogicException("Example of logic exception"));
-		};
-	}
-
-	/**
-	 * Exception is throwed by TOTI before method is called
-	 * Caused: user is not logged
-	 * @throws ServerException 401 Unauthorized
-	 * @return http://localhost:8080/application/exceptions/secured
-	 */
-	@Action(path="secured")
-	@Secured()
-	public ResponseAction secured() {
-		return (req, translator, identity)->{
-			return Response.OK().getText("This text should not be displayed");
 		};
 	}
 
@@ -50,7 +35,7 @@ public class ExceptionsController {
 	 */
 	@Action(path="post", methods = HttpMethod.POST)
 	public ResponseAction wrongHttpMethod() {
-		return (req, translator, identity)->{
+		return (req, identity)->{
 			return Response.OK().getText("This text should not be displayed");
 		};
 	}
@@ -62,7 +47,7 @@ public class ExceptionsController {
 	 */
 	@Action(path="catched")
 	public ResponseAction catched() {
-		return (req, translator, identity)->{
+		return (req, identity)->{
 			throw new LogicException("Example of logic exception");
 		};
 	}

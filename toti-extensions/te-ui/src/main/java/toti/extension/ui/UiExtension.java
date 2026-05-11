@@ -5,23 +5,21 @@ import java.util.HashMap;
 import java.util.List;
 
 import toti.application.answers.Headers;
+import toti.application.answers.action.ResponseAction;
 import toti.application.answers.request.Identity;
-import toti.application.answers.request.Request;
 import toti.application.answers.response.Response;
 import toti.application.application.register.Register;
-import toti.extension.templating.TemplateExtension;
+import toti.application.extensions.TotiExtension;
 import toti.extension.ui.tags.ControlTag;
 import toti.extension.ui.tags.FormTag;
 import toti.extension.ui.tags.GridTag;
-import toti.application.extensions.Extension;
-import toti.application.extensions.TotiExtension;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.files.env.Env;
 import toti.lib.tcpip.enums.StatusCode;
 import toti.lib.tcpip.structures.RequestParameters;
 import toti.lib.templating.Tag;
 
-public class UiExtension implements Extension, TotiExtension {
+public class UiExtension implements TotiExtension {
 
 	@Override
 	public String getIdentifier() {
@@ -40,30 +38,31 @@ public class UiExtension implements Extension, TotiExtension {
 	}
 
 	@Override
-	public Response getResponse(String uri, Request request, Identity identity, MapDictionary<String> space,
-			Headers responseHeaders, boolean isDeveloperRequest) {
-		switch (uri) {
-			case ".js":
-				return Response.create(StatusCode.OK)
+	public ResponseAction get(String uri, boolean isDeveloperRequest) {
+		return (request, identity)->{
+			return switch (uri) {
+				case ".js"->Response.create(StatusCode.OK)
 					.addHeader("Content-Type", "text/javascript")
 					.getTemplate("/ui/assets/js.jsp", new HashMap<>());
-			case ".css":
-				return Response.create(StatusCode.OK)
+				case ".css"->Response.create(StatusCode.OK)
 					.addHeader("Content-Type", "text/css")
 					.getTemplate("/ui/assets/css.css", new HashMap<>());
-			default:
-				return Response.create(StatusCode.NOT_FOUND).getEmpty();
-		}
+				default->Response.create(StatusCode.NOT_FOUND).getEmpty();
+			};
+		};
 	}
 
 	@Override
 	public void init(Env appEnv, Register register) {
+		// TODO
+		/*
 		TemplateExtension templateExtension = register.getExtension(TemplateExtension.class);
 		if (templateExtension == null) {
 			throw new RuntimeException("TOTI-UI Extension requires TOTI-Templating Extension.");
 		}
 		templateExtension.registerTags(getTags());
 		templateExtension.registerModule(getIdentifier(), "", "toti");
+		*/
 	}
 	
 	protected List<Tag> getTags() {

@@ -11,7 +11,7 @@ public class ErrorHandlerExampleController implements CustomErrorHandler {
 
 	@Override
 	public ResponseAction onError(StatusCode status, Throwable t) {
-		return (request, transator, identity)->{
+		return (request, identity)->{
 			return Response.create(status).getText("Ups, something happend: " + t.getMessage());
 		};
 	}
