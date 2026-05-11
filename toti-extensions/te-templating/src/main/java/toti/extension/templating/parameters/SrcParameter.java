@@ -1,6 +1,7 @@
 package toti.extension.templating.parameters;
 
-import toti.extension.templating.TemplateResponseContainer;
+import toti.application.answers.router.Link;
+import toti.extension.templating.TemplateExtension;
 import toti.lib.templating.Parameter;
 
 public class SrcParameter implements Parameter {
@@ -19,10 +20,10 @@ public class SrcParameter implements Parameter {
         }
         return String.format(
         	"\"%s\" + "
-        	+ TemplateResponseContainer.class.getCanonicalName()
-			+ ".class.cast(container)"
-        	+ ".createLink(\"%s\")",
-        	prefix, value
+        	+ Link.class.getCanonicalName()
+			+ ".class.cast(getVariable(%s))"
+        	+ ".create(\"%s\")",
+        	prefix, TemplateExtension.VARIABLE_NAME_LINK, value
         );
     }
 

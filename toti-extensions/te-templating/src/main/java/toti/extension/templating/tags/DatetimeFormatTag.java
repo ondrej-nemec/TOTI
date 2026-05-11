@@ -4,7 +4,8 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
-import toti.extension.templating.TemplateResponseContainer;
+import toti.application.answers.request.Identity;
+import toti.application.extensions.Translator;
 import toti.lib.templating.Tag;
 import toti.lib.templating.TagVariableMode;
 import toti.lib.templating.TemplateException;
@@ -39,31 +40,17 @@ public class DatetimeFormatTag implements Tag {
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
-		// {value=getVariable(()->{Object o4_0=getVariable("detail");Object o4_1=null;try{o4_1=o4_0.getClass().getMethod("get",java.lang.String.class).invoke(o4_0,"time");}catch(NoSuchMethodException e){o4_1=o4_0.getClass().getMethod("get",Object.class).invoke(o4_0,"time");}return o4_1;})}
-		/*
-		write(Template.escapeHtml(new DictionaryValue(getVariable(() -> {
-			Object o4_0 = getVariable("detail");
-			Object o4_1 = null;
-			try {
-				o4_1 = o4_0.getClass().getMethod("get", java.lang.String.class).invoke(o4_0, "time");
-			} catch (NoSuchMethodException e) {
-				o4_1 = o4_0.getClass().getMethod("get", Object.class).invoke(o4_0, "time");
-			}
-			return o4_1;
-		})).getValue(LocalDateTime.class).format(DateTimeFormatter.ofPattern(
-			// "yyyy-MM-dd HH:mm"
-			"dd.MM. yyyy HH:mm"
-		))));
-		*/
 		checkParameter(params, "value");
-	//	checkParameter(params, "type");
 		checkParameter(params, "format");
 		
 		return String.format(
 			"write(Template.escapeHtml(new DictionaryValue(%s)"
 			+ ".getValue(%s.class).format(%s.ofPattern("
-				+ TemplateResponseContainer.class.getCanonicalName()
-				+ ".class.cast(container)"
+				+ Identity.class.getCanonicalName()
+				+ ".class.cast(getVariable(\"totiIdentity\"))"
+				+ ".getScope("
+				+ Translator.class.getCanonicalName()
+				+ ")"
 				+ ".translate(\"%s\")"
 			+ "))));",
 			params.get("value"),

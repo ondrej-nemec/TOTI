@@ -1,20 +1,18 @@
 package toti.extension.ui.tags;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import toti.extension.ui.TagsProvider;
 import toti.lib.common.structures.MapInit;
 import toti.lib.templating.BaseTemplateTest;
 
 public class TagsEndToEndTest extends BaseTemplateTest {
 	
 	public TagsEndToEndTest() {
-		super(new TagsProvider().getTags(), new LinkedList<>());
+		super();
 	}
 
 	@ParameterizedTest

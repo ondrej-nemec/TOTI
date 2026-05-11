@@ -18,7 +18,7 @@ import toti.lib.files.env.Env;
 import toti.lib.tcpip.structures.RequestParameters;
 import toti.lib.translator.Translator;
 
-public class TranslatorExtension implements toti.application.extensions.TranslatorExtension, Extension {
+public class TranslatorExtension implements Extension {
 	
 	private final static String LOCALE_COOKIE_NAME = "Language";
 	private final static String LOCALE_HEADER_NAME = "Accept-Language";
@@ -77,7 +77,8 @@ public class TranslatorExtension implements toti.application.extensions.Translat
 	public void onRequestStart(Identity identity, MapDictionary<String> sessionSpace, Headers requestHeaders,
 		MapDictionary<String> queryParams, RequestParameters requestBody) {
 		Locale locale = getLocale(requestHeaders);
-		identity.getSessionSpace(this).put(NAME, locale.getLang());
+		sessionSpace.put(NAME, locale.getLang());
+		identity.setScope(null); // TODO
 	}
 	
 	private Locale getLocale(Headers headers) {
@@ -93,7 +94,7 @@ public class TranslatorExtension implements toti.application.extensions.Translat
 			return resolveLocale(locale);
 		}
 	}
-	
+
 	private Locale resolveLocale(String locale) {
 		// TODO vymyslet
 		return null;
@@ -108,25 +109,24 @@ public class TranslatorExtension implements toti.application.extensions.Translat
 	public void onRequestEnd(Identity identity, MapDictionary<String> sessionSpace, Headers responseHeaders) {
 		responseHeaders.addHeader(
 			"Set-Cookie", 
-			LOCALE_COOKIE_NAME + "=" + identity.getSessionSpace(this).getString(NAME)
+			LOCALE_COOKIE_NAME + "=" + sessionSpace.getString(NAME)
 			+ "; Path=/"
 			+ "; SameSite=Strict"
 		);
 	}
 
-	@Override
-	public toti.application.extensions.Translator getTranslator(Identity identity) {
+	/*public toti.application.extensions.Translator getTranslator(Identity identity) {
 		return new TranslatorImpl(translator.withLang(identity.getSessionSpace(this).getString(NAME)));
-	}
+	}*/
 
 	public toti.application.extensions.Translator getTranslator() {
 		return new TranslatorImpl(translator);
 	}
-	
+
 	public Translator getOrigin() {
 		return translator;
 	}
-	
+
 	@Override
 	public void onApplicationStart() throws Exception {}
 

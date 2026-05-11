@@ -2,13 +2,15 @@ package toti.extension.templating.tags;
 
 import java.util.Map;
 
-import toti.extension.templating.TemplateResponseContainer;
+import toti.application.answers.router.Link;
+import toti.extension.templating.TemplateExtension;
 import toti.lib.common.exceptions.LogicException;
 import toti.lib.templating.Tag;
 import toti.lib.templating.TagVariableMode;
 
 public class LinkTag implements Tag {
 	
+	@Override
 	public TagVariableMode getMode(String name) {
 		return TagVariableMode.STRING;
 	}
@@ -38,13 +40,13 @@ public class LinkTag implements Tag {
         String method = function[0];
 		
 		StringBuilder result = new StringBuilder(String.format(
-			TemplateResponseContainer.class.getCanonicalName()
-			+ ".class.cast(container)"
-			+ ".createLink(\"%s\", \"%s\", MapInit.create()", controller, method
+			Link.class.getCanonicalName()
+			+ ".class.cast(getVariable(%s))"
+			+ ".create(\"%s\", \"%s\", MapInit.create()", TemplateExtension.VARIABLE_NAME_LINK, controller, method
 		));
 		
 	    params.forEach((name, value)->{
-	    	result.append(String.format(".append(\"%s\",\"%\")", name, value));
+	    	result.append(String.format(".append(\"%s\",\"%s\")", name, value));
 	    });
 	    result.append(".toMap()");
         for (int i = 1; i < function.length; i++) {

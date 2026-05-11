@@ -2,7 +2,9 @@ package toti.extension.templating.tags;
 
 import java.util.Map;
 
-import toti.extension.templating.TemplateResponseContainer;
+import toti.application.answers.request.Identity;
+import toti.extension.templating.Authorize;
+import toti.extension.templating.TemplateExtension;
 import toti.lib.templating.Tag;
 import toti.lib.templating.TagVariableMode;
 
@@ -38,11 +40,9 @@ public class PermissionsTag implements Tag {
 		});
 		code.append(".toMap()");
 		return String.format(
-			"if(%s"
-			+ TemplateResponseContainer.class.getCanonicalName()
-			+ ".class.cast(container)"
-			+ ".isAllowed(getVariable(\"totiIdentity\"),%s))",
-			not ? "!":"", code
+			"if(%s%s.class.cast(getVariable(%s)).isAllowed(%s.class.cast(getVariable(\"totiIdentity\")),%s))",
+			not ? "!":"", Authorize.class.getCanonicalName(), TemplateExtension.VARIABLE_NAME_AUTHORIZE,
+			Identity.class.getCanonicalName(), code
 		);
 	}
 

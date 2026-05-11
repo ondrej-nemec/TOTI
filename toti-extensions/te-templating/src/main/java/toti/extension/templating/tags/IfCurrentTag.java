@@ -2,7 +2,8 @@ package toti.extension.templating.tags;
 
 import java.util.Map;
 
-import toti.extension.templating.TemplateResponseContainer;
+import toti.application.application.register.MappedAction;
+import toti.extension.templating.TemplateExtension;
 import toti.lib.common.exceptions.LogicException;
 import toti.lib.templating.Tag;
 import toti.lib.templating.TagVariableMode;
@@ -24,36 +25,22 @@ public class IfCurrentTag implements Tag {
 		StringBuilder result = new StringBuilder();
 		result.append(String.format("if(%s", params.containsKey("not") ? "!":""));
 		result.append("(true");
-		String module = params.get("module");
-		if (module != null) {
-			result.append("&&");
-			result.append("(\"" + module + "\").equals(" + callContainerMethod("getModuleName") +")");
-		}
-		String controller = params.get("controller");
-		if (controller != null) {
-			result.append("&&");
-			result.append("(\"" + controller + "\").equals(" + callContainerMethod("getClassName") + ")");
-		}
-		String method = params.get("method");
-		if (method != null) {
-			result.append("&&");
-			result.append("(\"" + method + "\").equals(" + callContainerMethod("getMethodName") + ")");
-		}
+		result.append(and(params.get("module"), "getModuleName"));
+		result.append(and(params.get("controller"), "getClassName"));
+		result.append(and(params.get("method"), "getMethodName"));
 		result.append(")){initNode(new HashMap<>());");
 		return result.toString();
 	}
-	
-	private String callContainerMethod(String method) {
+
+	private String and(String urlPart, String getter) {
+		if (urlPart == null) {
+			return "";
+		}
 		return String.format(
-			"("
-			+TemplateResponseContainer.class.getCanonicalName()
-			+ ".class.cast(container).getCurrent() == null"
-			+ " ? null : "
-			+TemplateResponseContainer.class.getCanonicalName()
-			+ ".class.cast(container).getCurrent().%s()"
-			+ ")",
-			method
+			"&& (\"%s\").equals(%s.class.cast(getVariable(%s).%s()))",
+			urlPart, MappedAction.class.getCanonicalName(), TemplateExtension.VARIABLE_NAME_MAPPED_ACTION, getter
 		);
+
 	}
 
 	@Override

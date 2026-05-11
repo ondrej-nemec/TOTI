@@ -32,13 +32,18 @@ import toti.lib.templating.Tag;
 import toti.lib.templating.Template;
 import toti.lib.templating.TemplateFactory;
 
-public class TemplateExtension implements toti.application.extensions.TemplateExtension, Extension {
+public class TemplateExtension implements toti.application.extensions.TemplateFactory, Extension {
 	
 	private final TemplateFactory templateFactory;
-	private final Logger logger;
 	
 	private final List<Tag> tags;
 	private final List<Parameter> parameters;
+
+	public static final String VARIABLE_NAME_LINK = "__totiExt_link";
+	public static final String VARIABLE_NAME_MAPPED_ACTION = "__totiExt_mappedAction";
+	public static final String VARIABLE_NAME_AUTHORIZE = "__totiExt_authorize";
+
+	private Authorize authorize;
 	
 	public TemplateExtension(Env env, Logger logger) {
 		this(
@@ -65,10 +70,16 @@ public class TemplateExtension implements toti.application.extensions.TemplateEx
 			new PlaceholderParameter()
 		));
 		this.templateFactory = new TemplateFactory(
-			tempPath, new HashMap<>(), // TODO
+			tempPath, new HashMap<>(),
 			deleteAuxFiles, minimalizeTemplate, tags, parameters, logger
 		);
-		this.logger = logger;
+		this.authorize = (identity, params)->{
+			throw new RuntimeException("TemplateExtension: no Authorize set");
+		};
+	}
+
+	public void setAuthorize(Authorize authorize) {
+		this.authorize = authorize;
 	}
 	
 	public void registerTags(List<Tag> tags) {
@@ -87,7 +98,9 @@ public class TemplateExtension implements toti.application.extensions.TemplateEx
 	public String getTemplate(String module, String filename, Map<String, Object> params, ResponseContainer container) throws Exception {
 		try {
 			Template template = templateFactory.getTemplate(module, filename);
-			// TODO set system variables for link, traslator etc
+			params.put(VARIABLE_NAME_LINK, container.link());
+			params.put(VARIABLE_NAME_MAPPED_ACTION, container.mapped());
+			params.put(VARIABLE_NAME_AUTHORIZE, authorize);
 			return template.create(params);
 		} catch (Exception e) {
 			throw new ResponseException(e);

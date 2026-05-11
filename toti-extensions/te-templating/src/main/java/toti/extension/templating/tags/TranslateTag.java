@@ -2,7 +2,8 @@ package toti.extension.templating.tags;
 
 import java.util.Map;
 
-import toti.extension.templating.TemplateResponseContainer;
+import toti.application.answers.request.Identity;
+import toti.application.extensions.Translator;
 import toti.lib.templating.Tag;
 import toti.lib.templating.TagVariableMode;
 
@@ -40,8 +41,11 @@ public class TranslateTag implements Tag {
 		variables.append(".toMap()");
 		return String.format(
 			"write(Template.escapeVariable("
-				+ TemplateResponseContainer.class.getCanonicalName()
-				+ ".class.cast(container)"
+				+ Identity.class.getCanonicalName()
+				+ ".class.cast(getVariable(\"totiIdentity\"))"
+				+ ".getScope("
+				+ Translator.class.getCanonicalName()
+				+ ")"
 				+ ".translate(\"%s\", %s)"
 			+ "));",
 			params.get("message"), variables.toString()
