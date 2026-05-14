@@ -19,7 +19,7 @@ public class PlaceholderParameter implements Parameter {
 				+ ".class.cast(getVariable(\"totiIdentity\"))"
 				+ ".getScope("
 				+ Translator.class.getCanonicalName()
-				+ ")"
+				+ ".class)"
 			+ ".translate(\"%s\"))",
 			value
 		);

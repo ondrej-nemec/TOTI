@@ -15,7 +15,7 @@ public class TranslateTag implements Tag {
 	}
 	
 	@Override
-	public String getName() {		
+	public String getName() {
 		return "trans";
 	}
 
@@ -45,7 +45,7 @@ public class TranslateTag implements Tag {
 				+ ".class.cast(getVariable(\"totiIdentity\"))"
 				+ ".getScope("
 				+ Translator.class.getCanonicalName()
-				+ ")"
+				+ ".class)"
 				+ ".translate(\"%s\", %s)"
 			+ "));",
 			params.get("message"), variables.toString()

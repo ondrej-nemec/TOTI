@@ -40,7 +40,7 @@ public class PermissionsTag implements Tag {
 		});
 		code.append(".toMap()");
 		return String.format(
-			"if(%s%s.class.cast(getVariable(%s)).isAllowed(%s.class.cast(getVariable(\"totiIdentity\")),%s))",
+			"if(%s%s.class.cast(getVariable(\"%s\")).isAllowed(%s.class.cast(getVariable(\"totiIdentity\")),%s))",
 			not ? "!":"", Authorize.class.getCanonicalName(), TemplateExtension.VARIABLE_NAME_AUTHORIZE,
 			Identity.class.getCanonicalName(), code
 		);

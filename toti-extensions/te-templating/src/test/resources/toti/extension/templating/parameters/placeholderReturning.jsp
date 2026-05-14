@@ -1,0 +1,1 @@
+<input t:placeholder="<%= "some.key" %>" />

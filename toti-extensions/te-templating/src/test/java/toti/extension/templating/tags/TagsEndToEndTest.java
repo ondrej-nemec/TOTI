@@ -82,7 +82,21 @@ public class TagsEndToEndTest extends BaseTemplateTestExt {
 			new Object[] {
 				"translateParamVariable.jsp", "Trans: some.key {param=some.value}"
 			},
-			//TODO link is missing - no controller
+			new Object[] {
+				"linkSimple.jsp", "Link: /params/contr/func"
+			},
+			new Object[] {
+				"linkNoController.jsp", "Link: /params/contr/func"
+			},
+			new Object[] {
+				"linkQueryParams.jsp", "Link: /params/contr/func"
+			},
+			new Object[] {
+				"linkUrlParam.jsp", "Link: /params/contr/func"
+			},
+			new Object[] {
+				"linkFull.jsp", "Link: /params/contr/func"
+			}
 		};
 	}
 }

@@ -32,28 +32,28 @@ public class LinkTag implements Tag {
 
 	@Override
 	public String getNotPairCode(Map<String, String> params) {
-        String controller = params.remove("controller");
-        if (params.get("method") == null || params.get("method").isEmpty()) {
-             throw new LogicException("LinkTag: 'method' parameter is required and must be non-empty");
-        }
-        String[] function = params.remove("method").split(":");
-        String method = function[0];
+		String controller = params.remove("controller");
+		if (params.get("method") == null || params.get("method").isEmpty()) {
+			 throw new LogicException("LinkTag: 'method' parameter is required and must be non-empty");
+		}
+		String[] function = params.remove("method").split(":");
+		String method = function[0];
 		
 		StringBuilder result = new StringBuilder(String.format(
 			Link.class.getCanonicalName()
-			+ ".class.cast(getVariable(%s))"
+			+ ".class.cast(getVariable(\"%s\"))"
 			+ ".create(\"%s\", \"%s\", MapInit.create()", TemplateExtension.VARIABLE_NAME_LINK, controller, method
 		));
 		
-	    params.forEach((name, value)->{
-	    	result.append(String.format(".append(\"%s\",\"%s\")", name, value));
-	    });
-	    result.append(".toMap()");
-        for (int i = 1; i < function.length; i++) {
-            result.append(String.format(",\"%s\"", function[i]));
-        }
+		params.forEach((name, value)->{
+			result.append(String.format(".append(\"%s\",\"%s\")", name, value));
+		});
+		result.append(".toMap()");
+		for (int i = 1; i < function.length; i++) {
+			result.append(String.format(",\"%s\"", function[i]));
+		}
 		result.append(")");
-        return "write(" + result.toString() + ");";
-    }
+		return "write(" + result.toString() + ");";
+	}
 
 }

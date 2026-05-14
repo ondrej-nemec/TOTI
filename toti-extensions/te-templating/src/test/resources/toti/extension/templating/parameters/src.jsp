@@ -1,0 +1,1 @@
+<img t:src="toti.templating.parameters.Controller:index" />

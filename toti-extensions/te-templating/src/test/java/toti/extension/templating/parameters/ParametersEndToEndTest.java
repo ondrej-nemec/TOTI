@@ -31,7 +31,6 @@ public class ParametersEndToEndTest extends BaseTemplateTestExt {
 	
 	public static Object[] data() {
 		return new Object[] {
-				// TODO alt, src, placeholder
 			new Object[] {
 				"href.jsp", "<a href=\"/params/contr/func\" />"
 			},
@@ -45,6 +44,18 @@ public class ParametersEndToEndTest extends BaseTemplateTestExt {
 				"hrefVariableAndString.jsp", "<a href=\"/params/contr/func\" />"
 			},
 			new Object[] {
+				"src.jsp", "<img src=\"/params/contr/func\" />"
+			},
+			new Object[] {
+				"srcReturning.jsp", "<img src=\"/params/contr/func\" />"
+			},
+			new Object[] {
+				"srcVariable.jsp", "<img src=\"/params/contr/func\" />"
+			},
+			new Object[] {
+				"srcVariableAndString.jsp", "<img src=\"/params/contr/func\" />"
+			},
+			new Object[] {
 				"title.jsp", "<div title=\"some.key {}\">"
 			},
 			new Object[] {
@@ -55,7 +66,31 @@ public class ParametersEndToEndTest extends BaseTemplateTestExt {
 			},
 			new Object[] {
 				"titleVariableAndString.jsp", "<div title=\"domain.some.key {}\">"
-			}
+			},
+			new Object[] {
+				"alt.jsp", "<img alt=\"some.key {}\" />"
+			},
+			new Object[] {
+				"altReturning.jsp", "<img alt=\"some.key {}\" />"
+			},
+			new Object[] {
+				"altVariable.jsp", "<img alt=\"some.key {}\" />"
+			},
+			new Object[] {
+				"altVariableAndString.jsp", "<img alt=\"domain.some.key {}\" />"
+			},
+			new Object[] {
+				"placeholder.jsp", "<input placeholder=\"some.key {}\" />"
+			},
+			new Object[] {
+				"placeholderReturning.jsp", "<input placeholder=\"some.key {}\" />"
+			},
+			new Object[] {
+				"placeholderVariable.jsp", "<input placeholder=\"some.key {}\" />"
+			},
+			new Object[] {
+				"placeholderVariableAndString.jsp", "<input placeholder=\"domain.some.key {}\" />"
+			},
 		};
 	}
 }

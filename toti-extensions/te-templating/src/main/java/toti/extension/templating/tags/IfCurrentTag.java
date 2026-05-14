@@ -37,7 +37,7 @@ public class IfCurrentTag implements Tag {
 			return "";
 		}
 		return String.format(
-			"&& (\"%s\").equals(%s.class.cast(getVariable(%s).%s()))",
+			"&& (\"%s\").equals(%s.class.cast(getVariable(\"%s\")).%s())",
 			urlPart, MappedAction.class.getCanonicalName(), TemplateExtension.VARIABLE_NAME_MAPPED_ACTION, getter
 		);
 

@@ -21,7 +21,7 @@ public class HrefParameter implements Parameter {
         return String.format(
         	"\"%s\" + "
 			+ Link.class.getCanonicalName()
-			+ ".class.cast(getVariable(%s))"
+			+ ".class.cast(getVariable(\"%s\"))"
         	+ ".create(\"%s\")",
         	prefix, TemplateExtension.VARIABLE_NAME_LINK, value
         );
