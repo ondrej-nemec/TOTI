@@ -1,3 +1,179 @@
 <h1>Extension: Templating</h1>
 
-TODO
+
+<p>
+	Integrate TOTI Templating library into TOTI application.
+</p>
+
+TODO dependency
+
+<h2>Register in Application Factory</h2>
+
+<h3>Using Env</h3>
+
+<pre><code>
+applicationFactory.addExtension(new TemplateExtension(env, logger));
+</code></pre>
+
+<p>
+	In application env the <code>templating</code> section is expected.
+	<ul>
+		<li><code>temp</code> path to temp</li>
+		<li><code>minimalize-templates</code> if templates should be minimalized (usually false)</li>
+		<li><code>delete-temp-java</code> if delete unused temporal files (usually false)</li>
+	</ul>
+</p>
+
+<h3>Programmatically</h3>
+
+<pre><code>
+	applicationFactory.addExtension(new TemplateExtension(
+		tempPath, minimalizeTemplate, deleteAuxFiles, logger
+	));
+</code></pre>
+
+<h3>Register template path</h3>
+
+<p>
+	At least one module must be registered.
+</p>
+
+<pre><code>
+	templateExtension.registerModule(moduleName, templatesPath);
+</code></pre>
+
+<h2>Tags and parameters</h2>
+
+<p>
+	Extension add some tags and parameters.
+</p>
+
+<h3>Tags</h3>
+
+<h4>If current</h4>
+<p>
+	Check if current page match / not match give parameters. Standart <code>else</code> tag can be inside <code>ifcurrent</code> pair.
+</p>
+<p>
+	<strong>Tag:</strong> <code>ifcurrent</code>
+	<br>
+	<strong>Paired:</strong> yes
+	<br>
+	<strong>Parameters</strong>
+	<ul>
+		<li><code>not</code>: Optional flag. If present, tag is in NOT MATCH mode.</li>
+		<li><code>module</code>: Optional. If present, the module name is check.</li>
+		<li><code>controller</code>: Optional. If present, controller className is check.</li>
+		<li><code>method</code>: Optional. If present, method name is check.</li>
+	</ul>
+</p>
+
+<h4>Link</h4>
+<p>
+	Generate link to another page in application by given parameters.
+</p>
+<p>
+	<strong>Tag:</strong> <code>link</code>
+	<br>
+	<strong>Paired:</strong> no
+	<br>
+	<strong>Parameters</strong>
+	<ul>
+		<li><code>controller</code>: full class name of controller.</li>
+		<li><code>method</code>: method name. If path parameters are needed (/controller/method/paramX), add each as <code>methodName:param1:param2</code>.</li>
+	</ul>
+	All other params will be used as query params (key=value).
+</p>
+
+<h4>Permission</h4>
+<p>
+	Check if current user has permissions. Standart <code>else</code> can be used.
+</p>
+<p>
+	This tag can be used only if <code>Authorize</code> is set to extension: <code>templateExtension.setAuthorize(...);</code>.
+</p>
+<p>
+	<strong>Tag:</strong> <code>allowed</code>
+	<br>
+	<strong>Paired:</strong> both. Not paired works as <code>if</code> without braces.
+	<br>
+	<strong>Parameters</strong>
+	<ul>
+		<li><code>not</code>: Optional flag. If present, tag is in NOT ALLOWED mode.</li>
+	</ul>
+	All other parameters are send to <code>Authorize:isAllowed</code> as params.
+</p>
+
+<h4>Translate</h4>
+<p>
+	Translate given message using application <code>Translator</code>.
+</p>
+<p>
+	<strong>Tag:</strong> <code>trans</code>
+	<br>
+	<strong>Paired:</strong> no
+	<br>
+	<strong>Parameters</strong>
+	<ul>
+		<li><code>message</code>: text to translate.</li>
+	</ul>
+	All other params will be used as variables.
+</p>
+
+<h4>DateTime format</h4>
+<p>
+	DEPRECATED. 
+</p>
+<p>
+	<strong>Tag:</strong> <code>format</code>
+	<br>
+	<strong>Paired:</strong> no
+	<br>
+	<strong>Parameters</strong>
+	<ul>
+		<li><code>value</code>: datetime</li>
+		<li><code>format</code>: translation key for required format - can be different in different language.</li>
+	</ul>
+</p>
+
+<h3>Parameters</h3>
+
+<h4>Alt</h4>
+<p>
+	<code>img</code> parameter for translated alternative text.
+</p>
+<p>
+	<strong>Parameter:</strong> <code>alt</code>
+</p>
+
+<h4>Href</h4>
+<p>
+	Generate <code>href</code> link in application. Expected value format: <i>[controllerClassName]:[methodName]</i>. Optionally, any path or query parameter can be added: <i>:param1</i> or <i>key=value</i>.
+</p>
+<p>
+	<strong>Parameter:</strong> <code>href</code>
+</p>
+
+<h4>Src</h4>
+<p>
+	Generate <code>src</code> link in application. Expected value format: <i>[controllerClassName]:[methodName]</i>. Optionally, any path or query parameter can be added: <i>:param1</i> or <i>key=value</i>.
+</p>
+<p>
+	<strong>Parameter:</strong> <code>src</code>
+</p>
+
+<h4>Placeholder</h4>
+<p>
+	<code>input</code> parameter for translated placeholder text.
+</p>
+<p>
+	<strong>Parameter:</strong> <code>placeholder</code>
+</p>
+
+<h4>Title</h4>
+<p>
+	Parameter for translated on hover text.
+</p>
+<p>
+	<strong>Parameter:</strong> <code>title</code>
+</p>
