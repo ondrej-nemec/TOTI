@@ -1,3 +1,40 @@
 <h1>Extension: Translator</h1>
 
-TODO
+
+<p>
+	Integrate TOTI Translate library into TOTI application.
+</p>
+
+TODO dependency
+
+<h2>Register in Application Factory</h2>
+
+<h3>Using Env</h3>
+
+<pre><code>
+applicationFactory.addExtension(new TranslatorExtension(env, logger));
+</code></pre>
+
+<p>
+	In application env the <code>lang</code> section is expected.
+	<ul>
+		<li><code>namespace</code>Optional. Default messages namespace. Default value is <i>messages</i></li>
+		<li><code>mainLang</code> Optional. Default language, also used if no other found. Empty value means only one language. Default value is empty string.</li>
+	</ul>
+</p>
+
+<h3>Programmatically</h3>
+
+<pre><code>
+	applicationFactory.addExtension(new TranslatorExtension(defNamespace, defaultLanguage, logger));
+</code></pre>
+
+<h3>Register messages path</h3>
+
+<p>
+	At least one path must be registered.
+</p>
+
+<pre><code>
+	translateExtension.addTranslationPath(path);
+</code></pre>

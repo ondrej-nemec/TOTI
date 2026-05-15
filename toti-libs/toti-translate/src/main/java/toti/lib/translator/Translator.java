@@ -17,20 +17,20 @@ pridat default namespace: messages/konfigurovatelny -- lepsi pro moduly
 	private final Map<String, Map<Object, Object>> cache;
 	private final Set<String> folders;
 
-    public Translator(Set<String> folders) {
-        this("messages", "", folders);
-    }
+	public Translator(Set<String> folders) {
+		this("messages", "", folders);
+	}
 
-    public Translator(String defNamespace, String selectedlang, Set<String> folders) {
+	public Translator(String defNamespace, String selectedlang, Set<String> folders) {
 		this(defNamespace, selectedlang, folders, new HashMap<>());
 	}
 
-    private Translator(String defNamespace, String selectedlang, Set<String> folders, Map<String, Map<Object, Object>> cache) {
-        this.defNamespace = defNamespace;
+	private Translator(String defNamespace, String selectedlang, Set<String> folders, Map<String, Map<Object, Object>> cache) {
+		this.defNamespace = defNamespace;
 		this.selectedLang = selectedlang;
 		this.folders = folders;
 		this.cache = cache;
-    }
+	}
 
 	public Translator withNamespace(String defNamespace) {
 		return new Translator(defNamespace, selectedLang, folders, cache);

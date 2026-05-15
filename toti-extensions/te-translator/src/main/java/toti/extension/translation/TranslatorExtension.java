@@ -1,9 +1,6 @@
 package toti.extension.translation;
 
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -24,49 +21,26 @@ public class TranslatorExtension implements Extension {
 	private final static String LOCALE_HEADER_NAME = "Accept-Language";
 	private final static String NAME = "selected-language";
 	
-	private final LanguageSettings langSettings;
-	private final Logger logger;
+	private final String defaultLanguage;
+//	private final Logger logger;
 	private final Set<String> paths;
 	
-	private Translator translator;
+	private final Translator translator;
 
 	public TranslatorExtension(Env env, Logger logger) {
-		this(parseLangSettings(env.getSection("lang")), logger);
-	}
-	
-	private static LanguageSettings parseLangSettings(Env env) {
-		if (env.getString("locales") != null) {  
-			List<Locale> locales = new LinkedList<>();
-			for (String l : env.getString("locales").split(",")) {
-				String locale = l.trim();
-				Env langConf = env.getSection("locale").getSection(locale);
-				Boolean ltr = langConf.getBoolean("ltr");
-				String substitutions = langConf.getString("substitutions");
-				locales.add(new Locale(
-					locale,
-					ltr == null ? true : ltr,
-					substitutions == null ? Arrays.asList() : Arrays.asList(substitutions.split(",")) 
-				));
-			}
-			return new LanguageSettings(env.getString("default"), locales);
-		}
-		return new LanguageSettings(java.util.Locale.getDefault().toString(), Arrays.asList());
+		this(env.getSection("lang").getString("namespace"), env.getSection("lang").getString("mainLang"), logger);
 	}
 
-	public TranslatorExtension(LanguageSettings langSettings, Logger logger) {
-		this.langSettings = langSettings;
-		this.logger = logger;
+	public TranslatorExtension(String defNamespace, String defaultLanguage, Logger logger) {
+	//	this.logger = logger;
 		this.paths = new HashSet<>();
+		this.defaultLanguage = defaultLanguage == null ? "" : defaultLanguage;
+		this.translator = new Translator(defNamespace == null ? "messages" : defNamespace, this.defaultLanguage, paths);
 	}
 	
 	@Override
 	public String getIdentifier() {
 		return getClass().getName();
-	}
-
-	@Override
-	public void init(Env appEnv, Register register) {
-		this.translator = new Translator(paths);
 	}
 	
 	public void addTranslationPath(String path) {
@@ -76,33 +50,25 @@ public class TranslatorExtension implements Extension {
 	@Override
 	public void onRequestStart(Identity identity, MapDictionary<String> sessionSpace, Headers requestHeaders,
 		MapDictionary<String> queryParams, RequestParameters requestBody) {
-		Locale locale = getLocale(requestHeaders);
-		sessionSpace.put(NAME, locale.getLang());
-		identity.setScope(null); // TODO
+		String selectedLang = getLocale(requestHeaders);
+		sessionSpace.put(NAME, selectedLang);
+		identity.setScope(
+			toti.application.extensions.Translator.class,
+			new TranslatorImpl(translator.withLang(selectedLang))
+		);
 	}
 	
-	private Locale getLocale(Headers headers) {
+	private String getLocale(Headers headers) {
 		Optional<String> cookieLang = headers.getCookieValue(LOCALE_COOKIE_NAME);
 		if (cookieLang.isPresent()) {
-			return resolveLocale(cookieLang.get());
+			return cookieLang.get();
 		}
 		Object lang = headers.getHeader(LOCALE_HEADER_NAME);
 		if (lang == null) {
-			return resolveLocale(langSettings.getDefaultLang().getLang());
+			return defaultLanguage;
 		} else {
-			String locale = lang.toString().split(" ", 2)[0].split(";")[0].split(",")[0].trim();
-			return resolveLocale(locale);
+			return lang.toString().split(" ", 2)[0].split(";")[0].split(",")[0].trim();
 		}
-	}
-
-	private Locale resolveLocale(String locale) {
-		// TODO vymyslet
-		return null;
-		/*Locale loc = translator.getLocale(locale);
-		if (loc == null) {
-			return translator.getLocale(langSettings.getDefaultLang().getLang());
-		}
-		return loc;*/
 	}
 
 	@Override
@@ -115,17 +81,12 @@ public class TranslatorExtension implements Extension {
 		);
 	}
 
-	/*public toti.application.extensions.Translator getTranslator(Identity identity) {
-		return new TranslatorImpl(translator.withLang(identity.getSessionSpace(this).getString(NAME)));
-	}*/
-
-	public toti.application.extensions.Translator getTranslator() {
-		return new TranslatorImpl(translator);
-	}
-
-	public Translator getOrigin() {
+	public Translator getTranslator() {
 		return translator;
 	}
+
+	@Override
+	public void init(Env appEnv, Register register) {}
 
 	@Override
 	public void onApplicationStart() throws Exception {}

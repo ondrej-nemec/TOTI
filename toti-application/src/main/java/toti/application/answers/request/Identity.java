@@ -64,6 +64,10 @@ public class Identity {
 		scope.put(t.getClass().getCanonicalName(), t);
 	}
 
+	public <T> void setScope(Class<?> clazz, T t) {
+		scope.put(clazz.getCanonicalName(), t);
+	}
+
 	public <T> void removeScope(Class<T> clazz) {
 		scope.remove(clazz.getCanonicalName());
 	}
