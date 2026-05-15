@@ -190,16 +190,16 @@ public class VariableParser implements Parser {
 	private String selectEscape(String calling, VariableSource mode) {
 		switch (mode) {
 			case NO_ESCAPE: return calling;
-			case JAVASCRIPT: return String.format("Template.escapeJavascript(%s,null)", calling);
-			case JAVASCRIPT_S: return String.format("Template.escapeJavascript(%s,false)", calling);
-			case JAVASCRIPT_D: return String.format("Template.escapeJavascript(%s,true)", calling);
-			case JAVASCRIPT_PARAMETER: return String.format("Template.escapeJsParameter(%s)", calling);
-			case STYLE: return String.format("Template.escapeStyle(%s)", calling);
-			case STYLE_PARAMETER: return String.format("Template.escapeStyleParameter(%s)", calling);
-			case URL: return String.format("Template.escapeUrl(%s)", calling);
+			case JAVASCRIPT: return String.format("escapeJavascript(%s,null)", calling);
+			case JAVASCRIPT_S: return String.format("escapeJavascript(%s,false)", calling);
+			case JAVASCRIPT_D: return String.format("escapeJavascript(%s,true)", calling);
+			case JAVASCRIPT_PARAMETER: return String.format("escapeJsParameter(%s)", calling);
+			case STYLE: return String.format("escapeStyle(%s)", calling);
+			case STYLE_PARAMETER: return String.format("escapeStyleParameter(%s)", calling);
+			case URL: return String.format("escapeUrl(%s)", calling);
 			case PARAMETER:
 			case HTML:
-			default: return String.format("Template.escapeHtml(%s)", calling);
+			default: return String.format("escapeHtml(%s)", calling);
 		}
 	}
 

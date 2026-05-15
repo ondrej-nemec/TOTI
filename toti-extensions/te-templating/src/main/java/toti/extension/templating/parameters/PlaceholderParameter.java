@@ -14,7 +14,7 @@ public class PlaceholderParameter implements Parameter {
 	@Override
 	public String getCode(String value) {
 		return String.format(
-			"Template.escapeHtml("
+			"escapeHtml("
 				+ Identity.class.getCanonicalName()
 				+ ".class.cast(getVariable(\"totiIdentity\"))"
 				+ ".getScope("

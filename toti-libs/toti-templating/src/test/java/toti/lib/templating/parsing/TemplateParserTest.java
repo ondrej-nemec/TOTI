@@ -98,7 +98,7 @@ public class TemplateParserTest {
 					true,
 					"another value: ${value}.",
 					"write(\"another value: \");"
-					+ "write(Template.escapeHtml("
+					+ "write(escapeHtml("
 					+ "getVariable(()->{"
 					+ "Object o0_0=getVariable(\"value\");"
 					+ "return o0_0;"
@@ -175,7 +175,7 @@ public class TemplateParserTest {
 			new Object[] {
 					true,
 					"texts are ${first.equals(${second})}",
-					"write(\"texts are \");write(Template.escapeHtml("
+					"write(\"texts are \");write(escapeHtml("
 						+"getVariable(()->{"
 						+ "Object o0_0=getVariable(\"first\");"
 						+ "Object o1_0_aux=getVariable(()->{"
@@ -196,7 +196,7 @@ public class TemplateParserTest {
 			new Object[] {
 					true,
 					"texts are ${${second}}",
-					"write(\"texts are \");write(Template.escapeHtml("
+					"write(\"texts are \");write(escapeHtml("
 						+"getVariable(()->{"
 						+ "Object o1_0_aux=getVariable(()->{"
 								+ "Object o1_0=getVariable(\"second\");"
@@ -250,7 +250,7 @@ public class TemplateParserTest {
 					true,
 					"something <div class=\"${clazz}\"/> text",
 					"write(\"something \");write(\"<div class=\\\"\" + "
-						+"Template.escapeHtml(getVariable(()->{"
+						+"escapeHtml(getVariable(()->{"
 						+ "Object o0_0=getVariable(\"clazz\");"
 						+ "return o0_0;"
 						+ "}))"

@@ -20,7 +20,7 @@ public class VariableParserTest {
 		ParsingSimulator.simulate(first, ")}");
 		
 		assertEquals(
-			"Template.escapeHtml(getVariable(()->{"
+			"escapeHtml(getVariable(()->{"
 			+ "Object o0_0=getVariable(\"title\");"
 			+ "Object o1_0_aux=getVariable(()->{"
 				+ "Object o1_0=getVariable(\"age\");"
@@ -71,7 +71,7 @@ public class VariableParserTest {
 				"title}",
 				true,
 				"o0_0",
-				"Template.escapeHtml(getVariable(()->{"
+				"escapeHtml(getVariable(()->{"
 				+ "Object o0_0=getVariable(\"title\");"
 				+ "return o0_0;"
 				+ "}))",
@@ -81,7 +81,7 @@ public class VariableParserTest {
 					"title.length()}",
 					true,
 					"o0_1",
-					"Template.escapeHtml(getVariable(()->{"
+					"escapeHtml(getVariable(()->{"
 						+ "Object o0_0=getVariable(\"title\");"
 						+ "Object o0_1=o0_0.getClass().getMethod(\"length\").invoke(o0_0);"
 						+ "return o0_1;"
@@ -92,7 +92,7 @@ public class VariableParserTest {
 					"title.equals(1)}",
 					true,
 					"o0_1",
-					"Template.escapeHtml(getVariable(()->{"
+					"escapeHtml(getVariable(()->{"
 					+ "Object o0_0=getVariable(\"title\");"
 					+ "Object o0_1=null;"
 					+ "try{"
@@ -108,7 +108,7 @@ public class VariableParserTest {
 					"title.class}",
 					true,
 					"o0_1",
-					"Template.escapeHtml(getVariable(()->{"
+					"escapeHtml(getVariable(()->{"
 					+ "Object o0_0=getVariable(\"title\");"
 					+ "Object o0_1=o0_0.getClass().getMethod(\"getClass\").invoke(o0_0);"
 					+ "return o0_1;"
@@ -119,7 +119,7 @@ public class VariableParserTest {
 					"age|Integer}",
 					true,
 					"o0_0",
-					"Template.escapeHtml(new DictionaryValue(getVariable(()->{"
+					"escapeHtml(new DictionaryValue(getVariable(()->{"
 					+ "Object o0_0=getVariable(\"age\");"
 					+ "return o0_0;"
 					+ "})).getValue(Integer.class))",
@@ -159,7 +159,7 @@ public class VariableParserTest {
 					"map.get()}",
 					true,
 					"o0_1",
-					"Template.escapeHtml(getVariable(()->{"
+					"escapeHtml(getVariable(()->{"
 					+ "Object o0_0=getVariable(\"map\");"
 					+ "Object o0_1=o0_0.getClass().getMethod(\"get\").invoke(o0_0);"
 					+ "return o0_1;"
@@ -170,7 +170,7 @@ public class VariableParserTest {
 					"map.get(\"value\")}",
 					true,
 					"o0_1",
-					"Template.escapeHtml(getVariable(()->{"
+					"escapeHtml(getVariable(()->{"
 					+ "Object o0_0=getVariable(\"map\");"
 					+ "Object o0_1=null;"
 					+ "try{"
@@ -186,7 +186,7 @@ public class VariableParserTest {
 					"map.get(12)}",
 					true,
 					"o0_1",
-					"Template.escapeHtml(getVariable(()->{"
+					"escapeHtml(getVariable(()->{"
 					+ "Object o0_0=getVariable(\"map\");"
 					+ "Object o0_1=null;"
 					+ "try{"
@@ -202,7 +202,7 @@ public class VariableParserTest {
 					"map.get(\"}\")}",
 					true,
 					"o0_1",
-					"Template.escapeHtml(getVariable(()->{"
+					"escapeHtml(getVariable(()->{"
 					+ "Object o0_0=getVariable(\"map\");"
 					+ "Object o0_1=null;"
 					+ "try{"
@@ -218,7 +218,7 @@ public class VariableParserTest {
 					"map.get(\"}\").getBoolean()}",
 					true,
 					"o0_2",
-					"Template.escapeHtml(getVariable(()->{"
+					"escapeHtml(getVariable(()->{"
 					+ "Object o0_0=getVariable(\"map\");"
 					+ "Object o0_1=null;"
 					+ "try{"
@@ -235,7 +235,7 @@ public class VariableParserTest {
 				"map.get(\"a\").anotherGet(\"x\")}",
 				true,
 				"o0_2",
-				"Template.escapeHtml(getVariable(()->{"
+				"escapeHtml(getVariable(()->{"
 				+ "Object o0_0=getVariable(\"map\");"
 				+ "Object o0_1=null;"
 				+ "try{"

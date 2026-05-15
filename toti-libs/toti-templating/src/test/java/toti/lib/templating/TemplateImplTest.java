@@ -1,15 +1,26 @@
 package toti.lib.templating;
 
+import java.util.LinkedList;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class TemplateTest {
+import toti.lib.templating.parsing.structures.TagNode;
+
+public class TemplateImplTest {
 
 	@ParameterizedTest
 	@MethodSource("dataCheckWorks")
 	public void testCheckWorks(String string, boolean expected) {
-		assertEquals(expected, Template.check(string));
+		TemplateImpl template = new TemplateImpl("", null) {
+			@Override public String _create(Map<String, Object> variables, LinkedList<TagNode> nodes, int parent) throws Exception {
+				return null;
+			}
+			@Override public long getLastModification() { return 0; }
+		};
+		assertEquals(expected, template.check(string));
 	}
 	
 	public static Object[] dataCheckWorks() {
@@ -38,7 +49,13 @@ public class TemplateTest {
 	@ParameterizedTest
 	@MethodSource("dataEscapeStringWorks")
 	public void testEscapeStringWorks(String variable, String expected) {
-		assertEquals(expected, Template.escapeHtml(variable));
+		TemplateImpl template = new TemplateImpl("", null) {
+			@Override public String _create(Map<String, Object> variables, LinkedList<TagNode> nodes, int parent) throws Exception {
+				return null;
+			}
+			@Override public long getLastModification() { return 0; }
+		};
+		assertEquals(expected, template.escapeHtml(variable));
 	}
 	
 	public static Object[] dataEscapeStringWorks() {

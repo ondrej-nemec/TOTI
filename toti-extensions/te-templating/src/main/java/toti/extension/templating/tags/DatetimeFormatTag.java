@@ -44,7 +44,7 @@ public class DatetimeFormatTag implements Tag {
 		checkParameter(params, "format");
 		
 		return String.format(
-			"write(Template.escapeHtml(new DictionaryValue(%s)"
+			"write(escapeHtml(new DictionaryValue(%s)"
 			+ ".getValue(%s.class).format(%s.ofPattern("
 				+ Identity.class.getCanonicalName()
 				+ ".class.cast(getVariable(\"totiIdentity\"))"

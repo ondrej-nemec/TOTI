@@ -30,8 +30,8 @@ public class ForEachTag implements Tag {
 			String[] keyP = parseItem(params.get("key"));
 			String[] valueP = parseItem(params.get("value"));
 			return String.format(
-				"for(%s %s:Template.toMap(%s,%s.class,%s.class).keySet()){"
-				+ "%s %s=Template.toMap(%s,%s.class,%s.class).get(%s);"
+				"for(%s %s:toMap(%s,%s.class,%s.class).keySet()){"
+				+ "%s %s=toMap(%s,%s.class,%s.class).get(%s);"
 				+ "initNode(new HashMap<>());"
 				+ "addVariable(\"%s\", %s);"
 				+ "addVariable(\"%s\", %s);",
@@ -42,7 +42,7 @@ public class ForEachTag implements Tag {
 		}
 		String[] item = parseItem(params.get("item"));
 		return String.format(
-				"for(%s %s:Template.toIterable(%s,%s.class)){"
+				"for(%s %s:toIterable(%s,%s.class)){"
 				+ "initNode(new HashMap<>());"
 				+ "addVariable(\"%s\", %s);",
 				item[0], item[1], params.get("collection"), item[0],

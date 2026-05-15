@@ -40,7 +40,7 @@ public class TranslateTag implements Tag {
 		});
 		variables.append(".toMap()");
 		return String.format(
-			"write(Template.escapeVariable("
+			"write(escapeVariable("
 				+ Identity.class.getCanonicalName()
 				+ ".class.cast(getVariable(\"totiIdentity\"))"
 				+ ".getScope("

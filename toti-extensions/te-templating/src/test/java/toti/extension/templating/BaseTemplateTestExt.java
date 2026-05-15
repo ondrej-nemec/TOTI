@@ -1,12 +1,14 @@
 package toti.extension.templating;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Logger;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.BeforeAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -21,8 +23,6 @@ import toti.application.extensions.Translator;
 public class BaseTemplateTestExt {
 
 	public void testTemplate(Map<String, String> modules, String module, String templatePath, Map<String, Object> variables, String expected) throws Exception {
-		FileUtils.deleteDirectory(new File("temp/cache"));
-
 		TemplateExtension ext = new TemplateExtension(
 			"temp", false, false, mock(Logger.class)
 		);
@@ -53,6 +53,11 @@ public class BaseTemplateTestExt {
 			"", null, identity, link, MappedAction.test("aa", "bb", "cc"), ext)
 		);
 		assertEquals(expected, actual);
+	}
+
+	@BeforeAll
+	public static void beforeAll() throws IOException {
+		FileUtils.deleteDirectory(new File("temp/cache"));
 	}
 
 }

@@ -1,6 +1,7 @@
 package toti.lib.templating;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Logger;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.BeforeAll;
 import static org.mockito.Mockito.mock;
 
 public class BaseTemplateTest {
@@ -25,14 +27,17 @@ public class BaseTemplateTest {
 	}
 
 	public void testTemplate(Map<String, String> modules, String module, String templatePath, Map<String, Object> variables, String expected) throws Exception {
-		FileUtils.deleteDirectory(new File("temp/cache"));
-	
 		TemplateFactory templateFactory = new TemplateFactory(
 			"temp", modules, false, false, tags, parameters, mock(Logger.class)
 		);
 		Template template = templateFactory.getTemplate(module, templatePath);
 		String actual = template.create(variables);
 		assertEquals(expected, actual);
+	}
+
+	@BeforeAll
+	public static void beforeAll() throws IOException {
+		FileUtils.deleteDirectory(new File("temp/cache"));
 	}
 
 }

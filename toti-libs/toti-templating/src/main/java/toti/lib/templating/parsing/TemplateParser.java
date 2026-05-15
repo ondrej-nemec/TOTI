@@ -11,7 +11,6 @@ import java.util.Map;
 import toti.lib.common.structures.DictionaryValue;
 import toti.lib.common.structures.MapInit;
 import toti.lib.common.structures.ThrowingConsumer;
-import toti.lib.common.structures.ThrowingSupplier;
 import toti.lib.files.access.FileUtils;
 import toti.lib.files.text.Text;
 import toti.lib.templating.Parameter;
@@ -19,7 +18,7 @@ import toti.lib.templating.Tag;
 import toti.lib.templating.Template;
 import toti.lib.templating.TemplateException;
 import toti.lib.templating.TemplateFactory;
-import toti.lib.templating.TemplateParameters;
+import toti.lib.templating.TemplateImpl;
 import toti.lib.templating.parsing.enums.ParserType;
 import toti.lib.templating.parsing.structures.TagNode;
 import toti.lib.templating.structures.TemplateFile;
@@ -48,35 +47,20 @@ public class TemplateParser {
 				+ String.format("import %s;", Map.class.getCanonicalName())
 				+ String.format("import %s;", HashMap.class.getCanonicalName())
 				+ String.format("import %s;", LinkedList.class.getCanonicalName())
-				+ String.format("import %s;", ThrowingConsumer.class.getCanonicalName())
-				+ String.format("import %s;", ThrowingSupplier.class.getCanonicalName())
 				+ String.format("import %s;", DictionaryValue.class.getCanonicalName())
 				+ String.format("import %s;", MapInit.class.getCanonicalName())
 				+ String.format("import %s;", TemplateFactory.class.getCanonicalName())
+				+ String.format("import %s;", TemplateImpl.class.getCanonicalName())
 				+ String.format("import %s;", Template.class.getCanonicalName())
 				+ String.format("import %s;", TagNode.class.getCanonicalName())
 				+ String.format("import %s;", TemplateException.class.getCanonicalName())
-				+ String.format("import %s;", TemplateParameters.class.getCanonicalName())
 				
-				+ String.format("public class %s implements Template, TemplateParameters{", file.className())
-					+ "private LinkedList<TagNode> nodes = new LinkedList<>();"
-					+ String.format("private final String moduleName = \"%s\";", file.moduleName())
-					+ "private final TemplateFactory templateFactory;"
+				+ String.format("public class %s extends TemplateImpl{", file.className())
 				+ String.format("public %s(TemplateFactory templateFactory){", file.className())
-				+ "this.templateFactory=templateFactory;"
+					+ String.format("super(\"%s\", templateFactory);", file.moduleName())
 				+ "}"
-				+ "private void write(Object data) {nodes.getLast().getBuilder().append(data);}"
-				+ "public void addVariable(String name, Object value) {nodes.getLast().getVariables().put(name, value);}"
-				+ "public Object getVariable(String name) {return nodes.getLast().getVariables().get(name);}"
-				+ "private Object getVariable(ThrowingSupplier<Object, Exception> supplier) throws Exception {return supplier.get();}"
-				+ "private ThrowingConsumer<Map<String, Object>,Exception> getBlock(String name,boolean required){ThrowingConsumer<Map<String,Object>,Exception> myBlock=nodes.getLast().getBlocks().get(name);if(myBlock==null&&required){throw new TemplateException(\"Missing block: \"+name);}else if(myBlock!=null){return myBlock;}else{return (p)->{};}}"
-				+ "private void addBlock(String name, ThrowingConsumer<Map<String, Object>, Exception> value) {nodes.getLast().getBlocks().put(name, value);}"
-
-				+ "private void initNode(Map<String, Object> variables) {Map<String, Object> params = new HashMap<>();Map<String, ThrowingConsumer<Map<String, Object>, Exception>> blocks = new HashMap<>();if (nodes.size() > 0) {params.putAll(nodes.getLast().getVariables());blocks.putAll(nodes.getLast().getBlocks());}if (variables != null) {params.putAll(variables);}nodes.add(new TagNode(params, blocks));}"
-				+ "private TagNode flushNode() {TagNode node = nodes.removeLast();if (nodes.size() > 0) {write(node.getBuilder().toString());nodes.getLast().updateVariables(node);}return node;}"
-								
-				+ String.format("public long getLastModification(){return %sL;}", file.lastModification())
-				+ "public String _create("
+				+ String.format("@Override public long getLastModification(){return %sL;}", file.lastModification())
+				+ "@Override public String _create("
 					+ "Map<String, Object>variables,"
 					+ "LinkedList<TagNode> nodes,"
 					+ "int parent"
