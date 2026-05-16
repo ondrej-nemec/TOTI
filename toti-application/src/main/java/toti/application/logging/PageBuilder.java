@@ -115,7 +115,7 @@ h1 { margin: 0 0 10px 0; color: var(--primary-color); }
 
 <body>
 <div class="header">
-<div class="brand">TOTI</div>
+<div class="brand">TOTI - Really cool framework</div>
 <div class="actions"><button id="toggle-theme" onclick="toggleTheme()"><span id="theme-light">☀️</span><span id="theme-dark">🌙</span></button></div>
 </div>
 
