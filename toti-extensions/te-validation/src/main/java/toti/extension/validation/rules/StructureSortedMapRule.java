@@ -7,12 +7,11 @@ import java.util.Map.Entry;
 import java.util.function.Function;
 
 import toti.application.extensions.Translator;
+import toti.extension.validation.ValidationItem;
+import toti.extension.validation.Validator;
 import toti.lib.common.structures.DictionaryValue;
 import toti.lib.common.structures.SortedMap;
 import toti.lib.tcpip.structures.RequestParameters;
-import toti.application.answers.request.Request;
-import toti.extension.validation.ValidationItem;
-import toti.extension.validation.Validator;
 
 public class StructureSortedMapRule implements Rule {
 	
@@ -25,7 +24,7 @@ public class StructureSortedMapRule implements Rule {
 	}
 
 	@Override
-	public void check(Request request, String propertyName, String ruleName, ValidationItem item) {
+	public void check(String propertyName, String ruleName, ValidationItem item) {
 		try {
 			RequestParameters fields = new RequestParameters();
 			List<String> order = new LinkedList<>();
@@ -40,7 +39,7 @@ public class StructureSortedMapRule implements Rule {
 				order.add(entryItem.getKey().toString());
 			}
 			item.addSubResult(validator.validate(
-				request, propertyName + "[%s]", fields, item.getTranslator(), item.getIdentity()
+				propertyName + "[%s]", fields, item.getTranslator()
 			));
 			SortedMap<String, Object> result = new SortedMap<>();
 			order.forEach(key->{

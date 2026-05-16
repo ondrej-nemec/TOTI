@@ -7,12 +7,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import toti.application.answers.request.Identity;
-import toti.application.answers.request.Request;
+import toti.application.extensions.Translator;
 import toti.extension.validation.ValidationItem;
 import toti.extension.validation.ValidationResult;
-import toti.extension.validation.rules.ExpectedTypeRule;
-import toti.application.extensions.Translator;
 
 public class ExpectedTypeRuleTest {
 
@@ -21,12 +18,11 @@ public class ExpectedTypeRuleTest {
 	public void testCheck(Class<?> expectedType, Object originValue, Object newValue, boolean canValidate, int times) {
 		ValidationResult result = mock(ValidationResult.class);
 		Translator translator = mock(Translator.class);
-		Identity identity = mock(Identity.class);
-		
-		ValidationItem item = new ValidationItem("name", originValue, result, translator, identity);
+
+		ValidationItem item = new ValidationItem("name", originValue, result, translator);
 		
 		ExpectedTypeRule rule = new ExpectedTypeRule(expectedType, (t)->"error");
-		rule.check(mock(Request.class), "propertyName", "ruleName", item);
+		rule.check("propertyName", "ruleName", item);
 		
 		assertEquals(newValue, item.getNewValue());
 		assertEquals(canValidate, item.canValidationContinue());

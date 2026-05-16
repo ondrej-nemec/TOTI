@@ -6,7 +6,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import toti.extension.validation.ValidationItem;
-import toti.extension.validation.rules.RegexRule;
 
 public class RegexRuleTest {
 
@@ -26,7 +25,7 @@ public class RegexRuleTest {
 	
 	@Test
 	public void testGetValue() {
-		ValidationItem item = new ValidationItem("name", "origin", null, null, null);
+		ValidationItem item = new ValidationItem("name", "origin", null, null);
 		item.setNewValue("newValue");
 		
 		RegexRule rule = new RegexRule(null, null);

@@ -8,7 +8,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import toti.extension.validation.ValidationItem;
-import toti.extension.validation.rules.FileAllowedTypesRule;
 import toti.lib.tcpip.structures.UploadedFile;
 
 public class FileAllowedTypeTest {
@@ -34,7 +33,7 @@ public class FileAllowedTypeTest {
 	
 	@Test
 	public void testGetValue() {
-		ValidationItem item = new ValidationItem("name", "origin", null, null, null);
+		ValidationItem item = new ValidationItem("name", "origin", null, null);
 		item.setNewValue("newValue");
 		
 		FileAllowedTypesRule rule = new FileAllowedTypesRule(null, null);

@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 
 import toti.application.extensions.Translator;
 import toti.lib.common.structures.BooleanBuilder;
-import toti.application.answers.request.Request;
 import toti.extension.validation.ValidationItem;
 
 public class SimpleRuleTest {
@@ -35,7 +34,7 @@ public class SimpleRuleTest {
 				return true;
 			}
 		};
-		rule.check(mock(Request.class), "property", "rule", item);
+		rule.check("property", "rule", item);
 		
 		verify(item, times(1)).addError("property", onError);
 		verify(item, times(1)).getOriginValue();
@@ -60,7 +59,7 @@ public class SimpleRuleTest {
 				return false;
 			}
 		};
-		rule.check(mock(Request.class), "property", "rule", item);
+		rule.check("property", "rule", item);
 		
 		verify(item, times(1)).getOriginValue();
 		verifyNoMoreInteractions(item);

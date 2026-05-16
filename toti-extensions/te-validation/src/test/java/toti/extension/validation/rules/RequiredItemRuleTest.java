@@ -7,12 +7,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import toti.application.answers.request.Identity;
-import toti.application.answers.request.Request;
+import toti.application.extensions.Translator;
 import toti.extension.validation.ValidationItem;
 import toti.extension.validation.ValidationResult;
-import toti.extension.validation.rules.RequiredItemRule;
-import toti.application.extensions.Translator;
 
 public class RequiredItemRuleTest {
 
@@ -21,15 +18,12 @@ public class RequiredItemRuleTest {
 	public void testCheck(boolean required, Object originValue, Object newValue, int times, boolean canValidate) {
 		ValidationResult result = mock(ValidationResult.class);
 		Translator translator = mock(Translator.class);
-		Identity identity = mock(Identity.class);
 		
-		ValidationItem item = new ValidationItem("name", originValue, result, translator, identity);
+		ValidationItem item = new ValidationItem("name", originValue, result, translator);
 		item.setNewValue(newValue);
 		
-		Request request = mock(Request.class);
-		
 		RequiredItemRule rule = new RequiredItemRule(required, (t, p)->"error");
-		rule.check(request, "propertyName", "ruleName", item);
+		rule.check( "propertyName", "ruleName", item);
 		
 		assertEquals(newValue, item.getNewValue());
 		assertEquals(canValidate, item.canValidationContinue());

@@ -5,11 +5,10 @@ import java.util.List;
 import java.util.function.Function;
 
 import toti.application.extensions.Translator;
-import toti.lib.common.structures.DictionaryValue;
-import toti.lib.tcpip.structures.RequestParameters;
-import toti.application.answers.request.Request;
 import toti.extension.validation.ValidationItem;
 import toti.extension.validation.Validator;
+import toti.lib.common.structures.DictionaryValue;
+import toti.lib.tcpip.structures.RequestParameters;
 
 public class StructureListRule implements Rule {
 
@@ -22,7 +21,7 @@ public class StructureListRule implements Rule {
 	}
 
 	@Override
-	public void check(Request request, String propertyName, String ruleName, ValidationItem item) {
+	public void check(String propertyName, String ruleName, ValidationItem item) {
 		try {
 			List<Object> list = new DictionaryValue(item.getOriginValue()).getList();
 			RequestParameters fields = new RequestParameters();
@@ -30,11 +29,9 @@ public class StructureListRule implements Rule {
 				fields.put(i + "", list.get(i));
 			}
 			item.addSubResult(validator.validate(
-				request,
 				(propertyName.contains(":") ? "" : "%s:") + propertyName + "[]",
 				fields,
-				item.getTranslator(),
-				item.getIdentity()
+				item.getTranslator()
 			));
 			item.setNewValue(new ArrayList<>(fields.values()));
 		} catch (ClassCastException | NumberFormatException e) {

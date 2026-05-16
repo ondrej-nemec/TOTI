@@ -12,17 +12,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static toti.lib.common.tests.TestCase.assertEquals;
 
 import toti.application.answers.request.Identity;
-import toti.application.answers.request.Request;
-import toti.extension.validation.GlobalFunction;
-import toti.extension.validation.ValidationItem;
-import toti.extension.validation.ValidationResult;
-import toti.extension.validation.Validator;
+import toti.application.extensions.Translator;
 import toti.extension.validation.collections.RulesCollection;
 import toti.extension.validation.rules.Rule;
-import toti.application.extensions.Translator;
+import static toti.lib.common.tests.TestCase.assertEquals;
 import toti.lib.tcpip.structures.RequestParameters;
 
 public class ValidatorTest {
@@ -87,7 +82,6 @@ public class ValidatorTest {
 				return key + ":" + params;
 			}
 		};
-		Request request = mock(Request.class);
 		
 		RequestParameters parameters = new RequestParameters();
 		parameters.put("a", "1");
@@ -101,7 +95,7 @@ public class ValidatorTest {
 			validator.setGlobalFunction(globalFunction);
 		}
 		Identity identity = mock(Identity.class);
-		ValidationResult actualResult = validator.validate(request, parameters, translator, identity);
+		ValidationResult actualResult = validator.validate(parameters, translator);
 
 		assertEquals(expectedResult, actualResult, message);
 		assertEquals(expectedParameters, parameters, message);
@@ -134,7 +128,7 @@ public class ValidatorTest {
 				"with rule - error",
 				false, null, Arrays.asList(
 					new RC("a")
-					.addRule((a, propertyName, ruleName, item)->{
+					.addRule((propertyName, ruleName, item)->{
 						item.addError(propertyName, t->"expected-error");
 					})
 				),
@@ -149,7 +143,7 @@ public class ValidatorTest {
 				"with rule - no error",
 				false, null, Arrays.asList(
 					new RC("a")
-					.addRule((a, propertyName, ruleName, item)->{})
+					.addRule((propertyName, ruleName, item)->{})
 				),
 				new ValidationResult(),
 				new RequestParameters()
@@ -159,7 +153,7 @@ public class ValidatorTest {
 			}, 
 			new Object[] {
 				"with global function",
-				false, g((req, data, result, t, i)->{
+				false, g((data, result)->{
 					result.addError("expected-error");
 					data.remove("a");
 					data.put("x", "y");
@@ -174,8 +168,8 @@ public class ValidatorTest {
 			new Object[] {
 				"STRICT: more parameters",
 				true, null, Arrays.asList(
-					new RC("a").addRule((a, propertyName, ruleName, item)->{}),
-					new RC("b").addRule((a, propertyName, ruleName, item)->{})
+					new RC("a").addRule((propertyName, ruleName, item)->{}),
+					new RC("b").addRule((propertyName, ruleName, item)->{})
 				),
 				new ValidationResult()
 				.addError("toti.validation.not-expected-parameters:{parameters=[c]}"),
@@ -187,10 +181,10 @@ public class ValidatorTest {
 			new Object[] {
 				"STRICT: more rules",
 				true, null, Arrays.asList(
-					new RC("a").addRule((a, propertyName, ruleName, item)->{}),
-					new RC("b").addRule((a, propertyName, ruleName, item)->{}),
-					new RC("c").addRule((a, propertyName, ruleName, item)->{}),
-					new RC("d").addRule((a, propertyName, ruleName, item)->{})
+					new RC("a").addRule((propertyName, ruleName, item)->{}),
+					new RC("b").addRule((propertyName, ruleName, item)->{}),
+					new RC("c").addRule((propertyName, ruleName, item)->{}),
+					new RC("d").addRule((propertyName, ruleName, item)->{})
 				),
 				// no error occurs because missing parameter is not validator job
 				new ValidationResult(),
@@ -202,9 +196,9 @@ public class ValidatorTest {
 			new Object[] {
 				"STRICT: correct",
 				true, null, Arrays.asList(
-					new RC("a").addRule((a, propertyName, ruleName, item)->{}),
-					new RC("b").addRule((a, propertyName, ruleName, item)->{}),
-					new RC("c").addRule((a, propertyName, ruleName, item)->{})
+					new RC("a").addRule((propertyName, ruleName, item)->{}),
+					new RC("b").addRule((propertyName, ruleName, item)->{}),
+					new RC("c").addRule((propertyName, ruleName, item)->{})
 				),
 				new ValidationResult(),
 				new RequestParameters()
@@ -215,8 +209,8 @@ public class ValidatorTest {
 			new Object[] {
 				"NOSTRICT: more parameters",
 				false, null, Arrays.asList(
-					new RC("a").addRule((a, propertyName, ruleName, item)->{}),
-					new RC("b").addRule((a, propertyName, ruleName, item)->{})
+					new RC("a").addRule((propertyName, ruleName, item)->{}),
+					new RC("b").addRule((propertyName, ruleName, item)->{})
 				),
 				new ValidationResult(),
 				new RequestParameters()
@@ -227,10 +221,10 @@ public class ValidatorTest {
 			new Object[] {
 				"NOSTRICT: more rules",
 				false, null, Arrays.asList(
-					new RC("a").addRule((a, propertyName, ruleName, item)->{}),
-					new RC("b").addRule((a, propertyName, ruleName, item)->{}),
-					new RC("c").addRule((a, propertyName, ruleName, item)->{}),
-					new RC("d").addRule((a, propertyName, ruleName, item)->{})
+					new RC("a").addRule((propertyName, ruleName, item)->{}),
+					new RC("b").addRule((propertyName, ruleName, item)->{}),
+					new RC("c").addRule((propertyName, ruleName, item)->{}),
+					new RC("d").addRule((propertyName, ruleName, item)->{})
 				),
 				new ValidationResult(),
 				new RequestParameters()
@@ -241,9 +235,9 @@ public class ValidatorTest {
 			new Object[] {
 				"NOSTRICT: correct",
 				false, null, Arrays.asList(
-					new RC("a").addRule((a, propertyName, ruleName, item)->{}),
-					new RC("b").addRule((a, propertyName, ruleName, item)->{}),
-					new RC("c").addRule((a, propertyName, ruleName, item)->{})
+					new RC("a").addRule((propertyName, ruleName, item)->{}),
+					new RC("b").addRule((propertyName, ruleName, item)->{}),
+					new RC("c").addRule((propertyName, ruleName, item)->{})
 				),
 				new ValidationResult(),
 				new RequestParameters()
@@ -255,17 +249,17 @@ public class ValidatorTest {
 				"RULE: break",
 				false, null, Arrays.asList(
 					new RC("a")
-					.addRule((a, propertyName, ruleName, item)->{
+					.addRule((propertyName, ruleName, item)->{
 						item.addError(t->"E1");
 					})
-					.addRule((a, propertyName, ruleName, item)->{
+					.addRule((propertyName, ruleName, item)->{
 						item.addError(t->"E2");
 					})
-					.addRule((a, propertyName, ruleName, item)->{
+					.addRule((propertyName, ruleName, item)->{
 						item.setCanValidate(false);
 						item.addError(t->"E3");
 					})
-					.addRule((a, propertyName, ruleName, item)->{
+					.addRule((propertyName, ruleName, item)->{
 						item.addError(t->"E4");
 					})
 				),
@@ -323,12 +317,12 @@ public class ValidatorTest {
 			new Object[] {
 				"DEFAULT RULE: correct",
 				null, null, Arrays.asList(
-					new RC("").addRule((a, propertyName, ruleName, item)->{
+					new RC("").addRule((propertyName, ruleName, item)->{
 						item.addError(t->"def applied");
 					}),
-					new RC("a").addRule((a, propertyName, ruleName, item)->{}),
-					new RC("b").addRule((a, propertyName, ruleName, item)->{}),
-					new RC("c").addRule((a, propertyName, ruleName, item)->{})
+					new RC("a").addRule((propertyName, ruleName, item)->{}),
+					new RC("b").addRule((propertyName, ruleName, item)->{}),
+					new RC("c").addRule((propertyName, ruleName, item)->{})
 				),
 				new ValidationResult(),
 				new RequestParameters()
@@ -339,10 +333,10 @@ public class ValidatorTest {
 			new Object[] {
 				"DEFAULT RULE: missing rule",
 				null, null, Arrays.asList(
-					new RC("").addRule((a, propertyName, ruleName, item)->{
+					new RC("").addRule((propertyName, ruleName, item)->{
 						item.addError(t->"def applied");
 					}),
-					new RC("a").addRule((a, propertyName, ruleName, item)->{})
+					new RC("a").addRule((ropertyName, ruleName, item)->{})
 				),
 				new ValidationResult()
 				.addError("b", "def applied")

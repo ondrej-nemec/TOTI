@@ -3,11 +3,10 @@ package toti.extension.validation.rules;
 import java.util.function.Function;
 
 import toti.application.extensions.Translator;
-import toti.lib.common.structures.DictionaryValue;
-import toti.lib.tcpip.structures.RequestParameters;
-import toti.application.answers.request.Request;
 import toti.extension.validation.ValidationItem;
 import toti.extension.validation.Validator;
+import toti.lib.common.structures.DictionaryValue;
+import toti.lib.tcpip.structures.RequestParameters;
 
 public class StructureMapRule implements Rule {
 
@@ -20,12 +19,12 @@ public class StructureMapRule implements Rule {
 	}
 
 	@Override
-	public void check(Request request, String propertyName, String ruleName, ValidationItem item) {
+	public void check(String propertyName, String ruleName, ValidationItem item) {
 		try {
 			RequestParameters fields = new RequestParameters();
 			fields.putAll(new DictionaryValue(item.getOriginValue()).getMap());
 			item.addSubResult(validator.validate(
-				request, propertyName + "[%s]", fields, item.getTranslator(), item.getIdentity()
+				propertyName + "[%s]", fields, item.getTranslator()
 			));
 			item.setNewValue(fields);
 		} catch (NullPointerException | ClassCastException e) {

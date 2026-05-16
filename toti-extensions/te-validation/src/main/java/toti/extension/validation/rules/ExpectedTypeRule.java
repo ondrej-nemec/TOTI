@@ -3,9 +3,8 @@ package toti.extension.validation.rules;
 import java.util.function.Function;
 
 import toti.application.extensions.Translator;
-import toti.lib.common.structures.DictionaryValue;
-import toti.application.answers.request.Request;
 import toti.extension.validation.ValidationItem;
+import toti.lib.common.structures.DictionaryValue;
 
 public class ExpectedTypeRule implements Rule {
 	
@@ -18,7 +17,7 @@ public class ExpectedTypeRule implements Rule {
 	}
 	
 	@Override
-	public void check(Request request, String propertyName, String ruleName, ValidationItem item) {
+	public void check(String propertyName, String ruleName, ValidationItem item) {
 		try {
 			Object newO = new DictionaryValue(item.getOriginValue()).getValue(expectedType);
 			item.setNewValue(newO);

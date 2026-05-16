@@ -7,11 +7,9 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import toti.application.answers.request.Identity;
-import toti.application.answers.request.Request;
+import toti.application.extensions.Translator;
 import toti.extension.validation.collections.RulesCollection;
 import toti.extension.validation.rules.Rule;
-import toti.application.extensions.Translator;
 import toti.lib.common.exceptions.LogicException;
 import toti.lib.common.structures.MapInit;
 import toti.lib.tcpip.structures.RequestParameters;
@@ -91,70 +89,47 @@ public class Validator {
 		return this;
 	}
 	
-	public ValidationResult validate(Request request, RequestParameters prop, Translator translator, Identity identity) {
-		return validate(request, "%s", prop, translator, identity);
+	public ValidationResult validate(RequestParameters prop, Translator translator) {
+		return validate("%s", prop, translator);
 	}
 	
 	/** INTERNAL **/
-	public ValidationResult validate(Request request, String format, RequestParameters prop, Translator translator, Identity identity) {
+	public ValidationResult validate(String format, RequestParameters prop, Translator translator) {
 		ValidationResult result = new ValidationResult();
 		List<String> names = new ArrayList<>();
 		for (RulesCollection rule : rules) {
-			String newName = iterateRules(request, format, rule.getName(), rule, prop, result, translator, identity);
-			
-			/*
-			Object newValue = rule.getChangeValue().apply(item.getNewValue());
-			if (newValue != null) {
-				prop.remove(rule.getName());
-				prop.put(newName, newValue);
-			} else if (rule.getRename().isPresent() && prop.containsKey(rule.getName())) {
-				prop.put(newName, prop.remove(rule.getName()));
-			}*/
+			String newName = iterateRules(format, rule.getName(), rule, prop, result, translator);
 			names.add(newName);
 		}
 		List<String> notChecked = new ArrayList<>(prop.keySet());
 		notChecked.removeAll(names);
 		
-		if (notChecked.size() > 0 && strictList) {
+		if (!notChecked.isEmpty() && strictList) {
 			result.addError(onStrictListError.apply(translator, notChecked.stream().map(a->String.format(format, a)).collect(Collectors.toList())));
 		}
-		/*checkRule(
-				Optional.of(notChecked),
-				(incomingData)->{
-					return incomingData.size() > 0 && strictList;
-				},
-				errors,
-				"form",
-				onStrictListError.apply(translator, notChecked.stream().map(a->String.format(format, a)).collect(Collectors.toList()))
-		);*/
 		if (!strictList && defaultRule.isPresent()) {
 			RulesCollection rule = defaultRule.get();
 			for (String notCheckedName : notChecked) {
-				iterateRules(request, format, notCheckedName, rule, prop, result, translator, identity);
-				/*swichRules(String.format(format, notCheckedName), notCheckedName, rule, errors, prop, translator);
-				Object newValue = rule.getChangeValue().apply(prop.get(notCheckedName));
-				if (newValue != null) {
-					prop.put(notCheckedName, newValue);
-				}*/
+				iterateRules(format, notCheckedName, rule, prop, result, translator);
 			}
 		}
 		if (globalFunc.isPresent() && result.isValid()) {
-			globalFunc.get().apply(request, prop, result, translator, identity);
+			globalFunc.get().apply(prop, result);
 		}
 		return result;
 	}
 	
 	private String iterateRules(
-			Request request, String format, String propertyName,
+			String format, String propertyName,
 			RulesCollection collection, RequestParameters prop,
-			ValidationResult result, Translator translator, Identity identity) {
+			ValidationResult result, Translator translator) {
 		ValidationItem item = new ValidationItem(
 			propertyName,
 			prop.getValue(propertyName),
-			result, translator, identity
+			result, translator
 		);
 		for (Rule singleRule : collection.getRules()) {
-			singleRule.check(request, String.format(format, propertyName), propertyName, item);
+			singleRule.check(String.format(format, propertyName), propertyName, item);
 			if (!item.canValidationContinue()) {
 				break;
 			}

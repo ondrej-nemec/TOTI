@@ -6,7 +6,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import toti.extension.validation.ValidationItem;
-import toti.extension.validation.rules.MinValueRule;
 
 public class MinValueRuleTest {
 	
@@ -31,7 +30,7 @@ public class MinValueRuleTest {
 	
 	@Test
 	public void testGetValue() {
-		ValidationItem item = new ValidationItem("name", "origin", null, null, null);
+		ValidationItem item = new ValidationItem("name", "origin", null, null);
 		item.setNewValue("newValue");
 		
 		MinValueRule rule = new MinValueRule(null, null);

@@ -10,7 +10,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import toti.extension.validation.ValidationItem;
-import toti.extension.validation.rules.MaxLengthRule;
 
 public class MaxLengthRuleTest {
 	
@@ -42,7 +41,7 @@ public class MaxLengthRuleTest {
 	
 	@Test
 	public void testGetValue() {
-		ValidationItem item = new ValidationItem("name", "origin", null, null, null);
+		ValidationItem item = new ValidationItem("name", "origin", null, null);
 		item.setNewValue("newValue");
 		
 		MaxLengthRule rule = new MaxLengthRule(null, null);

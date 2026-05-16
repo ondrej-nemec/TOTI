@@ -9,7 +9,7 @@ import toti.lib.files.json.Jsonable;
 
 public class ValidationResult implements Jsonable {
 
-	private Map<String, Set<String>> errors = new HashMap<>();
+	private final Map<String, Set<String>> errors = new HashMap<>();
 	
 	public boolean isValid() {
 		return errors.isEmpty();

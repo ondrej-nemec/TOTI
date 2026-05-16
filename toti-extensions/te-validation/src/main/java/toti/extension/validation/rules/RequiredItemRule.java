@@ -3,7 +3,6 @@ package toti.extension.validation.rules;
 import java.util.function.BiFunction;
 
 import toti.application.extensions.Translator;
-import toti.application.answers.request.Request;
 import toti.extension.validation.ValidationItem;
 
 public class RequiredItemRule implements Rule {
@@ -17,7 +16,7 @@ public class RequiredItemRule implements Rule {
 	}
 
 	@Override
-	public void check(Request request, String propertyName, String ruleName, ValidationItem item) {
+	public void check(String propertyName, String ruleName, ValidationItem item) {
 		if (isRequired && item.getOriginValue() == null) {
 			item.addError(propertyName, (translator)->onError.apply(translator, ruleName));
 		} else if (isRequired && item.getNewValue() == null) {

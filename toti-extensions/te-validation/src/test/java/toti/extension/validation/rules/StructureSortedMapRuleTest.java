@@ -11,13 +11,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import toti.application.answers.request.Identity;
-import toti.application.answers.request.Request;
+import toti.application.extensions.Translator;
 import toti.extension.validation.ValidationItem;
 import toti.extension.validation.ValidationResult;
 import toti.extension.validation.Validator;
-import toti.extension.validation.rules.StructureSortedMapRule;
-import toti.application.extensions.Translator;
 import toti.lib.common.structures.MapInit;
 import toti.lib.common.structures.SortedMap;
 import toti.lib.tcpip.structures.RequestParameters;
@@ -31,22 +28,19 @@ public class StructureSortedMapRuleTest {
 			String propertyName, String format, RequestParameters params) {
 		ValidationResult result = mock(ValidationResult.class);
 		Translator translator = mock(Translator.class);
-		Identity identity = mock(Identity.class);
 		
-		ValidationItem item = new ValidationItem("name", originValue, result, translator, identity);
+		ValidationItem item = new ValidationItem("name", originValue, result, translator);
 		
 		ValidationResult subResult = mock(ValidationResult.class);
 		Validator validator = mock(Validator.class);
-		when(validator.validate(any(), any(), any(), any(Translator.class), any())).thenReturn(subResult);
-		
-		Request request = mock(Request.class);
-		
+		when(validator.validate(any(), any(), any(Translator.class))).thenReturn(subResult);
+
 		StructureSortedMapRule rule = new StructureSortedMapRule(validator, (t)->"error");
-		rule.check(request, propertyName, "ruleName", item);
+		rule.check(propertyName, "ruleName", item);
 		
 		assertEquals(newValue, item.getNewValue());
 		assertEquals(canValidate, item.canValidationContinue());
-		verify(validator, times(validatorCalling)).validate(request, format, params, translator, identity);
+		verify(validator, times(validatorCalling)).validate(format, params, translator);
 		verify(result, times(errorCalling)).addError(propertyName, "error");
 		verify(result, times(validatorCalling)).addSubResult(subResult);
 	}
