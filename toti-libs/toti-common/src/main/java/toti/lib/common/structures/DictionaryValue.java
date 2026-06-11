@@ -8,6 +8,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -442,11 +443,26 @@ public class DictionaryValue implements Scalar {
 	@SuppressWarnings("unchecked")
 	public <K, V> Map<K, V> getMap() {
 		return parseValue(Map.class, fromStringToMapCallback, (val)-> {
-			if (val instanceof MapDictionary<?>) {
-				return MapDictionary.class.cast(val).toMap();
+			if (val instanceof MapDictionary<?> map) {
+				return map.toMap();
 			}
-			if (val instanceof SortedMap<?, ?>) {
-				return SortedMap.class.cast(val).toMap();
+			if (val instanceof SortedMap<?, ?> map) {
+				return map.toMap();
+			}
+			if (val instanceof ListDictionary list) {
+				Map<Object, Object> map = new HashMap<>();
+				list.forEach(item->{
+					map.put(item._1().toString(), item._2());
+				});
+				return map;
+			}
+			if (val instanceof Iterable<?> iterable) {
+				Map<Object, Object> map = new HashMap<>();
+				int i = 0;
+				for (Object elem : iterable) {
+					map.put((i++) + "", elem);
+				}
+				return map;
 			}
 			return val;
 		});
