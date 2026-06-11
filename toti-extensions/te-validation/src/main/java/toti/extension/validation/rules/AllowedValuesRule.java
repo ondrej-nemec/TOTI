@@ -1,25 +1,28 @@
 package toti.extension.validation.rules;
 
 import java.util.Collection;
-import java.util.function.Function;
+import java.util.function.Supplier;
 
-import toti.extension.validation.ValidationItem;
-import toti.application.extensions.Translator;
+import toti.extension.validation.results.CheckResult;
+import toti.extension.validation.results.ValidationItem;
 
-public class AllowedValuesRule extends SimpleRule<Collection<Object>> {
+public class AllowedValuesRule implements Rule {
 
-	public AllowedValuesRule(Collection<Object> value, Function<Translator, String> onError) {
-		super(value, onError);
+	private final Collection<Object> allowedList;
+	private final Supplier<String> onError;
+
+	public AllowedValuesRule(Collection<Object> allowedList, Supplier<String> onError) {
+		this.allowedList = allowedList;
+		this.onError = onError;
 	}
 
 	@Override
-	protected boolean isErrorToShow(Collection<Object> allowedList, Object o) {
-		return !allowedList.contains(o);
-	}
-	
-	@Override
-	protected Object getValue(ValidationItem item) {
-		return item.getNewValue();
+	public CheckResult check(ValidationItem item) {
+		if (item.getParsedValue() != null && !allowedList.contains(item.getParsedValue())) {
+			item.addError(onError.get());
+			return new CheckResult(false);
+		}
+		return new CheckResult(true);
 	}
 
 }

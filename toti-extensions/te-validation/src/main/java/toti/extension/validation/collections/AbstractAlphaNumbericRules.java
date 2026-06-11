@@ -2,15 +2,15 @@ package toti.extension.validation.collections;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
+import toti.application.extensions.Translator;
 import toti.extension.validation.rules.AllowedValuesRule;
 import toti.extension.validation.rules.MaxLengthRule;
 import toti.extension.validation.rules.MinLengthRule;
 import toti.extension.validation.rules.RegexRule;
 import toti.extension.validation.rules.Rule;
-import toti.application.extensions.Translator;
 import toti.lib.common.exceptions.LogicException;
 import toti.lib.common.structures.MapInit;
 
@@ -21,11 +21,18 @@ public abstract class AbstractAlphaNumbericRules<T> extends AbstractBaseRules<T>
 	private MinLengthRule minLengthRule;
 	private RegexRule regexRule;
 	
-	public AbstractAlphaNumbericRules(String name, boolean required, BiFunction<Translator, String, String> onRequiredError) {
-		super(name, required, onRequiredError);
+	public AbstractAlphaNumbericRules(String name, boolean required, Function<String, String> onRequiredError, Translator translator) {
+		super(name, required, onRequiredError, translator);
+	}
+
+	public T setRegex(String regex) {
+		return setRegex(regex, ()->translator.translate(
+			"toti.validation.text-not-match-pattern", 
+			new MapInit<String, Object>().append("regex", regex.replace("\\", "\\\\")).toMap()
+		)); // "Text must looks like " + regex.replace("\\", "\\\\")
 	}
 	
-	public T setRegex(String regex, Function<Translator, String> onRegexError) {
+	public T setRegex(String regex, Supplier<String> onRegexError) {
 		if (this.regexRule != null) {
 			throw new LogicException("You cannot set an already set value");
 		}
@@ -34,13 +41,13 @@ public abstract class AbstractAlphaNumbericRules<T> extends AbstractBaseRules<T>
 	}
 	
 	public T setAllowedValues(Collection<Object> values) {
-		return setAllowedValues(values, (t)->t.translate(
+		return setAllowedValues(values, ()->translator.translate(
 			"toti.validation.value-must-be-one-of", 
 			new MapInit<String, Object>().append("values", values).toMap()
 		)); // "Value must be one of: " + values
 	}
 	
-	public T setAllowedValues(Collection<Object> values, Function<Translator, String> onAllowedValuesError) {
+	public T setAllowedValues(Collection<Object> values, Supplier<String> onAllowedValuesError) {
 		if (this.allowedValuesRule != null) {
 			throw new LogicException("You cannot set an already set value");
 		}
@@ -49,40 +56,33 @@ public abstract class AbstractAlphaNumbericRules<T> extends AbstractBaseRules<T>
 	}
 
 	public T setMinLength(int minLength) {
-		return setMinLength(minLength, (t)->t.translate(
+		return setMinLength(minLength, ()->translator.translate(
 			"toti.validation.length-must-be-at-least", 
 			new MapInit<String, Object>().append("minLength", minLength).toMap()
 		)); // "Text length must be at least " + minLength
 	}
 	
-	public T setMinLength(int minLength, Function<Translator, String> onMinLengthError) {
+	public T setMinLength(int minLength, Supplier<String> onMinLengthError) {
 		if (this.minLengthRule != null) {
 			throw new LogicException("You cannot set an already set value");
 		}
-		this.minLengthRule = new MinLengthRule(minLength, onMinLengthError);;
+		this.minLengthRule = new MinLengthRule(minLength, onMinLengthError);
 		return getThis();
 	}
 	
 	public T setMaxLength(int maxLength) {
-		return setMaxLength(maxLength, (t)->t.translate(
+		return setMaxLength(maxLength, ()->translator.translate(
 			"toti.validation.length-must-be-max", 
 			new MapInit<String, Object>().append("maxLength", maxLength).toMap()
 		)); // "Text length must be maximal " + maxLength
 	}
 	
-	public T setMaxLength(int maxLength, Function<Translator, String> onMaxLengthError) {
+	public T setMaxLength(int maxLength, Supplier<String> onMaxLengthError) {
 		if (this.maxLengthRule != null) {
 			throw new LogicException("You cannot set an already set value");
 		}
 		this.maxLengthRule = new MaxLengthRule(maxLength, onMaxLengthError);
 		return getThis();
-	}
-
-	public T setRegex(String regex) {
-		return setRegex(regex, (t)->t.translate(
-			"toti.validation.text-not-match-pattern", 
-			new MapInit<String, Object>().append("regex", regex.replace("\\", "\\\\")).toMap()
-		)); // "Text must looks like " + regex.replace("\\", "\\\\")
 	}
 	
 	@Override

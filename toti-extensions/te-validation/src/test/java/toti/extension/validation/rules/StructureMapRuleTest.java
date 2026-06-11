@@ -1,65 +1,57 @@
 package toti.extension.validation.rules;
 
 import java.util.Arrays;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-import toti.application.extensions.Translator;
-import toti.extension.validation.ValidationItem;
-import toti.extension.validation.ValidationResult;
-import toti.extension.validation.Validator;
+import toti.extension.validation.results.ValidationCollection;
+import toti.lib.common.structures.ListInit;
 import toti.lib.common.structures.MapInit;
 import toti.lib.tcpip.structures.RequestParameters;
 
 public class StructureMapRuleTest {
 	
 	@ParameterizedTest
-	@MethodSource("dataCheck")
-	public void testCheck(Object originValue, Object newValue,
-			boolean canValidate, int errorCalling, int validatorCalling,
-			String propertyName, String format, RequestParameters params) {
-		ValidationResult result = mock(ValidationResult.class);
-		Translator translator = mock(Translator.class);
-		
-		ValidationItem item = new ValidationItem("name", originValue, result, translator);
-		
-		ValidationResult subResult = mock(ValidationResult.class);
-		Validator validator = mock(Validator.class);
-		when(validator.validate(any(), any(), any(Translator.class))).thenReturn(subResult);
-		
-		StructureMapRule rule = new StructureMapRule(validator, (t)->"error");
-		rule.check(propertyName, "ruleName", item);
-		
-		assertEquals(newValue, item.getNewValue());
-		assertEquals(canValidate, item.canValidationContinue());
-		verify(validator, times(validatorCalling)).validate(format, params, translator);
-		verify(result, times(errorCalling)).addError(propertyName, "error");
-		verify(result, times(validatorCalling)).addSubResult(subResult);
+	@MethodSource
+	public void testCheck(
+		Object originValue, Set<Object> expectedErrors, boolean isMoreValidationPossible,
+		Object expectedValue, int expectedValidateCalling,
+		RequestParameters fields, String name, String format
+	) {
+		RuleTest.testStructure(
+			(validator, onError)->new StructureMapRule(validator, onError),
+			originValue,
+			new ValidationCollection(
+				MapInit.create().toMap(),
+				new ListInit<>().toSet(),
+				fields
+			),
+			expectedErrors, isMoreValidationPossible,
+			expectedValue, expectedValidateCalling,
+			fields, name, format
+		);
 	}
 	
-	public static Object[] dataCheck() {
+	public static Object[] testCheck() {
 		return new Object[] {
 			new Object[] {
-				MapInit.create().append("a", "b").append("x", "y").toMap(),
+				MapInit.create().append("a", "b").append("x", "y").toMap(), RuleTest.empty(), true,
+				new RequestParameters().put("a", "b").put("x", "y"), 1,
 				new RequestParameters().put("a", "b").put("x", "y"),
-				true, 0, 1, "propertyName", "propertyName[%s]",
-				new RequestParameters().put("a", "b").put("x", "y")
+				"propertyName", "propertyName[%s]"
 			},
 			new Object[] {
-				Arrays.asList("aa"),
-				Arrays.asList("aa"),
-				true, 1, 0, "propertyName", null, null
+				Arrays.asList("aa"), RuleTest.empty(), true,
+				new RequestParameters().put("0", "aa"), 1,
+				new RequestParameters().put("0", "aa"),
+				"propertyName", "propertyName[%s]"
 			},
 			new Object[] {
-				"", "",
-				true, 1, 0, "propertyName", null, null
+				"", RuleTest.filled(), false,
+				"parsed-value", 0,
+				null, null, null
 			}
 		};
 	}

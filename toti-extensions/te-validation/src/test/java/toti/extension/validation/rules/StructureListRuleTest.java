@@ -1,69 +1,61 @@
 package toti.extension.validation.rules;
 
 import java.util.Arrays;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-import toti.application.extensions.Translator;
-import toti.extension.validation.ValidationItem;
-import toti.extension.validation.ValidationResult;
-import toti.extension.validation.Validator;
+import toti.extension.validation.results.ValidationCollection;
+import toti.lib.common.structures.ListInit;
 import toti.lib.common.structures.MapInit;
 import toti.lib.tcpip.structures.RequestParameters;
 
 public class StructureListRuleTest {
 
 	@ParameterizedTest
-	@MethodSource("dataCheck")
-	public void testCheck(Object originValue, Object newValue,
-			boolean canValidate, int errorCalling, int validatorCalling,
-			String propertyName, String format, RequestParameters params) {
-		ValidationResult result = mock(ValidationResult.class);
-		Translator translator = mock(Translator.class);
-		
-		ValidationItem item = new ValidationItem("name", originValue, result, translator);
-		
-		ValidationResult subResult = mock(ValidationResult.class);
-		Validator validator = mock(Validator.class);
-		when(validator.validate(any(), any(), any(Translator.class))).thenReturn(subResult);
-		
-		StructureListRule rule = new StructureListRule(validator, (t)->"error");
-		rule.check(propertyName, "ruleName", item);
-		
-		assertEquals(newValue, item.getNewValue());
-		assertEquals(canValidate, item.canValidationContinue());
-		verify(validator, times(validatorCalling)).validate(format, params, translator);
-		verify(result, times(errorCalling)).addError(propertyName, "error");
-		verify(result, times(validatorCalling)).addSubResult(subResult);
+	@MethodSource
+	public void testCheck(
+		Object originValue, Set<Object> expectedErrors, boolean isMoreValidationPossible,
+		Object expectedValue, int expectedValidateCalling,
+		RequestParameters fields, String name, String format
+	) {
+		RuleTest.testStructure(
+			(validator, onError)->new StructureListRule(validator, onError), originValue,
+			new ValidationCollection(
+				MapInit.create().toMap(),
+				new ListInit<>().toSet(),
+				fields
+			),
+			expectedErrors, isMoreValidationPossible, expectedValue, expectedValidateCalling,
+			fields, name, format
+		);
 	}
 	
-	public static Object[] dataCheck() {
+	public static Object[] testCheck() {
 		return new Object[] {
 			new Object[] {
-				Arrays.asList("a", "b"), Arrays.asList("a", "b"),
-				true, 0, 1, "propertyName", "%s:propertyName[]",
-				new RequestParameters().put("0", "a").put("1", "b")
+				Arrays.asList("a", "b"), RuleTest.empty(), true,
+				Arrays.asList("a", "b"), 1,
+				new RequestParameters().put("0", "a").put("1", "b"),
+				"%s:propertyName", "%s:propertyName[]"
 			},
 			new Object[] {
-				Arrays.asList("a", "b"), Arrays.asList("a", "b"),
-				true, 0, 1, "%s:propertyName", "%s:propertyName[]",
-				new RequestParameters().put("0", "a").put("1", "b")
+				Arrays.asList("a", "b"), RuleTest.empty(), true,
+				Arrays.asList("a", "b"), 1,
+				new RequestParameters().put("0", "a").put("1", "b"),
+				"propertyName", "%spropertyName[]"
 			},
 			new Object[] {
-				MapInit.create().append("x", "a").append("y", "b").toMap(), Arrays.asList("a", "b"),
-				true, 0, 1, "propertyName", "%s:propertyName[]",
-				new RequestParameters().put("0", "a").put("1", "b")
+				MapInit.create().append("x", "a").append("y", "b").toMap(), RuleTest.empty(), true,
+				Arrays.asList("a", "b"), 1,
+				new RequestParameters().put("0", "a").put("1", "b"),
+				"%s:propertyName", "%s:propertyName[]"
 			},
 			new Object[] {
-				"xxx", "xxx",
-				true, 1, 0, "propertyName", null, null
+				"xxx", RuleTest.filled(), false,
+				"parsed-value", 0,
+				null, "propertyName", "propertyName"
 			},
 		};
 	}

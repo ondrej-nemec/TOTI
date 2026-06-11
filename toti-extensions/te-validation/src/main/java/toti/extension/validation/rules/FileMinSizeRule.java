@@ -1,19 +1,28 @@
 package toti.extension.validation.rules;
 
-import java.util.function.Function;
+import java.util.function.Supplier;
 
-import toti.application.extensions.Translator;
+import toti.extension.validation.results.CheckResult;
+import toti.extension.validation.results.ValidationItem;
 import toti.lib.tcpip.structures.UploadedFile;
 
-public class FileMinSizeRule extends SimpleRule<Integer> {
+public class FileMinSizeRule implements Rule {
 
-	public FileMinSizeRule(Integer value, Function<Translator, String> onError) {
-		super(value, onError);
+	private final Integer minSize;
+	private final Supplier<String> onError;
+
+	public FileMinSizeRule(Integer minSize, Supplier<String> onError) {
+		this.minSize = minSize;
+		this.onError = onError;
 	}
 
 	@Override
-	protected boolean isErrorToShow(Integer minSize, Object o) {
-		UploadedFile file = (UploadedFile)o;
-		return file.getContent().length < minSize;
+	public CheckResult check(ValidationItem item) {
+		UploadedFile file = (UploadedFile)item.getRawValue();
+		if (file != null && file.getContent().length < minSize) {
+			item.addError(onError.get());
+		}
+		return new CheckResult(true);
 	}
+
 }

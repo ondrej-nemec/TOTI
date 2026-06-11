@@ -1,34 +1,48 @@
 package toti.extension.validation.rules;
 
-import java.util.function.Function;
+import java.util.Map;
+import java.util.function.Supplier;
 
-import toti.application.extensions.Translator;
-import toti.extension.validation.ValidationItem;
 import toti.extension.validation.Validator;
+import toti.extension.validation.results.CheckResult;
+import toti.extension.validation.results.ValidationCollection;
+import toti.extension.validation.results.ValidationItem;
 import toti.lib.common.structures.DictionaryValue;
 import toti.lib.tcpip.structures.RequestParameters;
 
 public class StructureMapRule implements Rule {
 
 	private final Validator validator;
-	private final Function<Translator, String> onError;
+	private final Supplier<String> onError;
 
-	public StructureMapRule(Validator validator, Function<Translator, String> onError) {
+	public StructureMapRule(Validator validator, Supplier<String> onError) {
 		this.validator = validator;
 		this.onError = onError;
 	}
 
 	@Override
-	public void check(String propertyName, String ruleName, ValidationItem item) {
+	public CheckResult check(ValidationItem item) {
 		try {
 			RequestParameters fields = new RequestParameters();
-			fields.putAll(new DictionaryValue(item.getOriginValue()).getMap());
-			item.addSubResult(validator.validate(
-				propertyName + "[%s]", fields, item.getTranslator()
-			));
-			item.setNewValue(fields);
+			fields.putAll(new DictionaryValue(item.getRawValue()).getMap());
+			
+			ValidationCollection validationCollection = validator._validate(
+				item.getExtendedName() + "[%s]", fields, item.getOriginName(), item.getExtendedName()
+			);
+			Map<String, Object> subErrors = validationCollection.getErrors();
+			if (!subErrors.isEmpty()) {
+				item.addError(subErrors);	
+			}
+
+			RequestParameters result = new RequestParameters();
+			fields.forEach((key, value)->{
+				result.put(key, validationCollection.getValue(key));
+			});
+			item.setValue(result);
+			return new CheckResult(true);
 		} catch (NullPointerException | ClassCastException e) {
-			item.addError(propertyName, onError);
+			item.addError(onError.get());
+			return new CheckResult(false);
 		}
 	}
 }

@@ -1,41 +1,34 @@
 package toti.extension.validation.rules;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import org.junit.jupiter.api.Test;
+import java.util.Set;
+
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import toti.extension.validation.ValidationItem;
 import toti.lib.tcpip.structures.UploadedFile;
 
 public class FileMinSizeRuleTest {
 	
 	@ParameterizedTest
-	@MethodSource("dataIsErrorToShow")
-	public void testIsErrorToShow(Object value, Integer bond, boolean expected) {
-		FileMinSizeRule rule = new FileMinSizeRule(null, null);
-		assertEquals(expected, rule.isErrorToShow(bond, value));
+	@MethodSource
+	public void testCheck(int minSize, Object rawValue, Set<Object> expectedErrors) {
+		RuleTest.test(
+			onError->new FileMinSizeRule(minSize, onError), rawValue, "not a file", // parsed value is not used
+			expectedErrors, true, "not a file"
+		);
 	}
 	
-	public static Object[] dataIsErrorToShow() {
+	public static Object[] testCheck() {
 		return new Object[] {
-			new Object[] { createFile(10), 12, true },
-			new Object[] { createFile(10), 10, false },
-			new Object[] { createFile(12), 10, false },
+			new Object[] { 12, null, RuleTest.empty() },
+			new Object[] { 12, createFile(10), RuleTest.filled() },
+			new Object[] { 10, createFile(10), RuleTest.empty() },
+			new Object[] { 10, createFile(12), RuleTest.empty() },
 		};
 	}
 	
 	private static UploadedFile createFile(int size) {
 		return new UploadedFile("fileName", "type", "bom", new byte[size]);
-	}
-	
-	@Test
-	public void testGetValue() {
-		ValidationItem item = new ValidationItem("name", "origin", null, null);
-		item.setNewValue("newValue");
-		
-		FileMinSizeRule rule = new FileMinSizeRule(null, null);
-		assertEquals("origin", rule.getValue(item));
 	}
 
 }

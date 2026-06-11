@@ -1,43 +1,37 @@
 package toti.extension.validation.rules;
 
 import java.util.Arrays;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import toti.extension.validation.ValidationItem;
 import toti.lib.tcpip.structures.UploadedFile;
 
 public class FileAllowedTypeTest {
 
 	@ParameterizedTest
-	@MethodSource("dataIsErrorToShow")
-	public void testIsErrorToShow(Object value, boolean expected) {
-		FileAllowedTypesRule rule = new FileAllowedTypesRule(null, null);
-		assertEquals(expected, rule.isErrorToShow(Arrays.asList("type1", "type2"), value));
+	@MethodSource
+	public void testCheck(Object rawValue, Set<Object> expectedErrors) {
+		// rule use raw value only and not change value
+		RuleTest.test(
+			onError->new FileAllowedTypesRule(Arrays.asList("type1", "type2"), onError),
+			rawValue, "not a file", // parsed not use
+			expectedErrors, true, "not a file"
+		);
 	}
 	
-	public static Object[] dataIsErrorToShow() {
+	public static Object[] testCheck() {
 		return new Object[] {
-			new Object[] { createFile("type1", "xxx"), true },
-			new Object[] { createFile("xxx", "type1"), false },
-			new Object[] { createFile("type1", "type1"), false },
+			new Object[] { null, RuleTest.empty() },
+			new Object[] { createFile("type1", "xxx"), RuleTest.filled() },
+			new Object[] { createFile("xxx", "type1"), RuleTest.empty() },
+			new Object[] { createFile("type1", "type1"), RuleTest.empty() },
 		};
 	}
 	
 	private static UploadedFile createFile(String type, String bom) {
 		return new UploadedFile("fileName", type, bom, new byte[10]);
 	}
-	
-	@Test
-	public void testGetValue() {
-		ValidationItem item = new ValidationItem("name", "origin", null, null);
-		item.setNewValue("newValue");
-		
-		FileAllowedTypesRule rule = new FileAllowedTypesRule(null, null);
-		assertEquals("origin", rule.getValue(item));
-	}
-	
+
 }

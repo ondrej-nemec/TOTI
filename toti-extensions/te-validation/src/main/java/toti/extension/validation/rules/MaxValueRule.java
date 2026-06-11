@@ -1,21 +1,33 @@
 package toti.extension.validation.rules;
 
-import java.util.function.Function;
+import java.util.function.Supplier;
 
-import toti.application.extensions.Translator;
+import toti.extension.validation.results.CheckResult;
+import toti.extension.validation.results.ValidationItem;
 import toti.lib.common.structures.DictionaryValue;
 
-public class MaxValueRule extends SimpleRule<Number> {
+public class MaxValueRule implements Rule {
 
-	public MaxValueRule(Number value, Function<Translator, String> onError) {
-		super(value, onError);
+	private final Number maxValue;
+	private final Supplier<String> onError;
+
+	public MaxValueRule(Number maxValue, Supplier<String> onError) {
+		this.maxValue = maxValue;
+		this.onError = onError;
 	}
 
 	@Override
-	protected boolean isErrorToShow(Number maxValue, Object o) {
+	public CheckResult check(ValidationItem item) {
+		if (isErrorToShow(item.getParsedValue())) {
+			item.addError(onError.get());
+		}
+		return new CheckResult(true);
+	}
+
+	private boolean isErrorToShow(Object o) {
 		try {
 			Number value = new DictionaryValue(o).getNumber();
-			return value == null || maxValue.doubleValue() < value.doubleValue();
+			return value != null && maxValue.doubleValue() < value.doubleValue();
 		} catch (NullPointerException | ClassCastException | NumberFormatException e) {
 			return true;
 		}

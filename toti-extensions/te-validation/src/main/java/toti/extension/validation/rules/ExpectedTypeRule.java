@@ -1,29 +1,30 @@
 package toti.extension.validation.rules;
 
-import java.util.function.Function;
+import java.util.function.Supplier;
 
-import toti.application.extensions.Translator;
-import toti.extension.validation.ValidationItem;
+import toti.extension.validation.results.CheckResult;
+import toti.extension.validation.results.ValidationItem;
 import toti.lib.common.structures.DictionaryValue;
 
 public class ExpectedTypeRule implements Rule {
 	
 	private final Class<?> expectedType;
-	private final Function<Translator, String> onError;
+	private final Supplier<String> onError;
 	
-	public ExpectedTypeRule(Class<?> expectedType, Function<Translator, String> onError) {
+	public ExpectedTypeRule(Class<?> expectedType, Supplier<String> onError) {
 		this.expectedType = expectedType;
 		this.onError = onError;
 	}
 	
 	@Override
-	public void check(String propertyName, String ruleName, ValidationItem item) {
+	public CheckResult check(ValidationItem item) {
 		try {
-			Object newO = new DictionaryValue(item.getOriginValue()).getValue(expectedType);
-			item.setNewValue(newO);
+			Object newO = new DictionaryValue(item.getRawValue()).getValue(expectedType);
+			item.setValue(newO);
+			return new CheckResult(true);
 		} catch (ClassCastException | NumberFormatException e) {
-			item.addError(propertyName, onError);
-			item.setCanValidate(false);
+			item.addError(onError.get());
+			return new CheckResult(false);
 		}
 	}
 

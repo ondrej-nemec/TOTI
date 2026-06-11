@@ -2,27 +2,42 @@ package toti.extension.validation.rules;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.Supplier;
 
-import toti.application.extensions.Translator;
+import toti.extension.validation.results.CheckResult;
+import toti.extension.validation.results.ValidationItem;
 import toti.lib.common.structures.DictionaryValue;
 
-public class MinLengthRule extends SimpleRule<Integer> {
+public class MinLengthRule implements Rule {
 
-	public MinLengthRule(Integer value, Function<Translator, String> onError) {
-		super(value, onError);
+	private final Integer minLength;
+	private final Supplier<String> onError;
+
+	public MinLengthRule(Integer minLength, Supplier<String> onError) {
+		this.minLength = minLength;
+		this.onError = onError;
 	}
 
 	@Override
-	protected boolean isErrorToShow(Integer minLength, Object o) {
+	public CheckResult check(ValidationItem item) {
+		if (isErrorToShow(item.getParsedValue())) {
+			item.addError(onError.get());
+		}
+		return new CheckResult(true);
+	}
+
+	private boolean isErrorToShow(Object o) {
+		if (o == null) {
+			return false;
+		}
 		DictionaryValue dicVal = new DictionaryValue(o);
 		if (dicVal.is(Map.class)) {
-			return minLength.intValue() > dicVal.getMap().size();
+			return minLength > dicVal.getMap().size();
 		}
 		if (dicVal.is(List.class)) {
-			return minLength.intValue() > dicVal.getList().size();
+			return minLength > dicVal.getList().size();
 		}
-		return minLength.intValue() > o.toString().length();
+		return minLength > o.toString().length();
 	}
 
 }

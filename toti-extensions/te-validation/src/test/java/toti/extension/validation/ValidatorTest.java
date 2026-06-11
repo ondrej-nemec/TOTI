@@ -1,400 +1,171 @@
 package toti.extension.validation;
 
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
-import toti.application.answers.request.Identity;
-import toti.application.extensions.Translator;
 import toti.extension.validation.collections.RulesCollection;
-import toti.extension.validation.rules.Rule;
-import static toti.lib.common.tests.TestCase.assertEquals;
+import toti.extension.validation.results.CheckResult;
+import toti.extension.validation.results.ValidationCollection;
+import toti.extension.validation.results.ValidationItem;
+import toti.extension.validation.rules.CustomValidationRule;
+import toti.lib.common.structures.ListInit;
+import toti.lib.common.structures.MapInit;
 import toti.lib.tcpip.structures.RequestParameters;
 
 public class ValidatorTest {
-	/*
-	@Test
-	@Parameters({"true", "false"})
-	public void testValidateWithNullParam(boolean strict) {
-		Translator translator = new Translator() {
-			@Override
-			public String translate(String key, Map<String, Object> variables, String locale) {
-				return key + ":" + variables;
-			}
-			@Override public Translator withLocale(Locale locale) { return null; }
-			@Override public void setLocale(Locale locale) {}
-			@Override public Set<String> getSupportedLocales() { return null; }
-			@Override public Locale getLocale(String locale) { return new Locale("", true, Arrays.asList()); }
-			@Override public Locale getLocale() { return new Locale("", true, Arrays.asList()); }
-		};
-		Request request = mock(Request.class);
-		
-		RequestParameters parameters = new RequestParameters();
-		parameters.put("a", "1");
-		parameters.put("b", null);
-		
-		Validator validator = new Validator(strict);
-		validator.addRule(ItemRules.objectRules("a", true));
-		validator.addRule(ItemRules.objectRules("b", strict));
-		
-		ValidationResult actualResult = validator.validate(request, parameters, translator);
 
-		RequestParameters expectedParameters = new RequestParameters();
-		expectedParameters.put("a", "1");
-		expectedParameters.put("b", null);
-		ValidationResult expectedResult = new ValidationResult();
-		
-		
-		System.out.println(actualResult);
-		System.out.println(parameters);
-		assertEquals(expectedResult.toString(), actualResult.toString());
-		assertEquals(expectedParameters.toString(), parameters.toString());
-		
-		assertEquals(expectedResult, actualResult);
-		assertEquals(expectedParameters, parameters);
-	}
-	*/
 	@ParameterizedTest
-	@MethodSource("dataValidate")
-	public void testValidate(
-			String message,
-			Boolean strict,
-			GlobalFunction globalFunction,
-			List<RulesCollection> rules,
-			ValidationResult expectedResult,
-			RequestParameters expectedParameters) {
-		Translator translator = new Translator() {
-			@Override
-			public String translate(String key) {
-				return key;
-			}
-			@Override
-			public String translate(String key, Map<String, Object> params) {
-				return key + ":" + params;
-			}
-		};
-		
-		RequestParameters parameters = new RequestParameters();
-		parameters.put("a", "1");
-		parameters.put("b", "2");
-		parameters.put("c", "3");
-		
-		rules = new LinkedList<>(rules);
-		Validator validator = strict == null ? new Validator(rules.remove(0)) : new Validator(strict);
-		rules.forEach(r->validator.addRule(r));
-		if (globalFunction != null) {
-			validator.setGlobalFunction(globalFunction);
-		}
-		Identity identity = mock(Identity.class);
-		ValidationResult actualResult = validator.validate(parameters, translator);
-
-		assertEquals(expectedResult, actualResult, message);
-		assertEquals(expectedParameters, parameters, message);
-		
-		verifyNoMoreInteractions(identity);
+	@MethodSource
+	public void testValidate(String message, Validator validator, ValidationResult expected) {
+		RequestParameters prop = new RequestParameters();
+		prop.put("key1", "value1");
+		prop.put("key2", "value2");
+		ValidationResult actual = validator.validate(prop);
+		assertEquals(expected, actual);
 	}
-	
-	public static Object[] dataValidate() {
+
+	public static Object[] testValidate() {
 		return new Object[] {
 			new Object[] {
-				"no rules - strict",
-				true, null, Arrays.asList(),
-				new ValidationResult()
-				.addError("toti.validation.not-expected-parameters:{parameters=[a, b, c]}"),
-				new RequestParameters()
-				.put("a", "1")
-				.put("b", "2")
-				.put("c", "3")
+				"strict = false | missing rule",
+				Validator.create(false)
+				.addRule(r->r.objectRules("key1", true)),
+				new ValidationCollection(
+					MapInit.create().toMap(),
+					new ListInit<>().toSet(),
+					new RequestParameters().put("key1", "value1").put("key2", "value2")
+				)
 			},
 			new Object[] {
-				"no rules - not strict",
-				false, null, Arrays.asList(),
-				new ValidationResult(),
-				new RequestParameters()
-				.put("a", "1")
-				.put("b", "2")
-				.put("c", "3")
+				"strict = false | existing rules",
+				Validator.create(false)
+				.addRule(r->r.objectRules("key1", true))
+				.addRule(r->r.objectRules("key2", true)),
+				new ValidationCollection(
+					MapInit.create().toMap(),
+					new ListInit<>().toSet(),
+					new RequestParameters().put("key1", "value1").put("key2", "value2")
+				)
 			},
 			new Object[] {
-				"with rule - error",
-				false, null, Arrays.asList(
-					new RC("a")
-					.addRule((propertyName, ruleName, item)->{
-						item.addError(propertyName, t->"expected-error");
-					})
-				),
-				new ValidationResult()
-				.addError("a", "expected-error"),
-				new RequestParameters()
-				.put("a", "1")
-				.put("b", "2")
-				.put("c", "3")
+				"strict = true | missing rule",
+				Validator.create(true)
+				.addRule(r->r.objectRules("key1", true)),
+				new ValidationCollection(
+					MapInit.create().toMap(),
+					new ListInit<>().add("toti.validation.not-expected-parameters").toSet(),
+					new RequestParameters().put("key1", "value1")
+				)
 			},
 			new Object[] {
-				"with rule - no error",
-				false, null, Arrays.asList(
-					new RC("a")
-					.addRule((propertyName, ruleName, item)->{})
-				),
-				new ValidationResult(),
-				new RequestParameters()
-				.put("a", "1")
-				.put("b", "2")
-				.put("c", "3")
-			}, 
-			new Object[] {
-				"with global function",
-				false, g((data, result)->{
-					result.addError("expected-error");
-					data.remove("a");
-					data.put("x", "y");
-				}), Arrays.asList(),
-				new ValidationResult()
-				.addError("expected-error"),
-				new RequestParameters()
-				.put("b", "2")
-				.put("c", "3")
-				.put("x", "y")
-			}, 
-			new Object[] {
-				"STRICT: more parameters",
-				true, null, Arrays.asList(
-					new RC("a").addRule((propertyName, ruleName, item)->{}),
-					new RC("b").addRule((propertyName, ruleName, item)->{})
-				),
-				new ValidationResult()
-				.addError("toti.validation.not-expected-parameters:{parameters=[c]}"),
-				new RequestParameters()
-				.put("a", "1")
-				.put("b", "2")
-				.put("c", "3")
+				"strict = true | existing rules",
+				Validator.create(true)
+				.addRule(r->r.objectRules("key1", true))
+				.addRule(r->r.objectRules("key2", true)),
+				new ValidationCollection(
+					MapInit.create().toMap(),
+					new ListInit<>().toSet(),
+					new RequestParameters().put("key1", "value1").put("key2", "value2")
+				)
 			},
 			new Object[] {
-				"STRICT: more rules",
-				true, null, Arrays.asList(
-					new RC("a").addRule((propertyName, ruleName, item)->{}),
-					new RC("b").addRule((propertyName, ruleName, item)->{}),
-					new RC("c").addRule((propertyName, ruleName, item)->{}),
-					new RC("d").addRule((propertyName, ruleName, item)->{})
-				),
-				// no error occurs because missing parameter is not validator job
-				new ValidationResult(),
-				new RequestParameters()
-				.put("a", "1")
-				.put("b", "2")
-				.put("c", "3")
+				"default rule rules",
+				Validator.create(r->r.objectRules()),
+				new ValidationCollection(
+					MapInit.create().toMap(),
+					new ListInit<>().toSet(),
+					new RequestParameters().put("key1", "value1").put("key2", "value2")
+				)
 			},
 			new Object[] {
-				"STRICT: correct",
-				true, null, Arrays.asList(
-					new RC("a").addRule((propertyName, ruleName, item)->{}),
-					new RC("b").addRule((propertyName, ruleName, item)->{}),
-					new RC("c").addRule((propertyName, ruleName, item)->{})
-				),
-				new ValidationResult(),
-				new RequestParameters()
-				.put("a", "1")
-				.put("b", "2")
-				.put("c", "3")
+				"Custom validation: invalid",
+				Validator.create(true)
+				.setCustomValidation((item)->{
+					item.addError("Custom " + item.getItemsNames());
+				}),
+				new ValidationCollection(
+					MapInit.create().toMap(),
+					new ListInit<>().add("toti.validation.not-expected-parameters").toSet(),
+					new RequestParameters()
+				)
 			},
 			new Object[] {
-				"NOSTRICT: more parameters",
-				false, null, Arrays.asList(
-					new RC("a").addRule((propertyName, ruleName, item)->{}),
-					new RC("b").addRule((propertyName, ruleName, item)->{})
-				),
-				new ValidationResult(),
-				new RequestParameters()
-				.put("a", "1")
-				.put("b", "2")
-				.put("c", "3")
-			},
-			new Object[] {
-				"NOSTRICT: more rules",
-				false, null, Arrays.asList(
-					new RC("a").addRule((propertyName, ruleName, item)->{}),
-					new RC("b").addRule((propertyName, ruleName, item)->{}),
-					new RC("c").addRule((propertyName, ruleName, item)->{}),
-					new RC("d").addRule((propertyName, ruleName, item)->{})
-				),
-				new ValidationResult(),
-				new RequestParameters()
-				.put("a", "1")
-				.put("b", "2")
-				.put("c", "3")
-			},
-			new Object[] {
-				"NOSTRICT: correct",
-				false, null, Arrays.asList(
-					new RC("a").addRule((propertyName, ruleName, item)->{}),
-					new RC("b").addRule((propertyName, ruleName, item)->{}),
-					new RC("c").addRule((propertyName, ruleName, item)->{})
-				),
-				new ValidationResult(),
-				new RequestParameters()
-				.put("a", "1")
-				.put("b", "2")
-				.put("c", "3")
-			},
-			new Object[] {
-				"RULE: break",
-				false, null, Arrays.asList(
-					new RC("a")
-					.addRule((propertyName, ruleName, item)->{
-						item.addError(t->"E1");
-					})
-					.addRule((propertyName, ruleName, item)->{
-						item.addError(t->"E2");
-					})
-					.addRule((propertyName, ruleName, item)->{
-						item.setCanValidate(false);
-						item.addError(t->"E3");
-					})
-					.addRule((propertyName, ruleName, item)->{
-						item.addError(t->"E4");
-					})
-				),
-				new ValidationResult()
-				.addError("a", "E1")
-				.addError("a", "E2")
-				.addError("a", "E3"),
-				new RequestParameters()
-				.put("a", "1")
-				.put("b", "2")
-				.put("c", "3")
-			},
-			new Object[] {
-				"RULE: change value",
-				false, null, Arrays.asList(
-					new RC("a").setChangeValue(x->"11"),
-					new RC("d").setChangeValue(x->"44") // not existing parameter
-				),
-				new ValidationResult(),
-				new RequestParameters()
-				.put("a", "11")
-				.put("b", "2")
-				.put("c", "3")
-				.put("d", "44")
-			},
-			new Object[] {
-				"RULE: custom validation",
-				false, null, Arrays.asList(
-					new RC("a").setCustomValidation(item->{
-						item.addError("a", t->"customError");
-						item.setNewValue("xx");
-					}),
-					new RC("d").setChangeValue(x->"44") // not existing parameter
-				),
-				new ValidationResult()
-				.addError("a", "customError"),
-				new RequestParameters()
-				.put("a", "xx")
-				.put("b", "2")
-				.put("c", "3")
-				.put("d", "44")
-			},
-			new Object[] {
-				"RULE: rename",
-				false, null, Arrays.asList(
-					new RC("a").setRename("aa"),
-					new RC("d").setRename("dd") // not existing parameter
-				),
-				new ValidationResult(),
-				new RequestParameters()
-				.put("aa", "1")
-				.put("b", "2")
-				.put("c", "3")
-			}, 
-			new Object[] {
-				"DEFAULT RULE: correct",
-				null, null, Arrays.asList(
-					new RC("").addRule((propertyName, ruleName, item)->{
-						item.addError(t->"def applied");
-					}),
-					new RC("a").addRule((propertyName, ruleName, item)->{}),
-					new RC("b").addRule((propertyName, ruleName, item)->{}),
-					new RC("c").addRule((propertyName, ruleName, item)->{})
-				),
-				new ValidationResult(),
-				new RequestParameters()
-				.put("a", "1")
-				.put("b", "2")
-				.put("c", "3")
-			},
-			new Object[] {
-				"DEFAULT RULE: missing rule",
-				null, null, Arrays.asList(
-					new RC("").addRule((propertyName, ruleName, item)->{
-						item.addError(t->"def applied");
-					}),
-					new RC("a").addRule((ropertyName, ruleName, item)->{})
-				),
-				new ValidationResult()
-				.addError("b", "def applied")
-				.addError("c", "def applied"),
-				new RequestParameters()
-				.put("a", "1")
-				.put("b", "2")
-				.put("c", "3")
+				"Custom validation: valid",
+				Validator.create(false)
+				.setCustomValidation((item)->{
+					item.addError("Custom " + item.getItemsNames());
+				}),
+				new ValidationCollection(
+					MapInit.create().toMap(),
+					new ListInit<>().add("Custom [key1, key2]").toSet(),
+					new RequestParameters().put("key1", "value1").put("key2", "value2")
+				)
 			},
 		};
 	}
-	
-	private static GlobalFunction g(GlobalFunction g) {
-		return g;
+
+	@ParameterizedTest
+	@MethodSource
+	public void testIterateRules(
+		String message,
+		boolean isMoreValidationPossible, CustomValidationRule custom,
+		Set<String> expectedErrors
+	) {
+		RulesCollection collection = mock(RulesCollection.class);
+		when(collection.getRules()).thenReturn(Arrays.asList(
+			item->{
+				item.addError("Error1");
+				return new CheckResult(true);
+			},
+			item->{
+				item.addError("Error2");
+				return new CheckResult(isMoreValidationPossible);
+			},
+			item->{
+				item.addError("Error3");
+				return new CheckResult(true);
+			}
+		));
+		when(collection.getCustomValidation()).thenReturn(Optional.ofNullable(custom));
+
+		ValidationItem expected = new ValidationItem(
+			"originPropertyName", "format(originPropertyName)", "something"
+		);
+		expected.getErrors().addAll(expectedErrors);
+
+		ValidationItem actual = Validator.create(false)
+			.iterateRules("format(%s)", "originPropertyName", collection, "something");
+		assertEquals(expected, actual);
 	}
-	
-	static class RC implements RulesCollection {
-		private final String name;
-		private final List<Rule> rules = new LinkedList<>();
-		private Optional<String> rename = Optional.empty();
-		private Optional<Function<Object, Object>> changeValue = Optional.empty();
-		private Optional<Consumer<ValidationItem>> customValidation = Optional.empty();
-		
-		public RC(String name) {
-			this.name = name;
-		}
-		
-		public RC addRule(Rule rule) {
-			rules.add(rule);
-			return this;
-		}
-		public RC setChangeValue(Function<Object, Object> changeValue) {
-			this.changeValue = Optional.of(changeValue);
-			return this;
-		}
-		public RC setCustomValidation(Consumer<ValidationItem> customValidation) {
-			this.customValidation = Optional.of(customValidation);
-			return this;
-		}
-		public RC setRename(String rename) {
-			this.rename = Optional.of(rename);
-			return this;
-		}
-		@Override public List<Rule> getRules() {
-			return rules;
-		}
-		@Override public String getName() {
-			return name;
-		}
-		@Override public Optional<String> getRename() {
-			return rename;
-		}
-		@Override public Optional<Function<Object, Object>> getChangeValue() {
-			return changeValue;
-		}
-		@Override public Optional<Consumer<ValidationItem>> getCustomValidation() {
-			return customValidation;
-		}
+
+	public static Object[] testIterateRules() {
+		return new Object[] {
+			new Object[] {
+				"Posible continue | no custom",
+				true, null, new ListInit<>("Error1").add("Error2").add("Error3").toSet()
+			},
+			new Object[] {
+				"Not posible continue | no custom",
+				false, null, new ListInit<>("Error1").add("Error2").toSet()
+			},
+			new Object[] {
+				"Posible continue | with custom",
+				true, new CustomValidationRule(item->{ item.addError("Error4"); }),
+				new ListInit<>("Error1").add("Error2").add("Error3").add("Error4").toSet()
+			},
+			new Object[] {
+				"Not posible continue | no custom",
+				false, new CustomValidationRule(item->{ item.addError("Error4"); }),
+				new ListInit<>("Error1").add("Error2").toSet()
+			}
+		};
 	}
-	
+
 }

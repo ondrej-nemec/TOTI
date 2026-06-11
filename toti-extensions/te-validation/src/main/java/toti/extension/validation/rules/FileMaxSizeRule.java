@@ -1,20 +1,28 @@
 package toti.extension.validation.rules;
 
-import java.util.function.Function;
+import java.util.function.Supplier;
 
-import toti.application.extensions.Translator;
+import toti.extension.validation.results.CheckResult;
+import toti.extension.validation.results.ValidationItem;
 import toti.lib.tcpip.structures.UploadedFile;
 
-public class FileMaxSizeRule extends SimpleRule<Integer> {
+public class FileMaxSizeRule implements Rule {
 
-	public FileMaxSizeRule(Integer value, Function<Translator, String> onError) {
-		super(value, onError);
+	private final Integer maxSize;
+	private final Supplier<String> onError;
+
+	public FileMaxSizeRule(Integer maxSize, Supplier<String> onError) {
+		this.maxSize = maxSize;
+		this.onError = onError;
 	}
 
 	@Override
-	protected boolean isErrorToShow(Integer maxSize, Object o) {
-		UploadedFile file = (UploadedFile)o;
-		return file.getContent().length > maxSize;
+	public CheckResult check(ValidationItem item) {
+		UploadedFile file = (UploadedFile)item.getRawValue();
+		if (file != null && file.getContent().length > maxSize) {
+			item.addError(onError.get());
+		}
+		return new CheckResult(true);
 	}
 
 }

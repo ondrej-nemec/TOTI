@@ -1,39 +1,31 @@
 package toti.extension.validation.rules;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import org.junit.jupiter.api.Test;
+import java.util.Set;
+
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import toti.extension.validation.ValidationItem;
 
 public class MinValueRuleTest {
 	
 	@ParameterizedTest
-	@MethodSource("dataIsErrorToShow")
-	public void testIsErrorToShow(Object value, Integer bond, boolean expected) {
-		MinValueRule rule = new MinValueRule(null, null);
-		assertEquals(expected, rule.isErrorToShow(bond, value));
+	@MethodSource
+	public void testCheck(Number minValue, Object parsedValue, Set<Object> expectedErrors) {
+		RuleTest.test(
+			onError->new MinValueRule(minValue, onError), "not number", parsedValue,
+			expectedErrors, true, parsedValue
+		);
 	}
-	
-	public static Object[] dataIsErrorToShow() {
+
+	public static Object[] testCheck() {
 		return new Object[] {
-			new Object[] { 12, 10, false },
-			new Object[] { 10, 12, true },
-			new Object[] { 10, 10, false },
-			new Object[] { "12", 10, false },
-			new Object[] { "", 12, true },
-			new Object[] { null, 12, true },
-			new Object[] { "x", 12, true },
+			new Object[] { 10, 12, RuleTest.empty() },
+			new Object[] { 12, 10, RuleTest.filled() },
+			new Object[] { 10, 10, RuleTest.empty() },
+			new Object[] { 10, "12", RuleTest.empty() },
+			new Object[] { 12, "", RuleTest.empty() },
+			new Object[] { 12, null, RuleTest.empty() },
+			new Object[] { 12, "x", RuleTest.filled() },
 		};
 	}
-	
-	@Test
-	public void testGetValue() {
-		ValidationItem item = new ValidationItem("name", "origin", null, null);
-		item.setNewValue("newValue");
-		
-		MinValueRule rule = new MinValueRule(null, null);
-		assertEquals("origin", rule.getValue(item));
-	}
+
 }

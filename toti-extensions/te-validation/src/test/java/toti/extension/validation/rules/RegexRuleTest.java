@@ -1,34 +1,27 @@
 package toti.extension.validation.rules;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import org.junit.jupiter.api.Test;
+import java.util.Set;
+
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import toti.extension.validation.ValidationItem;
 
 public class RegexRuleTest {
 
 	@ParameterizedTest
-	@MethodSource("dataIsErrorToShow")
-	public void testIsErrorToShow(Object value, String regex, boolean expected) {
-		RegexRule rule = new RegexRule(null, null);
-		assertEquals(expected, rule.isErrorToShow(regex, value));
+	@MethodSource
+	public void testCheck(String regex, Object parsedValue, Set<Object> expectedErrors) {
+		RuleTest.test(
+			// raw value is not used
+			onError->new RegexRule(regex, onError), 1000, parsedValue,
+			expectedErrors, true, parsedValue
+		);
 	}
 	
-	public static Object[] dataIsErrorToShow() {
+	public static Object[] testCheck() {
 		return new Object[] {
-			new Object[] { "aaa", "[a]?", false },
-			new Object[] { "aaa", "[b]+", true },
+			new Object[] { "[a]?", "aaa", RuleTest.empty() },
+			new Object[] { "[b]+", "aaa", RuleTest.filled() },
 		};
 	}
-	
-	@Test
-	public void testGetValue() {
-		ValidationItem item = new ValidationItem("name", "origin", null, null);
-		item.setNewValue("newValue");
-		
-		RegexRule rule = new RegexRule(null, null);
-		assertEquals("origin", rule.getValue(item));
-	}
+
 }

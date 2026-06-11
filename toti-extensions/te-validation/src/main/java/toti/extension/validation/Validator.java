@@ -4,11 +4,20 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import toti.application.extensions.Translator;
+import toti.extension.validation.collections.EmptyCollection;
 import toti.extension.validation.collections.RulesCollection;
+import toti.extension.validation.collections.factory.DefaultRulesCollectionsFactory;
+import toti.extension.validation.collections.factory.RulesCollectionsFactory;
+import toti.extension.validation.collections.factory.ValueRulesCollectionsFactory;
+import toti.extension.validation.results.CheckResult;
+import toti.extension.validation.results.CustomCollectionValidationItem;
+import toti.extension.validation.results.ValidationCollection;
+import toti.extension.validation.results.ValidationItem;
 import toti.extension.validation.rules.Rule;
 import toti.lib.common.exceptions.LogicException;
 import toti.lib.common.structures.MapInit;
@@ -18,139 +27,129 @@ public class Validator {
 	
 	private final List<RulesCollection> rules;
 	private final boolean strictList;
-	private final Optional<RulesCollection> defaultRule;
-	private final BiFunction<Translator, List<String>, String> onStrictListError;
-	private Optional<GlobalFunction> globalFunc = Optional.empty();
+	private final Optional<Function<DefaultRulesCollectionsFactory, RulesCollection>> defaultRule;
+	private final Function<List<String>, String> onStrictListError;
+	private Optional<Consumer<CustomCollectionValidationItem>> customValidation = Optional.empty();
+	private final Translator translator;
 
-	public Validator(boolean strictList) {
-		this(strictList, (trans, params)->trans.translate(
+	public static Validator create(boolean strictList) {
+		return create(strictList, createTranslator());
+	}
+
+	public static Validator create(boolean strictList, Translator translator) {
+		return create(strictList, params->translator.translate(
 			"toti.validation.not-expected-parameters",
 			new MapInit<String, Object>().append("parameters", params).toMap()
-		)); // "Not expected parameters: " + params
+		), translator);
+	}
+
+	public static Validator create(boolean strictList, Function<List<String>, String> onStrictListError) {
+		return create(strictList, onStrictListError, createTranslator());
 	}
 	
-	public Validator(boolean strictList, BiFunction<Translator, List<String>, String> onStrictListError) {
-		this(strictList, Optional.empty(), onStrictListError);
+	public static Validator create(boolean strictList, Function<List<String>, String> onStrictListError, Translator translator) {
+		return new Validator(strictList, Optional.empty(), onStrictListError, translator);
 	}
-	
-	public Validator(RulesCollection defaultRule) {
-		this(false, Optional.of(defaultRule), (trans, params)->trans.translate(
+
+	public static Validator create(Function<DefaultRulesCollectionsFactory, RulesCollection> defaultRule) {
+		return create(defaultRule, createTranslator());
+	}
+
+	public static Validator create(Function<DefaultRulesCollectionsFactory, RulesCollection> defaultRule, Translator translator) {
+		return create(defaultRule, params->translator.translate(
 			"toti.validation.parameter-not-match-default-rule",
 			new MapInit<String, Object>().append("parameter", params).toMap()
-		)); // "Parameters not match default rule: " + params
+		), translator);
+	}
+
+	public static Validator create(Function<DefaultRulesCollectionsFactory, RulesCollection> defaultRule, Function<List<String>, String> onStrictListError) {
+		return create(defaultRule, onStrictListError, createTranslator());
+	}
+
+	public static Validator create(Function<DefaultRulesCollectionsFactory, RulesCollection> defaultRule, Function<List<String>, String> onStrictListError, Translator translator) {
+		return new Validator(false, Optional.of(defaultRule), onStrictListError, translator);
+	}
+
+	private static Translator createTranslator() {
+		return Translator.createDefault();
 	}
 	
-	public Validator(RulesCollection defaultRule, BiFunction<Translator, List<String>, String> onStrictListError) {
-		this(false, Optional.of(defaultRule), onStrictListError);
-	}
-	
-	private Validator(boolean strictList, Optional<RulesCollection> defaultRule, BiFunction<Translator, List<String>, String> onStrictListError) {
+	private Validator(
+		boolean strictList, Optional<Function<DefaultRulesCollectionsFactory, RulesCollection>> defaultRule,
+		Function<List<String>, String> onStrictListError,
+		Translator translator
+	) {
 		this.strictList = strictList;
 		this.onStrictListError = onStrictListError;
 		this.rules = new LinkedList<>();
 		this.defaultRule = defaultRule;
+		this.translator = translator;
 	}
-	
-	/*
-	@Override
-	public void validate(Request request, Translator translator, Identity identity) throws RequestInterruptedException {
-		getBodyValidate().validate(request, translator, identity);
-	}
-	
-	public Validate getQueryValidate() {
-		return getValidate(true);
-	}
-	
-	public Validate getBodyValidate() {
-		return getValidate(false);
-	}
-	
-	private Validate getValidate(boolean query) {
-		return (request, translator, identity)->{
-			RequestParameters params = query ? new RequestParameters(request.getQueryParams().toMap()) : request.getBodyParams();
-			
-			ValidationResult result = validate(request, params, translator, identity);
-			if (!result.isValid()) {
-				throw new RequestInterruptedException(Response.create(StatusCode.BAD_REQUEST).getJson(result));
-			}
-		};
-	}*/
-	
-	public Validator addRule(RulesCollection rule) {
-		rules.add(rule);
+
+	public Validator addRule(Function<ValueRulesCollectionsFactory, RulesCollection> rule) {
+		rules.add(rule.apply(new RulesCollectionsFactory(translator)));
 		return this;
 	}
 	
-	public Validator setGlobalFunction(GlobalFunction globalFunction) {
-		if (this.globalFunc.isPresent()) {
+	public Validator setCustomValidation(Consumer<CustomCollectionValidationItem> customValidation) {
+		if (this.customValidation.isPresent()) {
 			throw new LogicException("Global function is already set");
 		}
-		this.globalFunc = Optional.of(globalFunction);
+		this.customValidation = Optional.of(customValidation);
 		return this;
 	}
 	
-	public ValidationResult validate(RequestParameters prop, Translator translator) {
-		return validate("%s", prop, translator);
+	public ValidationResult validate(RequestParameters prop) {
+		return _validate("%s", prop, "", "");
 	}
 	
 	/** INTERNAL **/
-	public ValidationResult validate(String format, RequestParameters prop, Translator translator) {
-		ValidationResult result = new ValidationResult();
-		List<String> names = new ArrayList<>();
+	public ValidationCollection _validate(String format, RequestParameters prop, String name, String extendedName) {
+		ValidationCollection result = new ValidationCollection();
 		for (RulesCollection rule : rules) {
-			String newName = iterateRules(format, rule.getName(), rule, prop, result, translator);
-			names.add(newName);
+			result.addItem(iterateRules(format, rule.getName(), rule, prop.getValue(rule.getName())));
 		}
 		List<String> notChecked = new ArrayList<>(prop.keySet());
-		notChecked.removeAll(names);
+		notChecked.removeAll(result.getItemsNames());
 		
-		if (!notChecked.isEmpty() && strictList) {
-			result.addError(onStrictListError.apply(translator, notChecked.stream().map(a->String.format(format, a)).collect(Collectors.toList())));
-		}
-		if (!strictList && defaultRule.isPresent()) {
-			RulesCollection rule = defaultRule.get();
-			for (String notCheckedName : notChecked) {
-				iterateRules(format, notCheckedName, rule, prop, result, translator);
+		if (!notChecked.isEmpty()) {
+			if (strictList) {
+				result.addError(
+					onStrictListError.apply(notChecked.stream().map(a->String.format(format, a)).collect(Collectors.toList()))
+				);
+			} else if (defaultRule.isPresent()) {
+				RulesCollection rule = defaultRule.get().apply(new RulesCollectionsFactory(translator));
+				for (String notCheckedName : notChecked) {
+					result.addItem(iterateRules(format, notCheckedName, rule, prop.getValue(notCheckedName)));
+				}
+			} else {
+				for (String notCheckedName : notChecked) {
+					result.addItem(iterateRules(format, notCheckedName, new EmptyCollection(), prop.getValue(notCheckedName)));
+				}
 			}
 		}
-		if (globalFunc.isPresent() && result.isValid()) {
-			globalFunc.get().apply(prop, result);
+		if (customValidation.isPresent() && result.isValid()) {
+			customValidation.get().accept(result);
 		}
 		return result;
 	}
 	
-	private String iterateRules(
+	protected ValidationItem iterateRules(
 			String format, String propertyName,
-			RulesCollection collection, RequestParameters prop,
-			ValidationResult result, Translator translator) {
-		ValidationItem item = new ValidationItem(
-			propertyName,
-			prop.getValue(propertyName),
-			result, translator
-		);
+			RulesCollection collection, Object rawValue) {
+		ValidationItem item = new ValidationItem(propertyName, String.format(format, propertyName), rawValue);
+		boolean isMoreValidationPossible = true;
 		for (Rule singleRule : collection.getRules()) {
-			singleRule.check(String.format(format, propertyName), propertyName, item);
-			if (!item.canValidationContinue()) {
+			CheckResult singleResult = singleRule.check(item);
+			isMoreValidationPossible = singleResult.isMoreValidationPossible();
+			if (!isMoreValidationPossible) {
 				break;
 			}
 		}
-		if (item.canValidationContinue() && collection.getCustomValidation().isPresent()) {
-			collection.getCustomValidation().get().accept(item);
+		if (isMoreValidationPossible && collection.getCustomValidation().isPresent()) {
+			collection.getCustomValidation().get().check(item);
 		}
-		if (result.isValid(propertyName) && collection.getChangeValue().isPresent()) {
-			Object newValue = collection.getChangeValue().get().apply(item.getNewValue());
-			// set only if origin and new value are not null
-			if (newValue != null && item.getNewValue() != null) {
-				item.setNewValue(newValue);
-				prop.put(propertyName, newValue);
-			}
-		}
-		String newName = collection.getRename().orElse(propertyName);
-		if (prop.containsKey(propertyName)) {
-			prop.remove(propertyName);
-			prop.put(newName, item.getNewValue());
-		}
-		return newName;
+		return item;
 	}
 	
 }

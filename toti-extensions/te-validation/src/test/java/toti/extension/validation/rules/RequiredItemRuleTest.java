@@ -1,53 +1,41 @@
 package toti.extension.validation.rules;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Set;
+
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import toti.application.extensions.Translator;
-import toti.extension.validation.ValidationItem;
-import toti.extension.validation.ValidationResult;
 
 public class RequiredItemRuleTest {
 
 	@ParameterizedTest
-	@MethodSource("dataCheck")
-	public void testCheck(boolean required, Object originValue, Object newValue, int times, boolean canValidate) {
-		ValidationResult result = mock(ValidationResult.class);
-		Translator translator = mock(Translator.class);
-		
-		ValidationItem item = new ValidationItem("name", originValue, result, translator);
-		item.setNewValue(newValue);
-		
-		RequiredItemRule rule = new RequiredItemRule(required, (t, p)->"error");
-		rule.check( "propertyName", "ruleName", item);
-		
-		assertEquals(newValue, item.getNewValue());
-		assertEquals(canValidate, item.canValidationContinue());
-		verify(result, times(times)).addError("propertyName", "error");
+	@MethodSource
+	public void testCheck(boolean required, Object rawValue, Object parsedValue, Set<Object> expectedErrors, boolean isMoreValidationPossible) {
+		RuleTest.test(
+			errors->new RequiredItemRule(required, p->"Expected Error " + p),
+			rawValue, parsedValue,
+			expectedErrors, isMoreValidationPossible, parsedValue
+		);
 	}
 	
-	public static Object[] dataCheck() {
+	public static Object[] testCheck() {
 		return new Object[] {
 			// not required, values null
-			new Object[] { false, null, null, 0, false },
+			new Object[] { false, null, null, RuleTest.empty(), true },
 			// not required, origin null, new not
-			new Object[] { false, null, "new value", 0, false },
+			new Object[] { false, null, "new value", RuleTest.empty(), true },
 			// not required, origin not null, new null
-			new Object[] { false, "origin", null, 0, false },
+			new Object[] { false, "origin", null, RuleTest.empty(), true },
 			// not required, values not null
-			new Object[] { false, "origin", "new value", 0, true },
+			new Object[] { false, "origin", "new value", RuleTest.empty(), true },
 			// required, values null
-			new Object[] { true, null, null, 1, false },
+			new Object[] { true, null, null, RuleTest.set("Expected Error Name"), false },
 			// required, origin null, new not
-			new Object[] { true, null, "new value", 1, false },
+			new Object[] { true, null, "new value", RuleTest.set("Expected Error Name"), false },
 			// required, origin not null, new null
-			new Object[] { true, "origin", null, 1, false },
+			new Object[] { true, "origin", null, RuleTest.set("Expected Error Name"), false },
 			// required, values not null
-			new Object[] { true, "origin", "new value", 0, true },
+			new Object[] { true, "origin", "new value", RuleTest.empty(), true },
 		};
 	}
+
 }

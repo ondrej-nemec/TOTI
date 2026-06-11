@@ -1,41 +1,52 @@
 package toti.extension.validation.rules;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.Map;
+import java.util.function.Supplier;
 
-import toti.application.extensions.Translator;
-import toti.extension.validation.ValidationItem;
 import toti.extension.validation.Validator;
+import toti.extension.validation.results.CheckResult;
+import toti.extension.validation.results.ValidationCollection;
+import toti.extension.validation.results.ValidationItem;
 import toti.lib.common.structures.DictionaryValue;
 import toti.lib.tcpip.structures.RequestParameters;
 
 public class StructureListRule implements Rule {
 
 	private final Validator validator;
-	private final Function<Translator, String> onError;
+	private final Supplier<String> onError;
 
-	public StructureListRule(Validator validator, Function<Translator, String> onError) {
+	public StructureListRule(Validator validator, Supplier<String> onError) {
 		this.validator = validator;
 		this.onError = onError;
 	}
 
 	@Override
-	public void check(String propertyName, String ruleName, ValidationItem item) {
+	public CheckResult check(ValidationItem item) {
 		try {
-			List<Object> list = new DictionaryValue(item.getOriginValue()).getList();
+			List<Object> list = new DictionaryValue(item.getRawValue()).getList();
 			RequestParameters fields = new RequestParameters();
 			for (int i = 0; i < list.size(); i++) {
 				fields.put(i + "", list.get(i));
 			}
-			item.addSubResult(validator.validate(
-				(propertyName.contains(":") ? "" : "%s:") + propertyName + "[]",
-				fields,
-				item.getTranslator()
-			));
-			item.setNewValue(new ArrayList<>(fields.values()));
+			ValidationCollection validationCollection = validator._validate(
+				(item.getExtendedName().contains(":") ? "" : "%s") + item.getExtendedName() + "[]",
+				fields, item.getOriginName(), item.getExtendedName()
+			);
+			Map<String, Object> subErrors = validationCollection.getErrors();
+			if (!subErrors.isEmpty()) {
+				item.addError(subErrors);	
+			}
+			List<Object> result = new LinkedList<>();
+			fields.forEach((key, value)->{
+				result.add(validationCollection.getValue(key));
+			});
+			item.setValue(result);
+			return new CheckResult(true);
 		} catch (ClassCastException | NumberFormatException e) {
-			item.addError(propertyName, onError);
+			item.addError(onError.get());
+			return new CheckResult(false);
 		}
 	}
 

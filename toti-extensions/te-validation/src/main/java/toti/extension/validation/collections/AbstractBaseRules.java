@@ -3,66 +3,51 @@ package toti.extension.validation.collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
-import toti.extension.validation.ValidationItem;
+import toti.application.extensions.Translator;
+import toti.extension.validation.results.CustomValueValidationItem;
+import toti.extension.validation.rules.CustomValidationRule;
 import toti.extension.validation.rules.ExpectedTypeRule;
 import toti.extension.validation.rules.RequiredItemRule;
 import toti.extension.validation.rules.Rule;
-import toti.application.extensions.Translator;
 import toti.lib.common.exceptions.LogicException;
 import toti.lib.common.structures.MapInit;
 
 public abstract class AbstractBaseRules<T> implements RulesCollection {
 	
 	private final String name;
+	protected final Translator translator;
 	
 	private final RequiredItemRule requiredItemRule;
 	private ExpectedTypeRule expectedRuleType;
 
-	private Optional<String> rename = Optional.empty();
-	private Optional<Function<Object, Object>> changeValue = Optional.empty();
-	private Optional<Consumer<ValidationItem>> customValidation = Optional.empty();
+	private Optional<CustomValidationRule> customValidationRule = Optional.empty();
 	
-	public AbstractBaseRules(String name, boolean required, BiFunction<Translator, String, String> onRequiredError) {
+	public AbstractBaseRules(String name, boolean required, Function<String, String> onRequiredError, Translator translator) {
 		this.name = name;
 		this.requiredItemRule = new RequiredItemRule(required, onRequiredError);
+		this.translator = translator;
 	}
-	
-	public T renameTo(String name) {
-		if (this.rename.isPresent()) {
-			throw new LogicException("Rename already set to: '" + rename.get() + "'");
-		}
-		this.rename = Optional.of(name);
-		return getThis();
-	}
-	
-	public T changeValue(Function<Object, Object> changeValue) {
-		if (this.changeValue.isPresent()) {
-			throw new LogicException("Change function already set");
-		}
-		this.changeValue = Optional.of(changeValue);
-		return getThis();
-	}
-	
+
 	public T _setType(Class<?> clazz) {
 		return _setType(clazz, true);
 	}
 	
-	public T _setType(Class<?> clazz, Function<Translator, String> onExpectedTypeError) {
+	public T _setType(Class<?> clazz, Supplier<String> onExpectedTypeError) {
 		return _setType(clazz, true, onExpectedTypeError);
 	}
 	
 	public T _setType(Class<?> clazz, boolean changeValueByType) {
-		return _setType(clazz, changeValueByType, (t)->t.translate(
+		return _setType(clazz, changeValueByType, ()->translator.translate(
 			"toti.validation.value-type-must-be", 
 			new MapInit<String, Object>().append("class", clazz).toMap()
 		)); // "Value must be " + clazz
 	}
 	
-	public T _setType(Class<?> clazz, boolean changeValueByType, Function<Translator, String> onExpectedTypeError) {
+	public T _setType(Class<?> clazz, boolean changeValueByType, Supplier<String> onExpectedTypeError) {
 		if (this.expectedRuleType != null) {
 			throw new LogicException("You cannot set an already set value");
 		}
@@ -71,8 +56,8 @@ public abstract class AbstractBaseRules<T> implements RulesCollection {
 		return getThis();
 	}
 
-	public T setCustomValidation(Consumer<ValidationItem> customValidation) {
-		this.customValidation = Optional.of(customValidation);
+	public T setCustomValidation(Consumer<CustomValueValidationItem> customValidation) {
+		this.customValidationRule = Optional.of(new CustomValidationRule(customValidation));
 		return getThis();
 	}
 	
@@ -101,18 +86,8 @@ public abstract class AbstractBaseRules<T> implements RulesCollection {
 	}
 
 	@Override
-	public Optional<String> getRename() {
-		return rename;
-	}
-
-	@Override
-	public Optional<Function<Object, Object>> getChangeValue() {
-		return changeValue;
-	}
-
-	@Override
-	public Optional<Consumer<ValidationItem>> getCustomValidation() {
-		return customValidation;
+	public Optional<CustomValidationRule> getCustomValidation() {
+		return customValidationRule;
 	}
 	
 }

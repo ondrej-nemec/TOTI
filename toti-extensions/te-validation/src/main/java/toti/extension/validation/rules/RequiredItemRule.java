@@ -1,31 +1,31 @@
 package toti.extension.validation.rules;
 
-import java.util.function.BiFunction;
+import java.util.function.Function;
 
-import toti.application.extensions.Translator;
-import toti.extension.validation.ValidationItem;
+import toti.extension.validation.results.CheckResult;
+import toti.extension.validation.results.ValidationItem;
 
 public class RequiredItemRule implements Rule {
 	
 	private final boolean isRequired;
-	private final BiFunction<Translator, String, String> onError;
+	private final Function<String, String> onError;
 	
-	public RequiredItemRule(boolean isRequired, BiFunction<Translator, String, String> onError) {
+	public RequiredItemRule(boolean isRequired, Function<String, String> onError) {
 		this.onError = onError;
 		this.isRequired = isRequired;
 	}
 
 	@Override
-	public void check(String propertyName, String ruleName, ValidationItem item) {
-		if (isRequired && item.getOriginValue() == null) {
-			item.addError(propertyName, (translator)->onError.apply(translator, ruleName));
-		} else if (isRequired && item.getNewValue() == null) {
+	public CheckResult check(ValidationItem item) {
+		// not continue with null value
+		if (isRequired && item.getRawValue() == null) {
+			item.addError(onError.apply(item.getOriginName()));
+			return new CheckResult(false);
+		} else if (isRequired && item.getParsedValue() == null) {
 			// after retype empty string is null number
-			item.addError(propertyName, (translator)->onError.apply(translator, ruleName));
+			item.addError(onError.apply(item.getOriginName()));
+			return new CheckResult(false);
 		}
-		if (item.getOriginValue() == null || item.getNewValue() == null) {
-			// not continue with null value
-			item.setCanValidate(false);
-		}
+		return new CheckResult(true);
 	}
 }

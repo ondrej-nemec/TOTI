@@ -1,21 +1,29 @@
 package toti.extension.validation.rules;
 
-import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import toti.application.extensions.Translator;
+import toti.extension.validation.results.CheckResult;
+import toti.extension.validation.results.ValidationItem;
 
-public class RegexRule extends SimpleRule<String> {
+public class RegexRule implements Rule {
 
-	public RegexRule(String value, Function<Translator, String> onError) {
-		super(value, onError);
+	private final String regex;
+	private final Supplier<String> onError;
+
+	public RegexRule(String regex, Supplier<String> onError) {
+		this.regex = regex;
+		this.onError = onError;
 	}
 
 	@Override
-	protected boolean isErrorToShow(String regex, Object o) {
-		Matcher m = Pattern.compile(regex).matcher(o.toString());
-		return !m.find();
+	public CheckResult check(ValidationItem item) {
+		Matcher m = Pattern.compile(regex).matcher(item.getRawValue().toString());
+		if (!m.find()) {
+			item.addError(onError.get());
+		}
+		return new CheckResult(true);
 	}
 
 }
