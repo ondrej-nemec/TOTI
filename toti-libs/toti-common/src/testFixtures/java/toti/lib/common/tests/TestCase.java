@@ -121,15 +121,15 @@ public interface TestCase {
 	/******************************/
 
 	static <K, V> String _toString(Map<K, V> map) {
-		if (map == null) {
-			return "NULL";
-		}
 		return _toString(map, "");
 	}
 
 	static <K, V> String _toString(Map<K, V> map, String prefix) {
+		if (map == null) {
+			return "NULL";
+		}
 		StringBuilder res = new StringBuilder();
-		res.append(prefix);
+		//res.append(prefix);
 		res.append("{");
 		map.forEach((k, v)->{
 			res.append("\n");
@@ -139,31 +139,37 @@ public interface TestCase {
 			res.append(": ");
 			res.append(_toString(v, prefix + PREFIX));
 		});
-		res.append("\n");
-		res.append(prefix);
+		if (!map.isEmpty()) {
+			res.append("\n");
+			res.append(prefix);
+		}
 		res.append("}");
 		return res.toString();
 	}
 
 	static <T> String _toString(Iterable<T> iterable) {
-		if (iterable == null) {
-			return "NULL";
-		}
 		return _toString(iterable, "");
 	}
 
 	static <T> String _toString(Iterable<T> iterable, String prefix) {
+		if (iterable == null) {
+			return "NULL";
+		}
 		StringBuilder res = new StringBuilder();
-		res.append(prefix);
+		//res.append(prefix);
 		res.append("[");
+		int i = 0;
 		for (T t : iterable) {
 			res.append("\n");
 			res.append(prefix);
 			res.append(PREFIX);
 			res.append(_toString(t, prefix + PREFIX));
+			i++;
 		}
-		res.append("\n");
-		res.append(prefix);
+		if (i > 0) {
+			res.append("\n");
+			res.append(prefix);
+		}
 		res.append("]");
 		return res.toString();
 	}
@@ -175,7 +181,7 @@ public interface TestCase {
 	@SuppressWarnings("unchecked")
 	static <T> String _toString(T t, String prefix) {
 		if (t == null) {
-			return prefix + "NULL ";
+			return prefix + "NULL";
 		}
 		if (t instanceof Map map) {
 			return _toString(map, prefix);
