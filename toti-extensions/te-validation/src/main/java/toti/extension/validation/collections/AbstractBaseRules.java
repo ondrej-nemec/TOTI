@@ -43,7 +43,7 @@ public abstract class AbstractBaseRules<T> implements RulesCollection {
 	public T _setType(Class<?> clazz, boolean changeValueByType) {
 		return _setType(clazz, changeValueByType, ()->translator.translate(
 			"toti.validation.value-type-must-be", 
-			new MapInit<String, Object>().append("class", clazz).toMap()
+			new MapInit<String, Object>().append("class", clazz.getCanonicalName()).toMap()
 		)); // "Value must be " + clazz
 	}
 	
