@@ -11,7 +11,7 @@ public interface Translator {
 	static Translator createDefault() {
 		return new Translator() {
 			@Override public String translate(String key) { return key; }
-			@Override public String translate(String key, Map<String, Object> params) { return key; }
+			@Override public String translate(String key, Map<String, Object> params) { return key + " " + params; }
 		};
 	}
 	
