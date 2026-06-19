@@ -86,9 +86,7 @@ public class RulesCollectionsFactory implements DefaultRulesCollectionsFactory, 
 	
 	@Override
 	public StructureRules mapRules(String name, boolean required, Validator validator, Function<String, String> onRequiredError) {
-		StructureRules rules = new StructureRules(name, required, onRequiredError, translator);
-		rules.setMapRule(validator);
-		return rules;
+		return StructureRules.map(name, required, onRequiredError, translator, validator);
 	}
 	
 	/******************************/
@@ -105,9 +103,7 @@ public class RulesCollectionsFactory implements DefaultRulesCollectionsFactory, 
 	
 	@Override
 	public StructureRules listRules(String name, boolean required, Validator validator, Function<String, String> onRequiredError) {
-		StructureRules rules = new StructureRules(name, required, onRequiredError, translator);
-		rules.setListRule(validator);
-		return rules;
+		return StructureRules.list(name, required, onRequiredError, translator, validator);
 	}
 	
 	/******************************/
@@ -124,9 +120,7 @@ public class RulesCollectionsFactory implements DefaultRulesCollectionsFactory, 
 	
 	@Override
 	public StructureRules sortedMapRules(String name, boolean required, Validator validator, Function<String, String> onRequiredError) {
-		StructureRules rules = new StructureRules(name, required, onRequiredError, translator);
-		rules.setSortedMapRule(validator);
-		return rules;
+		return StructureRules.sortedMap(name, required, onRequiredError, translator, validator);
 	}
 	
 	/******************************/

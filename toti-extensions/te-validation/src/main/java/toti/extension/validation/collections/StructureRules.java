@@ -19,13 +19,39 @@ public class StructureRules extends AbstractBaseRules<StructureRules> {
 
 	private MaxLengthRule maxLengthRule;
 	private MinLengthRule minLengthRule;
+
+	private final Rule structureRule;
 	
-	private StructureMapRule mapRule;
-	private StructureListRule listRule;
-	private StructureSortedMapRule sortedMapRule;
+	public static StructureRules map(
+		String name, boolean required, Function<String, String> onRequiredError, Translator translate, Validator validator
+	) {
+		return new StructureRules(
+			name, required, onRequiredError, translate,
+			new StructureMapRule(validator, ()->translate.translate("toti.validation.parameter-cannot-be-converted"))
+		);
+	}
 	
-	public StructureRules(String name, boolean required, Function<String, String> onRequiredError, Translator translate) {
+	public static StructureRules list(
+		String name, boolean required, Function<String, String> onRequiredError, Translator translate, Validator validator
+	) {
+		return new StructureRules(
+			name, required, onRequiredError, translate,
+			new StructureListRule(validator, ()->translate.translate("toti.validation.parameter-cannot-be-converted"))
+		);
+	}
+	
+	public static StructureRules sortedMap(
+		String name, boolean required, Function<String, String> onRequiredError, Translator translate, Validator validator
+	) {
+		return new StructureRules(
+			name, required, onRequiredError, translate,
+			new StructureSortedMapRule(validator, ()->translate.translate("toti.validation.parameter-cannot-be-converted"))
+		);
+	}
+
+	private StructureRules(String name, boolean required, Function<String, String> onRequiredError, Translator translate, Rule structureRule) {
 		super(name, required, onRequiredError, translate);
+		this.structureRule = structureRule;
 	}
 
 	public StructureRules setMinLength(int minLength) {
@@ -57,21 +83,6 @@ public class StructureRules extends AbstractBaseRules<StructureRules> {
 		this.maxLengthRule = new MaxLengthRule(maxLength, onMaxLengthError);
 		return this;
 	}
-	
-	public StructureRules setSortedMapRule(Validator validator) {
-		this.sortedMapRule = new StructureSortedMapRule(validator, ()->translator.translate("toti.validation.parameter-cannot-be-converted"));
-		return this;
-	}
-	
-	public StructureRules setMapRule(Validator validator) {
-		this.mapRule = new StructureMapRule(validator, ()->translator.translate("toti.validation.parameter-cannot-be-converted"));
-		return this;
-	}
-	
-	public StructureRules setListRule(Validator validator) {
-		this.listRule = new StructureListRule(validator, ()->translator.translate("toti.validation.parameter-cannot-be-converted"));
-		return this;
-	}
 
 	@Override
 	protected StructureRules getThis() {
@@ -81,20 +92,12 @@ public class StructureRules extends AbstractBaseRules<StructureRules> {
 	@Override
 	public List<Rule> getRules() {
 		List<Rule> rules = super.getRules();
+		rules.add(structureRule);
 		if (maxLengthRule != null) {
 			rules.add(maxLengthRule);
 		}
 		if (minLengthRule != null) {
 			rules.add(minLengthRule);
-		}
-		if (sortedMapRule != null) {
-			rules.add(sortedMapRule);
-		}
-		if (mapRule != null) {
-			rules.add(mapRule);
-		}
-		if (listRule != null) {
-			rules.add(listRule);
 		}
 		return rules;
 	}
