@@ -16,9 +16,9 @@ public class StructureMapRuleTest {
 	@ParameterizedTest
 	@MethodSource
 	public void testCheck(
-		Object originValue, Set<Object> expectedErrors, boolean isMoreValidationPossible,
-		Object expectedValue, int expectedValidateCalling,
-		RequestParameters fields, String name, String format
+		Object originValue, RequestParameters parsedValueToSub, RequestParameters subResponse, Object expectedValue,
+		Set<Object> expectedErrors, boolean isMoreValidationPossible,
+		int expectedValidateCalling, String name, String format
 	) {
 		RuleTest.testStructure(
 			(validator, onError)->new StructureMapRule(validator, onError),
@@ -26,33 +26,42 @@ public class StructureMapRuleTest {
 			new ValidationCollection(
 				MapInit.create().toMap(),
 				new ListInit<>().toSet(),
-				fields
+				subResponse
 			),
 			expectedErrors, isMoreValidationPossible,
 			expectedValue, expectedValidateCalling,
-			fields, name, format
+			parsedValueToSub, name, format
 		);
 	}
 	
 	public static Object[] testCheck() {
 		return new Object[] {
 			new Object[] {
-				MapInit.create().append("a", "b").append("x", "y").toMap(), RuleTest.empty(), true,
-				new RequestParameters().put("a", "b").put("x", "y"), 1,
+				MapInit.create().append("a", "b").append("x", "y").toMap(),
 				new RequestParameters().put("a", "b").put("x", "y"),
-				"propertyName", "propertyName[%s]"
+				new RequestParameters().put("a", "b").put("x", "y"),
+				new RequestParameters().put("a", "b").put("x", "y"),
+				RuleTest.empty(), true, 1, "propertyName", "propertyName[%s]"
 			},
 			new Object[] {
-				Arrays.asList("aa"), RuleTest.empty(), true,
-				new RequestParameters().put("0", "aa"), 1,
+				Arrays.asList("aa"),
 				new RequestParameters().put("0", "aa"),
-				"propertyName", "propertyName[%s]"
+				new RequestParameters().put("0", "aa"),
+				new RequestParameters().put("0", "aa"),
+				RuleTest.empty(), true, 1, "propertyName", "propertyName[%s]"
 			},
 			new Object[] {
-				"", RuleTest.filled(), false,
-				"parsed-value", 0,
-				null, null, null
-			}
+				"", null, null, "parsed-value",
+				RuleTest.filled(), false, 0, null, null
+			},
+			new Object[] {
+				MapInit.create().append("a", "A").append("b", "B").toMap(),
+				new RequestParameters().put("a", "A").put("b", "B"),
+				// simulate: remove b | add c | d is required but missing
+				new RequestParameters().put("a", "a").put("c", "C").put("d", null),
+				new RequestParameters().put("a", "a").put("c", "C").put("d", null),
+				RuleTest.empty(), true, 1, "propertyName", "propertyName[%s]"
+			},
 		};
 	}
 	

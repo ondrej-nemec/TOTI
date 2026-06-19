@@ -1,8 +1,10 @@
 package toti.extension.validation.rules;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import toti.extension.validation.Validator;
@@ -38,8 +40,11 @@ public class StructureListRule implements Rule {
 			if (!subErrors.isEmpty()) {
 				item.addError(subErrors);	
 			}
+			Set<String> keys = new HashSet<>();
+			keys.addAll(fields.keySet());
+			keys.addAll(validationCollection.getItemsNames());
 			List<Object> result = new LinkedList<>();
-			fields.forEach((key, value)->{
+			keys.forEach(key->{
 				result.add(validationCollection.getValue(key));
 			});
 			item.setValue(result);

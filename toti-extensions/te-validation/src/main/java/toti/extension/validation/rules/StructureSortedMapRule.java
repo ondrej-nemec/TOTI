@@ -46,6 +46,14 @@ public class StructureSortedMapRule implements Rule {
 			if (!subErrors.isEmpty()) {
 				item.addError(subErrors);	
 			}
+			var removed = new LinkedList<>(order);
+			removed.removeAll(validationCollection.getItemsNames());
+			order.removeAll(removed);
+
+			var added = new LinkedList<>(validationCollection.getItemsNames());
+			added.removeAll(order);
+			order.addAll(added);
+
 			SortedMap<String, Object> result = new SortedMap<>();
 			order.forEach(key->{
 				result.append(key, validationCollection.getValue(key));

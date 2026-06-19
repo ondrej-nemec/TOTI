@@ -33,12 +33,7 @@ public class StructureMapRule implements Rule {
 			if (!subErrors.isEmpty()) {
 				item.addError(subErrors);	
 			}
-
-			RequestParameters result = new RequestParameters();
-			fields.forEach((key, value)->{
-				result.put(key, validationCollection.getValue(key));
-			});
-			item.setValue(result);
+			item.setValue(validationCollection.getValues());
 			return new CheckResult(true);
 		} catch (NullPointerException | ClassCastException e) {
 			item.addError(onError.get());

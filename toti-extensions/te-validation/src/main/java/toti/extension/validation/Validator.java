@@ -113,16 +113,17 @@ public class Validator {
 		notChecked.removeAll(result.getItemsNames());
 		
 		if (!notChecked.isEmpty()) {
-			if (strictList) {
-				result.addError(
-					onStrictListError.apply(notChecked.stream().map(a->String.format(format, a)).collect(Collectors.toList()))
-				);
-			} else if (defaultRule.isPresent()) {
+			if (defaultRule.isPresent()) {
 				RulesCollection rule = defaultRule.get().apply(new RulesCollectionsFactory(translator));
 				for (String notCheckedName : notChecked) {
 					result.addItem(iterateRules(format, notCheckedName, rule, prop.getValue(notCheckedName)));
 				}
 			} else {
+				if (strictList) {
+					result.addError(
+						onStrictListError.apply(notChecked.stream().map(a->String.format(format, a)).collect(Collectors.toList()))
+					);
+				}
 				for (String notCheckedName : notChecked) {
 					result.addItem(iterateRules(format, notCheckedName, new EmptyCollection(), prop.getValue(notCheckedName)));
 				}
