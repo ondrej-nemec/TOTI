@@ -93,7 +93,7 @@ public class Validator {
 	
 	public Validator setCustomValidation(Consumer<CustomCollectionValidationItem> customValidation) {
 		if (this.customValidation.isPresent()) {
-			throw new LogicException("Global function is already set");
+			throw new LogicException("Custom validation is already set");
 		}
 		this.customValidation = Optional.of(customValidation);
 		return this;
