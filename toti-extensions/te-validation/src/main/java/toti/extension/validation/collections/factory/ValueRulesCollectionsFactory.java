@@ -3,6 +3,7 @@ package toti.extension.validation.collections.factory;
 import java.util.function.Function;
 
 import toti.extension.validation.Validator;
+import toti.extension.validation.ValidatorFactory;
 import toti.extension.validation.collections.AlphaNumbericRules;
 import toti.extension.validation.collections.BaseRules;
 import toti.extension.validation.collections.FileRules;
@@ -23,17 +24,17 @@ public interface ValueRulesCollectionsFactory {
 
 	AlphaNumbericRules objectRules(String name, boolean required, Function<String, String> onRequiredError);
 
-	StructureRules mapRules(String name, boolean required, Validator validator);
+	StructureRules mapRules(String name, boolean required, Function<ValidatorFactory, Validator> validator);
 
-	StructureRules mapRules(String name, boolean required, Validator validator, Function<String, String> onRequiredError);
+	StructureRules mapRules(String name, boolean required, Function<ValidatorFactory, Validator> validator, Function<String, String> onRequiredError);
 
-	StructureRules listRules(String name, boolean required, Validator validator);
+	StructureRules listRules(String name, boolean required, Function<ValidatorFactory, Validator> validator);
 
-	StructureRules listRules(String name, boolean required, Validator validator, Function<String, String> onRequiredError);
+	StructureRules listRules(String name, boolean required, Function<ValidatorFactory, Validator> validator, Function<String, String> onRequiredError);
 
-	StructureRules sortedMapRules(String name, boolean required, Validator validator);
+	StructureRules sortedMapRules(String name, boolean required, Function<ValidatorFactory, Validator> validator);
 
-	StructureRules sortedMapRules(String name, boolean required, Validator validator, Function<String, String> onRequiredError);
+	StructureRules sortedMapRules(String name, boolean required, Function<ValidatorFactory, Validator> validator, Function<String, String> onRequiredError);
 
 	FileRules fileRules(String name, boolean required);
 

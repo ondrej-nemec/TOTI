@@ -14,6 +14,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import toti.application.extensions.Translator;
 import toti.extension.validation.collections.RulesCollection;
 import toti.extension.validation.results.CheckResult;
 import toti.extension.validation.results.ValidationCollection;
@@ -33,7 +34,14 @@ public class ValidatorTest {
 		RequestParameters validatedData = new RequestParameters();
 		Map<String, Object> expectedErrors = new HashMap<>();
 
-		Validator validator = Validator.create(true);
+		Validator validator = Validator.create(true, new Translator() {
+			@Override public String translate(String key) {
+				return "E: " + key;
+			}
+			@Override public String translate(String key, Map<String, Object> params) {
+				return "E: " + key + " " + params;
+			}
+		});
 
 		for (int i = 0; i < 3; i++) {
 			var index = i;
@@ -42,7 +50,7 @@ public class ValidatorTest {
 		{
 			dataToValidate.put("bool_0", null);
 			expectedErrors.put("bool_0", new ListInit<>()
-				.add("toti.validation.item-required {parameter=bool_0}")
+				.add("E: toti.validation.item-required {parameter=bool_0}")
 			.toSet());
 			validatedData.put("bool_0", null);
 		}
@@ -70,32 +78,32 @@ public class ValidatorTest {
 		{
 			dataToValidate.put("number_0", "abcd");
 			expectedErrors.put("number_0", new ListInit<>()
-				.add("toti.validation.value-type-must-be {class=java.lang.Integer}")
+				.add("E: toti.validation.value-type-must-be {class=java.lang.Integer}")
 			.toSet());
 			validatedData.put("number_0", "abcd");
 		}
 		{
 			dataToValidate.put("number_1", "12");
 			expectedErrors.put("number_1", new ListInit<>()
-				.add("toti.validation.value-must-be-one-of {values=[111, 222]}")
+				.add("E: toti.validation.value-must-be-one-of {values=[111, 222]}")
 			.toSet());
 			validatedData.put("number_1", 12);
 		}
 		{
 			dataToValidate.put("number_2", "111");
 			expectedErrors.put("number_2", new ListInit<>()
-				.add("toti.validation.value-must-be-less-or-equals {maxValue=5}")
-				.add("toti.validation.length-must-be-at-least {minLength=8}")
-				.add("toti.validation.text-not-match-pattern {regex=[a-c]}")
-				.add("toti.validation.value-must-be-equals-or-higher {minValue=999}")
-				.add("toti.validation.length-must-be-max {maxLength=2}")
+				.add("E: toti.validation.value-must-be-less-or-equals {maxValue=5}")
+				.add("E: toti.validation.length-must-be-at-least {minLength=8}")
+				.add("E: toti.validation.text-not-match-pattern {regex=[a-c]}")
+				.add("E: toti.validation.value-must-be-equals-or-higher {minValue=999}")
+				.add("E: toti.validation.length-must-be-max {maxLength=2}")
 			.toSet());
 			validatedData.put("number_2", 111);
 		}
 		{
 			dataToValidate.put("number_3", "abc");
 			expectedErrors.put("number_3", new ListInit<>()
-				.add("toti.validation.value-type-must-be {class=java.lang.Double}")
+				.add("E: toti.validation.value-type-must-be {class=java.lang.Double}")
 			.toSet());
 			validatedData.put("number_3", "abc");
 		}
@@ -118,22 +126,22 @@ public class ValidatorTest {
 		{
 			dataToValidate.put("string_0", "ccccc");
 			expectedErrors.put("string_0", new ListInit<>()
-				.add("toti.validation.value-must-be-one-of {values=[aa, bb, dddd]}")
+				.add("E: toti.validation.value-must-be-one-of {values=[aa, bb, dddd]}")
 			.toSet());
 			validatedData.put("string_0", "ccccc");
 		}
 		{
 			dataToValidate.put("string_1", "dddd");
 			expectedErrors.put("string_1", new ListInit<>()
-				.add("toti.validation.length-must-be-at-least {minLength=8}")
-				.add("toti.validation.text-not-match-pattern {regex=[a-c]}")
-				.add("toti.validation.length-must-be-max {maxLength=2}")
+				.add("E: toti.validation.length-must-be-at-least {minLength=8}")
+				.add("E: toti.validation.text-not-match-pattern {regex=[a-c]}")
+				.add("E: toti.validation.length-must-be-max {maxLength=2}")
 			.toSet());
 			validatedData.put("string_1", "dddd");
 		}
 		{
 			expectedErrors.put("string_2", new ListInit<>()
-				.add("toti.validation.item-required {parameter=string_2}")
+				.add("E: toti.validation.item-required {parameter=string_2}")
 			.toSet());
 			validatedData.put("string_2", null);
 		}
@@ -152,9 +160,9 @@ public class ValidatorTest {
 		{
 			dataToValidate.put("file", new UploadedFile("fileName", "type", "bom", new byte[15]));
 			expectedErrors.put("file", new ListInit<>()
-				.add("toti.validation.file-size-can-be-max {fileMaxSize=10}")
-				.add("toti.validation.file-type-is-not-allowed {allowedFileTypes=[txt, md]}")
-				.add("toti.validation.file-size-must-be-at-least {fileMinSize=20}")
+				.add("E: toti.validation.file-size-can-be-max {fileMaxSize=10}")
+				.add("E: toti.validation.file-type-is-not-allowed {allowedFileTypes=[txt, md]}")
+				.add("E: toti.validation.file-size-must-be-at-least {fileMinSize=20}")
 			.toSet());
 			validatedData.put("file", new UploadedFile("fileName", "type", "bom", new byte[15]));
 		}
@@ -166,35 +174,35 @@ public class ValidatorTest {
 		for (int i = 0; i < 2; i++) {
 			int index = i;
 			validator.addRule(
-				r->r.listRules("list_" + index, true, Validator.create(
+				r->r.listRules("list_" + index, true, v->v.create(
 					s->s.numberRules(Double.class)
 				)).setMaxLength(2).setMinLength(5)
 			);
 		}
-		validator.addRule(r->r.listRules("validList", true, Validator.create(s->s.numberRules(Double.class))));
+		validator.addRule(r->r.listRules("validList", true, v->v.create(s->s.numberRules(Double.class))));
 
 		{
 			dataToValidate.put("list_0", "aaaaa");
 			expectedErrors.put("list_0", new ListInit<>()
-				.add("toti.validation.parameter-cannot-be-converted")
+				.add("E: toti.validation.parameter-cannot-be-converted")
 			.toSet());
 			validatedData.put("list_0", "aaaaa");
 		}
 		{
 			dataToValidate.put("list_1", Arrays.asList("a", "1", 2, "d"));
 			expectedErrors.put("list_1", new ListInit<>()
-				.add("toti.validation.length-must-be-at-least {minLength=5}")
+				.add("E: toti.validation.length-must-be-at-least {minLength=5}")
 				.add(
 					MapInit.create()
 					.append("0", new ListInit<>()
-						.add("toti.validation.value-type-must-be {class=java.lang.Double}")
+						.add("E: toti.validation.value-type-must-be {class=java.lang.Double}")
 					.toSet())
 					.append("3", new ListInit<>()
-						.add("toti.validation.value-type-must-be {class=java.lang.Double}")
+						.add("E: toti.validation.value-type-must-be {class=java.lang.Double}")
 					.toSet())
 					.toMap()
 				)
-				.add("toti.validation.length-must-be-max {maxLength=2}")
+				.add("E: toti.validation.length-must-be-max {maxLength=2}")
 			.toSet());
 			validatedData.put("list_1", Arrays.asList("a", 1.0, 2.0, "d"));
 		}
@@ -206,7 +214,7 @@ public class ValidatorTest {
 		for (int i = 0; i < 2; i++) {
 			int index = i;
 			validator.addRule(
-				r->r.mapRules("map_" + index, true, Validator.create(true)
+				r->r.mapRules("map_" + index, true, v->v.create(true)
 					.addRule(s->s.numberRules("a", true, Integer.class))
 					.addRule(s->s.numberRules("b", false, Integer.class).setMaxValue(10))
 				)
@@ -214,14 +222,14 @@ public class ValidatorTest {
 				.setMinLength(10)
 			);
 		}
-		validator.addRule(r->r.mapRules("validMap", true, Validator.create(false)
+		validator.addRule(r->r.mapRules("validMap", true, v->v.create(false)
 			.addRule(s->s.numberRules("a", true, Integer.class))
 			.addRule(s->s.numberRules("b", true, Double.class))
 		));
 		{
 			dataToValidate.put("map_0", "aaaaa");
 			expectedErrors.put("map_0", new ListInit<>()
-				.add("toti.validation.parameter-cannot-be-converted")
+				.add("E: toti.validation.parameter-cannot-be-converted")
 			.toSet());
 			validatedData.put("map_0", "aaaaa");
 		}
@@ -235,15 +243,15 @@ public class ValidatorTest {
 				.add(
 					MapInit.create()
 					.append("", new ListInit<>()
-						.add("toti.validation.not-expected-parameters {parameters=[map_1[c]]}")
+						.add("E: toti.validation.not-expected-parameters {parameters=[map_1[c]]}")
 					.toSet())
 					.append("b", new ListInit<>()
-						.add("toti.validation.value-must-be-less-or-equals {maxValue=10}")
+						.add("E: toti.validation.value-must-be-less-or-equals {maxValue=10}")
 					.toSet())
 					.toMap()
 				)
-				.add("toti.validation.length-must-be-max {maxLength=2}")
-				.add("toti.validation.length-must-be-at-least {minLength=10}")
+				.add("E: toti.validation.length-must-be-max {maxLength=2}")
+				.add("E: toti.validation.length-must-be-at-least {minLength=10}")
 			.toSet());
 			validatedData.put("map_1", new RequestParameters().put("a", 12).put("b", 11).put("c", 123));
 		}
@@ -272,7 +280,7 @@ public class ValidatorTest {
 		}
 
 		validator.addRule(
-			r->r.mapRules("custom_1", true, Validator.create(false)
+			r->r.mapRules("custom_1", true, v->v.create(false)
 				.addRule(s->s.numberRules("number", true, Integer.class))
 				.setCustomValidation(item->{
 					item.addError("Error map");
@@ -304,19 +312,19 @@ public class ValidatorTest {
 		}
 
 		validator.addRule(
-			r->r.mapRules("upper", true, Validator.create(true)
+			r->r.mapRules("upper", true, v->v.create(true)
 				.addRule(
-					s->s.listRules("subList1", true, Validator.create(t->t.numberRules(Integer.class)))
+					s->s.listRules("subList1", true, v1->v1.create(t->t.numberRules(Integer.class)))
 				)
 				.addRule(
-					s->s.listRules("subList2", true, Validator.create(
+					s->s.listRules("subList2", true, v1->v1.create(
 						t->t.numberRules(Integer.class)
 						.setMaxValue(5).setMinValue(20)
 					))
 					.setMaxLength(2).setMinLength(10)
 				)
 				.addRule(
-					s->s.mapRules("subMap", true, Validator.create(true)
+					s->s.mapRules("subMap", true, v1->v1.create(true)
 						.addRule(t->t.numberRules("a", false, Double.class))
 						.addRule(t->t.numberRules("b", true, Double.class))
 					)
@@ -335,33 +343,33 @@ public class ValidatorTest {
 			.append("subList2", new ListInit<>()
 				.add(MapInit.create()
 				.append("0", new ListInit<>()
-					.add("toti.validation.value-must-be-less-or-equals {maxValue=5}")
-					.add("toti.validation.value-must-be-equals-or-higher {minValue=20}")
+					.add("E: toti.validation.value-must-be-less-or-equals {maxValue=5}")
+					.add("E: toti.validation.value-must-be-equals-or-higher {minValue=20}")
 				.toSet())
 				.append("1", new ListInit<>()
-					.add("toti.validation.value-must-be-less-or-equals {maxValue=5}")
-					.add("toti.validation.value-must-be-equals-or-higher {minValue=20}")
+					.add("E: toti.validation.value-must-be-less-or-equals {maxValue=5}")
+					.add("E: toti.validation.value-must-be-equals-or-higher {minValue=20}")
 				.toSet())
 				.append("2", new ListInit<>()
-					.add("toti.validation.value-type-must-be {class=java.lang.Integer}")
+					.add("E: toti.validation.value-type-must-be {class=java.lang.Integer}")
 				.toSet())
 				.append("3", new ListInit<>()
-					.add("toti.validation.value-type-must-be {class=java.lang.Integer}")
+					.add("E: toti.validation.value-type-must-be {class=java.lang.Integer}")
 				.toSet())
 				.toMap())
-				.add("toti.validation.length-must-be-max {maxLength=2}")
-				.add("toti.validation.length-must-be-at-least {minLength=10}")
+				.add("E: toti.validation.length-must-be-max {maxLength=2}")
+				.add("E: toti.validation.length-must-be-at-least {minLength=10}")
 			.toSet())
 			.append("subMap", new ListInit<>()
 				.add(MapInit.create()
 				.append("a", new ListInit<>()
-					.add("toti.validation.value-type-must-be {class=java.lang.Double}")
+					.add("E: toti.validation.value-type-must-be {class=java.lang.Double}")
 				.toSet())
 				.append("b", new ListInit<>()
-					.add("toti.validation.item-required {parameter=b}")
+					.add("E: toti.validation.item-required {parameter=b}")
 				.toSet())
 				.append("", new ListInit<>()
-					.add("toti.validation.not-expected-parameters {parameters=[upper[subMap][c]]}")
+					.add("E: toti.validation.not-expected-parameters {parameters=[upper[subMap][c]]}")
 				.toSet())
 				.toMap())
 			.toSet())

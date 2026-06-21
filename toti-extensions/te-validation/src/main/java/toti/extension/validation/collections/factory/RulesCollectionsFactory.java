@@ -4,6 +4,7 @@ import java.util.function.Function;
 
 import toti.application.extensions.Translator;
 import toti.extension.validation.Validator;
+import toti.extension.validation.ValidatorFactory;
 import toti.extension.validation.collections.AlphaNumbericRules;
 import toti.extension.validation.collections.BaseRules;
 import toti.extension.validation.collections.FileRules;
@@ -75,52 +76,52 @@ public class RulesCollectionsFactory implements DefaultRulesCollectionsFactory, 
 	/******************************/
 	
 	@Override
-	public StructureRules mapRules(Validator validator) {
+	public StructureRules mapRules(Function<ValidatorFactory, Validator> validator) {
 		return mapRules("", false, validator, getDefaultRuleError());
 	}
 	
 	@Override
-	public StructureRules mapRules(String name, boolean required, Validator validator) {
+	public StructureRules mapRules(String name, boolean required, Function<ValidatorFactory, Validator> validator) {
 		return mapRules(name, required, validator, getRequiredError());
 	}
 	
 	@Override
-	public StructureRules mapRules(String name, boolean required, Validator validator, Function<String, String> onRequiredError) {
-		return StructureRules.map(name, required, onRequiredError, translator, validator);
+	public StructureRules mapRules(String name, boolean required, Function<ValidatorFactory, Validator> validator, Function<String, String> onRequiredError) {
+		return StructureRules.map(name, required, onRequiredError, translator, validator.apply(new ValidatorFactory(translator)));
 	}
 	
 	/******************************/
 	
 	@Override
-	public StructureRules listRules(Validator validator) {
+	public StructureRules listRules(Function<ValidatorFactory, Validator> validator) {
 		return listRules("", false, validator, getDefaultRuleError());
 	}
 	
 	@Override
-	public StructureRules listRules(String name, boolean required, Validator validator) {
+	public StructureRules listRules(String name, boolean required, Function<ValidatorFactory, Validator> validator) {
 		return listRules(name, required, validator, getRequiredError());
 	}
 	
 	@Override
-	public StructureRules listRules(String name, boolean required, Validator validator, Function<String, String> onRequiredError) {
-		return StructureRules.list(name, required, onRequiredError, translator, validator);
+	public StructureRules listRules(String name, boolean required, Function<ValidatorFactory, Validator> validator, Function<String, String> onRequiredError) {
+		return StructureRules.list(name, required, onRequiredError, translator, validator.apply(new ValidatorFactory(translator)));
 	}
 	
 	/******************************/
 	
 	@Override
-	public StructureRules sortedMapRules(Validator validator) {
+	public StructureRules sortedMapRules(Function<ValidatorFactory, Validator> validator) {
 		return sortedMapRules("", false, validator, getDefaultRuleError());
 	}
 	
 	@Override
-	public StructureRules sortedMapRules(String name, boolean required, Validator validator) {
+	public StructureRules sortedMapRules(String name, boolean required, Function<ValidatorFactory, Validator> validator) {
 		return sortedMapRules(name, required, validator, getRequiredError());
 	}
 	
 	@Override
-	public StructureRules sortedMapRules(String name, boolean required, Validator validator, Function<String, String> onRequiredError) {
-		return StructureRules.sortedMap(name, required, onRequiredError, translator, validator);
+	public StructureRules sortedMapRules(String name, boolean required, Function<ValidatorFactory, Validator> validator, Function<String, String> onRequiredError) {
+		return StructureRules.sortedMap(name, required, onRequiredError, translator, validator.apply(new ValidatorFactory(translator)));
 	}
 	
 	/******************************/

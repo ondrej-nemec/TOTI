@@ -1,6 +1,9 @@
 package toti.extension.validation.collections.factory;
 
+import java.util.function.Function;
+
 import toti.extension.validation.Validator;
+import toti.extension.validation.ValidatorFactory;
 import toti.extension.validation.collections.AlphaNumbericRules;
 import toti.extension.validation.collections.BaseRules;
 import toti.extension.validation.collections.NumberRules;
@@ -14,10 +17,10 @@ public interface DefaultRulesCollectionsFactory {
 	
 	AlphaNumbericRules objectRules();
 	
-	StructureRules mapRules(Validator validator);
+	StructureRules mapRules(Function<ValidatorFactory, Validator> validator);
 	
-	StructureRules listRules(Validator validator);
+	StructureRules listRules(Function<ValidatorFactory, Validator> validator);
 	
-	StructureRules sortedMapRules(Validator validator);
+	StructureRules sortedMapRules(Function<ValidatorFactory, Validator> validator);
 
 }
