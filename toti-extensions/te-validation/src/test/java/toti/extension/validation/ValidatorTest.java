@@ -22,6 +22,7 @@ import toti.extension.validation.results.ValidationItem;
 import toti.extension.validation.rules.CustomValidationRule;
 import toti.lib.common.structures.ListInit;
 import toti.lib.common.structures.MapInit;
+import toti.lib.common.structures.SortedMap;
 import toti.lib.common.tests.TestCase;
 import toti.lib.tcpip.structures.RequestParameters;
 import toti.lib.tcpip.structures.UploadedFile;
@@ -258,6 +259,15 @@ public class ValidatorTest {
 		{
 			dataToValidate.put("validMap", new RequestParameters().put("a", "11.1").put("b", "22"));
 			validatedData.put("validMap", new RequestParameters().put("a", 11).put("b", 22.0));
+		}
+
+		validator.addRule(r->r.sortedMapRules("sortedMap", true, v->v.create(false)));
+		{
+			dataToValidate.put("sortedMap", Arrays.asList(
+				new RequestParameters().put("3", "A"),
+				new RequestParameters().put("1", "B")
+			));
+			validatedData.put("sortedMap", new SortedMap<>().append("3", "A").append("1", "B"));
 		}
 
 		validator.addRule(

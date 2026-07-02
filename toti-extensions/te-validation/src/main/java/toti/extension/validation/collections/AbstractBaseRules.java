@@ -31,27 +31,18 @@ public abstract class AbstractBaseRules<T> implements RulesCollection {
 		this.requiredItemRule = new RequiredItemRule(required, onRequiredError);
 		this.translator = translator;
 	}
-
+	
 	public T _setType(Class<?> clazz) {
-		return _setType(clazz, true);
-	}
-	
-	public T _setType(Class<?> clazz, Supplier<String> onExpectedTypeError) {
-		return _setType(clazz, true, onExpectedTypeError);
-	}
-	
-	public T _setType(Class<?> clazz, boolean changeValueByType) {
-		return _setType(clazz, changeValueByType, ()->translator.translate(
+		return _setType(clazz, ()->translator.translate(
 			"toti.validation.value-type-must-be", 
 			new MapInit<String, Object>().append("class", clazz.getCanonicalName()).toMap()
 		)); // "Value must be " + clazz
 	}
 	
-	public T _setType(Class<?> clazz, boolean changeValueByType, Supplier<String> onExpectedTypeError) {
+	public T _setType(Class<?> clazz, Supplier<String> onExpectedTypeError) {
 		if (this.expectedRuleType != null) {
 			throw new LogicException("You cannot set an already set value");
 		}
-		// TODO use it ? this.changeValueByType = changeValueByType;
 		this.expectedRuleType = new ExpectedTypeRule(clazz, onExpectedTypeError);
 		return getThis();
 	}

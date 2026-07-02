@@ -1,3 +1,448 @@
 <h1>Extension: Validation</h1>
 
-TODO
+TODO dependency
+
+
+<p>
+	Package provide validation of request paramaters.
+</p>
+
+<h2>Create validator</h2>
+
+<p>
+	Validator can be created using one of these factory methods:
+
+<pre><code>
+	boolean strictList = ...
+	Validator v1 = Validator.create(strictList);
+	Validator v2 = Validator.create(strictList, translator);
+	Validator v3 = Validator.create(strictList, unexpectedParameters-&gt;customcustomErrorMessage);
+	Validator v4 = Validator.create(strictList, unexpectedParameters-&gt;customcustomErrorMessage, translator);
+</code></pre>
+
+	<code>strictList</code> defines if validated parameters can (strictList=false) or cannot (strictList=true) contain other parameters.
+</p>
+
+<p>
+	Second option is create validator with default rule. The rule will be used to any unexpected parameter.
+
+	<pre><code>
+	Validator v1 = Validator.create(d-&gt;d/* init defualt rule - see below */);
+	Validator v2 = Validator.create(d-&gt;d/* init defualt rule - see below */, translator);
+	Validator v3 = Validator.create(d-&gt;d/* init defualt rule - see below */, parametersNotMatchingDefaultRule-&gt;customcustomErrorMessage);
+	Validator v4 = Validator.create(d-&gt;d/* init defualt rule - see below */, parametersNotMatchingDefaultRule-&gt;customcustomErrorMessage, translator);
+	</code></pre>
+
+</p>
+
+
+
+<h2>Validate</h2>
+
+<pre><code>
+	Validator v = ...;
+	v.addRule(...);
+	ValidationResult result = v.validate(requestParameters);
+</code></pre>
+
+<p>
+	<code>ValidationResult</code> contains method <code>isValid</code>. Also provides all errors in <code>getErrors()</code>. All requerst parameters are parsed and available at <code>getValues()</code> (if not valid, data integrity is not guaranted).
+</p>
+
+<h2>Rules</h2>
+
+<h3>Boolean</h3>
+
+<pre><code>
+	v.addRule(r-&gt;r.booleanRules(name, required));
+	// OR
+	v.addRule(r-&gt;r.booleanRules(name, required, parameterName-&gt;messageIfParamerIsMissing));
+
+	// in default rule
+	Validator.create(d-&gt;d.booleanRules());
+</code></pre>
+
+<p>
+	<code>NULL</code> value is consider as missing. <code>"true"</code>, <code>"on"</code> and <code>"1"</code> is consider as <code>true</code>, any number higher than 0 is consider as <code>true</code>. Other values are consider as <code>false</code>.
+</p>
+
+
+<h3>Number</h3>
+
+<p>
+	Convert parameter to number of given class.
+</p>
+
+<pre><code>
+	v.addRule(r-&gt;r.numberRules(name, required, clazz));
+	// OR
+	v.addRule(r-&gt;r.numberRules(name, required, clazz, parameterName-&gt;messageIfParamerIsMissing));
+
+	// in default rule
+	Validator.create(d-&gt;d.numberRules(clazz));
+</code></pre>
+
+<h4>Min value</h4>
+
+<pre><code>
+	v.addRule(r-&gt;
+		r.numberRules(name, required, clazz)
+		.setMinValue(minValue)
+		// OR
+		.setMinValue(minValue, ()-&gt;customErrorMessage)
+	);
+</code></pre>
+
+<h4>Max value</h4>
+
+<pre><code>
+	v.addRule(r-&gt;
+		r.numberRules(name, required, clazz)
+		.setMaxValue(maxValue)
+		// OR
+		.setMaxValue(maxValue, ()-&gt;customErrorMessage)
+	);
+</code></pre>
+
+<h4>Regex</h4>
+
+<p>Applied on raw (string, not converted) value.</p>
+
+<pre><code>
+	v.addRule(r-&gt;
+		r.numberRules(name, required)
+		.setRegex(regex)
+		// OR
+		.setRegex(regex, ()-&gt;customErrorMessage)
+	);
+</code></pre>
+
+<h4>Allowed values</h4>
+
+<p>Applied on converted value.</p>
+
+<pre><code>
+	v.addRule(r-&gt;
+		r.numberRules(name, required)
+		.setAllowedValues(listOfValues)
+		// OR
+		.setAllowedValues(listOfValues, ()-&gt;customErrorMessage)
+	);
+</code></pre>
+
+<h4>Min length</h4>
+
+<p>Applied on raw (string, not converted) value.</p>
+
+<pre><code>
+	v.addRule(r-&gt;
+		r.numberRules(name, required)
+		.setMinLength(minLength)
+		// OR
+		.setMinLength(minLength, ()-&gt;customErrorMessage)
+	);
+</code></pre>
+
+<h4>Max length</h4>
+
+<p>Applied on raw (string, not converted) value.</p>
+
+<pre><code>
+	v.addRule(r-&gt;
+		r.numberRules(name, required)
+		.setMaxLength(maxLength)
+		// OR
+		.setMaxLength(maxLength, ()-&gt;customErrorMessage)
+	);
+</code></pre>
+
+
+<h3>Object</h3>
+
+<p>
+	For validation strings, enums, timestams and any other not covered classes.
+</p>
+
+<pre><code>
+	v.addRule(r-&gt;r.objectRules(name, required));
+	// OR
+	v.addRule(r-&gt;r.objectRules(name, required, parameterName-&gt;messageIfParamerIsMissing));
+
+	// in default rule
+	Validator.create(d-&gt;d.objectRules());
+</code></pre>
+
+<h4>Type</h4>
+
+<p>
+	Set expected class. Final values will contains value converted to this type.
+</p>
+
+<pre><code>
+	v.addRule(r-&gt;
+		r.objectRules(name, required)
+		.setType(clazz)
+		// OR
+		.setType(clazz, ()-&gt;customErrorMessage)
+	);
+</code></pre>
+
+<h4>Regex</h4>
+
+<p>Applied on raw (string, not converted) value.</p>
+
+<pre><code>
+	v.addRule(r-&gt;
+		r.objectRules(name, required)
+		.setRegex(regex)
+		// OR
+		.setRegex(regex, ()-&gt;customErrorMessage)
+	);
+</code></pre>
+
+<h4>Allowed values</h4>
+
+<p>Applied on converted value.</p>
+
+<pre><code>
+	v.addRule(r-&gt;
+		r.objectRules(name, required)
+		.setAllowedValues(listOfValues)
+		// OR
+		.setAllowedValues(listOfValues, ()-&gt;customErrorMessage)
+	);
+</code></pre>
+
+<h4>Min length</h4>
+
+<p>Applied on raw (string, not converted) value.</p>
+
+<pre><code>
+	v.addRule(r-&gt;
+		r.objectRules(name, required)
+		.setMinLength(minLength)
+		// OR
+		.setMinLength(minLength, ()-&gt;customErrorMessage)
+	);
+</code></pre>
+
+<h4>Max length</h4>
+
+<p>Applied on raw (string, not converted) value.</p>
+
+<pre><code>
+	v.addRule(r-&gt;
+		r.objectRules(name, required)
+		.setMaxLength(maxLength)
+		// OR
+		.setMaxLength(maxLength, ()-&gt;customErrorMessage)
+	);
+</code></pre>
+
+
+<h3>File</h3>
+
+<p>
+	Parameter must be instace of <code>UploadFile</code>.
+</p>
+
+<pre><code>
+	v.addRule(r-&gt;r.fileRules(name, required));
+	v.addRule(r-&gt;r.fileRules(name, required, parameterName-&gt;messageIfParamerIsMissing));
+
+	// in default rule
+	Validator.create(d-&gt;d.fileRules());
+</code></pre>
+
+<h4>Max file size</h4>
+
+<pre><code>
+	v.addRule(r-&gt;
+		r.fileRules(name, required)
+		.setFileMaxSize(fileMaxSize)
+		// OR
+		.setFileMaxSize(fileMaxSize, ()-&gt;customErrorMessage)
+	);
+</code></pre>
+
+<h4>Min file size</h4>
+
+<pre><code>
+	v.addRule(r-&gt;
+		r.fileRules(name, required)
+		.setFileMinSize(fileMinSize)
+		// OR
+		.setFileMinSize(fileMinSize, ()-&gt;customErrorMessage)
+	);
+</code></pre>
+
+<h4>Allowed file types</h4>
+
+<pre><code>
+	v.addRule(r-&gt;
+		r.fileRules(name, required)
+		.setAllowedFileTypes(allowedFileTypes)
+		// OR
+		.setAllowedFileTypes(allowedFileTypes, ()-&gt;customErrorMessage)
+	);
+</code></pre>
+
+<h3>Map</h3>
+
+<pre><code>
+	v.addRule(r-&gt;r.mapRules(name, required, v1-&gt;v1 /* init sub validator */ ));
+	// OR
+	v.addRule(r-&gt;r.mapRules(name, required, v1-&gt;v1 /* init sub validator */ , parameterName-&gt;messageIfParamerIsMissing));
+
+	// in default rule
+	Validator.create(d-&gt;d.mapRules(v1-&gt;v1 /* init sub validator */));
+</code></pre>
+
+<strong>Sub validator: see below.</strong>
+
+<h4>Min length</h4>
+
+<pre><code>
+	v.addRule(r-&gt;
+		r.mapRules(name, required, v1-&gt;v1)
+		.setMinLength(minLength)
+		// OR
+		.setMinLength(minLength, ()-&gt;customErrorMessage)
+	);
+</code></pre>
+
+<h4>Max length</h4>
+
+<pre><code>
+	v.addRule(r-&gt;
+		r.mapRules(name, required, v1-&gt;v1)
+		.setMaxLength(maxLength)
+		// OR
+		.setMaxLength(maxLength, ()-&gt;customErrorMessage)
+	);
+</code></pre>
+
+<h3>List</h3>
+
+<pre><code>
+	v.addRule(r-&gt;r.listRules(name, required, v1-&gt;v1 /* init sub validator */ ));
+	// OR
+	v.addRule(r-&gt;r.listRules(name, required, v1-&gt;v1 /* init sub validator */ , parameterName-&gt;messageIfParamerIsMissing));
+
+	// in default rule
+	Validator.create(d-&gt;d.listRules(v1-&gt;v1 /* init sub validator */));
+</code></pre>
+
+<strong>Sub validator: see below.</strong>
+
+<h4>Min length</h4>
+
+<pre><code>
+	v.addRule(r-&gt;
+		r.listRules(name, required, v1-&gt;v1)
+		.setMinLength(minLength)
+		// OR
+		.setMinLength(minLength, ()-&gt;customErrorMessage)
+	);
+</code></pre>
+
+<h4>Max length</h4>
+
+<pre><code>
+	v.addRule(r-&gt;
+		r.listRules(name, required, v1-&gt;v1)
+		.setMaxLength(maxLength)
+		// OR
+		.setMaxLength(maxLength, ()-&gt;customErrorMessage)
+	);
+</code></pre>
+
+<h3>SortedMap</h3>
+
+<pre><code>
+	v.addRule(r-&gt;r.sortedMapRules(name, required, v1-&gt;v1 /* init sub validator */ ));
+	// OR
+	v.addRule(r-&gt;r.sortedMapRules(name, required, v1-&gt;v1 /* init sub validator */ , parameterName-&gt;messageIfParamerIsMissing));
+
+	// in default rule
+	Validator.create(d-&gt;d.sortedMapRules(v1-&gt;v1 /* init sub validator */));
+</code></pre>
+
+<strong>Sub validator: see below.</strong>
+
+<h4>Min length</h4>
+
+<pre><code>
+	v.addRule(r-&gt;
+		r.sortedMapRules(name, required, v1-&gt;v1)
+		.setMinLength(minLength)
+		// OR
+		.setMinLength(minLength, ()-&gt;customErrorMessage)
+	);
+</code></pre>
+
+<h4>Max length</h4>
+
+<pre><code>
+	v.addRule(r-&gt;
+		r.sortedMapRules(name, required, v1-&gt;v1)
+		.setMaxLength(maxLength)
+		// OR
+		.setMaxLength(maxLength, ()-&gt;customErrorMessage)
+	);
+</code></pre>
+
+<h3>Custom validation</h3>
+
+<p>
+	Every parameter can be validated using custom validation. Custom validation is executed as last and only if parameter is valid.
+</p>
+
+<pre><code>
+	v.addRule(r-&gt;
+		r. /* set rule */
+		.setCustomValidation(item-&gt;{
+			item.addError("some error"); // if error is added, parameter is not valid
+			Object raw = item.getRawValue(); // origin, not parset value
+			Object parsed = item.getParsedVlaue(); // converted value
+			item.setValue("anything"); // set new value
+		})
+	);
+</code></pre>
+
+<h2>Custom validation</h2>
+
+<p>
+	Every request parameters can be validated using custom validation. Available in Validator, map rules, list rules and sorted map rules.
+</p>
+
+<pre><code>
+	v.setCustomValidation(item-&gt;{
+		item.addError("some error"); // if error is added, parameters are not valid
+		List&lt;String&gt; names = item.getItemsNames()); // list of parameter names
+		Object value = item.getValue(name); // get parsed value by given name
+		item.setItem(name, newValue); // set new value to given parameter
+		item.removeItem(name); // remove given parameter
+	})
+</code></pre>
+
+<h2>Sub validator</h2>
+
+<p>
+	Substructures as map and list require sub validator. Validator is created in rule definition.
+</p>
+
+<pre><code>
+	v.addRule(r-&gt;
+		r.mapRules(name, required, v1-&gt;
+			v1.create(strictList)
+			// define sub rules
+			// OR
+			v1.create(strictList, unexpectedParameters-&gt;customErrorMessage)
+			// OR with default rule
+			v1.create(d-&gt;d/*define rule*/)
+			// OR
+			v1.create(d-&gt;d/*define rule*/, parametersNotMatchingDefRule-&gt;customErrorMessage)
+		)
+	);
+</code></pre>

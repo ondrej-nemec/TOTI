@@ -6,6 +6,7 @@ import toti.extension.validation.Validator;
 import toti.extension.validation.ValidatorFactory;
 import toti.extension.validation.collections.AlphaNumbericRules;
 import toti.extension.validation.collections.BaseRules;
+import toti.extension.validation.collections.FileRules;
 import toti.extension.validation.collections.NumberRules;
 import toti.extension.validation.collections.StructureRules;
 
@@ -16,6 +17,8 @@ public interface DefaultRulesCollectionsFactory {
 	NumberRules numberRules(Class<? extends Number> clazz);
 	
 	AlphaNumbericRules objectRules();
+	
+	FileRules fileRules();
 	
 	StructureRules mapRules(Function<ValidatorFactory, Validator> validator);
 	

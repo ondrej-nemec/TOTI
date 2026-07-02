@@ -24,12 +24,12 @@ public class AlphaNumbericRules extends AbstractAlphaNumbericRules<AlphaNumberic
 		return _setType(clazz, onExpectedTypeError);
 	}
 	
-	public AlphaNumbericRules setType(Class<?> clazz, boolean changeValueByType) {
+	/*public AlphaNumbericRules setType(Class<?> clazz, boolean changeValueByType) {
 		return _setType(clazz, changeValueByType);
 	}
 	
 	public AlphaNumbericRules setType(Class<?> clazz, boolean changeValueByType, Supplier<String> onExpectedTypeError) {
 		return _setType(clazz, changeValueByType, onExpectedTypeError);
-	}
+	}*/
 	
 }

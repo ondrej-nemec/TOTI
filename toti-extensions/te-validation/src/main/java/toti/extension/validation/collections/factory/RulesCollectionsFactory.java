@@ -125,6 +125,11 @@ public class RulesCollectionsFactory implements DefaultRulesCollectionsFactory, 
 	}
 	
 	/******************************/
+
+	@Override
+	public FileRules fileRules() {
+		return fileRules("", false, getDefaultRuleError());
+	}
 	
 	@Override
 	public FileRules fileRules(String name, boolean required) {
