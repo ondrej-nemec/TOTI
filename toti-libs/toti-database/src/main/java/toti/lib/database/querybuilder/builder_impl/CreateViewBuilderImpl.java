@@ -4,12 +4,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import toti.lib.database.querybuilder.DbInstance;
-import toti.lib.database.querybuilder.builder_impl.share.ParametrizedSql;
 import toti.lib.database.querybuilder.builder_impl.share.SelectImpl;
-import toti.lib.database.querybuilder.builder_impl.share.SingleExecute;
 import toti.lib.database.querybuilder.builders.CreateViewBuilder;
 
-public class CreateViewBuilderImpl extends SelectImpl<CreateViewBuilderImpl> implements CreateViewBuilder, SingleExecute, ParametrizedSql {
+public class CreateViewBuilderImpl extends SelectImpl<CreateViewBuilderImpl> implements CreateViewBuilder {
 
 	// TODO with
 	private final Connection connection;

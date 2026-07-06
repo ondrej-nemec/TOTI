@@ -4,12 +4,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import toti.lib.database.querybuilder.DbInstance;
-import toti.lib.database.querybuilder.builder_impl.share.ParametrizedSql;
 import toti.lib.database.querybuilder.builder_impl.share.SelectImpl;
-import toti.lib.database.querybuilder.builder_impl.share.SingleExecute;
 import toti.lib.database.querybuilder.builders.AlterViewBuilder;
 
-public class AlterViewBuilderImpl extends SelectImpl<AlterViewBuilderImpl> implements AlterViewBuilder, SingleExecute, ParametrizedSql {
+public class AlterViewBuilderImpl extends SelectImpl<AlterViewBuilderImpl> implements AlterViewBuilder {
 
 	// TODO with
 	private final Connection connection;

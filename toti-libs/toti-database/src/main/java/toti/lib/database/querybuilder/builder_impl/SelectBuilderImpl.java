@@ -6,18 +6,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import toti.lib.common.structures.DictionaryValue;
+import toti.lib.common.structures.ThrowingFunction;
+import toti.lib.common.structures.Tuple2;
 import toti.lib.database.base.support.DatabaseRow;
 import toti.lib.database.querybuilder.DbInstance;
-import toti.lib.database.querybuilder.builder_impl.share.ParametrizedSql;
 import toti.lib.database.querybuilder.builder_impl.share.SelectExecute;
 import toti.lib.database.querybuilder.builder_impl.share.SelectImpl;
 import toti.lib.database.querybuilder.builders.SelectBuilder;
 import toti.lib.database.querybuilder.structures.SubSelect;
-import toti.lib.common.structures.DictionaryValue;
-import toti.lib.common.structures.ThrowingFunction;
-import toti.lib.common.structures.Tuple2;
 
-public class SelectBuilderImpl extends SelectImpl<SelectBuilderImpl> implements SelectBuilder, ParametrizedSql, SelectExecute {
+public class SelectBuilderImpl extends SelectImpl<SelectBuilderImpl> implements SelectBuilder, SelectExecute {
 
 	private final Connection connection;
 	private final DbInstance instance;
