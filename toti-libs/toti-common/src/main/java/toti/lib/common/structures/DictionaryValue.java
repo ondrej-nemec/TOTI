@@ -494,16 +494,19 @@ public class DictionaryValue implements Scalar {
 
 	@Override
 	public String toString() {
-		if (value == null) {
-			return "NULL";
-		}
-		return value.toString();
+		return String.format("DV[%s]", value == null ? "NULL" : value.getClass() + ":" + value.toString());
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (value == null) {
-			return obj == null;
+		if (obj == null) {
+			return value == null;
+		}
+		if (obj instanceof DictionaryValue dv) {
+			if (value == null) {
+				return dv.value == null;
+			}
+			return value.equals(dv.value);
 		}
 		return value.equals(obj);
 	}
