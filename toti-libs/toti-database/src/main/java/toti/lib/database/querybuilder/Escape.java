@@ -19,14 +19,14 @@ public class Escape {
 		if (value == null) {
 			return escapeNull();
 		}
-		if (value instanceof ListDictionary) {
-			ListDictionary iterable = ListDictionary.class.cast(value);
-			return Implode.implode(item->escapeScalar(item), ",", iterable.toList());
-		} else if (value instanceof Iterable<?>) {
-			Iterable<?> iterable = Iterable.class.cast(value);
-			return Implode.implode(item->escapeScalar(item), ",", iterable);
-		} else if (value instanceof DictionaryValue) {
-			return escapeScalar(DictionaryValue.class.cast(value).getValue());
+		if (value instanceof ListDictionary ld) {
+			return Implode.implode(item->escape(item), ",", ld.toList());
+		} else if (value instanceof Iterable<?> iterable) {
+			return Implode.implode(item->escape(item), ",", iterable);
+		} else if (value instanceof DictionaryValue dv) {
+			return escape(dv.getValue());
+		} else if (value.getClass().isArray()) {
+			return Implode.implode(item->escape(item), ",",(Object[])value);
 		} else {
 			return escapeScalar(value);
 		}

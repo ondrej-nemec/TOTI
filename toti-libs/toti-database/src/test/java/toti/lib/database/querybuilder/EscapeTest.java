@@ -21,6 +21,8 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import toti.lib.common.structures.DictionaryValue;
+import toti.lib.common.structures.ListDictionary;
 import toti.lib.common.structures.ThrowingSupplier;
 import toti.lib.database.base.Connections;
 
@@ -46,7 +48,10 @@ public class EscapeTest {
 			new Object[] { (byte)42, "42" },
 			new Object[] { "", "''" },
 			new Object[] { "some text", "'some text'" },
-			new Object[] { Arrays.asList("a", "b", "c"), "'a','b','c'" },
+			new Object[] { new DictionaryValue("some text"), "'some text'" },
+			new Object[] { Arrays.asList("a", "1", 1, true, null), "'a','1',1,true,null" },
+			new Object[] { new Object[] {"a", "1", 1, true, null}, "'a','1',1,true,null" },
+			new Object[] { new ListDictionary(Arrays.asList("a", "1", 1, true, null)), "'a','1',1,true,null" },
 			new Object[] { LocalTime.of(14, 47), "'14:47'" },
 			new Object[] { LocalTime.of(14, 47, 22), "'14:47:22'" },
 			new Object[] { LocalTime.of(14, 47, 22, 123), "'14:47:22.000000123'" },
