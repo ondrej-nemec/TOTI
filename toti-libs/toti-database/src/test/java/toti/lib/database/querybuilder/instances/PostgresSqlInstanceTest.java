@@ -389,8 +389,23 @@ public class PostgresSqlInstanceTest extends AbstractInstanceTest {
 	/***********************/
 	
 	@Override
-	protected String getFunctions_concat() {
+	protected String getFunctions_concat1() {
+		return "SELECT CONCAT('\"', name) FROM table_for_functions";
+	}
+	
+	@Override
+	protected String getFunctions_concat2() {
 		return "SELECT CONCAT('\"', name, '\"') FROM table_for_functions";
+	}
+	
+	@Override
+	protected String getFunctions_coalesce1() {
+		return "SELECT COALESCE('\"', name) FROM table_for_functions";
+	}
+	
+	@Override
+	protected String getFunctions_coalesce2() {
+		return "SELECT COALESCE('\"', name, '\"') FROM table_for_functions";
 	}
 
 	@Override

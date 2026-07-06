@@ -23,6 +23,12 @@ import toti.lib.database.querybuilder.enums.ColumnType;
 public class DerbyQueryBuilder implements DbInstance {
 
 	@Override
+	public String coalesce(String param1, String param2, String... params) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public String concat(String param1, String param2, String... params) {
 		// TODO Auto-generated method stub
 		return null;

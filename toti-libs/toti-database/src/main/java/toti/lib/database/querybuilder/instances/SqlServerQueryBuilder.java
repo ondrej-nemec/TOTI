@@ -41,6 +41,20 @@ import toti.lib.database.querybuilder.structures.SubSelect;
 public class SqlServerQueryBuilder implements DbInstance {
 
 	@Override
+	public String coalesce(String param1, String param2, String... params) {
+		StringBuilder builder = new StringBuilder("COALESCE(");
+		builder.append(param1);
+		builder.append(", ");
+		builder.append(param2);
+		for (String p : params) {
+			builder.append(", ");
+			builder.append(p);
+		}
+		builder.append(")");
+		return builder.toString();
+	}
+
+	@Override
 	public Escape getEscape() {
 		return new Escape() {
 			@Override

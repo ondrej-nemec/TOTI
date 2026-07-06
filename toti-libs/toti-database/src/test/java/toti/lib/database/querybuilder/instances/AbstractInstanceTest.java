@@ -20,7 +20,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import toti.lib.common.structures.ThrowingConsumer;
 import toti.lib.database.base.Connections;
-import toti.lib.files.text.Text;
 import toti.lib.database.querybuilder.Builder;
 import toti.lib.database.querybuilder.DbInstance;
 import toti.lib.database.querybuilder.QueryBuilder;
@@ -38,6 +37,7 @@ import toti.lib.database.querybuilder.enums.Join;
 import toti.lib.database.querybuilder.enums.OnAction;
 import toti.lib.database.querybuilder.enums.Where;
 import toti.lib.database.querybuilder.structures.ProcedureResult;
+import toti.lib.files.text.Text;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractInstanceTest {
@@ -62,8 +62,20 @@ public abstract class AbstractInstanceTest {
 	public Object[] dataFunctions() {
 		return new Object[] {
 			new Object[] {
-				"Concat",
-				f(b->b.select(f->f.concat("'\"'", "name", "'\"'")).from("table_for_functions")), getFunctions_concat()
+				"Concat 1",
+				f(b->b.select(f->f.concat("'\"'", "name", "'\"'")).from("table_for_functions")), getFunctions_concat1()
+			},
+			new Object[] {
+				"Concat 2",
+				f(b->b.select(f->f.concat("'\"'", "name")).from("table_for_functions")), getFunctions_concat2()
+			},
+			new Object[] {
+				"Coalesce 1",
+				f(b->b.select(f->f.coalesce("'\"'", "name", "'\"'")).from("table_for_functions")), getFunctions_coalesce1()
+			},
+			new Object[] {
+				"Coalesce 2",
+				f(b->b.select(f->f.coalesce("'\"'", "name")).from("table_for_functions")), getFunctions_coalesce2()
 			},
 			new Object[] {
 				"Group concat",
@@ -108,7 +120,13 @@ public abstract class AbstractInstanceTest {
 		};
 	}
 	
-	protected abstract String getFunctions_concat();
+	protected abstract String getFunctions_concat1();
+
+	protected abstract String getFunctions_concat2();
+	
+	protected abstract String getFunctions_coalesce1();
+
+	protected abstract String getFunctions_coalesce2();
 
 	protected abstract String getFunctions_groupConcat();
 

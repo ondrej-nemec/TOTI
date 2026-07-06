@@ -7,6 +7,11 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import toti.lib.common.functions.Implode;
+import toti.lib.common.structures.ObjectBuilder;
+import toti.lib.common.structures.SortedMap;
+import toti.lib.common.structures.Tuple2;
+import toti.lib.common.structures.Tuple3;
 import toti.lib.database.querybuilder.DbInstance;
 import toti.lib.database.querybuilder.builder_impl.AlterTableBuilderImpl;
 import toti.lib.database.querybuilder.builder_impl.AlterViewBuilderImpl;
@@ -34,14 +39,23 @@ import toti.lib.database.querybuilder.structures.DefaultValue;
 import toti.lib.database.querybuilder.structures.ForeignKey;
 import toti.lib.database.querybuilder.structures.Joining;
 import toti.lib.database.querybuilder.structures.SubSelect;
-import toti.lib.common.functions.Implode;
-import toti.lib.common.structures.ObjectBuilder;
-import toti.lib.common.structures.SortedMap;
-import toti.lib.common.structures.Tuple2;
-import toti.lib.common.structures.Tuple3;
 
 public class MySqlQueryBuilder implements DbInstance {
 
+	@Override
+	public String coalesce(String param1, String param2, String... params) {
+		StringBuilder builder = new StringBuilder("COALESCE(");
+		builder.append(param1);
+		builder.append(", ");
+		builder.append(param2);
+		for (String p : params) {
+			builder.append(", ");
+			builder.append(p);
+		}
+		builder.append(")");
+		return builder.toString();
+	}
+	
 	@Override
 	public String concat(String param1, String param2, String... params) {
 		StringBuilder builder = new StringBuilder("CONCAT(");
