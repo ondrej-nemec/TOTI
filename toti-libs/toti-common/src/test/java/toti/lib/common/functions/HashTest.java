@@ -1,11 +1,11 @@
 package toti.lib.common.functions;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import toti.lib.common.exceptions.HashException;
-import toti.lib.common.functions.Hash;
 
 public class HashTest {
 	

@@ -1,17 +1,15 @@
 package toti.lib.common.functions;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 import toti.lib.common.annotations.MapperIgnored;
 import toti.lib.common.annotations.MapperParameter;
 import toti.lib.common.annotations.MapperType;
-import toti.lib.common.functions.Mapper;
 import toti.lib.common.functions.testingClasses.Generic;
 import toti.lib.common.functions.testingClasses.Main;
 import toti.lib.common.functions.testingClasses.Parse;
@@ -23,11 +21,11 @@ public class MapperTest {
 	public void testSerializeAddAllParameters() {
 		Object actual = new Object() {
 			@SuppressWarnings("unused")
-			private String first = "first value";
+			private final String first = "first value";
 			@SuppressWarnings("unused")
-			private int second = 42;
+			private final int second = 42;
 			@SuppressWarnings("unused")
-			private List<String> list = Arrays.asList("a", "b", "c");
+			private final List<String> list = Arrays.asList("a", "b", "c");
 		};
 		Map<String, Object> expected = new MapInit<String, Object>()
 				.append("first", "first value")
@@ -41,15 +39,15 @@ public class MapperTest {
 	public void testSerializeAnnotatedAttributes() {
 		Object actual = new Object() {
 			@SuppressWarnings("unused")
-			private String first = "first value";
+			private final String first = "first value";
 			@SuppressWarnings("unused")
-			private int second = 42;
+			private final int second = 42;
 			@SuppressWarnings("unused")
-			private List<String> list = Arrays.asList("a", "b", "c");
+			private final List<String> list = Arrays.asList("a", "b", "c");
 			@MapperIgnored
-			private double ignored = 12.3;
+			private final double ignored = 12.3;
 			@MapperParameter({@MapperType("realName")})
-			private String anotherName = "renamed";
+			private final String anotherName = "renamed";
 		};
 		Map<String, Object> expected = new MapInit<String, Object>()
 				.append("first", "first value")
@@ -64,18 +62,18 @@ public class MapperTest {
 	public void testSerializeAnnotatedAttributesWithSwitch() {
 		Object actual = new Object() {
 			@SuppressWarnings("unused")
-			private String first = "first value";
+			private final String first = "first value";
 			@MapperParameter({@MapperType(value = "second", key = "used")})
-			private int second = 42;
+			private final int second = 42;
 			@MapperIgnored({"used"})
 			@MapperParameter({@MapperType(value = "--list--", key = "not-used")})
-			private List<String> list = Arrays.asList("a", "b", "c");
+			private final List<String> list = Arrays.asList("a", "b", "c");
 			@MapperIgnored
-			private double ignored = 12.3;
+			private final double ignored = 12.3;
 			@MapperParameter({@MapperType(value="NullParameter", ignoreOnNull = true)})
-			private String nullParam = null;
+			private final String nullParam = null;
 			@MapperParameter({@MapperType("realName")})
-			private String anotherName = "renamed";
+			private final String anotherName = "renamed";
 		};
 		Map<String, Object> expected = new MapInit<String, Object>()
 				.append("first", "first value")

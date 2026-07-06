@@ -6,7 +6,6 @@ import java.util.Map;
 import toti.lib.common.annotations.MapperIgnored;
 import toti.lib.common.annotations.MapperParameter;
 import toti.lib.common.annotations.MapperType;
-import toti.lib.common.functions.Mapper;
 
 public class MapperEndToEndTest {
 	

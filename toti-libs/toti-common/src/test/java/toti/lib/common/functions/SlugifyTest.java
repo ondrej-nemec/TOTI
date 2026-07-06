@@ -6,6 +6,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 public class SlugifyTest {
 
+	@SuppressWarnings("deprecation")
 	@ParameterizedTest
 	@MethodSource("parametersForTestTuSlugSlugifyString")
 	public void testTuSlugSlugifyString(String string, String expectedSlug) {
