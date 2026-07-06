@@ -55,7 +55,9 @@ public class SqLiteQueryBuilder implements DbInstance {
 	@Override
 	public String concat(String param1, String param2, String... params) {
 		StringBuilder builder = new StringBuilder("CONCAT(");
-		builder.append(param1 + ", " + param2);
+		builder.append(param1);
+		builder.append(", ");
+		builder.append(param2);
 		for (String p : params) {
 			builder.append(", ");
 			builder.append(p);
@@ -167,7 +169,7 @@ public class SqLiteQueryBuilder implements DbInstance {
 	public List<String> createSql(InsertBuilderImpl insert, boolean create) {
 		StringBuilder sql = new StringBuilder();
 		createWith(insert.getWiths(), sql, create);
-		sql.append("INSERT INTO " + getWithAlias(insert.getTable(), insert.getAlias()) + " ");
+		sql.append(String.format("INSERT INTO %s ", getWithAlias(insert.getTable(), insert.getAlias())));
 		if (insert.getValues().isEmpty()) {
 			// insert from select
 			sql.append("(");
@@ -236,7 +238,7 @@ WHERE name = 'table_name';
 				createJoin(join, sql, create);
 			}
 		});
-		createWhere(wheres, sql, create);
+		createWhere(wheres, sql);
 		return sql.toString();
 	}
 
@@ -244,18 +246,22 @@ WHERE name = 'table_name';
 	public String createSql(DeleteBuilderImpl delete, boolean create) {
 		StringBuilder sql = new StringBuilder();
 		createWith(delete.getWiths(), sql, create);
-		sql.append("DELETE FROM " + delete.getTable());
+		sql.append("DELETE FROM ")
+		.append(delete.getTable());
 		if (!delete.getJoins().isEmpty()) {
-			sql.append(" WHERE ROWID IN (");
-			sql.append("SELECT " + (delete.getAlias() == null ? delete.getTable() : delete.getAlias()) + ".ROWID");
-			sql.append(" FROM " + getWithAlias(delete.getTable(), delete.getAlias()));
+			sql.append(" WHERE ROWID IN (")
+			.append("SELECT ")
+			.append(delete.getAlias() == null ? delete.getTable() : delete.getAlias())
+			.append(".ROWID")
+			.append(" FROM ")
+			.append(getWithAlias(delete.getTable(), delete.getAlias()));
 			delete.getJoins().forEach(join->{
 				createJoin(join, sql, create);
 			});
-			createWhere(delete.getWheres(), sql, create);
+			createWhere(delete.getWheres(), sql);
 			sql.append(")");
 		} else {
-			createWhere(delete.getWheres(), sql, create);
+			createWhere(delete.getWheres(), sql);
 		}
 		return sql.toString();
 	}
@@ -285,7 +291,9 @@ WHERE name = 'table_name';
 	@Override
 	public String createSql(CreateViewBuilderImpl createView, boolean create) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("CREATE VIEW " + createView.getView() + " AS ");
+		sql.append("CREATE VIEW ")
+		.append(createView.getView())
+		.append(" AS ");
 		createPlainSelect(createView, sql, create);
 		return sql.toString();
 	}
@@ -293,8 +301,7 @@ WHERE name = 'table_name';
 	@Override
 	public String createSql(AlterViewBuilderImpl alterView, boolean create) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("DROP VIEW " + alterView.getView() + "; ");
-		sql.append("CREATE VIEW " + alterView.getView() + " AS ");
+		sql.append(String.format("DROP VIEW %s; CREATE VIEW %s AS ", alterView.getView(), alterView.getView()));
 		createPlainSelect(alterView, sql, create);
 		return sql.toString();
 	}
@@ -311,7 +318,7 @@ WHERE name = 'table_name';
 		
 		iterateList(
 			sql, createTable.getColumns(),
-			i->"", i->", ", c->getColumn(c, x->appendix.append(", " + x))
+			i->"", i->", ", c->getColumn(c, x->appendix.append(", ").append(x))
 		);
 		
 		sql.append(appendix.toString());
@@ -364,68 +371,69 @@ WHERE name = 'table_name';
 	/****************************/
 
 	protected String toString(ColumnType type) {
-		switch (type.getType()) {
-			case STRING:
-				return String.format("VARCHAR(%s)", type.getSize());
-			case CHAR:
-				return String.format("CHAR(%s)", type.getSize());
-			case INT: return "INTEGER";
-			case TIME:
+		return switch (type.getType()) {
+			case STRING->String.format("VARCHAR(%s)", type.getSize());
+			case CHAR->String.format("CHAR(%s)", type.getSize());
+			case INT->"INTEGER";
+			case TIME->{
 				if (type.getSize() == null) {
-					return "TIME";
+					yield "TIME";
 				}
-				return String.format("TIME(%s)", type.getSize());
-			case DATETIME:
+				yield String.format("TIME(%s)", type.getSize());
+			}
+			case DATETIME->{
 				if (type.getSize() == null) {
-					return "TIMESTAMP";
+					yield "TIMESTAMP";
 				}
-				return String.format("TIMESTAMP(%s)", type.getSize());
-			case DATETIME_ZONED:
+				yield String.format("TIMESTAMP(%s)", type.getSize());
+			}
+			case DATETIME_ZONED->{
 				if (type.getSize() == null) {
-					return "TIMESTAMPTZ";
+					yield "TIMESTAMPTZ";
 				}
-				return String.format("TIMESTAMPTZ(%s)", type.getSize());
-			default: return type.getType().toString();
-		}
+				yield String.format("TIMESTAMPTZ(%s)", type.getSize());
+			}
+			default->type.getType().toString();
+		};
 	}
 
 	protected String toString(ColumnSetting settings) {
-		switch (settings) {
+		return switch (settings) {
 			//case AUTO_INCREMENT: return "SERIAL";
-			case UNIQUE: return "UNIQUE";
-			case NOT_NULL: return "NOT NULL";
-			case NULL: return "NULL";
+			case UNIQUE->"UNIQUE";
+			case NOT_NULL->"NOT NULL";
+			case NULL->"NULL";
 			// never happends: case PRIMARY_KEY: return "";
-			default: return "";
-		}
+			default->"";
+		};
 	}
 
 	protected String toString(OnAction action) {
-		switch (action) {
-			case RESTRICT: return "RESTRICT";
-			case CASCADE: return "CASCADE";
-			case SET_NULL: return "SET NULL";
-			case NO_ACTION: return "NO ACTION";
-			case SET_DEFAULT: return "SET DEFAULT";
-			default: throw new RuntimeException("Not implemented action: " + action);
-		}
+		return switch (action) {
+			case RESTRICT->"RESTRICT";
+			case CASCADE->"CASCADE";
+			case SET_NULL->"SET NULL";
+			case NO_ACTION->"NO ACTION";
+			case SET_DEFAULT->"SET DEFAULT";
+			default->throw new RuntimeException("Not implemented action: " + action);
+		};
 	}
 
 	protected String toString(Join join) {
-		switch(join) {
-			case FULL_OUTER_JOIN: throw new RuntimeException("Full Outer Join is not supported by mysql");
-			case INNER_JOIN: return "JOIN";
-			case LEFT_OUTER_JOIN: return "LEFT JOIN";
-			case RIGHT_OUTER_JOIN: return "RIGHT JOIN";
-			default: throw new RuntimeException("Not implemented join: " + join);
-		}
+		return switch(join) {
+			case FULL_OUTER_JOIN->throw new RuntimeException("Full Outer Join is not supported by mysql");
+			case INNER_JOIN->"JOIN";
+			case LEFT_OUTER_JOIN->"LEFT JOIN";
+			case RIGHT_OUTER_JOIN->"RIGHT JOIN";
+			default->throw new RuntimeException("Not implemented join: " + join);
+		};
 	}
 
 	protected String toString(SelectJoin join) {
-		switch(join) {
-			case UNION_ALL: return "UNION ALL";
-			default: return join.toString();
-		}
+		return switch(join) {
+			case UNION_ALL->"UNION ALL";
+			default->join.toString();
+		};
 	}
 
 	/****************************/
@@ -454,7 +462,7 @@ WHERE name = 'table_name';
 		StringBuilder result = new StringBuilder();
 		result.append(table);
 		if (alias != null) {
-			result.append(" AS " + alias);
+			result.append(" AS ").append(alias);
 		}
 		return result.toString();
 	}
@@ -515,7 +523,7 @@ WHERE name = 'table_name';
 		builder.getJoins().forEach(join->{
 			createJoin(join, sql, create);
 		});
-		createWhere(builder.getWheres(), sql, create);
+		createWhere(builder.getWheres(), sql);
 		iterateList(
 			sql, builder.getGroupBy(),
 			i->" GROUP BY ", i->", ", i->i
@@ -529,10 +537,10 @@ WHERE name = 'table_name';
 			i->" ORDER BY ", i->", ", i->i
 		);
 		if (builder.getLimit() != null) {
-			sql.append(" LIMIT " + builder.getLimit());
+			sql.append(" LIMIT ").append(builder.getLimit());
 		}
 		if (builder.getOffset() != null) {
-			sql.append(" OFFSET " + builder.getOffset());
+			sql.append(" OFFSET ").append(builder.getOffset());
 		}
 	}
 	
@@ -560,7 +568,7 @@ WHERE name = 'table_name';
 		);
 	}
 	
-	private void createWhere(List<Tuple2<String, Where>> wheres, StringBuilder sql, boolean create) {
+	private void createWhere(List<Tuple2<String, Where>> wheres, StringBuilder sql) {
 		iterateList(
 			sql, wheres,
 			w->" WHERE ", w->" " + w._2().toString() + " ", w->"(" + w._1() + ")"
@@ -568,17 +576,18 @@ WHERE name = 'table_name';
 	}
 	
 	private void createJoin(Joining join, StringBuilder sql, boolean create) {
-		sql.append(" ");
-		sql.append(toString(join.getJoin()));
-		sql.append(" ");
-		sql.append(getWithAlias(
+		sql.append(" ")
+		.append(toString(join.getJoin()))
+		.append(" ")
+		.append(getWithAlias(
 			String.format(
 				join.getBuilder().wrap() ? "(%s)" : "%s",
 				create ? join.getBuilder().createSql() : join.getBuilder().getSql()
 			),
 			join.getAlias()
-		));
-		sql.append(" ON " + join.getOn());
+		))
+		.append(" ON ")
+		.append(join.getOn());
 	}
 	
 }

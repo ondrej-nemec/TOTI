@@ -59,7 +59,9 @@ public class MySqlQueryBuilder implements DbInstance {
 	@Override
 	public String concat(String param1, String param2, String... params) {
 		StringBuilder builder = new StringBuilder("CONCAT(");
-		builder.append(param1 + ", " + param2);
+		builder.append(param1);
+		builder.append(", ");
+		builder.append(param2);
 		for (String p : params) {
 			builder.append(", ");
 			builder.append(p);
@@ -183,7 +185,9 @@ public class MySqlQueryBuilder implements DbInstance {
 			withs.put(with._1(), create ? with._2().createSql() : with._2().getSql());
 		});
 		//createWith(insert.getWiths(), sql, create);
-		sql.append("INSERT INTO " + getWithAlias(insert.getTable(), insert.getAlias()) + " ");
+		sql.append("INSERT INTO ")
+		.append(getWithAlias(insert.getTable(), insert.getAlias()))
+		.append(" ");
 		if (insert.getValues().isEmpty()) {
 			// insert from select
 			sql.append("(");
@@ -252,7 +256,7 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 			}
 			sql.append(set);
 		});
-		createWhere(updateBuilder.getWheres(), sql, create);
+		createWhere(updateBuilder.getWheres(), sql);
 		return sql.toString();
 	}
 
@@ -260,8 +264,11 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 	public String createSql(DeleteBuilderImpl delete, boolean create) {
 		StringBuilder sql = new StringBuilder();
 		createWith(delete.getWiths(), sql, create);
-		sql.append("DELETE " + (delete.getAlias() == null ? delete.getTable() : delete.getAlias()));
-		sql.append(" FROM " + getWithAlias(delete.getTable(), delete.getAlias()));
+		sql.append(String.format(
+			"DELETE %s FROM %s",
+			delete.getAlias() == null ? delete.getTable() : delete.getAlias(),
+			getWithAlias(delete.getTable(), delete.getAlias())
+		));
 		
 		StringBuilder joins = new StringBuilder();
 		StringBuilder wheres = new StringBuilder();
@@ -269,7 +276,7 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 		delete.getJoins().forEach(join->{
 			createJoin(join, sql, create);
 		});
-		createWhere(delete.getWheres(), sql, create);
+		createWhere(delete.getWheres(), sql);
 		
 		sql.append(joins.toString());
 		sql.append(wheres.toString());
@@ -332,7 +339,7 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 		
 		iterateList(
 			sql, createTable.getColumns(),
-			i->"", i->", ", c->getColumn(createTable.getTable(), c, x->appendix.append(", " + x))
+			i->"", i->", ", c->getColumn(createTable.getTable(), c, x->appendix.append(", ").append(x))
 		);
 		
 		sql.append(appendix.toString());
@@ -403,67 +410,68 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 	/****************************/
 
 	protected String toString(ColumnType type) {
-		switch (type.getType()) {
-			case STRING:
-				return String.format("VARCHAR(%s)", type.getSize());
-			case CHAR:
-				return String.format("CHAR(%s)", type.getSize());
-			case TIME:
+		return switch (type.getType()) {
+			case STRING->String.format("VARCHAR(%s)", type.getSize());
+			case CHAR->String.format("CHAR(%s)", type.getSize());
+			case TIME->{
 				if (type.getSize() == null) {
-					return "TIME";
+					yield "TIME";
 				}
-				return String.format("TIME(%s)", type.getSize());
-			case DATETIME:
+				yield String.format("TIME(%s)", type.getSize());
+			}
+			case DATETIME->{
 				if (type.getSize() == null) {
-					return "TIMESTAMP";
+					yield "TIMESTAMP";
 				}
-				return String.format("TIMESTAMP(%s)", type.getSize());
-			case DATETIME_ZONED:
+				yield String.format("TIMESTAMP(%s)", type.getSize());
+			}
+			case DATETIME_ZONED->{
 				if (type.getSize() == null) {
-					return "TIMESTAMP";
+					yield "TIMESTAMP";
 				}
-				return String.format("TIMESTAMP(%s)", type.getSize());
-			default: return type.getType().toString();
-		}
+				yield String.format("TIMESTAMP(%s)", type.getSize());
+			}
+			default->type.getType().toString();
+		};
 	}
 
 	protected String toString(ColumnSetting settings) {
-		switch (settings) {
-			case AUTO_INCREMENT: return "AUTO_INCREMENT";
-			case UNIQUE: return "UNIQUE";
-			case NOT_NULL: return "NOT NULL";
-			case NULL: return "NULL";
+		return switch (settings) {
+			case AUTO_INCREMENT->"AUTO_INCREMENT";
+			case UNIQUE->"UNIQUE";
+			case NOT_NULL->"NOT NULL";
+			case NULL->"NULL";
 			// never happends: case PRIMARY_KEY: return "";
-			default: return "";
-		}
+			default->"";
+		};
 	}
 
 	protected String toString(OnAction action) {
-		switch (action) {
-			case RESTRICT: return "RESTRICT";
-			case CASCADE: return "CASCADE";
-			case SET_NULL: return "SET NULL";
-			case NO_ACTION: return "NO ACTION";
-			case SET_DEFAULT: throw new RuntimeException("Not supported operation");
-			default: throw new RuntimeException("Not implemented action: " + action);
-		}
+		return switch (action) {
+			case RESTRICT->"RESTRICT";
+			case CASCADE->"CASCADE";
+			case SET_NULL->"SET NULL";
+			case NO_ACTION->"NO ACTION";
+			case SET_DEFAULT->throw new RuntimeException("Not supported operation");
+			default->throw new RuntimeException("Not implemented action: " + action);
+		};
 	}
 
 	protected String toString(Join join) {
-		switch(join) {
-			case FULL_OUTER_JOIN: throw new RuntimeException("Full Outer Join is not supported by mysql");
-			case INNER_JOIN: return "JOIN";
-			case LEFT_OUTER_JOIN: return "LEFT JOIN";
-			case RIGHT_OUTER_JOIN: return "RIGHT JOIN";
-			default: throw new RuntimeException("Not implemented join: " + join);
-		}
+		return switch(join) {
+			case FULL_OUTER_JOIN->throw new RuntimeException("Full Outer Join is not supported by mysql");
+			case INNER_JOIN->"JOIN";
+			case LEFT_OUTER_JOIN->"LEFT JOIN";
+			case RIGHT_OUTER_JOIN->"RIGHT JOIN";
+			default->throw new RuntimeException("Not implemented join: " + join);
+		};
 	}
 
 	protected String toString(SelectJoin join) {
-		switch(join) {
-			case UNION_ALL: return "UNION ALL";
-			default: return join.toString();
-		}
+		return switch(join) {
+			case UNION_ALL->"UNION ALL";
+			default->join.toString();
+		};
 	}
 
 	/****************************/
@@ -492,7 +500,7 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 		StringBuilder result = new StringBuilder();
 		result.append(table);
 		if (alias != null) {
-			result.append(" AS " + alias);
+			result.append(" AS ").append(alias);
 		}
 		return result.toString();
 	}
@@ -508,16 +516,14 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 		}
 		
 		for (ColumnSetting settings : column.getSettings()) {
-			if (settings == ColumnSetting.PRIMARY_KEY) {
-				onConstaint.accept(String.format("PRIMARY KEY (%s)", column.getName()));
-			} else if (settings == ColumnSetting.UNIQUE) {
-				onConstaint.accept(String.format(
+			switch (settings) {
+				case PRIMARY_KEY->onConstaint.accept(String.format("PRIMARY KEY (%s)", column.getName()));
+				case UNIQUE->onConstaint.accept(String.format(
 					"CONSTRAINT UQ_%s_%s UNIQUE (%s)",
 					tableName, column.getName(), column.getName()
 				));
-			} else {
-				result.append(" ");
-				result.append(toString(settings));
+				default->result.append(" ")
+					.append(toString(settings));
 			}
 			
 		}
@@ -555,7 +561,7 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 		builder.getJoins().forEach(join->{
 			createJoin(join, sql, create);
 		});
-		createWhere(builder.getWheres(), sql, create);
+		createWhere(builder.getWheres(), sql);
 		iterateList(
 			sql, builder.getGroupBy(),
 			i->" GROUP BY ", i->", ", i->i
@@ -569,10 +575,10 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 			i->" ORDER BY ", i->", ", i->i
 		);
 		if (builder.getLimit() != null) {
-			sql.append(" LIMIT " + builder.getLimit());
+			sql.append(" LIMIT ").append(builder.getLimit());
 		}
 		if (builder.getOffset() != null) {
-			sql.append(" OFFSET " + builder.getOffset());
+			sql.append(" OFFSET ").append(builder.getOffset());
 		}
 	}
 	
@@ -600,7 +606,7 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 		);
 	}
 	
-	private void createWhere(List<Tuple2<String, Where>> wheres, StringBuilder sql, boolean create) {
+	private void createWhere(List<Tuple2<String, Where>> wheres, StringBuilder sql) {
 		iterateList(
 			sql, wheres,
 			w->" WHERE ", w->" " + w._2().toString() + " ", w->"(" + w._1() + ")"
