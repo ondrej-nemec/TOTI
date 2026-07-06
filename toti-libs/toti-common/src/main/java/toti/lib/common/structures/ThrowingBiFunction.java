@@ -18,7 +18,7 @@ package toti.lib.common.structures;
 public interface ThrowingBiFunction<T, R, S, E extends Throwable> {
 
 	/**
-     * Applies this function to the given arguments.	 * 
+     * Applies this function to the given arguments.
 	 * 
 	 * @param first the first function argument
 	 * @param second the second function argument

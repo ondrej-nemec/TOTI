@@ -9,9 +9,15 @@ import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Assertions;
 
+import toti.lib.common.structures.Callback;
 import toti.lib.common.structures.MapDictionary;
+import toti.lib.common.structures.ThrowingBiConsumer;
+import toti.lib.common.structures.ThrowingBiFunction;
+import toti.lib.common.structures.ThrowingCallback;
 import toti.lib.common.structures.ThrowingConsumer;
 import toti.lib.common.structures.ThrowingFunction;
+import toti.lib.common.structures.ThrowingSupplier;
+import toti.lib.common.structures.ThrowingTriConsumer;
 
 public interface TestCase {
 	
@@ -21,7 +27,23 @@ public interface TestCase {
 		return consumer;
 	}
 
+	static <T, E extends Throwable> ThrowingConsumer<T, E> throwingConsumer(ThrowingConsumer<T, E> consumer) {
+		return consumer;
+	}
+
+	static <T, S, E extends Throwable> ThrowingBiConsumer<T, S, E> throwingBiConsumer(ThrowingBiConsumer<T, S, E> biConsumer) {
+		return biConsumer;
+	}
+
+	static <T, S, V, E extends Throwable> ThrowingTriConsumer<T, S, V, E> throwingTriConsumer(ThrowingTriConsumer<T, S, V, E> triConsumer) {
+		return triConsumer;
+	}
+	
 	static <T> Supplier<T> supplier(Supplier<T> supplier) {
+		return supplier;
+	}
+
+	static <T, E extends Throwable> ThrowingSupplier<T, E> throwingSupplier(ThrowingSupplier<T, E> supplier) {
 		return supplier;
 	}
 
@@ -29,12 +51,20 @@ public interface TestCase {
 		return function;
 	}
 
-	static <T, E extends Exception> ThrowingConsumer<T, E> throwingConsumer(ThrowingConsumer<T, E> consumer) {
-		return consumer;
+	static <T, R, E extends Throwable> ThrowingFunction<T, R, E> throwingFunction(ThrowingFunction<T, R, E> function) {
+		return function;
 	}
 
-	static <T, R, E extends Exception> ThrowingFunction<T, R, E> throwingFunction(ThrowingFunction<T, R, E> function) {
-		return function;
+	static <T, S, R, E extends Throwable> ThrowingBiFunction<T, S, R, E> throwingBiFunction(ThrowingBiFunction<T, S, R, E> biFunction) {
+		return biFunction;
+	}
+
+	static Callback callback(Callback callback) {
+		return callback;
+	}
+
+	static <E extends Throwable> ThrowingCallback<E> throwingCallback(ThrowingCallback<E> callback) {
+		return callback;
 	}
 	
 	/**************************/
