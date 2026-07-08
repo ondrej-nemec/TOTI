@@ -252,6 +252,9 @@ public interface Scalar {
 				if (string.isEmpty()) {
 					return null;
 				}
+				if (string.equalsIgnoreCase("null")) {
+					return null;
+				}
 				return getTimestampFromString(string, clazz);
 			},
 			(object)->{
@@ -305,7 +308,7 @@ public interface Scalar {
 		available.put(ZonedDateTime.class, (string)->{
 			return ZonedDateTime.parse(string, DateTimeFormatter.ISO_ZONED_DATE_TIME);
 		});
-		RuntimeException result = null;
+		RuntimeException result;
 		try {
 			return tryTimestamp(available.remove(expected), stringValue);
 		} catch (RuntimeException e) {
