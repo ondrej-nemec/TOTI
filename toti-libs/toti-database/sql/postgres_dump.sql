@@ -1,8 +1,14 @@
 create table escape_table (
-	col_time time(6),
-	col_date date,
-	col_datetime timestamp(6),
-	col_datetime_zoned timestamptz(6)
+	col_bool bool null,
+	col_int int null,
+	col_float float null,
+	col_char char(3) null,
+	col_string varchar(5) null,
+	col_text text null,
+	col_time time(6) null,
+	col_date date null,
+	col_datetime timestamp(6) null,
+	col_datetime_zoned timestamptz(6) null
 );
 
 -- separator --

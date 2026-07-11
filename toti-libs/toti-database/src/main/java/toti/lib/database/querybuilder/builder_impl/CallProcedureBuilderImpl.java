@@ -10,12 +10,11 @@ import java.time.LocalTime;
 import java.util.LinkedList;
 import java.util.List;
 
-import toti.lib.database.querybuilder.DbInstance;
-import toti.lib.database.querybuilder.Escape;
-import toti.lib.database.querybuilder.builders.CallProcedureBuilder;
-import toti.lib.database.querybuilder.structures.ProcedureResult;
 import toti.lib.common.structures.IntegerBuilder;
 import toti.lib.common.structures.SortedMap;
+import toti.lib.database.querybuilder.DbInstance;
+import toti.lib.database.querybuilder.builders.CallProcedureBuilder;
+import toti.lib.database.querybuilder.structures.ProcedureResult;
 
 public class CallProcedureBuilderImpl implements CallProcedureBuilder {
 	
@@ -95,7 +94,7 @@ public class CallProcedureBuilderImpl implements CallProcedureBuilder {
             
             ProcedureResult result = new ProcedureResult(isOutput ? stmt.getObject(1) : 0);
             outputs.forEach((index, parameterName, clazz)->{
-	           	 result.addOutput(parameterName, Escape.parseValue(stmt, index + prefixIndex.get()));
+	           	 result.addOutput(parameterName, instance.getEscape().parseValue(stmt, index + prefixIndex.get()));
 	        });
             return result;
 		}

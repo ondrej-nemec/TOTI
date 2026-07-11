@@ -31,8 +31,8 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 			+ " Date_column DATE,"
 			+ " DateTime_column TIMESTAMP,"
 			+ " DateTime2_column TIMESTAMP(6),"
-			+ " DateTime_Zoned_column TIMESTAMP,"
-			+ " DateTime_Zoned2_column TIMESTAMP(6),"
+			+ " DateTime_Zoned_column DATETIME,"
+			+ " DateTime_Zoned2_column DATETIME(6),"
 			+ " FK_column_1 INT,"
 			+ " FK_column_2 INT,"
 			+ " FK_column_3 INT,"
@@ -414,22 +414,22 @@ public class MySqlInstanceTest extends AbstractInstanceTest {
 	
 	@Override
 	protected String getFunctions_concat1() {
-		return "SELECT CONCAT('\"', name) FROM table_for_functions";
-	}
-	
-	@Override
-	protected String getFunctions_concat2() {
 		return "SELECT CONCAT('\"', name, '\"') FROM table_for_functions";
 	}
 	
 	@Override
+	protected String getFunctions_concat2() {
+		return "SELECT CONCAT('\"', name) FROM table_for_functions";
+	}
+	
+	@Override
 	protected String getFunctions_coalesce1() {
-		return "SELECT COALESCE('\"', name) FROM table_for_functions";
+		return "SELECT COALESCE('\"', name, '\"') FROM table_for_functions";
 	}
 	
 	@Override
 	protected String getFunctions_coalesce2() {
-		return "SELECT COALESCE('\"', name, '\"') FROM table_for_functions";
+		return "SELECT COALESCE('\"', name) FROM table_for_functions";
 	}
 
 	@Override

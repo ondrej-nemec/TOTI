@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import toti.lib.common.structures.DictionaryValue;
+import toti.lib.common.structures.ThrowingFunction;
+import toti.lib.common.structures.Tuple2;
 import toti.lib.database.base.support.DatabaseRow;
 import toti.lib.database.querybuilder.DbInstance;
 import toti.lib.database.querybuilder.Functions;
@@ -16,9 +19,6 @@ import toti.lib.database.querybuilder.builder_impl.share.SelectExecute;
 import toti.lib.database.querybuilder.builders.MultipleSelectBuilder;
 import toti.lib.database.querybuilder.builders.SelectBuilder;
 import toti.lib.database.querybuilder.enums.SelectJoin;
-import toti.lib.common.structures.DictionaryValue;
-import toti.lib.common.structures.ThrowingFunction;
-import toti.lib.common.structures.Tuple2;
 
 public class MultipleSelectBuilderImpl implements MultipleSelectBuilder, ParametrizedSql, SelectExecute {
 
@@ -96,23 +96,23 @@ public class MultipleSelectBuilderImpl implements MultipleSelectBuilder, Paramet
 
 	@Override
 	public DictionaryValue fetchSingle() throws SQLException {
-		return fetchSingle(connection, createSql(), parameters);
+		return fetchSingle(connection, createSql(), parameters, instance.getEscape());
 	}
 
 	@Override
 	public DatabaseRow fetchRow() throws SQLException {
-		return fetchRow(connection, createSql(), parameters);
+		return fetchRow(connection, createSql(), parameters, instance.getEscape());
 	}
 
 	@Override
 	public <T> List<T> fetchAll(ThrowingFunction<DatabaseRow, T, SQLException> function) throws SQLException {
-		return fetchAll(connection, createSql(), parameters, function);
+		return fetchAll(connection, createSql(), parameters, function, instance.getEscape());
 	}
 
 	@Override
 	public <K, V> Map<K, V> fetchAll(ThrowingFunction<DatabaseRow, K, SQLException> key,
 		ThrowingFunction<DatabaseRow, V, SQLException> value) throws SQLException {
-		return fetchAll(connection, createSql(), parameters, key, value);
+		return fetchAll(connection, createSql(), parameters, key, value, instance.getEscape());
 	}
 
 }

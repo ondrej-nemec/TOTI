@@ -60,23 +60,23 @@ public class SelectBuilderImpl extends SelectImpl<SelectBuilderImpl> implements 
 
 	@Override
 	public DictionaryValue fetchSingle() throws SQLException {
-		return fetchSingle(connection, createSql(), getParameters());
+		return fetchSingle(connection, createSql(), getParameters(), instance.getEscape());
 	}
 
 	@Override
 	public DatabaseRow fetchRow() throws SQLException {
-		return fetchRow(connection, createSql(), getParameters());
+		return fetchRow(connection, createSql(), getParameters(), instance.getEscape());
 	}
 
 	@Override
 	public <T> List<T> fetchAll(ThrowingFunction<DatabaseRow, T, SQLException> function) throws SQLException {
-		return fetchAll(connection, createSql(), getParameters(), function);
+		return fetchAll(connection, createSql(), getParameters(), function, instance.getEscape());
 	}
 
 	@Override
 	public <K, V> Map<K, V> fetchAll(ThrowingFunction<DatabaseRow, K, SQLException> key,
 		ThrowingFunction<DatabaseRow, V, SQLException> value) throws SQLException {
-		return fetchAll(connection, createSql(), getParameters(), key, value);
+		return fetchAll(connection, createSql(), getParameters(), key, value, instance.getEscape());
 	}
 
 }

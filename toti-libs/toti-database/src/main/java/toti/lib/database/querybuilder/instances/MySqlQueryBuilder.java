@@ -1,5 +1,6 @@
 package toti.lib.database.querybuilder.instances;
 
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,6 +14,7 @@ import toti.lib.common.structures.SortedMap;
 import toti.lib.common.structures.Tuple2;
 import toti.lib.common.structures.Tuple3;
 import toti.lib.database.querybuilder.DbInstance;
+import toti.lib.database.querybuilder.Escape;
 import toti.lib.database.querybuilder.builder_impl.AlterTableBuilderImpl;
 import toti.lib.database.querybuilder.builder_impl.AlterViewBuilderImpl;
 import toti.lib.database.querybuilder.builder_impl.CallProcedureBuilderImpl;
@@ -41,6 +43,22 @@ import toti.lib.database.querybuilder.structures.Joining;
 import toti.lib.database.querybuilder.structures.SubSelect;
 
 public class MySqlQueryBuilder implements DbInstance {
+
+	@Override
+	public Escape getEscape() {
+		return new Escape(false) {
+
+			@Override
+			protected String escapeZonedDateAndTime(ZonedDateTime value) {
+				return escapeString(
+					value.toInstant().toString()
+					.replace("T", " ")
+					.replace("Z", "+00:00")
+				)
+				;
+			}
+		};
+	}
 
 	@Override
 	public String coalesce(String param1, String param2, String... params) {
@@ -427,9 +445,9 @@ ALTER TABLE table_name AUTO_INCREMENT = (SELECT IFNULL(MAX(id)+1, 1) FROM table_
 			}
 			case DATETIME_ZONED->{
 				if (type.getSize() == null) {
-					yield "TIMESTAMP";
+					yield "DATETIME";
 				}
-				yield String.format("TIMESTAMP(%s)", type.getSize());
+				yield String.format("DATETIME(%s)", type.getSize());
 			}
 			default->type.getType().toString();
 		};

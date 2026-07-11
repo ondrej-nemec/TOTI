@@ -10,6 +10,7 @@ import toti.lib.common.functions.Implode;
 import toti.lib.common.structures.ObjectBuilder;
 import toti.lib.common.structures.Tuple2;
 import toti.lib.database.querybuilder.DbInstance;
+import toti.lib.database.querybuilder.Escape;
 import toti.lib.database.querybuilder.builder_impl.AlterTableBuilderImpl;
 import toti.lib.database.querybuilder.builder_impl.AlterViewBuilderImpl;
 import toti.lib.database.querybuilder.builder_impl.CallProcedureBuilderImpl;
@@ -37,6 +38,11 @@ import toti.lib.database.querybuilder.structures.Joining;
 import toti.lib.database.querybuilder.structures.SubSelect;
 
 public class SqLiteQueryBuilder implements DbInstance {
+
+	@Override
+	public Escape getEscape() {
+		return new Escape();
+	}
 
 	@Override
 	public String coalesce(String param1, String param2, String... params) {

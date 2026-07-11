@@ -1,4 +1,10 @@
 create table escape_table (
+	col_bool bool,
+	col_int integer,
+	col_float float,
+	col_char char(3),
+	col_string varchar(5),
+	col_text text,
 	col_time time(6),
 	col_date date,
 	col_datetime timestamp(6),

@@ -61,7 +61,6 @@ public class SqlServerQueryBuilder implements DbInstance {
 			protected String escapeBoolean(Object value) {
 				return Boolean.class.cast(value) ? "1" : "0";
 			}
-			
 		};
 	}
 

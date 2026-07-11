@@ -3,6 +3,7 @@ package toti.lib.database.querybuilder.instances;
 import java.util.List;
 
 import toti.lib.database.querybuilder.DbInstance;
+import toti.lib.database.querybuilder.Escape;
 import toti.lib.database.querybuilder.builder_impl.AlterTableBuilderImpl;
 import toti.lib.database.querybuilder.builder_impl.AlterViewBuilderImpl;
 import toti.lib.database.querybuilder.builder_impl.CallProcedureBuilderImpl;
@@ -22,6 +23,11 @@ import toti.lib.database.querybuilder.enums.ColumnType;
 @Deprecated
 public class DerbyQueryBuilder implements DbInstance {
 
+	@Override
+	public Escape getEscape() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	@Override
 	public String coalesce(String param1, String param2, String... params) {
 		// TODO Auto-generated method stub
