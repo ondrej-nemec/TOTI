@@ -258,6 +258,21 @@ public class DictionaryValue implements Scalar {
 			if (val instanceof SortedMap<?, ?>) {
 				return new MapDictionary<>(SortedMap.class.cast(val).toMap());
 			}
+			if (val instanceof ListDictionary list) {
+				Map<Object, Object> map = new HashMap<>();
+				list.forEach(item->{
+					map.put(item._1().toString(), item._2());
+				});
+				return new MapDictionary<>(map);
+			}
+			if (val instanceof Iterable<?> iterable) {
+				Map<Object, Object> map = new HashMap<>();
+				int i = 0;
+				for (Object elem : iterable) {
+					map.put((i++) + "", elem);
+				}
+				return new MapDictionary<>(map);
+			}
 			return val;
 		});
 	}
