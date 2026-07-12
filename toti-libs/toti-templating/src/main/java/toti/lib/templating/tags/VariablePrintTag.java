@@ -5,7 +5,6 @@ import java.util.Map;
 import toti.lib.templating.Tag;
 import toti.lib.templating.TagVariableMode;
 
-@Deprecated
 public class VariablePrintTag implements Tag {
 	
 	@Override
