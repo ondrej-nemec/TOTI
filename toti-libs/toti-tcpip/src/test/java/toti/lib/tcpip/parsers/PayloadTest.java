@@ -13,7 +13,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import toti.lib.common.structures.MapInit;
 import toti.lib.common.structures.Tuple2;
-import toti.lib.tcpip.parsers.Payload;
 
 public class PayloadTest {
 

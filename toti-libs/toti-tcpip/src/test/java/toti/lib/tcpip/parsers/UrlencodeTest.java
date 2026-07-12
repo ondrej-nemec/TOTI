@@ -1,17 +1,13 @@
 package toti.lib.tcpip.parsers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.mock;
 
 import toti.lib.common.structures.MapInit;
-import toti.lib.tcpip.parsers.Payload;
-import toti.lib.tcpip.parsers.StreamReader;
-import toti.lib.tcpip.parsers.Urlencode;
 import toti.lib.tcpip.structures.RequestParameters;
 
 public class UrlencodeTest {

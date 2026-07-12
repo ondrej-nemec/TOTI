@@ -1,15 +1,15 @@
 package toti.lib.files.text.basic;
 
-import static org.mockito.Mockito.*;
-
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-
-import toti.lib.files.text.basic.WriteText;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 public class WriteTextTest {
 

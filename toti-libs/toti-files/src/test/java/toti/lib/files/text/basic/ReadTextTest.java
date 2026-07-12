@@ -1,15 +1,13 @@
 package toti.lib.files.text.basic;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Arrays;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
-
-import toti.lib.files.text.basic.ReadText;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ReadTextTest {
 	

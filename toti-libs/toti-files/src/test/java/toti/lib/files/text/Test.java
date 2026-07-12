@@ -2,10 +2,9 @@ package toti.lib.files.text;
 
 import java.io.IOException;
 
-import toti.lib.files.text.Text;
-
 public class Test {
 
+	@SuppressWarnings("CallToPrintStackTrace")
 	public static void main(String[] args) {
 		
 		try {
