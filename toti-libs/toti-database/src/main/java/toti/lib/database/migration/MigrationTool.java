@@ -87,19 +87,19 @@ public class MigrationTool {
 	public void revert(String id) throws Exception {
 		process(folders, true, builder, (filesToMigrate, single, builder)->{
 			for (int i = filesToMigrate.size(); i > 0; i--) {
-    			if (new IdSeparator(filesToMigrate.get(i-1), SEPARATOR).getId().equals(id)) {
-    				return;
-    			}
-    			single.transaction(filesToMigrate.get(i-1), builder, true);
-    		}
+				if (new IdSeparator(filesToMigrate.get(i-1), SEPARATOR).getId().equals(id)) {
+					return;
+				}
+				single.transaction(filesToMigrate.get(i-1), builder, true);
+			}
 		});
 	}
 	
 	public void revert(int steps) throws Exception {
 		process(folders, true, builder, (filesToMigrate, single, builder)->{
 			for (int i = filesToMigrate.size(); filesToMigrate.size() - i < steps; i--) {
-    			single.transaction(filesToMigrate.get(i-1), builder, true);
-    		}
+				single.transaction(filesToMigrate.get(i-1), builder, true);
+			}
 		});
 	}
 */
@@ -148,19 +148,20 @@ public class MigrationTool {
 				.execute();
 		} else {
 			builder
-	    		.insert(MIGRATION_TABLE)
-	    		.addValue("module", module)
-	    		.addValue("id", id)
-	    		.addValue("description", description)
-	    		//.addValue("datetime", common.functions.DateTime.format("yyyy-MM-dd HH:mm:ss.SSS"))
-	    		.addValue("datetime", LocalDateTime.now())
-	    		.execute();
+				.insert(MIGRATION_TABLE)
+				.addValue("module", module)
+				.addValue("id", id)
+				.addValue("description", description)
+				//.addValue("datetime", common.functions.DateTime.format("yyyy-MM-dd HH:mm:ss.SSS"))
+				.addValue("datetime", LocalDateTime.now())
+				.execute();
 		}
 	}
 
 	/******************************************/
 	
 	// TODO test
+	@SuppressWarnings("UseSpecificCatch")
 	protected List<String> selectMigrations(QueryBuilder builder, String module) throws SQLException {
 		try {
 			return builder.select("id")

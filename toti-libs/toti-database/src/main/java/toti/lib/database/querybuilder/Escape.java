@@ -132,7 +132,6 @@ public class Escape {
 		if (value.getClass().getName().equals("microsoft.sql.DateTimeOffset")) {
 			return ZonedDateTime.parse(getString.get().replaceFirst(" ", "T").replace(" ", ""));
 		}
-		System.out.println(value + " " + value.getClass());
 		return value;
 	}
 	

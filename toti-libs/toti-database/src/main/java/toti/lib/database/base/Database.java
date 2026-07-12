@@ -62,7 +62,7 @@ public class Database implements AutoCloseable {
 	}
 	
 	private DatabaseInstance createInstance(String name, Logger logger) {
-		switch (config.type) {
+		return switch (config.type) {
 		/*case "derby":
 			return new Derby( 
 					config.pathOrUrlToLocation, 
@@ -70,17 +70,12 @@ public class Database implements AutoCloseable {
 					createProperties(),
 					logger
 			);*/
-		case "mysql":
-			return new MySql(createDatabaseConnectionString(), config.getProperties(), name, logger);
-		case "postgresql":
-			return new PosgreSql(createDatabaseConnectionString(), config.getProperties(), name, logger);
-		case "sqlserver":
-			return new SqlServer(createDatabaseConnectionString(), config.getProperties(), name, logger);
-		case "sqlite":
-			return new SqLite(createDatabaseConnectionString(), config.getProperties(), name, logger);
-		default:
-			throw new RuntimeException("Unsupported type " + config.type);
-		}
+			case "mysql"->new MySql(createDatabaseConnectionString(), config.getProperties(), name, logger);
+			case "postgresql"->new PosgreSql(createDatabaseConnectionString(), config.getProperties(), name, logger);
+			case "sqlserver"->new SqlServer(createDatabaseConnectionString(), config.getProperties(), name, logger);
+			case "sqlite"->new SqLite(createDatabaseConnectionString(), config.getProperties(), name, logger);
+			default->throw new RuntimeException("Unsupported type " + config.type);
+		};
 	}
 	
 	/************ API ***********/
@@ -120,13 +115,14 @@ public class Database implements AutoCloseable {
 		};
 	}
 
-    @Override
-    public void close() throws SQLException {
+	@Override
+	public void close() throws SQLException {
 		pool.close();
-    }
+	}
 
 	/***************************/
 	
+	@SuppressWarnings("UseSpecificCatch")
 	protected <T> DoubleConsumer<T> getDoubleFunction(ConnectionFunction<T> consumer) {
 		return ()->{
 			Connection con = pool.getConnection();
