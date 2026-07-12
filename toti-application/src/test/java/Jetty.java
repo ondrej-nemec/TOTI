@@ -1,36 +1,13 @@
-import java.net.SocketAddress;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.EventListener;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.eclipse.jetty.server.ConnectionFactory;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.HttpConfiguration;
-import org.eclipse.jetty.server.HttpConnectionFactory;
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.Response;
-import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.SslConnectionFactory;
-import org.eclipse.jetty.util.Callback;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
-import org.eclipse.jetty.http.MetaData;
-import org.eclipse.jetty.http2.api.Session;
-import org.eclipse.jetty.http2.api.Stream;
-import org.eclipse.jetty.http2.api.server.ServerSessionListener;
-import org.eclipse.jetty.http2.frames.HeadersFrame;
-import org.eclipse.jetty.http2.frames.SettingsFrame;
-import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory;
-import org.eclipse.jetty.http2.server.RawHTTP2ServerConnectionFactory;
 
 public class Jetty {
 
 	// TODO https://jetty.org/docs/jetty/12/programming-guide/server/index.html
+	@SuppressWarnings("CallToPrintStackTrace")
 	public static void main(String[] args) {
 		try {
 			System.out.println("Start");
@@ -81,11 +58,13 @@ public class Jetty {
 	}
 */
 	private static Connector createUnsecured(Server server) {
-		HttpConfiguration httpsConfig = new HttpConfiguration();
-		HttpConnectionFactory h1 = new HttpConnectionFactory(httpsConfig);
-		HTTP2ServerConnectionFactory h2 = new HTTP2ServerConnectionFactory(httpsConfig);
+		//HttpConfiguration httpsConfig = new HttpConfiguration();
 		
-		ServerConnector connector = new ServerConnector(server/*, h2, h1*/);
+		ServerConnector connector = new ServerConnector(
+			server
+			// ,new HTTP2ServerConnectionFactory(httpsConfig)
+			// ,new HttpConnectionFactory(httpsConfig)
+		);
 		connector.setPort(80);
 		//connector.setHost("127.0.0.1");
 		return connector;
