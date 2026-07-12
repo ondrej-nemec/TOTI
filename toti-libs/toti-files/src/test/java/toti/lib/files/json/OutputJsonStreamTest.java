@@ -5,8 +5,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import toti.lib.common.structures.ThrowingConsumer;
-import toti.lib.files.json.JsonStreamException;
-import toti.lib.files.json.OutputJsonStream;
 import toti.lib.files.json.providers.OutputStringProvider;
 
 public class OutputJsonStreamTest {
@@ -119,8 +117,9 @@ public class OutputJsonStreamTest {
 				},
 
 				new Object[] {
-						"{\n"
-						+ "}",
+						"""
+						{
+						}""",
 						c((stream)->{
 							stream.writeObjectStart();
 							stream.writeObjectEnd();
@@ -128,9 +127,10 @@ public class OutputJsonStreamTest {
 						true
 				},
 				new Object[] {
-						"{\n"
-						+ "  \"name\": \"value\"\n"
-						+ "}",
+						"""
+						{
+						  "name": "value"
+						}""",
 						c((stream)->{
 							stream.writeObjectStart();
 							stream.writeObjectValue("name", "value");
@@ -139,12 +139,13 @@ public class OutputJsonStreamTest {
 						true
 				},
 				new Object[] {
-						"{\n"
-						+ "  \"name\": \"value\",\n"
-						+ "  \"int\": 12,\n"
-						+ "  \"special\": null,\n"
-						+ "  \"name2\": true\n"
-						+ "}",
+						"""
+						{
+						  "name": "value",
+						  "int": 12,
+						  "special": null,
+						  "name2": true
+						}""",
 						c((stream)->{
 							stream.writeObjectStart();
 							stream.writeObjectValue("name", "value");
@@ -156,12 +157,13 @@ public class OutputJsonStreamTest {
 						true
 				},
 				new Object[] {
-						"{\n"
-						+ "  \"list\": [\n"
-						+ "    \"value1\",\n"
-						+ "    \"value2\"\n"
-						+ "  ]\n"
-						+ "}",
+						"""
+						{
+						  "list": [
+						    "value1",
+						    "value2"
+						  ]
+						}""",
 						c((stream)->{
 							stream.writeObjectStart();
 							stream.writeListStart("list");
@@ -173,11 +175,12 @@ public class OutputJsonStreamTest {
 						true
 				},
 				new Object[] {
-						"{\n"
-						+ "  \"object\": {\n"
-						+ "    \"name\": \"value\"\n"
-						+ "  }\n"
-						+ "}",
+						"""
+						{
+						  "object": {
+						    "name": "value"
+						  }
+						}""",
 						c((stream)->{
 							stream.writeObjectStart();
 							stream.writeObjectStart("object");
@@ -188,18 +191,19 @@ public class OutputJsonStreamTest {
 						true
 				},
 				new Object[] {
-						"{\n"
-						+ "  \"object\": {\n"
-						+ "    \"name\": \"value\",\n"
-						+ "    \"object2\": {\n"
-						+ "      \"list\": [\n"
-						+ "        12,\n"
-						+ "        false,\n"
-						+ "        123.4\n"
-						+ "      ]\n"
-						+ "    }\n"
-						+ "  }\n"
-						+ "}",
+						"""
+						{
+						  "object": {
+						    "name": "value",
+						    "object2": {
+						      "list": [
+						        12,
+						        false,
+						        123.4
+						      ]
+						    }
+						  }
+						}""",
 						c((stream)->{
 							stream.writeObjectStart();
 							stream.writeObjectStart("object");

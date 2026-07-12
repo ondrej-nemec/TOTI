@@ -7,8 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import toti.lib.files.json.InputJsonStream;
-import toti.lib.files.json.JsonStreamException;
 import toti.lib.files.json.event.Event;
 import toti.lib.files.json.event.EventType;
 import toti.lib.files.json.event.Value;
@@ -202,9 +200,9 @@ public class InputJsonStreamTest {
 	public void testNextIfTextIsEmpty() throws IOException {
 		String testingJson = "";
 		InputStringProvider provider = new InputStringProvider(testingJson);
-		InputJsonStream stream = new InputJsonStream(provider);
-		assertEquals(EventType.EMPTY, stream.next().getType());
-		stream.close();
+		try (InputJsonStream stream = new InputJsonStream(provider)) {
+			assertEquals(EventType.EMPTY, stream.next().getType());
+		}
 	}
 	
 }

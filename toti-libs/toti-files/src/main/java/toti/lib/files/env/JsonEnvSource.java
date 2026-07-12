@@ -1,9 +1,9 @@
 package toti.lib.files.env;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import toti.lib.common.structures.DictionaryValue;
@@ -20,13 +20,13 @@ public class JsonEnvSource {
 	}
 
 	private static Value parse(DictionaryValue dv) {
-		if (dv.is(Map.class)) {
+		if (dv.getValue() instanceof Map) {
 			Value value = new Value(new HashMap<>());
 			dv.getDictionaryMap().forEach((k, v)->{
 				value.getMap().put(k, parse(v));
 			});
 			return value;
-		} else if (dv.is(Collection.class)) {
+		} else if (dv.getValue() instanceof List) {
 			Value value = new Value(new LinkedList<>());
 			dv.getDictionaryList().forEach((i, v)->{
 				value.getList().add(parse(v));

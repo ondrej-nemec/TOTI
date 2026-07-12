@@ -4,9 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import toti.lib.files.json.event.ValueParser;
-import toti.lib.files.json.event.ValueType;
-
 public class ValueParserTest {
 
 	@ParameterizedTest

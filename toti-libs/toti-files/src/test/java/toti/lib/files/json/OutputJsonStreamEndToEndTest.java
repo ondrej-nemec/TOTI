@@ -1,7 +1,5 @@
 package toti.lib.files.json;
 
-import toti.lib.files.json.JsonStreamException;
-import toti.lib.files.json.OutputJsonStream;
 import toti.lib.files.json.providers.OutputStringProvider;
 
 public class OutputJsonStreamEndToEndTest {
@@ -36,6 +34,7 @@ public class OutputJsonStreamEndToEndTest {
 		// stream.endDocument();
 	}
 
+	@SuppressWarnings("CallToPrintStackTrace")
 	public static void main(String[] args) {
 		OutputJsonStreamEndToEndTest test = new OutputJsonStreamEndToEndTest();
 		try {

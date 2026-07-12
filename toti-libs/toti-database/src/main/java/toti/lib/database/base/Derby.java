@@ -1,34 +1,31 @@
 package toti.lib.database.base;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
 import org.apache.logging.log4j.Logger;
 
 import toti.lib.database.querybuilder.DbInstance;
-import toti.lib.database.querybuilder.instances.DerbyQueryBuilder;
 
 @Deprecated
 public class Derby implements DatabaseInstance {
 	
-	private final Logger logger;
+	//private final Logger logger;
 	
-	private final String pathToServer;
+	//private final String pathToServer;
 	
-	private final String connectionString;
+	//private final String connectionString;
 	
-	private final Properties property;
+	//private final Properties property;
 	
-	private final boolean runOnExternal;
+	//private final boolean runOnExternal;
 	
 	public Derby(boolean runOnExternal, final String pathToServer, String connectionString, Properties property, final Logger logger) {
-		this.logger = logger;
-		this.connectionString = connectionString;
-		this.property = property;
-		this.pathToServer = pathToServer;
-		this.runOnExternal = runOnExternal;
+		//this.logger = logger;
+		//this.connectionString = connectionString;
+		//this.property = property;
+		//this.pathToServer = pathToServer;
+		//this.runOnExternal = runOnExternal;
 	}
 /*
 	@Override
@@ -54,14 +51,14 @@ public class Derby implements DatabaseInstance {
 */
 	@Override
 	public void createDb() throws SQLException {
-		try (Connection con = DriverManager.getConnection(connectionString, property)) {
+		// try (Connection con = DriverManager.getConnection(connectionString, property)) {
 			/* create and close connection - create db schema */
-		}
+		//}
 	}
 
 	@Override
 	public DbInstance getBuilderInstance() {
-		return new DerbyQueryBuilder();
+		return null;
 	}
 	@Override
 	public String getConnectionString() {

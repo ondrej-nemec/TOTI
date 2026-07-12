@@ -7,7 +7,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import toti.lib.common.structures.MapInit;
-import toti.lib.files.json.JsonWritter;
 
 public class JsonWritterTest {
 

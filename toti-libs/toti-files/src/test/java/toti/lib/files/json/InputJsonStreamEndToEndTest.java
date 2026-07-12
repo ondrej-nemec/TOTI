@@ -4,14 +4,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.stream.IntStream;
 
-import toti.lib.files.json.InputJsonStream;
-import toti.lib.files.json.JsonStreamException;
 import toti.lib.files.json.event.Event;
 import toti.lib.files.json.providers.InputStringProvider;
 import toti.lib.files.text.Text;
 
 public class InputJsonStreamEndToEndTest {
 	
+	@SuppressWarnings("CallToPrintStackTrace")
 	public static void main(String[] args) {
 		try {
 			new InputJsonStreamEndToEndTest().parse(InputJsonStreamEndToEndTest.class.getResourceAsStream("/json/json-input.json"));

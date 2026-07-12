@@ -1,16 +1,13 @@
 package toti.lib.files.json;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 import toti.lib.common.structures.MapInit;
-import toti.lib.files.json.JsonReader;
-import toti.lib.files.json.JsonStreamException;
 
 public class JsonReaderTest {
 	
