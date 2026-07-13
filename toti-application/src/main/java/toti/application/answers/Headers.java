@@ -13,6 +13,8 @@ import toti.lib.common.functions.Implode;
 import toti.lib.common.structures.DictionaryValue;
 
 public class Headers {
+
+	// TODO pri response mit moznost nahrazovat {nonce} (TemplateResponce - getter) a {csrf}
 	
 	private final Map<String, List<Object>> headers;
 	
@@ -53,7 +55,7 @@ public class Headers {
 	
 	public Object getHeader(String name)  {
 		String headerName = name.toLowerCase();
-		if (headers.containsKey(headerName) && headers.get(headerName).size() > 0) {
+		if (headers.containsKey(headerName) && !headers.get(headerName).isEmpty()) {
 			return headers.get(headerName).get(0);
 		}
 		return null;
@@ -61,7 +63,7 @@ public class Headers {
 	
 	public boolean containsHeader(String name) {
 		String headerName = name.toLowerCase();
-		return headers.containsKey(headerName) && headers.get(headerName).size() > 0;
+		return headers.containsKey(headerName) && !headers.get(headerName).isEmpty();
 	}
 	
 	public <T> T getHeader(String name, Class<T> clazz) {
