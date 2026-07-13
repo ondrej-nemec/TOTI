@@ -1,24 +1,346 @@
+<!DOCTYPE html>
 <html>
 <head>
-<!--
-	<meta property="twitter:card" content="summary">
-	<meta property="twitter:url" content="https://ondrej-nemec.github.io/TOTI/">
-	<meta property="twitter:title" content="TOTI">
-	<meta property="twitter:description" content="Java Web framework">
-	<meta property="twitter:image" content="https://raw.githubusercontent.com/ondrej-nemec/TOTI/master/logo.png">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TOTI Documentation</title>
+<link rel="icon" href="https://raw.githubusercontent.com/ondrej-nemec/TOTI/master/logo.jpg">
+<!-- V1.0.0 -->
+<style>
+	/* select  */
+	:root {
+		--primary-color: #0891B2;
+	}
+	/*************/
+	:root { --body-bg: #ffffff; --body-color: #2c3e50; --secondary-color: #6b7280; --card: #f4f6f8; --border: #e5e7eb; --code-bg: #f4f6f8; }
+	[data-theme="dark"] { --body-bg: #0f172a; --body-color: #e5e7eb; --secondary-color: #9ca3af; --card: #111827; --border: #1f2937; --code-bg: #1e293b; }
 
-	<meta property="og:type" content="website">
-	<meta property="og:url" content="https://ondrej-nemec.github.io/TOTI/">
-	<meta property="og:title" content="TOTI">
-	<meta property="og:description" content="Java Web framework">
-	<meta property="og:image" content="https://raw.githubusercontent.com/ondrej-nemec/TOTI/master/logo.png">
-	<meta property="og:image.type" content="image/png">
--->
-	<script src="https://ondrej-nemec.github.io/js-documentation/doc.js" crossorigin="anonymous"></script>
-	<script type="text/javascript">
-		jdDocumentation("bootstrap-light");
-	</script>
+	body { margin: 0; font-family: system-ui, sans-serif; background: var(--body-bg); color: var(--body-color); }
+	.header { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--border); height: 20px; position: fixed; top: 0; background:var(--body-bg); width: 95%; }
+	.brand { font-weight: 600; color: var(--primary-color); }
+	.container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+	h1 { margin: 0 0 10px 0; color: var(--primary-color); }
+	h2 { margin: 0 0 10px 0; font-weight: normal; color: var(--secondary-color); }
+	h3 { margin: 0 0 10px 0; font-weight: normal; color: var(--secondary-color); }
+	h4 { margin: 0 0 10px 0; font-weight: normal; color: var(--secondary-color); }
+	h5 { margin: 0 0 10px 0; font-weight: normal; color: var(--secondary-color); }
+
+	.toggle-button { background: transparent; color: var(--body-color); border: 1px solid var(--border); padding: 6px 10px; border-radius: 6px; cursor: pointer; }
+	[data-theme="dark"] #theme-dark { display: none; }
+	[data-theme="light"] #theme-light { display: none; }
+	.actions { display: flex; gap: 10px; font-size: 14px; color: var(--secondary-color); }
+
+	/******** code **********/
+	.code { background: var(--code-bg); border-left: 4px solid var(--primary-color); padding: 12px; font-family: monospace; overflow-x: auto; }
+	/******** boxes **********/
+	.card { border-radius: 10px; padding: 16px; margin-bottom: 16px; background: var(--card); border: 1px solid var(--border); }
+	/******** normal text **********/
+	.paragraph { padding: 16px; margin-bottom: 16px; }
+
+	/*********** hiddable *************/
+	.section { border: 1px solid var(--border); border-radius: 10px; margin-bottom: 16px; overflow: hidden; }
+	.section-header { padding: 12px 16px; cursor: pointer; justify-content: space-between; display: flex; }
+	.section-header:hover {  background: var(--border); }
+	.chevron {  transition: transform 0.2s; color: var(--secondary-color); }
+	.section.collapsed .chevron {  transform: rotate(-90deg); }
+	.section.collapsed .section-content {  display: none; }
+
+	/***************************/
+	footer {
+	    height: 30px;
+	    background: var(--card);
+	    display: flex;
+	    align-items: center;
+	    gap: 15px;
+	    padding: 0 10px;
+	    font-size: 13px;
+	}
+
+	:root{
+	    --sidebar-left-width:260px;
+	    --sidebar-right-width:220px;
+	    --header-height:60px;
+	    --radius:10px;
+	    --gap:24px;
+	}
+	.layout{
+	    display:grid;
+	    grid-template-columns: var(--sidebar-left-width) minmax(0,1fr) var(--sidebar-right-width);
+	    gap: var(--gap);
+	    max-width:1600px;
+	    margin: 30px auto;
+	    padding:24px;
+	}
+	.content{
+	    min-width:0;
+	}
+	.sidebar-left{
+	    position:sticky;
+	    top:40px;
+	    align-self:start;
+	    max-height:calc(100vh - 40px);
+	    overflow:auto;
+	    border-right:1px solid var(--border);
+	    padding-right:20px;
+	}
+	.sidebar-right{
+	    position:sticky;
+	    top:40px;
+	    align-self:start;
+	    max-height:calc(100vh - 40px);
+	    overflow:auto;
+	    border-left:1px solid var(--border);
+	    padding-left:20px;
+	    font-size:14px;
+	}
+	.menu, .menu ul {
+	    list-style:none;
+	    margin:0;
+	    padding-left:18px;
+	}
+	.menu > li{
+	    padding:4px 0;
+	}
+	.menu a{
+	    display:block;
+	    padding:5px 8px;
+	    border-radius:6px;
+	    color:var(--body-color);
+	    text-decoration:none;
+	}
+	.menu a:hover{
+	    background:var(--card);
+	}
+	.toc, .toc ul{
+	    list-style:none;
+	    margin:0;
+	    padding-left:15px;
+	}
+	.toc a{
+	    display:block;
+	    padding:4px 0;
+	    color:var(--secondary-color);
+	    text-decoration:none;
+	}
+	.toc a:hover{
+	    color:var(--primary-color);
+	}
+
+
+	#menuButton {
+		display: none;
+	}
+	#tocButton {
+		display: none;
+	}
+	@media (max-width:1100px){
+		.layout{
+		    grid-template-columns: minmax(0,1fr) var(--sidebar-right-width);
+		}
+		.sidebar-left {
+		    position:fixed;
+		    top:30px;
+		    bottom:0;
+		    width:280px;
+		    background:var(--body-bg);
+		    overflow:auto;
+		    z-index:100;
+		    transition:.3s;
+		    box-shadow:0 0 20px rgba(0,0,0,.25);
+		    left:-300px;
+		}
+		.sidebar-left.open{
+		    left:0;
+		}
+		#menuButton {
+			display: inherit;
+		}
+	}
+
+	@media (max-width:800px) {
+		.layout {
+		    grid-template-columns: minmax(0,1fr);
+		    padding:15px;
+		}
+		.sidebar-left, .sidebar-right {
+		    position:fixed;
+		    top:30px;
+		    bottom:0;
+		    width:280px;
+		    background:var(--body-bg);
+		    overflow:auto;
+		    z-index:100;
+		    transition:.3s;
+		}
+		.sidebar-left{
+		    left:-300px;
+		}
+		.sidebar-right{
+		    right:-300px;
+		}
+		.sidebar-left.open{
+		    left:0;
+		}
+		.sidebar-right.open{
+		    right:0;
+		}
+		#menuButton, #tocButton {
+			display: inherit;
+		}
+	}
+</style>
 </head>
+
 <body>
+<div class="header">
+    <div class="brand">TOTI - Really cool framework</div>
+
+    <div class="actions">
+        <button class="toggle-button" onclick="toggleTheme()">
+        	<span id="theme-light">☀️</span>
+        	<span id="theme-dark">🌙</span>
+        </button>
+    	<button id="menuButton" class="toggle-button">☰</button>
+        <button id="tocButton" class="toggle-button">☷</button>
+    </div>
+</div>
+
+
+<div class="layout">
+
+    <aside class="sidebar-left">
+       <ul class="menu">
+		<li>
+		    <a href="#">Kapitola 1</a>
+		    <ul>
+		        <li><a href="#">Úvod</a></li>
+		        <li>
+		            <a href="#">Instalace</a>
+		            <ul>
+		                <li><a href="#">Windows</a></li>
+		                <li><a href="#">Linux</a></li>
+		            </ul>
+		        </li>
+		    </ul>
+		</li>
+		</ul>
+    </aside>
+
+    <main class="content">
+        <h1>Welcome</h1>
+	    <h2>Your application is running successfully</h2>
+	    <h3>Your application is running successfully</h3>
+	    <h4>Your application is running successfully</h4>
+	    <h5>Your application is running successfully</h5>
+
+	    <div class="card">
+	        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	    </div>
+
+	    <div class="card">
+	        <div class="code">
+	        	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	        </div>
+	    </div>
+
+	    <div class="paragraph">
+	    	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	    </div>
+
+	    <div class="paragraph">
+		    <div class="code">
+		    	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		    </div>
+	    </div>
+
+	    <div class="section">
+		    <h3 class="section-header" onclick="toggleSection(this)">
+		        <span>Collapsable</span>
+		        <span class="chevron">▼</span>
+		    </h3>
+
+		    <div class="section-content">
+		         <div class="card">
+			        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			    </div>
+
+			    <div class="card">
+			        <div class="code">
+			        	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			        </div>
+			    </div>
+
+			    <div class="paragraph">
+			    	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			    </div>
+
+			    <div class="paragraph">
+				    <div class="code">
+				    	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+				    </div>
+			    </div>
+		    </div>
+		</div>
+
+	    <div class="section collapsed">
+		    <h3 class="section-header" onclick="toggleSection(this)">
+		        <span>Collapsed</span>
+		        <span class="chevron">▼</span>
+		    </h3>
+
+		    <div class="section-content">
+			    <div class="paragraph">
+			    	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			    </div>
+		    </div>
+		</div>
+    </main>
+
+    <aside class="sidebar-right">
+       <ul class="toc">
+		<li>
+		    <a href="#">Kapitola 1</a>
+		    <ul>
+		        <li><a href="#">Úvod</a></li>
+		        <li>
+		            <a href="#">Instalace</a>
+		            <ul>
+		                <li><a href="#">Windows</a></li>
+		                <li><a href="#">Linux</a></li>
+		            </ul>
+		        </li>
+		    </ul>
+		</li>
+		</ul>
+    </aside>
+
+</div>
+
+<footer>
+	Ondřej Němec
+</footer>
+
+</body>
+
+
+<script>
+	// dark/light
+	document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "light");
+	function toggleTheme() {
+	    const html = document.documentElement;
+	    const current = html.getAttribute("data-theme");
+	    var theme = current === "dark" ? "light" : "dark";
+	    html.setAttribute("data-theme", theme);
+	    localStorage.setItem("theme", theme);
+	}
+	// collapsable
+	function toggleSection(header) {
+	    const section = header.parentElement;
+	    section.classList.toggle("collapsed");
+	}
+	document.getElementById('menuButton').onclick = ()=>document.querySelector(".sidebar-left").classList.toggle("open");
+	document.getElementById('tocButton').onclick = ()=>document.querySelector(".sidebar-right").classList.toggle("open");
+</script>
+
 </body>
 </html>

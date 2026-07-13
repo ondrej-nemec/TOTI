@@ -1,0 +1,102 @@
+[
+	{
+		"name": "About",
+		"link": "about.html"
+	},
+	{
+		"name": "Get Started",
+		"link": "get-started.html"
+	},
+	{
+		"name": "TOTI Libraries",
+		"links": [
+			{
+				"name": "Common",
+				"link": "lib-common.html"
+			},
+			{
+				"name": "Files",
+				"link": "lib-files.html"
+			},
+			{
+				"name": "TCP/IP",
+				"link": "lib-tcpip.html"
+			},
+			{
+				"name": "Database",
+				"link": "lib-database.html"
+			},
+			{
+				"name": "Templating",
+				"link": "lib-templating.html"
+			},
+			{
+				"name": "Translate",
+				"link": "lib-translate.html"
+			}
+		]
+	},
+	{
+		"name": "TOTI Core",
+		"links": [
+			{
+				"name": "Basics",
+				"link": "core-how-it-works.html"
+			},
+			{
+				"name": "Configuration",
+				"link": "core-configure.html"
+			},
+			{
+				"name": "Responses",
+				"link": "core-responses.html"
+			},
+			{
+				"name": "Security",
+				"link": "core-security.html"
+			},
+			{
+				"name": "Extensions",
+				"link": "core-extensions.html"
+			}
+		]
+	},
+	{
+		"name": "TOTI Extensions",
+		"links": [
+			{
+				"name": "Database",
+				"link": "ext-database.html"
+			},
+			{
+				"name": "Templating",
+				"link": "ext-templating.html"
+			},
+			{
+				"name": "Translator",
+				"link": "ext-translator.html"
+			},
+			{
+				"name": "Validation",
+				"link": "ext-validation.html"
+			},
+			{
+				"name": "UI",
+				"links": [
+					{
+						"name": "",
+						"link": "ext-ui.html"
+					},
+					{
+						"name": "JS UI Framework",
+						"link": "ext-ui-js.html"
+					}
+				]
+			}
+		]
+	},
+	{
+		"name": "Licence",
+		"link": "https://raw.githubusercontent.com/ondrej-nemec/TOTI/refs/heads/master/LICENSE"
+	}
+]
