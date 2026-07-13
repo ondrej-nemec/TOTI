@@ -12,7 +12,6 @@ install_ext() {
   fi
 }
 
-install_ext bmewburn.vscode-intelephense-client
 install_ext oracle.oracle-java
 install_ext redhat.java
 install_ext samuel-weinhardt.vscode-jsp-lang

@@ -7,6 +7,13 @@ services:
     container_name: toti
     ports:
       - "19010:8080" # VS Code
+      # Examples runners
+      - "19021:80"
+      - "19022:443"
+      - "19031:81"
+      - "19032:444"
+      - "19041:82"
+      - "19042:445"
     volumes:
       - .:/home/coder/project
       - .vscode-config:/home/coder/.local/share/code-server
