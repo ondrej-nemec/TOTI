@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	<title>TOTI | Examples</title>
 	<style type="text/css">
-		:root {
+		/*:root {
 		    --bg: #ffffff;
 		    --text: #2c3e50;
 		    --muted: #6b7280;
@@ -106,6 +106,27 @@
 			display: none;
 		}
 		/**************************/
+		:root { --primary-color: #4F46E5; }
+		:root { --body-bg: #ffffff; --body-color: #2c3e50; --secondary-color: #6b7280; --card: #f4f6f8; --border: #e5e7eb; --code-bg: #f4f6f8; }
+		[data-theme="dark"] { --body-bg: #0f172a; --body-color: #e5e7eb; --secondary-color: #9ca3af; --card: #111827; --border: #1f2937; --code-bg: #1e293b; }
+
+		body { margin: 0; font-family: system-ui, sans-serif; background: var(--body-bg); color: var(--body-color); }
+		.header { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--border); height: 20px; position: fixed; top: 0; background:var(--body-bg); width: 95%; }
+		.brand { font-weight: 600; color: var(--primary-color); }
+		.container { margin: 40px auto; padding: 0 20px; }
+		h1 { margin: 0 0 10px 0; color: var(--primary-color); }
+		h2 { margin: 0 0 10px 0; font-weight: normal; color: var(--secondary-color); }
+		h3 { margin: 0 0 10px 0; font-weight: normal; color: var(--secondary-color); }
+		h4 { margin: 0 0 10px 0; font-weight: normal; color: var(--secondary-color); }
+		h5 { margin: 0 0 10px 0; font-weight: normal; color: var(--secondary-color); }
+
+		#toggle-theme { background: transparent; color: var(--body-color); border: 1px solid var(--border); padding: 6px 10px; border-radius: 6px; cursor: pointer; }
+		[data-theme="dark"] #theme-dark { display: none; }
+		[data-theme="light"] #theme-light { display: none; }
+		.actions { display: flex; gap: 10px; font-size: 14px; color: var(--secondary-color); }
+
+
+
 		#calling-results {
 			width: 35%;
 		    background: var(--code-bg);
@@ -144,8 +165,8 @@
 	</style>
 </head>
 <body>
-	<div class="topbar">
-	    <div class="brand">TOTI</div>
+	<div class="header">
+	    <div class="brand">TOTI - Really cool framework</div>
 
 	    <div class="actions">
 	        <button id="toggle-theme" onclick="toggleTheme()">

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>TOTI</title>
+<title>TOTI Test page</title>
 <!-- V1.0.0 -->
 <style>
 	/* select  */
@@ -19,12 +19,25 @@
 	html[data-page="warning"] {
 		--primary-color: #f59e0b;
 	}
+
+	html[data-page="documentation"] {
+		--primary-color: #0891B2;
+	}
+	html[data-page="debug"] {
+		--primary-color: #7C3AED;
+	}
+	html[data-page="examples"] {
+		--primary-color: #4F46E5;
+	}
+	html[data-page="statistics"] {
+		--primary-color: #0284C7;
+	}
 	/*************/
 	:root { --body-bg: #ffffff; --body-color: #2c3e50; --secondary-color: #6b7280; --card: #f4f6f8; --border: #e5e7eb; --code-bg: #f4f6f8; }
 	[data-theme="dark"] { --body-bg: #0f172a; --body-color: #e5e7eb; --secondary-color: #9ca3af; --card: #111827; --border: #1f2937; --code-bg: #1e293b; }
 
 	body { margin: 0; font-family: system-ui, sans-serif; background: var(--body-bg); color: var(--body-color); }
-	.header { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--border); }
+	.header { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--border); height: 20px; position: fixed; top: 0; background:var(--body-bg); width: 95%; }
 	.brand { font-weight: 600; color: var(--primary-color); }
 	.container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
 	h1 { margin: 0 0 10px 0; color: var(--primary-color); }
@@ -74,35 +87,52 @@
 
 <body>
 <div class="header">
-    <div class="brand">TOTI</div>
+		<div class="brand">TOTI - Really cool framework</div>
 
-<!-- only in examle -->
-    <div class="actions">
-        <label>
-        	<input type="radio" name="level" id="primary" checked>
-        	Primary
-        </label>
-        <label>
-        	<input type="radio" name="level" id="error">
-        	Error
-        </label>
-        <label>
-        	<input type="radio" name="level" id="success">
-        	Success
-        </label>
-        <label>
-        	<input type="radio" name="level" id="warning">
-        	Warning
-        </label>
-    </div>
- <!-- end -->
+	<!-- only in examle -->
+	    <div class="actions">
+	        <label>
+	        	<input type="radio" name="level" id="primary" checked>
+	        	Primary
+	        </label>
+	        <label>
+	        	<input type="radio" name="level" id="debug">
+	        	Debug
+	        </label>
+	        <label>
+	        	<input type="radio" name="level" id="success">
+	        	Success
+	        </label>
+	        <label>
+	        	<input type="radio" name="level" id="warning">
+	        	Warning
+	        </label>
+	        <label>
+	        	<input type="radio" name="level" id="error">
+	        	Error
+	        </label>
+	        <label>
+	        	<input type="radio" name="level" id="documentation">
+	        	Documentation
+	        </label>
+	        <label>
+	        	<input type="radio" name="level" id="examples">
+	        	Examples page
+	        </label>
+	        <span> | </span>
+	        <label>
+	        	<input type="radio" name="level" id="statistics">
+	        	Statistics
+	        </label>
+	    </div>
+	 <!-- end -->
 
-    <div class="actions">
-        <button id="toggle-theme" onclick="toggleTheme()">
-        	<span id="theme-light">☀️</span>
-        	<span id="theme-dark">🌙</span>
-        </button>
-    </div>
+	    <div class="actions">
+	        <button id="toggle-theme" onclick="toggleTheme()">
+	        	<span id="theme-light">☀️</span>
+	        	<span id="theme-dark">🌙</span>
+	        </button>
+	    </div>
 </div>
 
 <div class="container">
