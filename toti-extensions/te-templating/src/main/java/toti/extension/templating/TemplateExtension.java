@@ -8,12 +8,12 @@ import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 
-import toti.application.answers.Headers;
-import toti.application.answers.request.Identity;
-import toti.application.answers.response.ResponseContainer;
-import toti.application.answers.response.ResponseException;
-import toti.application.application.register.Register;
-import toti.application.extensions.Extension;
+import toti.core.answers.Headers;
+import toti.core.answers.request.Identity;
+import toti.core.answers.response.ResponseContainer;
+import toti.core.answers.response.ResponseException;
+import toti.core.application.register.Register;
+import toti.core.extensions.Extension;
 import toti.extension.templating.parameters.AltParameter;
 import toti.extension.templating.parameters.HrefParameter;
 import toti.extension.templating.parameters.PlaceholderParameter;
@@ -32,7 +32,7 @@ import toti.lib.templating.Tag;
 import toti.lib.templating.Template;
 import toti.lib.templating.TemplateFactory;
 
-public class TemplateExtension implements toti.application.extensions.TemplateFactory, Extension {
+public class TemplateExtension implements toti.core.extensions.TemplateFactory, Extension {
 	
 	private final TemplateFactory templateFactory;
 	

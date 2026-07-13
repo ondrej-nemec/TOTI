@@ -3,11 +3,11 @@ package toti.examples.modules;
 import java.util.Arrays;
 import java.util.List;
 
-import toti.application.answers.router.Link;
-import toti.application.answers.router.Router;
-import toti.application.application.Module;
-import toti.application.application.Task;
-import toti.application.application.register.Register;
+import toti.core.answers.router.Link;
+import toti.core.answers.router.Router;
+import toti.core.application.Module;
+import toti.core.application.Task;
+import toti.core.application.register.Register;
 import toti.examples.modules.application.ErrorHandlerExampleController;
 import toti.examples.modules.application.ExceptionsController;
 import toti.lib.files.env.Env;

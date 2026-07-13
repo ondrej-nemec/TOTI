@@ -6,8 +6,8 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 
-import toti.application.TotiServer;
-import toti.application.TotiServerFactory;
+import toti.core.TotiServer;
+import toti.core.TotiServerFactory;
 import toti.examples.modules.ApplicationModule;
 import toti.lib.common.structures.MapInit;
 import toti.lib.tcpip.SslCredentials;

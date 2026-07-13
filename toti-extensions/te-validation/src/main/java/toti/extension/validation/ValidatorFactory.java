@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-import toti.application.extensions.Translator;
+import toti.core.extensions.Translator;
 import toti.extension.validation.collections.RulesCollection;
 import toti.extension.validation.collections.factory.DefaultRulesCollectionsFactory;
 import toti.lib.common.structures.MapInit;

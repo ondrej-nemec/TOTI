@@ -1,9 +1,9 @@
 package toti.examples.modules.application;
 
-import toti.application.annotations.Action;
-import toti.application.annotations.Controller;
-import toti.application.answers.action.ResponseAction;
-import toti.application.answers.response.Response;
+import toti.core.annotations.Action;
+import toti.core.annotations.Controller;
+import toti.core.answers.action.ResponseAction;
+import toti.core.answers.response.Response;
 import toti.lib.common.exceptions.LogicException;
 import toti.lib.tcpip.enums.HttpMethod;
 

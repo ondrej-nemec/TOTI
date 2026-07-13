@@ -14,7 +14,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import toti.application.extensions.Translator;
+import toti.core.extensions.Translator;
 import toti.extension.validation.collections.RulesCollection;
 import toti.extension.validation.results.CheckResult;
 import toti.extension.validation.results.ValidationCollection;

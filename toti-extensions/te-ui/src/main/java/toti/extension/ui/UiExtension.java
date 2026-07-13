@@ -4,12 +4,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import toti.application.answers.Headers;
-import toti.application.answers.action.ResponseAction;
-import toti.application.answers.request.Identity;
-import toti.application.answers.response.Response;
-import toti.application.application.register.Register;
-import toti.application.extensions.TotiExtension;
+import toti.core.answers.Headers;
+import toti.core.answers.action.ResponseAction;
+import toti.core.answers.request.Identity;
+import toti.core.answers.response.Response;
+import toti.core.application.register.Register;
+import toti.core.extensions.TotiExtension;
 import toti.extension.ui.tags.ControlTag;
 import toti.extension.ui.tags.FormTag;
 import toti.extension.ui.tags.GridTag;

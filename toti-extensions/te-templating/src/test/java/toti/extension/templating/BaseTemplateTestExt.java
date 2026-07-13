@@ -14,11 +14,11 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import toti.application.answers.request.Identity;
-import toti.application.answers.response.ResponseContainer;
-import toti.application.answers.router.Link;
-import toti.application.application.register.MappedAction;
-import toti.application.extensions.Translator;
+import toti.core.answers.request.Identity;
+import toti.core.answers.response.ResponseContainer;
+import toti.core.answers.router.Link;
+import toti.core.application.register.MappedAction;
+import toti.core.extensions.Translator;
 
 public class BaseTemplateTestExt {
 

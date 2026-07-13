@@ -1,7 +1,7 @@
 package toti.extension.templating.parameters;
 
-import toti.application.answers.request.Identity;
-import toti.application.extensions.Translator;
+import toti.core.answers.request.Identity;
+import toti.core.extensions.Translator;
 import toti.lib.templating.Parameter;
 
 public class PlaceholderParameter implements Parameter {

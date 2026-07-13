@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import toti.application.answers.router.Link;
+import toti.core.answers.router.Link;
 import toti.extension.ui.control.Control;
 
 public class Button implements Input {

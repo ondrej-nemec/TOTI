@@ -2,7 +2,7 @@ package toti.extension.templating.tags;
 
 import java.util.Map;
 
-import toti.application.application.register.MappedAction;
+import toti.core.application.register.MappedAction;
 import toti.extension.templating.TemplateExtension;
 import toti.lib.common.exceptions.LogicException;
 import toti.lib.templating.Tag;

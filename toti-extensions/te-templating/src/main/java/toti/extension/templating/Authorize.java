@@ -2,7 +2,7 @@ package toti.extension.templating;
 
 import java.util.Map;
 
-import toti.application.answers.request.Identity;
+import toti.core.answers.request.Identity;
 
 public interface Authorize {
 

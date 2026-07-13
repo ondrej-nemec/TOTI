@@ -1,7 +1,7 @@
 package test;
 
-import toti.application.annotations.Action;
-import toti.application.answers.action.ResponseAction;
+import toti.core.annotations.Action;
+import toti.core.answers.action.ResponseAction;
 import toti.lib.tcpip.enums.HttpMethod;
 
 public class Test {

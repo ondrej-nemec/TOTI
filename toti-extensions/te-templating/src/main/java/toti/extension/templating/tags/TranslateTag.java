@@ -2,8 +2,8 @@ package toti.extension.templating.tags;
 
 import java.util.Map;
 
-import toti.application.answers.request.Identity;
-import toti.application.extensions.Translator;
+import toti.core.answers.request.Identity;
+import toti.core.extensions.Translator;
 import toti.lib.templating.Tag;
 import toti.lib.templating.TagVariableMode;
 

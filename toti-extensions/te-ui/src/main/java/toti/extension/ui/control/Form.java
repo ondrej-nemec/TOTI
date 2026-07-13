@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import toti.application.answers.request.Identity;
+import toti.core.answers.request.Identity;
 import toti.extension.ui.control.inputs.Hidden;
 import toti.extension.ui.control.inputs.Input;
 

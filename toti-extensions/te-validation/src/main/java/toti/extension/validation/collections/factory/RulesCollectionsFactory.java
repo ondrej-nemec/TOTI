@@ -2,7 +2,7 @@ package toti.extension.validation.collections.factory;
 
 import java.util.function.Function;
 
-import toti.application.extensions.Translator;
+import toti.core.extensions.Translator;
 import toti.extension.validation.Validator;
 import toti.extension.validation.ValidatorFactory;
 import toti.extension.validation.collections.AlphaNumbericRules;

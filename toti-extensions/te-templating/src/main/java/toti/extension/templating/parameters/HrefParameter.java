@@ -1,6 +1,6 @@
 package toti.extension.templating.parameters;
 
-import toti.application.answers.router.Link;
+import toti.core.answers.router.Link;
 import toti.extension.templating.TemplateExtension;
 import toti.lib.templating.Parameter;
 

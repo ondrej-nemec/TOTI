@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import toti.application.extensions.Translator;
+import toti.core.extensions.Translator;
 import toti.extension.validation.rules.FileAllowedTypesRule;
 import toti.extension.validation.rules.FileMaxSizeRule;
 import toti.extension.validation.rules.FileMinSizeRule;

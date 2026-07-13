@@ -1,9 +1,9 @@
 package toti.examples.modules.application;
 
-import toti.application.annotations.Controller;
-import toti.application.answers.action.ResponseAction;
-import toti.application.answers.response.Response;
-import toti.application.extensions.CustomErrorHandler;
+import toti.core.annotations.Controller;
+import toti.core.answers.action.ResponseAction;
+import toti.core.answers.response.Response;
+import toti.core.extensions.CustomErrorHandler;
 import toti.lib.tcpip.enums.StatusCode;
 
 @Controller("error")

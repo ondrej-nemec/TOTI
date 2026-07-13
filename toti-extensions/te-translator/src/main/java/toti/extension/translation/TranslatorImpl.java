@@ -4,7 +4,7 @@ import java.util.Map;
 
 import toti.lib.translator.Translator;
 
-public class TranslatorImpl implements toti.application.extensions.Translator {
+public class TranslatorImpl implements toti.core.extensions.Translator {
 
 	private final Translator parent;
 	

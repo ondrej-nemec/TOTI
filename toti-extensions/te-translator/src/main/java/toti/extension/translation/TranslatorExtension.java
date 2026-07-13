@@ -6,10 +6,10 @@ import java.util.Set;
 
 import org.apache.logging.log4j.Logger;
 
-import toti.application.answers.Headers;
-import toti.application.answers.request.Identity;
-import toti.application.application.register.Register;
-import toti.application.extensions.Extension;
+import toti.core.answers.Headers;
+import toti.core.answers.request.Identity;
+import toti.core.application.register.Register;
+import toti.core.extensions.Extension;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.files.env.Env;
 import toti.lib.tcpip.structures.RequestParameters;
@@ -53,7 +53,7 @@ public class TranslatorExtension implements Extension {
 		String selectedLang = getLocale(requestHeaders);
 		sessionSpace.put(NAME, selectedLang);
 		identity.setScope(
-			toti.application.extensions.Translator.class,
+			toti.core.extensions.Translator.class,
 			new TranslatorImpl(translator.withLang(selectedLang))
 		);
 	}
