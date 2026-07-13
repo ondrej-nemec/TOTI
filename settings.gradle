@@ -10,7 +10,7 @@ include('toti-libs:toti-translate')
 include('toti-libs:toti-templating')
 include('toti-libs:toti-tcpip')
 
-include('toti-application')
+include('toti-core')
 
 include('toti-extensions:te-ui')
 //include('toti-extensions:te-validator')

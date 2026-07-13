@@ -18,7 +18,7 @@ dependencies {
 	api project('toti-libs:toti-tcpip')
 	api project('toti-libs:toti-templating')
 	
-	api project('toti-application')
+	api project('toti-core')
 	
 	api project('toti-extensions:te-database')
 	api project('toti-extensions:te-validation')

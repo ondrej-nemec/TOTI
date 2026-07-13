@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-	api project(':toti-application')
+	api project(':toti-core')
 	api project(':toti-libs:toti-database')
 	
 	// https://github.com/gradle/gradle/issues/34512
