@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -283,5 +284,13 @@ public class TestCaseTest {
 			},
 		};
 	}
+
+	/*public void factoriesTests() {
+		var consumer = TestCase.consumer(String.class, s->{});
+		//var throwingConsumer = TestCase.throwingConsumer(String.class, s->{});
+		//var throwingBiConsumer = TestCase.throwingBiConsumer(String.class, Integer.class, (a, b)->{});
+		var supplier = TestCase.supplier(String.class, ()->null);
+		var function = TestCase.function(String.class, Integer.class, a->null);
+	}*/
 
 }

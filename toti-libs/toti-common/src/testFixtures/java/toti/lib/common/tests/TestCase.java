@@ -27,35 +27,41 @@ public interface TestCase {
 		return consumer;
 	}
 
-	static <T, E extends Throwable> ThrowingConsumer<T, E> throwingConsumer(ThrowingConsumer<T, E> consumer) {
+	static <T, E extends Throwable> ThrowingConsumer<T, E> throwingConsumer(Class<T> clazz, ThrowingConsumer<T, E> consumer) {
 		return consumer;
 	}
 
-	static <T, S, E extends Throwable> ThrowingBiConsumer<T, S, E> throwingBiConsumer(ThrowingBiConsumer<T, S, E> biConsumer) {
+	static <T, S, E extends Throwable> ThrowingBiConsumer<T, S, E> throwingBiConsumer(Class<T> clazzT, Class<S> clazzS, ThrowingBiConsumer<T, S, E> biConsumer) {
 		return biConsumer;
 	}
 
-	static <T, S, V, E extends Throwable> ThrowingTriConsumer<T, S, V, E> throwingTriConsumer(ThrowingTriConsumer<T, S, V, E> triConsumer) {
+	static <T, S, V, E extends Throwable> ThrowingTriConsumer<T, S, V, E> throwingTriConsumer(
+		Class<T> clazzT, Class<S> clazzS, Class<V> clazzV, ThrowingTriConsumer<T, S, V, E> triConsumer
+	) {
 		return triConsumer;
 	}
 	
-	static <T> Supplier<T> supplier(Supplier<T> supplier) {
+	static <T> Supplier<T> supplier(Class<T> clazz, Supplier<T> supplier) {
 		return supplier;
 	}
 
-	static <T, E extends Throwable> ThrowingSupplier<T, E> throwingSupplier(ThrowingSupplier<T, E> supplier) {
+	static <T, E extends Throwable> ThrowingSupplier<T, E> throwingSupplier(Class<T> clazz, ThrowingSupplier<T, E> supplier) {
 		return supplier;
 	}
 
-	static <T, R> Function<T, R> function(Function<T, R> function) {
+	static <T, R> Function<T, R> function(Class<T> clazzT, Class<R> clazzR, Function<T, R> function) {
 		return function;
 	}
 
-	static <T, R, E extends Throwable> ThrowingFunction<T, R, E> throwingFunction(ThrowingFunction<T, R, E> function) {
+	static <T, R, E extends Throwable> ThrowingFunction<T, R, E> throwingFunction(
+		Class<T> clazzT, Class<R> clazzR, ThrowingFunction<T, R, E> function
+	) {
 		return function;
 	}
 
-	static <T, S, R, E extends Throwable> ThrowingBiFunction<T, S, R, E> throwingBiFunction(ThrowingBiFunction<T, S, R, E> biFunction) {
+	static <T, S, R, E extends Throwable> ThrowingBiFunction<T, S, R, E> throwingBiFunction(
+		Class<T> clazzT, Class<S> clazzS, Class<R> clazzR, ThrowingBiFunction<T, S, R, E> biFunction
+	) {
 		return biFunction;
 	}
 
