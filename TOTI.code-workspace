@@ -46,9 +46,17 @@
                 "type": "java",
                 "name": "TOTI Examples Runner",
                 "request": "launch",
-                "mainClass": "toti.examples.TotiExamplesRunner",
+                "mainClass": "toti.examples.demo.TotiExamplesRunner",
                 "console": "internalConsole",
-                "cwd": "examples"
+                "cwd": "examples/demo"
+            },
+            {
+                "type": "java",
+                "name": "TOTI Get started",
+                "request": "launch",
+                "mainClass": "toti.examples.getStarted.GetStartedMain",
+                "console": "internalConsole",
+                "cwd": "examples/demo"
             },
             {
                 "type": "java",

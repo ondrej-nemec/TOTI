@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>TOTI Documentation</title>
-<link rel="icon" href="https://raw.githubusercontent.com/ondrej-nemec/TOTI/master/logo.jpg">
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>TOTI Documentation</title>
+	<link rel="icon" href="https://raw.githubusercontent.com/ondrej-nemec/TOTI/master/logo.jpg">
 <!-- V1.0.0 -->
 <style>
 	/* select  */
@@ -31,7 +31,7 @@
 	.actions { display: flex; gap: 10px; font-size: 14px; color: var(--secondary-color); }
 
 	/******** code **********/
-	.code { background: var(--code-bg); border-left: 4px solid var(--primary-color); padding: 12px; font-family: monospace; overflow-x: auto; }
+	pre, .code { background: var(--code-bg); border-left: 4px solid var(--primary-color); padding: 12px; font-family: monospace; overflow-x: auto; }
 	/******** boxes **********/
 	.card { border-radius: 10px; padding: 16px; margin-bottom: 16px; background: var(--card); border: 1px solid var(--border); }
 	/******** normal text **********/
@@ -47,83 +47,95 @@
 
 	/***************************/
 	footer {
-	    height: 30px;
-	    background: var(--card);
-	    display: flex;
-	    align-items: center;
-	    gap: 15px;
-	    padding: 0 10px;
-	    font-size: 13px;
+		height: 30px;
+		background: var(--card);
+		display: flex;
+		align-items: center;
+		gap: 15px;
+		padding: 0 10px;
+		font-size: 13px;
 	}
 
 	:root{
-	    --sidebar-left-width:260px;
-	    --sidebar-right-width:220px;
-	    --header-height:60px;
-	    --radius:10px;
-	    --gap:24px;
+		--sidebar-left-width:260px;
+		--sidebar-right-width:220px;
+		--header-height:60px;
+		--radius:10px;
+		--gap:24px;
 	}
 	.layout{
-	    display:grid;
-	    grid-template-columns: var(--sidebar-left-width) minmax(0,1fr) var(--sidebar-right-width);
-	    gap: var(--gap);
-	    max-width:1600px;
-	    margin: 30px auto;
-	    padding:24px;
+		display:grid;
+		grid-template-columns: var(--sidebar-left-width) minmax(0,1fr) var(--sidebar-right-width);
+		gap: var(--gap);
+		max-width:1600px;
+		margin: 30px auto;
+		padding:24px;
 	}
 	.content{
-	    min-width:0;
+		min-width:0;
 	}
 	.sidebar-left{
-	    position:sticky;
-	    top:40px;
-	    align-self:start;
-	    max-height:calc(100vh - 40px);
-	    overflow:auto;
-	    border-right:1px solid var(--border);
-	    padding-right:20px;
+		position:sticky;
+		top:40px;
+		align-self:start;
+		max-height:calc(100vh - 40px);
+		overflow:auto;
+		border-right:1px solid var(--border);
+		padding-right:20px;
 	}
 	.sidebar-right{
-	    position:sticky;
-	    top:40px;
-	    align-self:start;
-	    max-height:calc(100vh - 40px);
-	    overflow:auto;
-	    border-left:1px solid var(--border);
-	    padding-left:20px;
-	    font-size:14px;
+		position:sticky;
+		top:40px;
+		align-self:start;
+		max-height:calc(100vh - 40px);
+		overflow:auto;
+		border-left:1px solid var(--border);
+		padding-left:20px;
+		font-size:14px;
 	}
 	.menu, .menu ul {
-	    list-style:none;
-	    margin:0;
-	    padding-left:18px;
+		list-style:none;
+		margin:0;
+		padding-left:18px;
 	}
 	.menu > li{
-	    padding:4px 0;
+		padding:4px 0;
 	}
 	.menu a{
-	    display:block;
-	    padding:5px 8px;
-	    border-radius:6px;
-	    color:var(--body-color);
-	    text-decoration:none;
+		display:block;
+		padding:5px 8px;
+		border-radius:6px;
+		color:var(--body-color);
+		text-decoration:none;
 	}
 	.menu a:hover{
-	    background:var(--card);
+		background:var(--card);
 	}
 	.toc, .toc ul{
-	    list-style:none;
-	    margin:0;
-	    padding-left:15px;
+		list-style:none;
+		margin:0;
+		padding-left:15px;
 	}
 	.toc a{
-	    display:block;
-	    padding:4px 0;
-	    color:var(--secondary-color);
-	    text-decoration:none;
+		display:block;
+		padding:4px 0;
+		color:var(--secondary-color);
+		text-decoration:none;
 	}
 	.toc a:hover{
-	    color:var(--primary-color);
+		color:var(--primary-color);
+	}
+	.menu-link {
+		cursor: pointer;
+	}
+	li[level="0"] {
+		font-size: 1em;
+	}
+	li[level="1"] {
+		font-size: 0.95em;
+	}
+	li[level="3"] {
+		font-size: 0.90em;
 	}
 
 
@@ -135,22 +147,22 @@
 	}
 	@media (max-width:1100px){
 		.layout{
-		    grid-template-columns: minmax(0,1fr) var(--sidebar-right-width);
+			grid-template-columns: minmax(0,1fr) var(--sidebar-right-width);
 		}
 		.sidebar-left {
-		    position:fixed;
-		    top:30px;
-		    bottom:0;
-		    width:280px;
-		    background:var(--body-bg);
-		    overflow:auto;
-		    z-index:100;
-		    transition:.3s;
-		    box-shadow:0 0 20px rgba(0,0,0,.25);
-		    left:-300px;
+			position:fixed;
+			top:30px;
+			bottom:0;
+			width:280px;
+			background:var(--body-bg);
+			overflow:auto;
+			z-index:100;
+			transition:.3s;
+			box-shadow:0 0 20px rgba(0,0,0,.25);
+			left:-300px;
 		}
 		.sidebar-left.open{
-		    left:0;
+			left:0;
 		}
 		#menuButton {
 			display: inherit;
@@ -159,30 +171,30 @@
 
 	@media (max-width:800px) {
 		.layout {
-		    grid-template-columns: minmax(0,1fr);
-		    padding:15px;
+			grid-template-columns: minmax(0,1fr);
+			padding:15px;
 		}
 		.sidebar-left, .sidebar-right {
-		    position:fixed;
-		    top:30px;
-		    bottom:0;
-		    width:280px;
-		    background:var(--body-bg);
-		    overflow:auto;
-		    z-index:100;
-		    transition:.3s;
+			position:fixed;
+			top:30px;
+			bottom:0;
+			width:280px;
+			background:var(--body-bg);
+			overflow:auto;
+			z-index:100;
+			transition:.3s;
 		}
 		.sidebar-left{
-		    left:-300px;
+			left:-300px;
 		}
 		.sidebar-right{
-		    right:-300px;
+			right:-300px;
 		}
 		.sidebar-left.open{
-		    left:0;
+			left:0;
 		}
 		.sidebar-right.open{
-		    right:0;
+			right:0;
 		}
 		#menuButton, #tocButton {
 			display: inherit;
@@ -192,133 +204,37 @@
 </head>
 
 <body>
-<div class="header">
-    <div class="brand">TOTI - Really cool framework</div>
+	<div class="header">
+		<div class="brand">TOTI - Really cool framework</div>
 
-    <div class="actions">
-        <button class="toggle-button" onclick="toggleTheme()">
-        	<span id="theme-light">☀️</span>
-        	<span id="theme-dark">🌙</span>
-        </button>
-    	<button id="menuButton" class="toggle-button">☰</button>
-        <button id="tocButton" class="toggle-button">☷</button>
-    </div>
-</div>
-
-
-<div class="layout">
-
-    <aside class="sidebar-left">
-       <ul class="menu">
-		<li>
-		    <a href="#">Kapitola 1</a>
-		    <ul>
-		        <li><a href="#">Úvod</a></li>
-		        <li>
-		            <a href="#">Instalace</a>
-		            <ul>
-		                <li><a href="#">Windows</a></li>
-		                <li><a href="#">Linux</a></li>
-		            </ul>
-		        </li>
-		    </ul>
-		</li>
-		</ul>
-    </aside>
-
-    <main class="content">
-        <h1>Welcome</h1>
-	    <h2>Your application is running successfully</h2>
-	    <h3>Your application is running successfully</h3>
-	    <h4>Your application is running successfully</h4>
-	    <h5>Your application is running successfully</h5>
-
-	    <div class="card">
-	        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	    </div>
-
-	    <div class="card">
-	        <div class="code">
-	        	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	        </div>
-	    </div>
-
-	    <div class="paragraph">
-	    	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	    </div>
-
-	    <div class="paragraph">
-		    <div class="code">
-		    	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-		    </div>
-	    </div>
-
-	    <div class="section">
-		    <h3 class="section-header" onclick="toggleSection(this)">
-		        <span>Collapsable</span>
-		        <span class="chevron">▼</span>
-		    </h3>
-
-		    <div class="section-content">
-		         <div class="card">
-			        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			    </div>
-
-			    <div class="card">
-			        <div class="code">
-			        	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			        </div>
-			    </div>
-
-			    <div class="paragraph">
-			    	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			    </div>
-
-			    <div class="paragraph">
-				    <div class="code">
-				    	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-				    </div>
-			    </div>
-		    </div>
+		<div class="actions">
+			<button class="toggle-button" onclick="toggleTheme()">
+				<span id="theme-light">☀️</span>
+				<span id="theme-dark">🌙</span>
+			</button>
+			<button id="menuButton" class="toggle-button">☰</button>
+			<button id="tocButton" class="toggle-button">☷</button>
 		</div>
+	</div>
 
-	    <div class="section collapsed">
-		    <h3 class="section-header" onclick="toggleSection(this)">
-		        <span>Collapsed</span>
-		        <span class="chevron">▼</span>
-		    </h3>
 
-		    <div class="section-content">
-			    <div class="paragraph">
-			    	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			    </div>
-		    </div>
-		</div>
-    </main>
+	<div class="layout">
 
-    <aside class="sidebar-right">
-       <ul class="toc">
-		<li>
-		    <a href="#">Kapitola 1</a>
-		    <ul>
-		        <li><a href="#">Úvod</a></li>
-		        <li>
-		            <a href="#">Instalace</a>
-		            <ul>
-		                <li><a href="#">Windows</a></li>
-		                <li><a href="#">Linux</a></li>
-		            </ul>
-		        </li>
-		    </ul>
-		</li>
-		</ul>
-    </aside>
+		<aside class="sidebar-left">
+			<ul class="menu"></ul>
+		</aside>
 
-</div>
+		<main class="content"></main>
 
-<footer>
-	Ondřej Němec
-</footer>
+		<aside class="sidebar-right">
+			<ul class="toc"></ul>
+		</aside>
+
+	</div>
+
+	<footer>
+		Ondřej Němec 2018
+	</footer>
 
 </body>
 
@@ -327,19 +243,121 @@
 	// dark/light
 	document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "light");
 	function toggleTheme() {
-	    const html = document.documentElement;
-	    const current = html.getAttribute("data-theme");
-	    var theme = current === "dark" ? "light" : "dark";
-	    html.setAttribute("data-theme", theme);
-	    localStorage.setItem("theme", theme);
+		const html = document.documentElement;
+		const current = html.getAttribute("data-theme");
+		var theme = current === "dark" ? "light" : "dark";
+		html.setAttribute("data-theme", theme);
+		localStorage.setItem("theme", theme);
 	}
 	// collapsable
 	function toggleSection(header) {
-	    const section = header.parentElement;
-	    section.classList.toggle("collapsed");
+		const section = header.parentElement;
+		section.classList.toggle("collapsed");
 	}
 	document.getElementById('menuButton').onclick = ()=>document.querySelector(".sidebar-left").classList.toggle("open");
 	document.getElementById('tocButton').onclick = ()=>document.querySelector(".sidebar-right").classList.toggle("open");
+
+	var main = document.querySelector('main.content');
+	var toc = document.querySelector('ul.toc');
+	function showPage(data) {
+		main.innerHTML = data.html;
+		var qeue = [{
+			level: 2,
+			container: toc
+		}];
+		var index = 0;
+		main.querySelectorAll('h2, h3, h4, h5').forEach(h=>{
+			var last = qeue[qeue.length - 1];
+			var level = parseInt(h.tagName.replace('H', ''));
+			if (level > last.level) {
+				var ul = document.createElement('ul');
+				last.container.appendChild(ul);
+				last = {
+					level: level,
+					container: ul
+				};
+				qeue.push(last);
+			}
+			if (level < last.level) {
+				while (level != last.level) {
+					qeue.pop();
+					last = qeue[qeue.length - 1];
+				}
+			}
+			h.setAttribute('id', 'index-' + index);
+			var title = document.createElement('span');
+			title.addEventListener('click', e=>{
+				h.scrollIntoView();
+			});
+			title.innerText = h.innerText;
+
+			var container = document.createElement('li');
+			container.appendChild(title);
+			last.container.appendChild(container);
+		});
+	}
+	// TODO change language
+	function addMenuItem(data, url, parent, item, level) {
+		var container = document.createElement('li');
+		container.setAttribute('level', level);
+		parent.appendChild(container);
+		if (item.hasOwnProperty('links')) {
+			var titleElement = document.createElement('span');
+			titleElement.innerText = item.name;
+			var listElement = document.createElement('ul');
+
+			container.appendChild(titleElement);
+			container.appendChild(listElement);
+			item.links.forEach(sub=>{
+				addMenuItem(data, url, listElement, sub, level + 1);
+			});
+		} else {
+			var link = document.createElement('span');
+			link.innerText = item.name;
+			link.setAttribute('link', item.link);
+			link.classList.add('menu-link');
+			link.addEventListener('click', e=>{
+				showPage(data.get(item.link));
+			});
+			container.appendChild(link);
+			fetch(url + item.link).then(res=>{
+				return res.text();
+			}).then(body=>{
+				data.add(item.link, body);
+			});
+		}
+	}
+	async function loadData() {
+		var url = (location.origin + location.pathname).replace('index.html', '') + 'en/';
+		try {
+			const response = await fetch(url + "config.json");
+			const result = await response.json();
+
+			var pages = {
+				data: {},
+				add: function(link, body) {
+					// var el = document.createElement(body);
+					pages.data[link] = {
+						text: 'TODO', // el.innerText,
+						html: body
+					};
+				},
+				get: function(link) {
+					if (pages.data.hasOwnProperty(link)) {
+						return pages.data[link];
+					}
+					return {};
+				}
+			};
+			var menuElement = document.querySelector('ul.menu');
+			result.forEach(item=>{
+				addMenuItem(pages, url, menuElement, item, 0);
+			});
+		} catch (error) {
+			console.error(error.message);
+		}
+	}
+	loadData();
 </script>
 
 </body>

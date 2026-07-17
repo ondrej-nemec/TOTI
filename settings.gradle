@@ -19,6 +19,5 @@ include('toti-extensions:te-templating')
 include('toti-extensions:te-translator')
 include('toti-extensions:te-validation')
 
-include('examples')
-// include('examples:project1')
-// include('examples:project2')
+include('examples:get-started')
+include('examples:demo')
