@@ -1,4 +1,4 @@
-package toti.examples;
+package toti.examples.demo;
 
 import java.util.Arrays;
 import java.util.List;
@@ -8,7 +8,7 @@ import org.apache.logging.log4j.LogManager;
 
 import toti.core.TotiServer;
 import toti.core.TotiServerFactory;
-import toti.examples.modules.ApplicationModule;
+import toti.examples.demo.modules.ApplicationModule;
 import toti.lib.common.structures.MapInit;
 import toti.lib.tcpip.SslCredentials;
 

@@ -1,4 +1,4 @@
-package toti.examples.modules.application;
+package toti.examples.demo.modules.application;
 
 import toti.core.annotations.Controller;
 import toti.core.answers.action.ResponseAction;
