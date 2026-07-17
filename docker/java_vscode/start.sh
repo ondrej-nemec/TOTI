@@ -12,11 +12,10 @@ install_ext() {
   fi
 }
 
-install_ext oracle.oracle-java
 install_ext redhat.java
-install_ext samuel-weinhardt.vscode-jsp-lang
 install_ext vscjava.vscode-gradle
 install_ext vscjava.vscode-java-debug
 install_ext vscjava.vscode-java-test
+install_ext samuel-weinhardt.vscode-jsp-lang
 
 code-server --bind-addr 0.0.0.0:8080 --auth none

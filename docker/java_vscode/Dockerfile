@@ -3,8 +3,6 @@ FROM codercom/code-server:latest
 RUN mkdir -p /home/coder/project
 WORKDIR /home/coder/project
 
-# RUN code-server --install-extension bmewburn.vscode-intelephense-client
-
 ##############
 # JAVA
 USER root

@@ -35,7 +35,6 @@ services:
       - postgres
       - sqlserver
       - mysql
-      - sqlite
 
   mysql:
     image: mysql:8.0
@@ -84,16 +83,3 @@ services:
     #volumes:
       #- ./volumes/sqlserver:/var/opt/mssql
       #- ./toti-libs/toti-database/sql/sqlserver_dump.sql:/init-db/query_builder.sql:ro
-
-  sqlite:
-    image: nouchka/sqlite3:latest
-    container_name: toti_sqlite
-    stdin_open: true
-    tty: true
-    command: query_builder.sqlt < /root/dump.sql
-    volumes:
-      - ./volumes/sqlite/:/root/db/
-      - ./docker/sqlite/init.sh:/init-sqlite.sh:ro
-      # - ./docker/sqlite_dump.sql:/root/dump.sql
-      #- ./toti-libs/toti-database/sql/sqlite_dump.sql:/docker-entrypoint-initdb.d/query_builder.sql:ro
-    entrypoint: ["/bin/sh", "/init-sqlite.sh"]
