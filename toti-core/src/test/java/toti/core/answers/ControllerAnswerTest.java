@@ -429,7 +429,7 @@ public class ControllerAnswerTest {
 							return new TextResponse(StatusCode.OK, new Headers(), "interrupted");
 						};
 					} 
-				}, throwingFunction((o)->o.getClass().getMethod("index")),
+				}, throwingFunction(Object.class, Method.class, (o)->o.getClass().getMethod("index")),
 				new TextResponse(StatusCode.OK, new Headers(), "interrupted")
 			},
 			// interrupted in authorize 
@@ -442,7 +442,7 @@ public class ControllerAnswerTest {
 							return new TextResponse(StatusCode.OK, new Headers(), "interrupted");
 							};
 					} 
-				}, throwingFunction((o)->o.getClass().getMethod("index")),
+				}, throwingFunction(Object.class, Method.class, (o)->o.getClass().getMethod("index")),
 				new TextResponse(StatusCode.OK, new Headers(), "interrupted")
 			},
 			// TODO convert to correct calling
@@ -556,7 +556,7 @@ public class ControllerAnswerTest {
 							return new TextResponse(StatusCode.OK, new Headers(), "interrupted");
 						};
 					} 
-				}, throwingFunction((o)->o.getClass().getMethod("index")),
+				}, throwingFunction(Object.class, Method.class, (o)->o.getClass().getMethod("index")),
 				new TextResponse(StatusCode.OK, new Headers(), "interrupted")
 			},
 			// interrupted in create
@@ -569,7 +569,7 @@ public class ControllerAnswerTest {
 							return new TextResponse(StatusCode.OK, new Headers(), "interrupted");
 						};
 					} 
-				}, throwingFunction((o)->o.getClass().getMethod("index")),
+				}, throwingFunction(Object.class, Method.class, (o)->o.getClass().getMethod("index")),
 				new TextResponse(StatusCode.OK, new Headers(), "interrupted")
 			},
 			// create return response
@@ -582,7 +582,7 @@ public class ControllerAnswerTest {
 							return new TextResponse(StatusCode.OK, new Headers(), "response");
 						};
 					} 
-				}, throwingFunction((o)->o.getClass().getMethod("index")),
+				}, throwingFunction(Object.class, Method.class, (o)->o.getClass().getMethod("index")),
 				new TextResponse(StatusCode.OK, new Headers(), "response")
 			},
 			// create with params
@@ -595,7 +595,7 @@ public class ControllerAnswerTest {
 							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id + ": " + value);
 						};
 					} 
-				}, throwingFunction((o)->o.getClass().getMethod("index", int.class, String.class)),
+				}, throwingFunction(Object.class, Method.class, (o)->o.getClass().getMethod("index", int.class, String.class)),
 				new TextResponse(StatusCode.OK, new Headers(), "Response 10: aaa")
 			},
 			// create with params - cast
@@ -608,7 +608,7 @@ public class ControllerAnswerTest {
 							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id + ": " + value);
 						};
 					} 
-				}, throwingFunction((o)->o.getClass().getMethod("index", int.class, String.class)),
+				}, throwingFunction(Object.class, Method.class, (o)->o.getClass().getMethod("index", int.class, String.class)),
 				new TextResponse(StatusCode.OK, new Headers(), "Response 10: aaa")
 			},
 			// create with params - wrong type
@@ -621,7 +621,7 @@ public class ControllerAnswerTest {
 							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id + ": " + value);
 						};
 					} 
-				}, throwingFunction((o)->o.getClass().getMethod("index", int.class, String.class)),
+				}, throwingFunction(Object.class, Method.class, (o)->o.getClass().getMethod("index", int.class, String.class)),
 				new EmptyResponse(StatusCode.BAD_REQUEST, new Headers())
 			},
 			// create with params - less that expected
@@ -634,7 +634,7 @@ public class ControllerAnswerTest {
 							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id + ": " + value);
 						};
 					} 
-				}, throwingFunction((o)->o.getClass().getMethod("index", int.class, String.class)),
+				}, throwingFunction(Object.class, Method.class, (o)->o.getClass().getMethod("index", int.class, String.class)),
 				new EmptyResponse(StatusCode.BAD_REQUEST, new Headers())
 			},
 			// create with params - more than expected
@@ -647,7 +647,7 @@ public class ControllerAnswerTest {
 							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id + ": " + value);
 						};
 					} 
-				}, throwingFunction((o)->o.getClass().getMethod("index", int.class, String.class)),
+				}, throwingFunction(Object.class, Method.class, (o)->o.getClass().getMethod("index", int.class, String.class)),
 				new EmptyResponse(StatusCode.BAD_REQUEST, new Headers())
 			}
 		};
