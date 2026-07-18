@@ -60,7 +60,7 @@ public class TotiAnswer {
 			moduleName.set(extension.getIdentifier());
 			return extension.get(url, isDevelopReqeust).create(request, identity);
 		}
-		return Response.create(StatusCode.NOT_FOUND).getEmpty();
+		return Response.create(StatusCode.NOT_FOUND).getText("Not found");
 	}
 	
 	private Response getWelcomePage() {
