@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
@@ -11,7 +12,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.websocket.server.ServerWebSocketContainer;
 
-import toti.lib.common.structures.ThrowingBiFunction;
 import toti.lib.files.env.Env;
 import toti.lib.tcpip.parsers.Form;
 import toti.lib.tcpip.parsers.Payload;
@@ -49,8 +49,8 @@ public class TotiServer {
 	
 	public Application addApplication(
 			String appIdentifier,
-			ThrowingBiFunction<Env, ApplicationFactory, Application, Exception> init,
-			List<String> hostnames, List<String> paths) throws Exception {
+			BiFunction<Env, ApplicationFactory, Application> init,
+			List<String> hostnames, List<String> paths) {
 		Env applicationEnv = this.env.getSection("applications").getSection(appIdentifier);
 		ApplicationFactory applicationFactory = new ApplicationFactory(appIdentifier, applicationEnv, charset, hostnames, paths);
 		Application application = init.apply(applicationEnv, applicationFactory);

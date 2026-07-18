@@ -11,20 +11,8 @@ public interface Module {
 	
 	String getName();
 
-	List<Task> initInstances(Env env, Register register, Link link) throws Exception;
+	List<Task> initInstances(Env env, Register register, Link link);
 	
 	default void addRoutes(Router router, Link link) {}
-/*
-	default String getTranslationPath() {
-		return null;
-	}
-	
-	default String getMigrationsPath() {
-		return null;
-	}
-	
-	default String getTemplatesPath() {
-		return null;
-	}
-*/
+
 }

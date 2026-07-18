@@ -24,7 +24,7 @@ public class ApplicationModule implements Module {
 	}
 
 	@Override
-	public List<Task> initInstances(Env env, Register register, Link link) throws Exception {
+	public List<Task> initInstances(Env env, Register register, Link link) {
 		// register.getExtension(TemplateExtension.class).registerModule(getName(), "", "templates");
 
 		//TaskExample task = new TaskExample(LogManager.getLogger("task"));

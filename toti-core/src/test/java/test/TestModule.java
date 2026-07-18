@@ -17,7 +17,7 @@ public class TestModule implements Module {
 	}
 
 	@Override
-	public List<Task> initInstances(Env env, Register register, Link link) throws Exception {
+	public List<Task> initInstances(Env env, Register register, Link link) {
 		register.addController(ControllerA.class, ()->new ControllerA());
 		register.addController(ControllerC.class, ()->new ControllerC());
 		return Arrays.asList();

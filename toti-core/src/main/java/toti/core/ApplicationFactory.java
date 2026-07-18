@@ -68,7 +68,7 @@ public class ApplicationFactory {
 		this.extensionsTotiResponses = new LinkedList<>();
 	}
 
-	public Application create(List<Module> modules, Logger logger) throws Exception {
+	public Application create(List<Module> modules, Logger logger) {
 		ObjectBuilder<Module> actualModule = new ObjectBuilder<>();
 		Param root = new Param(null);
 		Register register = new Register(root, actualModule, pattern, extensions);
