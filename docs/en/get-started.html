@@ -6,11 +6,129 @@ On this page you can see, how to create your first TOTI project.
 TODO dependency
 
 
-<h2>Initialize</h2>
+<h2>Preparations</h2>
+
+<div>
+	The tutorial expected you have created Java Gradle project with dependency on TOTI Core. TOTI use Log4j2 so you will probably need dependency on some implementation of it.
+</div>
+
+<h2>Initialize server</h2>
+
+<div>
+	We start with creating <code>TotiServerFactory</code>. This class helps with configuring a server. You can create it with given path to configuration file or with properties or without parameters to use default configuration or to set it manualy in code. For now, we let everything default.
+</div> 
+<div>
+	From <code>TotiServerFactroy</code> we create <code>TotiServer</code>. If we call <code>start</code>, our program will be listening on ports <a href="http://localhost">80</a> and <a href="https://localhost">443</a>.
+</div>
+
+<div>
+	Our class can look like this:
+	<pre><code>
+public class GetStartedMain {
+	
+	private final Logger logger;
+	private final TotiServer server;
+
+	public GetStartedMain() {
+		this.logger = LogManager.getLogger("toti-get-started");
+		TotiServerFactory serverFactory = new TotiServerFactory();
+		// there can be server configuration
+		this.server = serverFactory.create(logger);
+	}
+
+	public void start() {
+		try {
+			server.start();
+		} catch (Exception e) {
+			logger.fatal("GetStarted:start fails", e);
+		}
+	}
+
+	public void stop() {
+		try {
+			server.stop();
+		} catch (Exception e) {
+			logger.fatal("GetStarted:stp fails", e);
+		}
+	}
+
+	public static void main(String[] args) {
+		// no need to call stop - this is just demo stopped from IDE
+		new GetStartedMain().start();
+	}
+
+}
+	</code></pre>
+</div>
+
+<div>
+	Our program is binding ports, but all requests return 404.
+</div>
 
 
+<h2>Applications</h2>
+
+<div>
+	Application from TOTI perspective is one application running on web server (<code>TotiServer</code>). One server can has more applications. You can add or remove <code>Application</code> from server before or after server start. Here we will add our application right after server create.
+</div>
+
+<pre><code>
+server.addApplication("getStarted", (env, applicationFactory)->{
+	// there can be application configuration
+	applicationFactory.setDevModeFunc(ip->true); // dev mode
+	return applicationFactory.create(Arrays.asList(), logger);
+}, null, null);
+</code></pre>
+
+<div>
+	First argument is unique name for you application. Second is callback. Callback provide env (part of server env relatet to your application) and application factory (allows configure application). A result is new <code>Application</code> created from applicationFactory. Last two arguments are used if you have more applications. Can stay null here.
+</div>
+
+<div>
+	<code>create</code> method requires list of <code>Module</code>s and logger. List can be empty.
+</div>
+
+<div>
+	Also, we set the application to develop mode. In develop mode, TOTI displays more information in browser.
+</div>
+
+<div>
+	Now, if you restart your program and make request you get... 404. But now, you can see more details.
+</div>
+
+<div>
+	Just verify TOTI is working, try use <code>/toti</code> as URI. You should see <a href="http://localhost/toti">TOTI welcome page.</a>
+</div>
 
 
+<h3>HTML, CSS, JS, Images etc</h3>
+
+<div>
+	Now, create folder with name <code>www</code> in your application root and then create file with name <code>index.html</code> inside the folder.
+</div>
+
+<pre><code>
+	&gt;!DOCTYPE html&lt;
+	&gt;html&lt;
+	&gt;head&lt;
+		&gt;meta charset="utf-8"&lt;
+		&gt;meta name="viewport" content="width=device-width, initial-scale=1"&lt;
+		&gt;title&lt;Hello World&gt;/title&lt;
+	&gt;/head&lt;
+	&gt;body&lt;
+		&gt;h1&lt;Hello World!&gt;/h1&lt;
+
+	&gt;/body&lt;
+	&gt;/html&lt;
+</code></pre>
+
+<div>
+	If you just refresh your page - no program restart needed, you will see your <a href="http://localhost">Hello World page</a>.
+</div>
+
+<div>
+	<code>www</code> is resource folder - everything inside is available from browser.
+</div>
 
 
 TODO:
