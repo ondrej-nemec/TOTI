@@ -50,7 +50,7 @@ public class TotiServerFactory {
 		return env;
 	}
 	
-	public TotiServer create(Logger logger) throws Exception {
+	public TotiServer create(Logger logger) {
 		Env settings = env.getSection("http");
 		String charset = getCharset(settings);
 
