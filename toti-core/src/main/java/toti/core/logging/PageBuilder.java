@@ -101,7 +101,7 @@ html { --primary-color: %s; }
 :root { --body-bg: #ffffff; --body-color: #2c3e50; --secondary-color: #6b7280; --card: #f4f6f8; --border: #e5e7eb; --code-bg: #f4f6f8; }
 [data-theme="dark"] { --body-bg: #0f172a; --body-color: #e5e7eb; --secondary-color: #9ca3af; --card: #111827; --border: #1f2937; --code-bg: #1e293b; }
 body { margin: 0; font-family: system-ui, sans-serif; background: var(--body-bg); color: var(--body-color); }
-.header { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--border); height: 20px; position: fixed; top: 0; background:var(--body-bg); width: 95%; }
+.header { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--border); height: 20px; position: fixed; top: 0; background:var(--body-bg); width: 95%%; }
 .brand { font-weight: 600; color: var(--primary-color); }
 .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
 h1 { margin: 0 0 10px 0; color: var(--primary-color); }
