@@ -27,7 +27,7 @@ public class TotiExamplesRunner {
 			TotiServerFactory serverFactory = new TotiServerFactory();
 
 			TotiServer server = serverFactory.create(LogManager.getLogger("toti"));
-			server.addApplication("examples", (env, applicationFactory)->{
+			server.addApplication("demo", (env, applicationFactory)->{
 				applicationFactory.setDevModeFunc(ip->true); // dev mode
 				// TODO applicationFactory.setUrlPattern(null);
 				
@@ -56,7 +56,7 @@ public class TotiExamplesRunner {
 			TotiServerFactory serverFactory = new TotiServerFactory("fileConfiguration.xml");
 			
 			TotiServer server = serverFactory.create(LogManager.getLogger("toti"));
-			server.addApplication("examples", (env, applicationFactory)->{
+			server.addApplication("demo", (env, applicationFactory)->{
 				applicationFactory.setDevModeFunc(ip->true); // dev mode
 				// TODO applicationFactory.setUrlPattern(null);
 				
@@ -95,7 +95,7 @@ public class TotiExamplesRunner {
 			serverFactory.setCerts(Optional.of(cred));
 			
 			TotiServer server = serverFactory.create(LogManager.getLogger("toti"));
-			server.addApplication("examples", (env, applicationFactory)->{
+			server.addApplication("demo", (env, applicationFactory)->{
 				// set
 				applicationFactory.setAutoStart(true);
 				applicationFactory.setDevModeFunc(ip->true); // dev mode
