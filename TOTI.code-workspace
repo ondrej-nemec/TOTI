@@ -44,7 +44,7 @@
             },
             {
                 "type": "java",
-                "name": "TOTI Examples Runner",
+                "name": "Demo Runner",
                 "request": "launch",
                 "mainClass": "toti.examples.demo.TotiExamplesRunner",
                 "console": "internalConsole",
@@ -52,11 +52,11 @@
             },
             {
                 "type": "java",
-                "name": "TOTI Get started",
+                "name": "Get started",
                 "request": "launch",
                 "mainClass": "toti.examples.getStarted.GetStartedMain",
                 "console": "internalConsole",
-                "cwd": "examples/demo"
+                "cwd": "examples/get-started"
             },
             {
                 "type": "java",
