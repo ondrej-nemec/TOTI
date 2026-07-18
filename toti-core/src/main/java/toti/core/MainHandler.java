@@ -1,7 +1,9 @@
 package toti.core;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,13 +14,17 @@ import org.eclipse.jetty.util.Callback;
 import org.eclipse.jetty.websocket.server.ServerWebSocketContainer;
 
 import toti.core.answers.Answer;
+import toti.core.answers.ExceptionAnswer;
 import toti.core.answers.Headers;
+import toti.core.answers.request.Identity;
 import toti.core.answers.request.Request;
 import toti.core.answers.response.FinalResponse;
+import toti.core.application.register.Register;
 import toti.core.hosts.AnswerWrapper;
 import toti.core.hosts.Hosts;
 import toti.lib.common.structures.ObjectBuilder;
 import toti.lib.tcpip.enums.HttpMethod;
+import toti.lib.tcpip.enums.StatusCode;
 import toti.lib.tcpip.parsers.Form;
 import toti.lib.tcpip.parsers.StreamReader;
 import toti.lib.tcpip.parsers.Urlencode;
@@ -33,16 +39,45 @@ public class MainHandler extends Handler.Abstract {
 	private final Form formParser;
 	private final Urlencode urlEncode;
 	private final StreamReader streamReader;
+	private final AnswerWrapper defaultAnswer;
 	
 	public MainHandler(Form formParser, Urlencode urlEncode, StreamReader streamReader, Logger logger) {
 		this.formParser = formParser;
 		this.urlEncode = urlEncode;
 		this.streamReader = streamReader;
 		this.logger = logger;
+		this.defaultAnswer = defaultAnswer(logger);
+	}
+
+	private AnswerWrapper defaultAnswer(Logger logger) {
+		return new AnswerWrapper(new Answer(null, null, null, null, null, null, null) {
+			private final ExceptionAnswer def = new ExceptionAnswer(
+				new Register(null, null, null, null), x->false, null, logger
+			);
+			@Override
+			public FinalResponse accept(Request request, String ipAddress) throws IOException {
+				return def.answer(request, StatusCode.NOT_FOUND, null, new Identity(ipAddress, null, new HashMap<>(), Optional.empty(), null) {
+					
+				}, null, new Headers(), "utf-8");
+			}
+		
+		}, false);
 	}
 
 	@Override
+	@SuppressWarnings("UseSpecificCatch")
 	public boolean handle(org.eclipse.jetty.server.Request jettyRequest, org.eclipse.jetty.server.Response jettyResponse, Callback callback) throws Exception {
+		try {
+			return _handle(jettyRequest, jettyResponse, callback);
+		} catch (Throwable t) {
+			logger.fatal("Cannot server request", t);
+			jettyResponse.setStatus(500);
+			callback.succeeded();
+			return true;
+		}
+	}
+
+	private boolean _handle(org.eclipse.jetty.server.Request jettyRequest, org.eclipse.jetty.server.Response jettyResponse, Callback callback) throws Exception {
 		Headers requestHeaders = new Headers();
 		jettyRequest.getHeaders().forEach((httpField)->{
 			httpField.getValueList().forEach((value)->{
@@ -63,10 +98,7 @@ public class MainHandler extends Handler.Abstract {
 		// Answer answer = answers.get(applicationName);
 		if (!selected.isUsed()) {
 			logger.warn("Request to unknown application: " + applicationName);
-			// TODO some pretty error message?
-			jettyResponse.setStatus(404);
-			callback.succeeded();
-			return true;
+			selected = defaultAnswer;
 		}
 		if (selected.usePath()) {
 			uri = uri.substring(index);
@@ -96,7 +128,7 @@ public class MainHandler extends Handler.Abstract {
 			Integer length = requestHeaders.getHeader("Content-Length", Integer.class);
 			if (type == null || type.equals("") || type.toString().toLowerCase().startsWith("application/x-www-form-urlencoded")) {
 				parsedBody = urlEncode.decode(is, length);
-			} else if (type != null && type.toString().toLowerCase().startsWith("multipart/form-data")) {
+			} else if (type.toString().toLowerCase().startsWith("multipart/form-data")) {
 				parsedBody = formParser.read(type.toString(), length, is);
 			} else {
 				requestBody = streamReader.readData(length, is, 0, (a)->false, false);
