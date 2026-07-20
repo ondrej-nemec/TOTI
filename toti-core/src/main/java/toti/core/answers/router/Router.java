@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class Router {
 
-	private Map<String, String> map = new HashMap<>();
+	private final Map<String, String> map = new HashMap<>();
 	
 	public <T> void addUrl(String origin, String target) {
 		map.put(origin, target);

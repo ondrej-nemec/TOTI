@@ -11,8 +11,6 @@ public interface Module {
 	
 	String getName();
 
-	List<Task> initInstances(Env env, Register register, Link link);
-	
-	default void addRoutes(Router router, Link link) {}
+	List<Task> init(Env env, Register register, Link link, Router router);
 
 }

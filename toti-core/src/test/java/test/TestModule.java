@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import toti.core.answers.router.Link;
+import toti.core.answers.router.Router;
 import toti.core.application.Module;
 import toti.core.application.Task;
 import toti.core.application.register.Register;
@@ -17,7 +18,7 @@ public class TestModule implements Module {
 	}
 
 	@Override
-	public List<Task> initInstances(Env env, Register register, Link link) {
+	public List<Task> init(Env env, Register register, Link link, Router router) {
 		register.addController(ControllerA.class, ()->new ControllerA());
 		register.addController(ControllerC.class, ()->new ControllerC());
 		return Arrays.asList();

@@ -82,8 +82,7 @@ public class ApplicationFactory {
 		
 		for (Module module : modules) {
 			actualModule.set(module);
-			tasks.addAll(module.initInstances(env, register, link));
-			module.addRoutes(router, link);
+			tasks.addAll(module.init(env, register, link, router));
 		}
 		actualModule.set(null);
 		

@@ -16,11 +16,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static toti.lib.common.tests.TestCase.assertEquals;
-import static toti.lib.common.tests.TestCase.consumer;
 
 import toti.core.application.Module;
 import toti.core.application.Task;
+import static toti.lib.common.tests.TestCase.assertEquals;
+import static toti.lib.common.tests.TestCase.consumer;
 import toti.lib.files.env.Env;
 
 public class ApplicationFactoryTest {
@@ -56,10 +56,10 @@ public class ApplicationFactoryTest {
 		
 		Module module1 = mock(Module.class);
 		when(module1.getName()).thenReturn("module1");
-		when(module1.initInstances(any(), any(), any())).thenReturn(Arrays.asList(task11, task12));
+		when(module1.init(any(), any(), any(), any())).thenReturn(Arrays.asList(task11, task12));
 		Module module2 = mock(Module.class);
 		when(module2.getName()).thenReturn("module2");
-		when(module2.initInstances(any(), any(), any())).thenReturn(Arrays.asList(task21));
+		when(module2.init(any(), any(), any(), any())).thenReturn(Arrays.asList(task21));
 		
 		Application application = factory.create(Arrays.asList(module1, module2), totiLogger);
 		
