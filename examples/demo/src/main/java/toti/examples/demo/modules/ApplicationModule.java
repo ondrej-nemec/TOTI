@@ -12,10 +12,6 @@ import toti.examples.demo.modules.application.ErrorHandlerExampleController;
 import toti.examples.demo.modules.application.ExceptionsController;
 import toti.lib.files.env.Env;
 
-/**
- *
- * @author coder
- */
 public class ApplicationModule implements Module {
 
 	@Override
@@ -24,7 +20,11 @@ public class ApplicationModule implements Module {
 	}
 
 	@Override
-	public List<Task> initInstances(Env env, Register register, Link link) {
+	public List<Task> init(Env env, Register register, Link link, Router router) {
+		//router.addUrl("/toti-test", link.create(ResponseController.class, c->c.getText()));
+		//router.addUrl("/application-response.text", link.create(ResponseController.class, c->c.getText()));
+		router.addUrl("/ico", "/favicon.ico");
+
 		// register.getExtension(TemplateExtension.class).registerModule(getName(), "", "templates");
 
 		//TaskExample task = new TaskExample(LogManager.getLogger("task"));
@@ -40,13 +40,6 @@ public class ApplicationModule implements Module {
 		register.addController(ProcessingController.class, ()->new ProcessingController());
 		register.addController(UserController.class, ()->new UserController(sipe));*/
 		return Arrays.asList(/*task*/);
-	}
-	
-	@Override
-	public void addRoutes(Router router, Link link) {
-		//router.addUrl("/toti-test", link.create(ResponseController.class, c->c.getText()));
-		//router.addUrl("/application-response.text", link.create(ResponseController.class, c->c.getText()));
-		router.addUrl("/ico", "/favicon.ico");
 	}
 
 }
