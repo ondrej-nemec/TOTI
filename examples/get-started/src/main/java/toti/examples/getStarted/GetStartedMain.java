@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import toti.core.TotiServer;
 import toti.core.TotiServerFactory;
+import toti.examples.getStarted.core.CoreModule;
 
 public class GetStartedMain {
 	
@@ -20,7 +21,7 @@ public class GetStartedMain {
 		server.addApplication("getStarted", (env, applicationFactory)->{
 			applicationFactory.setDevModeFunc(ip->true); // dev mode
 			return applicationFactory.create(Arrays.asList(
-				
+				new CoreModule(logger)
 			), logger);
 		}, null, null);
 	}

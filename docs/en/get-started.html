@@ -131,6 +131,301 @@ server.addApplication("getStarted", (env, applicationFactory)->{
 </div>
 
 
-TODO:
+<h2>Handling requests</h2>
 
-init, settings, welcome page, first module, controller, error page ...
+<h3>Module</h3>
+
+<div>
+	To start receiving and handling requests, we first need to create module. Module is logical part of application.
+</div>
+
+<div>
+	In this case we will create <code>CoreModule</code>. Every module must implement <code>Module</code> interface.
+</div>
+
+<pre><code>
+public class CoreModule implements Module {
+
+	private final Logger logger;
+
+	public CoreModule(Logger logger) {
+		this.logger = logger;
+	}
+
+	@Override
+	public String getName() {
+		return "core";
+	}
+
+	@Override
+	public List<Task> init(Env env, Register register, Link link, Router router) {
+		return Arrays.asList();
+	}
+
+}
+</code></pre>
+
+<div>
+	And add module to application:
+</div>
+
+<pre><code>
+	return applicationFactory.create(Arrays.asList(
+		new CoreModule(logger)
+	), logger);
+</code></pre>
+
+<div>
+	Every module has to have not null name. Name can be empty string and must be unique in application.
+</div>
+
+<div>
+	In <code>init</code> method you initialize classes the module use.
+	<ul>
+		<li><code>env</code> same as application has</li>
+		<li><code>register</code> allows register controllers and share instances between modules</li>
+		<li><code>link</code> to create link inside your application</li>
+		<li><code>router</code> to modify routing</li>
+	</ul>
+	Method returns list of <code>Task</code>s (will be explained later). 
+</div>
+
+
+<h3>Controller</h3>
+
+<div>
+	Then we need some controller. Every TOTI controller must be annotated with <code>@Controller</code>. This annotation requires string parameter - name. The name must be not null.
+</div>
+
+<pre><code>
+import toti.core.annotations.Controller;
+
+@Controller("welcome")
+public class WelcomeController {
+
+}
+</code></pre>
+
+<div>
+	Do not forgot register controler in module:
+</div>
+
+<pre><code>
+	register.addController(WelcomeController.class, ()->new WelcomeController());
+</code></pre>
+
+<div>
+	Actual request handling is done inside controller methods annotated as <code>@Action</code>. You can specify <code>path</code> and allowed HTTP methods in the annotation.
+</div>
+<div>
+	Action has to return <code>ResponseAction</code>. <code>ResponseAction</code> is callback. It provides <code>Request</code> (holds information about request: parameters, headers) and <code>Identity</code> (holds information about user). Return type is <code>Response</code>.
+</div>
+
+<pre><code>
+	@Action(path="hello")
+	public ResponseAction hello() {
+		return (request, identity)->{
+			return Response.OK()
+			.addHeader("Content-type", "text/html")
+			.getText("&gt;h1&lt;Hello World!&gt;/h1&lt;");
+		};
+	}
+</code></pre>
+
+<div>
+	To check everyting works, visit: <a href="http://localhost/core/welcome/hello">/core/welcome/hello</a>.
+</div>
+
+<div>
+	We can make it more interesting using query parameters:
+</div>
+
+<pre><code>
+	@Action(path="hello")
+	public ResponseAction hello() {
+		return (request, identity)->{
+			String name = request.getQueryParam("name").getString();
+			if (name == null) {
+				name = "World";
+			}
+			return Response.OK()
+			.addHeader("Content-type", "text/html")
+			.getText("&gt;h1&lt;Hello " + name + "!&gt;/h1&lt;");
+		};
+	}
+</code></pre>
+
+
+<div>
+	We can change message using <code>name</code> parameter: <a href="http://localhost/core/welcome/hello?name=TOTI">/core/welcome/hello?name=TOTI</a>.
+</div>
+
+<div>
+	If we need have some parameter(s) in path, we define them in action definition.
+</div>
+
+<pre><code>
+	@Action(path="guess")
+	public ResponseAction guess(Integer from, Integer to) {
+		return (request, identity)->{
+			return Response.OK()
+			.addHeader("Content-type", "text/html")
+			.getText("&gt;div&lt;Guess number between " + from + " to " + to + "&gt;/div&lt;");
+		};
+	}
+</code></pre>
+
+<div>
+	The page is available at fe. <a href="http://localhost/core/welcome/guess/1/100">/core/welcome/guess/1/100</a>
+</div>
+
+
+<div>
+	Combination of controller name, action path and action path parameter count must be unique inside module.
+</div>
+
+
+<h3>Tasks</h3>
+
+<div>
+	Task is something that needs to start and stop with application. <code>Task</code> interface define <code>start</code> and <code>stop</code> method. The methods are called during application start/stop. The methods are not called in separated threads.
+</div>
+
+<div>
+	Lets's make task that increment some value by 1 every 1 second. First we need some class to hold values:
+</div>
+
+<pre><code>
+public class Counter {
+
+	private int count;
+
+	public int getCount() {
+		return count;
+	}
+
+	public void increase() {
+		count = count + 1;
+		if (count == Integer.MAX_VALUE) {
+			count = 0;
+		}
+	}
+
+}
+</code></pre>
+
+
+<div>
+	Now we can create task:
+</div>
+
+<pre><code>
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.logging.log4j.Logger;
+
+import toti.core.application.Task;
+import toti.examples.getStarted.core.services.Counter;
+
+public class CounterTask implements Task {
+
+	private final Counter counter;
+	private final Logger logger;
+	private final ScheduledExecutorService pool;
+	private Future<?> future;
+
+	public CounterTask(Counter counter, Logger logger) {
+		this.counter = counter;
+		this.logger = logger;
+		this.pool = Executors.newSingleThreadScheduledExecutor();
+	}
+
+	@Override
+	public void start() throws Exception {
+		future = pool.scheduleWithFixedDelay(()->{
+			counter.increase();
+		}, 0, 60, TimeUnit.SECONDS);
+	}
+
+	@Override
+	public void stop() throws Exception {
+		try {
+			if (future != null) {
+				future.cancel(true);
+			}
+			pool.shutdownNow();
+		} catch (Exception e) {
+			logger.error("Cannot stop pool", e);
+		}
+	}
+
+}
+</code></pre>
+
+<div>Last, we create controller to show it in web.</div>
+
+<pre><code>
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.logging.log4j.Logger;
+
+import toti.core.application.Task;
+import toti.examples.getStarted.core.services.Counter;
+
+public class CounterTask implements Task {
+
+	private final Counter counter;
+	private final Logger logger;
+	private final ScheduledExecutorService pool;
+	private Future<?> future;
+
+	public CounterTask(Counter counter, Logger logger) {
+		this.counter = counter;
+		this.logger = logger;
+		this.pool = Executors.newSingleThreadScheduledExecutor();
+	}
+
+	@Override
+	public void start() throws Exception {
+		future = pool.scheduleWithFixedDelay(()->{
+			counter.increase();
+		}, 0, 1, TimeUnit.SECONDS);
+	}
+
+	@Override
+	public void stop() throws Exception {
+		try {
+			if (future != null) {
+				future.cancel(true);
+			}
+			pool.shutdownNow();
+		} catch (Exception e) {
+			logger.error("Cannot stop pool", e);
+		}
+	}
+
+}
+</code></pre>
+
+<div>
+	Also, we need init everything in <code>init</code> method:
+</div>
+
+<pre><code>
+	Counter counter = new Counter();
+	register.addController(CounterController.class, ()->new CounterController(counter));
+	return Arrays.asList(new CounterTask(counter, logger));
+</code></pre>
+
+<div>
+	Our counter is available at <a href="http://localhost/core/counter">/core/counter</a>.
+</div>
+
+
+TODO prolinky na detailnejsi popisy
