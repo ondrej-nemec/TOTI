@@ -7,11 +7,11 @@ import toti.lib.tcpip.enums.HttpMethod;
 
 public class Param {
 
-	private String text;
+	private final String text;
 	
-	private Map<HttpMethod, MappedAction> actions = new HashMap<>();
+	private final Map<HttpMethod, MappedAction> actions = new HashMap<>();
 	
-	private Map<Param, Param> childs = new HashMap<>();
+	private final Map<Param, Param> childs = new HashMap<>();
 	
 	public Param(String text) {
 		this.text = text;

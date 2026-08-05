@@ -1,17 +1,21 @@
 package toti.core.application.register;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import test.ControllerA;
 import test.ControllerB;
@@ -176,10 +180,8 @@ public class RegisterTest {
 	
 	@Test
 	public void testAddControllerThanAlreadyExists() {
-		UriPattern pattern = mock(UriPattern.class);
-		when(pattern.createUri(any(), any(), any(), any(), any(), any())).thenReturn("/a/b/c");
 		Param root = new Param(null);
-		Register register = new Register(root, new ObjectBuilder<>(new TestModule()), pattern, new HashMap<>());
+		Register register = new Register(root, new ObjectBuilder<>(new TestModule()), getPattern(), new HashMap<>());
 		register.addController(ControllerA.class, ()->new ControllerA());
 		
 		RegisterException expected = assertThrows(RegisterException.class, ()->{

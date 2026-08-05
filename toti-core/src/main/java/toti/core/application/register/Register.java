@@ -83,7 +83,7 @@ public class Register {
 					if (part.equals(UriPattern.PARAM)) {
 						if (parameters.isEmpty()) {
 							throw new RegisterException(
-								"URI pattern expects more pameters than method contains. "
+								"URI pattern expects more parameters than method contains. "
 								+ module.get().getName()
 								+ ":" + clazz.getAnnotation(Controller.class).value()
 								+ ":" + actionPart
