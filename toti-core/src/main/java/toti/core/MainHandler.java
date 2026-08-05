@@ -182,11 +182,11 @@ public class MainHandler extends Handler.Abstract {
 		return true;
 	}
 
-	public void addApplication(Answer answer, List<String> hostnames, List<String> paths) {
-		answers.add(answer, hostnames, paths);
+	public void addApplication(Answer answer, String hostname, String path) {
+		answers.add(answer, hostname, path);
 	}
 	
-	public void removeApplication(List<String> hostnames, List<String> paths) {
-		answers.remove(hostnames, paths);
+	public void removeApplication(String hostname, String path) {
+		answers.remove(hostname, path);
 	}
 }

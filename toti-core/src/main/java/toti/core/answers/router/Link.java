@@ -9,9 +9,9 @@ import java.util.function.Function;
 
 import toti.core.annotations.Action;
 import toti.core.annotations.Controller;
-import toti.core.application.Module;
 import toti.core.answers.action.ResponseAction;
 import toti.core.answers.router.mock.MockCreator;
+import toti.core.application.Module;
 import toti.core.application.register.Register;
 import toti.lib.common.exceptions.LogicException;
 import toti.lib.common.functions.StackTrace;
@@ -39,12 +39,18 @@ public class Link {
 		// return url.matches("/[^/\\\\]?.*");
 	}
 
+	private final String baseUrl;
 	private final Register register;
 	private final UriPattern pattern;
 		
-	public Link(Register register, UriPattern pattern) {
+	public Link(String baseUrl, Register register, UriPattern pattern) {
+		this.baseUrl = baseUrl;
 		this.register = register;
 		this.pattern = pattern;
+	}
+
+	public String getBaseUrl() {
+		return baseUrl;
 	}
 	
 	/*private String getPath(Module module, Class<?> controller) {
@@ -96,7 +102,7 @@ public class Link {
 			Class<?> controller = getController(controllerName);
 			Method method = getMethod(controller, methodName, urlParams.length);
 			return create(controller, method, getParams, urlParams);
-		} catch (Exception e) {
+		} catch (ClassNotFoundException | NoSuchMethodException e) {
 			throw new RuntimeException("Cannot create link.", e);
 		}
 	}
@@ -196,14 +202,14 @@ public class Link {
 					uri.append(o);
 				}
 			}
-			if (queryParams.size() > 0) {
+			if (!queryParams.isEmpty()) {
 				StringBuilder get = new StringBuilder();
 				queryParams.forEach((k, v)->parseParams(get, k, v));
 				uri.append("?");
 				uri.append(get.toString());
 			}
 			
-			return uri.toString();
+			return baseUrl + uri.toString();
 		} catch (Exception e) {
 			throw new RuntimeException("Cannot create link", e);
 		}

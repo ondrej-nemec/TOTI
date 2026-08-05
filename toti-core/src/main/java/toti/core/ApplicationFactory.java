@@ -43,8 +43,8 @@ public class ApplicationFactory {
 	private Map<String, List<Object>>  responseHeaders = null;
 	private UriPattern pattern = new UriPattern() {};
 	
-	private final List<String> paths;
-	private final List<String> hostnames;
+	private final String basePath;
+	private final String hostname;
 	
 	private final Env env;
 	private final String appIdentifier;
@@ -57,12 +57,12 @@ public class ApplicationFactory {
 
 	private TemplateFactory templateExtension;
 	
-	public ApplicationFactory(String appIdentifier, Env env, String charset, List<String> hostnames, List<String> paths) {
+	public ApplicationFactory(String appIdentifier, Env env, String charset, String hostname, String basePath) {
 		this.env = env;
 		this.appIdentifier = appIdentifier;
 		this.charset = charset;
-		this.paths = paths;
-		this.hostnames = hostnames;
+		this.basePath = basePath;
+		this.hostname = hostname;
 		
 		this.extensions = new HashMap<>();
 		this.extensionsTotiResponses = new LinkedList<>();
@@ -72,7 +72,7 @@ public class ApplicationFactory {
 		ObjectBuilder<Module> actualModule = new ObjectBuilder<>();
 		Param root = new Param(null);
 		Register register = new Register(root, actualModule, pattern, extensions);
-		Link link = new Link(/*getUrlPattern(env),*/ register, pattern);
+		Link link = new Link(basePath == null ? "" : "/" + basePath, /*getUrlPattern(env),*/ register, pattern);
 		Router router = new Router(/*register*/);
 
 		extensions.forEach((n, e)->e.init(env, register));
@@ -112,7 +112,7 @@ public class ApplicationFactory {
 		);
 		return new Application(
 			tasks, root, link, register, extensions.values(),
-			answer, getAutoStart(env), hostnames, paths
+			answer, getAutoStart(env), hostname, basePath
 		);
 	}
 

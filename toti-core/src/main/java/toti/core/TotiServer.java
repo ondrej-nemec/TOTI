@@ -2,7 +2,6 @@ package toti.core;
 
 import java.time.Duration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -50,9 +49,9 @@ public class TotiServer {
 	public Application addApplication(
 			String appIdentifier,
 			BiFunction<Env, ApplicationFactory, Application> init,
-			List<String> hostnames, List<String> paths) {
+			String hostname, String basePath) {
 		Env applicationEnv = this.env.getSection("applications").getSection(appIdentifier);
-		ApplicationFactory applicationFactory = new ApplicationFactory(appIdentifier, applicationEnv, charset, hostnames, paths);
+		ApplicationFactory applicationFactory = new ApplicationFactory(appIdentifier, applicationEnv, charset, hostname, basePath);
 		Application application = init.apply(applicationEnv, applicationFactory);
 		applications.put(appIdentifier, application);
 		if (isRunning && application.isAutoStart()) {
@@ -107,8 +106,8 @@ public class TotiServer {
 			Application application = applications.get(appIdentifier);
 			logger.info("Application is starting: " + appIdentifier);
 			application.start();
-			handler.addApplication(application.getRequestAnswer(), application.getHostnames(), application.getPaths());
-			logger.info("Application is running: " + appIdentifier + " ON " + application.getHostnames() + " AS " + application.getPaths());
+			handler.addApplication(application.getRequestAnswer(), application.getHostname(), application.getBasePath());
+			logger.info("Application is running: " + appIdentifier + " ON " + application.getHostname() + " AS " + application.getBasePath());
 		} catch (Exception e) {
 			logger.error("Application start fail: " + appIdentifier, e);
 		}
@@ -117,7 +116,7 @@ public class TotiServer {
 	protected boolean stopApplication(String appIdentifier, Application application) {
 		try {
 			logger.info("Application is stopping: " + appIdentifier);
-			handler.removeApplication(application.getHostnames(), application.getPaths());
+			handler.removeApplication(application.getHostname(), application.getBasePath());
 			application.stop();
 			logger.info("Application is stopped: " + appIdentifier);
 			return true;

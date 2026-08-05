@@ -1,7 +1,5 @@
 package toti.core;
 
-import java.util.Arrays;
-
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -145,7 +143,7 @@ public class TotiServerTest {
 		
 		server.addApplication("testId", (e, factory)->{
 			return app;
-		}, Arrays.asList("host"), Arrays.asList("a1", "a2"));
+		}, "host", "path");
 		
 		assertEquals(
 			MapInit.create().append("testId", app).toMap(),
@@ -156,7 +154,7 @@ public class TotiServerTest {
 		verify(server, times(1)).setRunning(anyBoolean());
 		verify(server, times(2)).getApplications();
 		verify(server, times(1)).addApplication(
-			eq("testId"), any(), eq(Arrays.asList("host")), eq(Arrays.asList("a1", "a2"))
+			eq("testId"), any(), eq("host"), eq("path")
 		);
 		verifyNoMoreInteractions(server);
 	}
@@ -218,16 +216,16 @@ public class TotiServerTest {
 		Answer answer = mock(Answer.class);
 		Application app = mock(Application.class);
 		when(app.getRequestAnswer()).thenReturn(answer);
-		when(app.getPaths()).thenReturn(Arrays.asList("h1", "h2"));
-		when(app.getHostnames()).thenReturn(Arrays.asList("host"));
+		when(app.getBasePath()).thenReturn("path");
+		when(app.getHostname()).thenReturn("host");
 		
 		server.getApplications().put("testId", app);
 		
 		server.startApplication("testId");
 		
 		verify(app, times(1)).start();
-		verify(app, times(1)).getPaths();
-		verify(app, times(1)).getHostnames();
+		verify(app, times(2)).getBasePath();
+		verify(app, times(2)).getHostname();
 		verify(app, times(1)).getRequestAnswer();
 	}
 

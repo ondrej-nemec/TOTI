@@ -1,7 +1,6 @@
 package toti.core.hosts;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import toti.core.answers.Answer;
@@ -15,20 +14,20 @@ public class Host {
 		this.answers = new HashMap<>();
 	}
 	
-	public void add(List<String> paths, Answer answer) {
-		if (paths == null) {
+	public void add(String path, Answer answer) {
+		if (path == null) {
 			defAnswer = answer;
 			return;
 		}
-		paths.forEach(p->answers.put(p, answer));
+		answers.put(path, answer);
 	}
 
-	public void remove(List<String> paths) {
-		if (paths == null) {
+	public void remove(String path) {
+		if (path == null) {
 			defAnswer = null;
 			return;
 		}
-		paths.forEach(p->answers.remove(p));
+		answers.remove(path);
 	}
 	
 	public AnswerWrapper get(String path) {

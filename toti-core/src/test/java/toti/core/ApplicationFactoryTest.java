@@ -46,7 +46,7 @@ public class ApplicationFactoryTest {
 		Logger totiLogger = mock(Logger.class);
 		
 		ApplicationFactory factory = new ApplicationFactory(
-			"appId", env, "charset", Arrays.asList("hostName"), Arrays.asList("alias1", "alias2")
+			"appId", env, "charset", "hostName", "basePath"
 		);
 		setFactory.accept(factory);
 		
@@ -70,7 +70,7 @@ public class ApplicationFactoryTest {
 		assertNotNull(application.getLink());
 		assertNotNull(application.getRegister());
 		assertNotNull(application.getRequestAnswer());
-		assertEquals(Arrays.asList("alias1", "alias"), application.getPaths());
+		assertEquals("basePath", application.getBasePath());
 		
 		verify(module1).getName();
 		verify(module2).getName();
