@@ -90,8 +90,6 @@ public class ControllerAnswerTest {
 		Router router = mock(Router.class);
 		when(router.getUrlMapping("/routered-action")).thenReturn("/routered/route/method");
 		//.thenReturn(MappedAction.test("routered", "route", "method"));
-		
-		IdentityFactory identityFactory = mock(IdentityFactory.class);
 		Identity identity = mock(Identity.class);
 		
 		MappedAction mappedAction = MappedAction.test("a", "b", "c");
@@ -109,27 +107,26 @@ public class ControllerAnswerTest {
 
 		Headers responseHeaders = new Headers();
 		
-		Request r = new Request(
+		Request request = new Request(
 			"/a/b/c", HttpMethod.GET, new Headers(),
 			MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty()
 		);
 		
-		assertEquals(finalResponse, answer.answer(r, identity, responseHeaders, ""));
+		assertEquals(finalResponse, answer.answer(request, identity, responseHeaders, ""));
 
-		Request request = new Request(
-			"", HttpMethod.GET, new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty()
+		Request expectedRequest = new Request(
+			"/a/b/c", HttpMethod.GET, new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty()
 		);
 
 		verify(answer, times(1)).answer(any(), any(), any(), any());
 		verify(answer, times(1)).getMappedAction(root, new LinkedList<>(
 			Arrays.asList("a", "b", "c")
-		), HttpMethod.GET, request);
+		), HttpMethod.GET, expectedRequest);
 			// .getMappedAction("/a/b/c", HttpMethod.GET, request);
-		verify(answer, times(1)).run("/a/b/c", mappedAction, request, identity);
-		verify(identityFactory, times(1)).finalizeIdentity(identity, responseHeaders);
+		verify(answer, times(1)).run("/a/b/c", mappedAction, expectedRequest, identity);
 		verify(router, times(1)).getUrlMapping("/a/b/c");
 		verify(answer, times(1)).getUrlParts("/a/b/c");
-		verifyNoMoreInteractions(identityFactory, answer, router);
+		verifyNoMoreInteractions(answer, router);
 	}
 	
 	@ParameterizedTest
