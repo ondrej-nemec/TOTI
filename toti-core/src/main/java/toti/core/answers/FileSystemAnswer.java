@@ -39,6 +39,8 @@ public class FileSystemAnswer {
 	
 	private Response answer(String url, HttpMethod method, Headers responseHeaders, String charset) throws ServerException {
 		File file = new File(resourcesDir + url);
+		System.out.println(resourcesDir);
+		System.out.println(url);
 		try {
 			File resDir = new File(resourcesDir);
 			if (!file.getCanonicalFile().toString().startsWith(resDir.getCanonicalFile().toString())) {
@@ -50,8 +52,13 @@ public class FileSystemAnswer {
 		}
 		
 		if (!file.exists() || (file.isDirectory() && !dirResponseAllowed)) {
-			if (file.isDirectory() && dirDefaultFile != null && new File(resourcesDir + url + "/" + dirDefaultFile).exists()) {
-				return Response.create(StatusCode.OK).getFile(resourcesDir + url + "/" + dirDefaultFile);
+			String path = resourcesDir + url;
+			if (!path.endsWith("/")) {
+				path += "/";
+			}
+			path += dirDefaultFile;
+			if (file.isDirectory() && dirDefaultFile != null && new File(path).exists()) {
+				return Response.create(StatusCode.OK).getFile(path);
 			}
 			throw new ServerException(StatusCode.NOT_FOUND, String.format("URL not fouded: %s (%s)", url, method));
 		}

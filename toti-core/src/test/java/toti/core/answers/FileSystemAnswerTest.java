@@ -10,9 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import toti.core.ServerException;
 import toti.core.answers.request.Request;
@@ -87,23 +84,31 @@ public class FileSystemAnswerTest {
 	public void testAnswerWithDefaultFileWorking(String message, String uri) throws ServerException {
 		FileSystemAnswer answer = create("index.txt", false);
 		
-		Headers responseHeaders = mock(Headers.class);
+		Headers responseHeaders = new Headers();
 		Request request = createRequest(uri);
 		
 		FinalResponse actual = answer.answer(request, responseHeaders, "toti-charset");
 		
-		FinalResponse expected = new FinalResponse(StatusCode.OK, mock(Headers.class), "Index content");
+		FinalResponse expected = new FinalResponse(
+			StatusCode.OK,
+			new Headers().addHeader("Content-Type", "text/plain; charset=toti-charset")
+			.addHeader("content-disposition", "inline; filename=\"test/FileSystemAnswerTest/index.txt\""),
+			"Index content"
+		);
 		
 		assertEquals(expected, actual, message);
-		verify(responseHeaders, times(1)).addHeader("Content-Type", "text/plain; charset=toti-charset");
+		/*verify(responseHeaders, times(1)).addHeader("Content-Type", "text/plain; charset=toti-charset");
 		verify(responseHeaders, times(1)).getHeaders();
-		verifyNoMoreInteractions(responseHeaders);
+		verifyNoMoreInteractions(responseHeaders);*/
 	}
 	
 	public static Object[] dataAnswerWithDefaultFileWorking() {
 		return new Object[] {
 			new Object[] {
 				"Root dir", "/"
+			},
+			new Object[] {
+				"Root dir", ""
 			}
 		};
 	}
@@ -112,14 +117,14 @@ public class FileSystemAnswerTest {
 	public void testAnswerCorrectResultWithDirectoryAndAllowedDirResponse() throws ServerException {
 		FileSystemAnswer answer = create(null, true);
 		
-		Headers responseHeaders = mock(Headers.class);
+		Headers responseHeaders = new Headers();
 		Request request = createRequest("/subdir");
 		
 		FinalResponse actual = answer.answer(request, responseHeaders, "toti-charset");
 		
 		FinalResponse expected = new FinalResponse(
 			StatusCode.OK,
-			new Headers().addHeader("Content-Type", "text/plain"), // headers is default text header and is overrided later
+			new Headers().addHeader("Content-Type", "text/html; charset=toti-charset"),
 			"Folder: <br>"
 			+ "<a href='/subdir/..'>..</a><br>"
 			+ "<a href='/subdir/a.txt'>a.txt</a><br>"
@@ -127,26 +132,32 @@ public class FileSystemAnswerTest {
 		);
 		
 		assertEquals(expected, actual);
-		verify(responseHeaders, times(1)).addHeader("Content-Type", "text/html; charset=toti-charset");
+		/*verify(responseHeaders, times(1)).addHeader("Content-Type", "text/html; charset=toti-charset");
 		verify(responseHeaders, times(1)).getHeaders();
-		verifyNoMoreInteractions(responseHeaders);
+		verifyNoMoreInteractions(responseHeaders);*/
 	}
 
 	@Test
 	public void testAnswerCorrectResultWithFile() throws ServerException {
 		FileSystemAnswer answer = create(null, false);
 		
-		Headers responseHeaders = mock(Headers.class);
+		Headers responseHeaders = new Headers();
 		Request request = createRequest("/someFile.txt");
 		
 		FinalResponse actual = answer.answer(request, responseHeaders, "toti-charset");
 		
-		FinalResponse expected = new FinalResponse(StatusCode.OK, new Headers(), "Some file content");
+		FinalResponse expected = new FinalResponse(
+			StatusCode.OK,
+			new Headers().addHeader("Content-Type", "text/plain; charset=toti-charset")
+			.addHeader("content-disposition", "inline; filename=\"test/FileSystemAnswerTest/someFile.txt\""),
+			"Some file content"
+		);
 		
 		assertEquals(expected, actual);
-		verify(responseHeaders, times(1)).addHeader("Content-Type", "text/plain; charset=toti-charset");
+		/*verify(responseHeaders, times(1)).addHeader("Content-Type", "text/plain; charset=toti-charset");
+		verify(responseHeaders, times(1)).addHeader("content-disposition", "inline; filename=\"test/FileSystemAnswerTest/someFile.txt\"");
 		verify(responseHeaders, times(1)).getHeaders();
-		verifyNoMoreInteractions(responseHeaders);
+		verifyNoMoreInteractions(responseHeaders);*/
 	}
 	
 	private FileSystemAnswer create(String defaultFile, boolean allowedDir) {
