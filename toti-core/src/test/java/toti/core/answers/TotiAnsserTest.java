@@ -14,14 +14,12 @@ import static org.mockito.Mockito.when;
 import toti.core.answers.action.ResponseAction;
 import toti.core.answers.request.Identity;
 import toti.core.answers.request.Request;
-import toti.core.answers.response.DownloadMode;
-import toti.core.answers.response.EmptyResponse;
-import toti.core.answers.response.FileResponse;
 import toti.core.answers.response.Response;
 import toti.core.answers.response.TextResponse;
 import toti.core.application.register.Register;
 import toti.core.extensions.TemplateFactory;
 import toti.core.extensions.TotiExtension;
+import toti.core.logging.Page;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.common.structures.ObjectBuilder;
 import toti.lib.files.env.Env;
@@ -61,7 +59,7 @@ public class TotiAnsserTest {
 		};
 		
 		TotiAnswer answer = new TotiAnswer(
-			ip->ip.equals("localhost"),
+			ip->ip != null && ip.equals("localhost"),
 			mock(TemplateFactory.class),
 			Arrays.asList(extension)
 		);
@@ -73,7 +71,7 @@ public class TotiAnsserTest {
 	public static Object[] dataRoutingWithExtension() {
 		return new Object[] {
 			new Object[] {
-				"/not-existing", new EmptyResponse(StatusCode.NOT_FOUND, new Headers())
+				"/not-existing", new TextResponse(StatusCode.NOT_FOUND, new Headers(), "Not found")
 			},
 			new Object[] {
 				"/ext", new TextResponse(StatusCode.ACCEPTED, new Headers(), "extensionResponse")
@@ -108,11 +106,18 @@ public class TotiAnsserTest {
 		for (String url : both) {
 			// index request, not develop
 			result.add(new Object[] {
-				"notLocalHost", url, new EmptyResponse(StatusCode.NOT_FOUND, new Headers())	
+				"notLocalHost", url, new TextResponse(StatusCode.NOT_FOUND, new Headers(), "Not found")
 			});
 			// index request, develop
 			result.add(new Object[] {
-				"localhost", url, new FileResponse(StatusCode.OK, new Headers(), "toti/assets/index.html", DownloadMode.RESPONSE)
+				"localhost", url, new TextResponse(StatusCode.OK, new Headers().addHeader("content-type", "text/html"), Page.primary(
+					"Welcome",
+					b->{
+						b.addH1("Welcome");
+						b.addH2("Hello and welcome in TOTI framework");
+						b.addParagraph("Your application is running successfully");
+					}
+				).create())
 			});
 		}
 		String[] wrong = new String[] {
@@ -120,7 +125,7 @@ public class TotiAnsserTest {
 		};
 		for (String url : wrong) {
 			result.add(new Object[] {
-				"localhost", url, new EmptyResponse(StatusCode.NOT_FOUND, new Headers())
+				"localhost", url, new TextResponse(StatusCode.NOT_FOUND, new Headers(), "Not found")
 			});
 		}
 		return result;
