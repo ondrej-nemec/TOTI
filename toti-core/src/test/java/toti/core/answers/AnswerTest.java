@@ -1,20 +1,19 @@
 package toti.core.answers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import toti.core.ServerException;
 import toti.core.answers.request.Identity;
@@ -53,6 +52,7 @@ public class AnswerTest {
 		
 		verify(identityFactory, times(1))
 			.createIdentity(expectedHeaders, getQueryParams(), getBodyParams(), "ip:ad:dr:ess");
+		verify(identityFactory, times(1)).finalizeIdentity(identity, new Headers(getHeadersRes()));
 		
 		verify(totiAnswer, times(1)).answer(request, identity, new Headers(getHeadersRes()), "charset");
 		
@@ -84,6 +84,7 @@ public class AnswerTest {
 		
 		verify(identityFactory, times(1))
 			.createIdentity(expectedHeaders, getQueryParams(), getBodyParams(), "ip:ad:dr:ess");
+		verify(identityFactory, times(1)).finalizeIdentity(identity, new Headers(getHeadersRes()));
 		
 		verify(controllerAnswer, times(1))
 			.answer(request, identity, new Headers(getHeadersRes()), "charset");
