@@ -39,8 +39,6 @@ public class FileSystemAnswer {
 	
 	private Response answer(String url, HttpMethod method, Headers responseHeaders, String charset) throws ServerException {
 		File file = new File(resourcesDir + url);
-		System.out.println(resourcesDir);
-		System.out.println(url);
 		try {
 			File resDir = new File(resourcesDir);
 			if (!file.getCanonicalFile().toString().startsWith(resDir.getCanonicalFile().toString())) {

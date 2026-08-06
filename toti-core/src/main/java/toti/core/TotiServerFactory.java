@@ -70,7 +70,7 @@ public class TotiServerFactory {
 
 		StreamReader streamReader = new StreamReader(getMaxRequestSize(settings));
 
-		return new TotiServer(server, streamReader, env, charset, readTimeout, logger);
+		return new TotiServer(new ServerWrapper(server), streamReader, env, charset, readTimeout, logger);
 	}
 	
 	private ServerConnector createHTTP(Server server, int port, long timeout) {

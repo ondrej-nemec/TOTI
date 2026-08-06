@@ -1,15 +1,11 @@
 package toti.core;
 
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.websocket.server.ServerWebSocketContainer;
 
 import toti.lib.files.env.Env;
 import toti.lib.tcpip.parsers.Form;
@@ -20,7 +16,7 @@ import toti.lib.tcpip.parsers.Urlencode;
 public class TotiServer {
 	
 	private final MainHandler handler;
-	private final Server server;
+	private final ServerWrapper server;
 	private final Logger logger;
 	private final Env env;
 	private final String charset;
@@ -29,7 +25,7 @@ public class TotiServer {
 	
 	private boolean isRunning = false;
 	
-	public TotiServer(Server server, StreamReader streamReader, Env env, String charset, long timeout, Logger logger) {
+	protected TotiServer(ServerWrapper server, StreamReader streamReader, Env env, String charset, long timeout, Logger logger) {
 		this.server = server;
 		this.logger = logger;
 		this.env = env;
@@ -37,13 +33,15 @@ public class TotiServer {
 		Payload payload = new Payload();
 		this.handler = new MainHandler(new Form(payload, streamReader), new Urlencode(payload, streamReader), streamReader, logger);
 		
+		server.init(handler, timeout);
+		/*
 		// required for websockets
 		ContextHandler contextHandler = new ContextHandler();
 		ServerWebSocketContainer container = ServerWebSocketContainer.ensure(server, contextHandler);
 		container.setIdleTimeout(Duration.ofMillis(timeout));
 		contextHandler.setHandler(handler);
 		
-		server.setHandler(contextHandler);
+		server.setHandler(contextHandler);*/
 	}
 	
 	public Application addApplication(

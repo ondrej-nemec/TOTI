@@ -1,7 +1,6 @@
 package toti.core;
 
 import org.apache.logging.log4j.Logger;
-import org.eclipse.jetty.server.Server;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -39,7 +38,8 @@ public class TotiServerTest {
 		Application app3 = mock(Application.class);
 		when(app3.isAutoStart()).thenReturn(false);
 		
-		Server server = mock(Server.class);
+		ServerWrapper server = mock(ServerWrapper.class);
+
 		Logger logger = mock(Logger.class);
 		TotiServer toti = spy(new TotiServer(
 			server, mock(StreamReader.class), mock(Env.class), "charset", 60000, logger
@@ -53,6 +53,7 @@ public class TotiServerTest {
 		assertTrue(toti.isRunning());
 		
 		verify(server, times(1)).start();
+		verify(server, times(1)).init(any(), any(Long.class));
 		verify(toti, times(2)).startApplication(any());
 		verify(toti, times(1)).startApplication("h1");
 		verify(toti, times(1)).startApplication("h2");
@@ -74,7 +75,7 @@ public class TotiServerTest {
 		Application app3 = mock(Application.class);
 		when(app3.isAutoStart()).thenReturn(false);
 		
-		Server server = mock(Server.class);
+		ServerWrapper server = mock(ServerWrapper.class);
 		Logger logger = mock(Logger.class);
 		/*
 		HttpServer toti = spy(new HttpServer(
@@ -115,6 +116,7 @@ public class TotiServerTest {
 		assertEquals(3, callCount.get());
 		
 		verify(server, times(1)).stop();
+		verify(server, times(1)).init(any(), any(Long.class));
 		verifyNoMoreInteractions(server);
 		//*/
 	}
@@ -134,7 +136,8 @@ public class TotiServerTest {
 		when(env.getSection(any())).thenReturn(env);
 		Logger logger = mock(Logger.class);
 		TotiServer server = spy(new TotiServer(
-			mock(Server.class), mock(StreamReader.class), env, "charset", 60000, logger
+			mock(ServerWrapper.class), mock(StreamReader.class),
+			env, "charset", 60000, logger
 		));
 		server.setRunning(isServerRunning);
 		doNothing().when(server).startApplication(any());
@@ -187,7 +190,7 @@ public class TotiServerTest {
 		/*/
 		IntegerBuilder callCount = new IntegerBuilder(0);
 		TotiServer server = new TotiServer(
-			mock(Server.class), mock(StreamReader.class), env, "charset", 60000, logger
+			mock(ServerWrapper.class), mock(StreamReader.class), env, "charset", 60000, logger
 		) {
 			@Override
 			protected boolean stopApplication(String host, Application application) {
@@ -210,7 +213,7 @@ public class TotiServerTest {
 	public void testStartApplication() throws Exception {
 		Logger logger = mock(Logger.class);
 		TotiServer server = new TotiServer(
-			mock(Server.class), mock(StreamReader.class),
+			mock(ServerWrapper.class), mock(StreamReader.class),
 			mock(Env.class), "charset", 60000, logger
 		);
 		Answer answer = mock(Answer.class);
@@ -233,7 +236,7 @@ public class TotiServerTest {
 	public void testStopApplicationWorking() throws Exception {
 		Logger logger = mock(Logger.class);
 		TotiServer server = new TotiServer(
-			mock(Server.class), mock(StreamReader.class),
+			mock(ServerWrapper.class), mock(StreamReader.class),
 			mock(Env.class), "charset", 60000, logger
 		);
 		Application app = mock(Application.class);
@@ -245,7 +248,7 @@ public class TotiServerTest {
 	public void testStopApplicationAppThrowsException() throws Exception {
 		Logger logger = mock(Logger.class);
 		TotiServer server = new TotiServer(
-			mock(Server.class), mock(StreamReader.class),
+			mock(ServerWrapper.class), mock(StreamReader.class),
 			mock(Env.class), "charset", 60000, logger
 		);
 		Application app = mock(Application.class);
