@@ -76,7 +76,7 @@ public class TotiServer {
 				startApplication(host);
 			}
 		});
-		logger.info("Server is running");
+		logger.info("Server is running on " + server.getPorts());
 		logger.info(
 			"Available applications: " + applications.entrySet().stream()
 			.map(e->e.getKey() + ": " + (e.getValue().isRunning() ? "Running" : "Stopped"))

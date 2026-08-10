@@ -1,5 +1,7 @@
 package toti.core;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -52,25 +54,28 @@ public class TotiServerFactory {
 	
 	public TotiServer create(Logger logger) {
 		Env settings = env.getSection("http");
-		String charset = getCharset(settings);
+		String actualCharset = getCharset(settings);
 
 		Server server = new Server(new QueuedThreadPool(getThreadPool(settings)));
 		
-		Optional<SslCredentials> certs = getCerts(settings);
-		long readTimeout = getReadTimeout(settings);
+		long actualReadTimeout = getReadTimeout(settings);
 		
-		int httpPort = getHttpPort(settings);
-		if (httpPort > 0) {
-			server.addConnector(createHTTP(server, httpPort, readTimeout));
+		List<Integer> usedPorts = new LinkedList<>();
+		int actualHttpPort = getHttpPort(settings);
+		if (actualHttpPort > 0) {
+			server.addConnector(createHTTP(server, actualHttpPort, actualReadTimeout));
+			usedPorts.add(actualHttpPort);
 		}
-		int httpsPort = getHttpsPort(settings);
-		if (certs.isPresent()) {
-			server.addConnector(createHTTPS(server, httpsPort, readTimeout, certs.get()));
+		int actualHttpsPort = getHttpsPort(settings);
+		Optional<SslCredentials> actualCerts = getCerts(settings);
+		if (actualHttpsPort > 0 && actualCerts.isPresent()) {
+			server.addConnector(createHTTPS(server, actualHttpsPort, actualReadTimeout, actualCerts.get()));
+			usedPorts.add(actualHttpsPort);
 		}
 
 		StreamReader streamReader = new StreamReader(getMaxRequestSize(settings));
 
-		return new TotiServer(new ServerWrapper(server), streamReader, env, charset, readTimeout, logger);
+		return new TotiServer(new ServerWrapper(server, usedPorts), streamReader, env, actualCharset, actualReadTimeout, logger);
 	}
 	
 	private ServerConnector createHTTP(Server server, int port, long timeout) {

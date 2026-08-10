@@ -1,6 +1,7 @@
 package toti.core;
 
 import java.time.Duration;
+import java.util.List;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
@@ -8,9 +9,15 @@ import org.eclipse.jetty.websocket.server.ServerWebSocketContainer;
 
 public class ServerWrapper {
 	private final Server server;
+	private final List<Integer> ports;
 	
-	public ServerWrapper(Server server) {
+	public ServerWrapper(Server server, List<Integer> ports) {
 		this.server = server;
+		this.ports = ports;
+	}
+
+	public List<Integer> getPorts() {
+		return ports;
 	}
 	
 	public void init(MainHandler handler, long timeout) {
