@@ -76,7 +76,7 @@ public class ApplicationFactory {
 		Router router = new Router(/*register*/);
 
 		extensions.forEach((n, e)->e.init(env, register));
-		TemplateFactory templateExtension = getTemplateFactory();
+		TemplateFactory actualTemplateExtension = getTemplateFactory();
 		
 		List<Task> tasks = new LinkedList<>();
 		
@@ -91,10 +91,10 @@ public class ApplicationFactory {
 		Function<String, Boolean> isDevelopFunc = getDevModeFunc();
 		
 		TotiAnswer totiAnwer = new TotiAnswer(
-			isDevelopFunc, templateExtension, extensionsTotiResponses
+			isDevelopFunc, actualTemplateExtension, extensionsTotiResponses
 		);
 		ExceptionAnswer exceptionAnswer = new ExceptionAnswer(register, isDevelopFunc, getLogsPath(env), logger);
-		ControllerAnswer controllerAnswer = new ControllerAnswer(router, root, templateExtension, link, logger);
+		ControllerAnswer controllerAnswer = new ControllerAnswer(router, root, actualTemplateExtension, link, logger);
 		FileSystemAnswer fileSystemAnswer = new FileSystemAnswer(
 			getResourcesPath(env),
 			getDirResponseAllowed(env),
@@ -148,17 +148,12 @@ public class ApplicationFactory {
 		Headers headers = new Headers();
 		if (!env.getList("headers").isEmpty()) {
 			env.getList("headers").forEach(h->{
-				String header = "";
 				if (h.isSection()) {
-					header = h.getSection().getString("header");
+					h.getSection().getList("header").forEach(v->{
+						parseHeader(headers, v.getValue().toString());
+					});
 				} else if (h.isValue()) {
-					header = h.getValue().toString();
-				}
-				String[] hds = header.split(":", 2);
-				if (hds.length == 1) {
-					headers.addHeader(hds[0].trim(), "");
-				} else {
-					headers.addHeader(hds[0].trim(), hds[1].trim());
+					parseHeader(headers, h.getValue().toString());
 				}
 			});
 		} else {
@@ -175,6 +170,15 @@ public class ApplicationFactory {
 			headers.addHeader("Access-Control-Allow-Origin", "*");
 		}
 		return headers.getHeaders();
+	}
+
+	private void parseHeader(Headers headers, String header) {
+		String[] hds = header.split(":", 2);
+		if (hds.length == 1) {
+			headers.addHeader(hds[0].trim(), "");
+		} else {
+			headers.addHeader(hds[0].trim(), hds[1].trim());
+		}
 	}
 	
 	private boolean getAutoStart(Env env) {
