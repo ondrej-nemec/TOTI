@@ -24,7 +24,25 @@
 			},
 			{
 				"name": "Database",
-				"link": "lib-database.html"
+				"link": "lib-database.html",
+				"links": [
+					{
+						"name": "Base",
+						"link": "lib-database-base.html"
+					},
+					{
+						"name": "Query Builder",
+						"link": "lib-database-queryBuilder.html"
+					},
+					{
+						"name": "Migrations",
+						"link": "lib-database-migrations.html"
+					},
+					{
+						"name": "Testing",
+						"link": "lib-database-testing.html"
+					}
+				]
 			},
 			{
 				"name": "Templating",
@@ -40,12 +58,12 @@
 		"name": "TOTI Core",
 		"links": [
 			{
-				"name": "Basics",
-				"link": "core-how-it-works.html"
-			},
-			{
 				"name": "Configuration",
 				"link": "core-configure.html"
+			},
+			{
+				"name": "Register, Link and Router",
+				"link": "core-classes.html"
 			},
 			{
 				"name": "Responses",

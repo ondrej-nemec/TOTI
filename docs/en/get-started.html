@@ -1,27 +1,30 @@
 <h1>Get started</h1>
 
+<div class="paragraph">
+	On this page you can see, how to create your first TOTI project.
+</div>
 
-On this page you can see, how to create your first TOTI project.
-
-TODO dependency
+<div class="paragraph">
+	TODO dependency
+</div>
 
 
 <h2>Preparations</h2>
 
-<div>
+<div class="paragraph">
 	The tutorial expected you have created Java Gradle project with dependency on TOTI Core. TOTI use Log4j2 so you will probably need dependency on some implementation of it.
 </div>
 
 <h2>Initialize server</h2>
 
-<div>
+<div class="paragraph">
 	We start with creating <code>TotiServerFactory</code>. This class helps with configuring a server. You can create it with given path to configuration file or with properties or without parameters to use default configuration or to set it manualy in code. For now, we let everything default.
 </div> 
-<div>
+<div class="paragraph">
 	From <code>TotiServerFactroy</code> we create <code>TotiServer</code>. If we call <code>start</code>, our program will be listening on ports <a href="http://localhost">80</a> and <a href="https://localhost">443</a>.
 </div>
 
-<div>
+<div class="paragraph">
 	Our class can look like this:
 	<pre><code>
 public class GetStartedMain {
@@ -61,14 +64,18 @@ public class GetStartedMain {
 	</code></pre>
 </div>
 
-<div>
+<div class="paragraph">
 	Our program is binding ports, but all requests return 404.
+</div>
+
+<div class="alert">
+	Full server configuration is <span href="core-configure" class="inner-link">here</span>.
 </div>
 
 
 <h2>Applications</h2>
 
-<div>
+<div class="paragraph">
 	Application from TOTI perspective is one application running on web server (<code>TotiServer</code>). One server can has more applications. You can add or remove <code>Application</code> from server before or after server start. Here we will add our application right after server create.
 </div>
 
@@ -80,53 +87,57 @@ server.addApplication("getStarted", (env, applicationFactory)->{
 }, null, null);
 </code></pre>
 
-<div>
+<div class="paragraph">
 	First argument is unique name for you application. Second is callback. Callback provide env (part of server env relatet to your application) and application factory (allows configure application). A result is new <code>Application</code> created from applicationFactory. Last two arguments are used if you have more applications. Can stay null here.
 </div>
 
-<div>
+<div class="paragraph">
 	<code>create</code> method requires list of <code>Module</code>s and logger. List can be empty.
 </div>
 
-<div>
+<div class="paragraph">
 	Also, we set the application to develop mode. In develop mode, TOTI displays more information in browser.
 </div>
 
-<div>
+<div class="alert">
+	Full application configuration is <span href="core-configure" class="inner-link">here</span>.
+</div>
+
+<div class="paragraph">
 	Now, if you restart your program and make request you get... 404. But now, you can see more details.
 </div>
 
-<div>
+<div class="paragraph">
 	Just verify TOTI is working, try use <code>/toti</code> as URI. You should see <a href="http://localhost/toti">TOTI welcome page.</a>
 </div>
 
 
 <h3>HTML, CSS, JS, Images etc</h3>
 
-<div>
+<div class="paragraph">
 	Now, create folder with name <code>www</code> in your application root and then create file with name <code>index.html</code> inside the folder.
 </div>
 
-<pre><code>
-	&gt;!DOCTYPE html&lt;
-	&gt;html&lt;
-	&gt;head&lt;
-		&gt;meta charset="utf-8"&lt;
-		&gt;meta name="viewport" content="width=device-width, initial-scale=1"&lt;
-		&gt;title&lt;Hello World&gt;/title&lt;
-	&gt;/head&lt;
-	&gt;body&lt;
-		&gt;h1&lt;Hello World!&gt;/h1&lt;
+<pre><code class="language-html">
+	&lt;!DOCTYPE html&gt;
+	&lt;html&gt;
+	&lt;head&gt;
+		&lt;meta charset="utf-8"&gt;
+		&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+		&lt;title&gt;Hello World&lt;/title&gt;
+	&lt;/head&gt;
+	&lt;body&gt;
+		&lt;h1&gt;Hello World!&lt;/h1&gt;
 
-	&gt;/body&lt;
-	&gt;/html&lt;
+	&lt;/body&gt;
+	&lt;/html&gt;
 </code></pre>
 
-<div>
+<div class="paragraph">
 	If you just refresh your page - no program restart needed, you will see your <a href="http://localhost">Hello World page</a>.
 </div>
 
-<div>
+<div class="paragraph">
 	<code>www</code> is resource folder - everything inside is available from browser.
 </div>
 
@@ -135,11 +146,11 @@ server.addApplication("getStarted", (env, applicationFactory)->{
 
 <h3>Module</h3>
 
-<div>
+<div class="paragraph">
 	To start receiving and handling requests, we first need to create module. Module is logical part of application.
 </div>
 
-<div>
+<div class="paragraph">
 	In this case we will create <code>CoreModule</code>. Every module must implement <code>Module</code> interface.
 </div>
 
@@ -165,7 +176,7 @@ public class CoreModule implements Module {
 }
 </code></pre>
 
-<div>
+<div class="paragraph">
 	And add module to application:
 </div>
 
@@ -175,11 +186,11 @@ public class CoreModule implements Module {
 	), logger);
 </code></pre>
 
-<div>
+<div class="paragraph">
 	Every module has to have not null name. Name can be empty string and must be unique in application.
 </div>
 
-<div>
+<div class="paragraph">
 	In <code>init</code> method you initialize classes the module use.
 	<ul>
 		<li><code>env</code> same as application has</li>
@@ -190,10 +201,13 @@ public class CoreModule implements Module {
 	Method returns list of <code>Task</code>s (will be explained later). 
 </div>
 
+<div class="alert">
+	Read how to use <span href="core-classes" class="inner-link">Register, Link and Router</span>.
+</div>
 
 <h3>Controller</h3>
 
-<div>
+<div class="paragraph">
 	Then we need some controller. Every TOTI controller must be annotated with <code>@Controller</code>. This annotation requires string parameter - name. The name must be not null.
 </div>
 
@@ -206,7 +220,7 @@ public class WelcomeController {
 }
 </code></pre>
 
-<div>
+<div class="paragraph">
 	Do not forgot register controler in module:
 </div>
 
@@ -214,10 +228,10 @@ public class WelcomeController {
 	register.addController(WelcomeController.class, ()->new WelcomeController());
 </code></pre>
 
-<div>
+<div class="paragraph">
 	Actual request handling is done inside controller methods annotated as <code>@Action</code>. You can specify <code>path</code> and allowed HTTP methods in the annotation.
 </div>
-<div>
+<div class="paragraph">
 	Action has to return <code>ResponseAction</code>. <code>ResponseAction</code> is callback. It provides <code>Request</code> (holds information about request: parameters, headers) and <code>Identity</code> (holds information about user). Return type is <code>Response</code>.
 </div>
 
@@ -227,16 +241,16 @@ public class WelcomeController {
 		return (request, identity)->{
 			return Response.OK()
 			.addHeader("Content-type", "text/html")
-			.getText("&gt;h1&lt;Hello World!&gt;/h1&lt;");
+			.getText("&lt;h1&gt;Hello World!&lt;/h1&gt;");
 		};
 	}
 </code></pre>
 
-<div>
+<div class="paragraph">
 	To check everyting works, visit: <a href="http://localhost/core/welcome/hello">/core/welcome/hello</a>.
 </div>
 
-<div>
+<div class="paragraph">
 	We can make it more interesting using query parameters:
 </div>
 
@@ -250,17 +264,17 @@ public class WelcomeController {
 			}
 			return Response.OK()
 			.addHeader("Content-type", "text/html")
-			.getText("&gt;h1&lt;Hello " + name + "!&gt;/h1&lt;");
+			.getText("&lt;h1&gt;Hello " + name + "!&lt;/h1&gt;");
 		};
 	}
 </code></pre>
 
 
-<div>
+<div class="paragraph">
 	We can change message using <code>name</code> parameter: <a href="http://localhost/core/welcome/hello?name=TOTI">/core/welcome/hello?name=TOTI</a>.
 </div>
 
-<div>
+<div class="paragraph">
 	If we need have some parameter(s) in path, we define them in action definition.
 </div>
 
@@ -270,28 +284,32 @@ public class WelcomeController {
 		return (request, identity)->{
 			return Response.OK()
 			.addHeader("Content-type", "text/html")
-			.getText("&gt;div&lt;Guess number between " + from + " to " + to + "&gt;/div&lt;");
+			.getText("&lt;div&gt;Guess number between " + from + " to " + to + "&lt;/div&gt;");
 		};
 	}
 </code></pre>
 
-<div>
+<div class="paragraph">
 	The page is available at fe. <a href="http://localhost/core/welcome/guess/1/100">/core/welcome/guess/1/100</a>
 </div>
 
 
-<div>
+<div class="paragraph">
 	Combination of controller name, action path and action path parameter count must be unique inside module.
+</div>
+
+<div class="alert">
+	There is list of all available <span href="core-resposes" class="inner-link">Responses</span>.
 </div>
 
 
 <h3>Tasks</h3>
 
-<div>
+<div class="paragraph">
 	Task is something that needs to start and stop with application. <code>Task</code> interface define <code>start</code> and <code>stop</code> method. The methods are called during application start/stop. The methods are not called in separated threads.
 </div>
 
-<div>
+<div class="paragraph">
 	Lets's make task that increment some value by 1 every 1 second. First we need some class to hold values:
 </div>
 
@@ -315,7 +333,7 @@ public class Counter {
 </code></pre>
 
 
-<div>
+<div class="paragraph">
 	Now we can create task:
 </div>
 
@@ -365,7 +383,7 @@ public class CounterTask implements Task {
 }
 </code></pre>
 
-<div>Last, we create controller to show it in web.</div>
+<div class="paragraph">Last, we create controller to show it in web.</div>
 
 <pre><code>
 import java.util.concurrent.Executors;
@@ -413,7 +431,7 @@ public class CounterTask implements Task {
 }
 </code></pre>
 
-<div>
+<div class="paragraph">
 	Also, we need init everything in <code>init</code> method:
 </div>
 
@@ -423,9 +441,24 @@ public class CounterTask implements Task {
 	return Arrays.asList(new CounterTask(counter, logger));
 </code></pre>
 
-<div>
+<div class="paragraph">
 	Our counter is available at <a href="http://localhost/core/counter">/core/counter</a>.
 </div>
 
 
-TODO prolinky na detailnejsi popisy
+<h2>Afterwords</h2>
+
+<div class="paragraph">
+	Congratulations. You have your first TOTI program.
+</div>
+
+<div>
+	<ul>
+		<li>
+			How secure application: <span href="core-security" class="inner-link">Authentication and authorization</span>
+		</li>
+		<li>
+			How add more function to program: <span href="core-extensions" class="inner-link">Extensions</span>
+		</li>
+	</ul>
+</div>

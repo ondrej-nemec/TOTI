@@ -1,6 +1,546 @@
-TODO
-
-různa nastaveni serveru a aplikace - file vs programatically
+<h1>Configuration</h1>
 
 
-exception, custom handler
+<div class="paragraph">
+	Both server and aplication can be let in default settings, can be set using configuration file or can be set in code.
+</div>
+
+<div class="paragraph">
+	Configuration file can be in XML or Properties format. File configuration override default configuration. Code settings override default and file configuration. If value is set to null, default value is used.
+</div>
+
+<div class="paragraph">
+	File configuration is applied if <code>TotiServerFactory</code> is created with parameter: <code>new TotiServerFactory("/path/to/file")</code>. Path can be absolute or relative. File can be in classpath(compiled to jar) or outside of jar.
+</div>
+
+
+<h2>Server</h2>
+
+<h3>Charset</h3>
+
+<div class="paragraph">
+	Set charset of all data transfer.
+</div>
+
+<div class="paragraph">
+	<strong>Default value: </strong>
+	UTF-8
+</div>
+
+<div class="paragraph">
+	<strong>Set in code: </strong>
+	<code>setCharset()</code>
+</div>
+
+<div class="paragraph">
+	<strong>Set in properties: </strong>
+	<code>http.charset</code>
+</div>
+
+<div class="paragraph">
+	<strong>Set in XML:</strong>
+	<pre><code>
+&lt;root&gt;
+    &lt;http&gt;
+        ...
+        &lt;charset&gt;...&lt;/charset&gt;
+    &lt;/http&gt;
+&lt;/root&gt;
+	</code></pre>
+</div>
+
+
+<h3>HTTP port</h3>
+
+<div class="paragraph">
+	Set port to be used for HTTP communication. Value 0 (or below) disable HTTP.
+</div>
+
+<div class="paragraph">
+	<strong>Default value: </strong>
+	80
+</div>
+
+<div class="paragraph">
+	<strong>Set in code: </strong>
+	<code>setHttpPort</code>
+</div>
+
+<div class="paragraph">
+	<strong>Set in properties: </strong>
+	<code>http.port</code>
+</div>
+
+<div class="paragraph">
+	<strong>Set in XML:</strong>
+	<pre><code>
+&lt;root&gt;
+    &lt;http&gt;
+        ...
+        &lt;port&gt;...&lt;/port&gt;
+    &lt;/http&gt;
+&lt;/root&gt;
+	</code></pre>
+</div>
+
+
+<h3>HTTPS port</h3>
+
+<div class="paragraph">
+	Set port to be used for HTTPS. Value 0 (or below) disable HTTPS.
+</div>
+
+<div class="paragraph">
+	<strong>Default value: </strong>
+	443
+</div>
+
+<div class="paragraph">
+	<strong>Set in code: </strong>
+	<code>setHttpsPort</code>
+</div>
+
+<div class="paragraph">
+	<strong>Set in properties: </strong>
+	<code>http.secured-port</code>
+</div>
+
+<div class="paragraph">
+	<strong>Set in XML:</strong>
+	<pre><code>
+&lt;root&gt;
+    &lt;http&gt;
+        ...
+        &lt;secured-port&gt;...&lt;/secured-port&gt;
+    &lt;/http&gt;
+&lt;/root&gt;
+	</code></pre>
+</div>
+
+
+<h3>SSL certificates</h3>
+
+<div class="paragraph">
+	Set certificates. If no certificates provided, HTTPS is disabled.
+	<br>
+	Server needs path to its own certificate key store and password and key store type as well.
+	<br>
+	Optionally, if sni host is checked can be set (True in default).
+	<br>
+	Trusted clients can be set. Path to certificate store, password and store type are required.
+	<br>
+	If no trusted clients certificate store is provided, server trusts all clients.
+</div>
+
+<div class="paragraph">
+	<strong>Default value: </strong>
+	Optional.empty()
+</div>
+
+<div class="paragraph">
+	<strong>Set in code: </strong>
+	<pre><code>
+SslCredentials cred = new SslCredentials();
+cred.setCertificateStore("...", "...", "...");
+cred.setSniHostCheck(...);
+cred.setTrustedClientsStore("...", "...", "...");
+cred.setTrustAll(...);
+serverFactory.setCerts(Optional.of(cred));
+	</code></pre>
+</div>
+
+<div class="paragraph">
+	<strong>Set in properties: </strong>
+	<div><code>http.key-store.path</code></div>
+	<div><code>http.key-store.password</code></div>
+	<div><code>http.key-store.type</code></div>
+	<div><code>http.key-store.checkSNI</code></div>
+	<div><code>http.trust-store.path</code></div>
+	<div><code>http.trust-store.password</code></div>
+	<div><code>http.trust-store.type</code></div>
+</div>
+
+<div class="paragraph">
+	<strong>Set in XML:</strong>
+	<pre><code>
+&lt;root&gt;
+    &lt;http&gt;
+        ...
+        &lt;key-store&gt;
+            &lt;path&gt;...&lt;/path&gt;
+            &lt;password&gt;...&lt;/password&gt;
+            &lt;type&gt;...&lt;/type&gt;
+            &lt;checkSNI&gt;...&lt;/checkSNI&gt;
+        &lt;/key-store&gt;
+        &lt;trust-store&gt;
+            &lt;path&gt;...&lt;/path&gt;
+            &lt;password&gt;...&lt;/password&gt;
+            &lt;type&gt;...&lt;/type&gt;
+        &lt;/trust-store&gt;
+    &lt;/http&gt;
+&lt;/root&gt;
+	</code></pre>
+</div>
+
+
+<h3>Read timeout</h3>
+
+<div class="paragraph">
+	Max read timeout in ms.
+</div>
+
+<div class="paragraph">
+	<strong>Default value: </strong>
+	60 000
+</div>
+
+<div class="paragraph">
+	<strong>Set in code: </strong>
+	<code>setReadTimeout</code>
+</div>
+
+<div class="paragraph">
+	<strong>Set in properties: </strong>
+	<code>http.read-timeout</code>
+</div>
+
+<div class="paragraph">
+	<strong>Set in XML:</strong>
+	<pre><code>
+&lt;root&gt;
+    &lt;http&gt;
+        ...
+        &lt;read-timeout&gt;...&lt;/read-timeout&gt;
+    &lt;/http&gt;
+&lt;/root&gt;
+	</code></pre>
+</div>
+
+
+<h3>Max request body size</h3>
+
+<div class="paragraph">
+	
+</div>Max allowed size of request body. Value NULL means no max value.
+
+<div class="paragraph">
+	<strong>Default value: </strong>
+	null
+</div>
+
+<div class="paragraph">
+	<strong>Set in code: </strong>
+	<code>setMaxRequestBodySize</code>
+</div>
+
+<div class="paragraph">
+	<strong>Set in properties: </strong>
+	<code>http.max-request-size</code>
+</div>
+
+<div class="paragraph">
+	<strong>Set in XML:</strong>
+	<pre><code>
+&lt;root&gt;
+    &lt;http&gt;
+        ...
+        &lt;max-request-size&gt;...&lt;/max-request-size&gt;
+    &lt;/http&gt;
+&lt;/root&gt;
+	</code></pre>
+</div>
+
+
+<h3>Thread pool</h3>
+
+<div class="paragraph">
+	Size of thread pool available to handle client requests at one moment.
+</div>
+
+<div class="paragraph">
+	<strong>Default value: </strong>
+	5
+</div>
+
+<div class="paragraph">
+	<strong>Set in code: </strong>
+	<code>setThreadPool</code>
+</div>
+
+<div class="paragraph">
+	<strong>Set in properties:</strong>
+	<code>http.thread-pool</code>
+</div>
+
+<div class="paragraph">
+	<strong>Set in XML:</strong>
+	<pre><code>
+&lt;root&gt;
+    &lt;http&gt;
+        ...
+        &lt;thread-pool&gt;...&lt;/thread-pool&gt;
+    &lt;/http&gt;
+&lt;/root&gt;
+	</code></pre>
+</div>
+
+<h2>Application</h2>
+
+<div class="paragraph">
+	All file settings contains application unique in the path. In examples, 'demo' will be used as application unique.
+</div>
+
+      
+<h3>Allow dir list</h3>
+
+<div class="paragraph">
+	TODO
+</div>
+
+<div class="paragraph">
+	<strong>Default value: </strong>
+	false
+</div>
+
+<div class="paragraph">
+	<strong>Set in code: </strong>
+	<code>setDirResponseAllowed</code>
+</div>
+
+<div class="paragraph">
+	<strong>Set in properties:</strong>
+	<code>applications.demo.dir-allowed</code>
+</div>
+
+<div class="paragraph">
+	<strong>Set in XML:</strong>
+	<pre><code>
+&lt;root&gt;
+    &lt;applications&gt;
+        ...
+        &lt;demo&gt;
+            ...
+            &lt;dir-allowed&gt;...&lt;/dir-allowed&gt;
+        &lt;/demo&gt;
+    &lt;/applications&gt;
+&lt;/root&gt;
+	</code></pre>
+</div>
+
+       
+<h3>Default file in directory</h3>
+
+<div class="paragraph">
+	TODO
+</div>
+
+<div class="paragraph">
+	<strong>Default value: </strong>
+	index.html
+</div>
+
+<div class="paragraph">
+	<strong>Set in code: </strong>
+	<code>setDirDefaultFile</code>
+</div>
+
+<div class="paragraph">
+	<strong>Set in properties:</strong>
+	<code>applications.demo.dir-default-file</code>
+</div>
+
+<div class="paragraph">
+	<strong>Set in XML:</strong>
+	<pre><code>
+&lt;root&gt;
+    &lt;applications&gt;
+        ...
+        &lt;demo&gt;
+            ...
+            &lt;dir-default-file&gt;...&lt;/dir-default-file&gt;
+        &lt;/demo&gt;
+    &lt;/applications&gt;
+&lt;/root&gt;
+	</code></pre>
+</div>
+
+ 
+<h3>Resources path</h3>
+
+<div class="paragraph">
+	TODO
+</div>
+
+<div class="paragraph">
+	<strong>Default value: </strong>
+	www
+</div>
+
+<div class="paragraph">
+	<strong>Set in code: </strong>
+	<code>setResourcesPath</code>
+</div>
+
+<div class="paragraph">
+	<strong>Set in properties:</strong>
+	<code>applications.demo.resource-path</code>
+</div>
+
+<div class="paragraph">
+	<strong>Set in XML:</strong>
+	<pre><code>
+&lt;root&gt;
+    &lt;applications&gt;
+        ...
+        &lt;demo&gt;
+            ...
+            &lt;resource-path&gt;...&lt;/resource-path&gt;
+        &lt;/demo&gt;
+    &lt;/applications&gt;
+&lt;/root&gt;
+	</code></pre>
+</div>
+   
+<h3>Response headers</h3>
+
+<div class="paragraph">
+	TODO
+</div>
+
+<div class="paragraph">
+	<strong>Default value: </strong>
+	Access-Control-Allow-Origin: *
+</div>
+
+<div class="paragraph">
+	<strong>Set in code: </strong>
+	<code>setHeaders</code>
+</div>
+
+<div class="paragraph">
+	<strong>Set in properties:</strong>
+	<br>
+	<code>applications.demo.headers.1</code>
+	<br>
+	<code>applications.demo.headers.2</code>
+	<br>
+	...
+</div>
+
+<div class="paragraph">
+	<strong>Set in XML:</strong>
+	<pre><code>
+&lt;root&gt;
+    &lt;applications&gt;
+        ...
+        &lt;demo&gt;
+            ...
+            &lt;headers&gt;
+            	...
+            	&lt;header&gt;...&lt;/header&gt;
+            	&lt;header&gt;...&lt;/header&gt;
+            &lt;/headers&gt;
+        &lt;/demo&gt;
+    &lt;/applications&gt;
+&lt;/root&gt;
+	</code></pre>
+</div>
+
+<h3>Logs path</h3>
+
+<div class="paragraph">
+	TODO
+</div>
+
+<div class="paragraph">
+	<strong>Default value: </strong>
+	logs/&lt;appIdentifier&gt;
+</div>
+
+<div class="paragraph">
+	<strong>Set in code: </strong>
+	<code>setLogsPath</code>
+</div>
+
+<div class="paragraph">
+	<strong>Set in properties:</strong>
+	<code>applications.demo.logs-path</code>
+</div>
+
+<div class="paragraph">
+	<strong>Set in XML:</strong>
+	<pre><code>
+&lt;root&gt;
+    &lt;applications&gt;
+        ...
+        &lt;demo&gt;
+            ...
+            &lt;logs-path&gt;...&lt;/logs-path&gt;
+        &lt;/demo&gt;
+    &lt;/applications&gt;
+&lt;/root&gt;
+	</code></pre>
+</div>
+
+<h3>Is application in dev mode</h3>
+
+<div class="paragraph">
+	TODO
+	 ip->ip.equals("127.0.0.1") || ip.equals("0:0:0:0:0:0:0:1")
+</div>
+
+<div class="paragraph">
+	<strong>Default value: </strong>
+	
+</div>
+
+<div class="paragraph">
+	<strong>Set in code: </strong>
+	<code>setDevModeFunc</code>
+</div>
+
+<div class="paragraph">
+	<strong>Set in properties:</strong>
+	Cannot be set
+</div>
+
+<div class="paragraph">
+	<strong>Set in XML:</strong>
+	Cannot be set
+</div>
+ 
+<h3>Auto start</h3>
+
+<div class="paragraph">
+	TODO
+</div>
+
+<div class="paragraph">
+	<strong>Default value: </strong>
+	true
+</div>
+
+<div class="paragraph">
+	<strong>Set in code: </strong>
+	<code>setAutoStart</code>
+</div>
+
+<div class="paragraph">
+	<strong>Set in properties:</strong>
+	<code>applications.demo.autostart</code>
+</div>
+
+<div class="paragraph">
+	<strong>Set in XML:</strong>
+	<pre><code>
+&lt;root&gt;
+    &lt;applications&gt;
+        ...
+        &lt;demo&gt;
+            ...
+            &lt;autostart&gt;...&lt;/autostart&gt;
+        &lt;/demo&gt;
+    &lt;/applications&gt;
+&lt;/root&gt;
+	</code></pre>
+</div>

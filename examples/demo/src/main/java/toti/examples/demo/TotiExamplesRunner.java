@@ -6,6 +6,8 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 
+import toti.core.Application;
+import toti.core.ApplicationFactory;
 import toti.core.TotiServer;
 import toti.core.TotiServerFactory;
 import toti.examples.demo.modules.ApplicationModule;
@@ -17,69 +19,75 @@ public class TotiExamplesRunner {
 	// TODO spravne def nastaveni hostname a path + example jak pouzit
 
 	public static void main(String[] args) {
-	//	createWithDefaultSettings();
+		createWithDefaultSettings();
 		createAndSetProgrammatically();
-	//	createWithFileSettings();
+		createWithXmlFileSettings();
+		createWithPropertiesFileSettings();
 	}
 
-	protected static void createWithDefaultSettings() {
+
+	private static Application initApplication(ApplicationFactory applicationFactory) {
+		applicationFactory.setDevModeFunc(ip->true); // dev mode
+		// TODO applicationFactory.setUrlPattern(null);
+		
+		// optional: add extensions, always in code
+		// TODO applicationFactory.addExtension(new AuthenticationExtension());
+		// TODO applicationFactory.addExtension(new UiExtension());
+		// TranslatorExtension require settings
+		// TemplateExtension require settings
+		// DatabaseExtension require settings
+		
+		return applicationFactory.create(Arrays.asList(
+			new ApplicationModule()/*,
+			new UiModule(),
+			new TemplatingModule()*/
+		), LogManager.getLogger("toti"));
+	}
+
+
+	private static void createWithDefaultSettings() {
 		try {
 			TotiServerFactory serverFactory = new TotiServerFactory();
 
 			TotiServer server = serverFactory.create(LogManager.getLogger("toti"));
 			server.addApplication("demo", (env, applicationFactory)->{
-				applicationFactory.setDevModeFunc(ip->true); // dev mode
-				// TODO applicationFactory.setUrlPattern(null);
-				
-				// optional: add extensions, always in code
-				// TODO applicationFactory.addExtension(new AuthenticationExtension());
-				// TODO applicationFactory.addExtension(new UiExtension());
-				// TranslatorExtension require settings
-				// TemplateExtension require settings
-				// DatabaseExtension require settings
-				
-				return applicationFactory.create(Arrays.asList(
-					new ApplicationModule()/*,
-					new UiModule(),
-					new TemplatingModule()*/
-				), LogManager.getLogger("toti"));
+				return initApplication(applicationFactory);
 			}, null, null);
 			server.start();
 		} catch (Exception e) {
-			LogManager.getLogger("toti").error("Init fails", e);
+			LogManager.getLogger("toti").error("Default init fails", e);
 		}
 	}
 	
-	protected static void createWithFileSettings() {
+	private static void createWithPropertiesFileSettings() {
 		try {
-			//TotiServerFactory serverFactory = new TotiServerFactory("fileConfiguration.properties");
+			TotiServerFactory serverFactory = new TotiServerFactory("fileConfiguration.properties");
+			
+			TotiServer server = serverFactory.create(LogManager.getLogger("toti"));
+			server.addApplication("demo", (env, applicationFactory)->{
+				return initApplication(applicationFactory);
+			}, null, null);
+			server.start();
+		} catch (Exception e) {
+			LogManager.getLogger("toti").error("Properties init fails", e);
+		}
+	}
+	
+	private static void createWithXmlFileSettings() {
+		try {
 			TotiServerFactory serverFactory = new TotiServerFactory("fileConfiguration.xml");
 			
 			TotiServer server = serverFactory.create(LogManager.getLogger("toti"));
 			server.addApplication("demo", (env, applicationFactory)->{
-				applicationFactory.setDevModeFunc(ip->true); // dev mode
-				// TODO applicationFactory.setUrlPattern(null);
-				
-				// optional: add extensions, always in code
-				/*applicationFactory.addExtension(new AuthenticationExtension());
-				applicationFactory.addExtension(new UiExtension());
-				applicationFactory.addExtension(new TranslatorExtension(env, LogManager.getLogger("translate")));
-				applicationFactory.addExtension(new TemplateExtension(env, LogManager.getLogger("template")));
-				applicationFactory.addExtension(new DatabaseExtension(LogManager.getLogger("database")));*/
-				
-				return applicationFactory.create(Arrays.asList(
-					new ApplicationModule()/*,
-					new UiModule(),
-					new TemplatingModule()*/
-				), LogManager.getLogger("toti"));
+				return initApplication(applicationFactory);
 			}, null, null);
 			server.start();
 		} catch (Exception e) {
-			LogManager.getLogger("toti").error("Init fails", e);
+			LogManager.getLogger("toti").error("Xml init fails", e);
 		}
 	}
 
-	protected static void createAndSetProgrammatically() {
+	private static void createAndSetProgrammatically() {
 		try {
 			TotiServerFactory serverFactory = new TotiServerFactory();
 			serverFactory.setCharset("utf-8");
@@ -98,40 +106,22 @@ public class TotiExamplesRunner {
 			server.addApplication("demo", (env, applicationFactory)->{
 				// set
 				applicationFactory.setAutoStart(true);
-				applicationFactory.setDevModeFunc(ip->true); // dev mode
 				applicationFactory.setDirDefaultFile("index.html");
 				applicationFactory.setDirResponseAllowed(true);
 				applicationFactory.setHeaders(
 					new MapInit<String, List<Object>>()
 					.append("Access-Control-Allow-Origin", Arrays.asList("*"))
+					.append("Server", Arrays.asList("TOTI", "Program settings"))
 					.toMap()
 				);
 				applicationFactory.setLogsPath("logs");
 				applicationFactory.setResourcesPath("www");
-				// TODO applicationFactory.setUrlPattern(null);
-				
-				// optional: add extensions, always in code
-				/*applicationFactory.addExtension(new AuthenticationExtension());
-				applicationFactory.addExtension(new UiExtension());
-				applicationFactory.addExtension(new TranslatorExtension(
-					new LanguageSettings("en", Arrays.asList(new Locale("en", true, Arrays.asList("en_GB")))),
-					LogManager.getLogger("translate")
-				));
-				applicationFactory.addExtension(new TemplateExtension(
-					"temp/samples", false, false, LogManager.getLogger("template")
-				));
-				applicationFactory.addExtension(new DatabaseExtension(LogManager.getLogger("database")));*/
-				// validation extension doesn't need register
-				
-				return applicationFactory.create(Arrays.asList(
-					new ApplicationModule()/*,
-					new UiModule(),
-					new TemplatingModule()*/
-				), LogManager.getLogger("toti"));
+
+				return initApplication(applicationFactory);
 			}, null, null);
 			server.start();
 		} catch (Exception e) {
-			LogManager.getLogger("toti").error("Init fails", e);
+			LogManager.getLogger("toti").error("Program init fails", e);
 		}
 	}
 }

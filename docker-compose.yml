@@ -14,6 +14,8 @@ services:
       - "19032:444"
       - "19041:82"
       - "19042:445"
+      - "19051:83"
+      - "19052:446"
     volumes:
       - .:/home/coder/project
       - .vscode-config:/home/coder/.local/share/code-server

@@ -186,6 +186,9 @@
 				<pre id="asyncRes"></pre>
 			</div>
 		</div>
+
+		<div id="servers"></div>
+
 		<div id="modules" style="max-width: 75%"></div>
 	</div>
 
@@ -195,6 +198,26 @@
 		    const current = html.getAttribute("data-theme");
 		    html.setAttribute("data-theme", current === "dark" ? "light" : "dark");
 		}
+
+		var servers = document.getElementById('servers');
+		[ 'Default settings', 'Program settings', 'XML settings', 'Properties settigns' ].forEach((name, index)=>{
+			var section = document.createElement('div');
+			servers.appendChild(section);
+			var title = document.createElement('span');
+			title.innerText = name;
+			section.appendChild(title);
+			[ 'HTTP', 'HTTPS'].forEach((protocol, port)=>{
+				var space = document.createElement('span');
+				space.innerHTML = '&nbsp;';
+				section.appendChild(space);
+
+				var link = document.createElement('a');
+				link.innerText = protocol;
+				link.setAttribute('href', protocol.toLowerCase() + "://localhost:190" + (index + 2) + (port + 1) + "/index.html");
+				section.appendChild(link);
+			});
+		});
+
 		var openLinkButtons = [
 			{
 				name: 'OPEN',

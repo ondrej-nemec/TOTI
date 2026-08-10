@@ -1,0 +1,56 @@
+<h1 id="migrations">Migrations</h1>
+
+<p>
+	Database migrations or simply migrations are tool allowing you keep database in same state on production and on develop with your colleagues. In migration folders are scripts for updating current database. Every structure change have to by in this scripts so after migrating you have your database up to date to current code. After migrating each script this tool make note to special table and not migrate this script again.
+</p>
+
+<h2>Migration identifier</h2>
+<p>
+	There is name convention for migration files: <i>id__description</i>. id must be unique for folder, cannot contains '<i>__</i>'. Suggested id format is: yyyy_mm_dd_i where i is index of migration that day.
+</p>
+
+<h2>Folders</h2>
+
+<p>
+	You can use more folders (modules) as source for migrations. Folders are executed one after one in order they are defined. Folders can be inside or outside classpath. Java migrations outside classpath have to be builded (not .java but .class).
+</p>
+
+<h2>Types</h2>
+
+<h3>Java</h3>
+
+<p>
+	Standart Java class. Has to implement <code>Migration</code> interface.
+</p>
+
+<h3>SQL</h3>
+
+<p>Simple SQL script. <i>.sql</i> is required as extension.</p>
+
+<h3>Always</h3>
+
+<p>
+	Java or SQL migration that is executed every time. On the end of other migrations, the always migrations are executed. Very helpful f.e. for views. On view change, you not create new migration but just change view in Always migration and you can see git changes.
+</p>
+
+<p>
+	A migration became Always migration if id of the migration contains 'ALWAYS' (upper case).
+</p>
+
+<h2>Example</h2>
+
+<p class="alert alert-warning">
+	<strong>NOTE:</strong> MigrationTool in this example is created manualy, but best practise is use <code>Database</code> class for creating and migrating database.
+</p>
+
+<pre><code class="language-java">
+QueryBuilder builder = ...;
+Logger logger = ...;
+MigrationTool tool = new MigrationTool(
+	Arrays.asList("path/to/first/module", "path/to/second/module"), // folders
+	builder, // query builder for java migrations
+	logger // see JI Common
+);
+
+tool.migrate();
+</code></pre>

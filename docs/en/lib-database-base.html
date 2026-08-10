@@ -1,0 +1,83 @@
+<h1>Base</h1>
+
+<p>
+	<code>Database</code> class is interface between your application and other TOTI Database parts.
+</p>
+
+<h2>Construct</h2>
+
+<p><code>Database</code> constructor requires two parameters: <code>DatabaseConfig</code> and <code>Logger</code> (Log4j2).</p>
+
+<h3>DatabaseConfig</h3>
+
+<p>
+	Constructor parameters:
+	<ul>
+		<li>Type: type of database. Allowed values: 'mysql', 'postgresql', 'sqlite' and 'sqlserver'</li>
+		<li>Path (SQLite) or URL</li>
+		<li>Schema/database name</li>
+		<li>Login</li>
+		<li>Password</li>
+		<li>List of migration paths: for more see <span href="lib-database-migrations" class="inner-link">Migrations</span></li>
+		<li>Pool size: maximal pool size</li>
+	</ul>
+</p>
+
+<p>
+	Optionally, another parameters can be add: <br>
+	<code>config.setProperty(optionName, value);</code>
+</p>
+
+<h2>Run query</h2>
+
+<p>SQL query can be executed in two ways: with <code>applyQuery</code> or <code>applyBuiler</code>. Both require function as parameter. The function get <code>Connection</code>, resp. <code>QueryBuilder</code> as parameter. Value the function returns, <code>applyQuery</code> (<code>applyBuilder</code>) returns.</p>
+
+<strong>Example</strong>
+
+<p>In example, both methods return <code>Integer</code> but result value is generic.</p>
+
+<pre><code class="language-java">
+Database database = ...;
+// execute SQL
+int result = database.applyQuery((connection)->{
+	// you can close Statement, ResultSet,.., but never close connection
+	/*
+	// your code here, f.e.:
+	try (Statement statement = connecion.createStatement()) {
+		// ...
+	}
+	*/
+	return 0;
+});
+
+// execute with QueryBuilder
+int result = database.applyBuilder((builder)->{
+	/*
+	// your code here, f.e.:
+	builder.select(*).from("Table1").fetchAll();
+	*/
+	return 1;
+});
+
+// without returning
+database.applyBuilder((builder)->{
+	/*
+	// your code here, f.e.:
+	builder.delete("Table1").execute();
+	*/
+});
+</code></pre>
+
+<p class="alert alert-info">
+	Everything inside  <code>applyQuery</code> and <code>applyBuilder</code> is inside transaction.
+</p>
+
+<p class="alert alert-danger">
+	Don't close <code>Connection</code>. It will be returned to pool.
+</p>
+
+<h2>Migrate</h2>
+
+<p>
+	Migration function is described <span href="lib-database-migrations" class="inner-link">here</span>. With <code>Database</code> you can simply call <code>migrate</code> function. There is <code>createDbIfNotExists</code> method, too. This method create new database if not exists.
+</p>

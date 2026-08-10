@@ -24,18 +24,19 @@
 	h3 { margin: 0 0 10px 0; font-weight: normal; color: var(--secondary-color); }
 	h4 { margin: 0 0 10px 0; font-weight: normal; color: var(--secondary-color); }
 	h5 { margin: 0 0 10px 0; font-weight: normal; color: var(--secondary-color); }
+	a { color: var(--primary-color) }
 
 	.toggle-button { background: transparent; color: var(--body-color); border: 1px solid var(--border); padding: 6px 10px; border-radius: 6px; cursor: pointer; }
 	[data-theme="dark"] #theme-dark { display: none; }
 	[data-theme="light"] #theme-light { display: none; }
 	.actions { display: flex; gap: 10px; font-size: 14px; color: var(--secondary-color); }
 
-	/******** code **********/
-	pre, .code { background: var(--code-bg); border-left: 4px solid var(--primary-color); padding: 12px; font-family: monospace; overflow-x: auto; }
+	/******** alert **********/
+	.alert { background: var(--code-bg); border-left: 4px solid var(--primary-color); padding: 12px; font-family: monospace; overflow-x: auto; }
 	/******** boxes **********/
 	.card { border-radius: 10px; padding: 16px; margin-bottom: 16px; background: var(--card); border: 1px solid var(--border); }
 	/******** normal text **********/
-	.paragraph { padding: 16px; margin-bottom: 16px; }
+	.paragraph { margin-bottom: 16px; }
 
 	/*********** hiddable *************/
 	.section { border: 1px solid var(--border); border-radius: 10px; margin-bottom: 16px; overflow: hidden; }
@@ -138,6 +139,11 @@
 		font-size: 0.90em;
 	}
 
+	code {
+		color: #d63384;
+	}
+	.inner-link { color: var(--primary-color); text-decoration:underline; cursor:pointer; }
+
 
 	#menuButton {
 		display: none;
@@ -201,6 +207,12 @@
 		}
 	}
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/html.min.js"></script>-->
+
 </head>
 
 <body>
@@ -224,7 +236,7 @@
 			<ul class="menu"></ul>
 		</aside>
 
-		<main class="content"></main>
+		<main class="content container"></main>
 
 		<aside class="sidebar-right">
 			<ul class="toc"></ul>
@@ -233,13 +245,14 @@
 	</div>
 
 	<footer>
-		Ondřej Němec 2018
+		©&nbsp;Ondřej Němec 2018&nbsp;-&nbsp;<span id="year"></span>
 	</footer>
 
 </body>
 
 
 <script>
+	document.getElementById('year').innerText = new Date().getFullYear();
 	// dark/light
 	document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "light");
 	function toggleTheme() {
@@ -257,10 +270,18 @@
 	document.getElementById('menuButton').onclick = ()=>document.querySelector(".sidebar-left").classList.toggle("open");
 	document.getElementById('tocButton').onclick = ()=>document.querySelector(".sidebar-right").classList.toggle("open");
 
+	function setMemory(name, value) {
+		const url = new URL(window.location);
+		url.searchParams.set(name, value);
+		history.pushState(null, '', url);
+	}
+	const urlParams = new URLSearchParams(window.location.search);
+	const selectedPage = urlParams.get('page');
+
 	var main = document.querySelector('main.content');
 	var toc = document.querySelector('ul.toc');
-	function showPage(data) {
-		main.innerHTML = data.html;
+	function showPage(data, content) {
+		main.innerHTML = content.html;
 		var qeue = [{
 			level: 2,
 			container: toc
@@ -295,35 +316,46 @@
 			container.appendChild(title);
 			last.container.appendChild(container);
 		});
+		hljs.highlightAll();
+		main.querySelectorAll('.inner-link').forEach(link=>{
+			link.addEventListener('click', e=>{
+				var href = link.getAttribute('href') + '.html';
+				showPage(data, data.get(href));
+				setMemory('page', href);
+			});
+		});
 	}
 	// TODO change language
 	function addMenuItem(data, url, parent, item, level) {
 		var container = document.createElement('li');
 		container.setAttribute('level', level);
 		parent.appendChild(container);
-		if (item.hasOwnProperty('links')) {
-			var titleElement = document.createElement('span');
-			titleElement.innerText = item.name;
-			var listElement = document.createElement('ul');
 
-			container.appendChild(titleElement);
-			container.appendChild(listElement);
-			item.links.forEach(sub=>{
-				addMenuItem(data, url, listElement, sub, level + 1);
+		var titleElement = document.createElement('span');
+		titleElement.innerText = item.name;
+		container.appendChild(titleElement);
+		if (item.hasOwnProperty('link')) {
+			titleElement.setAttribute('link', item.link);
+			titleElement.classList.add('menu-link');
+			titleElement.addEventListener('click', e=>{
+				showPage(data, data.get(item.link));
+				setMemory('page', item.link);
 			});
-		} else {
-			var link = document.createElement('span');
-			link.innerText = item.name;
-			link.setAttribute('link', item.link);
-			link.classList.add('menu-link');
-			link.addEventListener('click', e=>{
-				showPage(data.get(item.link));
-			});
-			container.appendChild(link);
 			fetch(url + item.link).then(res=>{
 				return res.text();
 			}).then(body=>{
 				data.add(item.link, body);
+				if (item.link === selectedPage) {
+					showPage(data, data.get(item.link));
+				}
+			});
+		}
+		if (item.hasOwnProperty('links')) {
+			var listElement = document.createElement('ul');
+
+			container.appendChild(listElement);
+			item.links.forEach(sub=>{
+				addMenuItem(data, url, listElement, sub, level + 1);
 			});
 		}
 	}

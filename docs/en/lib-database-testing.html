@@ -1,0 +1,104 @@
+<h1>Testing</h1>
+
+<p>DatabaseTestCase (DTC) is usefull when you need test something with database. Before each test, DTC apply all migrations and insert test data. After each test, DTC clean database.</p>
+
+<h2>Dependency</h2>
+
+TODO
+
+<h2>Usage</h2>
+
+<p>
+	The test is standart jUnit5 test. Test class has to extends <code>DatabaseTestCase</code>. Constructor requires <code>DatabaseConfig</code> (from Database</a>) and optionaly <code>Logger</code> (Log4j2).
+</p>
+
+<p>
+	Instance of <code>Database</code> class is available in test class on protected parameter <code>database</code> or with method <code>getDatabase</code>. <strong>Do not create any other instances of <code>Database</code> in your DTCs.</strong>
+</p>
+
+<p class="alert alert-danger">
+	DTC uses <code>@BeforeEach</code> and <code>@AfterEach</code> methods. If you need use it too, override <code>before</code> or <code>after</code>. Always call parent method.
+</p>
+
+<p class="alert alert-warning">
+	All queries run in super transaction that is never commited. No exception can broke it. But calling <code>System.exit</code> can make unexpected states.
+</p>
+
+<h2>Dataset</h2>
+
+<p>
+	<code>DatabaseTestCase</code> has one abstract method: <code>getDataSet</code>. Here you define startup state of your database before <strong>each</strong> test. Dataset is common for all tests of one test class. If you need some data only for one test, call <code>alterDataSet</code> on the first line of your test.
+</p>
+
+<h1>Example</h1>
+
+<pre><code>
+public class Example extends DatabaseTestCase {
+
+	public Example() {
+		super(/* DatabaseConfig */);
+	}
+
+	/**
+	 * dataset common for all test
+	 * can returns empty list
+	 */
+	@Override
+	protected List&lt;Table&gt; getDataSet() {
+		return Arrays.asList(
+			new Table("Table1")
+			.addRow(
+				Row.insert()
+				.addColumn("id", 1)
+				.addColumn("name", "Name #1")
+			)
+			.addRow(
+				Row.insert()
+				.addColumn("id", 2)
+				.addColumn("name", "Name #2")
+			),
+			new Table("Table2")
+			.addRow(
+				Row.insert()
+				.addColumn("id", 1)
+				.addColumn("value", "Value #1")
+			)
+			.addRow(
+				Row.insert()
+				.addColumn("id", 2)
+				.addColumn("value", "Value #2")
+			)
+		);
+	}
+	
+	/**
+	 * used common dataset only
+	 */
+	@Test
+	public void test1() {
+		// ...
+	}
+	
+	/**
+	 * common dataset updated with own data
+	 */
+	@Test
+	public void test2() throws SQLException {
+		alterDataSet(Arrays.asList(
+			new Table("Table1")
+			.addRow(
+				Row.insert() // add one more row to Table1
+				.addColumn("id", 3)
+				.addColumn("name", "Name #3")
+			),
+			new Table("Table2")
+			.addRow(
+				Row.update("id", 2) // update row with id=2
+				.addColumn("value", "another value")
+			)
+		));
+		// ...
+	}
+
+}
+</code></pre>

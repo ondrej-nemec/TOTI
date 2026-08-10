@@ -1,0 +1,660 @@
+<h1 id="queryBuilder">Query builder</h1>
+
+
+<p>Query Builder composes SQL query by calling adequate methods. Another word, this package is Database Abstraction Layer. 
+</p>
+<p>You can create new instance of each builder or you can use <code>QueryBuilder</code> class. This class is factory for builders. <strong>Remember all builders created from one <code>QueryBuilder</code> have same <code>Connection</code>.</strong> <code>QueryBuilder</code> allows you begin, commit or rollback transaction.</p>
+
+<p>
+Each builder can be executed several times.
+</p>
+
+<p>
+	Supported databases:
+	<ul>
+		<li>MySQL</li>
+		<li>PostgreSQL</li>
+		<li>SQL Server (MS Server)</li>
+		<li>SQLite</li>
+	</ul>
+</p>
+
+<h2>Parameters</h2>
+
+<p>
+	Some queries can be parametrized. See example:
+</p>
+
+<pre><code class="language-java">
+QueryBuilder builder = ...;
+builder.select("*")
+	.from("myTable")
+	.where("id > :id")
+	.addParameter(":id", 123);
+</code></pre>
+
+<p>
+	All parameters are named. That is usefull if you need use one value moretimes. All values are escaped. If you wish add not escaped value, use <code>addNotEscapedParameter</code> method.
+</p>
+
+<h2>Escaping</h2>
+
+<p>
+	Values passed to <code>addParameter</code> or <code>addValue</code> are escaped.
+</p>
+
+<h2>Join</h2>
+
+<p>
+	Join type is realized with <code>Join</code> enum.
+</p>
+
+<pre><code class="language-java">
+QueryBuilder builder = ...;
+builder.select("*")
+	.from("FirstTable", "f")
+	.join("SecondTable", "s", Join.LEFT_OUTER_JOIN, "s.id = t.second_id");
+</code></pre>
+
+<h2>Where</h2>
+
+<p>Some builders contains <code>where</code> and <code>orWhere</code> method. Everything inside *where method parameter will be automatically inside '()'.</p>
+
+<h2>Builders</h2>
+
+<h3>Select</h3>
+
+<strong>Parametrized</strong>
+
+<p>For creating select statement. Result is returned with: <code>fetchSingle</code> (returns one <code>DictionaryValue</code> from first row and first column or null), <code>fetchRow</code> (returns <code>MapDictionary</code> of values on first row), <code>fetchRow(Class&lt;T&gt;)</code> (returns new instance of <code>Class&lt;T&gt;</code> parsed from row using <a href="?file=lib-common.html">Mapper</a> or null), <code>fetchAll</code> (returns list of <code>MapDictionary</code>, one item - one row), <code>fetchAll(consumer)</code> (returns list, each item is result of given consumer applied on corresponging row) and <code>fetchAll(consumer, consumer)</code> (returns map, each item is result of first callback - key - and second callback - value - applied on corresponging row).</p>
+
+<p>
+	Instead of select string, you can pass another <code>SelectBuilder</code>. It be usead as subselect.
+</p>
+<strong>Example</strong>
+
+<pre><code class="language-java">
+builder.select("a.id a_id", "b.id b_id", "b.number")
+	.from("Table1 a")
+	.join("Table2 b", Join.INNER_JOIN, "a.id = b.a_id")
+	.join(
+		builder.select("max(id) as max_id, name").from("Table1").groupBy("name"),
+		"c", // name of subselect
+		Join.LEFT_OUTER_JOIN,
+		"a.id = c.max_id"
+	)
+	.where("a.id &lt; :id")
+	.where("b.id &lt; :id")
+	.where("b.number in (:in)")
+	.orWhere("c.name != :name")
+	.orderBy("a.id")
+	.limit(10, 5)
+	.addParameter(":id", 18)
+	.addParameter(":name", "admin")
+	.addParameter(":in", Arrays.asList(1,2,3,4));
+</code></pre>
+
+<p>SQL without translated parameters:</p>
+<pre><code class="language-sql">
+SELECT * 
+FROM Table1 a 
+JOIN Table2 b ON a.id = b.a_id 
+LEFT JOIN (
+	SELECT max(id) as max_id, name 
+	FROM Table1 
+	GROUP BY name
+) c ON a.id = c.max_id 
+WHERE (a.id &lt; :id) 
+AND (b.id &lt; :id) 
+AND (b.number in (:in)) 
+OR (c.name != :name) 
+ORDER BY a.id 
+LIMIT 10 OFFSET 5
+</code></pre>
+<p>SQL with translated parameters</p>
+<pre><code class="language-sql">
+SELECT * 
+FROM Table1 a 
+JOIN Table2 b ON a.id = b.a_id 
+LEFT JOIN (
+	SELECT max(id) as max_id, name 
+	FROM Table1 
+	GROUP BY name
+) c ON a.id = c.max_id 
+WHERE (a.id &lt; 18) 
+AND (b.id &lt; 18) 
+AND (b.number in (1,2,3,4)) 
+OR (c.name != 'admin') 
+ORDER BY a.id LIMIT 10 OFFSET 5
+</code></pre>
+
+<h3>Update</h3>
+
+<strong>Parametrized</strong>
+
+<p>
+	For creating update statement. Executed with <code>execute</code>.
+</p>
+<strong>Example</strong>
+
+<pre><code class="language-java">
+builder.update("Table1")
+	.set("name = :name")
+	.where("id = :id")
+	.addParameter(":id", 18)
+	.addParameter(":name", "user18")
+</code></pre>
+
+<p>SQL without translated parameters:</p>
+<pre><code class="language-sql">
+UPDATE Table1 
+SET name = :name 
+WHERE (id = :id)
+</code></pre>
+<p>SQL with translated parameters</p>
+<pre><code class="language-sql">
+UPDATE Table1 
+SET name = 'user18' 
+WHERE (id = 18)
+</code></pre>
+
+<h3>Insert</h3>
+
+<p>For creating insert statement. Method <code>addValue</code> escape value. Not escaped value can be added with <code>addNotEscapedValue</code>. Executed with <code>execute</code>, returns <code>DictionaryValue</code> of created id or -1 if no id generated.</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-java">
+builder.insert("Table2")
+	.addValue("id", 123)
+	.addValue("number", 12.8)
+	.addValue("name", "Item 8")
+</code></pre>
+
+<p>SQL:</p>
+<pre><code class="language-sql">
+INSERT INTO Table2 (number, name, id) 
+VALUES (12.8, 'Item 8', 123)
+</code></pre>
+
+<h3>Delete</h3>
+
+<strong>Parametrized</strong>
+
+<p>For creating delete statement. Executed with <code>execute</code>.</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-java">
+builder.delete("Table1")
+	.where("id = :id")
+	.addParameter(":id", 1)
+</code></pre>
+
+<p>SQL without translated parameters:</p>
+<pre><code class="language-sql">
+DELETE FROM Table1 
+WHERE (id = :id)
+</code></pre>
+<p>SQL with translated parameters</p>
+<pre><code class="language-sql">
+DELETE FROM Table1 
+WHERE (id = 1)
+</code></pre>
+
+<h3>Create table</h3>
+
+<p>For creating table. With <code>addColumn</code> method you specify column name, type and settings (primary key, auto incement, ...). Optionaly you can specify default value. <strong>Default value is not escaped.</strong> Executed with <code>execute</code>.</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-java">
+builder.createTable("Table3")
+	.addColumn("id", ColumnType.integer(), ColumnSetting.PRIMARY_KEY, ColumnSetting.AUTO_INCREMENT)
+	.addColumn("name", ColumnType.string(10)) // no addition settings
+	.addColumn("is_used", ColumnType.bool(), true, ColumnSetting.NOT_NULL) // defaut value is 'true'
+</code></pre>
+
+<p>SQL:</p>
+<pre><code class="language-sql">
+CREATE TABLE Table3 ( 
+	id INT AUTO INCREMENT, 
+	name VARCHAR(10), 
+	is_used BOOLEAN DEFAULT true NOT NULL,
+	PRIMARY KEY (id)
+)
+</code></pre>
+
+<h3>Alter table</h3>
+
+<p>For altering table. With <code>addColumn</code> method you specify column name, type and settings (primary key, auto incement, ...). Optionaly you can specify default value. <strong>Default value is not escaped.</strong> Executed with <code>execute</code>.</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-java">
+builder.alterTable("Table3")
+	.addColumn("cost", ColumnType.integer())
+	.renameColumn("is_used", "used", ColumnType.bool())
+</code></pre>
+
+<p>SQL:</p>
+<pre><code class="language-sql">
+ALTER TABLE Table3 
+ADD cost INT, 
+CHANGE COLUMN is_used used BOOLEAN
+</code></pre>
+
+<h3>Delete table</h3>
+
+<p>For deleting table. Executed with <code>execute</code>.</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-java">
+builder.deleteTable("Table3")
+</code></pre>
+
+<p>SQL:</p>
+<pre><code class="language-sql">
+DROP TABLE Table3
+</code></pre>
+
+<h3>Create view</h3>
+
+<p>For creating view. Executed with <code>execute</code>.</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-java">
+builder.createView("table1_table2_view")
+	.select("*")
+	.from("Table1", "a")
+	.join("Table2", "b", Join.INNER_JOIN, "a.id = b.a_id")
+	.join(
+		builder.select("max(id) as max_id, name").from("Table1").groupBy("name"),
+		"c", // name of subselect
+		Join.LEFT_OUTER_JOIN,
+		"a.id = c.max_id"
+	)
+	.where("a.id &lt; :id")
+	.where("b.id &lt; :id")
+	.where("b.number in (:in)")
+	.orWhere("c.name != :name")
+	.orderBy("a.id")
+	.limit(10, 5)
+	.addParameter(":id", 18)
+	.addParameter(":name", "admin")
+	.addParameter(":in", Arrays.asList(1,2,3,4))
+</code></pre>
+
+<p>SQL without translated parameters:</p>
+<pre><code class="language-sql">
+CREATE VIEW table1_table2_view AS
+	SELECT * 
+	FROM Table1 a 
+	JOIN Table2 b ON a.id = b.a_id 
+	LEFT JOIN (
+		SELECT max(id) as max_id, name
+		FROM Table1 
+		GROUP BY name
+	) c ON a.id = c.max_id 
+	WHERE (a.id &lt; :id) 
+	AND (b.id &lt; :id) 
+	AND (b.number in (:in)) 
+	OR (c.name != :name) 
+	ORDER BY a.id 
+	LIMIT 10 OFFSET 5
+</code></pre>
+<p>SQL with translated parameters</p>
+<pre><code class="language-sql">
+CREATE VIEW table1_table2_view AS
+	SELECT * 
+	FROM Table1 a 
+	JOIN Table2 b ON a.id = b.a_id 
+	LEFT JOIN (
+		SELECT max(id) as max_id, name 
+		FROM Table1 
+		GROUP BY name
+	) c ON a.id = c.max_id
+	WHERE (a.id &lt; 18) 
+	AND (b.id &lt; 18) 
+	AND (b.number in (1,2,3,4)) 
+	OR (c.name != 'admin') 
+	ORDER BY a.id 
+	LIMIT 10 OFFSET 5
+</code></pre>
+
+<h3>Alter view</h3>
+
+<p>For altering view. Executed with <code>execute</code>.</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-java">
+builder.alterView("table1_table2_view")
+	.select("*")
+	.from("Table1", "a")
+	.join("Table2", "b", Join.INNER_JOIN, "a.id = b.a_id")
+	.where("a.id &lt; :id")
+	.where("b.id &lt; :id")
+	.where("b.number in (:in)")
+	.orWhere("c.name != :name")
+	.orderBy("a.id")
+	.limit(10, 5)
+	.addParameter(":id", 18)
+	.addParameter(":name", "admin")
+	.addParameter(":in", Arrays.asList(1,2,3,4))
+</code></pre>
+
+<p>SQL without translated parameters:</p>
+<pre><code class="language-sql">
+-- see, MySql has not alter view statement, so delete and create again is used
+DROP VIEW table1_table2_view;
+CREATE VIEW table1_table2_view AS 
+	SELECT * 
+	FROM Table1 a 
+	JOIN Table2 b ON a.id = b.a_id 
+	WHERE (a.id &lt; :id) 
+	AND (b.id &lt; :id) 
+	AND (b.number in (:in)) 
+	OR (c.name != :name) 
+	ORDER BY a.id 
+	LIMIT 10 OFFSET 5
+</code></pre>
+<p>SQL with translated parameters</p>
+<pre><code class="language-sql">
+-- see, MySql has not alter view statement, so delete and create again is used
+DROP VIEW table1_table2_view;
+CREATE VIEW table1_table2_view AS 
+	SELECT * 
+	FROM Table1 a 
+	JOIN Table2 b ON a.id = b.a_id 
+	WHERE (a.id &lt; 18) 
+	AND (b.id &lt; 18) 
+	AND (b.number in (1,2,3,4)) 
+	OR (c.name != 'admin') 
+	ORDER BY a.id 
+	LIMIT 10 OFFSET 5
+</code></pre>
+
+<h3>Delete view</h3>
+
+<p>For deleting view. Executed with <code>execute</code>.</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-java">
+builder.deleteView("table1_table2_view")
+</code></pre>
+
+<p>SQL:</p>
+<pre><code class="language-sql">
+DROP VIEW table1_table2_view
+</code></pre>
+
+<h3>Multy select</h3>
+
+<strong>Parametrized</strong>
+
+<p>Allows <code>union</code>, <code>intersect</code> and <code>except</code> of <code>SelectBuiler</code>s. Result is returned in same was as in <code>select</code>. Each builder can has own parameters. Except this, <code>MultipleSelectBuilder</code> has global parameters common for all batches.</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-java">
+builder
+	.multiSelect(
+		builder.select("*")
+		.from("Table1")
+		.where("name != :name")
+		.andWhere("id > :id")
+		.addParameter(":name", "Table1-name")
+	)
+	.union(
+		builder.select("*")
+		.from("Table2")
+		.where("name != :name")
+		.andWhere("id > :id")
+		.addParameter(":name", "Table2-name")
+	)
+	.addParameter(":id", 42)
+	.orderBy("id")
+</code></pre>
+
+<p>SQL without translated parameters:</p>
+<pre><code class="language-sql">
+	SELECT * 
+	FROM Table1 
+	WHERE (name != :name) 
+	AND (id > :id) 
+UNION 
+	SELECT * 
+	FROM Table2 
+	WHERE (name != :name) 
+	AND (id > :id)
+ORDER BY id
+</code></pre>
+<p>SQL with translated parameters</p>
+<pre><code class="language-sql">
+	SELECT * 
+	FROM Table1 
+	WHERE (name != 'Table1-name')
+	AND (id > 42) 
+UNION 
+	SELECT * 
+	FROM Table2
+	WHERE (name != 'Table2-name') 
+	AND (id > 42)
+ORDER BY id
+</code></pre>
+
+<h3>Call procedure</h3>
+
+<p>Execute SQL procedure with parameters. Also output parameter can be registered.</p>
+
+<p class="alert alert-danger">
+	Not all database engine support returning database procedure;
+</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-java">
+builder.call("no_parameter_procedure")
+</code></pre>
+
+<pre><code class="language-java">
+builder.call("input_parameter_procedure")
+.addInputParameter(123)
+</code></pre>
+
+
+<pre><code class="language-java">
+builder.call("output_parameter_procedure")
+.addOutputParameter("out1", String.class)
+</code></pre>
+
+<pre><code class="language-java">
+builder.call("returning_procedure")
+.registerProcedureOutput()
+</code></pre>
+
+
+<h3>Batch</h3>
+
+<strong>Parametrized</strong>
+
+<p>
+	Concat more builders into one statement (one builder - one batch) and execute at once. Each builder can has own parameters. Except this, <code>BatchBuilder</code> has global parameters common for all batches.
+</p>
+
+<strong>Example</strong>
+
+<pre><code class="language-java">
+builder.batch()
+	.addBatch(
+		builder.update("Table1")
+		.set("name = :name")
+		.where("id = :id")
+		.addParameter(":name", "Table1-Name")
+	)
+	.addBatch(
+		builder.update("Table2")
+		.set("name = :name")
+		.where("id = :id")
+		.addParameter(":name", "Table2-Name")
+	)
+	.addParameter(":id", 42)
+</code></pre>
+
+<p>SQL without translated parameters:</p>
+<pre><code class="language-sql">
+UPDATE Table1 
+SET name = :name
+WHERE (id = :id);
+
+UPDATE Table2
+SET name = :name 
+WHERE (id = :id); 
+</code></pre>
+<p>SQL with translated parameters</p>
+<pre><code class="language-sql">
+UPDATE Table1 
+SET name = 'Table1-Name' 
+WHERE (id = 42); 
+
+UPDATE Table2 
+SET name = 'Table2-Name'
+WHERE (id = 42); 
+</code></pre>
+
+<h3>SQL Functions</h3>
+
+<p>
+	Group of some SQL functions. Returns given function in correct spelling for given SQL platform.
+</p>
+
+<h3>Prepared queries</h3>
+
+<p>
+	<code>QueryBuilder</code> provides some prepared queries.
+</p>
+
+<p>
+	In examples will be used following database.
+</p>
+
+<img src="../images/query-builder-db.png">
+
+<h5>Get one item</h5>
+
+<p>
+	<code>get</code> method returns one <code>DatabaseRow</code> (or null) in given table by given column.
+</p>
+
+<pre><code class="language-java">
+QueryBuilder builder = ....;
+// get all columns (select *)
+DatabaseRow row = builder.get("MainTable", "ID", 42);
+// or get specified columns
+DatabaseRow row = builder.get("MainTable", "ID", 42, "Col_1", "Col_2");
+</code></pre>
+
+<h5>Get all items</h5>
+
+<p>
+	<code>getAll</code> method returns all
+</p>
+
+<pre><code class="language-java">
+QueryBuilder builder = ....;
+// get all columns (select *)
+List&lt;DatabaseRow&gt; rows = builder.getAll("MainTable");
+// or get specified columns
+List&lt;DatabaseRow&gt; rows = builder.getAll("MainTable");
+// or change DatabaseRow to given class
+List&lt;T&gt; rows = builder.getAll("MainTable", (row)->{
+	// here return new T
+});
+</code></pre>
+
+<h5>Get all items by</h5>
+
+<p>
+	<code>getAllBy</code> methods returns all items by specific column.
+</p>
+
+<pre><code class="language-java">
+QueryBuilder builder = ....;
+// get all columns (select *)
+List&lt;DatabaseRow&gt; rows = builder.getAllBy("MainTable", "Col_1", "some-value");
+// or get specified columns
+List&lt;DatabaseRow&gt; rows = builder.getAllBy("MainTable", "Col_1", "some-value");
+// or change DatabaseRow to given class
+List&lt;T&gt; rows = builder.getAllBy("MainTable", "Col_1", "some-value", (row)->{
+	// here return new T
+});
+</code></pre>
+
+<h5>Get all items in</h5>
+
+<p>
+	<code>getAllIn</code> methods returns all items by specific column (with list of values).
+</p>
+
+<pre><code class="language-java">
+QueryBuilder builder = ....;
+// get all columns (select *)
+List&lt;DatabaseRow&gt; rows = builder.getAllIn("MainTable", "Col_2", Arrays.asList("some-value-1", "some-value-2"));
+// or get specified columns
+List&lt;DatabaseRow&gt; rows = builder.getAllIn("MainTable", "Col_2", Arrays.asList("some-value-1", "some-value-2"));
+// or change DatabaseRow to given class
+List&lt;T&gt; rows = builder.getAllIn("MainTable", "Col_2", Arrays.asList("some-value-1", "some-value-2"), (row)->{
+	// here return new T
+});
+</code></pre>
+
+<h5>Delete item</h5>
+
+<p>
+	<code>delete</code> methods delete rows with speficied column. Returns count of affected rows.
+</p>
+
+<pre><code class="language-java">
+QueryBuilder builder = ....;
+int affectedRows = builder.delete("MainTable", "ID", 42);
+</code></pre>
+
+<h5>Update item</h5>
+
+<p>
+	<code>update</code> method update rows specified by column. New values are stored in <code>Map</code> - keys are column names and values are values. Values are escaped <strong>but keys not.</strong>. Method returns count of affected rows.
+</p>
+
+<pre><code class="language-java">
+QueryBuilder builder = ....;
+Map&lt;String, Object&gt; data = ....;
+int affectedRows = builder.update("MainTable", "ID", 42, data);
+</code></pre>
+
+<h5>Insert item</h5>
+
+<p>
+	<code>insert</code> method insert one new row and returns generated id as <code>DictionaryValue</code>. New values are stored in <code>Map</code> - keys are column names and values are values. Values are escaped <strong>but keys not.</strong>.
+</p>
+
+<pre><code class="language-java">
+QueryBuilder builder = ....;
+Map&lt;String, Object&gt; data = ....;
+DictionaryValue id = builder.insert("MainTable", data);
+</code></pre>
+
+<h5>Save relation</h5>
+
+<p>
+	<code>saveRelation</code> methods update/create/delete rows in related table.
+</p>
+
+<pre><code class="language-java">
+QueryBuilder builder = ....;
+Map&lt;String, Object&gt; data = ....; // data in RelatedTable
+builder.saveRelation("RelatedTable", "ID" /*from RelatedTable*/, "MainTable_id", 42, data);
+</code></pre>

@@ -15,13 +15,17 @@
 		</key-store>
 	</http>
 	<applications>
-		<examples>
+		<demo>
 			<resource-path>www</resource-path>
 			<dir-allowed>true</dir-allowed>
 			<dir-default-file>index.html</dir-default-file>
 			<logs-path>logs</logs-path>
 			<autostart>true</autostart>
-			<headers>Access-Control-Allow-Origin:*</headers>
-		</examples>
+			<headers>
+				<header>Access-Control-Allow-Origin:*</header>
+				<header>Server:TOTI</header>
+				<header>Server:XML set</header>
+			</headers>
+		</demo>
 	</applications>
 </root>
