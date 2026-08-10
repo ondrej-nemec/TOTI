@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 
 import org.apache.logging.log4j.Logger;
@@ -87,6 +86,9 @@ public class MainHandler extends Handler.Abstract {
 		
 		String uri = jettyRequest.getHttpURI().getDecodedPath();
 		Object hostname = requestHeaders.getHeader("Host");
+		if (hostname == null) {
+			hostname = "";
+		}
 		String applicationName = hostname.toString().split(":")[0];
 		String path = "";
 		int index = uri.indexOf("/", 1);
@@ -97,7 +99,7 @@ public class MainHandler extends Handler.Abstract {
 		AnswerWrapper selected = answers.get(applicationName, path);
 		// Answer answer = answers.get(applicationName);
 		if (!selected.isUsed()) {
-			logger.warn("Request to unknown application: " + applicationName);
+			logger.warn("Request to unknown application: " + applicationName + ", possible path: " + path);
 			selected = defaultAnswer;
 		}
 		if (selected.usePath()) {
