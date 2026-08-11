@@ -86,10 +86,7 @@ public class MainHandler extends Handler.Abstract {
 		
 		String uri = jettyRequest.getHttpURI().getDecodedPath();
 		Object hostname = requestHeaders.getHeader("Host");
-		if (hostname == null) {
-			hostname = "";
-		}
-		String applicationName = hostname.toString().split(":")[0];
+		String applicationName = hostname == null ? null : hostname.toString().split(":")[0];
 		String path = "";
 		int index = uri.indexOf("/", 1);
 		if (index != -1) {
