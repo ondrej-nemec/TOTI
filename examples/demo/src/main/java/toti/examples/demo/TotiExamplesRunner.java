@@ -10,7 +10,7 @@ import toti.core.Application;
 import toti.core.ApplicationFactory;
 import toti.core.TotiServer;
 import toti.core.TotiServerFactory;
-import toti.examples.demo.modules.ApplicationModule;
+import toti.examples.demo.modules.CoreModule;
 import toti.lib.common.structures.MapInit;
 import toti.lib.tcpip.SslCredentials;
 
@@ -23,11 +23,32 @@ public class TotiExamplesRunner {
 		createAndSetProgrammatically();
 		createWithXmlFileSettings();
 		createWithPropertiesFileSettings();
+		createMain();
 	}
 
+	private static void createMain() {
+		try {
+			TotiServerFactory serverFactory = new TotiServerFactory();
+			serverFactory.setHttpPort(84);
+			serverFactory.setHttpsPort(447);
+			TotiServer server = serverFactory.create(LogManager.getLogger("toti"));
+			
+			server.addApplication("prod", (env, applicationFactory)->{
+				applicationFactory.setDevModeFunc(ip->false); // prod mode
+				return initApplication(applicationFactory);
+			}, null, "prod");
+
+			server.addApplication("dev", (env, applicationFactory)->{
+				applicationFactory.setDevModeFunc(ip->true); // dev mode
+				return initApplication(applicationFactory);
+			}, null, "dev");
+			server.start();
+		} catch (Exception e) {
+			LogManager.getLogger("toti").error("Main init fails", e);
+		}
+	}
 
 	private static Application initApplication(ApplicationFactory applicationFactory) {
-		applicationFactory.setDevModeFunc(ip->true); // dev mode
 		// TODO applicationFactory.setUrlPattern(null);
 		
 		// optional: add extensions, always in code
@@ -38,12 +59,11 @@ public class TotiExamplesRunner {
 		// DatabaseExtension require settings
 		
 		return applicationFactory.create(Arrays.asList(
-			new ApplicationModule()/*,
+			new CoreModule()/*,
 			new UiModule(),
 			new TemplatingModule()*/
 		), LogManager.getLogger("toti"));
 	}
-
 
 	private static void createWithDefaultSettings() {
 		try {
@@ -51,6 +71,7 @@ public class TotiExamplesRunner {
 
 			TotiServer server = serverFactory.create(LogManager.getLogger("toti"));
 			server.addApplication("demo", (env, applicationFactory)->{
+				applicationFactory.setDevModeFunc(ip->true); // dev mode
 				return initApplication(applicationFactory);
 			}, null, null);
 			server.start();
@@ -65,6 +86,7 @@ public class TotiExamplesRunner {
 			
 			TotiServer server = serverFactory.create(LogManager.getLogger("toti"));
 			server.addApplication("demo", (env, applicationFactory)->{
+				applicationFactory.setDevModeFunc(ip->true); // dev mode
 				return initApplication(applicationFactory);
 			}, null, null);
 			server.start();
@@ -79,6 +101,7 @@ public class TotiExamplesRunner {
 			
 			TotiServer server = serverFactory.create(LogManager.getLogger("toti"));
 			server.addApplication("demo", (env, applicationFactory)->{
+				applicationFactory.setDevModeFunc(ip->true); // dev mode
 				return initApplication(applicationFactory);
 			}, null, null);
 			server.start();
@@ -104,6 +127,7 @@ public class TotiExamplesRunner {
 			
 			TotiServer server = serverFactory.create(LogManager.getLogger("toti"));
 			server.addApplication("demo", (env, applicationFactory)->{
+				applicationFactory.setDevModeFunc(ip->true); // dev mode
 				// set
 				applicationFactory.setAutoStart(true);
 				applicationFactory.setDirDefaultFile("index.html");

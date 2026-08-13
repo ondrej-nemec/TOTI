@@ -1,4 +1,4 @@
-package toti.examples.demo.modules.application;
+package toti.examples.demo.modules.core;
 
 import toti.core.annotations.Action;
 import toti.core.annotations.Controller;
@@ -8,7 +8,7 @@ import toti.lib.common.exceptions.LogicException;
 import toti.lib.tcpip.enums.HttpMethod;
 
 /**
- * This example shows TOTI reaction on varios exceptions
+ * This example shows TOTI reactions on varios exceptions
  * @author Ondřej Němec
  *
  */

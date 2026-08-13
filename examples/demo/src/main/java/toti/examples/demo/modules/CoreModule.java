@@ -3,16 +3,21 @@ package toti.examples.demo.modules;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+
 import toti.core.answers.router.Link;
 import toti.core.answers.router.Router;
 import toti.core.application.Module;
 import toti.core.application.Task;
 import toti.core.application.register.Register;
-import toti.examples.demo.modules.application.ErrorHandlerExampleController;
-import toti.examples.demo.modules.application.ExceptionsController;
+import toti.examples.demo.modules.core.ErrorHandlerExampleController;
+import toti.examples.demo.modules.core.ExceptionsController;
+import toti.examples.demo.modules.core.RequestController;
+import toti.examples.demo.modules.core.ResponseController;
+import toti.examples.demo.modules.core.WebsocketTask;
 import toti.lib.files.env.Env;
 
-public class ApplicationModule implements Module {
+public class CoreModule implements Module {
 
 	@Override
 	public String getName() {
@@ -27,7 +32,7 @@ public class ApplicationModule implements Module {
 
 		// register.getExtension(TemplateExtension.class).registerModule(getName(), "", "templates");
 
-		//TaskExample task = new TaskExample(LogManager.getLogger("task"));
+		WebsocketTask task = new WebsocketTask(LogManager.getLogger("task"));
 		
 		//SessionUserProviderExample sipe = new SessionUserProviderExample(link);
 		
@@ -35,11 +40,11 @@ public class ApplicationModule implements Module {
 		
 		register.addController(ErrorHandlerExampleController.class, ()->new ErrorHandlerExampleController());
 		register.addController(ExceptionsController.class, ()->new ExceptionsController());
-		/*register.addController(RequestController.class, ()->new RequestController());
 		register.addController(ResponseController.class, ()->new ResponseController(task, link));
-		register.addController(ProcessingController.class, ()->new ProcessingController());
+		register.addController(RequestController.class, ()->new RequestController());
+		/*register.addController(ProcessingController.class, ()->new ProcessingController());
 		register.addController(UserController.class, ()->new UserController(sipe));*/
-		return Arrays.asList(/*task*/);
+		return Arrays.asList(task);
 	}
 
 }
