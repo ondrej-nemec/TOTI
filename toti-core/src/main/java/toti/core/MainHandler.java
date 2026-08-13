@@ -15,6 +15,8 @@ import org.eclipse.jetty.websocket.server.ServerWebSocketContainer;
 import toti.core.answers.Answer;
 import toti.core.answers.ExceptionAnswer;
 import toti.core.answers.Headers;
+import toti.core.answers.action.JettyWebSocket;
+import toti.core.answers.action.WebSocket;
 import toti.core.answers.request.Identity;
 import toti.core.answers.request.Request;
 import toti.core.answers.response.FinalResponse;
@@ -28,7 +30,6 @@ import toti.lib.tcpip.parsers.Form;
 import toti.lib.tcpip.parsers.StreamReader;
 import toti.lib.tcpip.parsers.Urlencode;
 import toti.lib.tcpip.structures.RequestParameters;
-import toti.lib.tcpip.structures.WebSocket;
 
 public class MainHandler extends Handler.Abstract {
 
@@ -106,7 +107,7 @@ public class MainHandler extends Handler.Abstract {
 		
 		ObjectBuilder<WebSocket> websocket = new ObjectBuilder<>();
 		if ("websocket".equals(requestHeaders.getHeader("Upgrade"))) {
-			websocket.set(new WebSocket(()->{
+			websocket.set(new JettyWebSocket(()->{
 				ServerWebSocketContainer container = ServerWebSocketContainer.get(jettyRequest.getContext());
 				// This is a WebSocket upgrade request, perform a direct upgrade.
 				boolean upgraded = container.upgrade(

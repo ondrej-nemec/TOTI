@@ -1,4 +1,4 @@
-package toti.lib.tcpip.structures;
+package toti.core.answers.action;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -10,7 +10,7 @@ import org.eclipse.jetty.websocket.api.Session;
 
 import toti.lib.common.structures.ThrowingCallback;
 
-public class WebSocket implements Session.Listener.AutoDemanding {
+public class JettyWebSocket implements Session.Listener.AutoDemanding, WebSocket {
 	
 	private Session session;
 	
@@ -23,7 +23,7 @@ public class WebSocket implements Session.Listener.AutoDemanding {
 	
 	private final ThrowingCallback<Exception> onAccept;
 	
-	public WebSocket(ThrowingCallback<Exception> onAccept) {
+	public JettyWebSocket(ThrowingCallback<Exception> onAccept) {
 		this.onAccept = onAccept;
 	}
 
@@ -53,6 +53,7 @@ public class WebSocket implements Session.Listener.AutoDemanding {
 		onClose.accept(reason);
 	}
 
+	@Override
 	public void send(String message) throws IOException {
 		if (!session.isOpen()) {
 			return;
@@ -60,6 +61,7 @@ public class WebSocket implements Session.Listener.AutoDemanding {
 		this.session.sendText(message, Callback.NOOP);
 	}
 
+	@Override
 	public void send(byte[] content) throws IOException {
 		if (!session.isOpen()) {
 			return;
@@ -67,6 +69,7 @@ public class WebSocket implements Session.Listener.AutoDemanding {
 		this.session.sendBinary(ByteBuffer.wrap(content), Callback.NOOP);
 	}
 
+	@Override
 	public void sendPing() {
 		if (!session.isOpen()) {
 			return;
@@ -74,6 +77,7 @@ public class WebSocket implements Session.Listener.AutoDemanding {
 		this.session.sendPing(ByteBuffer.wrap(new byte[]{1}), Callback.NOOP);
 	}
 
+	@Override
 	public void close() {
 		session.close();
 		// session.disconnect();
@@ -85,6 +89,7 @@ public class WebSocket implements Session.Listener.AutoDemanding {
 	 * @return <code>true</code> if websocket can receive message, <code>false</code> if is stopped
 	 *  or not start yet
 	 */
+	@Override
 	public boolean isRunning() {
 		return session != null && session.isOpen();
 	}
@@ -95,14 +100,17 @@ public class WebSocket implements Session.Listener.AutoDemanding {
 	 * @return <code>true</code> if websocket was closed, <code>false</code> if reading process is running
 	 *  or not start yet
 	 */
+	@Override
 	public boolean isClosed() {
 		return session != null && !session.isOpen();
 	}
 	
+	@Override
 	public boolean isAccepted() {
 		return isAccepted;
 	}
 	
+	@Override
 	public void accept(
 		toti.lib.common.structures.Callback onOpen,
 		BiConsumer<Boolean, ByteBuffer> onMessage,

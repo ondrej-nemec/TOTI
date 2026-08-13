@@ -1,9 +1,9 @@
 package toti.core.answers.response;
 
 import toti.core.answers.Headers;
+import toti.core.answers.action.WebSocket;
 import toti.lib.common.exceptions.LogicException;
 import toti.lib.tcpip.enums.StatusCode;
-import toti.lib.tcpip.structures.WebSocket;
 
 public class WebsocketResponse implements Response {
 	
