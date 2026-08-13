@@ -21,7 +21,7 @@ public class CoreModule implements Module {
 
 	@Override
 	public String getName() {
-		return "application";
+		return "core";
 	}
 
 	@Override

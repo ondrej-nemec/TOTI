@@ -281,6 +281,7 @@
 	var main = document.querySelector('main.content');
 	var toc = document.querySelector('ul.toc');
 	function showPage(data, content) {
+		toc.innerHTML = "";
 		main.innerHTML = content.html;
 		var qeue = [{
 			level: 2,

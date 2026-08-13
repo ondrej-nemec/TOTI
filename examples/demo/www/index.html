@@ -285,31 +285,19 @@
 					{
 						name: 'Inside of method',
 						description: 'Exception throwed directly in method.',
-						link: '/application/exceptions/method',
-						buttons: syncAsyncButtons
-					},
-					{
-						name: 'Secured',
-						description: 'Exception throwed by TOTI because of missing logged user.',
-						link: '/application/exceptions/secured',
-						buttons: syncAsyncButtons
-					},
-					{
-						name: 'Request Interrupted',
-						description: 'Request interrupted in createResponse step.',
-						link: '/application/exceptions/interrupt',
+						link: '/core/exceptions/method',
 						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Wrong HTTP method',
 						description: 'Exception throwed by TOTI because of wrong HTTP method. POST required, GET used.',
-						link: '/application/exceptions/post',
+						link: '/core/exceptions/post',
 						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Catched',
 						description: 'Exception catched by CustomExceptionExtension',
-						link: '/application/exceptions/catched',
+						link: '/core/exceptions/catched',
 						buttons: syncAsyncButtons
 					}
 				]
@@ -345,13 +333,13 @@
 					{
 						name: 'Basic',
 						description: 'Simple request on controller method.',
-						link: '/application/request/basic',
+						link: '/core/request/basic',
 						buttons: syncAsyncButtons
 					},
 					{
 						name: 'URI parameter',
 						description: 'Request on controller method with paramter (String).',
-						link: '/application/request/basic/',
+						link: '/core/request/basic/',
 						buttons: [
 							{
 								name: 'Parameter: someRandomString',
@@ -370,7 +358,7 @@
 					{
 						name: 'HTTP POST',
 						description: 'Request with POST method. Method GET cause Exception.',
-						link: '/application/request/post',
+						link: '/core/request/post',
 						buttons: [
 							{
 								name: 'OPEN',
@@ -397,7 +385,7 @@
 					{
 						name: 'HTTP GET or POST',
 						description: 'Controller method servers both GET and POST.',
-						link: '/application/request/get-or-post',
+						link: '/core/request/get-or-post',
 						buttons: [
 							{
 								name: 'OPEN',
@@ -424,7 +412,7 @@
 					{
 						name: 'URI query',
 						description: 'Parsing query parameters',
-						link: '/application/request/query?',
+						link: '/core/request/query?',
 						buttons: [
 							{
 								name: 'Simple parameters',
@@ -467,13 +455,13 @@
 					{
 						name: 'Body type',
 						description: 'Method accepted request body only in JSON.',
-						link: '/application/request/body-type'
+						link: '/core/request/body-type'
 						// TODO body
 					},
 					{
 						name: 'File',
 						description: 'Serving request with file',
-						link: '/application/request/file',
+						link: '/core/request/file',
 						// TODO file
 					}
 				]
@@ -483,51 +471,57 @@
 				description: 'How can TOTI answer to request.',
 				links: [
 					{
-						name: 'File from disk',
-						description: 'Returns file from disk.',
-						link: '/application/response/file',
+						name: 'Plain text file from disk',
+						description: 'Returns plain text file from disk.',
+						link: '/core/response/file-plain',
+						buttons: syncAsyncButtons
+					},
+					{
+						name: 'Binary file from disk',
+						description: 'Returns binary file from disk.',
+						link: '/core/response/file-binary',
 						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Generate file',
 						description: 'Returns runtime generated file.',
-						link: '/application/response/generate',
+						link: '/core/response/generate',
 						buttons: syncAsyncButtons
 					},
 					{
 						name: 'JSON',
 						description: 'Returns JSON response.',
-						link: '/application/response/json',
+						link: '/core/response/json',
 						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Simple text',
 						description: 'Returns simple text response.',
-						link: '/application/response/text',
+						link: '/core/response/text',
 						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Template',
 						description: 'Returns response created from tempkate. Requires registered TemplateExtension.',
-						link: '/application/response/template',
+						link: '/core/response/template',
 						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Redirect inside application',
 						description: 'Redirect to Simple text page.',
-						link: '/application/response/redirect',
+						link: '/core/response/redirect',
 						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Redirect out of application',
 						description: 'Redirect to Github.',
-						link: '/application/response/open-redirect',
+						link: '/core/response/open-redirect',
 						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Websocket',
 						description: 'Communication thru websocket.',
-						link: '/application/response/websocket',
+						link: '/core/response/websocket',
 						buttons: syncAsyncButtons
 					}
 				]
@@ -565,7 +559,7 @@
 					{
 						name: 'Login',
 						description: 'Login selected user',
-						link: '/application/users/login/',
+						link: '/core/users/login/',
 						buttons: [
 							{
 								name: 'User 1',
@@ -596,7 +590,7 @@
 					{
 						name: 'Logout',
 						description: 'Logout current user.',
-						link: '/application/users/logout',
+						link: '/core/users/logout',
 						buttons: [
 							{
 								name: 'RUN',
@@ -608,7 +602,7 @@
 					{
 						name: 'Check user',
 						description: 'Check current user',
-						link: '/application/users/check',
+						link: '/core/users/check',
 						buttons: [
 							{
 								name: 'RUN',
@@ -620,25 +614,25 @@
 					{
 						name: 'Not secured',
 						description: 'Works every time',
-						link: '/application/users/not-secured',
+						link: '/core/users/not-secured',
 						buttons: authButtons
 					},
 					{
 						name: 'Cookie token',
 						description: 'Requires token at least in cookie',
-						link: '/application/users/page',
+						link: '/core/users/page',
 						buttons: authButtons
 					},
 					{
 						name: 'CSFR',
 						description: 'Requires token in cookie and CSFR token',
-						link: '/application/users/form',
+						link: '/core/users/form',
 						buttons: authButtons
 					},
 					{
 						name: 'Header',
 						description: 'Requires token in Authentication header',
-						link: '/application/users/api',
+						link: '/core/users/api',
 						buttons: authButtons
 					}
 				]

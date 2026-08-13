@@ -250,7 +250,6 @@ serverFactory.setCerts(Optional.of(cred));
 	</code></pre>
 </div>
 
-
 <h3>Thread pool</h3>
 
 <div class="paragraph">
@@ -294,7 +293,7 @@ serverFactory.setCerts(Optional.of(cred));
 <h3>Allow dir list</h3>
 
 <div class="paragraph">
-	TODO
+	In case a URI pointing to resources directory but not pointing to file but folder, this flag signalize if content of folder can be listed on page.
 </div>
 
 <div class="paragraph">
@@ -331,7 +330,7 @@ serverFactory.setCerts(Optional.of(cred));
 <h3>Default file in directory</h3>
 
 <div class="paragraph">
-	TODO
+	In case listing directory is not allowed and URI pointing to folder, this file (in the folder) will be showed. NULL value means no file will be used.
 </div>
 
 <div class="paragraph">
@@ -364,11 +363,10 @@ serverFactory.setCerts(Optional.of(cred));
 	</code></pre>
 </div>
 
- 
 <h3>Resources path</h3>
 
 <div class="paragraph">
-	TODO
+	Path to folder on disk where are resources files. This path is root for resources.
 </div>
 
 <div class="paragraph">
@@ -404,7 +402,7 @@ serverFactory.setCerts(Optional.of(cred));
 <h3>Response headers</h3>
 
 <div class="paragraph">
-	TODO
+	Headers returned with every response.
 </div>
 
 <div class="paragraph">
@@ -449,7 +447,7 @@ serverFactory.setCerts(Optional.of(cred));
 <h3>Logs path</h3>
 
 <div class="paragraph">
-	TODO
+	Path where TOTI will be saving detailed error files. Emptry string means no saving.
 </div>
 
 <div class="paragraph">
@@ -485,13 +483,14 @@ serverFactory.setCerts(Optional.of(cred));
 <h3>Is application in dev mode</h3>
 
 <div class="paragraph">
-	TODO
-	 ip->ip.equals("127.0.0.1") || ip.equals("0:0:0:0:0:0:0:1")
+	TOTI can response in two modes: DEV and PROD. In PROD, TOTI shows less information about errors on page. In DEV, TOTI shows as much as possible information about exceptions etc.
+	<br>
+	The mode can be selected for given request. TOTI provide request IP for selection mode.
 </div>
 
 <div class="paragraph">
 	<strong>Default value: </strong>
-	
+	ip->ip.equals("127.0.0.1") || ip.equals("0:0:0:0:0:0:0:1")
 </div>
 
 <div class="paragraph">
@@ -512,7 +511,7 @@ serverFactory.setCerts(Optional.of(cred));
 <h3>Auto start</h3>
 
 <div class="paragraph">
-	TODO
+	Flag signalize if application should automatically start with <code>TotiServer</code>.
 </div>
 
 <div class="paragraph">
