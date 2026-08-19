@@ -2,6 +2,7 @@ package toti.lib.tcpip.structures;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 
 import toti.lib.files.text.Binary;
 
@@ -106,5 +107,16 @@ public class UploadedFile {
 		}
 		return true;
 	}
-	
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 79 * hash + Objects.hashCode(this.fileName);
+		hash = 79 * hash + Objects.hashCode(this.contentType);
+		hash = 79 * hash + Objects.hashCode(this.bom);
+		hash = 79 * hash + Arrays.hashCode(this.content);
+		hash = 79 * hash + Objects.hashCode(this.binary);
+		return hash;
+	}
+
 }
