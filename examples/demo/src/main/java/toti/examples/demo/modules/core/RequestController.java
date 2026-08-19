@@ -73,13 +73,18 @@ public class RequestController {
 	
 	/**
 	 * Accepting only selected body type
-	 * @return http://localhost:8080/application/request/body-type
+	 * @return http://localhost:8080/application/request/body
 	 */
-	// TODO set body type json
-	@Action(path="body-type")
+	@Action(path="body")
 	public ResponseAction bodyType() {
 		return (request, identity)->{
-			return Response.create(StatusCode.OK).getJson(request.getBodyParams());
+			return Response.create(StatusCode.OK)
+			.addHeader("content-type", "text/html")
+			.getText(
+				"Binary body: " + (request.getBody() == null ? "NULL" : new String(request.getBody()))
+				+ "<br>" +
+				"Parsed: " + request.getBodyParams()
+			);
 		};
 	}
 	

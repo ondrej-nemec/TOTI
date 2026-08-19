@@ -1,1 +1,159 @@
-TODO
+<h1>Request and responses</h1>
+
+<h2>Requests</h2>
+
+<h3>URI parameters</h3>
+
+<div class="paragraph">
+	Parameters in URI (<code>/some/path/{param}</code>) must be defined in method declaration.
+</div>
+
+<h3>Query parameters</h3>
+
+<div class="paragraph">
+	Query parameters (<code>/some/path?{key}={value}</code>) are available at:
+	<pre><code>
+		request.getQueryParams(); // returns collection of all parameters
+		// OR
+		request.getQueryParam(name); // returns parameter by given name as DictionaryValue
+	</code></pre>
+</div>
+
+<h3>Body parameters</h3>
+
+<div class="paragraph">
+	Body parameters can be:
+	<ul>
+		<li><strong>URLEconded</strong> are automatically parsed</li>
+		<li><strong>FormData</strong> are automatically parsed</li>
+		<li><strong>Others</strong> available in binary form</li>
+	</ul>
+</div>
+
+<div class="paragraph">
+	Parsed parameters can be obtained:
+	<pre><code>
+		request.getBodyParams(); // returns collection of all parameters
+		// OR
+		request.getBodyParam(name); // returns parameter by given name as DictionaryValue
+		// file from FormData
+		request.getBodyParams().getUploadedFile(parameterName); // returns UploadedFile
+	</code></pre>
+</div>
+
+<div>
+	Binary data can be obtained:
+	<pre><code>
+		request.getBody(); // returns byte[] or null if body is empty or data was parsed
+	</code></pre>
+</div>
+
+<h3>UploadedFile</h3>
+
+<div class="paragraph">
+	Structure holding data about uploading file: file name, content type, bom and file content.
+</div>
+
+<div class="paragraph">
+	Class also contains methods for helping with file saving:
+	<pre><code>
+		UploadedFile file = ...;
+		file.save(path); // save to given path
+		file.save(path, filename); // save to given path with given name
+	</code></pre>
+</div>
+
+<h2>Responses</h2>
+
+<div class="paragraph">
+	Every response add all nesessary headers.
+	<pre><code>
+		Response.create(statusCode)
+		.addHeader(name, value) // can be called multiple times
+		// HERE is correct body method
+	</code></pre>
+</div>
+
+<h3>Empty</h3>
+
+<div class="paragraph">
+	<code>getEmpty()</code> Response without body.
+</div>
+
+<h3>Text</h3>
+
+<div class="paragraph">
+	<code>getText(text)</code> Response body will be plaintext.
+</div>
+
+<h3>Json</h3>
+
+<div class="paragraph">
+	<code>getJson(data)</code> Response parse given data to json and send.
+</div>
+
+<h3>File</h3>
+
+<div class="paragraph">
+	<code>getFile(path)</code> send content of file on given path to browser. Browser deside if shows file or download.
+</div>
+
+<div class="paragraph">
+	<code>getFileDownload(sourceFile, fileName, force)</code> send content of file on given path (<code>sourceFile</code>) to browser. File will be downloaded as <code>fileName</code>. If flag <code>force</code> is set to true, file will be downloaded.
+</div>
+
+<div class="paragraph">
+	<code>getFileDownload(fileName, data, force)</code> send binary data (<code>data</code>) to browser. File will be downloaded as <code>fileName</code>. If flag <code>force</code> is set to true, file will be downloaded.
+	<br>
+	This could be used to return pictures or runtime generated files.
+</div>
+
+<h3>Redirect</h3>
+
+<div class="paragraph">
+	<code>getRedirect(uri)</code> redirect to given URI only inside current server.
+</div>
+
+<div class="paragraph">
+	<code>getRedirect(uri, allowOutOfAppRedirect)</code> redirect to given URI. If flag <code>allowOutOfAppRedirect</code> is set to true, redirect can be done outside current server.
+</div>
+
+<h3>Template</h3>
+
+<div class="paragraph">
+	<code>getTemplate(fileName, params)</code> returns response with body parsed from given template. Requires registered <code>TemplateExtension</code>. Behaviour of this method depends on implementation of used extension.
+</div>
+
+<h3>WebSocket</h3>
+
+<div class="paragraph">
+	WebSockets are handled little bit differently:
+	<pre><code>
+	@Action(path="websocket")
+	public ResponseAction getWebsocket() {
+		return (request, identity)->{
+			try {
+				// websocket can be empty - means this request is not valid websocket request
+				if (request.getWebsocket().isPresent()) {
+					WebSocket webSocket = request.getWebsocket().get();
+					webSocket.accept(()->{
+						// on open
+					}, (isBinary, byteBuffer)->{
+						// on message
+					}, (exception)->{
+						// on error
+					}, (message)->{
+						// on close
+					});
+					return Response.getWebsocket(webSocket);
+				}
+				// any classic response
+				return Response.OK().getEmpty();
+			} catch (Exception e) {
+				// some error handling
+				throw new RuntimeException(e);
+			}
+		};
+	}
+	</code></pre>
+</div>
