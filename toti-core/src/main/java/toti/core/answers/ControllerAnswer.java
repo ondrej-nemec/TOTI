@@ -2,17 +2,11 @@ package toti.core.answers;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.stream.XMLStreamException;
 
 import org.apache.logging.log4j.Logger;
 
 import toti.core.ServerException;
-import toti.core.answers.action.BodyType;
 import toti.core.answers.action.ResponseAction;
 import toti.core.answers.request.Identity;
 import toti.core.answers.request.Request;
@@ -25,10 +19,6 @@ import toti.core.answers.router.Router;
 import toti.core.application.register.MappedAction;
 import toti.core.application.register.Param;
 import toti.core.extensions.TemplateFactory;
-import toti.lib.common.structures.DictionaryValue;
-import toti.lib.files.json.JsonReader;
-import toti.lib.files.xml.XmlObject;
-import toti.lib.files.xml.XmlReader;
 import toti.lib.tcpip.enums.HttpMethod;
 import toti.lib.tcpip.enums.StatusCode;
 
@@ -60,7 +50,7 @@ public class ControllerAnswer {
 			return null;
 		}
 		try {
-			return run(request.getUri(), mapped, request, identity)
+			return run(uri, mapped, request, identity)
 				.prepare(new ResponseContainer(charset, responseHeaders, identity, link, mapped, templateExtension));
 		} catch (ServerException e){
 			throw e;
@@ -117,12 +107,11 @@ public class ControllerAnswer {
 		}
 		Object controller = mapped.getClassFactory().create();
 		ResponseAction action = (ResponseAction)mapped.getAction().invoke(controller, params);
-		// TODO jeste bude potreba zavolat parse body
-		// typ body mozna pridat do @action
+		// maybe parse body?
 		return action.create(request, identity);
 	}
 
-	protected void parseBody(Request request, List<BodyType> allowedTypes, MappedAction mapped) throws ServerException {
+	/*protected void parseBody(Request request, List<BodyType> allowedTypes, MappedAction mapped) throws ServerException {
 		if (request.getBodyParams().size() > 0) {
 			if (!allowedTypes.contains(BodyType.FORM_DATA) || !allowedTypes.contains(BodyType.URL_PARAMS)) {
 				// TODO IMPROVEMENT maybe convert from structured to plaintext - need change JI
@@ -166,6 +155,6 @@ public class ControllerAnswer {
 		} else {
 			return xml.getValue().getValue();
 		}
-	}
+	}*/
 	
 }

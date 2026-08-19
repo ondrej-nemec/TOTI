@@ -8,9 +8,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.apache.logging.log4j.Logger;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,8 +22,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import toti.core.ServerException;
-import toti.core.answers.action.BodyType;
 import toti.core.answers.action.ResponseAction;
 import toti.core.answers.request.Identity;
 import toti.core.answers.request.IdentityFactory;
@@ -42,7 +38,6 @@ import toti.core.extensions.TemplateFactory;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.common.structures.ThrowingFunction;
 import static toti.lib.common.tests.TestCase.assertEquals;
-import static toti.lib.common.tests.TestCase.consumer;
 import static toti.lib.common.tests.TestCase.throwingFunction;
 import toti.lib.tcpip.enums.HttpMethod;
 import toti.lib.tcpip.enums.StatusCode;
@@ -649,108 +644,8 @@ public class ControllerAnswerTest {
 			}
 		};
 	}
-/*
-	@Test
-	@MethodSource("dataRunCreateParametersNotMatch")
-	public void testRunCreateParametersNotMatch(
-			List<Object> pathParams,
-			Object controller, ThrowingFunction<Object, Method, Exception> getMethod) throws Throwable {
-		Translator translator = mock(Translator.class);
-		when(translator.withLocale(any(Locale.class))).thenReturn(translator);
-		Identity identity = mock(Identity.class);
-		when(identity.getLoginMode()).thenReturn(HEADER);
-		
-		MappedAction action = new MappedAction(
-			null, null, null,
-			getMethod.apply(controller), ()->controller, HEADER,
-			null
-		);
-		
-		Router router = mock(Router.class);
-		// when(router.getRedirectOnNotLoggedInUser()).thenReturn(null);
-		
-		ControllerAnswer answer = new ControllerAnswer(
-			router, mock(Param.class), new HashMap<>(),
-			mock(SessionUserProvider.class), mock(IdentityFactory.class),
-			mock(Link.class), translator, mock(Logger.class)
-		);
-		Request request = new Request(
-			HttpMethod.GET, new Headers(), MapDictionary.hashMap(), new RequestParameters(), null, Optional.empty()
-		);
-		request.getPathParams().addAll(pathParams);
-		
-		try {
-			 answer.run("/uri", action, request, identity);
-			 fail("Expected exception");
-		} catch (IllegalArgumentException e) {
-			// expected
-		} catch (Exception e) {
-			fail("Unexpected exception " + e.getMessage());
-		}
-	}
-	
-	public Object[] dataRunCreateParametersNotMatch() {
-		return new Object[] {
-			// wrong class
-			new Object[] {
-				Arrays.asList("aaa"), new Object() {
-					@SuppressWarnings("unused")
-					public ResponseAction index(int id) {
-						return ResponseBuilder.get()
-						.createResponse((request, identity)->{
-							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id);
-						});
-					} 
-				}, throwingFunction((o)->o.getClass().getMethod("index", int.class))
-			},
-			// request contains more parameters
-			new Object[] {
-				Arrays.asList("aaa", 10), new Object() {
-					@SuppressWarnings("unused")
-					public ResponseAction index(int id) {
-						return ResponseBuilder.get()
-						.createResponse((request, identity)->{
-							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id);
-						});
-					} 
-				}, throwingFunction((o)->o.getClass().getMethod("index", int.class))
-			},
-			// request contains less parameters
-			new Object[] {
-				Arrays.asList(10), new Object() {
-					@SuppressWarnings("unused")
-					public ResponseAction index(int id, String value) {
-						return ResponseBuilder.get()
-						.createResponse((request, identity)->{
-							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id + ": " + value);
-						});
-					} 
-				}, throwingFunction((o)->o.getClass().getMethod("index", int.class, String.class))
-			},
-			// request contains another method with same name
-			new Object[] {
-				Arrays.asList(10), new Object() {
-					@SuppressWarnings("unused")
-					public ResponseAction index(int id, String value) {
-						return ResponseBuilder.get()
-						.createResponse((request, identity)->{
-							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id + ": " + value);
-						});
-					}
-					@SuppressWarnings("unused")
-					public ResponseAction index(int id) {
-						return ResponseBuilder.get()
-						.createResponse((request, identity)->{
-							fail();
-							return new TextResponse(StatusCode.OK, new Headers(), "Response " + id);
-						});
-					} 
-				}, throwingFunction((o)->o.getClass().getMethod("index", int.class, String.class))
-			}
-		};
-	}
-*/
 
+/*
 	@Test
 	public void testParseBodyThrowsWithNotSupportedTypes() throws ServerException {
 		ControllerAnswer answer = new ControllerAnswer(
@@ -931,18 +826,6 @@ public class ControllerAnswerTest {
 
 	private static byte[] getXml() {
 		return "<root><some>parameter</some></root>".getBytes();
-	}
-/*
-	private Consumer<Request> consumer(Consumer<Request> consumer) {
-		return consumer;
-	}
+	}*/
 
-	private <T> Supplier<T> supplier(Supplier<T> supplier) {
-		return supplier;
-	}
-
-	private Object function(Function<Object, Method> function) {
-		return function;
-	}
-	*/
 }
