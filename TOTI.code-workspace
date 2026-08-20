@@ -12,7 +12,7 @@
         "workbench.startupEditor": "none",
         "workbench.colorTheme": "Default Dark Modern",
         "remote.autoForwardPortsSource": "hybrid",
-        "diffEditor.ignoreTrimWhitespace": true,
+        "diffEditor.ignoreTrimWhitespace": false,
         "editor.renderWhitespace": "all",
         "explorer.autoReveal": false,
         "git.ignoreLimitWarning": true,

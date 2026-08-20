@@ -303,7 +303,7 @@
 				]
 			},
 			{
-				name: 'Router',
+				name: 'Core: Router',
 				description: 'Static special routes mapped to existing URL.',
 				links: [
 					{
@@ -525,119 +525,16 @@
 						buttons: syncAsyncButtons
 					}
 				]
-			}
-		];
-// TODO formulare a posilani tokenu
-// TODO callbacky pro js prihlaseni
-		var authButtons = [
-			{
-				name: 'No token',
-				method: 'GET',
-				sync: true
 			},
 			{
-				name: 'Cookie only',
-				method: 'GET',
-				sync: true
-			},
-			{
-				name: 'Cookie and CSFR',
-				method: 'GET',
-				sync: false
-			},
-			{
-				name: 'Authentication header',
-				method: 'GET',
-				sync: true
-			},
-		];
-		var authExtension = [
-			{
-				name: 'Authentication: login',
-				description: '',
+				name: 'Core: Identity',
+				description: 'How can TOTI answer to request.',
 				links: [
-					{
-						name: 'Login',
-						description: 'Login selected user',
-						link: '/core/users/login/',
-						buttons: [
-							{
-								name: 'User 1',
-								method: 'GET',
-								sync: true,
-								linkParam: 'user1'
-							},
-							{
-								name: 'User 1',
-								method: 'GET',
-								sync: false,
-								linkParam: 'user1'
-							},
-							{
-								name: 'User 2',
-								method: 'GET',
-								sync: true,
-								linkParam: 'user2'
-							},
-							{
-								name: 'User 2',
-								method: 'GET',
-								sync: false,
-								linkParam: 'user2'
-							}
-						]
-					},
-					{
-						name: 'Logout',
-						description: 'Logout current user.',
-						link: '/core/users/logout',
-						buttons: [
-							{
-								name: 'RUN',
-								method: 'GET',
-								sync: false
-							}
-						]
-					},
-					{
-						name: 'Check user',
-						description: 'Check current user',
-						link: '/core/users/check',
-						buttons: [
-							{
-								name: 'RUN',
-								method: 'GET',
-								sync: false
-							}
-						]
-					},
-					{
-						name: 'Not secured',
-						description: 'Works every time',
-						link: '/core/users/not-secured',
-						buttons: authButtons
-					},
-					{
-						name: 'Cookie token',
-						description: 'Requires token at least in cookie',
-						link: '/core/users/page',
-						buttons: authButtons
-					},
-					{
-						name: 'CSFR',
-						description: 'Requires token in cookie and CSFR token',
-						link: '/core/users/form',
-						buttons: authButtons
-					},
-					{
-						name: 'Header',
-						description: 'Requires token in Authentication header',
-						link: '/core/users/api',
-						buttons: authButtons
-					}
+					// TODO
 				]
 			}
 		];
+		var authExtension = [];
 		var translateExtension = [];
 		var templateExtension = [];
 		var validatorExtension = [];
@@ -646,7 +543,7 @@
 
 		var modules = [
 			{
-				name: 'Application',
+				name: 'Core',
 				description: '',
 				links: applicationModule
 			},

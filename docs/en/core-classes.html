@@ -1,11 +1,127 @@
-<h1>Register, Link and Router</h1>
-TODO 
+<h1>Register, Router and Link</h1>
 
-router - s popisem action?
-link
-register
+<h2>Register</h2>
 
+<div class="paragraph">
+	<code>Register</code> serves to few purposes. First, there is controller registration. Second, allows share instances between modules. Third, gives access to extensions.
+</div>
 
-exception, custom handler
+<h3>Controller</h3>
 
-identity, csrf token
+<pre><code>
+	register.addController(MyController.class, ()->new MyController())
+</code></pre>
+
+<h3>Share instances</h3>
+
+<div class="paragraph">
+	Register allows share created instance of class:
+	<pre><code>
+MyClass myClass = ...;
+
+// register
+register.addService(myClass);
+// check for existence
+register.isServicePresent(MyClass.class);
+// receive
+MyClass myClass = register.getService(MyClass.class);
+
+// OR
+
+// register
+register.addService("SharedClass", myClass);
+// check for existence
+register.isServicePresent("SharedClass");
+// receive
+MyClass myClass = register.getService("SharedClass", myClass);
+	</code></pre>
+</div>
+
+<div class="paragraph">
+	Sharing factory to creating new instance is also posible:
+	<pre><code>
+// register
+register.addFactory(()->new MyClass());
+// check for existence
+register.isFactoryPresent(MyClass.class);
+// receive
+MyClass myClass = register.getFactory(MyClass.class); // new instance every time
+
+// OR
+
+// register
+register.addFactory("SharedMethod", ()->new MyClass());
+// check for existence
+register.isFactoryPresent("SharedMethod");
+// receive
+MyClass myClass = register.getFactory("SharedClass", MyClass.class); // new instance every time
+	</code></pre>
+</div>
+
+<h3>Obtaining extension</h3>
+
+<div>
+	If application has registred some extension, register allows access them:
+	<pre><code>
+register.getExtension(MyExtension.class);
+	</code></pre>
+</div>
+
+<h2>Router</h2>
+
+<div class="paragraph">
+	By default, TOTI use link in format <code>/[module]/[controller]/[action]/{params}</code>. All values are optional, but each route + HttpMethod must be unique.
+</div>
+
+<div class="paragraph">
+	Class <code>Router</code> allows create static mapping between routes. For example, allows automatically redirect <code>/</code> to some defautl or home page.
+
+	<pre><code>
+router.addUrl("/", "/core/home/index");
+	</code></pre>
+</div>
+
+<h3>Custom routes</h3>
+
+<div class="paragraph">
+	Create own routes pattern is possible. It requires instance of <code>UriPattern</code> and override <code>createuri</code> method. Then, the instance must be registered: <code>applicationFactory.setUrlPattern(uriPattern)</code>
+</div>
+
+<h2>Link</h2>
+
+<div class="paragraph">
+	This class allows generate links inside application. Generation requires <code>Class</code> (must be registered as controller in <code>Register</code>) and method calling where action is called. <strong>The calling will not be performed, it is just mock calling.</strong>
+
+	<pre><code>
+// link to MyController to method 'index'
+String href = link.create(MyController.class, c->c.index());
+// and with query parameters
+String href = link.create(MyController.class, c->c.index(), MapInit.create().append("key", "value").toMap());
+// with path params
+String href = link.create(MyController.class, c->c.index(null, null), 123, true);
+// with query and path params
+String href = link.create(MyController.class, c->c.index(null, null), MapInit.create().append("key", "value").toMap(), 123, true);
+	</code></pre>
+</div>
+
+<h2>Custom exception handler</h2>
+
+<div class="paragraph">
+	Custom Exception handler is controller that implements <code>CustomErrorHandler</code>. The controller must be registered. Custom handling is performed only if request is not develop.
+</div>
+
+<strong>Example</strong>
+
+<pre><code>
+@Controller("error")
+public class ErrorHandlerExampleController implements CustomErrorHandler {
+
+	@Override
+	public ResponseAction onError(StatusCode status, Throwable t) {
+		return (request, identity)->{
+			return Response.create(status).getText("Ups, something happend: " + t.getMessage());
+		};
+	}
+
+}
+</code></pre>

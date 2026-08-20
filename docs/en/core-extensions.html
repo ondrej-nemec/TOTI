@@ -1,3 +1,25 @@
-TODO
+<h1>Extensions</h1>
 
-how to write extension
+<div class="paragraph">
+	Extensions bring more functions and features. Every extension has to be registered: <code>applicationFactory.addExtension(extension);</code>.
+</div>
+
+<h2>How create own extension</h2>
+
+<div class="paragraph">
+	Every extension implements <code>Extension</code>.
+	<ul>
+		<li><code>getIdentifier</code> string unique</li>
+		<li><code>onRequestStart</code> called before request is handled in controller</li>
+		<li><code>onRequestEnd</code> called after request is handled in controller</li>
+		<li><code>onApplicationStart</code> called when application starting</li>
+		<li><code>onApplicationStop</code> called when application stopping</li>
+	</ul>
+
+</div>
+
+<h2>Template extension</h2>
+
+<div class="paragraph">
+	Template extension is special case of extension. Allows to use <code>getTemplate</code> responses. Extensions must implements <code>TemplateFactory</code> and can be registered only one in application.
+</div>
