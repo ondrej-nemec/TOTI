@@ -73,28 +73,28 @@ public class Link {
 	
 	protected StringHref parseStringHref(String href) {
 		String[] values = href.split(":");
-        if (values.length == 0) {
+		if (values.length == 0) {
 			throw new LogicException("No HREF/SRC specified");
 		}
-        if (values.length == 1) {
-            throw new LogicException("HREF/SRC parameter required format: '[controller]:[method]<:[parameter]>{n}'");
-        }
-        String controller = null;
-        if (!values[0].isEmpty()) {
-            controller = values[0];
-        }
+		if (values.length == 1) {
+			throw new LogicException("HREF/SRC parameter required format: '[controller]:[method]<:[parameter]>{n}'");
+		}
+		String controller = null;
+		if (!values[0].isEmpty()) {
+			controller = values[0];
+		}
 		Map<String, Object> queryParams = new HashMap<>();
 		List<Object> pathParams= new LinkedList<>();
-        String method = values[1];
-        for (int i = 2; i < values.length; i++) {
-        	if (values[i].contains("=")) {
-                String[] get = values[i].split("=", 2);
-                queryParams.put(get[0], get[1]);
-        	} else {
-        		pathParams.add(values[i]);
-        	}
-        }
-        return new StringHref(controller, method, queryParams, pathParams);
+		String method = values[1];
+		for (int i = 2; i < values.length; i++) {
+			if (values[i].contains("=")) {
+				String[] get = values[i].split("=", 2);
+				queryParams.put(get[0], get[1]);
+			} else {
+				pathParams.add(values[i]);
+			}
+		}
+		return new StringHref(controller, method, queryParams, pathParams);
 	}
 	
 	public String create(String controllerName, String methodName, Map<String, Object> getParams, Object... urlParams) {
@@ -152,8 +152,8 @@ public class Link {
 	private <T> Method mockMethod(Class<T> controller, Function<T, ResponseAction> method) {
 		ObjectBuilder<Method> builder = new ObjectBuilder<>();
 		T result = new MockCreator().createMock(controller, builder);
-    	method.apply(result);
-    	return builder.get();
+		method.apply(result);
+		return builder.get();
 	}
 	
 	public <T> String create(Class<T> controller, Function<T, ResponseAction> method) {
