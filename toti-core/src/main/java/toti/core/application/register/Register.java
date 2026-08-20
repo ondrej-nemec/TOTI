@@ -160,17 +160,17 @@ public class Register {
 		FACTORIES.put(name, factory);
 	}
 
-	public <T> Factory<T> getFactory(Class<T> clazz) {
+	public <T> T getFactory(Class<T> clazz) {
 		return getFactory(clazz.getName(), clazz);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> Factory<T> getFactory(String name, Class<T> clazz) {
+	public <T> T getFactory(String name, Class<T> clazz) {
 		Factory<?> result = FACTORIES.get(name);
 		if (result == null) {
 			 throw new RegisterException("Missing factory " + name + " " + clazz);
 		}
-		return (Factory<T>)result;
+		return ((Factory<T>)result).create();
 	}
 
 	public boolean isFactoryPresent(Class<?> clazz) {

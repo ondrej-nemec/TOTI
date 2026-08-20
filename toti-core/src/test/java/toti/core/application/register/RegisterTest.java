@@ -268,7 +268,7 @@ public class RegisterTest {
 		assertFalse(register.isFactoryPresent(SomeClass.class));
 		
 		register.addFactory(SomeClass.class, ()->new SomeClass("id"));
-		assertEquals("id", register.getFactory(SomeClass.class).create().getId());
+		assertEquals("id", register.getFactory(SomeClass.class).getId());
 	}
 	
 	@Test
@@ -279,7 +279,7 @@ public class RegisterTest {
 		assertFalse(register.isFactoryPresent("someName"));
 		
 		register.addFactory("someName", ()->new SomeClass("id"));
-		assertEquals("id", register.getFactory("someName", SomeClass.class).create().getId());
+		assertEquals("id", register.getFactory("someName", SomeClass.class).getId());
 		assertFalse(register.isFactoryPresent(SomeClass.class));
 	}
 	
