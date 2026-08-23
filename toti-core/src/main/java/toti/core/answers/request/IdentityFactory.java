@@ -63,7 +63,7 @@ public class IdentityFactory {
 				identity, identity.getSessionSpace(extension), responseHeaders
 			);
 		});
-		session.saveSession(responseHeaders, identity.getSessionId(), identity.getSessionSpaces(), identity.getUser());
+		session.saveSession(responseHeaders, identity.getSessionId(), identity.getSessionSpaces(), identity.getUserMode(), identity.getUser());
 	}
 
 }

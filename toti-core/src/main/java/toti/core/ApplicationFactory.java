@@ -14,6 +14,7 @@ import toti.core.answers.ExceptionAnswer;
 import toti.core.answers.FileSystemAnswer;
 import toti.core.answers.Headers;
 import toti.core.answers.TotiAnswer;
+import toti.core.answers.request.Identity;
 import toti.core.answers.request.IdentityFactory;
 import toti.core.answers.router.Link;
 import toti.core.answers.router.Router;
@@ -26,9 +27,11 @@ import toti.core.application.register.Register;
 import toti.core.extensions.Extension;
 import toti.core.extensions.TemplateFactory;
 import toti.core.extensions.TotiExtension;
+import toti.lib.common.structures.MapDictionary;
 import toti.lib.common.structures.ObjectBuilder;
 import toti.lib.common.structures.dictionary.Scalar;
 import toti.lib.files.env.Env;
+import toti.lib.tcpip.structures.RequestParameters;
 
 public class ApplicationFactory {
 
@@ -86,7 +89,16 @@ public class ApplicationFactory {
 		}
 		actualModule.set(null);
 		
-		IdentityFactory identityFactory = new IdentityFactory(extensions.values(), getSessionManager());
+		SessionManager currentSessionManager = getSessionManager();
+		IdentityFactory identityFactory = new IdentityFactory(extensions.values(), currentSessionManager);
+		addExtension(new Extension() {
+			@Override public String getIdentifier() { return "toti_sessionManager"; }
+			@Override public void init(Env appEnv, Register register) {}
+			@Override public void onRequestStart(Identity identity, MapDictionary<String> sessionSpace, Headers requestHeaders, MapDictionary<String> queryParams, RequestParameters requestBody) {}
+			@Override public void onRequestEnd(Identity identity, MapDictionary<String> sessionSpace, Headers responseHeaders) {}
+			@Override public void onApplicationStart() throws Exception { sessionManager.onApplicationStart(); }
+			@Override public void onApplicationStop() throws Exception { sessionManager.onApplicationStop(); }
+		});
 		
 		Function<String, Boolean> isDevelopFunc = getDevModeFunc();
 		

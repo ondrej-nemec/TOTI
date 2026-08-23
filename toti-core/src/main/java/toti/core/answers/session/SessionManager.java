@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import toti.core.answers.Headers;
+import toti.core.answers.request.UserMode;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.tcpip.structures.RequestParameters;
 
@@ -12,9 +13,13 @@ public interface SessionManager {
 
 	CurrentSession restoreSession(Headers requestHeaders, MapDictionary<String> queryParams, RequestParameters requestBody);
 
-	void saveSession(Headers responseHeaders, String sessionId, Map<String, MapDictionary<String>> sessionSpace, Optional<Object> user);
+	void saveSession(Headers responseHeaders, String sessionId, Map<String, MapDictionary<String>> sessionSpace, UserMode userMode, Optional<Object> user);
 
 	String getCsrfTokenSalt();
+
+	void onApplicationStart() throws Exception;
+	
+	void onApplicationStop() throws Exception;
 
 	static SessionManager empty() {
 		return new SessionManager() {
@@ -22,9 +27,11 @@ public interface SessionManager {
 				return new CurrentSession("", new HashMap<>(), null);
 			}
 			@Override public void saveSession(
-				Headers responseHeaders, String sessionId, Map<String, MapDictionary<String>> sessionSpace, Optional<Object> user
+				Headers responseHeaders, String sessionId, Map<String, MapDictionary<String>> sessionSpace, UserMode userMode, Optional<Object> user
 			) {}
 			@Override public String getCsrfTokenSalt() { return ""; }
+			@Override public void onApplicationStart() throws Exception {}
+			@Override public void onApplicationStop() throws Exception {}
 		};
 	}
 

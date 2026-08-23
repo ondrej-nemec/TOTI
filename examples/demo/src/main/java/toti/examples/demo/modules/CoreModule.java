@@ -12,6 +12,7 @@ import toti.core.application.Task;
 import toti.core.application.register.Register;
 import toti.examples.demo.modules.core.ErrorHandlerExampleController;
 import toti.examples.demo.modules.core.ExceptionsController;
+import toti.examples.demo.modules.core.IdentityController;
 import toti.examples.demo.modules.core.RequestController;
 import toti.examples.demo.modules.core.ResponseController;
 import toti.examples.demo.modules.core.WebsocketTask;
@@ -26,9 +27,6 @@ public class CoreModule implements Module {
 
 	@Override
 	public List<Task> init(Env env, Register register, Link link, Router router) {
-		//router.addUrl("/toti-test", link.create(ResponseController.class, c->c.getText()));
-		//router.addUrl("/application-response.text", link.create(ResponseController.class, c->c.getText()));
-		router.addUrl("/ico", "/favicon.ico");
 
 		// register.getExtension(TemplateExtension.class).registerModule(getName(), "", "templates");
 
@@ -42,8 +40,15 @@ public class CoreModule implements Module {
 		register.addController(ExceptionsController.class, ()->new ExceptionsController());
 		register.addController(ResponseController.class, ()->new ResponseController(task, link));
 		register.addController(RequestController.class, ()->new RequestController());
+		register.addController(IdentityController.class, ()->new IdentityController());
 		/*register.addController(ProcessingController.class, ()->new ProcessingController());
 		register.addController(UserController.class, ()->new UserController(sipe));*/
+
+		// redirect must be after registration
+		router.addUrl("/toti-test", link.create(ResponseController.class, c->c.getText()));
+		router.addUrl("/application-response.text", link.create(ResponseController.class, c->c.getText()));
+		router.addUrl("/ico", "/favicon.ico");
+
 		return Arrays.asList(task);
 	}
 

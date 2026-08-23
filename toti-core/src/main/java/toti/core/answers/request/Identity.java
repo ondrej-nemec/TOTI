@@ -11,6 +11,7 @@ public class Identity {
 	private final String IP;
 		
 	private Optional<Object> user;
+	private UserMode mode;
 
 	private final Map<String, MapDictionary<String>> sessionSpaces;
 	private final String sessionId;
@@ -25,14 +26,17 @@ public class Identity {
 		this.user = user;
 		this.csrfToken = csrfToken;
 		this.scope = MapDictionary.hashMap();
+		this.mode = user.isEmpty() ? UserMode.ANONYMOUS : UserMode.LOGIN;
 	}
 	
 	public void login(Object user) {
 		this.user = Optional.of(user);
+		this.mode = UserMode.LOGIN;
 	}
 	
 	public void logout() {
 		this.user = Optional.empty();
+		this.mode = UserMode.LOGOUT;
 	}
 
 	/*************/
@@ -91,6 +95,10 @@ public class Identity {
 	
 	public Optional<Object> getUser() {
 		return user;
+	}
+
+	public UserMode getUserMode() {
+		return mode;
 	}
 	
 	/**
