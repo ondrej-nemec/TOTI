@@ -7,6 +7,7 @@ import toti.core.annotations.Action;
 import toti.core.annotations.Controller;
 import toti.core.answers.action.ResponseAction;
 import toti.core.answers.response.Response;
+import toti.lib.common.functions.Implode;
 
 @Controller("identity")
 public class IdentityController {
@@ -15,8 +16,9 @@ public class IdentityController {
 	public ResponseAction print() {
 		return (request, identity)->{
 			return Response.OK().getText(String.format(
-				"Identity:\nIP:%s\nCSRF:%s\nUser:%s\nSpace:%s",
-				identity.getIP(), identity.getCsrfToken(), identity.getUser(), identity.getSessionSpace()
+				"Identity:\nIP:%s\nCSRF:%s\nUser:%s\nSpace:%s\nFlash:%s",
+				identity.getIP(), identity.getCsrfToken(), identity.getUser(), identity.getSessionSpace(),
+				Implode.implode(" \n", identity.getFlashMessages())
 			));
 		};
 	}
@@ -28,6 +30,10 @@ public class IdentityController {
 			LocalDateTime now = LocalDateTime.now().withSecond(0).withNano(0);
 			identity.getSessionSpace().put("A", now);
 			identity.getSessionSpace().put("B", random);
+
+			identity.addFlashMessage("info", "Info 1: " + random);
+			identity.addFlashMessage("info", "Info 2: " + random);
+			identity.addFlashMessage("error", "Error: " + random);
 
 			return Response.OK().getText(String.format("A:%s\nB:%s", now, random));
 		};

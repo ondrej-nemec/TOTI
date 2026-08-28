@@ -1,5 +1,8 @@
 package toti.core.answers.request;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -51,6 +54,25 @@ public class Identity {
 
 	public MapDictionary<String> getSessionSpace() {
 		return getSessionSpace("");
+	}
+
+	public void addFlashMessage(String severity, String message) {
+		getFlashes().add(new FlashMessage(severity, message));
+	}
+
+	public List<FlashMessage> getFlashMessages() {
+		List<FlashMessage> flashes = getFlashes();
+		List<FlashMessage> result = new ArrayList<>(flashes);
+		flashes.clear();
+		return result;
+	}
+
+	private List<FlashMessage> getFlashes() {
+		MapDictionary<String> flashes = getSessionSpace("toti_flash");
+		if (!flashes.containsKey("flash")) {
+			flashes.put("flash", new LinkedList<>());
+		}
+		return flashes.getList("flash");
 	}
 	
 	private MapDictionary<String> getSessionSpace(String name) {
