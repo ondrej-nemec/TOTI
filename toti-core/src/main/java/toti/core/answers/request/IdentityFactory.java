@@ -2,13 +2,13 @@ package toti.core.answers.request;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Optional;
 
 import toti.core.answers.Headers;
 import toti.core.answers.session.CurrentSession;
 import toti.core.answers.session.SessionManager;
 import toti.core.extensions.Extension;
-import toti.lib.common.exceptions.HashException;
-import toti.lib.common.functions.Hash;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.tcpip.structures.RequestParameters;
 
@@ -23,10 +23,15 @@ public class IdentityFactory {
 	}
 
 	public Identity createIdentity(Headers requestHeaders, MapDictionary<String> queryParameters, RequestParameters bodyParameters, String ip) {
-		CurrentSession currentSession = session.restoreSession(requestHeaders, queryParameters, bodyParameters);
+		Optional<CurrentSession> currentSession = session.restoreSession(requestHeaders, queryParameters, bodyParameters);
+
 		Identity identity = new Identity(
-			ip, currentSession.sessionId(), currentSession.sessionSpace(),
-			currentSession.user(), createCsrfToken(currentSession.sessionId(), bodyParameters)
+			ip,
+			currentSession.isPresent() ? currentSession.get().sessionSpace() : new HashMap<>(),
+			Optional.ofNullable(currentSession.isPresent() ? currentSession.get().sessionId() : null),
+			Optional.ofNullable(currentSession.isPresent() ? currentSession.get().csrfToken() : null),
+			currentSession.isPresent() ? currentSession.get().user() : Optional.empty(),
+			currentSession.isPresent() ? currentSession.get().isTokenVerified() : false
 		);
 		extensions.forEach((extension)->{
 			extension.onRequestStart(
@@ -35,26 +40,6 @@ public class IdentityFactory {
 			);
 		});
 		return identity;
-	}
-	
-	private CsrfToken createCsrfToken(String sessionId, RequestParameters parameters) {
-		String csrfTokenName = "_csrf_token";
-		String csrfToken = null;
-		if (parameters.containsKey(csrfTokenName)) {
-			csrfToken = parameters.getString(csrfTokenName);
-			parameters.remove(csrfTokenName);
-		}
-		try {
-			Hash hash = Hash.getSha256();
-			return new CsrfToken(
-				csrfTokenName,
-				hash.toHash(sessionId, session.getCsrfTokenSalt()),
-				csrfToken == null ? false : hash.compare(sessionId, csrfToken, session.getCsrfTokenSalt())
-			);
-		} catch (HashException e) {
-			// parsed to runtime exception because of using predefined hash alghoritm
-			throw new RuntimeException(e.getCause());
-		}
 	}
 
 	public void finalizeIdentity(Identity identity, Headers responseHeaders) throws IOException {

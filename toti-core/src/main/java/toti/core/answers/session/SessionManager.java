@@ -1,6 +1,5 @@
 package toti.core.answers.session;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -11,11 +10,9 @@ import toti.lib.tcpip.structures.RequestParameters;
 
 public interface SessionManager {
 
-	CurrentSession restoreSession(Headers requestHeaders, MapDictionary<String> queryParams, RequestParameters requestBody);
+	Optional<CurrentSession> restoreSession(Headers requestHeaders, MapDictionary<String> queryParams, RequestParameters requestBody);
 
-	void saveSession(Headers responseHeaders, String sessionId, Map<String, MapDictionary<String>> sessionSpace, UserMode userMode, Optional<Object> user);
-
-	String getCsrfTokenSalt();
+	void saveSession(Headers responseHeaders, Optional<String> sessionId, Map<String, MapDictionary<String>> sessionSpace, UserMode userMode, Optional<Object> user);
 
 	void onApplicationStart() throws Exception;
 	
@@ -23,13 +20,12 @@ public interface SessionManager {
 
 	static SessionManager empty() {
 		return new SessionManager() {
-			@Override public CurrentSession restoreSession(Headers requestHeaders, MapDictionary<String> queryParams, RequestParameters requestBody) {
-				return new CurrentSession("", new HashMap<>(), null);
+			@Override public Optional<CurrentSession> restoreSession(Headers requestHeaders, MapDictionary<String> queryParams, RequestParameters requestBody) {
+				return Optional.empty();
 			}
 			@Override public void saveSession(
-				Headers responseHeaders, String sessionId, Map<String, MapDictionary<String>> sessionSpace, UserMode userMode, Optional<Object> user
+				Headers responseHeaders, Optional<String> sessionId, Map<String, MapDictionary<String>> sessionSpace, UserMode userMode, Optional<Object> user
 			) {}
-			@Override public String getCsrfTokenSalt() { return ""; }
 			@Override public void onApplicationStart() throws Exception {}
 			@Override public void onApplicationStop() throws Exception {}
 		};

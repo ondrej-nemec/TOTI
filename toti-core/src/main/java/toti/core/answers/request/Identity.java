@@ -12,41 +12,56 @@ import toti.lib.common.structures.MapDictionary;
 public class Identity {
 
 	private final String IP;
-		
+	private final MapDictionary<String> scope;
+	private final Map<String, MapDictionary<String>> sessionSpaces;
+
+	private final Optional<String> sessionId;
+	private final Optional<String> csrfToken;
 	private Optional<Object> user;
+	private final boolean isCsrfTokenVerified;
 	private UserMode mode;
 
-	private final Map<String, MapDictionary<String>> sessionSpaces;
-	private final String sessionId;
-	private final CsrfToken csrfToken;
-
-	private final MapDictionary<String> scope;
-	
-	protected Identity(String IP, String sessionId, Map<String, MapDictionary<String>> sessionSpaces, Optional<Object> user, CsrfToken csrfToken) {
+	protected Identity(
+		String IP, Map<String, MapDictionary<String>> sessionSpaces, Optional<String> sessionId,
+		Optional<String> csrfToken, Optional<Object> user, boolean isCsrfTokenVerified
+	) {
 		this.IP = IP;
+		this.scope = MapDictionary.hashMap();
 		this.sessionSpaces = sessionSpaces;
 		this.sessionId = sessionId;
-		this.user = user;
 		this.csrfToken = csrfToken;
-		this.scope = MapDictionary.hashMap();
-		this.mode = user.isEmpty() ? UserMode.ANONYMOUS : UserMode.LOGIN;
+		this.user = user;
+		this.isCsrfTokenVerified = isCsrfTokenVerified;
+		this.mode = sessionId.isEmpty() ? UserMode.ANONYMOUS : user.isEmpty() ? UserMode.NOT_LOGGED_USER : UserMode.LOGGED_USER;
 	}
 	
 	public void login(Object user) {
 		this.user = Optional.of(user);
-		this.mode = UserMode.LOGIN;
+		this.mode = UserMode.LOGGED_USER;
 	}
 	
 	public void logout() {
 		this.user = Optional.empty();
-		this.mode = UserMode.LOGOUT;
+		this.mode = UserMode.ANONYMOUS;
+	}
+
+	public String getCsrfToken() {
+		return csrfToken.orElse("");
+	}
+	
+	public boolean isAnonymous() {
+		return mode == UserMode.ANONYMOUS;
+	}
+	
+	public boolean isUserPresent() {
+		return user.isPresent();
+	}
+
+	public boolean isCsrfTokenVerified() {
+		return isCsrfTokenVerified;
 	}
 
 	/*************/
-
-	public CsrfToken getCsrfToken() {
-		return csrfToken;
-	}
 	
 	protected MapDictionary<String> getSessionSpace(Extension extension) {
 		return getSessionSpace(extension.getIdentifier());
@@ -97,14 +112,8 @@ public class Identity {
 	public <T> void removeScope(Class<T> clazz) {
 		scope.remove(clazz.getCanonicalName());
 	}
-	
-	public boolean isAnonymous() {
-		return user.isEmpty();
-	}
-	
-	public boolean isPresent() {
-		return !isAnonymous();
-	}
+
+	/*******************/
 	
 	/**
 	 * Returns user as defined class. This class must extends of User
@@ -119,7 +128,7 @@ public class Identity {
 		return user;
 	}
 
-	public UserMode getUserMode() {
+	protected UserMode getUserMode() {
 		return mode;
 	}
 	
@@ -131,7 +140,7 @@ public class Identity {
 		return IP;
 	}
 
-	protected String getSessionId() {
+	protected Optional<String> getSessionId() {
 		return sessionId;
 	}
 

@@ -528,9 +528,38 @@
 			},
 			{
 				name: 'Core: Identity',
-				description: 'How can TOTI answer to request.',
+				description: 'What provide Identity, with usage of DefaultSession',
 				links: [
-					// TODO
+					{
+						name: 'Print data',
+						description: 'Print data in Identity',
+						link: '/core/identity/print',
+						buttons: syncAsyncButtons
+					},
+					{
+						name: 'Set data',
+						description: 'Set data to Identity',
+						link: '/core/identity/set',
+						buttons: syncAsyncButtons
+					},
+					{
+						name: 'Login',
+						description: 'Set user to Identity',
+						link: '/core/identity/login',
+						buttons: syncAsyncButtons
+					},
+					{
+						name: 'Logout',
+						description: 'Remove user from Identity',
+						link: '/core/identity/logout',
+						buttons: syncAsyncButtons
+					},
+					{
+						name: 'Forms',
+						description: 'Sending form data to test tokens',
+						link: '/core/identity/form',
+						buttons: openLinkButtons
+					}
 				]
 			}
 		];

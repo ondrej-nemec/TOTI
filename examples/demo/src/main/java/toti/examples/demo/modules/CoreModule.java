@@ -40,7 +40,7 @@ public class CoreModule implements Module {
 		register.addController(ExceptionsController.class, ()->new ExceptionsController());
 		register.addController(ResponseController.class, ()->new ResponseController(task, link));
 		register.addController(RequestController.class, ()->new RequestController());
-		register.addController(IdentityController.class, ()->new IdentityController());
+		register.addController(IdentityController.class, ()->new IdentityController(link));
 		/*register.addController(ProcessingController.class, ()->new ProcessingController());
 		register.addController(UserController.class, ()->new UserController(sipe));*/
 

@@ -56,7 +56,7 @@ public class MainHandler extends Handler.Abstract {
 			);
 			@Override
 			public FinalResponse accept(Request request, String ipAddress) throws IOException {
-				return def.answer(request, StatusCode.NOT_FOUND, null, new Identity(ipAddress, null, new HashMap<>(), Optional.empty(), null) {
+				return def.answer(request, StatusCode.NOT_FOUND, null, new Identity(ipAddress, new HashMap<>(), Optional.empty(), Optional.empty(), null, false) {
 					
 				}, null, new Headers(), "utf-8");
 			}

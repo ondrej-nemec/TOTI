@@ -4,6 +4,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.time.ZonedDateTime;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -13,22 +14,39 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang3.RandomStringUtils;
-
 import toti.core.answers.Headers;
 import toti.core.answers.request.UserMode;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.common.structures.NamedThredFactory;
-import toti.lib.common.structures.Tuple2;
 import toti.lib.tcpip.structures.RequestParameters;
 
 public class DefaultSession implements SessionManager {
 
-	private final static String SESSION_COOKIE_NAME = "SessionID";
-	private final static String SESSION_HEADER_NAME = "Authorization";
+	class Session {
+		String sessionId;
+		String csrfToken;
+		Long expiration;
+		Map<String, MapDictionary<String>> sessionSpaces;
+		Optional<Object> user;
 
-	private final Map<String, Tuple2<Long, CurrentSession>> spaces = new ConcurrentHashMap<>();
-	private String salt;
+		public Session(String sessionId, String csrfToken, Long expiration, Map<String, MapDictionary<String>> sessionSpaces, Optional<Object> user) {
+			this.sessionId = sessionId;
+			this.csrfToken = csrfToken;
+			this.expiration = expiration;
+			this.sessionSpaces = sessionSpaces;
+			this.user = user;
+		}
+
+		CurrentSession create(String currentToken) {
+			return new CurrentSession(sessionId, sessionSpaces, user, csrfToken, csrfToken != null && csrfToken.equals(currentToken));
+		}
+	}
+
+	public final static String SESSION_COOKIE_NAME = "SessionID";
+	public final static String SESSION_HEADER_NAME = "Authorization";
+	public final static String CSRF_TOKEN_NAME = "_csrf_token";
+
+	private final Map<String, Session> spaces = new ConcurrentHashMap<>();
 
 	private final String basePath;
 	private final Long maxAgeInSec;
@@ -47,20 +65,24 @@ public class DefaultSession implements SessionManager {
 			return;
 		}
 		future = pool.scheduleWithFixedDelay(()->{
-			spaces.keySet().forEach(token->check(token));
+			spaces.keySet().forEach(sessionId->{
+				if (check(sessionId) == null) {
+					spaces.remove(sessionId);
+				}
+			});
 		}, 1, 2, TimeUnit.MINUTES);
 	}
 
-	private CurrentSession check(String token) {
-		var session = spaces.get(token);
+	private Session check(String sessionId) {
+		var session = spaces.get(sessionId);
 		if (session == null) {
 			return null;
 		}
-		if (session._1() == null) {
-			return session._2();
+		if (session.expiration == null) {
+			return session;
 		}
-		if (session._1() >= ZonedDateTime.now().toEpochSecond()) {
-			return session._2();
+		if (session.expiration >= ZonedDateTime.now().toEpochSecond()) {
+			return session;
 		}
 		return null;
 	}
@@ -74,26 +96,33 @@ public class DefaultSession implements SessionManager {
 	}
 
 	@Override
-	public CurrentSession restoreSession(
+	public Optional<CurrentSession> restoreSession(
 		Headers requestHeaders,
 		MapDictionary<String> queryParams,
 		RequestParameters requestBody
 	) {
-		String token = getHeaderToken(requestHeaders)
+		String csrfToken = null;
+		if (requestBody.containsKey(CSRF_TOKEN_NAME)) {
+			csrfToken = requestBody.getString(CSRF_TOKEN_NAME);
+			requestBody.remove(CSRF_TOKEN_NAME);
+		}
+
+		String sessionId = getHeaderToken(requestHeaders)
 		.orElse(
 			getCookieToken(requestHeaders)
-			.orElse(RandomStringUtils.randomAlphabetic(50))
+			.orElse(generateSecret())
 		);
-		CurrentSession session = check(token);
-		if (session != null) {
-			return session;
+		Session session = check(sessionId);
+		if (session == null) {
+			session = new Session(sessionId, generateSecret(), null, new HashMap<>(), Optional.empty());
+			spaces.put(sessionId, session);
 		}
-		return new CurrentSession(token, new HashMap<>(), Optional.empty());
+		return Optional.of(session.create(csrfToken));
 	}
 
 	@Override
-	public void saveSession(Headers responseHeaders, String sessionId, Map<String, MapDictionary<String>> sessionSpace, UserMode userMode, Optional<Object> user) {
-		if (userMode == UserMode.LOGOUT) {
+	public void saveSession(Headers responseHeaders, Optional<String> sessionId, Map<String, MapDictionary<String>> sessionSpace, UserMode userMode, Optional<Object> user) {
+		if (userMode == UserMode.ANONYMOUS) {
 			responseHeaders.addHeader(
 				"Set-Cookie", 
 				SESSION_COOKIE_NAME + "="
@@ -102,16 +131,20 @@ public class DefaultSession implements SessionManager {
 				+ "; SameSite=Strict"
 				+ "; Max-Age=" + 0
 			);
-			spaces.remove(sessionId);
+			spaces.remove(sessionId.get());
 		} else {
 			Long expiration = maxAgeInSec;
 			if (expiration != null) {
 				expiration += ZonedDateTime.now().toEpochSecond();
 			}
-			spaces.put(sessionId, new Tuple2<>(expiration, new CurrentSession(sessionId, sessionSpace, user)));
+			Session session = spaces.get(sessionId.get());
+			// sessionspace is reference, no update needed
+			session.expiration = expiration;
+			session.user = user;
+
 			responseHeaders.addHeader(
 				"Set-Cookie",
-				SESSION_COOKIE_NAME + "=" + sessionId
+				SESSION_COOKIE_NAME + "=" + sessionId.get()
 				+ "; HttpOnly"
 				+ (basePath == null ? "" : "; Path=" + basePath)
 				+ "; SameSite=Strict"
@@ -134,19 +167,15 @@ public class DefaultSession implements SessionManager {
 		return requestHeaders.getCookieValue(SESSION_COOKIE_NAME);
 	}
 
-	@Override
-	public String getCsrfTokenSalt() {
-		if (salt == null) {
-			try {
-				SecureRandom sr = SecureRandom.getInstance("SHA1PRNG", "SUN");
-				byte[] saltBytes = new byte[32];
-				sr.nextBytes(saltBytes);
-				salt = new String(saltBytes);
-			} catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-				throw new RuntimeException(e);
-			}
+	private String generateSecret() {
+		try {
+			SecureRandom sr = SecureRandom.getInstance("SHA1PRNG", "SUN");
+			byte[] secret = new byte[32];
+			sr.nextBytes(secret);
+			return Base64.getEncoder().encodeToString(secret);
+		} catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+			throw new RuntimeException(e);
 		}
-		return salt;
 	}
 
 }
