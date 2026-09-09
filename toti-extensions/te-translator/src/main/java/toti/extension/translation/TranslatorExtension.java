@@ -7,7 +7,7 @@ import java.util.Set;
 import org.apache.logging.log4j.Logger;
 
 import toti.core.answers.Headers;
-import toti.core.answers.request.Identity;
+import toti.core.answers.session.Identity;
 import toti.core.application.register.Register;
 import toti.core.extensions.Extension;
 import toti.lib.common.structures.MapDictionary;

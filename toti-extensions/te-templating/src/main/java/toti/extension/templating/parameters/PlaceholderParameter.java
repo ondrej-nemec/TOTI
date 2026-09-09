@@ -1,6 +1,6 @@
 package toti.extension.templating.parameters;
 
-import toti.core.answers.request.Identity;
+import toti.core.answers.session.Identity;
 import toti.core.extensions.Translator;
 import toti.lib.templating.Parameter;
 

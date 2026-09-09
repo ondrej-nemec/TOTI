@@ -16,10 +16,10 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import toti.core.ServerException;
-import toti.core.answers.request.Identity;
-import toti.core.answers.request.IdentityFactory;
 import toti.core.answers.request.Request;
 import toti.core.answers.response.FinalResponse;
+import toti.core.answers.session.Identity;
+import toti.core.answers.session.IdentityFactory;
 import toti.core.application.register.MappedAction;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.tcpip.enums.HttpMethod;

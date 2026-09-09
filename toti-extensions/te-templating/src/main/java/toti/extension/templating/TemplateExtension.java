@@ -9,9 +9,9 @@ import java.util.Map;
 import org.apache.logging.log4j.Logger;
 
 import toti.core.answers.Headers;
-import toti.core.answers.request.Identity;
 import toti.core.answers.response.ResponseContainer;
 import toti.core.answers.response.ResponseException;
+import toti.core.answers.session.Identity;
 import toti.core.application.register.Register;
 import toti.core.extensions.Extension;
 import toti.extension.templating.parameters.AltParameter;

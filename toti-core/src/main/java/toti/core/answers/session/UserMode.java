@@ -1,4 +1,4 @@
-package toti.core.answers.request;
+package toti.core.answers.session;
 
 public enum UserMode {
 

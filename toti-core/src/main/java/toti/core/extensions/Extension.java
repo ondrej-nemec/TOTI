@@ -1,7 +1,7 @@
 package toti.core.extensions;
 
 import toti.core.answers.Headers;
-import toti.core.answers.request.Identity;
+import toti.core.answers.session.Identity;
 import toti.core.application.register.Register;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.files.env.Env;

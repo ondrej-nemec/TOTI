@@ -1,4 +1,4 @@
-package toti.core.answers.request;
+package toti.core.answers.session;
 
 public record FlashMessage(String severity, String message) {
 

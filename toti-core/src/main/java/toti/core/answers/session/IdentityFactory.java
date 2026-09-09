@@ -1,4 +1,4 @@
-package toti.core.answers.request;
+package toti.core.answers.session;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.Optional;
 
 import toti.core.answers.Headers;
-import toti.core.answers.session.CurrentSession;
-import toti.core.answers.session.SessionManager;
 import toti.core.extensions.Extension;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.tcpip.structures.RequestParameters;

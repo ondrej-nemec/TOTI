@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import toti.core.answers.request.Identity;
+import toti.core.answers.session.Identity;
 import toti.extension.ui.control.inputs.Hidden;
 import toti.extension.ui.control.inputs.Input;
 
@@ -41,11 +41,12 @@ public class Form implements Control {
 	}
 	
 	public void setCsrfSecured(Identity identity) {
-		fields.add(
+		// TODO
+		/*fields.add(
 			Hidden.input(identity.getCsrfToken().tokenName())
 			.setDefaultValue(identity.getCsrfToken().actualToken())
 			.getInputSettings()
-		);
+		);*/
 	}
 	
 	public Form addInput(Input input) {

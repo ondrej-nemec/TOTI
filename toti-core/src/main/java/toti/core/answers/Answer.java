@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import toti.core.ServerException;
-import toti.core.answers.request.Identity;
-import toti.core.answers.request.IdentityFactory;
 import toti.core.answers.request.Request;
 import toti.core.answers.response.FinalResponse;
+import toti.core.answers.session.Identity;
+import toti.core.answers.session.IdentityFactory;
 import toti.lib.tcpip.enums.StatusCode;
 
 public class Answer {

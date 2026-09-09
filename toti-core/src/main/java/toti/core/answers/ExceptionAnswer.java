@@ -10,12 +10,12 @@ import java.util.function.Function;
 
 import org.apache.logging.log4j.Logger;
 
-import toti.core.answers.request.Identity;
 import toti.core.answers.request.Request;
 import toti.core.answers.response.FinalResponse;
 import toti.core.answers.response.Response;
 import toti.core.answers.response.ResponseContainer;
 import toti.core.answers.response.TextResponse;
+import toti.core.answers.session.Identity;
 import toti.core.application.register.MappedAction;
 import toti.core.application.register.Register;
 import toti.core.logging.ExceptionHashCode;

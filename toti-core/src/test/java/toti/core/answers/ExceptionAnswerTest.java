@@ -22,11 +22,11 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import toti.core.answers.action.ResponseAction;
-import toti.core.answers.request.Identity;
 import toti.core.answers.request.Request;
 import toti.core.answers.response.FinalResponse;
 import toti.core.answers.response.Response;
 import toti.core.answers.response.TextResponse;
+import toti.core.answers.session.Identity;
 import toti.core.application.register.MappedAction;
 import toti.core.application.register.Register;
 import toti.core.extensions.CustomErrorHandler;

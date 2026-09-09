@@ -6,10 +6,10 @@ import java.util.Random;
 import toti.core.annotations.Action;
 import toti.core.annotations.Controller;
 import toti.core.answers.action.ResponseAction;
-import toti.core.answers.request.Identity;
 import toti.core.answers.response.Response;
 import toti.core.answers.router.Link;
 import toti.core.answers.session.DefaultSession;
+import toti.core.answers.session.Identity;
 import toti.lib.common.functions.Implode;
 import toti.lib.tcpip.enums.HttpMethod;
 

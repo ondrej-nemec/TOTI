@@ -1,4 +1,4 @@
-package toti.core.answers.request;
+package toti.core.answers.session;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

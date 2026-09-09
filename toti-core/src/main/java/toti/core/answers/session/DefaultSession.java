@@ -15,7 +15,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import toti.core.answers.Headers;
-import toti.core.answers.request.UserMode;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.common.structures.NamedThredFactory;
 import toti.lib.tcpip.structures.RequestParameters;
