@@ -59,7 +59,7 @@ public class TotiExamplesRunner {
 		// TemplateExtension require settings
 		// DatabaseExtension require settings
 		
-		applicationFactory.setSessionManager(new DefaultSessionManager("", 2 * 60L));
+		applicationFactory.setSessionManager(new DefaultSessionManager(applicationFactory.getBasePath(), 2 * 60L));
 		return applicationFactory.create(Arrays.asList(
 			new CoreModule()/*,
 			new UiModule(),

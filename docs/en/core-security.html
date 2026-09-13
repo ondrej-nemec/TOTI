@@ -1,12 +1,151 @@
 <h1>Security</h1>
 
-TODO
+<div class="paragraph">
+	TOTI provides information about user who makes request. Also allows log in/out users, store server side data etc.
+</div>
 
-security - csfr
+<h2>Identity</h2>
 
-identity, session space, scope
-how to write + Default
+<div>
+	Instance of <code>Identity</code> is part of <code>ResponseAction</code>.
+</div>
+
+<h3>IP</h3>
+<div class="paragraph">
+	<code>getIP</code> returns user IP.
+</div>
+
+<h3>Session Space</h3>
+
+<div class="paragraph">
+	Session space are data related to unique user. It can hold data between requests. How data will be saved depends on <code>SessionManager</code> (see below).
+</div>
+
+<div class="paragraph">
+	<code>getSessionSpace</code> returns whole session space
+</div>
+
+<h3>Flash messages</h3>
+
+<div class="paragraph">
+	Flash messages are string data. The messages are usualy displayed to user to notify him/her what happends on server.
+</div>
+
+<div class="paragraph">
+	<code>addFlashMessage(severity, message)</code> add new message to qeue.
+	<br>
+	<code>getFlashMessages()</code> returns list of all messages. WARNING! Qeue is automaticlly cleared.
+</div>
 
 
-SessionManager, pridava se do ApplicationFactory
-DefaultSessionManager
+<h3>Scope</h3>
+
+<div class="paragraph">
+	Scope is holder for classes set by extensions. This allows to use request specific instances.
+</div>
+
+<div class="paragraph">
+	<code>setScope(object)</code> add object to scope
+	<br>
+	<code>setScope(clazz, object)</code> add object to scope
+	<br>
+	<code>getScope(clazz)</code> returns object of given class from scope or null
+	<br>
+	<code>removeScope(clazz)</code> remove object of given class from scope
+</div>
+
+<h3>User</h3>
+
+<div class="paragraph">
+	<code>Identity</code> contains current logged user. In TOTI, user has no given interface or base class.
+</div>
+
+<div class="paragraph">
+	<code>getUser</code> returns <code>Optional</code> of Object
+	<br>
+	<code>getUser(clazz)</code> returns null if no user is present or try retype user to given class and return.
+	<br>
+	<code>login(user)</code> add user to identity
+	<br>
+	<code>logout</code> remove user from identity
+</div>
+
+<h4>User mode</h4>
+
+<div class="paragraph">
+	<code>Identity</code> operates in three modes.
+	<ul>
+		<li><strong>Anonymous</strong> no identification. Session space and flash messages are usualy NOT saved.</li>
+		<li><strong>Not logged user</strong> there is no logged user, but there is some identification. Usualy means session space and flash messages can be used</li>
+		<li><strong>Logged user</strong> there is logged user</li>
+	</ul>
+</div>
+
+<div class="paragraph">
+	Current user mode of <code>Identity</code> is available:
+	<br>
+	<code>isAnonymous</code> true if no identification is available, false otherwise
+	<br>
+	<code>isUserPresent</code> true if there is logged user, false otherwise
+</div>
+
+<h4>CSRF</h4>
+
+<div class="paragraph">
+	TOTI comes with build in CSRF protection. Details depends on <code>SessionManager</code>, but <code>Identity</code> facilitates data.
+	<br>
+	<code>isCsrfTokenVerified</code> returns true if <code>SessionManager</code> mark request as CSRF verified
+	<br>
+	<code>getCsrfToken</code> returns token for current context or empty string if <code>SessionManager</code> not provide it
+</div>
+
+<h2>Session Manager</h2>
+
+<div class="paragraph">
+	<code>SessionManager</code> is interface. How session is stored, how tokens are generated and sent to user depends on implementation.
+</div>
+
+<div class="paragraph">
+	<code>SessionManager</code> instance is set like this:
+	<pre><code>
+applicationFactory.setSessionManager(sessionManager);
+	</code></pre>
+	TOTI can work with now <code>SessionManager</code> set, but session space, flash messages and login cannot work without it.
+</div>
+
+<div class="paragraph">
+	<code>SessionManager</code> contains following methods:
+	<br>
+	<code>onApplicationStart</code> called once when application is starting
+	<br>
+	<code>onApplicationStop</code> called once when application is stopping
+	<br>
+	<code>restoreSession(requestHeaders, queryParams, requestBody)</code> called on start of every request. The point of this method is to find if request contains any information about session.
+	<br>
+	<code>saveSession(responseHeaders, sessionId, sessionSpace, userMode, user)</code> called on end of every request. The point of this method is to save data and set identifier to response headers.
+</div>
+
+<h3>DefaultSessionManager</h3>
+
+<div class="paragraph">
+	Implement own <code>SessionManager</code> can be hard. So TOTI also comes with default implementation. It can be used or help with custom implementation.
+</div>
+
+<div class="paragraph">
+	Default implementation store session id in cookie. If request not contains session id or session is no longer valid, new session is created. This allows to send flash messages to not logged users. The sessions are stored in RAM.
+</div>
+
+<div class="paragraph">
+	<pre><code>
+new DefaultSessionManager(applicationFactory.getBasePath(), 2 * 60L)
+	</code></pre>
+	As first parameter, <code>DefaultSessionManager</code> needs application path. It is used in cookie <code>path</code>. The second parameter is max expiration time in seconds. If null, session never expired.
+</div>
+
+<div class="paragraph">
+	Important parameter is:
+	<pre><code>
+DefaultSessionManager.CSRF_TOKEN_NAME
+	</code></pre>
+	It is input name for CSRF.
+</div>

@@ -71,6 +71,10 @@ public class ApplicationFactory {
 		this.extensionsTotiResponses = new LinkedList<>();
 	}
 
+	public String getBasePath() {
+		return basePath;
+	}
+
 	public Application create(List<Module> modules, Logger logger) {
 		ObjectBuilder<Module> actualModule = new ObjectBuilder<>();
 		Param root = new Param(null);
