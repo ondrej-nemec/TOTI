@@ -2,6 +2,25 @@
 // Apply the java-library plugin to add support for Java Library
 plugins {
     id 'java-library'
+    id 'maven-publish'
+}
+
+group = project.libraryGroup
+version = '1.0'
+
+publishing {
+    publications {
+        myLibrary(MavenPublication) {
+            from components.java
+        }
+    }
+
+     repositories {
+        maven {
+            name = "local"
+            url = uri(project.publishPath)
+        }
+    }
 }
 
 compileTestJava.options.encoding = 'UTF-8'
