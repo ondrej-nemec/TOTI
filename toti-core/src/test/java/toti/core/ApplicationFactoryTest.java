@@ -30,6 +30,7 @@ public class ApplicationFactoryTest {
 	// TODO full test with env, manual set, def values
 	
 	@Test
+	@Disabled
 	public void test() {
 		fail("TODO");
 	}

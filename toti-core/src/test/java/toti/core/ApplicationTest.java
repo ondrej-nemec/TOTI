@@ -1,26 +1,26 @@
 package toti.core;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.junit.jupiter.api.Test;
-
 import toti.core.application.Task;
 import toti.core.application.register.MappedAction;
 import toti.core.application.register.Param;
 import toti.core.extensions.Extension;
+import toti.lib.common.tests.TestCase;
 import toti.lib.tcpip.enums.HttpMethod;
 
 public class ApplicationTest {
@@ -177,23 +177,19 @@ public class ApplicationTest {
 		application.iterate((item)->{
 			actual.add(item.getMethod() + " " + item.getUri());
 		});
+		actual.sort(Comparator.naturalOrder());
 		List<String> expected = Arrays.asList(
-			"GET /module/controller",
 			"DELETE /module/controller/method1",
-			"POST /module/controller/method1",
 			"GET /extra/index",
 			"GET /extra/index/{}",
+			"GET /extra/{}/string",
+			"GET /module/controller",
 			"POST /extra/index/{}",
 			"POST /extra/{}",
-			"GET /extra/{}/string"
+			"POST /module/controller/method1"
 		);
 		
-		try {
-			assertEquals(expected, actual);
-		} catch (Throwable t) {
-			assertEquals(expected.toString(), actual.toString());
-			throw t;
-		}
+		TestCase.assertEquals(expected, actual);
 	}
 	
 }

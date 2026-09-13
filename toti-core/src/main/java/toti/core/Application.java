@@ -102,54 +102,54 @@ public class Application {
 	/****************/
 	
 	public void iterate(Consumer<Item> onItem) {
-        iterate(onItem, root, "", 0);
-    }
+		iterate(onItem, root, "", 0);
+	}
 
-    private void iterate(Consumer<Item> onItem, Param param, String uri, int deep) {
-        String path = getPath(uri, param);
-        param.getActions().forEach((method, action)->{
-             onItem.accept(new Item(path, method, action));
-        });
+	private void iterate(Consumer<Item> onItem, Param param, String uri, int deep) {
+		String path = getPath(uri, param);
+		param.getActions().forEach((method, action)->{
+			 onItem.accept(new Item(path, method, action));
+		});
 
-        param.getChilds().forEach((x, child)->{
-             iterate(
-                 onItem,
-                 child,
-                 deep == 0 ? uri : path,
-                 deep+1
-             );
-        });
-    }
-    
-    private String getPath(String uri, Param param) {
-    	if (param.getText() != null) {
-            return uri + "/" + param.getText();
-        }
-    	return uri + "/{}";
-    }
+		param.getChilds().forEach((x, child)->{
+			 iterate(
+				 onItem,
+				 child,
+				 deep == 0 ? uri : path,
+				 deep+1
+			 );
+		});
+	}
+	
+	private String getPath(String uri, Param param) {
+		if (param.getText() != null) {
+			return uri + "/" + param.getText();
+		}
+		return uri + "/{}";
+	}
 
-    public class Item {
+	public class Item {
 
-        private final String uri;
-        private final HttpMethod method;
-        private final MappedAction action;
-        
-        public Item(String uri, HttpMethod method, MappedAction action) {
-             this.uri = uri;
-             this.method = method;
-             this.action = action;
-        }
+		private final String uri;
+		private final HttpMethod method;
+		private final MappedAction action;
+		
+		public Item(String uri, HttpMethod method, MappedAction action) {
+			 this.uri = uri;
+			 this.method = method;
+			 this.action = action;
+		}
 
-        public MappedAction getAction() {
-             return action;
-        }
+		public MappedAction getAction() {
+			 return action;
+		}
 
-        public HttpMethod getMethod() {
-             return method;
-        }
+		public HttpMethod getMethod() {
+			 return method;
+		}
 
-        public String getUri() {
-             return uri;
-        }
-    }
+		public String getUri() {
+			 return uri;
+		}
+	}
 }

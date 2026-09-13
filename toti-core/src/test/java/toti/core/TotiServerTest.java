@@ -54,6 +54,7 @@ public class TotiServerTest {
 		
 		verify(server, times(1)).start();
 		verify(server, times(1)).init(any(), any(Long.class));
+		verify(server, times(1)).getPorts();
 		verify(toti, times(2)).startApplication(any());
 		verify(toti, times(1)).startApplication("h1");
 		verify(toti, times(1)).startApplication("h2");
