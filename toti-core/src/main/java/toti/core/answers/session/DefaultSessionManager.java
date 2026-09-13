@@ -19,9 +19,9 @@ import toti.lib.common.structures.MapDictionary;
 import toti.lib.common.structures.NamedThredFactory;
 import toti.lib.tcpip.structures.RequestParameters;
 
-public class DefaultSession implements SessionManager {
+public class DefaultSessionManager implements SessionManager {
 
-	class Session {
+	protected static class Session {
 		String sessionId;
 		String csrfToken;
 		Long expiration;
@@ -39,13 +39,76 @@ public class DefaultSession implements SessionManager {
 		CurrentSession create(String currentToken) {
 			return new CurrentSession(sessionId, sessionSpaces, user, csrfToken, csrfToken != null && csrfToken.equals(currentToken));
 		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((sessionId == null) ? 0 : sessionId.hashCode());
+			result = prime * result + ((csrfToken == null) ? 0 : csrfToken.hashCode());
+			result = prime * result + ((expiration == null) ? 0 : expiration.hashCode());
+			result = prime * result + ((sessionSpaces == null) ? 0 : sessionSpaces.hashCode());
+			result = prime * result + ((user == null) ? 0 : user.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Session other = (Session) obj;
+			if (sessionId == null) {
+				if (other.sessionId != null)
+					return false;
+			} else if (!sessionId.equals(other.sessionId))
+				return false;
+			if (csrfToken == null) {
+				if (other.csrfToken != null)
+					return false;
+			} else if (!csrfToken.equals(other.csrfToken))
+				return false;
+			if (expiration == null) {
+				if (other.expiration != null)
+					return false;
+			} else if (!expiration.equals(other.expiration))
+				return false;
+			if (sessionSpaces == null) {
+				if (other.sessionSpaces != null)
+					return false;
+			} else if (!sessionSpaces.equals(other.sessionSpaces))
+				return false;
+			if (user == null) {
+				if (other.user != null)
+					return false;
+			} else if (!user.equals(other.user))
+				return false;
+			return true;
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			sb.append("Session{");
+			sb.append("sessionId=").append(sessionId);
+			sb.append(", csrfToken=").append(csrfToken);
+			sb.append(", expiration=").append(expiration);
+			sb.append(", sessionSpaces=").append(sessionSpaces);
+			sb.append(", user=").append(user);
+			sb.append('}');
+			return sb.toString();
+		}
+		
 	}
 
 	public final static String SESSION_COOKIE_NAME = "SessionID";
 	public final static String SESSION_HEADER_NAME = "Authorization";
 	public final static String CSRF_TOKEN_NAME = "_csrf_token";
 
-	private final Map<String, Session> spaces = new ConcurrentHashMap<>();
+	private final Map<String, Session> spaces;
 
 	private final String basePath;
 	private final Long maxAgeInSec;
@@ -53,9 +116,14 @@ public class DefaultSession implements SessionManager {
 	private final ScheduledExecutorService pool = Executors.newSingleThreadScheduledExecutor(new NamedThredFactory("DefaultSession"));
 	private Future<?> future;
 
-	public DefaultSession(String basePath, Long maxAgeInSec) {
+	public DefaultSessionManager(String basePath, Long maxAgeInSec) {
+		this(basePath, maxAgeInSec, new ConcurrentHashMap<>());
+	}
+
+	protected DefaultSessionManager(String basePath, Long maxAgeInSec, Map<String, Session> spaces) {
 		this.basePath = basePath == null || basePath.equals("") ? "/" : basePath;
 		this.maxAgeInSec = maxAgeInSec;
+		this.spaces = spaces;
 	}
 
 	@Override
@@ -64,15 +132,20 @@ public class DefaultSession implements SessionManager {
 			return;
 		}
 		future = pool.scheduleWithFixedDelay(()->{
-			spaces.keySet().forEach(sessionId->{
-				if (check(sessionId) == null) {
-					spaces.remove(sessionId);
-				}
-			});
+			runCheck(ZonedDateTime.now());
 		}, 1, 2, TimeUnit.MINUTES);
 	}
 
-	private Session check(String sessionId) {
+	protected void runCheck(ZonedDateTime now) {
+		for(var iterator = spaces.entrySet().iterator(); iterator.hasNext(); ) {
+			var entry = iterator.next();
+			if(check(entry.getKey(), now) == null) {
+				iterator.remove();
+			}
+		}
+	}
+
+	protected Session check(String sessionId, ZonedDateTime now) {
 		var session = spaces.get(sessionId);
 		if (session == null) {
 			return null;
@@ -80,7 +153,7 @@ public class DefaultSession implements SessionManager {
 		if (session.expiration == null) {
 			return session;
 		}
-		if (session.expiration >= ZonedDateTime.now().toEpochSecond()) {
+		if (session.expiration >= now.toEpochSecond()) {
 			return session;
 		}
 		return null;
@@ -100,20 +173,33 @@ public class DefaultSession implements SessionManager {
 		MapDictionary<String> queryParams,
 		RequestParameters requestBody
 	) {
+		return restoreSession(requestHeaders, queryParams, requestBody, ZonedDateTime.now());
+	}
+
+	protected Optional<CurrentSession> restoreSession(
+		Headers requestHeaders,
+		MapDictionary<String> queryParams,
+		RequestParameters requestBody,
+		ZonedDateTime now
+	) {
 		String csrfToken = null;
 		if (requestBody.containsKey(CSRF_TOKEN_NAME)) {
 			csrfToken = requestBody.getString(CSRF_TOKEN_NAME);
 			requestBody.remove(CSRF_TOKEN_NAME);
 		}
-
-		String sessionId = getHeaderToken(requestHeaders)
-		.orElse(
-			getCookieToken(requestHeaders)
-			.orElse(generateSecret())
-		);
-		Session session = check(sessionId);
+		Session session = null;
+		Optional<String> token;
+		if ((token = getHeaderToken(requestHeaders)).isPresent()) {
+			session = check(token.get(), now);
+		} else if ((token = getCookieToken(requestHeaders)).isPresent()) {
+			session = check(token.get(), now);
+		}
 		if (session == null) {
-			session = new Session(sessionId, generateSecret(), null, new HashMap<>(), Optional.empty());
+			String sessionId = generateSecret();
+			session = new Session(
+				sessionId, generateSecret(), maxAgeInSec == null ? null : now.toEpochSecond(),
+				new HashMap<>(), Optional.empty()
+			);
 			spaces.put(sessionId, session);
 		}
 		return Optional.of(session.create(csrfToken));
@@ -121,6 +207,13 @@ public class DefaultSession implements SessionManager {
 
 	@Override
 	public void saveSession(Headers responseHeaders, Optional<String> sessionId, Map<String, MapDictionary<String>> sessionSpace, UserMode userMode, Optional<Object> user) {
+		saveSession(responseHeaders, sessionId, sessionSpace, userMode, user, ZonedDateTime.now());
+	}
+
+	protected void saveSession(
+		Headers responseHeaders, Optional<String> sessionId, Map<String, MapDictionary<String>> sessionSpace,
+		UserMode userMode, Optional<Object> user, ZonedDateTime now
+	) {
 		if (userMode == UserMode.ANONYMOUS) {
 			responseHeaders.addHeader(
 				"Set-Cookie", 
@@ -134,7 +227,7 @@ public class DefaultSession implements SessionManager {
 		} else {
 			Long expiration = maxAgeInSec;
 			if (expiration != null) {
-				expiration += ZonedDateTime.now().toEpochSecond();
+				expiration += now.toEpochSecond();
 			}
 			Session session = spaces.get(sessionId.get());
 			// sessionspace is reference, no update needed
@@ -166,7 +259,7 @@ public class DefaultSession implements SessionManager {
 		return requestHeaders.getCookieValue(SESSION_COOKIE_NAME);
 	}
 
-	private String generateSecret() {
+	protected String generateSecret() {
 		try {
 			SecureRandom sr = SecureRandom.getInstance("SHA1PRNG", "SUN");
 			byte[] secret = new byte[32];

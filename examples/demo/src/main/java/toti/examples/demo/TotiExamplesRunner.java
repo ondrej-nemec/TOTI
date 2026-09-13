@@ -10,7 +10,7 @@ import toti.core.Application;
 import toti.core.ApplicationFactory;
 import toti.core.TotiServer;
 import toti.core.TotiServerFactory;
-import toti.core.answers.session.DefaultSession;
+import toti.core.answers.session.DefaultSessionManager;
 import toti.examples.demo.modules.CoreModule;
 import toti.lib.common.structures.MapInit;
 import toti.lib.tcpip.SslCredentials;
@@ -59,7 +59,7 @@ public class TotiExamplesRunner {
 		// TemplateExtension require settings
 		// DatabaseExtension require settings
 		
-		applicationFactory.setSessionManager(new DefaultSession("", 2 * 60L));
+		applicationFactory.setSessionManager(new DefaultSessionManager("", 2 * 60L));
 		return applicationFactory.create(Arrays.asList(
 			new CoreModule()/*,
 			new UiModule(),

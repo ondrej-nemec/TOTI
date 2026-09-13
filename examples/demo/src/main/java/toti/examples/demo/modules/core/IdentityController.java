@@ -8,7 +8,7 @@ import toti.core.annotations.Controller;
 import toti.core.answers.action.ResponseAction;
 import toti.core.answers.response.Response;
 import toti.core.answers.router.Link;
-import toti.core.answers.session.DefaultSession;
+import toti.core.answers.session.DefaultSessionManager;
 import toti.core.answers.session.Identity;
 import toti.lib.common.functions.Implode;
 import toti.lib.tcpip.enums.HttpMethod;
@@ -122,9 +122,9 @@ public class IdentityController {
 </html>
 """,
 				token, sendLink, sendLink,
-				DefaultSession.CSRF_TOKEN_NAME, token,
+				DefaultSessionManager.CSRF_TOKEN_NAME, token,
 				sendLink,
-				DefaultSession.CSRF_TOKEN_NAME, token
+				DefaultSessionManager.CSRF_TOKEN_NAME, token
 			));
 		};
 	}
@@ -135,9 +135,9 @@ public class IdentityController {
 			return Response.OK()
 			//.addHeader("content-type", "text/html")
 			.getText(
-				"Cookie: " + request.getHeaders().getCookieValue(DefaultSession.SESSION_COOKIE_NAME)
+				"Cookie: " + request.getHeaders().getCookieValue(DefaultSessionManager.SESSION_COOKIE_NAME)
 				+ "\n" +
-				"Header: " + request.getHeaders().getHeader(DefaultSession.SESSION_HEADER_NAME)
+				"Header: " + request.getHeaders().getHeader(DefaultSessionManager.SESSION_HEADER_NAME)
 				+ "\n" +
 				"CSRF: " + identity.getCsrfToken() + " " + identity.isCsrfTokenVerified()
 			);
