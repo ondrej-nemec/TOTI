@@ -1,4 +1,4 @@
-package toti.extension.ui.backend.grid;
+package toti.extension.ui.backendTest.grid;
 
 import java.sql.Connection;
 import java.util.Arrays;
@@ -12,11 +12,11 @@ import static org.mockito.Mockito.mock;
 import toti.lib.database.querybuilder.QueryBuilder;
 import toti.lib.database.querybuilder.builders.SelectBuilder;
 import toti.lib.database.querybuilder.instances.PostgreSqlQueryBuilder;
-import toti.extension.ui.backend.Owner;
-import toti.extension.ui.backend.grid.Filter;
-import toti.extension.ui.backend.grid.FilterMode;
-import toti.extension.ui.backend.grid.GridDao;
-import toti.extension.ui.backend.grid.Sort;
+import toti.extension.ui.backendTest.Owner;
+import toti.extension.ui.backendTest.grid.Filter;
+import toti.extension.ui.backendTest.grid.FilterMode;
+import toti.extension.ui.backendTest.grid.GridDao;
+import toti.extension.ui.backendTest.grid.Sort;
 import toti.lib.common.structures.MapInit;
 import toti.lib.common.structures.SortedMap;
 

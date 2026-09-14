@@ -1,4 +1,4 @@
-package toti.extension.ui.backend;
+package toti.extension.ui.backendTest;
 
 import static org.junit.jupiter.api.Assertions.fail;
 

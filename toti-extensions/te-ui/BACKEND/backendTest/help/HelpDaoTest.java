@@ -1,4 +1,4 @@
-package toti.extension.ui.backend.help;
+package toti.extension.ui.backendTest.help;
 
 import java.sql.SQLException;
 

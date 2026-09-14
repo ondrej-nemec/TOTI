@@ -1,10 +1,10 @@
-package toti.extension.ui.backend.grid;
+package toti.extension.ui.backendTest.grid;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import toti.extension.ui.backend.grid.GridRange;
+import toti.extension.ui.backendTest.grid.GridRange;
 
 public class GridRangeTest {
 
