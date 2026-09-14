@@ -2,14 +2,5 @@
 /.gradle/
 /build
 
-# eclipse
+# IDE
 /bin/
-/.classpath
-/.project
-/.settings
-
-# toti
-/temp
-/logs
-
-/src/main/resources/conf/app.properties
