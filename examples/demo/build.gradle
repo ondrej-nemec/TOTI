@@ -6,7 +6,6 @@ compileTestJava.options.encoding = 'UTF-8'
 
 repositories {
 	mavenCentral()
-	maven { url 'https://jitpack.io' }
 }
 
 dependencies {

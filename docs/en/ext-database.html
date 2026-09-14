@@ -4,6 +4,23 @@
 	Extension includes TOTI Database lib to project. Calling <code>migrate()</code> method is automatic during application start.
 </p>
 
+<h2>Dependency</h2>
+
+<p class="paragraph">
+	<strong>Using Gradle</strong>
+
+	<pre><code>
+	repositories {
+		...
+		maven { url 'https://ondrej-nemec.github.io/maven' }
+	}
+
+	dependencies {
+		implementation group: 'toti.TOTI.extension', name: 'te-database', version: '--version--'
+		...
+	}
+	</code></pre>
+</p>
 
 <h2>Register in Application Factory</h2>
 

@@ -4,6 +4,26 @@
 	Provide localization from files. Allowed formats: <code>xml</code>, <code>properties</code>.
 </p>
 
+<h2>Dependency</h2>
+
+<p class="paragraph">
+	<strong>Using Gradle</strong>
+
+	<pre><code>
+	repositories {
+		...
+		maven { url 'https://ondrej-nemec.github.io/maven' }
+	}
+
+	dependencies {
+		implementation group: 'toti.TOTI.lib', name: 'toti-translate', version: '--version--'
+		...
+	}
+	</code></pre>
+</p>
+
+<h2>Create instance</h2>
+
 <p>
 	<code>Translator</code> class is constructed with Set of paths where translation files are stored. Optionaly you can set namespace (default: <i>messages</i>) and language (default is empty - not selected) too. 
 </p>

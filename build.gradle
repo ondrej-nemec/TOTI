@@ -10,8 +10,6 @@ ext {
 	extensionGroup = 'toti.TOTI.extension'
     publishPath = '/home/coder/project/publish'
 }
-// ext.group = 'toti'
-// ext.publishPath = '/home/coder/project/repository';
 
 group = project.projectGroup
 version = '1.0'
@@ -35,8 +33,6 @@ compileTestJava.options.encoding = 'UTF-8'
 
 repositories {
 	mavenCentral()
-	maven { url 'https://jitpack.io' }
-   // flatDir { dirs 'libs' }
 }
 
 dependencies {

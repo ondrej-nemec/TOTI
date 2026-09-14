@@ -27,7 +27,6 @@ compileTestJava.options.encoding = 'UTF-8'
 // In this section you declare where to find the dependencies of your project
 repositories {
     mavenCentral()
-    maven { url 'https://jitpack.io' }
 }
 
 dependencies {

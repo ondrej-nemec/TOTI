@@ -5,7 +5,19 @@
 </div>
 
 <div class="paragraph">
-	TODO dependency
+	<strong>Include using Gradle</strong>
+
+	<pre><code>
+	repositories {
+		...
+		maven { url 'https://ondrej-nemec.github.io/maven' }
+	}
+
+	dependencies {
+		implementation group: 'toti.TOTI', name: 'toti-core', version: '--version--'
+		...
+	}
+	</code></pre>
 </div>
 
 

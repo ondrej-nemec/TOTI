@@ -5,7 +5,23 @@
 	Integrate TOTI Translate library into TOTI application.
 </p>
 
-TODO dependency
+<h2>Dependency</h2>
+
+<p class="paragraph">
+	<strong>Using Gradle</strong>
+
+	<pre><code>
+	repositories {
+		...
+		maven { url 'https://ondrej-nemec.github.io/maven' }
+	}
+
+	dependencies {
+		implementation group: 'toti.TOTI.extension', name: 'te-translator', version: '--version--'
+		...
+	}
+	</code></pre>
+</p>
 
 <h2>Register in Application Factory</h2>
 

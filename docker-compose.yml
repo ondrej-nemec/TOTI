@@ -21,6 +21,7 @@ services:
     volumes:
       - .:/home/coder/project
       - .vscode-config:/home/coder/.local/share/code-server
+      - ../ondrej-nemec.github.io/maven:/home/coder/project/publish
     restart: "no"
 
   adminer:
@@ -31,7 +32,6 @@ services:
     restart: "no"
     container_name: toti_adminer
     volumes:
-      - ./volumes/sqlite/:/root/sqlite/
       - ./docs:/var/www/html/docs
     ports:
       - 19040:8080
