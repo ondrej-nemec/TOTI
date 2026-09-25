@@ -30,14 +30,12 @@ public class FileSystemAnswer {
 		this.dirDefaultFile = dirDefaultFile;
 	}
 	
-	public FinalResponse answer(
-			Request request, Headers responseHeaders, String charset
-			) throws ServerException {
-		return answer(request.getUri(), request.getMethod(), responseHeaders, charset)
+	public FinalResponse answer(Request request, Headers responseHeaders, String charset) throws ServerException {
+		return answer(request.getUri(), request.getMethod(), charset)
 			.prepare(new ResponseContainer(charset, responseHeaders, null, null, null, null));
 	}
 	
-	private Response answer(String url, HttpMethod method, Headers responseHeaders, String charset) throws ServerException {
+	private Response answer(String url, HttpMethod method, String charset) throws ServerException {
 		File file = new File(resourcesDir + url);
 		try {
 			File resDir = new File(resourcesDir);
@@ -61,15 +59,16 @@ public class FileSystemAnswer {
 			throw new ServerException(StatusCode.NOT_FOUND, String.format("URL not fouded: %s (%s)", url, method));
 		}
 		if (file.isDirectory()) {
-			return getDirResponse(file.listFiles(), url, responseHeaders, charset);
+			return getDirResponse(file.listFiles(), url, charset);
 		}
 		return Response.create(StatusCode.OK).getFile(resourcesDir + url);
 	}
 	
-	private Response getDirResponse(File[] files, String path, Headers responseHeaders, String charset) throws ServerException {
+	private Response getDirResponse(File[] files, String path, String charset) throws ServerException {
 		try {
-			responseHeaders.addHeader("Content-Type", "text/html; charset=" + charset);
-			return Response.create(StatusCode.OK).getText(createFolderHtml(files, path));
+			return Response.create(StatusCode.OK)
+			.addHeader("Content-Type", "text/html; charset=" + charset)
+			.getText(createFolderHtml(files, path));
 		} catch (Exception e) {
 			throw new ServerException(StatusCode.INTERNAL_SERVER_ERROR, null, "Directory list fail: " + path);
 		}
