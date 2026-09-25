@@ -1,32 +1,32 @@
 plugins {
-    id 'java-library'
-    id 'maven-publish'
+	id 'java-library'
+	id 'maven-publish'
 }
 
 ext {
-	projectGroup = 'toti'
-	coreGroup = 'toti.TOTI'
-    libraryGroup = 'toti.TOTI.lib'
-	extensionGroup = 'toti.TOTI.extension'
-    publishPath = '/home/coder/project/publish'
+	projectGroup = 'com.github.toti'
+	coreGroup = 'com.github.toti.core'
+	libraryGroup = 'com.github.toti.lib'
+	extensionGroup = 'com.github.toti.extension'
+	publishPath = '/home/coder/project/publish'
 }
 
 group = project.projectGroup
 version = '1.0'
 
 publishing {
-    publications {
-        myLibrary(MavenPublication) {
-            from components.java
-        }
-    }
+	publications {
+		myLibrary(MavenPublication) {
+			from components.java
+		}
+	}
 
-     repositories {
-        maven {
-            name = "local"
-            url = uri(project.publishPath)
-        }
-    }
+	 repositories {
+		maven {
+			name = "local"
+			url = uri(project.publishPath)
+		}
+	}
 }
 
 compileTestJava.options.encoding = 'UTF-8'
