@@ -40,6 +40,7 @@ public class UiExtension implements TotiExtension {
 	@Override
 	public ResponseAction get(String uri, boolean isDeveloperRequest) {
 		return (request, identity)->{
+			// TODO .addHeader("Cache-Control", "private, max-age=" + (3600 * 12)) // 12 hours
 			return switch (uri) {
 				case ".js"->Response.create(StatusCode.OK)
 					.addHeader("Content-Type", "text/javascript")
