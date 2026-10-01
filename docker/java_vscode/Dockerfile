@@ -16,6 +16,11 @@ RUN curl -sSL https://github.com/adoptium/temurin21-binaries/releases/download/j
 ENV JAVA_HOME=/opt/openjdk21
 ENV PATH="$JAVA_HOME/bin:$PATH"
 
+# TRIVY
+RUN mkdir -p ~/.local/bin
+RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b ~/.local/bin
+ENV PATH="$HOME/.local/bin:$PATH"
+
 # NPM
 RUN apt update && apt install npm
 RUN npm install jest
