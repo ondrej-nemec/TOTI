@@ -35,7 +35,6 @@ dependencies {
 	
 
 	/***********  TESTS *******************/
-	testImplementation(testFixtures(project(':toti-libs:toti-templating')))
 
 	// https://mvnrepository.com/artifact/org.mockito/mockito-core
 	testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.24.0'
