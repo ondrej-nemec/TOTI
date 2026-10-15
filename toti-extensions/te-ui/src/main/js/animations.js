@@ -7,7 +7,6 @@ class LoadingAnimation {
 		this.container.classList.add('toti-animation-input-loading-container');
 		parentContainer.appendChild(this.container);
 		parentContainer.style.position = 'relative';
-		this.start();
 	}
 	start() {
 		var dots = [];
@@ -16,6 +15,10 @@ class LoadingAnimation {
 			dot.classList.add('toti-animation-input-loading-dot');
 			dots.push(dot);
 			this.container.appendChild(dot);
+		}
+		var failure = this.container.querySelector('.toti-animation-input-loading-failure');
+		if (failure !== null) {
+			failure.remove();
 		}
 		var index = 0;
 		this.interval = setInterval(()=>{
@@ -50,16 +53,9 @@ class LoadingAnimation {
 
 function animations(configuration) {
 	var animations = {};
-	function create(name, func) {
-		if (configuration.hasOwnProperty(name)) {
-			animations[name] = configuration[name];
-		} else {
-			animations[name] = func;
-		}
-	}
-	create('inputLoading', (parentContainer)=>{
+	totiUtils.optionalConf(configuration, 'inputLoading', (parentContainer)=>{
 		return new LoadingAnimation(parentContainer);
-	});
+	}, animations);
 
 	return animations;
 }

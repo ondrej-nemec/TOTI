@@ -1,3 +1,241 @@
 <h1>JS framework</h1>
 
 TODO
+
+<pre><code>
+Toti.init({});
+</code></pre>
+
+registerCallback(name, callback)
+getCallback(name)
+utils
+images
+	arrowUp
+	arrowDown
+	arrowRight
+	arrowLeft
+animations
+dialog
+createInput(attributes)
+Form(attributes)
+Grid(attributes)
+load(...configurations)
+
+
+<h2>Inputs</h2>
+
+<div>
+	All inputs contains following methods:
+	<ul>
+		<li><code>setData(string name, object value)</code></li>
+		<li><code>getData(string name): object</code></li>
+		<li><code>getName(): string</code></li>
+		<li><code>getType(): string</code></li>
+		<li><code>getContainer(): Node</code></li>
+		<li><code>getValue(): object</code></li>
+		<li><code>setValue(object value, string source = null)</code></li>
+		<li><code>parseValue(object value): value</code></li>
+		<li><code>clear(string source = null)</code></li>
+		<li><code>onChange(callback, string source = null)</code></li>
+		<li><code>getTitle(): string</code></li>
+		<li><code>isExcluded(): bool</code></li>
+		<li><code>setExcluded(bool isDisabled)</code></li>
+		<li><code>isRequired(): bool</code></li>
+		<li><code>setRequired(bool isRequired)</code></li>
+		<li><code>isDisabled(): bool</code></li>
+		<li><code>addError(string error, object params = {})</code></li>
+		<li><code>getErrors(): object</code></li>
+		<li><code>clearErrors()</code></li>
+		<li><code>isValid(): bool</code></li>
+		<li><code>addValidation(name, callback)</code></li>
+	</ul>
+</div>
+
+<h4>Optional inputs</h4>
+
+<div>
+	Some inputs can be optional. It means they are used or not depending on user choise.
+	<ul>
+		<li><code>setUsed(bool isUsed)</code></li>
+		<li><code>isUsed(): bool</code></li>
+		<li><code>setRequired(bool isRequired)</code> cannot be called</li>
+	</ul>
+</div>
+
+
+TODO option inputs 663
+
+<h2>Form</h2>
+
+TODO
+
+<h2>Grid</h2>
+
+TODO
+
+
+<h2>SortedMap</h2>
+
+TODO
+
+
+<h2>Utils</h2>
+
+<pre><code>
+Toti.utils
+</code></pre>
+
+<h3>Clone</h3>
+
+<div class="paragraph">
+	<code>clone(data): object</code> creates and returns copy of given data.
+</div>
+
+<h3>Random</h3>
+
+<div class="paragraph">
+	<code>random(max = 10000000): int</code> creates random integer in range from 0 to given max number.
+</div>
+
+<h3>Sleep</h3>
+
+<div class="paragraph">
+	<code>sleept(millis): Promise</code>. The Promise waits given miliseconds before continue.
+</div>
+
+<h3>Unaccent</h3>
+
+<div class="paragraph">
+	<code>unaccent(string): string</code> returns new string where any letter with accent (like <code>ě</code>, <code>é</code>, <code>ë</code>) are replaced with same letter without accent (in this case: <code>e</code>)
+</div>
+
+<h3>PametrizedString</h3>
+
+<div class="paragraph">
+	<code>parametrizedString(string, object params): string</code> looks for all keys of <code>params</code> in <code>string</code> (need to be in format <code>{key}</code>) and replaces them with given value. 
+</div>
+
+<h3>CapitalizeFirstLetter</h3>
+
+<div class="paragraph">
+	<code>capitalizeFirstLetter(string): string</code> returns given string with first letter being capital.
+</div>
+
+<h3>Execute</h3>
+
+<div class="paragraph">
+	<code>execute(callback, args = [], evaluate = false)</code> executes given <code>callback</code> with given arguments and returns result.
+	<code>callback</code> can be
+	<ul>
+		<li>Function</li>
+		<li>Name of registered Toti callback</li>
+		<li>Name of defined function in global scope</li>
+		<li>JS script (to run string as script, <code>evaluate</code> must be set to true)</li>
+	</ul>
+
+</div>
+
+<h3>OptionalConf</h3>
+
+<div class="paragraph">
+	<strong>Primary for internal use</strong>
+</div>
+
+<div class="paragraph">
+	<code>optionalConf(objcet configuration, string name, callback, result)</code> check if <code>configuration</code> contains <code>name</code>. If so, value is set to <code>result</code>. If not, given callback is set to <code>result</code>.
+</div>
+
+
+
+<h2>Dialog</h2>
+
+<div class="paragraph">
+	Set of interaction with user. 
+</div>
+
+<pre><code>
+Toti.dialog
+</code></pre>
+
+<h3>Alert</h3>
+
+<div class="paragraph">
+	<code>alert(message): Promise</code> shows given message. There is no value in Promise result.
+</div>
+
+<strong>Override</strong>
+<pre><code>
+{
+	...,
+	dialog: {
+		...,
+		alert: func(string): Promise
+	}
+}
+</code></pre>
+
+<h3>Prompt</h3>
+
+<div class="paragraph">
+	<code>prompt(message, defValue = ""): Promise</code> shows given message as prompt. The promise response data are: <code>null</code> if message is dismissed or string (can be empty) otherwise.
+</div>
+
+<pre><code>
+{
+	...,
+	dialog: {
+		...,
+		prompt: func(string, string): Promise
+	}
+}
+</code></pre>
+
+<h3>Confirm</h3>
+
+<div class="paragraph">
+	<code>confirm(message): Promise</code> shows given message as confirmation message. The promise response data is: true (yes) or false (no).
+</div>
+
+<pre><code>
+{
+	...,
+	dialog: {
+		...,
+		confirm: func(string): Promise
+	}
+}
+</code></pre>
+
+
+
+<h2>Animation</h2>
+
+<pre><code>
+Toti.animations
+</code></pre>
+
+<h2>InputLoading</h2>
+
+<div class="paragraph">
+	<code>inputLoading(Node element): LoadingAnimation</code> allows show loading animation on input or another element. In case of input element, the <code>element</code> must be parent element.
+</div>
+
+<div class="paragraph">
+	Animation is controlled using this methods:
+	<ul>
+		<li><code>start</code> shows and start loading animation</li>
+		<li><code>stop</code> stops loading animation. Animation is still visible.</li>
+		<li><code>failure</code> switch animation to signalize invalid state</li>
+		<li><code>remove</code> stops and remove loading animation</li>
+	</ul>
+</div>
+
+<pre><code>
+{
+	...,
+	animations: {
+		...,
+		inputLoading: func(Node element): LoadingAnimation
+	}
+}
+</code></pre>

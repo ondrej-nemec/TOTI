@@ -1,4 +1,4 @@
-const {createInput, createDatetime, timestamp}  = require('../src/inputs');
+const {createInput, createDatetime, timestamp}  = require('../../../main/js/inputs');
 
 /**** Input.popupWL ****/
 [

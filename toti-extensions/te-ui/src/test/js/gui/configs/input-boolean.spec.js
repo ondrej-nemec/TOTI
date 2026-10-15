@@ -144,7 +144,7 @@ var booleanInputs = [];
 	});
 });
 
-require('../spec.js')({
+require('/home/coder/project/playwright.spec.js')({
 	name: 'Inputs: Boolean inputs',
 	create: (conf)=>{
 		return Toti.createInput(conf);

@@ -1,26 +1,19 @@
 function dialog(configuration) {
 	var dialog = {};
-	function create(name, func) {
-		if (configuration.hasOwnProperty(name)) {
-			dialog[name] = configuration[name];
-		} else {
-			dialog[name] = func;
-		}
-	}
-	create('promt', (message, defValue = "")=>{
+	totiUtils.optionalConf(configuration, 'prompt', (message, defValue = "")=>{
 		return new Promise((resolve)=>{
 			resolve(prompt(message, defValue));
 		});
-	});
-	create('confirm', (message)=>{
+	}, dialog);
+	totiUtils.optionalConf(configuration, 'confirm', (message)=>{
 		return new Promise((resolve)=>{
 			resolve(confirm(message));
 		});
-	});
-	create('alert', (message)=>{
+	}, dialog);
+	totiUtils.optionalConf(configuration, 'alert', (message)=>{
 		return new Promise((resolve)=>{
 			resolve(alert(message));
 		});
-	});
+	}, dialog);
 	return dialog;
 }

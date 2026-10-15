@@ -72,7 +72,7 @@ module.exports = (conf)=>{
 
   function runTest(spec, create, verify) {
       test(spec.name, async ({ page }) => {
-          await page.goto('file://' + __dirname + '/test.html');
+          await page.goto('file://' + __dirname + '/html/playwrightTestPage.html');
           await page.addScriptTag({
             content: 'var initTest = '+ create.toString() +';'
           });

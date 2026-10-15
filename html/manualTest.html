@@ -14,19 +14,19 @@
 		}
 	</script>
 
-	<link rel="stylesheet" href="../src/main/resources/toti/extension/ui/toti.css">
-	<script src="../src/main/resources/toti/extension/ui//SortedMap.js"></script>
-	<script src="../src/main/resources/toti/extension/ui/dialog.js"></script>
-	<script src="../src/main/resources/toti/extension/ui/animations.js"></script>
-	<script src="../src/main/resources/toti/extension/ui/utils.js"></script>
-	<script src="../src/main/resources/toti/extension/ui/load.js"></script>
-	<script src="../src/main/resources/toti/extension/ui/inputs.js"></script>
-	<script src="../src/main/resources/toti/extension/ui/form.js"></script>
-	<script src="../src/main/resources/toti/extension/ui/grid.js"></script>
+	<link rel="stylesheet" href="te-ui/toti.css">
+	<script src="te-ui/SortedMap.js"></script>
+	<script src="te-ui/dialog.js"></script>
+	<script src="te-ui/animations.js"></script>
+	<script src="te-ui/utils.js"></script>
+	<script src="te-ui/load.js"></script>
+	<script src="te-ui/inputs.js"></script>
+	<script src="te-ui/form.js"></script>
+	<script src="te-ui/grid.js"></script>
 
-	<script src="../src/main/resources/toti/extension/ui/toti.js"></script>
+	<script src="te-ui/toti.js"></script>
 
-	<script src="tests_gui/mock.js"></script>
+	<script src="te-ui-test/mock.js"></script>
 
 	<style type="text/css">
 		.menu-item {
@@ -65,17 +65,18 @@
 	<div id="body"></div>
 
 
-	<script src="tests_gui/configs/input.spec.js"></script>
-	<script src="tests_gui/configs/input-options.spec.js"></script>
-	<script src="tests_gui/configs/input-texts.spec.js"></script>
-	<script src="tests_gui/configs/input-numbers.spec.js"></script>
-	<script src="tests_gui/configs/input-boolean.spec.js"></script>
-	<script src="tests_gui/configs/input-others.spec.js"></script>
-	<script src="tests_gui/configs/input-special.spec.js"></script>
-	<script src="tests_gui/configs/input-datetime.spec.js"></script>
-	<script src="tests_gui/configs/input-actions.spec.js"></script>
-	<script src="tests_gui/configs/form.spec.js"></script>
-	<script src="tests_gui/configs/grid.spec.js"></script>
+	<script src="te-ui-test/configs/input.spec.js"></script>
+	<script src="te-ui-test/configs/input-options.spec.js"></script>
+	<script src="te-ui-test/configs/input-texts.spec.js"></script>
+	<script src="te-ui-test/configs/input-numbers.spec.js"></script>
+	<script src="te-ui-test/configs/input-boolean.spec.js"></script>
+	<script src="te-ui-test/configs/input-others.spec.js"></script>
+	<script src="te-ui-test/configs/input-special.spec.js"></script>
+	<script src="te-ui-test/configs/input-datetime.spec.js"></script>
+	<script src="te-ui-test/configs/input-actions.spec.js"></script>
+	<script src="te-ui-test/configs/form.spec.js"></script>
+	<script src="te-ui-test/configs/grid.spec.js"></script>
+	<script src="te-ui-test/configs/functions.spec.js"></script>
 
 
 	<script type="text/javascript">
@@ -344,6 +345,64 @@
 			pre.textContent = JSON.stringify(item.conf, undefined, 2);
 			return container;
 		}
+		function printFunction(item) {
+			var container = document.createElement('div');
+			container.classList.add('test');
+
+			var title = document.createElement('div');
+			title.innerText = item.name;
+			title.classList.add('test-title');
+			container.appendChild(title);
+
+			var testContainer = document.createElement('div');
+			testContainer.classList.add('test-body');
+			container.appendChild(testContainer);
+
+			var runButton = document.createElement('button');
+			runButton.innerText = "Run";
+			
+			var content = document.createElement('div');
+			testContainer.appendChild(content);
+			content.appendChild(runButton);
+
+			var element = null;
+			if (item.hasOwnProperty('element')) {
+				element = item.element();
+				content.appendChild(element);
+			}
+
+			testContainer.appendChild(document.createElement('hr'));
+
+			var pre = document.createElement('div');
+			testContainer.appendChild(pre);
+
+			runButton.onclick = ()=>{
+				pre.innerHTML = '';
+				item.function(element).then((res)=>{
+					var i = document.createElement('i');
+					if (res === null) {
+						i.innerText = 'NULL';
+						pre.appendChild(i);
+					} else if (res === undefined) {
+						i.innerText = 'undefined';
+						pre.appendChild(i);
+					} else if (res === true) {
+						i.innerText = 'true';
+						pre.appendChild(i);
+					} else if (res === false) {
+						i.innerText = 'false';
+						pre.appendChild(i);
+					} else if (res === '') {
+						i.innerText = '< empty >';
+						pre.appendChild(i);
+					} else {
+						pre.innerText = res;
+					}
+				});
+			};
+
+			return container;
+		}
 		function iterateTests(container, spec, index, hashArray, finalHash) {
 			container.setAttribute('data-index', index);
 			var title = document.createElement('h' + index);
@@ -376,6 +435,8 @@
 					printGroup(item, submenuContainer, groupContainer, index + 1, selectedHash, hashArray, finalHash);
 				} else if (item.type === 'test') {
 					testContainer.appendChild(printTest(item, item.create));
+				} else if (item.type === 'function') {
+					testContainer.appendChild(printFunction(item));
 				}
 			});
 		}

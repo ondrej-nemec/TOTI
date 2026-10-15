@@ -1,4 +1,4 @@
-const totiUtils  = require('../src/utils');
+const totiUtils  = require('../../../main/js/utils');
 
 test('Clone create deep copy of simple object', () => {
 	var source = {

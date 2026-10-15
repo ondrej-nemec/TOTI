@@ -272,7 +272,7 @@ var formEditableTests = [];
 					},
 					field: {
 						type: 'test-standart',
-						name: "Input {i}"
+						title: "Input {i}"
 					}
 				},
 			]
@@ -308,7 +308,7 @@ var formEditableTests = [];
 	});
 })
 
-require('../spec.js')({
+require('/home/coder/project/playwright.spec.js')({
 	name: 'Form',
 	create: (conf)=>{
 		return Toti.Form(conf);

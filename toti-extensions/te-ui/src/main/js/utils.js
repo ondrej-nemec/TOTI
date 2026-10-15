@@ -59,6 +59,13 @@ var totiUtils = {
 		}
 		console.warn('Unknown callback', callback);
 	},
+	optionalConf: function(configuration, name, func, result) {
+		if (configuration.hasOwnProperty(name)) {
+			result[name] = configuration[name];
+		} else {
+			result[name] = func;
+		}
+	}
 };
 /* for jest unit test */
 if (typeof module !== 'undefined') {

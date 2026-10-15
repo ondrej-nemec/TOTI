@@ -4,7 +4,7 @@ const {
   getMethod,
   parseBodyParams,
   parseHeaders
-}  = require('../src/load');
+}  = require('../../../main/js/load');
 
 var dataset = [
   {

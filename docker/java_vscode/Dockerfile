@@ -22,9 +22,13 @@ RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/
 ENV PATH="$HOME/.local/bin:$PATH"
 
 # NPM
-RUN apt update && apt install npm
+RUN apt-get update && apt-get install -y npm
 RUN npm install jest
 RUN npm install playwright
+# for chromium
+# RUN apt install libnspr4
+# RUN apt install libnss3
+# RUN apt install -y libatk1.0-0
 
 USER coder
 

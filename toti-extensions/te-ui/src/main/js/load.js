@@ -12,19 +12,19 @@ function _parseParams(params, fAdd) {
 	}
 }
 function _parseParam(name, param, fAdd) {
-		if (param === null) {
-				// TODO nothing? or empty string?
-		} else if (Array.isArray(param)) {
-			param.forEach((p)=>{
-				_parseParam(name + '[]', p, fAdd);
-			});
-		} else if (typeof param === 'object') {
-			for (const[n, p] of Object.entries(param)) {
-				_parseParam(name + '[' + n + ']', p, fAdd);
-			}
-		} else {
-			fAdd(name, param);
+	if (param === null) {
+		// TODO nothing? or empty string?
+	} else if (Array.isArray(param)) {
+		param.forEach((p)=>{
+			_parseParam(name + '[]', p, fAdd);
+		});
+	} else if (typeof param === 'object') {
+		for (const[n, p] of Object.entries(param)) {
+			_parseParam(name + '[' + n + ']', p, fAdd);
 		}
+	} else {
+		fAdd(name, param);
+	}
 }
 
 
@@ -132,7 +132,7 @@ function load(configurations) {
 			parsePathParams(configuration.url, configuration),
 			configuration,
 			'query'
-			);
+		);
 		var body = null;
 		if (method.toLowerCase() === 'get' || method.toLowerCase() === 'head') {
 			url = parseQueryParams(url, configuration, 'body');

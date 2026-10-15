@@ -959,7 +959,7 @@ var _requiredTest = (type, validate, defValue)=>{
 	});
 });
 
-require('../spec.js')({
+require('/home/coder/project/playwright.spec.js')({
 	name: 'Inputs: Base Inputs',
 	create: (conf)=>{
 		return Toti.createInput(conf);

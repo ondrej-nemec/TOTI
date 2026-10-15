@@ -10,7 +10,7 @@
         "editor.pasteAs.enabled": false,
         "editor.copyWithSyntaxHighlighting": false,
         "workbench.startupEditor": "none",
-        "workbench.colorTheme": "Default Dark Modern",
+        "workbench.colorTheme": "Dark Modern",
         "remote.autoForwardPortsSource": "hybrid",
         "diffEditor.ignoreTrimWhitespace": false,
         "editor.renderWhitespace": "all",

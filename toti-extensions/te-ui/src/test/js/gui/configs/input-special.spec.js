@@ -2718,7 +2718,7 @@ specialInputTests.push({
 	]
 });
 
-require('../spec.js')({
+require('/home/coder/project/playwright.spec.js')({
 	name: 'Inputs: Special inputs',
 	create: (conf)=>{
 		return Toti.createInput(conf);

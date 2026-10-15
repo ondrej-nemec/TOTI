@@ -2529,7 +2529,7 @@ var index = 0;
 	prepare(optionsInputRadiolist, 'radiolist');
 });
 
-require('../spec.js')({
+require('/home/coder/project/playwright.spec.js')({
 	name: 'Inputs: OptionInputs',
 	create: (conf)=>{
 		return Toti.createInput(conf);

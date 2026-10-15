@@ -425,7 +425,8 @@ animationOrigin.inputLoading = (parentContainer)=>{
 	return {
 		start: ()=>{},
 		remove: ()=>{},
-		failure: ()=>{}
+		failure: ()=>{},
+		stop: ()=>{}
 	};
 };
 Toti.animations = animationOrigin;

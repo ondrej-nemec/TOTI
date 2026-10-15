@@ -502,7 +502,7 @@ var numberInputs = [];
 	});
 });
 
-require('../spec.js')({
+require('/home/coder/project/playwright.spec.js')({
 	name: 'Inputs: Number inputs',
 	create: (conf)=>{
 		return Toti.createInput(conf);
