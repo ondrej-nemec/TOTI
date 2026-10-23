@@ -45,6 +45,7 @@
 	h3 { margin: 0 0 10px 0; font-weight: normal; color: var(--secondary-color); }
 	h4 { margin: 0 0 10px 0; font-weight: normal; color: var(--secondary-color); }
 	h5 { margin: 0 0 10px 0; font-weight: normal; color: var(--secondary-color); }
+	.dropdownSelect { padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; cursor: pointer; color: var(--secondary-color); background: var(--body-bg); }
 
 	#toggle-theme { background: transparent; color: var(--body-color); border: 1px solid var(--border); padding: 6px 10px; border-radius: 6px; cursor: pointer; }
 	[data-theme="dark"] #theme-dark { display: none; }
@@ -126,6 +127,13 @@
 	        </label>
 	    </div>
 	 <!-- end -->
+	 	<div>
+			<select class="dropdownSelect">
+			  <option value="cz">Česky</option>
+			  <option value="en">English</option>
+			  <option value="de">Deutsch</option>
+			</select>
+	 	</div>
 
 	    <div class="actions">
 	        <button id="toggle-theme" onclick="toggleTheme()">

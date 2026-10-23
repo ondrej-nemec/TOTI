@@ -24,6 +24,7 @@
 	h3 { margin: 0 0 10px 0; font-weight: normal; color: var(--secondary-color); }
 	h4 { margin: 0 0 10px 0; font-weight: normal; color: var(--secondary-color); }
 	h5 { margin: 0 0 10px 0; font-weight: normal; color: var(--secondary-color); }
+	.dropdownSelect { padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; cursor: pointer; color: var(--secondary-color); background: var(--body-bg); }
 	a { color: var(--primary-color) }
 
 	.toggle-button { background: transparent; color: var(--body-color); border: 1px solid var(--border); padding: 6px 10px; border-radius: 6px; cursor: pointer; }
@@ -220,12 +221,19 @@
 		<div class="brand">TOTI - Really cool framework</div>
 
 		<div class="actions">
-			<button class="toggle-button" onclick="toggleTheme()">
-				<span id="theme-light">☀️</span>
-				<span id="theme-dark">🌙</span>
-			</button>
-			<button id="menuButton" class="toggle-button">☰</button>
-			<button id="tocButton" class="toggle-button">☷</button>
+		 	<div>
+				<select class="dropdownSelect" id="versionSelect">
+				  <option value="v1.x">v1.0</option>
+				</select>
+		 	</div>
+			<div>
+				<button class="toggle-button" onclick="toggleTheme()">
+					<span id="theme-light">☀️</span>
+					<span id="theme-dark">🌙</span>
+				</button>
+				<button id="menuButton" class="toggle-button">☰</button>
+				<button id="tocButton" class="toggle-button">☷</button>
+			</div>
 		</div>
 	</div>
 
@@ -326,8 +334,7 @@
 			});
 		});
 	}
-	// TODO change language
-	function addMenuItem(data, url, parent, item, level) {
+	function addMenuItem(data, url, parent, item, level, selectedVersion) {
 		var container = document.createElement('li');
 		container.setAttribute('level', level);
 		parent.appendChild(container);
@@ -345,6 +352,7 @@
 			fetch(url + item.link).then(res=>{
 				return res.text();
 			}).then(body=>{
+				body = body.replace("--version--", selectedVersion);
 				data.add(item.link, body);
 				if (item.link === selectedPage) {
 					showPage(data, data.get(item.link));
@@ -356,12 +364,17 @@
 
 			container.appendChild(listElement);
 			item.links.forEach(sub=>{
-				addMenuItem(data, url, listElement, sub, level + 1);
+				addMenuItem(data, url, listElement, sub, level + 1, selectedVersion);
 			});
 		}
 	}
+	var versionSelect = document.getElementById('versionSelect');
+	versionSelect.addEventListener('change', ()=>{
+		loadData();
+	});
 	async function loadData() {
-		var url = (location.origin + location.pathname).replace('index.html', '') + 'en/';
+		const selectedVersion = versionSelect.options[versionSelect.selectedIndex].innerText;
+		var url = (location.origin + location.pathname).replace('index.html', '') + 'en/'; // TODO add to path: versionSelect.value
 		try {
 			const response = await fetch(url + "config.json");
 			const result = await response.json();
@@ -384,7 +397,7 @@
 			};
 			var menuElement = document.querySelector('ul.menu');
 			result.forEach(item=>{
-				addMenuItem(pages, url, menuElement, item, 0);
+				addMenuItem(pages, url, menuElement, item, 0, selectedVersion);
 			});
 		} catch (error) {
 			console.error(error.message);
