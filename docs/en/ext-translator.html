@@ -17,7 +17,7 @@
 	}
 
 	dependencies {
-		implementation group: 'toti.TOTI.extension', name: 'te-translator', version: '--version--'
+		implementation group: ''com.github.toti.extension', name: 'te-translator', version: '--version--'
 		...
 	}
 	</code></pre>
@@ -54,3 +54,26 @@ applicationFactory.addExtension(new TranslatorExtension(env, logger));
 <pre><code>
 	translateExtension.addTranslationPath(path);
 </code></pre>
+
+<h2>Use Translator</h2>
+
+<h3>In request</h3>
+
+<pre><code>
+identity.getScope(Translator.class);
+</code></pre>
+
+<div>
+	This returns instance of <code>toti.core.extensions.Translator</code> where language selected by user is already applied.
+</div>
+
+<h3>Outer request</h3>
+
+<pre><code>
+extension.getTranslator();
+</code></pre>
+
+<div>
+	This returns instace of <code>toti.lib.translator.Translator</code> where any settings (language etc) must be applied manually.
+</div>
+
