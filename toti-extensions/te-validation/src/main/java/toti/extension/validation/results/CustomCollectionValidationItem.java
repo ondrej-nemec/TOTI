@@ -2,7 +2,9 @@ package toti.extension.validation.results;
 
 import java.util.Collection;
 
-public interface CustomCollectionValidationItem {
+import toti.lib.common.structures.dictionary.ScalarStructure;
+
+public interface CustomCollectionValidationItem extends ScalarStructure<String> {
 
 	void addError(String error);
 
