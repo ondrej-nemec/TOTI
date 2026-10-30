@@ -132,22 +132,22 @@ public interface Scalar {
 	 * @throws ClassCastException if all convert and parse mechanism fails
 	 */
 	default Number getNumber() {
-        return parseValue(
-            Number.class,
-            a->{
-                if (a.contains(".")) {
-                     return parsePrimitive(a, ()->Double.valueOf(a));
-                }
-                return parsePrimitive(a, ()->Long.valueOf(a));
-            },
-            v->{
-                if (v instanceof Boolean) {
-                	return Boolean.class.cast(v) ? 1 : 0;
-        		}
-                return Number.class.cast(v);
-            }
-        );
-    }
+		return parseValue(
+			Number.class,
+			a->{
+				if (a.contains(".")) {
+					 return parsePrimitive(a, ()->Double.valueOf(a));
+				}
+				return parsePrimitive(a, ()->Long.valueOf(a));
+			},
+			v->{
+				if (v instanceof Boolean) {
+					return Boolean.class.cast(v) ? 1 : 0;
+				}
+				return Number.class.cast(v);
+			}
+		);
+	}
 
 	/**
 	 * Get value as {@link Character}.
@@ -178,9 +178,9 @@ public interface Scalar {
 	 * 
 	 * @return {@link Enum} or null if value is null or value is empty string or value is 'null'(CI string)
 	 * @throws ClassCastException if all convert and parse mechanism fails
-     * @throws IllegalArgumentException if the specified enum type has
-     *         no constant with the specified name, or the specified
-     *         class object does not represent an enum type
+	 * @throws IllegalArgumentException if the specified enum type has
+	 *		 no constant with the specified name, or the specified
+	 *		 class object does not represent an enum type
 	 */
 	default <E extends Enum<E>> E getEnum(Class<E> enumm) {
 		return parseValue(enumm,a->parsePrimitive(a, ()->E.valueOf(enumm, a)), null);
