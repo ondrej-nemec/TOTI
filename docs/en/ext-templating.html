@@ -17,7 +17,7 @@
 	}
 
 	dependencies {
-		implementation group: 'toti.TOTI.extension', name: 'te-templating', version: '--version--'
+		implementation group: 'com.github.toti.extension', name: 'te-templating', version: '--version--'
 		...
 	}
 	</code></pre>
@@ -56,6 +56,16 @@ applicationFactory.addExtension(new TemplateExtension(env, logger));
 
 <pre><code>
 	templateExtension.registerModule(moduleName, templatesPath);
+</code></pre>
+
+<h3>Create template manually</h3>
+
+<div>
+	To create template manually outside request process, there is <code>getTemplate</code> method.
+</div>
+
+<pre><code>
+extension.getTemplate((moduleName, filename, params, link));
 </code></pre>
 
 <h2>Tags and parameters</h2>

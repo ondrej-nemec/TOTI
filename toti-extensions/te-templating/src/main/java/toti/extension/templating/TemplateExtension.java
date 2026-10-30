@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import toti.core.answers.Headers;
 import toti.core.answers.response.ResponseContainer;
 import toti.core.answers.response.ResponseException;
+import toti.core.answers.router.Link;
 import toti.core.answers.session.Identity;
 import toti.core.application.register.Register;
 import toti.core.extensions.Extension;
@@ -105,6 +106,14 @@ public class TemplateExtension implements toti.core.extensions.TemplateFactory, 
 		} catch (Exception e) {
 			throw new ResponseException(e);
 		}
+	}
+
+	public String getTemplate(String module, String filename, Map<String, Object> params, Link link) throws Exception {
+		Template template = templateFactory.getTemplate(module, filename);
+		params.put(VARIABLE_NAME_LINK, link);
+		params.put(VARIABLE_NAME_MAPPED_ACTION, null);
+		params.put(VARIABLE_NAME_AUTHORIZE, authorize);
+		return template.create(params);
 	}
 
 	@Override
