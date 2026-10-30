@@ -25,7 +25,7 @@ public class TemplateResponse implements Response {
 	@Override
 	public FinalResponse prepare(ResponseContainer container) {
 		// TODO mit to primo v Headers objektu?
-		String nonce = RandomStringUtils.randomAlphanumeric(50);
+		String nonce = RandomStringUtils.insecure().nextAlphanumeric(50);
 		params.put("nonce", nonce);
 		params.put("totiIdentity", container.identity());
 		
