@@ -133,14 +133,19 @@ public interface Scalar {
 	 */
 	default Number getNumber() {
         return parseValue(
-             Number.class,
-             a->{
-                 if (a.contains(".")) {
-                      return parsePrimitive(a, ()->Double.valueOf(a));
-                 }
-                 return parsePrimitive(a, ()->Long.valueOf(a));
-             },
-             v->Number.class.cast(v)
+            Number.class,
+            a->{
+                if (a.contains(".")) {
+                     return parsePrimitive(a, ()->Double.valueOf(a));
+                }
+                return parsePrimitive(a, ()->Long.valueOf(a));
+            },
+            v->{
+                if (v instanceof Boolean) {
+                	return Boolean.class.cast(v) ? 1 : 0;
+        		}
+                return Number.class.cast(v);
+            }
         );
     }
 
