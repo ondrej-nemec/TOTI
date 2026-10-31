@@ -468,6 +468,286 @@ public class PostgresSqlInstanceTest extends AbstractInstanceTest {
 		return "CALL procedure_void('some'::varchar, ?, 123, ?, false)";
 	}
 
+	/*************************************/
+
+	@Override
+	protected String prepQ_simple() {
+		return "SELECT * FROM escape_table";
+	}
+
+	@Override
+	protected String prepQ_sortAsc() {
+		return "SELECT * FROM escape_table ORDER BY col_int ASC";
+	}
+
+	@Override
+	protected String prepQ_sortDesc() {
+		return "SELECT * FROM escape_table ORDER BY col_int DESC";
+	}
+
+	@Override
+	protected String prepQ_sortMore() {
+		return "SELECT * FROM escape_table ORDER BY col_int ASC, col_string DESC, col_float ASC";
+	}
+
+	@Override
+	protected String prepQ_filterLikeFF() {
+		return "SELECT * FROM escape_table WHERE (CONCAT('', col_string) LIKE '%aaa%')";
+	}
+
+	@Override
+	protected String prepQ_filterLikeTF() {
+		return "SELECT * FROM escape_table WHERE (LOWER(CONCAT('', col_string)) LIKE LOWER('%aaa%'))";
+	}
+
+	@Override
+	protected String prepQ_filterLikeFT() {
+		return "SELECT * FROM escape_table WHERE (CONCAT('', col_string) LIKE '%aaa%')";
+	}
+
+	@Override
+	protected String prepQ_filterLikeTT() {
+		return "SELECT * FROM escape_table WHERE (LOWER(CONCAT('', col_string)) LIKE LOWER('%aaa%'))";
+	}
+
+	@Override
+	protected String prepQ_filterEqualsNull() {
+		return "SELECT * FROM escape_table WHERE (col_string IS NULL)";
+	}
+
+	@Override
+	protected String prepQ_filterEquals() {
+		return "SELECT * FROM escape_table WHERE (col_int = 12.3)";
+	}
+
+	@Override
+	protected String prepQ_filterEqualsFF() {
+		return "SELECT * FROM escape_table WHERE (col_string = 'aaa')";
+	}
+
+	@Override
+	protected String prepQ_filterEqualsFT() {
+		return "SELECT * FROM escape_table WHERE (col_string = 'aaa')";
+	}
+
+	@Override
+	protected String prepQ_filterEqualsTF() {
+		return "SELECT * FROM escape_table WHERE (LOWER(col_string) = LOWER('aaa'))";
+	}
+
+	@Override
+	protected String prepQ_filterEqualsTT() {
+		return "SELECT * FROM escape_table WHERE (LOWER(col_string) = LOWER('aaa'))";
+	}
+
+	@Override
+	protected String prepQ_filterNotEqualsNull() {
+		return "SELECT * FROM escape_table WHERE (col_string IS NOT NULL)";
+	}
+
+	@Override
+	protected String prepQ_filterNotEquals() {
+		return "SELECT * FROM escape_table WHERE (col_int != 12.3)";
+	}
+
+	@Override
+	protected String prepQ_filterNotEqualsFF() {
+		return "SELECT * FROM escape_table WHERE (col_string != 'aaa')";
+	}
+
+	@Override
+	protected String prepQ_filterNotEqualsFT() {
+		return "SELECT * FROM escape_table WHERE (col_string != 'aaa')";
+	}
+
+	@Override
+	protected String prepQ_filterNotEqualsTF() {
+		return "SELECT * FROM escape_table WHERE (LOWER(col_string) != LOWER('aaa'))";
+	}
+
+	@Override
+	protected String prepQ_filterNotEqualsTT() {
+		return "SELECT * FROM escape_table WHERE (LOWER(col_string) != LOWER('aaa'))";
+	}
+
+	@Override
+	protected String prepQ_filterStartsWithFF() {
+		return "SELECT * FROM escape_table WHERE (CONCAT('', col_string) LIKE 'aaa%')";
+	}
+
+	@Override
+	protected String prepQ_filterStartsWithTF() {
+		return "SELECT * FROM escape_table WHERE (LOWER(CONCAT('', col_string)) LIKE LOWER('aaa%'))";
+	}
+
+	@Override
+	protected String prepQ_filterStartsWithFT() {
+		return "SELECT * FROM escape_table WHERE (CONCAT('', col_string) LIKE 'aaa%')";
+	}
+
+	@Override
+	protected String prepQ_filterStartsWithTT() {
+		return "SELECT * FROM escape_table WHERE (LOWER(CONCAT('', col_string)) LIKE LOWER('aaa%'))";
+	}
+
+	@Override
+	protected String prepQ_filterEndsWithFF() {
+		return "SELECT * FROM escape_table WHERE (CONCAT('', col_string) LIKE '%aaa')";
+	}
+
+	@Override
+	protected String prepQ_filterEndsWithTF() {
+		return "SELECT * FROM escape_table WHERE (LOWER(CONCAT('', col_string)) LIKE LOWER('%aaa'))";
+	}
+
+	@Override
+	protected String prepQ_filterEndsWithFT() {
+		return "SELECT * FROM escape_table WHERE (CONCAT('', col_string) LIKE '%aaa')";
+	}
+
+	@Override
+	protected String prepQ_filterEndsWithTT() {
+		return "SELECT * FROM escape_table WHERE (LOWER(CONCAT('', col_string)) LIKE LOWER('%aaa'))";
+	}
+
+	@Override
+	protected String prepQ_filterNotLikeFF() {
+		return "SELECT * FROM escape_table";
+	}
+
+	@Override
+	protected String prepQ_filterNotLikeTF() {
+		return "SELECT * FROM escape_table";
+	}
+
+	@Override
+	protected String prepQ_filterNotLikeFT() {
+		return "SELECT * FROM escape_table";
+	}
+
+	@Override
+	protected String prepQ_filterNotLikeTT() {
+		return "SELECT * FROM escape_table WHERE (col_datetime > '2026-10-24T23:35')";
+	}
+
+	@Override
+	protected String prepQ_filterMoreI() {
+		return "SELECT * FROM escape_table WHERE (col_int > 12.3)";
+	}
+
+	@Override
+	protected String prepQ_filterMoreT() {
+		return "SELECT * FROM escape_table WHERE (col_datetime > '2026-10-24T23:35')";
+	}
+
+	@Override
+	protected String prepQ_filterMoreOrEqualsI() {
+		return "SELECT * FROM escape_table WHERE (col_int >= 12.3)";
+	}
+
+	@Override
+	protected String prepQ_filterMoreOrEqualsT() {
+		return "SELECT * FROM escape_table WHERE (col_datetime >= '2026-10-24T23:35')";
+	}
+
+	@Override
+	protected String prepQ_filterLessI() {
+		return "SELECT * FROM escape_table WHERE (col_int < 12.3)";
+	}
+
+	@Override
+	protected String prepQ_filterLessT() {
+		return "SELECT * FROM escape_table WHERE (col_datetime < '2026-10-24T23:35')";
+	}
+
+	@Override
+	protected String prepQ_filterLessOrEqualsI() {
+		return "SELECT * FROM escape_table WHERE (col_int <= 12.3)";
+	}
+
+	@Override
+	protected String prepQ_filterLessOrEqualsT() {
+		return "SELECT * FROM escape_table WHERE (col_datetime <= '2026-10-24T23:35')";
+	}
+
+	@Override
+	protected String prepQ_filterIn() {
+		return "SELECT * FROM escape_table WHERE (CONCAT('', col_int) IN (123))";
+	}
+
+	@Override
+	protected String prepQ_filterInFF() {
+		return "SELECT * FROM escape_table WHERE (CONCAT('', col_string) IN ('aaa'))";
+	}
+
+	@Override
+	protected String prepQ_filterInTF() {
+		return "SELECT * FROM escape_table WHERE (LOWER(CONCAT('', col_string)) IN (LOWER('aaa')))";
+	}
+
+	@Override
+	protected String prepQ_filterInFT() {
+		return "SELECT * FROM escape_table WHERE (CONCAT('', col_string) IN ('aaa'))";
+	}
+
+	@Override
+	protected String prepQ_filterInTT() {
+		return "SELECT * FROM escape_table WHERE (LOWER(CONCAT('', col_string)) IN (LOWER('aaa')))";
+	}
+
+	@Override
+	protected String prepQ_filterInNoValue() {
+		return "SELECT * FROM escape_table WHERE (1=2)";
+	}
+
+	@Override
+	protected String prepQ_filterNotIn() {
+		return "SELECT * FROM escape_table WHERE (CONCAT('', col_int) NOT IN (11))";
+	}
+
+	@Override
+	protected String prepQ_filterNotInFF() {
+		return "SELECT * FROM escape_table WHERE (CONCAT('', col_string) NOT IN ('aaa'))";
+	}
+
+	@Override
+	protected String prepQ_filterNotInTF() {
+		return "SELECT * FROM escape_table WHERE (LOWER(CONCAT('', col_string)) NOT IN (LOWER('aaa')))";
+	}
+
+	@Override
+	protected String prepQ_filterNotInFT() {
+		return "SELECT * FROM escape_table WHERE (CONCAT('', col_string) NOT IN ('aaa'))";
+	}
+
+	@Override
+	protected String prepQ_filterNotInTT() {
+		return "SELECT * FROM escape_table WHERE (LOWER(CONCAT('', col_string)) NOT IN (LOWER('aaa')))";
+	}
+
+	@Override
+	protected String prepQ_filterNotInNoValue() {
+		return "SELECT * FROM escape_table WHERE (LOWER(CONCAT('', col_string)) NOT IN (LOWER('aaa')))";
+	}
+
+	@Override
+	protected String prepQ_limitOffsetL() {
+		return "SELECT * FROM escape_table LIMIT 10";
+	}
+
+	@Override
+	protected String prepQ_limitOffsetO() {
+		return "SELECT * FROM escape_table";
+	}
+
+	@Override
+	protected String prepQ_limitOffsetLO() {
+		return "SELECT * FROM escape_table LIMIT 10 OFFSET 20";
+	}
+
+	/*************************************/
+
+
 	@Override
 	protected Connection getConnection(Connections connections) throws SQLException {
 		return connections.postgres();

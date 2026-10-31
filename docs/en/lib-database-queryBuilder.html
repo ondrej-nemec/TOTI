@@ -612,6 +612,51 @@ List&lt;T&gt; rows = builder.getAllIn("MainTable", "Col_2", Arrays.asList("some-
 });
 </code></pre>
 
+<h5>Apply select</h5>
+
+<p>
+	<code>applySelect</code> applies given filters, sorting and limits to given select.
+</p>
+
+<pre><code>
+QueryBuilder builder = ....;
+SelectBuilder select = ...;
+builder.applySelect(
+	select,
+	Arrays.asList(
+		Filter.EQUALS(colName, value)
+	),
+	Arrays.asList(
+		new Sort(colName, false)
+	),
+	10, // can be null - not apply offset
+	20 // can be null - not apply limit
+);
+</code></pre>
+
+<h5>Check if item exists</h5>
+
+<p>
+	<code>exists(String, String, Object)</code> method check if exists row with given id.
+</p>
+
+<pre><code class="language-java">
+QueryBuilder builder = ....;
+boolean exists = builder.exists("MainTable", "ID", 42);
+</code></pre>
+
+<h5>Check if exists item with same parameters</h5>
+
+<p>
+	<code>exists(String, String, Object, Map)</code> method check if exists another row with given params.
+</p>
+
+<pre><code class="language-java">
+QueryBuilder builder = ....;
+boolean exists = builder.exists("MainTable", "ID", 42, MapInit.create().append("name", "Item 1").toMap());
+</code></pre>
+
+
 <h5>Delete item</h5>
 
 <p>

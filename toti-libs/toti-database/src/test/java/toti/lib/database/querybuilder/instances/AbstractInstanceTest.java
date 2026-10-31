@@ -3,9 +3,13 @@ package toti.lib.database.querybuilder.instances;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -19,6 +23,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import toti.lib.common.structures.ThrowingConsumer;
+import toti.lib.common.tests.TestCase;
 import toti.lib.database.base.Connections;
 import toti.lib.database.querybuilder.Builder;
 import toti.lib.database.querybuilder.DbInstance;
@@ -37,6 +42,8 @@ import toti.lib.database.querybuilder.enums.Join;
 import toti.lib.database.querybuilder.enums.OnAction;
 import toti.lib.database.querybuilder.enums.Where;
 import toti.lib.database.querybuilder.structures.ProcedureResult;
+import toti.lib.database.querybuilder.structures.preparedQueries.Filter;
+import toti.lib.database.querybuilder.structures.preparedQueries.Sort;
 import toti.lib.files.text.Text;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -147,6 +154,515 @@ public abstract class AbstractInstanceTest {
 	protected abstract String getFunctions_lower();
 
 	protected abstract String getFunctions_upper();
+
+	@ParameterizedTest
+	@MethodSource("testPreparedQueries_applySelect")
+	public void testPreparedQueries_applySelect(
+		String message, List<Filter> filters, List<Sort> sorting, Integer limit, Integer offset,
+		Function<AbstractInstanceTest, String> createSql
+	) throws Exception {
+		try (Connection connection = getConnection(connections)) {
+			QueryBuilder builder = new QueryBuilder(instance, connection);
+			
+			SelectBuilder select = builder.select("*").from("escape_table");
+			builder.applySelect(select, filters, sorting, offset, limit);
+
+			//assertSql(expectedGet, select.getSql());
+			assertSql(createSql.apply(this), select.createSql());
+			select.fetchAll();
+		}
+	}
+	
+	public Object[] testPreparedQueries_applySelect() {
+		LocalDateTime now = LocalDateTime.of(2026, 10, 24, 23, 35);
+		return new Object[] {
+			new Object[] {
+				"Everything empty",
+				Arrays.asList(),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_simple())
+			},
+			/******************************************/
+			new Object[] {
+				"Sorting: single one ASC",
+				Arrays.asList(),
+				Arrays.asList(new Sort("col_int", false)),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_sortAsc())
+			},
+			new Object[] {
+				"Sorting: single one DESC",
+				Arrays.asList(),
+				Arrays.asList(new Sort("col_int", true)),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_sortDesc())
+			},
+			new Object[] {
+				"Sorting: more sorts",
+				Arrays.asList(),
+				Arrays.asList(
+					new Sort("col_int", false),
+					new Sort("col_string", true),
+					new Sort("col_float", false)
+				),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_sortMore())
+			},
+			/******************************************/
+			new Object[] {
+				"Filters: LIKE | CI false | ID false",
+				Arrays.asList(Filter.LIKE("col_string", "aaa", false, false)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterLikeFF())
+			},
+			new Object[] {
+				"Filters: LIKE | CI true | ID false",
+				Arrays.asList(Filter.LIKE("col_string", "aaa", true, false)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterLikeTF())
+			},
+			new Object[] {
+				"Filters: LIKE | CI false | ID true",
+				Arrays.asList(Filter.LIKE("col_string", "aaa", false, true)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterLikeFT())
+			},
+			new Object[] {
+				"Filters: LIKE | CI true | ID true",
+				Arrays.asList(Filter.LIKE("col_string", "aaa", true, true)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterLikeTT())
+			},
+
+			new Object[] {
+				"Filters: EQUALS | no more set",
+				Arrays.asList(Filter.EQUALS("col_int", 12.3)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterEquals())
+			},
+			new Object[] {
+				"Filters: EQUALS | CI false | ID false",
+				Arrays.asList(Filter.EQUALS("col_string", "aaa", false, false)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterEqualsFF())
+			},
+			new Object[] {
+				"Filters: EQUALS | CI true | ID false",
+				Arrays.asList(Filter.EQUALS("col_string", "aaa", true, false)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterEqualsTF())
+			},
+			new Object[] {
+				"Filters: EQUALS | CI false | ID true",
+				Arrays.asList(Filter.EQUALS("col_string", "aaa", false, true)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterEqualsFT())
+			},
+			new Object[] {
+				"Filters: EQUALS | CI true | ID true",
+				Arrays.asList(Filter.EQUALS("col_string", "aaa", true, true)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterEqualsTT())
+			},
+			new Object[] {
+				"Filters: EQUALS | null",
+				Arrays.asList(Filter.EQUALS("col_string", null, true, true)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterEqualsNull())
+			},
+
+			new Object[] {
+				"Filters: NOT_EQUALS | no more set",
+				Arrays.asList(Filter.NOT_EQUALS("col_int", 12.3)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterNotEquals())
+			},
+			new Object[] {
+				"Filters: NOT_EQUALS | CI false | ID false",
+				Arrays.asList(Filter.NOT_EQUALS("col_string", "aaa", false, false)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterNotEqualsFF())
+			},
+			new Object[] {
+				"Filters: NOT_EQUALS | CI true | ID false",
+				Arrays.asList(Filter.NOT_EQUALS("col_string", "aaa", true, false)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterNotEqualsTF())
+			},
+			new Object[] {
+				"Filters: NOT_EQUALS | CI false | ID true",
+				Arrays.asList(Filter.NOT_EQUALS("col_string", "aaa", false, true)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterNotEqualsFT())
+			},
+			new Object[] {
+				"Filters: NOT_EQUALS | CI true | ID true",
+				Arrays.asList(Filter.NOT_EQUALS("col_string", "aaa", true, true)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterNotEqualsTT())
+			},
+			new Object[] {
+				"Filters: NOT_EQUALS | null",
+				Arrays.asList(Filter.NOT_EQUALS("col_string", null, true, true)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterNotEqualsNull())
+			},
+
+			new Object[] {
+				"Filters: STARTS_WITH | CI false | ID false",
+				Arrays.asList(Filter.STARTS_WITH("col_string", "aaa", false, false)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterStartsWithFF())
+			},
+			new Object[] {
+				"Filters: STARTS_WITH | CI true | ID false",
+				Arrays.asList(Filter.STARTS_WITH("col_string", "aaa", true, false)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterStartsWithTF())
+			},
+			new Object[] {
+				"Filters: STARTS_WITH | CI false | ID true",
+				Arrays.asList(Filter.STARTS_WITH("col_string", "aaa", false, true)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterStartsWithFT())
+			},
+			new Object[] {
+				"Filters: STARTS_WITH | CI true | ID true",
+				Arrays.asList(Filter.STARTS_WITH("col_string", "aaa", true, true)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterStartsWithTT())
+			},
+
+			new Object[] {
+				"Filters: ENDS_WITH | CI false | ID false",
+				Arrays.asList(Filter.ENDS_WITH("col_string", "aaa", false, false)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterEndsWithFF())
+			},
+			new Object[] {
+				"Filters: ENDS_WITH | CI true | ID false",
+				Arrays.asList(Filter.ENDS_WITH("col_string", "aaa", true, false)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterEndsWithTF())
+			},
+			new Object[] {
+				"Filters: ENDS_WITH | CI false | ID true",
+				Arrays.asList(Filter.ENDS_WITH("col_string", "aaa", false, true)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterEndsWithFT())
+			},
+			new Object[] {
+				"Filters: ENDS_WITH | CI true | ID true",
+				Arrays.asList(Filter.ENDS_WITH("col_string", "aaa", true, true)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterEndsWithTT())
+			},
+
+			new Object[] {
+				"Filters: MORE_OR_EQUALS | number",
+				Arrays.asList(Filter.MORE_OR_EQUALS("col_int", 12.3)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterMoreOrEqualsI())
+			},
+			new Object[] {
+				"Filters: MORE_OR_EQUALS | DateTime",
+				Arrays.asList(Filter.MORE_OR_EQUALS("col_datetime", now)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterMoreOrEqualsT())
+			},
+
+			new Object[] {
+				"Filters: MORE | number",
+				Arrays.asList(Filter.MORE("col_int", 12.3)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterMoreI())
+			},
+			new Object[] {
+				"Filters: MORE | DateTime",
+				Arrays.asList(Filter.MORE("col_datetime", now)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterMoreT())
+			},
+
+			new Object[] {
+				"Filters: LESS_OR_EQUALS | number",
+				Arrays.asList(Filter.LESS_OR_EQUALS("col_int", 12.3)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterLessOrEqualsI())
+			},
+			new Object[] {
+				"Filters: LESS_OR_EQUALS | DateTime",
+				Arrays.asList(Filter.LESS_OR_EQUALS("col_datetime", now)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterLessOrEqualsT())
+			},
+
+			new Object[] {
+				"Filters: LESS | number",
+				Arrays.asList(Filter.LESS("col_int", 12.3)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterLessI())
+			},
+			new Object[] {
+				"Filters: LESS | DateTime",
+				Arrays.asList(Filter.LESS("col_datetime", now)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterLessT())
+			},
+
+			new Object[] {
+				"Filters: IN | no more set",
+				Arrays.asList(Filter.IN("col_int", Arrays.asList(123))),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterIn())
+			},
+			new Object[] {
+				"Filters: IN | CI false | ID false",
+				Arrays.asList(Filter.IN("col_string", Arrays.asList("aaa"), false, false)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterInFF())
+			},
+			new Object[] {
+				"Filters: IN | CI true | ID false",
+				Arrays.asList(Filter.IN("col_string", Arrays.asList("aaa"), true, false)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterInTF())
+			},
+			new Object[] {
+				"Filters: IN | CI false | ID true",
+				Arrays.asList(Filter.IN("col_string", Arrays.asList("aaa"), false, true)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterInFT())
+			},
+			new Object[] {
+				"Filters: IN | CI true | ID true",
+				Arrays.asList(Filter.IN("col_string", Arrays.asList("aaa"), true, true)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterInTT())
+			},
+			new Object[] {
+				"Filters: IN | no value",
+				Arrays.asList(Filter.IN("col_string", Arrays.asList(), true, true)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterInNoValue())
+			},
+
+			new Object[] {
+				"Filters: NOT_IN | no more set",
+				Arrays.asList(Filter.NOT_IN("col_int", Arrays.asList(11))),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterNotIn())
+			},
+			new Object[] {
+				"Filters: NOT_IN | CI false | ID false",
+				Arrays.asList(Filter.NOT_IN("col_string", Arrays.asList("aaa"), false, false)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterNotInFF())
+			},
+			new Object[] {
+				"Filters: NOT_IN | CI true | ID false",
+				Arrays.asList(Filter.NOT_IN("col_string", Arrays.asList("aaa"), true, false)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterNotInTF())
+			},
+			new Object[] {
+				"Filters: NOT_IN | CI false | ID true",
+				Arrays.asList(Filter.NOT_IN("col_string", Arrays.asList("aaa"), false, true)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterNotInFT())
+			},
+			new Object[] {
+				"Filters: NOT_IN | CI true | ID true",
+				Arrays.asList(Filter.NOT_IN("col_string", Arrays.asList("aaa"), true, true)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterNotInTT())
+			},
+			new Object[] {
+				"Filters: NOT_IN | no value",
+				Arrays.asList(Filter.NOT_IN("col_string", Arrays.asList("aaa"), true, true)),
+				Arrays.asList(),
+				null,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_filterNotInNoValue())
+			},
+
+			/******************************************/
+			new Object[] {
+				"Limit and Offset: limit only",
+				Arrays.asList(),
+				Arrays.asList(),
+				10,
+				null,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_limitOffsetL())
+			},
+			new Object[] {
+				"Limit and Offset: offset only",
+				Arrays.asList(),
+				Arrays.asList(),
+				null,
+				20,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_limitOffsetO())
+			},
+			new Object[] {
+				"Limit and Offset: both",
+				Arrays.asList(),
+				Arrays.asList(),
+				10,
+				20,
+				TestCase.function(AbstractInstanceTest.class, String.class, t->t.prepQ_limitOffsetLO())
+			}
+		};
+	}
+
+	protected abstract String prepQ_simple();
+	protected abstract String prepQ_sortAsc();
+	protected abstract String prepQ_sortDesc();
+	protected abstract String prepQ_sortMore();
+
+	protected abstract String prepQ_filterLikeFF();
+	protected abstract String prepQ_filterLikeTF();
+	protected abstract String prepQ_filterLikeFT();
+	protected abstract String prepQ_filterLikeTT();
+	protected abstract String prepQ_filterEquals();
+	protected abstract String prepQ_filterEqualsNull();
+	protected abstract String prepQ_filterEqualsFF();
+	protected abstract String prepQ_filterEqualsFT();
+	protected abstract String prepQ_filterEqualsTF();
+	protected abstract String prepQ_filterNotEquals();
+	protected abstract String prepQ_filterNotEqualsNull();
+	protected abstract String prepQ_filterNotEqualsFF();
+	protected abstract String prepQ_filterNotEqualsFT();
+	protected abstract String prepQ_filterNotEqualsTF();
+	protected abstract String prepQ_filterNotEqualsTT();
+
+	protected abstract String prepQ_filterEqualsTT();
+	protected abstract String prepQ_filterStartsWithFF();
+	protected abstract String prepQ_filterStartsWithTF();
+	protected abstract String prepQ_filterStartsWithFT();
+	protected abstract String prepQ_filterStartsWithTT();
+	protected abstract String prepQ_filterEndsWithFF();
+	protected abstract String prepQ_filterEndsWithTF();
+	protected abstract String prepQ_filterEndsWithFT();
+	protected abstract String prepQ_filterEndsWithTT();
+	protected abstract String prepQ_filterNotLikeFF();
+	protected abstract String prepQ_filterNotLikeTF();
+	protected abstract String prepQ_filterNotLikeFT();
+	protected abstract String prepQ_filterNotLikeTT();
+	protected abstract String prepQ_filterMoreI();
+	protected abstract String prepQ_filterMoreT();
+	protected abstract String prepQ_filterMoreOrEqualsI();
+	protected abstract String prepQ_filterMoreOrEqualsT();
+	protected abstract String prepQ_filterLessI();
+	protected abstract String prepQ_filterLessT();
+	protected abstract String prepQ_filterLessOrEqualsI();
+	protected abstract String prepQ_filterLessOrEqualsT();
+	protected abstract String prepQ_filterIn();
+	protected abstract String prepQ_filterInFF();
+	protected abstract String prepQ_filterInTF();
+	protected abstract String prepQ_filterInFT();
+	protected abstract String prepQ_filterInTT();
+	protected abstract String prepQ_filterInNoValue();
+	protected abstract String prepQ_filterNotIn();
+	protected abstract String prepQ_filterNotInFF();
+	protected abstract String prepQ_filterNotInTF();
+	protected abstract String prepQ_filterNotInFT();
+	protected abstract String prepQ_filterNotInTT();
+	protected abstract String prepQ_filterNotInNoValue();
+
+	protected abstract String prepQ_limitOffsetL();
+	protected abstract String prepQ_limitOffsetO();
+	protected abstract String prepQ_limitOffsetLO();
 
 	/********* TABLE **************/
 	
