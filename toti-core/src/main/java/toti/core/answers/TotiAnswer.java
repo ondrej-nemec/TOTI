@@ -39,11 +39,19 @@ public class TotiAnswer {
 		) throws ServerException {
 		ObjectBuilder<String> moduleName = new ObjectBuilder<>();
 		String uri = request.getUri().substring(5);
-		return getResponse(uri, request, identity, responseHeaders, moduleName)
-		.prepare(new ResponseContainer(charset, responseHeaders, identity, null, MappedAction.totiAnswer(moduleName.get()), templateExtension));
+		try {
+			return getResponse(uri, request, identity, responseHeaders, moduleName)
+			.prepare(new ResponseContainer(charset, responseHeaders, identity, null, MappedAction.totiAnswer(moduleName.get()), templateExtension));
+		} catch (ServerException e){
+			throw e;
+		} catch (Throwable e) {
+			throw new ServerException(StatusCode.INTERNAL_SERVER_ERROR, null, e);
+		}
 	}
 	
-	protected Response getResponse(String url, Request request, Identity identity, Headers responseHeaders, ObjectBuilder<String> moduleName) {
+	protected Response getResponse(
+		String url, Request request, Identity identity, Headers responseHeaders, ObjectBuilder<String> moduleName
+	) throws Throwable {
 		boolean isDevelopReqeust = isDevelop.apply(identity.getIP());
 		switch (url.toLowerCase()) {
 			case "":

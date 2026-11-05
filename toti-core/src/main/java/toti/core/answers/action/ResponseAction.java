@@ -6,6 +6,6 @@ import toti.core.answers.session.Identity;
 
 public interface ResponseAction {
 
-	Response create(Request request, Identity identity);
+	Response create(Request request, Identity identity) throws Throwable;
 	
 }
