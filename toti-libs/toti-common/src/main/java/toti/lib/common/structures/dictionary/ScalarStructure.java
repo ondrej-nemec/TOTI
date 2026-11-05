@@ -27,6 +27,10 @@ public interface ScalarStructure<S> {
 		return ()->getValue(key);
 	}
 
+	default boolean contains(S key) {
+		return getValue(key) != null;
+	}
+
 	/**
 	 * See {@link DictionaryValue#getBoolean()}
 	 * 
