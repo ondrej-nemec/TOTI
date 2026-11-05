@@ -437,8 +437,8 @@
 		item.addError("some error"); // if error is added, parameters are not valid
 		List&lt;String&gt; names = item.getItemsNames()); // list of parameter names
 		Object value = item.getValue(name); // get parsed value by given name
-		item.setItem(name, newValue); // set new value to given parameter
-		item.removeItem(name); // remove given parameter
+		item.setValue(name, newValue); // set new value to given parameter
+		item.removeValue(name); // remove given parameter
 	})
 </code></pre>
 
