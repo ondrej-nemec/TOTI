@@ -296,8 +296,8 @@ public class ValidatorTest {
 					item.addError("Error map");
 					item.addError("Names " + item.getItemsNames());
 					item.addError("Parsed " + item.getValue("number"));
-					item.setItem("boolean", true);
-					item.removeItem("a");
+					item.setValue("boolean", true);
+					item.removeValue("a");
 				})
 			)
 		);

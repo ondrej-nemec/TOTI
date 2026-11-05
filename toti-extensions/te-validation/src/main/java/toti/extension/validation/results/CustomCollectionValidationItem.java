@@ -2,20 +2,18 @@ package toti.extension.validation.results;
 
 import java.util.Collection;
 
-import toti.lib.common.structures.dictionary.ScalarStructure;
+import toti.lib.common.structures.Dictionary;
 
-public interface CustomCollectionValidationItem extends ScalarStructure<String> {
+public interface CustomCollectionValidationItem extends Dictionary<String> {
 
 	void addError(String error);
 
 	Object getValue(String name);
 
-	void removeItem(String propertyName);
+	void removeValue(String propertyName);
 
-	void setItem(String propertyName, Object value);
+	void setValue(String propertyName, Object value);
 
 	Collection<String> getItemsNames();
-
-
 
 }

@@ -66,12 +66,12 @@ public class ValidationCollection implements ValidationResult, CustomCollectionV
 	}
 
 	@Override
-	public void removeItem(String propertyName) {
+	public void removeValue(String propertyName) {
 		values.remove(propertyName);
 	}
 
 	@Override
-	public void setItem(String propertyName, Object value) {
+	public void setValue(String propertyName, Object value) {
 		values.put(propertyName, value);
 	}
 
