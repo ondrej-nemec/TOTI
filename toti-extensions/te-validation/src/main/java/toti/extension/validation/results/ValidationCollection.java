@@ -117,4 +117,9 @@ public class ValidationCollection implements ValidationResult, CustomCollectionV
 		return "ValidationCollection [\nsubErrors=" + subErrors + "\nownErrors=" + ownErrors + "\nvalues=" + values + "\n]";
 	}
 
+	@Override
+	public void clear() {
+		values.clear();
+	}
+
 }
