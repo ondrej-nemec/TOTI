@@ -6,7 +6,7 @@ plugins {
 }
 
 group = project.libraryGroup
-version = '1.0'
+version = project.version
 
 publishing {
     publications {
