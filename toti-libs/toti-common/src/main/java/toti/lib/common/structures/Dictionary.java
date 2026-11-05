@@ -40,6 +40,16 @@ public interface Dictionary<S> extends ScalarStructure<S> {
 
 	/**
 	 * Returns value by given identificator
+	 * 
+	 * @param key S identifier
+	 * @return value parset to given class
+	 */
+	default <T> T getValue(S key, Class<T> clazz) {
+		return getDictionaryValue(key).getValue(clazz);
+	}
+
+	/**
+	 * Returns value by given identificator
 
 	 * @param key S identifier
 	 * @return not converted value
