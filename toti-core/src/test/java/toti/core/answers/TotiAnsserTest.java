@@ -30,7 +30,7 @@ public class TotiAnsserTest {
 	
 	@ParameterizedTest
 	@MethodSource("dataRoutingWithExtension")
-	public void testRoutingWithExtension(String url, Response expected) {
+	public void testRoutingWithExtension(String url, Response expected) throws Throwable {
 		TotiExtension extension = new TotiExtension() {
 			@Override
 			public String getIdentifier() {
@@ -84,7 +84,7 @@ public class TotiAnsserTest {
 	
 	@ParameterizedTest
 	@MethodSource("dataGetResponseWithEmptyAndNotExistingUrl")
-	public void testGetResponseWithEmptyAndNotExistingUrl(String ip, String url, Response expected) {
+	public void testGetResponseWithEmptyAndNotExistingUrl(String ip, String url, Response expected) throws Throwable {
 		Identity identity = mock(Identity.class);
 		when(identity.getIP()).thenReturn(ip);
 		
