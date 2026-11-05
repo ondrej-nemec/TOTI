@@ -1,25 +1,25 @@
 <h1>JS framework</h1>
 
 TODO
-
-<pre><code>
-Toti.init({});
-</code></pre>
-
 registerCallback(name, callback)
 getCallback(name)
-utils
 images
 	arrowUp
 	arrowDown
 	arrowRight
 	arrowLeft
-animations
-dialog
 createInput(attributes)
 Form(attributes)
 Grid(attributes)
 load(...configurations)
+
+TODO podporovane typy inputu + konfigurace
+
+TODO prenastaveni inputu
+
+<pre><code>
+Toti.init({});
+</code></pre>
 
 
 <h2>Inputs</h2>
@@ -63,8 +63,7 @@ load(...configurations)
 </div>
 
 
-
-<h4>Option inputs</h4>
+<h4>OptionInput</h4>
 
 <div>
 	Represent one item in list of options (f.e. in select).
@@ -78,8 +77,149 @@ load(...configurations)
 	</ul>
 </div>
 
+<h4>OptionsInput</h4>
 
-TODO options inputs 785
+<div>
+	Represent input with options to select - select box and radio list.
+	<ul>
+		<li><code>getSelected(): OptionInput</code></li>
+		<li><code>afterOptionLoad(callable then)</code></li>
+		<li><code>getOptions()</code></li>
+	</ul>
+</div>
+
+<!----------------->
+
+<h4 extends="input">StandartInput</h4>
+
+<div>
+	Represent basic input.
+	<ul>
+		<li><code>_isValueMissing()</code></li>
+	</ul>
+</div>
+
+<h4 extends="input">CheckInput</h4>
+
+<div>
+	Represent input with boolean value.
+	<ul>
+		<li><code>_isValueMissing()</code></li>
+	</ul>
+</div>
+
+<h4 extends="input">TextAreaInput</h4>
+
+<div>
+	Represent text area input.
+</div>
+
+<h4 extends="input">RangeInput</h4>
+
+<div>
+	Represent range input.
+</div>
+
+<h4 extends="input">TextInput</h4>
+
+<div>
+	Represent text input.
+	<ul>
+		<li><code>getOptions()</code></li>
+	</ul>
+</div>
+
+<h4 extends="input">FileInput</h4>
+
+<div>
+	Represent file input.
+</div>
+
+<h4 extends="input">HiddenInput</h4>
+
+<div>
+	Represent hidden input.
+</div>
+
+<h4 extends="input">ColorInput</h4>
+
+<div>
+	Represent color input.
+</div>
+
+<h4 extends="input">DatetimeInput</h4>
+
+<div>
+	Represent inputs for date and/or time: date, time, datetime, week and month.
+</div>
+
+<h4 extends="options-input">RadioListInput</h4>
+
+<div>
+	Represent radiolist.
+</div>
+
+<h4 extends="options-input">SelectInput</h4>
+
+<div>
+	Represent select.
+	<ul>
+		<li><code>_parentChanged(parentValue)</code></li>
+		<li><code>__findParent(parent)</code></li>
+	</ul>
+</div>
+
+<h4 extends="input">DynamicInput</h4>
+
+<div>
+	Container with inputs. User can add/remove inputs.
+	<ul>
+		<li><code>addField()</code></li>
+		<li><code>removeField(index = null)</code> remove input on given index. If null, last input is removed.</li>
+		<li><code>_isValueMissing()</code></li>
+	</ul>
+</div>
+
+<h4 extends="input">InputList</h4>
+
+<div>
+	Container with inputs. Inputs cannot be changed by user.
+	<ul>
+		<li><code>_isValueMissing()</code></li>
+	</ul>
+</div>
+
+<h4 extends="input">LoadedList</h4>
+
+<div>
+	Container with inputs. Inputs are defined by given template and loaded parameters.
+	<ul>
+		<li><code>_isValueMissing()</code></li>
+	</ul>
+</div>
+
+<h4 extends="input">SubmitInput</h4>
+
+<div>
+	Represent inputs for submiting form: submit a image.
+	<ul>
+		<li><code>getSubmitPolicy()</code></li>
+		<li><code>setSubmit(configuration, element)</code></li>
+		<li><code>submit()</code></li>
+	</ul>
+</div>
+
+
+<h4 extends="input">Button</h4>
+
+<div>
+	Represent button.
+	<ul>
+		<li><code>onClick(callable callback)</code></li>
+		<li><code>click()</code></li>
+	</ul>
+</div>
+
 
 
 
@@ -94,10 +234,6 @@ TODO
 
 TODO
 
-
-<h2>SortedMap</h2>
-
-TODO
 
 
 <h2>Utils</h2>

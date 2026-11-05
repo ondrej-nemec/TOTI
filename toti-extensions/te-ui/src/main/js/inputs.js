@@ -2180,7 +2180,7 @@ class SelectInput extends OptionsInput {
 					object.selfModify = false;
 					return;
 				}
-				var selected = object.findParent(object.getSelected());
+				var selected = object.__findParent(object.getSelected());
 				/* onchange callback is called only if value change */
 				if (selected === null) {
 					master.clear();
@@ -2198,19 +2198,19 @@ class SelectInput extends OptionsInput {
 						setMasterValue();
 					}
 					if (master.getSelected() !== null) {
-						object.parentChanged(master.getValue());
+						object._parentChanged(master.getValue());
 					}
 					/* set after init */
 					master.onChange(()=>{
-						object.parentChanged(master.getValue());
+						object._parentChanged(master.getValue());
 					});
 				});
 			} else {
 				master.onChange(()=>{
-					object.parentChanged(master.getValue());
+					object._parentChanged(master.getValue());
 				});
 
-				this.parentChanged(master.getValue());
+				this._parentChanged(master.getValue());
 				this.afterOptionLoad(setMasterValue);
 			}
 			this.onChange(setMasterValue);
@@ -2228,7 +2228,7 @@ class SelectInput extends OptionsInput {
 			}
 		});
 	}
-	findParent(selected) {
+	__findParent(selected) {
 		if (selected === null) {
 			return null;
 		}
@@ -2236,9 +2236,9 @@ class SelectInput extends OptionsInput {
 		if (parent === null) {
 			return selected;
 		}
-		return this.findParent(parent);
+		return this.__findParent(parent);
 	}
-	parentChanged(masterValue) {
+	_parentChanged(masterValue) {
 		var markedOption = this.getOptions().get(masterValue);
 		this.getOptions().forEach((value, option)=>{
 			if (markedOption === null) {
@@ -2252,7 +2252,7 @@ class SelectInput extends OptionsInput {
 				option.setDisabled(true, true);
 			}
 		});
-		var selected = this.findParent(this.getSelected());
+		var selected = this.__findParent(this.getSelected());
 		if (selected === null && masterValue === null) {
 			return;
 		}
@@ -2857,8 +2857,8 @@ class LoadedList extends Input {
 						}
 
 						var input = Toti.createInput(subAttributes, configuration);
-						if (typeof input['parentChanged'] === 'function') {
-							input.parentChanged(rowUnique);
+						if (typeof input['_parentChanged'] === 'function') {
+							input._parentChanged(rowUnique);
 						}
 						input.onChange((element, oldValue)=>{
 							var value = Toti.utils.clone(instance.getValue());
@@ -3199,7 +3199,7 @@ class Button extends Input {
 		this.onSuccess = onSuccess;
 	}
 	onClick(callback) {
-		this.onClick.push(onClick);
+		this.onClick.push(callback);
 	}
 	click() {
 		var instance = this;
