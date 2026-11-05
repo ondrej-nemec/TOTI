@@ -10,7 +10,7 @@ ext {
 	libraryGroup = 'com.github.toti.lib'
 	extensionGroup = 'com.github.toti.extension'
 	publishPath = '/home/coder/project/publish'
-	version = '1.0.0-alpha'
+	version = '1.0.0-alpha2'
 }
 
 group = project.projectGroup
