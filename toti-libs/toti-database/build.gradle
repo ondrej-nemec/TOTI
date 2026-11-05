@@ -7,7 +7,7 @@ plugins {
 }
 
 group = project.libraryGroup
-version = project.version
+version = project.projectVersion
 
 publishing {
     publications {
