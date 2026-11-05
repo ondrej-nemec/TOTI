@@ -1,8 +1,8 @@
 package toti.extension.validation.results;
 
-import toti.lib.common.structures.dictionary.Scalar;
+import toti.lib.common.structures.NonFixedType;
 
-public interface CustomValueValidationItem extends Scalar {
+public interface CustomValueValidationItem extends NonFixedType {
 
 	Object getRawValue();
 

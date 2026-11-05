@@ -1,25 +1,15 @@
 package toti.lib.common.structures;
 
-import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import toti.lib.common.functions.Mapper;
-import toti.lib.common.structures.dictionary.Scalar;
 
 /**
  * Class is wrapper for any object. The class is able to convert some common types to another
@@ -28,11 +18,11 @@ import toti.lib.common.structures.dictionary.Scalar;
  * @author Ondřej Němec
  *
  */
-public class DictionaryValue implements Scalar {
+public class DictionaryValue implements NonFixedType {
 
 	private final Object value;
 	
-	private final Function<String, Object> stringMapping = (v)->{
+	/*private final Function<String, Object> stringMapping = (v)->{
 		try {
 			Object reader = Class.forName("ji.json.JsonReader").getDeclaredConstructor().newInstance();
 			return reader.getClass().getMethod("read", String.class).invoke(reader, v);
@@ -41,7 +31,7 @@ public class DictionaryValue implements Scalar {
 		}
 	};
 	private Function<String, Object> fromStringToListCallback = stringMapping;
-	private Function<String, Object> fromStringToMapCallback = stringMapping;
+	private Function<String, Object> fromStringToMapCallback = stringMapping;*/
 	private String onlyKey = null;
 	
 	/**
@@ -64,10 +54,10 @@ public class DictionaryValue implements Scalar {
 	 * @param fromStringToListCallback {@link Function} with string argument and returns {@link List}
 	 * @return {@link DictionaryValue} self
 	 */
-	public DictionaryValue addListCallback(Function<String, Object> fromStringToListCallback) {
+	/*public DictionaryValue addListCallback(Function<String, Object> fromStringToListCallback) {
 		this.fromStringToListCallback = fromStringToListCallback;
 		return this;
-	}
+	}*/
 	
 	/**
 	 * Override default method for parsing {@link Map} from string
@@ -75,10 +65,10 @@ public class DictionaryValue implements Scalar {
 	 * @param fromStringToMapCallback {@link Function} with string argument and returns {@link Map}
 	 * @return {@link DictionaryValue} self
 	 */
-	public DictionaryValue addMapCallback(Function<String, Object> fromStringToMapCallback) {
+	/*public DictionaryValue addMapCallback(Function<String, Object> fromStringToMapCallback) {
 		this.fromStringToMapCallback = fromStringToMapCallback;
 		return this;
-	}
+	}*/
 
 	/**
 	 * Set key for parsing object using {@link Mapper}. Default is null
@@ -196,313 +186,6 @@ public class DictionaryValue implements Scalar {
 		} else {
 			return value;
 		}
-	}
-
-	/************/
-	
-	/**
-	 * Get value as {@link ListDictionary}
-	 * <p>
-	 * {@link Collection} and array are converted
-	 * <p>
-	 * {@link String} is parsed useing ji.json.JsonReader (if is present in project)
-	 * <p>
-	 * {@link SortedMap} is converted using {@link SortedMap#toList()}
-	 * <p>
-	 * {@link MapDictionary} and {@link Map} are converted using {@link Map#values()}
-	 * 
-	 * @return {@link ListDictionary}
-	 * @throws ClassCastException if all convert and parse mechanism fails
-	 */
-	@SuppressWarnings("unchecked")
-	public ListDictionary getDictionaryList() {
-		return parseValue(ListDictionary.class, fromStringToListCallback, (val)->{
-			if (val.getClass().isArray()) {
-				return new ListDictionary(Arrays.asList((Object[])val));
-			}
-			if (val instanceof Collection<?>) {
-				return new ListDictionary(Collection.class.cast(val));
-			}
-			if (val instanceof SortedMap<?, ?>) {
-				return new ListDictionary(SortedMap.class.cast(val).toList());
-			}
-			if (val instanceof Map<?, ?>) {
-				return new ListDictionary(Map.class.cast(val).values());
-			}
-			if (val instanceof MapDictionary<?>) {
-				return new ListDictionary(MapDictionary.class.cast(val).values());
-			}
-			return val;
-		});
-	}
-
-	/**
-	 * Get value as {@link MapDictionary}
-	 * <p>
-	 * {@link String} is parsed useing ji.json.JsonReader (if is present in project)
-	 * <p>
-	 * {@link SortedMap} is converted using {@link SortedMap#toMap()}
-	 * <p>
-	 * {@link Map} is converted
-	 * 
-	 * @param <T> the type of item
-	 * @return {@link MapDictionary}
-	 * @throws ClassCastException if all convert and parse mechanism fails
-	 */
-	@SuppressWarnings("unchecked")
-	public <T, E> MapDictionary<T> getDictionaryMap() {
-		return parseValue(MapDictionary.class, fromStringToMapCallback, (val)->{
-			if (val instanceof Map<?, ?>) {
-				return new MapDictionary<>(Map.class.cast(val));
-			}
-			if (val instanceof SortedMap<?, ?>) {
-				return new MapDictionary<>(SortedMap.class.cast(val).toMap());
-			}
-			if (val instanceof ListDictionary list) {
-				Map<Object, Object> map = new HashMap<>();
-				list.forEach(item->{
-					map.put(item._1().toString(), item._2());
-				});
-				return new MapDictionary<>(map);
-			}
-			if (val instanceof Iterable<?> iterable) {
-				Map<Object, Object> map = new HashMap<>();
-				int i = 0;
-				for (Object elem : iterable) {
-					map.put((i++) + "", elem);
-				}
-				return new MapDictionary<>(map);
-			}
-			return val;
-		});
-	}
-
-	/**
-	 * Get value as {@link SortedMap}
-	 * <p>
-	 * {@link String} is parsed useing ji.json.JsonReader (if is present in project)
-	 * <p>
-	 * {@link MapDictionary} and {@link Map} are converted
-	 * 
-	 * @param <T> the type of item
-	 * @return {@link SortedMap}
-	 * @throws ClassCastException if all convert and parse mechanism fails
-	 */
-	@SuppressWarnings("unchecked")
-	public <T, E> SortedMap<T, E> getSortedMap() {
-		return parseValue(SortedMap.class, fromStringToListCallback, (val)->{
-			if (val instanceof Map<?, ?>) {
-				return new SortedMap<T, E>().putAll(Map.class.cast(val));
-			}
-			if (val instanceof MapDictionary<?>) {
-				return new SortedMap<T, E>().putAll(MapDictionary.class.cast(val).toMap());
-			}
-			return val;
-		});
-	}
-
-	/**
-	 * Get value as {@link List}
-	 * <p>
-	 * {@link ListDictionary}, array and other {@link Collection} are converted
-	 * <p>
-	 * {@link String} is parsed useing ji.json.JsonReader (if is present in project)
-	 * <p>
-	 * {@link SortedMap} is converted using {@link SortedMap#toList()}
-	 * <p>
-	 * {@link MapDictionary} and {@link Map} are converted using {@link Map#values()}
-	 * 
-	 * @param <T> the type of item
-	 * @return {@link List}
-	 * @throws ClassCastException if all convert and parse mechanism fails
-	 */
-	@SuppressWarnings("unchecked")
-	public <T> List<T> getList() {
-		return parseValue(List.class, fromStringToListCallback, (val)-> {
-			if (val.getClass().isArray()) {
-				return new ArrayList<>(Arrays.asList((T[])val));
-			}
-			if (val instanceof ListDictionary) {
-				return ListDictionary.class.cast(val).toList();
-			}
-			if (val instanceof Set<?>) {
-				return new LinkedList<>(Set.class.cast(val));
-			}
-			if (val instanceof SortedMap<?, ?>) {
-				return SortedMap.class.cast(val).toList();
-			}
-			if (val instanceof Map<?, ?>) {
-				return Map.class.cast(val).values().stream().collect(Collectors.toList());
-			}
-			if (val instanceof MapDictionary<?>) {
-				return MapDictionary.class.cast(val).values().stream().collect(Collectors.toList());
-			}
-			return val;
-		});
-	}
-	/**
-	 * Get value as {@link Set}
-	 * <p>
-	 * {@link ListDictionary}, array and other {@link Collection} are converted
-	 * <p>
-	 * {@link String} is parsed useing ji.json.JsonReader (if is present in project)
-	 * <p>
-	 * {@link SortedMap} is converted using {@link SortedMap#toList()} and converted from {@link List} to {@link Set}
-	 * <p>
-	 * {@link MapDictionary} and {@link Map} are converted using {@link Map#keySet()}
-	 * 
-	 * @param <T> the type of item
-	 * @return {@link Set}
-	 * @throws ClassCastException if all convert and parse mechanism fails
-	 */
-	@SuppressWarnings("unchecked")
-	public <T> Set<T> getSet() {
-		return parseValue(Set.class, fromStringToListCallback, (val)-> {
-			if (val.getClass().isArray()) {
-				return new HashSet<>(Arrays.asList((T[])val));
-			}
-			if (val instanceof ListDictionary || val instanceof List<?>) {
-				return new HashSet<>(getList());
-			}
-			if (val instanceof Map<?, ?>) {
-				return new HashSet<>(Map.class.cast(val).keySet());
-			}
-			if (val instanceof MapDictionary<?>) {
-				return new HashSet<>(MapDictionary.class.cast(val).keySet());
-			}
-			return val;
-		});
-	}
-	/**
-	 * Get value as array
-	 * <p>
-	 * {@link ListDictionary} and {@link Collection} are converted
-	 * <p>
-	 * {@link String} is parsed useing ji.json.JsonReader (if is present in project)
-	 * <p>
-	 * {@link SortedMap} is converted using {@link SortedMap#toList()}
-	 * <p>
-	 * {@link MapDictionary} and {@link Map} are converted using {@link Map#values()}
-	 * 
-	 * @param <T> the type of item
-	 * @return array
-	 * @throws ClassCastException if all convert and parse mechanism fails
-	 */
-	@SuppressWarnings("unchecked")
-	public <T> T[] getArray() {
-		if (value == null) {
-			return null;
-		}
-		if (value.getClass().isArray()) {
-			return (T[])value;
-		}
-		Object val = value;
-		if (val instanceof String && fromStringToListCallback != null) {
-			val = fromStringToListCallback.apply(val.toString());
-		}
-		if (val == null) {
-			return null;
-		}
-		if (val instanceof ListDictionary) {
-			return (T[])getDictionaryList().toArray();
-		}
-		if (val instanceof List<?>) {
-			return (T[])getList().toArray();
-		}
-		if (val instanceof Set<?>) {
-			return (T[])getSet().toArray();
-		}
-		if (val instanceof Map<?, ?>) {
-			return (T[])getMap().values().toArray();
-		}
-		if (val instanceof MapDictionary<?>) {
-			return (T[])getDictionaryMap().values().toArray();
-		}
-		return (T[])val;
-	}
-	
-	/*
-	@SuppressWarnings("unchecked")
-	public <T> Iterable<T> getIterable() {
-		return parseValue(Set.class, fromStringToListCallback, (value)-> {
-			if (value.getClass().isArray()) {
-				return Arrays.asList((T[])value);
-			}
-			if (value instanceof ListDictionary<?>) {
-				return ListDictionary.class.cast(value).toList();
-			}
-			return value;
-		});
-	}
-*/
-//	static <T> Iterable<T> toIterable(Object o, Class<T> clazz) {
-//		if (o instanceof ListDictionary) {
-//			return ListDictionary.class.cast(o).toList();
-//		} else if (o.getClass().isArray()) {
-//			return java.util.Arrays.asList((T[])o);
-//		} else /*if (o16_1 instanceof Iterable<?>)*/ {
-//			return (Iterable<T>) o;
-//		}
-//	}
-	
-	/**
-	 * Get value as {@link Map}
-	 * <p>
-	 * {@link String} is parsed useing ji.json.JsonReader (if is present in project)
-	 * <p>
-	 * {@link SortedMap} and {@link MapDictionary} are converted
-	 * 
-	 * @return {@link Map}
-	 * @throws ClassCastException if all convert and parse mechanism fails
-	 */
-	@SuppressWarnings("unchecked")
-	public <K, V> Map<K, V> getMap() {
-		return parseValue(Map.class, fromStringToMapCallback, (val)-> {
-			if (val instanceof MapDictionary<?> map) {
-				return map.toMap();
-			}
-			if (val instanceof SortedMap<?, ?> map) {
-				return map.toMap();
-			}
-			if (val instanceof ListDictionary list) {
-				Map<Object, Object> map = new HashMap<>();
-				list.forEach(item->{
-					map.put(item._1().toString(), item._2());
-				});
-				return map;
-			}
-			if (val instanceof Iterable<?> iterable) {
-				Map<Object, Object> map = new HashMap<>();
-				int i = 0;
-				for (Object elem : iterable) {
-					map.put((i++) + "", elem);
-				}
-				return map;
-			}
-			return val;
-		});
-	}
-	
-	/***********/
-
-	private <T> T parseValue(Class<T> clazz, Function<String, Object> fromString, Function<Object, Object> prepare) {
-		if (value == null) {
-			return null;
-		}
-		if (clazz.isInstance(value)) {
-			return clazz.cast(value);
-		}
-		Object val = value;
-		if (val instanceof String && fromString != null) {
-			val = fromString.apply(val.toString());
-		}
-		if (prepare != null && val != null) {
-			val = prepare.apply(val);
-		}
-		if (val == null) {
-			return null;
-		}
-		return clazz.cast(val);
 	}
 	
 	/************/
