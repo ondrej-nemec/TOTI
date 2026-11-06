@@ -177,8 +177,6 @@ public class MainHandler extends Handler.Abstract {
 		} else {
 			callback.succeeded();
 		}
-		
-		callback.succeeded();
 		return true;
 	}
 
