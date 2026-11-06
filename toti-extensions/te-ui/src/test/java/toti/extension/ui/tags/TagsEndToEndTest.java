@@ -6,8 +6,6 @@ import java.util.Map;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import toti.lib.common.structures.MapInit;
-
 public class TagsEndToEndTest {
 	
 	public TagsEndToEndTest() {
@@ -19,8 +17,7 @@ public class TagsEndToEndTest {
 	public void testTags(String template, String expected) throws Exception {
 		Map<String, String> modules = new HashMap<>();
 		modules.put("", "toti/extension/templating/tags");
-		Map<String, Object> variables = new MapInit<String, Object>()
-			.toMap();
+		//Map<String, Object> variables = new MapInit<String, Object>().toMap();
 //		testTemplate(modules, "", template, variables, expected);
 	}
 	

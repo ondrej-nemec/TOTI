@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import toti.core.answers.session.Identity;
-import toti.extension.ui.control.inputs.Hidden;
 import toti.extension.ui.control.inputs.Input;
 
 public class Form implements Control {

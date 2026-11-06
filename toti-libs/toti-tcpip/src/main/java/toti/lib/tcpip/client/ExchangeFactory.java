@@ -41,7 +41,7 @@ public class ExchangeFactory {
 			new Form(payload, reader), 
 			new Urlencode(payload, reader),
 			reader,
-			()->RandomStringUtils.randomAlphanumeric(50),
+			()->RandomStringUtils.insecure().nextAlphanumeric(50),
 			logger
 		);
 	}

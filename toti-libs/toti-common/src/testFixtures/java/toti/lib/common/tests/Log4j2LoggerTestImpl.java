@@ -175,7 +175,6 @@ public class Log4j2LoggerTestImpl implements Logger {
 		
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void debug(Marker marker, String message, Supplier<?>... paramSuppliers) {
 		throw new NotImplementedYet();
@@ -189,14 +188,12 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void debug(Marker marker, Supplier<?> messageSupplier) {
 		throw new NotImplementedYet();
 		
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void debug(Marker marker, Supplier<?> messageSupplier, Throwable throwable) {
 		throw new NotImplementedYet();
 		
@@ -247,7 +244,6 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void debug(String message, Supplier<?>... paramSuppliers) {
 		throw new NotImplementedYet();
 		
@@ -259,14 +255,12 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void debug(Supplier<?> messageSupplier) {
 		throw new NotImplementedYet();
 		
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void debug(Supplier<?> messageSupplier, Throwable throwable) {
 		throw new NotImplementedYet();
 		
@@ -462,7 +456,6 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void error(Marker marker, String message, Supplier<?>... paramSuppliers) {
 		throw new NotImplementedYet();
 		
@@ -475,14 +468,12 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void error(Marker marker, Supplier<?> messageSupplier) {
 		throw new NotImplementedYet();
 		
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void error(Marker marker, Supplier<?> messageSupplier, Throwable throwable) {
 		throw new NotImplementedYet();
 		
@@ -535,7 +526,6 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void error(String message, Supplier<?>... paramSuppliers) {
 		throw new NotImplementedYet();
 		
@@ -547,14 +537,12 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void error(Supplier<?> messageSupplier) {
 		throw new NotImplementedYet();
 		
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void error(Supplier<?> messageSupplier, Throwable throwable) {
 		throw new NotImplementedYet();
 		
@@ -750,7 +738,6 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void fatal(Marker marker, String message, Supplier<?>... paramSuppliers) {
 		throw new NotImplementedYet();
 		
@@ -763,14 +750,12 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void fatal(Marker marker, Supplier<?> messageSupplier) {
 		throw new NotImplementedYet();
 		
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void fatal(Marker marker, Supplier<?> messageSupplier, Throwable throwable) {
 		throw new NotImplementedYet();
 		
@@ -821,7 +806,6 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void fatal(String message, Supplier<?>... paramSuppliers) {
 		throw new NotImplementedYet();
 		
@@ -833,14 +817,12 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void fatal(Supplier<?> messageSupplier) {
 		throw new NotImplementedYet();
 		
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void fatal(Supplier<?> messageSupplier, Throwable throwable) {
 		throw new NotImplementedYet();
 		
@@ -1042,7 +1024,6 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void info(Marker marker, String message, Supplier<?>... paramSuppliers) {
 		throw new NotImplementedYet();
 		
@@ -1055,14 +1036,12 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void info(Marker marker, Supplier<?> messageSupplier) {
 		throw new NotImplementedYet();
 		
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void info(Marker marker, Supplier<?> messageSupplier, Throwable throwable) {
 		throw new NotImplementedYet();
 		
@@ -1113,7 +1092,6 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void info(String message, Supplier<?>... paramSuppliers) {
 		throw new NotImplementedYet();
 		
@@ -1125,14 +1103,12 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void info(Supplier<?> messageSupplier) {
 		throw new NotImplementedYet();
 		
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void info(Supplier<?> messageSupplier, Throwable throwable) {
 		throw new NotImplementedYet();
 		
@@ -1386,7 +1362,6 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void log(Level level, Marker marker, String message, Supplier<?>... paramSuppliers) {
 		throw new NotImplementedYet();
 		
@@ -1399,14 +1374,12 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void log(Level level, Marker marker, Supplier<?> messageSupplier) {
 		throw new NotImplementedYet();
 		
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void log(Level level, Marker marker, Supplier<?> messageSupplier, Throwable throwable) {
 		throw new NotImplementedYet();
 		
@@ -1473,7 +1446,6 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void log(Level level, String message, Supplier<?>... paramSuppliers) {
 		throw new NotImplementedYet();
 		
@@ -1486,14 +1458,12 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void log(Level level, Supplier<?> messageSupplier) {
 		throw new NotImplementedYet();
 		
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void log(Level level, Supplier<?> messageSupplier, Throwable throwable) {
 		throw new NotImplementedYet();
 		
@@ -1713,7 +1683,6 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void trace(Marker marker, String message, Supplier<?>... paramSuppliers) {
 		throw new NotImplementedYet();
 		
@@ -1726,14 +1695,12 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void trace(Marker marker, Supplier<?> messageSupplier) {
 		throw new NotImplementedYet();
 		
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void trace(Marker marker, Supplier<?> messageSupplier, Throwable throwable) {
 		throw new NotImplementedYet();
 		
@@ -1784,7 +1751,6 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void trace(String message, Supplier<?>... paramSuppliers) {
 		throw new NotImplementedYet();
 		
@@ -1796,14 +1762,12 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void trace(Supplier<?> messageSupplier) {
 		throw new NotImplementedYet();
 		
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void trace(Supplier<?> messageSupplier, Throwable throwable) {
 		throw new NotImplementedYet();
 		
@@ -1939,14 +1903,12 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public EntryMessage traceEntry(Supplier<?>... paramSuppliers) {
 		throw new NotImplementedYet();
 		
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public EntryMessage traceEntry(String format, Supplier<?>... paramSuppliers) {
 		throw new NotImplementedYet();
 		
@@ -2051,7 +2013,6 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void warn(Marker marker, String message, Supplier<?>... paramSuppliers) {
 		throw new NotImplementedYet();
 		
@@ -2063,13 +2024,11 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void warn(Marker marker, Supplier<?> messageSupplier) {
 		throw new NotImplementedYet();
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void warn(Marker marker, Supplier<?> messageSupplier, Throwable throwable) {
 		throw new NotImplementedYet();
 	}
@@ -2115,7 +2074,6 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void warn(String message, Supplier<?>... paramSuppliers) {
 		throw new NotImplementedYet();
 	}
@@ -2126,13 +2084,11 @@ public class Log4j2LoggerTestImpl implements Logger {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void warn(Supplier<?> messageSupplier) {
 		throw new NotImplementedYet();
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void warn(Supplier<?> messageSupplier, Throwable throwable) {
 		throw new NotImplementedYet();
 	}
