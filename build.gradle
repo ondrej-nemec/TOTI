@@ -37,6 +37,11 @@ repositories {
 	mavenCentral()
 }
 
+java {
+	withSourcesJar()
+	withJavadocJar()
+}
+
 dependencies {
 	api project('toti-libs:toti-common')
 	api project('toti-libs:toti-database')
@@ -53,4 +58,3 @@ dependencies {
 	api project('toti-extensions:te-translator')
 	api project('toti-extensions:te-ui')
 }
-

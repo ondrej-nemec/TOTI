@@ -29,7 +29,6 @@ public class FileUtils {
 	 * At first, method tries load file using <code>getResourceAsStream</code>, then {@link FileInputStream}.
 	 * <strong>Path to file has to be relative without first '/'.</strong>
 	 * 
-	 * @param clazz {@link Class} some class of your project for current class loader
 	 * @param path String relative path to file without first '/'
 	 * @return {@link InputStream} created stream
 	 * @throws IOException

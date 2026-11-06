@@ -46,9 +46,7 @@ public interface Response {
 	
 	/**
 	 * For websocket response
-	 * @param websocket
-	 * @param onMessage
-	 * @param onError
+	 * @param webSocket
 	 * @return
 	 */
 	static Response getWebsocket(WebSocket webSocket) {

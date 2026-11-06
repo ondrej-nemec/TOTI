@@ -14,7 +14,7 @@ import toti.lib.templating.parsing.enums.VariableSource;
 import toti.lib.templating.parsing.structures.TagParserParam;
 
 /**
- * Activate if previous == '<' and actual != '%'
+ * Activate if previous == '&lt;' and actual != '%'
  * @author Ondřej Němec
  *
  */

@@ -62,8 +62,8 @@ public class Link {
 		
 	/**
 	 * Parse string to link
-	 * Required format <[controller]>:[method]<:[parameter]>{n}
-	 * @param url
+	 * Required format &lt;[controller]&gt;:[method]&lt;:[parameter]&gt;{n}
+	 * @param href
 	 * @return
 	 */
 	public String create(String href) {

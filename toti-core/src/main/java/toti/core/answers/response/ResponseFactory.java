@@ -75,7 +75,6 @@ public class ResponseFactory {
 	
 	/**
 	 * Returns empty response with code
-	 * @param code
 	 * @return
 	 */
 	public Response getEmpty() {

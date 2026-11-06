@@ -27,6 +27,11 @@ repositories {
 	mavenCentral()
 }
 
+java {
+	withSourcesJar()
+	withJavadocJar()
+}
+
 dependencies {
 	api project(':toti-libs:toti-templating')
 	api project(':toti-core')

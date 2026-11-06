@@ -21,7 +21,6 @@ public class ListDictionary implements Dictionary<Integer>, Iterable<Tuple2<Inte
 	/**
 	 * Create new instance as wrapper for {@link LinkedList}
 	 * 
-	 * @param <S> the type of items
 	 * @return {@link ListDictionary}
 	 */
 	public static ListDictionary linkedList() {
@@ -31,7 +30,6 @@ public class ListDictionary implements Dictionary<Integer>, Iterable<Tuple2<Inte
 	/**
 	 * Create new instance as wrapper for {@link ArrayList}
 	 * 
-	 * @param <S> the type of items
 	 * @return {@link ListDictionary}
 	 */
 	public static ListDictionary arrayList() {
@@ -41,7 +39,6 @@ public class ListDictionary implements Dictionary<Integer>, Iterable<Tuple2<Inte
 	/**
 	 * Create new instance as wrapper for {@link HashSet}
 	 * 
-	 * @param <S> the type of items
 	 * @return {@link ListDictionary}
 	 */
 	public static ListDictionary hashSet() {

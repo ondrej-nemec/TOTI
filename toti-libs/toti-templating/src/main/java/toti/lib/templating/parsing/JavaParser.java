@@ -3,7 +3,7 @@ package toti.lib.templating.parsing;
 import toti.lib.templating.parsing.enums.VariableSource;
 
 /**
- * Activated if previous == '<' and actual == '%'
+ * Activated if previous == '&lt;' and actual == '%'
  * @author Ondřej Němec
  *
  */
