@@ -13,6 +13,7 @@ import toti.core.answers.response.Response;
 import toti.core.answers.router.Link;
 import toti.lib.common.structures.MapInit;
 import toti.lib.files.access.FileUtils;
+import toti.lib.tcpip.enums.HttpMethod;
 import toti.lib.tcpip.enums.StatusCode;
 
 @Controller("response")
@@ -154,24 +155,19 @@ public class ResponseController {
 	 * Create websocket connection
 	 * @return http://localhost:8080/application/response/websocket
 	 */
-	@Action(path="websocket")
+	@Action(path="websocket", methods = {HttpMethod.GET, HttpMethod.CONNECT})
 	public ResponseAction getWebsocket() {
 		return (req, identity)->{
-			try {
-				// websocket can be empty - means this request is not valid websocket request
-				if (req.getWebsocket().isPresent()) {
-					WebSocket webSocket = req.getWebsocket().get();
-					webSocket.accept(()->{
-						// TODO on open
-					}, task.onMessage(), task.onError(), (x)->task.removeWebsocket());
-					task.setWebsocket(webSocket);
-					return Response.getWebsocket(webSocket);
-				}
-				return Response.OK().getFile("files/core/responses/websocket.html");
-			} catch (Exception e) {
-				// return Response.INTERNAL_SERVER_ERROR().getEmpty();
-				throw new RuntimeException(e);
+			// websocket can be empty - means this request is not valid websocket request
+			if (req.getWebsocket().isPresent()) {
+				WebSocket webSocket = req.getWebsocket().get();
+				webSocket.accept(()->{
+					// TODO on open
+				}, task.onMessage(), task.onError(), (x)->task.removeWebsocket());
+				task.setWebsocket(webSocket);
+				return Response.getWebsocket(webSocket);
 			}
+			return Response.OK().getFile("files/core/responses/websocket.html");
 		};
 	}
 }

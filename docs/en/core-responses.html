@@ -129,7 +129,7 @@
 <div class="paragraph">
 	WebSockets are handled little bit differently:
 	<pre><code>
-	@Action(path="websocket")
+	@Action(path="websocket", methods = {HttpMethod.GET, HttpMethod.CONNECT}) // http2 needs to make CONNECT request
 	public ResponseAction getWebsocket() {
 		return (request, identity)->{
 			try {

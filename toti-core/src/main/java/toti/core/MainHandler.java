@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Optional;
 
 import org.apache.logging.log4j.Logger;
+import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.io.Content;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.util.Callback;
@@ -105,8 +106,19 @@ public class MainHandler extends Handler.Abstract {
 		}
 		Answer answer = selected.getAnswer();
 		
+		HttpMethod httpMethod = HttpMethod.valueOf(jettyRequest.getMethod().toUpperCase());
+
 		ObjectBuilder<WebSocket> websocket = new ObjectBuilder<>();
-		if ("websocket".equals(requestHeaders.getHeader("Upgrade"))) {
+		if (
+			// http1.1 websocket
+			"websocket".equals(requestHeaders.getHeader("Upgrade"))
+			|| // http2 websocket
+			(
+				HttpMethod.CONNECT.equals(httpMethod)
+				//&& "websocket".equals(requestHeaders.getHeader(":protocol"))
+				&& jettyRequest.getConnectionMetaData().getHttpVersion() == HttpVersion.HTTP_2
+			)
+		) {
 			websocket.set(new JettyWebSocket(()->{
 				ServerWebSocketContainer container = ServerWebSocketContainer.get(jettyRequest.getContext());
 				// This is a WebSocket upgrade request, perform a direct upgrade.
@@ -137,7 +149,7 @@ public class MainHandler extends Handler.Abstract {
 
 		Request request = new Request(
 			uri,
-			HttpMethod.valueOf(jettyRequest.getMethod().toUpperCase()),
+			httpMethod,
 			requestHeaders,
 			urlEncode.decode(jettyRequest.getHttpURI().getQuery()),
 			parsedBody,

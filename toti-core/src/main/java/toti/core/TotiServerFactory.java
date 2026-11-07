@@ -87,14 +87,10 @@ public class TotiServerFactory {
 		// httpConfig.setSecurePort(securePort);
 		
 		HttpConnectionFactory http11 = new HttpConnectionFactory(httpConfig);
-		HTTP2CServerConnectionFactory http2 = new HTTP2CServerConnectionFactory(httpConfig);
+		HTTP2CServerConnectionFactory h2c = new HTTP2CServerConnectionFactory(httpConfig);
 		
-		/*ALPNServerConnectionFactory alpn = new ALPNServerConnectionFactory();
-		// The default protocol to use in case there is no negotiation.
-		alpn.setDefaultProtocol(http11.getProtocol());*/
-
-		//return new ServerConnector(server, alpn, http2, http11); // most browsers not support HTTP2 over telnet
-		ServerConnector connector = new ServerConnector(server, http11, /*alpn, */http2);
+		// http11 must be first | most browsers not support HTTP2 over telnet
+		ServerConnector connector = new ServerConnector(server, http11, h2c);
 		connector.setPort(port);
 		connector.setIdleTimeout(timeout);
 		return connector;
@@ -136,11 +132,11 @@ public class TotiServerFactory {
 		
 		ALPNServerConnectionFactory alpn = new ALPNServerConnectionFactory();
 		// The default protocol to use in case there is no negotiation.
-		alpn.setDefaultProtocol(http11.getProtocol());
+		alpn.setDefaultProtocol(http2.getProtocol());
 		// The ConnectionFactory for TLS.
 		SslConnectionFactory ssl = new SslConnectionFactory(sslContextFactory, alpn.getProtocol());
 
-		ServerConnector connector = new ServerConnector(server, ssl, alpn, http2, http11);
+		ServerConnector connector = new ServerConnector(server, ssl, alpn, http11, http2);
 		connector.setPort(port);
 		connector.setIdleTimeout(timeout);
 		return connector;

@@ -213,7 +213,7 @@
 
 				var link = document.createElement('a');
 				link.innerText = protocol;
-				link.setAttribute('href', protocol.toLowerCase() + "://localhost:190" + (index + 2) + (port + 1) + "/index.html");
+				link.setAttribute('href', protocol.toLowerCase() + "://localhost:190" + (21 + index*2 + port) + "/index.html");
 				section.appendChild(link);
 			});
 		});
