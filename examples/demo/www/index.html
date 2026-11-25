@@ -199,7 +199,7 @@
 		    html.setAttribute("data-theme", current === "dark" ? "light" : "dark");
 		}
 
-		var servers = document.getElementById('servers');
+		/*var servers = document.getElementById('servers');
 		[ 'Default settings', 'Program settings', 'XML settings', 'Properties settigns' ].forEach((name, index)=>{
 			var section = document.createElement('div');
 			servers.appendChild(section);
@@ -216,7 +216,7 @@
 				link.setAttribute('href', protocol.toLowerCase() + "://localhost:190" + (21 + index*2 + port) + "/index.html");
 				section.appendChild(link);
 			});
-		});
+		});*/
 
 		var openLinkButtons = [
 			{
@@ -237,23 +237,74 @@
 				sync: false
 			}
 		];
+
+		var errorLinks = [];
+		function initErrorLink(item, name, path) {
+			errorLinks.push({
+				name: name + ': ' + item.name,
+				description: item.description,
+				link: '/' + path + item.link,
+				buttons: item.buttons
+			});
+		}
+		[
+			{
+				name: 'Inside of method',
+				description: 'Exception throwed directly in method.',
+				link: '/core/exceptions/method',
+				buttons: syncAsyncButtons
+			},
+			{
+				name: 'Not found',
+				description: 'Method not found',
+				link: '/wrong',
+				buttons: syncAsyncButtons
+			},
+			{
+				name: 'Wrong HTTP method',
+				description: 'Exception throwed by TOTI because of wrong HTTP method. POST required, GET used.',
+				link: '/core/exceptions/post',
+				buttons: syncAsyncButtons
+			}
+		].forEach((item)=>{
+			initErrorLink(item, 'DEV without Custom', 'dev1');
+			initErrorLink(item, 'DEV with Custom', 'dev2');
+			initErrorLink(item, 'PROD without Custom', 'prod1');
+			initErrorLink(item, 'PROD with Custom', 'prod2');
+		});
+
+
 		var applicationModule = [
 			{
 				name: 'TOTI',
 				description: 'Basic TOTI URLs and functions',
 				links: [
 					{
-						name: 'Welcome page',
+						name: 'Welcome page on DEV',
 						description: 'TOTI Welcome page for verify system is running and responding.'
 							+ ' Works only from develing IP addresses.',
-						link: '/toti',
+						link: '/dev1/toti',
 						buttons: openLinkButtons
 					},
 					{
-						name: 'Link to folder',
+						name: 'Welcome page on PROD',
+						description: 'TOTI Welcome page for verify system is running and responding.'
+							+ ' Works only from develing IP addresses.',
+						link: '/prod1/toti',
+						buttons: openLinkButtons
+					},
+					{
+						name: 'Link to folder | Dir response allowed',
 						description: 'Link points to folder inside www folder. TOTI prints filder content'
 							+ ' Works only if dir response is allowed.',
-						link: '/folder1',
+						link: '/dev2/folder1',
+						buttons: openLinkButtons
+					},
+					{
+						name: 'Link to folder | Dir response not allowed',
+						description: 'Link points to folder inside www folder. TOTI prints filder content'
+							+ ' Works only if dir response is allowed.',
+						link: '/dev1/folder1',
 						buttons: openLinkButtons
 					},
 					{
@@ -261,19 +312,26 @@
 						description: 'Link points to folder inside www folder, but folder contains index file.'
 							+ ' TOTI open index file.'
 							+ ' Works only if dir default file is set to index.html and dir response is forbidden.',
-						link: '/folder2',
+						link: '/dev1/folder2',
 						buttons: openLinkButtons
 					},
 					{
+						name: 'Link to root with custom index',
+						description: 'Application with custom index',
+						link: '/prod1',
+						buttons: openLinkButtons
+					},
+
+					{
 						name: 'Link to plain text file',
 						description: 'Link points to file in www folder. TOTI opens file.',
-						link: '/files/plainTextFile.txt',
+						link: '/dev1/files/plainTextFile.txt',
 						buttons: openLinkButtons
 					},
 					{
 						name: 'Link to binary file',
 						description: 'Link points to file in www folder. Browser downloads file.',
-						link: '/files/binaryFile.odt',
+						link: '/dev1/files/binaryFile.odt',
 						buttons: openLinkButtons
 					}
 				]
@@ -281,26 +339,7 @@
 			{
 				name: 'Core: Exceptions',
 				description: 'How TOTI reacts on different exceptions throwed in different sources.',
-				links: [
-					{
-						name: 'Inside of method',
-						description: 'Exception throwed directly in method.',
-						link: '/core/exceptions/method',
-						buttons: syncAsyncButtons
-					},
-					{
-						name: 'Wrong HTTP method',
-						description: 'Exception throwed by TOTI because of wrong HTTP method. POST required, GET used.',
-						link: '/core/exceptions/post',
-						buttons: syncAsyncButtons
-					},
-					{
-						name: 'Catched',
-						description: 'Exception catched by CustomExceptionExtension',
-						link: '/core/exceptions/catched',
-						buttons: syncAsyncButtons
-					}
-				]
+				links: errorLinks
 			},
 			{
 				name: 'Core: Router',
@@ -309,19 +348,19 @@
 					{
 						name: 'TOTI',
 						description: 'Route start with toti. Returns error - routes start with /toti are not allowed.',
-						link: '/toti-test',
+						link: '/dev1/toti-test',
 						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Controller',
 						description: 'Pointing to existing controller.',
-						link: '/application-response.text',
+						link: '/dev1/application-response.text',
 						buttons: syncAsyncButtons
 					},
 					{
 						name: 'File',
 						description: 'Pointing to file in resource directory. Returns error - routes pointing to file are not allowed.',
-						link: '/ico',
+						link: '/dev1/ico',
 						buttons: syncAsyncButtons
 					}
 				]
@@ -333,13 +372,13 @@
 					{
 						name: 'Basic',
 						description: 'Simple request on controller method.',
-						link: '/core/request/basic',
+						link: '/dev1/core/request/basic',
 						buttons: syncAsyncButtons
 					},
 					{
 						name: 'URI parameter',
 						description: 'Request on controller method with paramter (String).',
-						link: '/core/request/basic/',
+						link: '/dev1/core/request/basic/',
 						buttons: [
 							{
 								name: 'Parameter: someRandomString',
@@ -358,7 +397,7 @@
 					{
 						name: 'HTTP POST',
 						description: 'Request with POST method. Method GET cause Exception.',
-						link: '/core/request/post',
+						link: '/dev1/core/request/post',
 						buttons: [
 							{
 								name: 'OPEN',
@@ -385,7 +424,7 @@
 					{
 						name: 'HTTP GET or POST',
 						description: 'Controller method servers both GET and POST.',
-						link: '/core/request/get-or-post',
+						link: '/dev1/core/request/get-or-post',
 						buttons: [
 							{
 								name: 'OPEN',
@@ -412,7 +451,7 @@
 					{
 						name: 'URI query',
 						description: 'Parsing query parameters',
-						link: '/core/request/query?',
+						link: '/dev1/core/request/query?',
 						buttons: [
 							{
 								name: 'Simple parameters',
@@ -455,13 +494,13 @@
 					{
 						name: 'Body',
 						description: 'Method accepted request body only in JSON.',
-						link: '/core/request/body'
+						link: '/dev1/core/request/body'
 						// TODO body
 					},
 					{
 						name: 'File',
 						description: 'Serving request with file',
-						link: '/core/request/file',
+						link: '/dev1/core/request/file',
 						// TODO file
 					}
 				]
@@ -473,55 +512,55 @@
 					{
 						name: 'Plain text file from disk',
 						description: 'Returns plain text file from disk.',
-						link: '/core/response/file-plain',
+						link: '/dev1/core/response/file-plain',
 						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Binary file from disk',
 						description: 'Returns binary file from disk.',
-						link: '/core/response/file-binary',
+						link: '/dev1/core/response/file-binary',
 						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Generate file',
 						description: 'Returns runtime generated file.',
-						link: '/core/response/generate',
+						link: '/dev1/core/response/generate',
 						buttons: syncAsyncButtons
 					},
 					{
 						name: 'JSON',
 						description: 'Returns JSON response.',
-						link: '/core/response/json',
+						link: '/dev1/core/response/json',
 						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Simple text',
 						description: 'Returns simple text response.',
-						link: '/core/response/text',
+						link: '/dev1/core/response/text',
 						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Template',
 						description: 'Returns response created from tempkate. Requires registered TemplateExtension.',
-						link: '/core/response/template',
+						link: '/dev1/core/response/template',
 						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Redirect inside application',
 						description: 'Redirect to Simple text page.',
-						link: '/core/response/redirect',
+						link: '/dev1/core/response/redirect',
 						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Redirect out of application',
 						description: 'Redirect to Github.',
-						link: '/core/response/open-redirect',
+						link: '/dev1/core/response/open-redirect',
 						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Websocket',
 						description: 'Communication thru websocket.',
-						link: '/core/response/websocket',
+						link: '/dev1/core/response/websocket',
 						buttons: syncAsyncButtons
 					}
 				]
@@ -533,31 +572,31 @@
 					{
 						name: 'Print data',
 						description: 'Print data in Identity',
-						link: '/core/identity/print',
+						link: '/dev1/core/identity/print',
 						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Set data',
 						description: 'Set data to Identity',
-						link: '/core/identity/set',
+						link: '/dev1/core/identity/set',
 						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Login',
 						description: 'Set user to Identity',
-						link: '/core/identity/login',
+						link: '/dev1/core/identity/login',
 						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Logout',
 						description: 'Remove user from Identity',
-						link: '/core/identity/logout',
+						link: '/dev1/core/identity/logout',
 						buttons: syncAsyncButtons
 					},
 					{
 						name: 'Forms',
 						description: 'Sending form data to test tokens',
-						link: '/core/identity/form',
+						link: '/dev1/core/identity/form',
 						buttons: openLinkButtons
 					}
 				]

@@ -92,7 +92,12 @@ public class MainHandler extends Handler.Abstract {
 		String path = "";
 		int index = uri.indexOf("/", 1);
 		if (index != -1) {
+			// if uri looks like '/path/someting' or '/path/'
 			path = uri.substring(1, index);
+		} else if (uri.length() > 1) {
+			// if uri looks like '/path'
+			path = uri.substring(1);
+			index = path.length() + 1;
 		}
 
 		AnswerWrapper selected = answers.get(applicationName, path);

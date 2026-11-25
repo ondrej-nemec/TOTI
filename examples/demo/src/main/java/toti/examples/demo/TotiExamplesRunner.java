@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import toti.core.Application;
 import toti.core.ApplicationFactory;
@@ -20,10 +21,10 @@ public class TotiExamplesRunner {
 	// TODO spravne def nastaveni hostname a path + example jak pouzit
 
 	public static void main(String[] args) {
-		createWithDefaultSettings();
-		createAndSetProgrammatically();
-		createWithXmlFileSettings();
-		createWithPropertiesFileSettings();
+		//createWithDefaultSettings();
+		//createAndSetProgrammatically();
+		//createWithXmlFileSettings();
+		//createWithPropertiesFileSettings();
 		createMain();
 	}
 
@@ -32,17 +33,39 @@ public class TotiExamplesRunner {
 			TotiServerFactory serverFactory = new TotiServerFactory();
 			serverFactory.setHttpPort(84);
 			serverFactory.setHttpsPort(447);
-			TotiServer server = serverFactory.create(LogManager.getLogger("toti"));
-			
-			server.addApplication("prod", (env, applicationFactory)->{
-				applicationFactory.setDevModeFunc(ip->false); // prod mode
-				return initApplication(applicationFactory);
-			}, null, "prod");
+			Logger logger = LogManager.getLogger("toti");
+			TotiServer server = serverFactory.create(logger);
 
-			server.addApplication("dev", (env, applicationFactory)->{
+			server.addApplication("dev1", (env, applicationFactory)->{
+				applicationFactory.setDevModeFunc(ip->true); // prod mode
+				applicationFactory.setSessionManager(new DefaultSessionManager(applicationFactory.getBasePath(), 2 * 60L));
+				applicationFactory.setDirResponseAllowed(false);
+				return applicationFactory.create(Arrays.asList(
+					new CoreModule(false)
+				), logger);
+			}, null, "dev1");
+			server.addApplication("dev2", (env, applicationFactory)->{
 				applicationFactory.setDevModeFunc(ip->true); // dev mode
-				return initApplication(applicationFactory);
-			}, null, "dev");
+				applicationFactory.setDirResponseAllowed(true);
+				return applicationFactory.create(Arrays.asList(
+					new CoreModule(true)
+				), logger);
+			}, null, "dev2");
+
+			server.addApplication("prod1", (env, applicationFactory)->{
+				applicationFactory.setDevModeFunc(ip->false); // prod mode
+				applicationFactory.setDirDefaultFile("index.txt");
+				return applicationFactory.create(Arrays.asList(
+					new CoreModule(false)
+				), logger);
+			}, null, "prod1");
+			server.addApplication("prod2", (env, applicationFactory)->{
+				applicationFactory.setDevModeFunc(ip->false); // prod mode
+				return applicationFactory.create(Arrays.asList(
+					new CoreModule(true)
+				), logger);
+			}, null, "prod2");
+
 			server.start();
 		} catch (Exception e) {
 			LogManager.getLogger("toti").error("Main init fails", e);
@@ -61,13 +84,13 @@ public class TotiExamplesRunner {
 		
 		applicationFactory.setSessionManager(new DefaultSessionManager(applicationFactory.getBasePath(), 2 * 60L));
 		return applicationFactory.create(Arrays.asList(
-			new CoreModule()/*,
+			new CoreModule(true)/*,
 			new UiModule(),
 			new TemplatingModule()*/
 		), LogManager.getLogger("toti"));
 	}
 
-	private static void createWithDefaultSettings() {
+	protected static void createWithDefaultSettings() {
 		try {
 			TotiServerFactory serverFactory = new TotiServerFactory();
 
@@ -82,7 +105,7 @@ public class TotiExamplesRunner {
 		}
 	}
 	
-	private static void createWithPropertiesFileSettings() {
+	protected static void createWithPropertiesFileSettings() {
 		try {
 			TotiServerFactory serverFactory = new TotiServerFactory("fileConfiguration.properties");
 			
@@ -97,7 +120,7 @@ public class TotiExamplesRunner {
 		}
 	}
 	
-	private static void createWithXmlFileSettings() {
+	protected static void createWithXmlFileSettings() {
 		try {
 			TotiServerFactory serverFactory = new TotiServerFactory("fileConfiguration.xml");
 			
@@ -112,7 +135,7 @@ public class TotiExamplesRunner {
 		}
 	}
 
-	private static void createAndSetProgrammatically() {
+	protected static void createAndSetProgrammatically() {
 		try {
 			TotiServerFactory serverFactory = new TotiServerFactory();
 			serverFactory.setCharset("utf-8");

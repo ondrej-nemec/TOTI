@@ -39,17 +39,5 @@ public class ExceptionsController {
 			return Response.OK().getText("This text should not be displayed");
 		};
 	}
-
-	/**
-	 * Exception throwed inside method before Response is returned, exception catched by CustomExceptionExtension
-	 * @throws LogicException
-	 * @return http://localhost:8080/application/exceptions/catched
-	 */
-	@Action(path="catched")
-	public ResponseAction catched() {
-		return (req, identity)->{
-			throw new LogicException("Example of logic exception");
-		};
-	}
 	
 }

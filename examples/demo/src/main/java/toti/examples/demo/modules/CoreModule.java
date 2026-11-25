@@ -20,6 +20,12 @@ import toti.lib.files.env.Env;
 
 public class CoreModule implements Module {
 
+	private final boolean useCustomErrorHandler;
+
+	public CoreModule(boolean useCustomErrorHandler) {
+		this.useCustomErrorHandler = useCustomErrorHandler;
+	}
+
 	@Override
 	public String getName() {
 		return "core";
@@ -36,7 +42,9 @@ public class CoreModule implements Module {
 		
 		//register.getExtension(AuthenticationExtension.class).setSessionUserProvider(sipe);
 		
-		register.addController(ErrorHandlerExampleController.class, ()->new ErrorHandlerExampleController());
+		if (useCustomErrorHandler) {
+			register.addController(ErrorHandlerExampleController.class, ()->new ErrorHandlerExampleController());
+		}
 		register.addController(ExceptionsController.class, ()->new ExceptionsController());
 		register.addController(ResponseController.class, ()->new ResponseController(task, link));
 		register.addController(RequestController.class, ()->new RequestController());

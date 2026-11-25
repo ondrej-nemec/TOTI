@@ -79,8 +79,10 @@ public class ApplicationFactory {
 		ObjectBuilder<Module> actualModule = new ObjectBuilder<>();
 		Param root = new Param(null);
 		Register register = new Register(root, actualModule, pattern, extensions);
-		Link link = new Link(basePath == null ? "" : "/" + basePath, /*getUrlPattern(env),*/ register, pattern);
-		Router router = new Router(/*register*/);
+		
+		String appBasePath = basePath == null ? "" : "/" + basePath;
+		Link link = new Link(appBasePath, /*getUrlPattern(env),*/ register, pattern);
+		Router router = new Router(appBasePath);
 
 		extensions.forEach((n, e)->e.init(env, register));
 		TemplateFactory actualTemplateExtension = getTemplateFactory();
@@ -100,8 +102,8 @@ public class ApplicationFactory {
 			@Override public void init(Env appEnv, Register register) {}
 			@Override public void onRequestStart(Identity identity, MapDictionary<String> sessionSpace, Headers requestHeaders, MapDictionary<String> queryParams, RequestParameters requestBody) {}
 			@Override public void onRequestEnd(Identity identity, MapDictionary<String> sessionSpace, Headers responseHeaders) {}
-			@Override public void onApplicationStart() throws Exception { sessionManager.onApplicationStart(); }
-			@Override public void onApplicationStop() throws Exception { sessionManager.onApplicationStop(); }
+			@Override public void onApplicationStart() throws Exception { currentSessionManager.onApplicationStart(); }
+			@Override public void onApplicationStop() throws Exception { currentSessionManager.onApplicationStop(); }
 		});
 		
 		Function<String, Boolean> isDevelopFunc = getDevModeFunc();
