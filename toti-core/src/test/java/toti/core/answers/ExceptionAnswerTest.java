@@ -30,6 +30,7 @@ import toti.core.answers.session.Identity;
 import toti.core.application.register.MappedAction;
 import toti.core.application.register.Register;
 import toti.core.extensions.CustomErrorHandler;
+import toti.core.extensions.TemplateFactory;
 import toti.core.logging.FileName;
 import toti.lib.common.structures.MapDictionary;
 import toti.lib.files.text.Text;
@@ -55,6 +56,7 @@ public class ExceptionAnswerTest {
 
 		ExceptionAnswer answer = spy(new ExceptionAnswer(
 			mock(Register.class),
+			mock(TemplateFactory.class),
 			ip->false,
 			null,
 			mock(Logger.class)
@@ -91,6 +93,7 @@ public class ExceptionAnswerTest {
 
 		ExceptionAnswer answer = spy(new ExceptionAnswer(
 			register,
+			mock(TemplateFactory.class),
 			ip->false,
 			null,
 			logger
@@ -129,6 +132,7 @@ public class ExceptionAnswerTest {
 		
 		ExceptionAnswer answer = spy(new ExceptionAnswer(
 			mock(Register.class),
+			mock(TemplateFactory.class),
 			incomingIp->isDev,
 			null,
 			logger
@@ -189,6 +193,7 @@ public class ExceptionAnswerTest {
 		int random = 123456789;
 		ExceptionAnswer answer = new ExceptionAnswer(
 			mock(Register.class),
+			mock(TemplateFactory.class),
 			ip->ip.equals("localhost"),
 			logsPath,
 			mock(Logger.class)
@@ -221,6 +226,7 @@ public class ExceptionAnswerTest {
 		
 		ExceptionAnswer answer = new ExceptionAnswer(
 			mock(Register.class),
+			mock(TemplateFactory.class),
 			ip->ip.equals("localhost"),
 			null,
 			mock(Logger.class)
@@ -251,6 +257,7 @@ public class ExceptionAnswerTest {
 		
 		ExceptionAnswer answer = new ExceptionAnswer(
 			mock(Register.class),
+			mock(TemplateFactory.class),
 			ip->ip.equals("localhost"),
 			"/tmp/toti-test",
 			mock(Logger.class)

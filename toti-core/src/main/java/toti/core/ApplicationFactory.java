@@ -111,7 +111,7 @@ public class ApplicationFactory {
 		TotiAnswer totiAnwer = new TotiAnswer(
 			isDevelopFunc, actualTemplateExtension, extensionsTotiResponses
 		);
-		ExceptionAnswer exceptionAnswer = new ExceptionAnswer(register, isDevelopFunc, getLogsPath(env), logger);
+		ExceptionAnswer exceptionAnswer = new ExceptionAnswer(register, actualTemplateExtension, isDevelopFunc, getLogsPath(env), logger);
 		ControllerAnswer controllerAnswer = new ControllerAnswer(router, root, actualTemplateExtension, link, logger);
 		FileSystemAnswer fileSystemAnswer = new FileSystemAnswer(
 			getResourcesPath(env),

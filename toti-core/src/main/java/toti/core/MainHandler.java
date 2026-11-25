@@ -53,7 +53,7 @@ public class MainHandler extends Handler.Abstract {
 	private AnswerWrapper defaultAnswer(Logger logger) {
 		return new AnswerWrapper(new Answer(null, null, null, null, null, null, null) {
 			private final ExceptionAnswer def = new ExceptionAnswer(
-				new Register(null, null, null, null), x->false, null, logger
+				new Register(null, null, null, null), null, x->false, null, logger
 			);
 			@Override
 			public FinalResponse accept(Request request, String ipAddress) throws IOException {

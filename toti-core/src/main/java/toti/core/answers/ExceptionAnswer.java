@@ -18,6 +18,7 @@ import toti.core.answers.response.TextResponse;
 import toti.core.answers.session.Identity;
 import toti.core.application.register.MappedAction;
 import toti.core.application.register.Register;
+import toti.core.extensions.TemplateFactory;
 import toti.core.logging.ExceptionHashCode;
 import toti.core.logging.FileName;
 import toti.core.logging.Page;
@@ -30,15 +31,17 @@ public class ExceptionAnswer {
 	private final Logger logger;
 	private final String logsPath;
 	private final Register register;
+	private final TemplateFactory templateExtension;
 	
 	private final Map<ExceptionHashCode, String> exceptionFileName = new HashMap<>();
 
 	public ExceptionAnswer(
-			Register register, Function<String, Boolean> isDevelop,
+			Register register, TemplateFactory templateExtension, Function<String, Boolean> isDevelop,
 			String logsPath, Logger logger) {
 		this.register = register;
 		this.logger = logger;
 		this.isDevelop = isDevelop;
+		this.templateExtension = templateExtension;
 		if (logsPath == null || logsPath.isEmpty()) {
 			this.logsPath = null;
 			logger.debug("Extended HTML request log is disabled");
@@ -55,7 +58,7 @@ public class ExceptionAnswer {
 		String charset
 	) {
 		return getResponse(request, status, t, identity, mappedAction, charset)
-			.prepare(new ResponseContainer(charset, responseHeaders, identity, null, mappedAction, null));
+			.prepare(new ResponseContainer(charset, responseHeaders, identity, null, mappedAction, templateExtension));
 	}
 	
 	protected Response getResponse(
