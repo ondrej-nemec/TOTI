@@ -9,7 +9,7 @@ import java.util.function.Function;
 
 import toti.lib.common.structures.DictionaryValue;
 
-public final class TimeRange<V> {
+public class TimeRange<V> {
 	
 	class Interval {
 		final ZonedDateTime start;
